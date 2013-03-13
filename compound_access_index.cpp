@@ -4,10 +4,10 @@
 #include "typetuple.hpp"
 
 template <Uint32 DIM>
-struct AccessIndex
+struct Index_t
 {
-    AccessIndex () : m(0) { }
-    AccessIndex (Uint32 i) : m(i) { }
+    Index_t () : m(0) { }
+    Index_t (Uint32 i) : m(i) { }
     
     bool is_at_end () const { return m >= DIM; }
     bool is_not_at_end () const { return m < DIM; }
@@ -22,12 +22,12 @@ private:
 
 int main (int argc, char **argv)
 {
-    typedef AccessIndex<3> I3;
-    typedef AccessIndex<4> I4;
-    typedef AccessIndex<5> I5;
-    typedef CompoundAccessIndex_t<TypeTuple_t<I3>::T> X;
-    typedef CompoundAccessIndex_t<TypeTuple_t<I3,I4>::T> Y;
-    typedef CompoundAccessIndex_t<TypeTuple_t<I3,I4,I5>::T> Z;
+    typedef Index_t<3> I3;
+    typedef Index_t<4> I4;
+    typedef Index_t<5> I5;
+    typedef CompoundIndex_t<TypeTuple_t<I3>::T> X;
+    typedef CompoundIndex_t<TypeTuple_t<I3,I4>::T> Y;
+    typedef CompoundIndex_t<TypeTuple_t<I3,I4,I5>::T> Z;
     
     for (X x; x.is_not_at_end(); ++x)
     {

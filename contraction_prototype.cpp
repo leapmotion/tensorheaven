@@ -195,7 +195,7 @@ struct ExpressionTemplate_Evaluation_t
 
     typedef TypeList_t<IndexType> FreeIndexTypeList;
     typedef EmptyTypeList SummedIndexTypeList;
-    typedef CompoundAccessIndex_t<TypeList_t<IndexType> > AccessIndex; // an index composed of all free indices
+    typedef CompoundIndex_t<TypeList_t<IndexType> > Index; // an index composed of all free indices
     
     ExpressionTemplate_Evaluation_t (Operand const &operand) : m_operand(operand) { }
     
@@ -222,7 +222,7 @@ struct ExpressionTemplate_Addition_t
     typedef typename LeftOperand::Scalar Scalar;
     typedef typename LeftOperand::FreeIndexTypeList FreeIndexTypeList;
     typedef EmptyTypeList SummedIndexTypeList; // TEMP: see above comment about "private" indices
-    typedef typename LeftOperand::AccessIndex AccessIndex;
+    typedef typename LeftOperand::Index Index;
     
     ExpressionTemplate_Addition_t (LeftOperand const &left_operand, RightOperand const &right_operand)
         :
@@ -230,7 +230,7 @@ struct ExpressionTemplate_Addition_t
         m_right_operand(right_operand)
     { }
     
-    Scalar operator [] (AccessIndex const &i) const { return m_left_operand[i] + m_right_operand[i]; }
+    Scalar operator [] (Index const &i) const { return m_left_operand[i] + m_right_operand[i]; }
 
 private:
 
@@ -263,8 +263,8 @@ struct ExpressionTemplate_Multiplication_t
     // the summed indices (at this level) are the double-occurrences indices
     // of the concatenated list of free indices from the left and right operands
     typedef typename ElementsHavingMultiplicity_t<CombinedFreeIndexTypeList,2>::T SummedIndexTypeList;
-    // AccessIndex is a list (TODO: change to tuple) of type FreeIndices    
-    typedef CompoundAccessIndex_t<FreeIndexTypeList> AccessIndex;
+    // Index is a list (TODO: change to tuple) of type FreeIndices    
+    typedef CompoundIndex_t<FreeIndexTypeList> Index;
 
     ExpressionTemplate_Multiplication_t (LeftOperand const &left_operand, RightOperand const &right_operand)
         :
@@ -272,28 +272,28 @@ struct ExpressionTemplate_Multiplication_t
         m_right_operand(right_operand)
     { }
     
-    Scalar operator [] (AccessIndex const &i) const 
+    Scalar operator [] (Index const &i) const 
     { 
         typedef typename ConcatenationOfTypeLists_t<FreeIndexTypeList,SummedIndexTypeList>::T TotalIndexTypeList;
-        typedef CompoundAccessIndex_t<TotalIndexTypeList> TotalAccessIndex;
-        typedef CompoundAccessIndex_t<SummedIndexTypeList> SummedAccessIndex;
+        typedef CompoundIndex_t<TotalIndexTypeList> TotalIndex;
+        typedef CompoundIndex_t<SummedIndexTypeList> SummedIndex;
         
         // TODO: iterate over the indices that are summed at this level
         
         // the operands take indices that are a subset of the summed indices and access index.
         
         // constructing t with i initializes the first elements which correpond to
-        // AccessIndex with the value of i, and initializes the remaining elements to zero.
-        TotalAccessIndex t(i);
+        // Index with the value of i, and initializes the remaining elements to zero.
+        TotalIndex t(i);
         Scalar retval(0);
-        // get the map which produces the CompoundAccessIndex for each operand from the TotalAccessIndex t
-        typedef CompoundAccessIndexMap_t<typename LeftOperand::FreeIndexTypeList,TotalIndexTypeList> LeftOperandIndexMap;
-        typedef CompoundAccessIndexMap_t<typename RightOperand::FreeIndexTypeList,TotalIndexTypeList> RightOperandIndexMap;
+        // get the map which produces the CompoundIndex for each operand from the TotalIndex t
+        typedef CompoundIndexMap_t<typename LeftOperand::FreeIndexTypeList,TotalIndexTypeList> LeftOperandIndexMap;
+        typedef CompoundIndexMap_t<typename RightOperand::FreeIndexTypeList,TotalIndexTypeList> RightOperandIndexMap;
         typename LeftOperandIndexMap::EvalMapType left_operand_index_map = LeftOperandIndexMap::eval;
         typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
         // t = (f,s), which is a concatenation of the free access indices and the summed access indices.
         // s is a reference to the second part, which is what is iterated over in the summation.
-        for (SummedAccessIndex &s = t.template trailing_list<FreeIndexTypeList::LENGTH>(); s.is_not_at_end(); ++s)
+        for (SummedIndex &s = t.template trailing_list<FreeIndexTypeList::LENGTH>(); s.is_not_at_end(); ++s)
             retval += m_left_operand[left_operand_index_map(t)] * m_right_operand[right_operand_index_map(t)];
         return retval;
     }
@@ -310,45 +310,15 @@ struct Vector_t
     typedef Scalar_ Scalar;
     static Uint32 const DIM = DIM_;
     static Uint32 const FACTOR_COUNT = 1; // vector quantities are used as 1-tensors.
-/*
-    // for use in operator [] for actual evaluation of tensor components (should have SYMBOL_ = '\0')
-    // also for use in operator () for creating expression templates (should have SYMBOL_ != '\0')
-    template <char SYMBOL_>
-    struct AccessIndex_t // TODO: change back to Index
-    {
-        static Uint32 const DIM = Vector_t::DIM;
-        static char const SYMBOL = SYMBOL_;
-    
-        AccessIndex_t () : m(0) { }
-        AccessIndex_t (Uint32 i) : m(i) { }
-        
-        // the SYMBOL doesn't affect the implementation at all, so there is a canonical conversion to 
-        // the "default" type which has SYMBOL = '\0'.
-//         operator AccessIndex_t<'\0'> const & () const { return *this; }
-//         operator AccessIndex_t<'\0'> & () { return *this; }
-        
-        bool is_at_end () const { return m >= DIM; }
-        bool is_not_at_end () const { return m < DIM; }
-        Uint32 value () const { return m; } // for the specific memory addressing scheme that Vector_t uses
-        void operator ++ () { ++m; }
-        void reset () { m = 0; }
-        
-    private:
-    
-        Uint32 m;
-    };
-    
-    typedef AccessIndex_t<'\0'> AccessIndex; // TODO: change back to Index
-*/
 
     // for use in operator [] for actual evaluation of tensor components (should have SYMBOL_ = '\0')
     // also for use in operator () for creating expression templates (should have SYMBOL_ != '\0')
-    struct AccessIndex // TODO: change back to Index
+    struct Index // TODO: change back to Index
     {
         static Uint32 const DIM = Vector_t::DIM;
     
-        AccessIndex () : m(0) { }
-        AccessIndex (Uint32 i) : m(i) { }
+        Index () : m(0) { }
+        Index (Uint32 i) : m(i) { }
         
         bool is_at_end () const { return m >= DIM; }
         bool is_not_at_end () const { return m < DIM; }
@@ -362,10 +332,10 @@ struct Vector_t
     };
 
     template <char SYMBOL>
-    struct AccessIndex_t : public AccessIndex
+    struct Index_t : public Index
     {
-        AccessIndex_t () { }
-        AccessIndex_t (Uint32 i) : AccessIndex(i) { }
+        Index_t () { }
+        Index_t (Uint32 i) : Index(i) { }
     };    
 
 
@@ -379,14 +349,14 @@ struct Vector_t
     // operator () will be used to create expression templates
     // for the purposes of indexed contractions.
     // TODO: make Index type encode the guarantee that it's value will always be valid
-    Scalar operator [] (AccessIndex const &i) const
+    Scalar operator [] (Index const &i) const
     { 
         if (i.is_at_end()) 
             throw std::invalid_argument("index out of range"); 
         else 
             return m[i.value()]; 
     }
-    Scalar &operator [] (AccessIndex const &i) 
+    Scalar &operator [] (Index const &i) 
     { 
         if (i.is_at_end()) 
             throw std::invalid_argument("index out of range"); 
@@ -402,7 +372,7 @@ struct Vector_t
     // IndexType_t<'j'> j;
     // u(i)*v(j)
     template <char SYMBOL>
-    ExpressionTemplate_Evaluation_t<Vector_t,AccessIndex_t<SYMBOL> > operator () (AccessIndex_t<SYMBOL> const &) const
+    ExpressionTemplate_Evaluation_t<Vector_t,Index_t<SYMBOL> > operator () (Index_t<SYMBOL> const &) const
     {
         Lvd::Meta::Assert<(SYMBOL != '\0')>();
         return expr<SYMBOL>();
@@ -411,9 +381,9 @@ struct Vector_t
     // the corresponding outer product example here would be
     // u.expr<'i'>() * v.expr<'j'>()
     template <char SYMBOL>
-    ExpressionTemplate_Evaluation_t<Vector_t,AccessIndex_t<SYMBOL> > expr () const
+    ExpressionTemplate_Evaluation_t<Vector_t,Index_t<SYMBOL> > expr () const
     {
-        return ExpressionTemplate_Evaluation_t<Vector_t,AccessIndex_t<SYMBOL> >(*this);
+        return ExpressionTemplate_Evaluation_t<Vector_t,Index_t<SYMBOL> >(*this);
     }
     
 protected:
@@ -425,12 +395,12 @@ template <typename Scalar, Uint32 DIM>
 std::ostream &operator << (std::ostream &out, Vector_t<Scalar,DIM> const &v)
 {
     typedef Vector_t<Scalar,DIM> Vector;
-    typedef typename Vector::AccessIndex AccessIndex;
+    typedef typename Vector::Index Index;
 
     if (DIM == 0)
         return out << "()";
     
-    AccessIndex i; // initialized to the beginning automatically
+    Index i; // initialized to the beginning automatically
     out << '(' << v[i];
     ++i;
     for ( ; i.is_not_at_end(); ++i)
@@ -444,12 +414,12 @@ template <typename Vector>
 struct DotProduct_t
 {
     typedef typename Vector::Scalar Scalar;
-    typedef typename Vector::AccessIndex AccessIndex;
+    typedef typename Vector::Index Index;
 
     static Scalar eval (Vector const &l, Vector const &r)
     {
         Scalar retval(0);
-        for (AccessIndex i; i.is_not_at_end(); ++i)
+        for (Index i; i.is_not_at_end(); ++i)
             retval += l[i]*r[i];
         return retval;
     }
@@ -493,13 +463,13 @@ struct Nonsymmetric2Tensor_t : Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM>
 
     Nonsymmetric2Tensor_t (WithoutInitialization const &w) : Parent(w) { }
 
-    struct AccessIndex : public Parent::AccessIndex
+    struct Index : public Parent::Index
     {
-        AccessIndex () { } // default constructor initializes to beginning
-        AccessIndex (Uint32 i) : Parent::AccessIndex(i) { }
-        AccessIndex (typename F1::AccessIndex i1, typename F2::AccessIndex i2) : Parent::AccessIndex(F2::DIM*i1.value()+i2.value()) { }
-        typename F1::AccessIndex subindex1 () const { return this->value() / F2::DIM; }
-        typename F2::AccessIndex subindex2 () const { return this->value() % F2::DIM; }
+        Index () { } // default constructor initializes to beginning
+        Index (Uint32 i) : Parent::Index(i) { }
+        Index (typename F1::Index i1, typename F2::Index i2) : Parent::Index(F2::DIM*i1.value()+i2.value()) { }
+        typename F1::Index subindex1 () const { return this->value() / F2::DIM; }
+        typename F2::Index subindex2 () const { return this->value() % F2::DIM; }
     };
 };
 
@@ -518,17 +488,17 @@ struct Nonsymmetric3Tensor_t : Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM*F
     typedef F2_ F2;
     typedef F3_ F3;
 
-    struct AccessIndex : public Parent::AccessIndex
+    struct Index : public Parent::Index
     {
-        AccessIndex () { } // default constructor initializes to beginning
-        AccessIndex (Uint32 i) : Parent::AccessIndex(i) { }
-        AccessIndex (typename F1::AccessIndex i1, typename F2::AccessIndex i2, typename F3::AccessIndex i3) 
+        Index () { } // default constructor initializes to beginning
+        Index (Uint32 i) : Parent::Index(i) { }
+        Index (typename F1::Index i1, typename F2::Index i2, typename F3::Index i3) 
             : 
-            Parent::AccessIndex(F3::DIM*(F2::DIM*i1.value()+i2.value())+i3.value()) 
+            Parent::Index(F3::DIM*(F2::DIM*i1.value()+i2.value())+i3.value()) 
         { }
-        typename F1::AccessIndex subindex1 () const { return this->value() / (F3::DIM*F2::DIM); }
-        typename F2::AccessIndex subindex2 () const { return this->value() / F3::DIM % F2::DIM; }
-        typename F3::AccessIndex subindex3 () const { return this->value() % F3::DIM; }
+        typename F1::Index subindex1 () const { return this->value() / (F3::DIM*F2::DIM); }
+        typename F2::Index subindex2 () const { return this->value() / F3::DIM % F2::DIM; }
+        typename F3::Index subindex3 () const { return this->value() % F3::DIM; }
     };
 };
 
@@ -551,7 +521,7 @@ struct Simple2Tensor_t
     F1 const &factor1 () const { return m1; }
     F2 const &factor2 () const { return m2; }
     
-    Scalar operator [] (typename Nonsymmetric2Tensor_t<F1,F2>::AccessIndex const &i) const
+    Scalar operator [] (typename Nonsymmetric2Tensor_t<F1,F2>::Index const &i) const
     {
         if (i.is_at_end())
             throw std::invalid_argument("index out of range");
@@ -611,7 +581,7 @@ struct Simple3Tensor_t
     F2 const &factor2 () const { return m2; }
     F3 const &factor3 () const { return m3; }
 
-    Scalar operator [] (typename Nonsymmetric3Tensor_t<F1,F2,F3>::AccessIndex const &i) const
+    Scalar operator [] (typename Nonsymmetric3Tensor_t<F1,F2,F3>::Index const &i) const
     {
         if (i.is_at_end())
             throw std::invalid_argument("index out of range");
@@ -688,14 +658,14 @@ struct Antisymmetric2Tensor_t : public Vector_t<typename F_::Scalar,((F_::DIM-1)
 {
     typedef Vector_t<typename F_::Scalar,((F_::DIM-1)*F_::DIM)/2> Parent;
     typedef typename Parent::Scalar Scalar;
-    typedef typename Parent::AccessIndex AccessIndex;
+    typedef typename Parent::Index Index;
     using Parent::DIM;
     typedef F_ F;
     static Uint32 const FACTOR_COUNT = 2; // there are two factors in this tensor type (F1 and F2)
 
     // TODO: make Index in this class, and make it construct with a Tensor<T,T>::Index
     
-    Scalar &operator [] (typename Nonsymmetric2Tensor_t<F,F>::AccessIndex const &i)
+    Scalar &operator [] (typename Nonsymmetric2Tensor_t<F,F>::Index const &i)
     {
         Uint32 r = i.subindex1().value();
         Uint32 c = i.subindex2().value();
@@ -716,7 +686,7 @@ struct Antisymmetric2Tensor_t : public Vector_t<typename F_::Scalar,((F_::DIM-1)
         // if we're in the subdiagonal, switch the indices to get into the superdiagonal
         if (r > c)
             std::swap(r, c);
-        AccessIndex antisymmetric_2_tensor_index(r*DIM - (r*(r+3) >> 1) + c - 1);
+        Index antisymmetric_2_tensor_index(r*DIM - (r*(r+3) >> 1) + c - 1);
         return operator[](antisymmetric_2_tensor_index); // should call Vector_t::operator[]
     }
 };
@@ -794,7 +764,7 @@ int main (int argc, char **argv)
         {
             for (Uint32 c = 0; c < 4; ++c)
             {
-                std::cout << "\t" << X[Float3x4::AccessIndex(r,c)];
+                std::cout << "\t" << X[Float3x4::Index(r,c)];
             }
             std::cout << '\n';
         }
@@ -805,18 +775,18 @@ int main (int argc, char **argv)
     
         for (Uint32 i = 0; i < Float3x4::DIM; ++i)
         {
-            Float3x4::AccessIndex index(i);
+            Float3x4::Index index(i);
             std::cout << i << " -> " << index.subindex1().value() << ", " << index.subindex2().value()
-                      << " -> " << Float3x4::AccessIndex(index.subindex1().value(), index.subindex2().value()).value() << '\n';
+                      << " -> " << Float3x4::Index(index.subindex1().value(), index.subindex2().value()).value() << '\n';
         }
         
         std::cout << '\n';
         
         for (Uint32 i = 0; i < Float2x3x4::DIM; ++i)
         {
-            Float2x3x4::AccessIndex index(i);
+            Float2x3x4::Index index(i);
             std::cout << i << " -> " << index.subindex1().value() << ", " << index.subindex2().value() << ", " << index.subindex3().value() 
-                      << " -> " << Float2x3x4::AccessIndex(index.subindex1().value(), index.subindex2().value(), index.subindex3().value()).value() << '\n';
+                      << " -> " << Float2x3x4::Index(index.subindex1().value(), index.subindex2().value(), index.subindex3().value()).value() << '\n';
         }
         
         std::cout << '\n';
@@ -830,7 +800,7 @@ int main (int argc, char **argv)
             {
                 for (Uint32 c = 0; c < 4; ++c)
                 {
-                    std::cout << "\t" << Z[Float2x3x4::AccessIndex(s,r,c)];
+                    std::cout << "\t" << Z[Float2x3x4::Index(s,r,c)];
                 }
                 std::cout << '\n';
             }
@@ -850,7 +820,7 @@ int main (int argc, char **argv)
         {
             for (Uint32 c = 0; c < 4; ++c)
             {
-                std::cout << "\t" << Y[Float3x4::AccessIndex(r,c)];
+                std::cout << "\t" << Y[Float3x4::Index(r,c)];
             }
             std::cout << '\n';
         }
@@ -863,7 +833,7 @@ int main (int argc, char **argv)
         float accumulator = 0;    
         for (Uint32 r = 0; r < 3; ++r)
             for (Uint32 c = 0; c < 4; ++c)
-                accumulator += X[Float3x4::AccessIndex(r,c)] * Y[Float3x4::AccessIndex(r,c)];
+                accumulator += X[Float3x4::Index(r,c)] * Y[Float3x4::Index(r,c)];
         std::cout << "actual answer = " << accumulator << ")\n\n";
         
         typedef Nonsymmetric2Tensor_t<Float3,Float3> Float3x3;
@@ -871,11 +841,11 @@ int main (int argc, char **argv)
         for (Uint32 i = 0; i < 3; ++i)
             for (Uint32 j = 0; j < 3; ++j)
                 for (Uint32 k = 0; k < 4; ++k)
-                    W[Float3x3::AccessIndex(i,j)] = X[Float3x4::AccessIndex(i,k)] * Y[Float3x4::AccessIndex(j,k)];
+                    W[Float3x3::Index(i,j)] = X[Float3x4::Index(i,k)] * Y[Float3x4::Index(j,k)];
         for (Uint32 i = 0; i < 3; ++i)
         {
             for (Uint32 j = 0; j < 3; ++j)
-                std::cout << '\t' << W[Float3x3::AccessIndex(i,j)];
+                std::cout << '\t' << W[Float3x3::Index(i,j)];
             std::cout << '\n';
         }
     }
@@ -884,22 +854,22 @@ int main (int argc, char **argv)
     {
         Float3 u(-0.1, 2.0, 8);
         Float3 v(4.1, 5.2, 6.3);
-        typedef Float3::AccessIndex_t<'i'> I;
-        typedef Float3::AccessIndex_t<'j'> J;
+        typedef Float3::Index_t<'i'> I;
+        typedef Float3::Index_t<'j'> J;
         I i;
         {
             typedef ExpressionTemplate_Evaluation_t<Float3,I> E1;
             typedef ExpressionTemplate_Evaluation_t<Float3,J> E2;
             
 //             E1 e1 = v(i);
-//             std::cout << e1[E1::AccessIndex(0)] << '\n';
-            std::cout << v(i)[E1::AccessIndex(0)] << '\n';
+//             std::cout << e1[E1::Index(0)] << '\n';
+            std::cout << v(i)[E1::Index(0)] << '\n';
             
 //             E2 e2 = v.expr<'j'>();
-//             std::cout << e2[E2::AccessIndex(1)] << '\n';
-            std::cout << v.expr<'j'>()[E2::AccessIndex(1)] << '\n';
+//             std::cout << e2[E2::Index(1)] << '\n';
+            std::cout << v.expr<'j'>()[E2::Index(1)] << '\n';
             
-            for (Float3::AccessIndex k; k.is_not_at_end(); ++k)
+            for (Float3::Index k; k.is_not_at_end(); ++k)
                 std::cout << u[k] + v[k] << ", ";
             std::cout << '\n';
         }
@@ -909,7 +879,7 @@ int main (int argc, char **argv)
             typedef ExpressionTemplate_Evaluation_t<Float3,I> EE;
             typedef ExpressionTemplate_Addition_t<EE,EE> EA;
             EA e(u(i), v(i));
-            for (EA::AccessIndex j; j.is_not_at_end(); ++j)
+            for (EA::Index j; j.is_not_at_end(); ++j)
                 std::cout << e[j] << ", ";
             std::cout << '\n';
         }
@@ -919,10 +889,10 @@ int main (int argc, char **argv)
             typedef ExpressionTemplate_Evaluation_t<Float3,I> EE;
             typedef ExpressionTemplate_Multiplication_t<EE,EE> EM;
             EM e(u(i), v(i));
-            Float3::AccessIndex j;
+            Float3::Index j;
             std::cout << j.DIM << '\n';
-//             std::cout << TypeStringOf_t<EE::AccessIndex>::eval() << '\n';
-            std::cout << e[EM::AccessIndex()] << '\n';
+//             std::cout << TypeStringOf_t<EE::Index>::eval() << '\n';
+            std::cout << e[EM::Index()] << '\n';
             float dot = 0;
             for (Uint32 k = 0; k < 3; ++k)
                 dot += u[k]*v[k];

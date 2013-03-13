@@ -1,20 +1,20 @@
-#ifndef COMPOUND_ACCESS_INDEX_HPP_
-#define COMPOUND_ACCESS_INDEX_HPP_
+#ifndef COMPOUND_INDEX_HPP_
+#define COMPOUND_INDEX_HPP_
 
 #include "list.hpp"
 #include "typelist_utility.hpp"
 
-// AccessIndexTypeList should be a TypeList_t containing AccessIndex types (e.g. Vector_t::Index)
-template <typename AccessIndexTypeList_>
-struct CompoundAccessIndex_t : List_t<AccessIndexTypeList_>
+// IndexTypeList should be a TypeList_t containing Index types (e.g. Vector_t::Index)
+template <typename IndexTypeList_>
+struct CompoundIndex_t : List_t<IndexTypeList_>
 {
-    typedef List_t<AccessIndexTypeList_> Parent;
-    typedef AccessIndexTypeList_ AccessIndexTypeList;
+    typedef List_t<IndexTypeList_> Parent;
+    typedef IndexTypeList_ IndexTypeList;
     // TODO: static Uint32 const DIM (this must be recursively defined)
     
-    CompoundAccessIndex_t () { } // default constructor initializes to "first" component
-    template <typename LeadingAccessIndexTypeList>
-    CompoundAccessIndex_t (CompoundAccessIndex_t<LeadingAccessIndexTypeList> const &leading_compound_access_index) 
+    CompoundIndex_t () { } // default constructor initializes to "first" component
+    template <typename LeadingIndexTypeList>
+    CompoundIndex_t (CompoundIndex_t<LeadingIndexTypeList> const &leading_compound_access_index) 
         : 
         Parent(leading_compound_access_index)
     { }
@@ -37,9 +37,9 @@ struct CompoundAccessIndex_t : List_t<AccessIndexTypeList_>
     void print (std::ostream &out) const { out << this->head().value() << ", "; body().print(out); }
     
     // slighty hacky way to use List_t's existing functionality -- NOTE: this only
-    // works because CompoundAccessIndex_t<AccessIndexTypeList> inherits non-virtually from 
-    // List_t<AccessIndexTypeList> and has no members.
-    typedef CompoundAccessIndex_t<typename AccessIndexTypeList::Body> BodyList;
+    // works because CompoundIndex_t<IndexTypeList> inherits non-virtually from 
+    // List_t<IndexTypeList> and has no members.
+    typedef CompoundIndex_t<typename IndexTypeList::Body> BodyList;
     BodyList &body ()
     { 
         return *static_cast<BodyList *>(&Parent::body()); 
@@ -50,16 +50,16 @@ struct CompoundAccessIndex_t : List_t<AccessIndexTypeList_>
     }
     
     // slighty hacky way to use List_t's existing functionality -- NOTE: this only
-    // works because CompoundAccessIndex_t<AccessIndexTypeList> inherits non-virtually from 
-    // List_t<AccessIndexTypeList> and has no members.
+    // works because CompoundIndex_t<IndexTypeList> inherits non-virtually from 
+    // List_t<IndexTypeList> and has no members.
     // returns the type of the trailing List_t starting at the INDEXth element
     template <Uint32 INDEX>
     struct TrailingListType_t
     {
-        typedef CompoundAccessIndex_t<typename AccessIndexTypeList::template TrailingTypeList_t<INDEX>::T> T;
+        typedef CompoundIndex_t<typename IndexTypeList::template TrailingTypeList_t<INDEX>::T> T;
     };
 
-    // returns the trailing CompoundAccessIndex_t starting at the INDEXth element
+    // returns the trailing CompoundIndex_t starting at the INDEXth element
     template <Uint32 INDEX>
     typename TrailingListType_t<INDEX>::T const &trailing_list () const
     {
@@ -72,18 +72,18 @@ struct CompoundAccessIndex_t : List_t<AccessIndexTypeList_>
     };
 };
 
-// template specializations for the AccessIndexTypeList list corner cases
-template <typename AccessIndexHead>
-struct CompoundAccessIndex_t<TypeList_t<AccessIndexHead> > : public List_t<TypeList_t<AccessIndexHead> >
+// template specializations for the IndexTypeList list corner cases
+template <typename IndexHead>
+struct CompoundIndex_t<TypeList_t<IndexHead> > : public List_t<TypeList_t<IndexHead> >
 {
-    typedef List_t<TypeList_t<AccessIndexHead> > Parent;
-    typedef TypeList_t<AccessIndexHead> AccessIndexTypeList;
+    typedef List_t<TypeList_t<IndexHead> > Parent;
+    typedef TypeList_t<IndexHead> IndexTypeList;
     // TODO: static Uint32 const DIM
     
-    CompoundAccessIndex_t () { } // default constructor initializes to "first" component
-    CompoundAccessIndex_t (AccessIndexHead const &head) : Parent(head) { }
-    template <typename LeadingAccessIndexTypeList>
-    CompoundAccessIndex_t (CompoundAccessIndex_t<LeadingAccessIndexTypeList> const &leading_compound_access_index) 
+    CompoundIndex_t () { } // default constructor initializes to "first" component
+    CompoundIndex_t (IndexHead const &head) : Parent(head) { }
+    template <typename LeadingIndexTypeList>
+    CompoundIndex_t (CompoundIndex_t<LeadingIndexTypeList> const &leading_compound_access_index) 
         : 
         Parent(leading_compound_access_index)
     { }
@@ -96,22 +96,22 @@ struct CompoundAccessIndex_t<TypeList_t<AccessIndexHead> > : public List_t<TypeL
     // TEMP
     void print (std::ostream &out) const { out << this->head().value() << ", "; }
 
-    // type conversion operator -- because this CompoundAccessIndex_t only has one component,
+    // type conversion operator -- because this CompoundIndex_t only has one component,
     // it can be canonically identified as its component type.
-    operator AccessIndexHead const & () const { return this->head(); }
-    operator AccessIndexHead & () { return this->head(); }
+    operator IndexHead const & () const { return this->head(); }
+    operator IndexHead & () { return this->head(); }
 
     // slighty hacky way to use List_t's existing functionality -- NOTE: this only
-    // works because CompoundAccessIndex_t<AccessIndexTypeList> inherits non-virtually from 
-    // List_t<AccessIndexTypeList> and has no members.
+    // works because CompoundIndex_t<IndexTypeList> inherits non-virtually from 
+    // List_t<IndexTypeList> and has no members.
     // returns the type of the trailing List_t starting at the INDEXth element
     template <Uint32 INDEX>
     struct TrailingListType_t
     {
-        typedef CompoundAccessIndex_t<typename AccessIndexTypeList::template TrailingTypeList_t<INDEX>::T> T;
+        typedef CompoundIndex_t<typename IndexTypeList::template TrailingTypeList_t<INDEX>::T> T;
     };
 
-    // returns the trailing CompoundAccessIndex_t starting at the INDEXth element
+    // returns the trailing CompoundIndex_t starting at the INDEXth element
     template <Uint32 INDEX>
     typename TrailingListType_t<INDEX>::T const &trailing_list () const
     {
@@ -125,15 +125,15 @@ struct CompoundAccessIndex_t<TypeList_t<AccessIndexHead> > : public List_t<TypeL
 };
 
 template <>    
-struct CompoundAccessIndex_t<EmptyTypeList> : public List_t<EmptyTypeList>
+struct CompoundIndex_t<EmptyTypeList> : public List_t<EmptyTypeList>
 {
 //    enum { _ = Lvd::Meta::Assert<false>::v }; // don't make one of these
 
     typedef List_t<EmptyTypeList> Parent;
-    typedef EmptyTypeList AccessIndexTypeList;
+    typedef EmptyTypeList IndexTypeList;
     // TODO: static Uint32 const DIM
     
-//     CompoundAccessIndex_t () { } // default constructor initializes to "first" component
+//     CompoundIndex_t () { } // default constructor initializes to "first" component
 //     
 //     bool is_at_end () const { return head().is_at_end(); }
 //     bool is_not_at_end () const { return head().is_not_at_end(); }
@@ -153,7 +153,7 @@ struct CompoundAccessIndex_t<EmptyTypeList> : public List_t<EmptyTypeList>
 
 
 template <typename TypeList, typename UniqueTypes_ = typename UniqueTypesIn_t<TypeList>::T>
-struct CompoundAccessIndexMap_t
+struct CompoundIndexMap_t
 {
 private:
 
@@ -162,16 +162,16 @@ private:
     
 public:
 
-    typedef CompoundAccessIndex_t<TypeList> (*EvalMapType) (CompoundAccessIndex_t<UniqueTypes> const &index);
-    static CompoundAccessIndex_t<TypeList> eval (CompoundAccessIndex_t<UniqueTypes> const &index)
+    typedef CompoundIndex_t<TypeList> (*EvalMapType) (CompoundIndex_t<UniqueTypes> const &index);
+    static CompoundIndex_t<TypeList> eval (CompoundIndex_t<UniqueTypes> const &index)
     {
-        return CompoundAccessIndex_t<TypeList>(index.template value<HEAD_INDEX>(),
-                                               CompoundAccessIndexMap_t<typename TypeList::Body, UniqueTypes>::eval(index));
+        return CompoundIndex_t<TypeList>(index.template value<HEAD_INDEX>(),
+                                               CompoundIndexMap_t<typename TypeList::Body, UniqueTypes>::eval(index));
     }
 };
 
 template <typename Head, typename UniqueTypes_>
-struct CompoundAccessIndexMap_t<TypeList_t<Head>, UniqueTypes_>
+struct CompoundIndexMap_t<TypeList_t<Head>, UniqueTypes_>
 {
 private:
 
@@ -180,11 +180,11 @@ private:
 
 public:
 
-    typedef CompoundAccessIndex_t<TypeList_t<Head> > (*EvalMapType) (CompoundAccessIndex_t<UniqueTypes> const &index);
-    static CompoundAccessIndex_t<TypeList_t<Head> > eval (CompoundAccessIndex_t<UniqueTypes> const &index)
+    typedef CompoundIndex_t<TypeList_t<Head> > (*EvalMapType) (CompoundIndex_t<UniqueTypes> const &index);
+    static CompoundIndex_t<TypeList_t<Head> > eval (CompoundIndex_t<UniqueTypes> const &index)
     {
-        return CompoundAccessIndex_t<TypeList_t<Head> >(index.template el<HEAD_INDEX>());
+        return CompoundIndex_t<TypeList_t<Head> >(index.template el<HEAD_INDEX>());
     }
 };
 
-#endif // COMPOUND_ACCESS_INDEX_HPP_
+#endif // COMPOUND_INDEX_HPP_
