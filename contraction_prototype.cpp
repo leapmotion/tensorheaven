@@ -27,10 +27,10 @@ static WithoutInitialization const WITHOUT_INITIALIZATION = WithoutInitializatio
 /*
 if A is a tensor type, and i is an index compatible with A, then A(i) returns an expression template.
 
-e.g. if A is Antisymmetric2Tensor<U,V> and v is V, and i is U::Index and j,k is V::Index, then
+e.g. if A is Tensor2Antisymmetric<U,V> and v is V, and i is U::Index and j,k is V::Index, then
 
-A(Nonsymmetric2Tensor(i,j)) returns an expression template storing down-cast, and
-A(Nonsymmetric2Tensor(i,j))*v(j) is an expression template encoding the contraction.
+A(Tensor2(i,j)) returns an expression template storing down-cast, and
+A(Tensor2(i,j))*v(j) is an expression template encoding the contraction.
 
 an expression like a(i,j)*b(j)*c(i)*d(k) should produce something like
 
@@ -71,8 +71,8 @@ indices.  any indices that occur twice in the expression are "summed" indices an
      |
     NSTI(i,j))
 
-X is a Nonsymmetric2Tensor, but to access it with two separate indices, an adaptor index
-must be used -- "NSTI" (Nonsymmetric2Tensor::Index).  Thus
+X is a Tensor2, but to access it with two separate indices, an adaptor index
+must be used -- "NSTI" (Tensor2::Index).  Thus
   X(NSTI(i,j)) is an expression template with free indices (i,j),
   X(NSTI(i,j))*u(j) is an expression template with free indices (i),
   X(NSTI(i,j))*u(j)*v(k) is an expression template with free indices (i,k),
@@ -329,28 +329,6 @@ struct ExpressionTemplate_Multiplication_t
     Scalar operator [] (Index const &i) const
     {
         return Summation_t<LeftOperand,RightOperand,FreeIndexTypeList,SummedIndexTypeList>::eval(m_left_operand, m_right_operand, i);
-//         typedef typename ConcatenationOfTypeLists_t<FreeIndexTypeList,SummedIndexTypeList>::T TotalIndexTypeList;
-//         typedef CompoundIndex_t<TotalIndexTypeList> TotalIndex;
-//         typedef CompoundIndex_t<SummedIndexTypeList> SummedIndex;
-//
-//         // TODO: iterate over the indices that are summed at this level
-//
-//         // the operands take indices that are a subset of the summed indices and access index.
-//
-//         // constructing t with i initializes the first elements which correpond to
-//         // Index with the value of i, and initializes the remaining elements to zero.
-//         TotalIndex t(i);
-//         Scalar retval(0);
-//         // get the map which produces the CompoundIndex for each operand from the TotalIndex t
-//         typedef CompoundIndexMap_t<TotalIndexTypeList,typename LeftOperand::FreeIndexTypeList> LeftOperandIndexMap;
-//         typedef CompoundIndexMap_t<TotalIndexTypeList,typename RightOperand::FreeIndexTypeList> RightOperandIndexMap;
-//         typename LeftOperandIndexMap::EvalMapType left_operand_index_map = LeftOperandIndexMap::eval;
-//         typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
-//         // t = (f,s), which is a concatenation of the free access indices and the summed access indices.
-//         // s is a reference to the second part, which is what is iterated over in the summation.
-//         for (SummedIndex &s = t.template trailing_list<FreeIndexTypeList::LENGTH>(); s.is_not_at_end(); ++s)
-//             retval += m_left_operand[left_operand_index_map(t)] * m_right_operand[right_operand_index_map(t)];
-//         return retval;
     }
 
 private:
@@ -364,7 +342,7 @@ struct Vector_t
 {
     typedef Scalar_ Scalar;
     static Uint32 const DIM = DIM_;
-    static Uint32 const FACTOR_COUNT = 1; // vector quantities are used as 1-tensors.
+    static Uint32 const DEGREE = 1; // vector quantities are used as 1-tensors.
 
     // for use in operator [] for actual evaluation of tensor components
     struct Index
@@ -468,6 +446,7 @@ std::ostream &operator << (std::ostream &out, Vector_t<Scalar,DIM> const &v)
     return out << ')';
 }
 
+// NOTE: these don't seem to work -- maybe the compiler isn't smart enough to match the types
 template <typename Scalar, Uint32 DIM>
 std::ostream &operator << (std::ostream &out, typename Vector_t<Scalar,DIM>::Index const &i)
 {
@@ -480,8 +459,8 @@ std::ostream &operator << (std::ostream &out, typename Vector_t<Scalar,DIM>::tem
     return out << i.value();
 }
 
-// this default implementation should work for any vector space that has an Index type (but not e.g. Simple2Tensor_t).
-// template specialization can be used to define other implementations (e.g. Simple2Tensor_t).
+// this default implementation should work for any vector space that has an Index type (but not e.g. Tensor2Simple_t).
+// template specialization can be used to define other implementations (e.g. Tensor2Simple_t).
 template <typename Vector>
 struct DotProduct_t
 {
@@ -497,48 +476,26 @@ struct DotProduct_t
     }
 };
 
-// expression template for contracting Vector_t types
-// template <typename F1_, typename F2_, typename IndexType1_, typename IndexType2_>
-// struct ExpressionTemplate_t // TODO: come up with better name
-// {
-//     enum { _ = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename F1_::Scalar,typename F2_::Scalar>::v>::v };
-//
-//     typedef F1_ F1;
-//     typedef F2_ F2;
-//     typedef typename F1::Scalar Scalar;
-//     typedef IndexType1_ IndexType1;
-//     typedef IndexType2_ IndexType2;
-//
-//     ExpressionTemplate_t (F1 const &f1, F2 const &f2) : m1(f1), m2(f2) { }
-//
-//     Scalar eval (Tuple_t<IndexType> const &index) const
-//     {
-//     }
-// };
-//
-// template <typename F1, typename F2, typename IndexType1, typename IndexType2>
-// ExpressionTemplate_t<F1,F2,IndexType1,IndexType2> operator * (
-
 // general 2-tensor with no symmetries -- most general type of 2-tensor
 template <typename F1_, typename F2_>
-struct Nonsymmetric2Tensor_t : Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM>
+struct Tensor2_t : Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM>
 {
     enum { _ = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename F1_::Scalar,typename F2_::Scalar>::v>::v };
 
     typedef Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM> Parent;
     typedef typename Parent::Scalar Scalar;
     using Parent::DIM;
-    static Uint32 const FACTOR_COUNT = 2; // there are two factors in this tensor type (F1 and F2)
+    static Uint32 const DEGREE = 2; // there are two factors in this tensor type (F1 and F2)
 
     typedef F1_ F1;
     typedef F2_ F2;
 
-    Nonsymmetric2Tensor_t (WithoutInitialization const &w) : Parent(w) { }
+    Tensor2_t (WithoutInitialization const &w) : Parent(w) { }
 
     struct Index : public Parent::Index
     {
         Index () { } // default constructor initializes to beginning
-        Index (Uint32 i) : Parent::Index(i) { }
+        explicit Index (Uint32 i) : Parent::Index(i) { }
         Index (typename F1::Index i1, typename F2::Index i2) : Parent::Index(F2::DIM*i1.value()+i2.value()) { }
         typename F1::Index subindex1 () const { return this->value() / F2::DIM; }
         typename F2::Index subindex2 () const { return this->value() % F2::DIM; }
@@ -547,14 +504,14 @@ struct Nonsymmetric2Tensor_t : Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM>
 
 // general 3-tensor with no symmetries -- most general type of 3-tensor
 template <typename F1_, typename F2_, typename F3_>
-struct Nonsymmetric3Tensor_t : Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM*F3_::DIM>
+struct Tensor3_t : Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM*F3_::DIM>
 {
     enum { _ = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename F1_::Scalar,typename F2_::Scalar>::v>::v };
 
     typedef Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM*F3_::DIM> Parent;
     typedef typename Parent::Scalar Scalar;
     using Parent::DIM;
-    static Uint32 const FACTOR_COUNT = 3; // there are two factors in this tensor type (F1 and F2)
+    static Uint32 const DEGREE = 3; // there are two factors in this tensor type (F1 and F2)
 
     typedef F1_ F1;
     typedef F2_ F2;
@@ -578,7 +535,7 @@ struct Nonsymmetric3Tensor_t : Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM*F
 // the space of simple 2-tensors is not a linear subspace of 2-tensors, so it
 // is not a vector quantity.
 template <typename F1_, typename F2_>
-struct Simple2Tensor_t
+struct Tensor2Simple_t
 {
     enum { _ = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename F1_::Scalar,typename F2_::Scalar>::v>::v };
 
@@ -586,14 +543,14 @@ struct Simple2Tensor_t
     typedef F2_ F2;
     typedef typename F1::Scalar Scalar;
     // there is no dimension because this is not a vector space (not even a manifold -- it is an algebraic variety)
-    static Uint32 const FACTOR_COUNT = 2; // there are two factors in this tensor type (F1 and F2)
+    static Uint32 const DEGREE = 2; // there are two factors in this tensor type (F1 and F2)
 
-    Simple2Tensor_t (F1 const &f1, F2 const &f2) : m1(f1), m2(f2) { }
+    Tensor2Simple_t (F1 const &f1, F2 const &f2) : m1(f1), m2(f2) { }
 
     F1 const &factor1 () const { return m1; }
     F2 const &factor2 () const { return m2; }
 
-    Scalar operator [] (typename Nonsymmetric2Tensor_t<F1,F2>::Index const &i) const
+    Scalar operator [] (typename Tensor2_t<F1,F2>::Index const &i) const
     {
         if (i.is_at_end())
             throw std::invalid_argument("index out of range");
@@ -604,7 +561,7 @@ struct Simple2Tensor_t
 
     // TODO: type cast operator to NonsymmetricTensor which creates an expression template to do the indexing
 
-    // TODO: the sum of two Simple2Tensor_t<F1,F2>s is a Nonsymmetric2Tensor_t<F1,F2>
+    // TODO: the sum of two Tensor2Simple_t<F1,F2>s is a Tensor2_t<F1,F2>
 
 private:
 
@@ -613,7 +570,7 @@ private:
 };
 
 template <typename F1, typename F2>
-std::ostream &operator << (std::ostream &out, Simple2Tensor_t<F1,F2> const &s)
+std::ostream &operator << (std::ostream &out, Tensor2Simple_t<F1,F2> const &s)
 {
     return out << s.factor1() << " \\otimes " << s.factor2();
 }
@@ -621,21 +578,21 @@ std::ostream &operator << (std::ostream &out, Simple2Tensor_t<F1,F2> const &s)
 // template specialization for the contraction of simple 2-tensors
 // (A \otimes B) : (C \otimes D) := (A \cdot C)(B \cdot D)
 template <typename F1, typename F2>
-struct DotProduct_t<Simple2Tensor_t<F1,F2> >
+struct DotProduct_t<Tensor2Simple_t<F1,F2> >
 {
-    typedef Simple2Tensor_t<F1,F2> Simple2Tensor;
-    typedef typename Simple2Tensor::Scalar Scalar;
+    typedef Tensor2Simple_t<F1,F2> Tensor2Simple;
+    typedef typename Tensor2Simple::Scalar Scalar;
 
-    static Scalar eval (Simple2Tensor const &l, Simple2Tensor const &r)
+    static Scalar eval (Tensor2Simple const &l, Tensor2Simple const &r)
     {
         return DotProduct_t<F1>::eval(l.factor1(),r.factor1()) * DotProduct_t<F2>::eval(l.factor2(),r.factor2());
     }
 };
 
-// Simple3Tensor_t
+// Tensor3Simple_t
 
 template <typename F1_, typename F2_, typename F3_>
-struct Simple3Tensor_t
+struct Tensor3Simple_t
 {
     enum { _ = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename F1_::Scalar,typename F2_::Scalar>::v>::v &&
                Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename F1_::Scalar,typename F3_::Scalar>::v>::v };
@@ -645,15 +602,15 @@ struct Simple3Tensor_t
     typedef F3_ F3;
     typedef typename F1::Scalar Scalar;
     // there is no dimension because this is not a vector space (not even a manifold -- it is an algebraic variety)
-    static Uint32 const FACTOR_COUNT = 3; // there are two factors in this tensor type (F1 and F2)
+    static Uint32 const DEGREE = 3; // there are two factors in this tensor type (F1 and F2)
 
-    Simple3Tensor_t (F1 const &f1, F2 const &f2, F3 const &f3) : m1(f1), m2(f2), m3(f3) { }
+    Tensor3Simple_t (F1 const &f1, F2 const &f2, F3 const &f3) : m1(f1), m2(f2), m3(f3) { }
 
     F1 const &factor1 () const { return m1; }
     F2 const &factor2 () const { return m2; }
     F3 const &factor3 () const { return m3; }
 
-    Scalar operator [] (typename Nonsymmetric3Tensor_t<F1,F2,F3>::Index const &i) const
+    Scalar operator [] (typename Tensor3_t<F1,F2,F3>::Index const &i) const
     {
         if (i.is_at_end())
             throw std::invalid_argument("index out of range");
@@ -669,7 +626,7 @@ private:
 };
 
 template <typename F1, typename F2, typename F3>
-std::ostream &operator << (std::ostream &out, Simple3Tensor_t<F1,F2,F3> const &s)
+std::ostream &operator << (std::ostream &out, Tensor3Simple_t<F1,F2,F3> const &s)
 {
     return out << s.factor1() << " \\otimes " << s.factor2() << " \\otimes " << s.factor3();
 }
@@ -677,12 +634,12 @@ std::ostream &operator << (std::ostream &out, Simple3Tensor_t<F1,F2,F3> const &s
 // template specialization for the contraction of simple 2-tensors
 // (A \otimes B \otimes C) : (P \otimes Q \otimes R) := (A \cdot P)(B \cdot Q)(C \cdot R)
 template <typename F1, typename F2, typename F3>
-struct DotProduct_t<Simple3Tensor_t<F1,F2,F3> >
+struct DotProduct_t<Tensor3Simple_t<F1,F2,F3> >
 {
-    typedef Simple3Tensor_t<F1,F2,F3> Simple3Tensor;
-    typedef typename Simple3Tensor::Scalar Scalar;
+    typedef Tensor3Simple_t<F1,F2,F3> Tensor3Simple;
+    typedef typename Tensor3Simple::Scalar Scalar;
 
-    static Scalar eval (Simple3Tensor const &l, Simple3Tensor const &r)
+    static Scalar eval (Tensor3Simple const &l, Tensor3Simple const &r)
     {
         return DotProduct_t<F1>::eval(l.factor1(),r.factor1()) *
                DotProduct_t<F2>::eval(l.factor2(),r.factor2()) *
@@ -726,18 +683,18 @@ struct Symmetric2Tensor_t : public Vector_t<T_::Scalar,((T_::DIM+1)*T_::DIM)/2>
 };
 */
 template <typename F_>
-struct Antisymmetric2Tensor_t : public Vector_t<typename F_::Scalar,((F_::DIM-1)*F_::DIM)/2>
+struct Tensor2Antisymmetric_t : public Vector_t<typename F_::Scalar,((F_::DIM-1)*F_::DIM)/2>
 {
     typedef Vector_t<typename F_::Scalar,((F_::DIM-1)*F_::DIM)/2> Parent;
     typedef typename Parent::Scalar Scalar;
     typedef typename Parent::Index Index;
     using Parent::DIM;
     typedef F_ F;
-    static Uint32 const FACTOR_COUNT = 2; // there are two factors in this tensor type (F1 and F2)
+    static Uint32 const DEGREE = 2; // there are two factors in this tensor type (F1 and F2)
 
     // TODO: make Index in this class, and make it construct with a Tensor<T,T>::Index
 
-    Scalar &operator [] (typename Nonsymmetric2Tensor_t<F,F>::Index const &i)
+    Scalar &operator [] (typename Tensor2_t<F,F>::Index const &i)
     {
         Uint32 r = i.subindex1().value();
         Uint32 c = i.subindex2().value();
@@ -763,49 +720,22 @@ struct Antisymmetric2Tensor_t : public Vector_t<typename F_::Scalar,((F_::DIM-1)
     }
 };
 
-// expression templates
-//
-// need one for the following operators:
-// = (assignment)
-// + (addition of types having a common downcast (e.g. a Simple2Tensor_t and an Antisymmetric2Tensor_t)
-// - (subtraction of types having a common downcast)
-// % (tensor product to form higher tensor types -- produces a SimpleNTensor_t)
-//
-// NOTE: * (in-line adjacent contraction of identical types) will (could) evaluate immediately,
-// but * (in-line adjacent contraction of non-identical types) requires breaking the tensor types down,
-// so maybe an expression template for downcasting is necessary.
-
-// template <typename F_>
-// struct Expr_2Tensor_1Contraction_t
-// {
-//     enum { _ = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename F1_::Scalar,typename F2_::Scalar>::v>::v };
-//
-//     typedef F1_ F1;
-//     typedef F2_ F2;
-//     typedef typename F1::Scalar Scalar;
-//     typedef Scalar ReturnType;
-//
-//     Expr_2Tensor_1Contraction_t (Simple2Tensor_t<F1,F2> const &s) :
-//
-//     ReturnType eval ()
-// };
-
 template <typename F1, typename F2>
-Simple2Tensor_t<F1,F2> operator % (F1 const &l, F2 const &r)
+Tensor2Simple_t<F1,F2> operator % (F1 const &l, F2 const &r)
 {
-    return Simple2Tensor_t<F1,F2>(l, r);
+    return Tensor2Simple_t<F1,F2>(l, r);
 }
 
 template <typename F1, typename F2, typename F3>
-Simple3Tensor_t<F1,F2,F3> operator % (F1 const &l, Simple2Tensor_t<F2,F3> const &r)
+Tensor3Simple_t<F1,F2,F3> operator % (F1 const &l, Tensor2Simple_t<F2,F3> const &r)
 {
-    return Simple3Tensor_t<F1,F2,F3>(l, r.factor1(), r.factor2());
+    return Tensor3Simple_t<F1,F2,F3>(l, r.factor1(), r.factor2());
 }
 
 template <typename F1, typename F2, typename F3>
-Simple3Tensor_t<F1,F2,F3> operator % (Simple2Tensor_t<F1,F2> const &l, F3 const &r)
+Tensor3Simple_t<F1,F2,F3> operator % (Tensor2Simple_t<F1,F2> const &l, F3 const &r)
 {
-    return Simple3Tensor_t<F1,F2,F3>(l.factor1(), l.factor2(), r);
+    return Tensor3Simple_t<F1,F2,F3>(l.factor1(), l.factor2(), r);
 }
 
 
@@ -825,12 +755,12 @@ int main (int argc, char **argv)
         std::cout << FORMAT_VALUE(v) << '\n';
         std::cout << FORMAT_VALUE(w) << '\n';
 
-        typedef Simple2Tensor_t<Float3,Float4> SimpleFloat3x4;
+        typedef Tensor2Simple_t<Float3,Float4> SimpleFloat3x4;
         SimpleFloat3x4 X(v,w);
 
         std::cout << "X := v \\otimes w = " << X << ", and " << v%w << '\n';
 
-        typedef Nonsymmetric2Tensor_t<Float3,Float4> Float3x4;
+        typedef Tensor2_t<Float3,Float4> Float3x4;
 
         for (Uint32 r = 0; r < 3; ++r)
         {
@@ -843,7 +773,7 @@ int main (int argc, char **argv)
 
         std::cout << '\n';
 
-        typedef Nonsymmetric3Tensor_t<Float2,Float3,Float4> Float2x3x4;
+        typedef Tensor3_t<Float2,Float3,Float4> Float2x3x4;
 
         for (Uint32 i = 0; i < Float3x4::DIM; ++i)
         {
@@ -863,7 +793,7 @@ int main (int argc, char **argv)
 
         std::cout << '\n';
 
-        typedef Simple3Tensor_t<Float2,Float3,Float4> SimpleFloat2x3x4;
+        typedef Tensor3Simple_t<Float2,Float3,Float4> SimpleFloat2x3x4;
         SimpleFloat2x3x4 Z(u%v%w);
         std::cout << "u \\otimes v \\otimes w = " << Z << '\n';
         for (Uint32 s = 0; s < 2; ++s)
@@ -908,7 +838,7 @@ int main (int argc, char **argv)
                 accumulator += X[Float3x4::Index(r,c)] * Y[Float3x4::Index(r,c)];
         std::cout << "actual answer = " << accumulator << ")\n\n";
 
-        typedef Nonsymmetric2Tensor_t<Float3,Float3> Float3x3;
+        typedef Tensor2_t<Float3,Float3> Float3x3;
         Float3x3 W(WITHOUT_INITIALIZATION);
         for (Uint32 i = 0; i < 3; ++i)
             for (Uint32 j = 0; j < 3; ++j)
