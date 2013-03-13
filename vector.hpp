@@ -46,10 +46,15 @@ struct Vector_t
     };
 
     explicit Vector_t (WithoutInitialization const &) { }
-    Vector_t (Scalar fill) { for (Uint32 i = 0; i < DIM; ++i) m[i] = fill; }
+    explicit Vector_t (Scalar fill) { for (Uint32 i = 0; i < DIM; ++i) m[i] = fill; }
     Vector_t (Scalar x0, Scalar x1) { Lvd::Meta::Assert<(DIM == 2)>(); m[0] = x0; m[1] = x1; }
     Vector_t (Scalar x0, Scalar x1, Scalar x2) { Lvd::Meta::Assert<(DIM == 3)>(); m[0] = x0; m[1] = x1; m[2] = x2; }
     Vector_t (Scalar x0, Scalar x1, Scalar x2, Scalar x3) { Lvd::Meta::Assert<(DIM == 4)>(); m[0] = x0; m[1] = x1; m[2] = x2; m[3] = x3; }
+
+    // type conversion operator for canonical coersion to Scalar type when the vector is 1-dimensional
+    operator Scalar const & () const { Lvd::Meta::Assert<(DIM == 1)>(); return m[0]; }
+    // this could be implemented as "operator Scalar & ()" but it would be bad to make implicit casts that can be used to change the value of this.
+    Scalar &as_scalar () { Lvd::Meta::Assert<(DIM == 1)>(); return m[0]; } // can use this to assign from Scalar
 
     // NOTE: operator [] will be used to return values, while
     // operator () will be used to create expression templates

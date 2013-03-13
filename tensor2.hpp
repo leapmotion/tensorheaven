@@ -24,6 +24,33 @@ struct Tensor2_t : Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM>
     Tensor2_t (WithoutInitialization const &w) : Parent(w) { }
     Tensor2_t (Scalar fill) : Parent(fill) { }
 
+    // type conversion operator for canonical coersion to the F1 factor type when the
+    // tensor is a tensor product of F1 with a 1-dimensional vector space.
+    operator F1 const & () const
+    {
+        Lvd::Meta::Assert<(F2::DIM == 1)>();
+        return *reinterpret_cast<F1 const *>(&Parent::m[0]); // super C-like, but should be no problem because there is no virtual inheritance
+    }
+    // this could be implemented as "operator F1 & ()" but it would be bad to make implicit casts that can be used to change the value of this.
+    F1 &as_factor1 ()
+    {
+        Lvd::Meta::Assert<(F2::DIM == 1)>();
+        return *reinterpret_cast<F1 *>(&Parent::m[0]); // super C-like, but should be no problem because there is no virtual inheritance
+    }
+    // type conversion operator for canonical coersion to the F2 factor type when the
+    // tensor is a tensor product of a 1-dimensional vector space with F2.
+    operator F2 const & () const
+    {
+        Lvd::Meta::Assert<(F1::DIM == 1)>();
+        return *reinterpret_cast<F2 const *>(&Parent::m[0]); // super C-like, but should be no problem because there is no virtual inheritance
+    }
+    // this could be implemented as "operator F2 & ()" but it would be bad to make implicit casts that can be used to change the value of this.
+    F2 &as_factor2 ()
+    {
+        Lvd::Meta::Assert<(F1::DIM == 1)>();
+        return *reinterpret_cast<F2 *>(&Parent::m[0]); // super C-like, but should be no problem because there is no virtual inheritance
+    }
+
     struct IndexBlah : public Parent::Index // TODO: deprecate (it's only used in the test code below)
     {
         IndexBlah () { } // default constructor initializes to beginning
@@ -54,13 +81,13 @@ struct Tensor2_t : Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM>
         Lvd::Meta::Assert<(SYMBOL != '\0')>();
         return ExpressionTemplate_IndexAsVector_t<Tensor2_t,typename Parent::template Index_t<SYMBOL> >(*this);
     }
-    
+
     // a 2-tensor can be indexed by the pair of factor indices (F1::Index, F2::Index)
     template <char F1_SYMBOL, char F2_SYMBOL>
     ExpressionTemplate_IndexAsTensor2_t<Tensor2_t,
-                                        typename F1::template Index_t<F1_SYMBOL>, 
+                                        typename F1::template Index_t<F1_SYMBOL>,
                                         typename F2::template Index_t<F2_SYMBOL> > operator () (
-        typename F1::template Index_t<F1_SYMBOL> const &, 
+        typename F1::template Index_t<F1_SYMBOL> const &,
         typename F2::template Index_t<F2_SYMBOL> const &) const
     {
         return expr<F1_SYMBOL,F2_SYMBOL>();
@@ -68,13 +95,13 @@ struct Tensor2_t : Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM>
     // the 2-index analog of expr<SYMBOL>()
     template <char F1_SYMBOL, char F2_SYMBOL>
     ExpressionTemplate_IndexAsTensor2_t<Tensor2_t,
-                                        typename F1::template Index_t<F1_SYMBOL>, 
+                                        typename F1::template Index_t<F1_SYMBOL>,
                                         typename F2::template Index_t<F2_SYMBOL> > expr () const
     {
         Lvd::Meta::Assert<(F1_SYMBOL != '\0')>();
         Lvd::Meta::Assert<(F2_SYMBOL != '\0')>();
         return ExpressionTemplate_IndexAsTensor2_t<Tensor2_t,
-                                                   typename F1::template Index_t<F1_SYMBOL>, 
+                                                   typename F1::template Index_t<F1_SYMBOL>,
                                                    typename F2::template Index_t<F2_SYMBOL> >(*this);
     }
 };

@@ -487,20 +487,60 @@ Tensor3Simple_t<F1,F2,F3> operator % (Tensor2Simple_t<F1,F2> const &l, F3 const 
     return Tensor3Simple_t<F1,F2,F3>(l.factor1(), l.factor2(), r);
 }
 
+typedef Vector_t<float,2> Float2;
+typedef Vector_t<float,3> Float3;
+typedef Vector_t<float,4> Float4;
+typedef Vector_t<float,5> Float5;
+typedef Tensor2_t<Float3,Float4> Float3x4;
+typedef Tensor2Simple_t<Float3,Float4> SimpleFloat3x4;
+typedef Tensor3_t<Float2,Float3,Float4> Float2x3x4;
+typedef Tensor3Simple_t<Float2,Float3,Float4> SimpleFloat2x3x4;
+typedef Tensor2_t<Float3,Float3> Float3x3;
+typedef Tensor2_t<Float4,Float5> Float4x5;
+typedef Tensor2_t<Float5,Float2> Float5x2;
+
+void foo (float x) { std::cout << "foo(" << x << ")\n"; }
+void bar (Float3 const &x) { std::cout << "bar(" << x << ")\n"; }
+void bor (Float4 const &x) { std::cout << "bor(" << x << ")\n"; }
 
 int main (int argc, char **argv)
 {
-    typedef Vector_t<float,2> Float2;
-    typedef Vector_t<float,3> Float3;
-    typedef Vector_t<float,4> Float4;
-    typedef Vector_t<float,5> Float5;
-    typedef Tensor2_t<Float3,Float4> Float3x4;
-    typedef Tensor2Simple_t<Float3,Float4> SimpleFloat3x4;
-    typedef Tensor3_t<Float2,Float3,Float4> Float2x3x4;
-    typedef Tensor3Simple_t<Float2,Float3,Float4> SimpleFloat2x3x4;
-    typedef Tensor2_t<Float3,Float3> Float3x3;
-    typedef Tensor2_t<Float4,Float5> Float4x5;
-    typedef Tensor2_t<Float5,Float2> Float5x2;
+
+    // 1-dimensional vector to scalar coersion
+    {
+        typedef Vector_t<float,1> Float1;
+        Float1 v(3);
+        std::cout << "type coersion from Vector_t<float,1> to float:\n";
+        foo(v);
+        v.as_scalar() = 2;
+        std::cout << "assignment via float coersion (v should equal (2)): " << FORMAT_VALUE(v) << "\n\n";
+
+        // this should produce a compile error -- no canonical conversion from 2d vector to scalar
+//         typedef Vector_t<float,2> Float2;
+//         Float2 w(4);
+//         foo(w);
+
+        typedef Tensor2_t<Float1,Float1> Float1x1;
+        Float1x1 m(4);
+        std::cout << "type coersion from Tensor2_t<Float1,Float1> to float:\n";
+        foo(m);
+        m = 8;
+        std::cout << "assignment via float coersion (m should equal [8]): " << FORMAT_VALUE(m) << "\n\n";
+
+        typedef Tensor2_t<Float3,Float1> Float3x1;
+        Float3x1 a(5);
+        std::cout << "type coersion from Tensor2_t<Float3,Float1> to Float3:\n";
+        bar(a);
+        a.as_factor1() = Float3(20);
+        std::cout << "assignment via float coersion (a should equal [20  20  20]^T): " << FORMAT_VALUE(a) << "\n\n";
+
+        typedef Tensor2_t<Float1,Float4> Float1x4;
+        Float1x4 b(6);
+        std::cout << "type coersion from Tensor2_t<Float1,Float4> to Float4:\n";
+        bor(b);
+        b.as_factor2() = Float4(42);
+        std::cout << "assignment via float coersion (b should equal [42  42  42  42]): " << FORMAT_VALUE(b) << "\n\n";
+    }
 
     // testing various tensor access and operations
     {
@@ -893,6 +933,38 @@ int main (int argc, char **argv)
             std::cout << '\n';
             std::cout << '\n';
         }
+
+//         {
+//             std::cout << "2-tensor contraction (matrix multiplication)\n";
+//             Float3x3 u(WITHOUT_INITIALIZATION);
+//             for (Uint32 k = 0; k < Float3x4::DIM; ++k)
+//                 u[k] = k*k;
+//             std::cout << FORMAT_VALUE(u) << '\n';
+//             typedef Float3::Index_t<'i'> I;
+//             I i;
+//             typedef ExpressionTemplate_IndexAsTensor2_t<Float3x3,I,I> EII;
+//             typedef ExpressionTemplate_Multiplication_t<EII,EJK> EM;
+//             typedef ExpressionTemplate_Multiplication_t<EM,EKL> EMM;
+//             std::cout << "expression template contraction u(i,j)*v(j,k):\n";
+//             EM e(u(i,j), v(j,k));
+//             for (EM::Index c; c.is_not_at_end(); ++c)
+//                 std::cout << e[c] << ", ";
+//             std::cout << '\n';
+//
+//             std::cout << "hand-computed answer:\n";
+//             for (Uint32 a = 0; a < 3; ++a)
+//             {
+//                 for (Uint32 b = 0; b < 5; ++b)
+//                 {
+//                     float accum = 0;
+//                     for (Uint32 c = 0; c < 4; ++c)
+//                         accum += u[Float3x4::IndexBlah(a,c)] * v[Float4x5::IndexBlah(c,b)];
+//                     std::cout << accum << ", ";
+//                 }
+//             }
+//             std::cout << '\n';
+//             std::cout << '\n';
+//         }
     }
 
     return 0;
