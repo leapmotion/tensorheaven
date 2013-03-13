@@ -13,8 +13,8 @@ template <typename TypeList_>
 struct List_t
 {
     typedef TypeList_ TypeList;
-    typedef typename TypeList::Head HeadType;
-    typedef typename TypeList::Body BodyTypeList;
+    typedef typename TypeList::HeadType HeadType;
+    typedef typename TypeList::BodyTypeList BodyTypeList;
     typedef List_t<BodyTypeList> BodyList;
     static Uint32 const LENGTH = TypeList::LENGTH;
 
@@ -24,37 +24,29 @@ struct List_t
     // the following constructors initialize the first elements that are common to both
     // list types, doing default construction for all remaining elements, if any.
     List_t (List_t<EmptyTypeList> const &) { } // default construction
-    // single-element lists
-    template <typename OtherHead>
-    List_t (List_t<TypeList_t<OtherHead> > const &leading_list) 
-        : 
-        m_head(leading_list.head())
-    {
-        Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<OtherHead,typename TypeList::Head>::v>();
-    }
-    // lists having more than one element
-    template <typename T0, typename T1, typename T2>
-    List_t (List_t<TypeList_t<T0, TypeList_t<T1,T2> > > const &leading_list) 
-        : 
-        m_head(leading_list.head()), 
+    // construction from single-element leading lists -- default constructor for body
+    List_t (List_t<TypeList_t<HeadType> > const &leading_list) : m_head(leading_list.head()) { }
+    // construction from leading lists having more than one element
+    template <typename BodyTypeList>
+    List_t (List_t<TypeList_t<HeadType,BodyTypeList> > const &leading_list)
+        :
+        m_head(leading_list.head()),
         m_body(leading_list.body())
-    {
-        Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<T0,typename TypeList::Head>::v>();
-    }
-    
+    { }
+
     HeadType const &head () const { return m_head; }
     HeadType &head () { return m_head; }
     BodyList const &body () const { return m_body; }
     BodyList &body () { return m_body; }
 
-    // returns the INDEXth element type of this List_t    
+    // returns the INDEXth element type of this List_t
     template <Uint32 INDEX>
     struct Type_t
     {
         typedef typename TypeList::template El_t<INDEX>::T T;
     };
 
-    // returns the INDEXth element of this List_t    
+    // returns the INDEXth element of this List_t
     template <Uint32 INDEX>
     typename Type_t<INDEX>::T const &el () const
     {
@@ -82,9 +74,9 @@ struct List_t
         Lvd::Meta::Assert<(INDEX < LENGTH)>();
         return ListHelper_t<TypeList,INDEX>::trailing_list(*this);
     };
-    
-    void print (std::ostream &out, bool print_parens = true) const 
-    { 
+
+    void print (std::ostream &out, bool print_parens = true) const
+    {
         if (print_parens)
             out << '(';
         out << head() << ", ";
@@ -92,14 +84,14 @@ struct List_t
         if (print_parens)
             out << ')';
     }
-    
-    static std::string type_as_string () { return "List_t" + TypeList::type_as_string(); }
-    
+
+    static std::string type_as_string () { return "List_t<" + TypeStringOf_t<TypeList>::eval() + '>'; }
+
 private:
 
     HeadType m_head;
     BodyList m_body;
-    
+
     template <typename TypeList__, Uint32 INDEX_> friend struct ListHelper_t;
 };
 
@@ -115,9 +107,11 @@ struct List_t<EmptyTypeList>
     static List_t const SINGLETON; // so you never have to allocate another -- it's not guaranteed to take 0 memory
 
     List_t () { }
+//     template <typename TypeList>
+//     List_t (List_t<TypeList> const &) { }
 
     // there is no head or body, so there are no accessors for them.
-    
+
     template <Uint32 INDEX>
     struct Type_t
     {
@@ -143,7 +137,7 @@ struct List_t<EmptyTypeList>
     {
         typedef List_t<EmptyTypeList> T;
     };
-    
+
     // returns the trailing List_t starting at the INDEXth element
     template <Uint32 INDEX>
     typename TrailingListType_t<INDEX>::T const &trailing_list () const
@@ -157,64 +151,54 @@ struct List_t<EmptyTypeList>
         Lvd::Meta::Assert<(INDEX < LENGTH)>();
         return ListHelper_t<TypeList,INDEX>::trailing_list(*this);
     };
-    
-    void print (std::ostream &out, bool print_parens = true) const 
-    { 
+
+    void print (std::ostream &out, bool print_parens = true) const
+    {
         if (print_parens)
             out << "()";
     }
 
-    static std::string type_as_string () { return "List_t" + TypeList::type_as_string(); }
+    static std::string type_as_string () { return "List_t<" + TypeStringOf_t<TypeList>::eval() + '>'; }
 };
 
 // TODO: make into extern variable
 List_t<EmptyTypeList> const List_t<EmptyTypeList>::SINGLETON;
 
-template <typename Head>
-struct List_t<TypeList_t<Head> >
+template <typename HeadType_>
+struct List_t<TypeList_t<HeadType_> >
 {
-    typedef TypeList_t<Head> TypeList;
-    typedef Head HeadType;
+    typedef HeadType_ HeadType;
+    typedef TypeList_t<HeadType> TypeList;
     typedef EmptyTypeList BodyTypeList;
     typedef List_t<EmptyTypeList> BodyList;
     static Uint32 const LENGTH = 1;
-    
+
     List_t () { }
     List_t (HeadType const &head) : m_head(head) { }
-    
+
     // the following constructors initialize the first elements that are common to both
     // list types, doing default construction for all remaining elements, if any.
     List_t (List_t<EmptyTypeList> const &) { } // default construction
-    // single-element lists -- this is also the copy constructor
-    template <typename OtherHead>
-    List_t (List_t<TypeList_t<OtherHead> > const &leading_list) 
-        : 
+    List_t (List_t const &list) : m_head(list.m_head) { }
+    template <typename BodyTypeList>
+    List_t (List_t<TypeList_t<HeadType, BodyTypeList> > const &leading_list)
+        :
         m_head(leading_list.head())
-    {
-        Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<OtherHead,typename TypeList::Head>::v>();
-    }
-    // this includes every list except List_t<EmptyTypeList> -- this is the copy constructor also
-    template <typename T0, typename T1, typename T2>
-    List_t (List_t<TypeList_t<T0, TypeList_t<T1,T2> > > const &leading_list) 
-        : 
-        m_head(leading_list.head())
-    {
-        Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<T0,typename TypeList::Head>::v>();
-    }
+    { }
 
     HeadType const &head () const { return m_head; }
     HeadType &head () { return m_head; }
     // there is no body, so there is no accessor for it.
 //     List_t<EmptyTypeList> const &body () const { return List_t<EmptyTypeList>::SINGLETON; } // TEMP?
 
-    // type cast operator for Head?
+    // type cast operator for HeadType?
 
     template <Uint32 INDEX>
     struct Type_t
     {
         typedef typename TypeList::template El_t<INDEX>::T T;
     };
-    
+
     template <Uint32 INDEX>
     HeadType const &el () const
     {
@@ -227,7 +211,7 @@ struct List_t<TypeList_t<Head> >
         Lvd::Meta::Assert<(INDEX < LENGTH)>();
         return m_head;
     }
-    
+
     // returns the type of the trailing List_t starting at the INDEXth element
     template <Uint32 INDEX>
     struct TrailingListType_t
@@ -249,8 +233,8 @@ struct List_t<TypeList_t<Head> >
         return ListHelper_t<TypeList,INDEX>::trailing_list(*this);
     };
 
-    void print (std::ostream &out, bool print_parens = true) const 
-    { 
+    void print (std::ostream &out, bool print_parens = true) const
+    {
         if (print_parens)
             out << '(';
         out << head();
@@ -258,8 +242,8 @@ struct List_t<TypeList_t<Head> >
             out << ')';
     }
 
-    static std::string type_as_string () { return "List_t" + TypeList::type_as_string(); }
-    
+    static std::string type_as_string () { return "List_t<" + TypeStringOf_t<TypeList>::eval() + '>'; }
+
 private:
 
     HeadType m_head;
@@ -279,20 +263,20 @@ std::ostream &operator << (std::ostream &out, List_t<TypeList> const &l)
 
 
 // for use in the el() method in List_t
-template <typename TypeList, Uint32 INDEX> 
+template <typename TypeList, Uint32 INDEX>
 struct ListHelper_t
 {
     enum { _ = Lvd::Meta::Assert<(INDEX > 0)>::v };
     typedef List_t<TypeList> List;
     typedef typename TypeList::template El_t<INDEX>::T ValueType;
     typedef List_t<typename TypeList::template TrailingTypeList_t<INDEX>::T> TrailingListType;
-    static ValueType const &el (List const &list) { return ListHelper_t<typename TypeList::Body,INDEX-1>::el(list.body()); }
-    static ValueType &el (List &list) { return ListHelper_t<typename TypeList::Body,INDEX-1>::el(list.body()); }
-    static TrailingListType const &trailing_list (List const &list) { return ListHelper_t<typename TypeList::Body,INDEX-1>::trailing_list(list.body()); }
-    static TrailingListType &trailing_list (List &list) { return ListHelper_t<typename TypeList::Body,INDEX-1>::trailing_list(list.body()); }
+    static ValueType const &el (List const &list) { return ListHelper_t<typename TypeList::BodyTypeList,INDEX-1>::el(list.body()); }
+    static ValueType &el (List &list) { return ListHelper_t<typename TypeList::BodyTypeList,INDEX-1>::el(list.body()); }
+    static TrailingListType const &trailing_list (List const &list) { return ListHelper_t<typename TypeList::BodyTypeList,INDEX-1>::trailing_list(list.body()); }
+    static TrailingListType &trailing_list (List &list) { return ListHelper_t<typename TypeList::BodyTypeList,INDEX-1>::trailing_list(list.body()); }
 };
 
-template <typename TypeList> struct ListHelper_t<TypeList,0> 
+template <typename TypeList> struct ListHelper_t<TypeList,0>
 {
     typedef List_t<TypeList> List;
     typedef typename List::HeadType ValueType;

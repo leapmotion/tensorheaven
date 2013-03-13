@@ -9,14 +9,14 @@ template <typename TypeList>
 struct TailOfTypeList_t
 {
     enum { _ = Lvd::Meta::Assert<(TypeList::LENGTH > 0)>::v }; // must be nonempty list
-    
-    typedef typename TailOfTypeList_t<typename TypeList::Body>::T T;
+
+    typedef typename TailOfTypeList_t<typename TypeList::BodyTypeList>::T T;
 };
 
-template <typename Head>
-struct TailOfTypeList_t<TypeList_t<Head> >
+template <typename HeadType>
+struct TailOfTypeList_t<TypeList_t<HeadType> >
 {
-    typedef Head T;
+    typedef HeadType T;
 };
 
 
@@ -26,12 +26,12 @@ template <typename TypeList>
 struct AllButTailOfTypeList_t
 {
     enum { _ = Lvd::Meta::Assert<(TypeList::LENGTH > 0)>::v }; // must be nonempty list
-    
-    typedef TypeList_t<typename TypeList::Head,typename AllButTailOfTypeList_t<typename TypeList::Body>::T> T;
+
+    typedef TypeList_t<typename TypeList::HeadType,typename AllButTailOfTypeList_t<typename TypeList::BodyTypeList>::T> T;
 };
 
-template <typename Head>
-struct AllButTailOfTypeList_t<TypeList_t<Head> >
+template <typename HeadType>
+struct AllButTailOfTypeList_t<TypeList_t<HeadType> >
 {
     typedef EmptyTypeList T;
 };
@@ -60,10 +60,10 @@ struct ReversedTypeList_t<EmptyTypeList>
 template <typename TypeList>
 struct ReversedUniqueTypesIn_t
 {
-    typedef typename ReversedUniqueTypesIn_t<typename TypeList::Body>::T ReversedUniqueTypesInBody;
-    typedef typename Lvd::Meta::If<(ReversedUniqueTypesInBody::template Contains_t<typename TypeList::Head>::V),
+    typedef typename ReversedUniqueTypesIn_t<typename TypeList::BodyTypeList>::T ReversedUniqueTypesInBody;
+    typedef typename Lvd::Meta::If<(ReversedUniqueTypesInBody::template Contains_t<typename TypeList::HeadType>::V),
                                    ReversedUniqueTypesInBody,
-                                   TypeList_t<typename TypeList::Head,ReversedUniqueTypesInBody> >::T T;
+                                   TypeList_t<typename TypeList::HeadType,ReversedUniqueTypesInBody> >::T T;
 };
 
 template <>
@@ -84,14 +84,14 @@ template <typename TypeList, typename UsedTypeList = EmptyTypeList>
 struct UniqueTypesIn_t
 {
 private:
-    typedef typename TypeList::Head Head;
-    typedef typename TypeList::Body Body;
-    typedef TypeList_t<Head,UsedTypeList> NextUsedTypeList;
-    typedef typename UniqueTypesIn_t<Body,NextUsedTypeList>::T RemainingUniqueTypeList;
+    typedef typename TypeList::HeadType HeadType;
+    typedef typename TypeList::BodyTypeList BodyTypeList;
+    typedef TypeList_t<HeadType,UsedTypeList> NextUsedTypeList;
+    typedef typename UniqueTypesIn_t<BodyTypeList,NextUsedTypeList>::T RemainingUniqueTypeList;
 public:
-    typedef typename Lvd::Meta::If<(UsedTypeList::template Contains_t<Head>::V),
+    typedef typename Lvd::Meta::If<(UsedTypeList::template Contains_t<HeadType>::V),
                           RemainingUniqueTypeList,
-                          TypeList_t<Head,RemainingUniqueTypeList> >::T T;
+                          TypeList_t<HeadType,RemainingUniqueTypeList> >::T T;
 };
 
 template <typename UsedTypeList>
@@ -106,9 +106,9 @@ struct UniqueTypesIn_t<EmptyTypeList,UsedTypeList>
 template <typename TypeList, typename Type>
 struct Occurrence_t
 {
-    static Uint32 const COUNT = 
-        (Lvd::Meta::TypesAreEqual<typename TypeList::Head,Type>::v ? 1 : 0)
-        + Occurrence_t<typename TypeList::Body,Type>::COUNT;
+    static Uint32 const COUNT =
+        (Lvd::Meta::TypesAreEqual<typename TypeList::HeadType,Type>::v ? 1 : 0)
+        + Occurrence_t<typename TypeList::BodyTypeList,Type>::COUNT;
 };
 
 template <typename Type>
@@ -122,9 +122,9 @@ struct Occurrence_t<EmptyTypeList,Type>
 template <typename TypeList, typename UniqueTypeList, Uint32 MULTIPLICITY>
 struct ElementsOfListHavingMultiplicity_t
 {
-    typedef typename ElementsOfListHavingMultiplicity_t<TypeList,typename UniqueTypeList::Body,MULTIPLICITY>::T InBody;
-    typedef typename Lvd::Meta::If<(Occurrence_t<TypeList,typename UniqueTypeList::Head>::COUNT == MULTIPLICITY),
-                                   TypeList_t<typename UniqueTypeList::Head,InBody>,
+    typedef typename ElementsOfListHavingMultiplicity_t<TypeList,typename UniqueTypeList::BodyTypeList,MULTIPLICITY>::T InBody;
+    typedef typename Lvd::Meta::If<(Occurrence_t<TypeList,typename UniqueTypeList::HeadType>::COUNT == MULTIPLICITY),
+                                   TypeList_t<typename UniqueTypeList::HeadType,InBody>,
                                    InBody>::T T;
 };
 
@@ -150,8 +150,8 @@ struct ElementsHavingMultiplicity_t
 template <typename FirstTypeList, typename SecondTypeList>
 struct ConcatenationOfTypeLists_t
 {
-    typedef typename FirstTypeList::Head FirstTypeListHead;
-    typedef typename FirstTypeList::Body FirstTypeListBody;
+    typedef typename FirstTypeList::HeadType FirstTypeListHead;
+    typedef typename FirstTypeList::BodyTypeList FirstTypeListBody;
     typedef TypeList_t<FirstTypeListHead,typename ConcatenationOfTypeLists_t<FirstTypeListBody,SecondTypeList>::T> T;
 };
 

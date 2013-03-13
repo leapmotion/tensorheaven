@@ -79,7 +79,7 @@ scalar value).
 
 /*
 Want to make the map which maps a tuple of unique indices to a tuple of specified indices
-e.g. if the input is (i,j,j,i,k) (which is a TypeList_t type), then the output is the map 
+e.g. if the input is (i,j,j,i,k) (which is a TypeList_t type), then the output is the map
 (i,j,k) -> (i,j,j,i,k) (which is a map from a List_t<i,j,k> to a List_t<i,j,j,i,k>).
 */
 
@@ -87,43 +87,25 @@ template <typename TypeList, typename UniqueTypes_ = typename UniqueTypesIn_t<Ty
 struct IndexMap_t
 {
     typedef UniqueTypes_ UniqueTypes;
-    static Uint32 const HEAD_INDEX = UniqueTypes::template IndexOf_t<typename TypeList::Head>::V;
-    
+    static Uint32 const HEAD_INDEX = UniqueTypes::template IndexOf_t<typename TypeList::HeadType>::V;
+
     static List_t<TypeList> eval (List_t<UniqueTypes> const &index)
     {
         return List_t<TypeList>(index.template value<HEAD_INDEX>(),
-                                IndexMap_t<typename TypeList::Body, UniqueTypes>::eval(index));
+                                IndexMap_t<typename TypeList::BodyTypeList, UniqueTypes>::eval(index));
     }
 };
 
-template <typename Head, typename UniqueTypes_>
-struct IndexMap_t<TypeList_t<Head>, UniqueTypes_>
+template <typename HeadType, typename UniqueTypes_>
+struct IndexMap_t<TypeList_t<HeadType>, UniqueTypes_>
 {
     typedef UniqueTypes_ UniqueTypes;
     static Uint32 const HEAD_INDEX = 0;
-    
-    static List_t<TypeList_t<Head> > eval (List_t<UniqueTypes> const &index)
+
+    static List_t<TypeList_t<HeadType> > eval (List_t<UniqueTypes> const &index)
     {
-        return List_t<TypeList_t<Head> >(index.template value<HEAD_INDEX>());
+        return List_t<TypeList_t<HeadType> >(index.template value<HEAD_INDEX>());
     }
 };
 
-
-
-
-
-/*
-
-given a list I of unique indices and a sequence of indices J taken from that list (which could have repeats),
-what is the map taking I to J?
-
-e.g.
-
-I = (a,b,c,d)
-J = (a,b,b,a,d)
-
-
-
-
-*/
 #endif // INDEX_MAP_HPP_

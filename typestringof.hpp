@@ -2,8 +2,11 @@
 #define TYPESTRINGOF_HPP_
 
 #include <string>
+#include <sstream>
 
 #include "lvd.hpp"
+
+#define AS_STRING(x) static_cast<std::ostringstream &>(std::ostringstream().flush() << x).str()
 
 template <typename T> struct TypeStringOf_t { static std::string eval () { return T::type_as_string(); } }; // default
 
