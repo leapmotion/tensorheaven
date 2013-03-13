@@ -639,6 +639,12 @@ int main (int argc, char **argv)
             for (Uint32 k = 0; k < 3; ++k)
                 std::cout << u[k] + v[k] << ", ";
             std::cout << '\n';
+                
+            std::cout << "operator +\n";
+            EA e2(u(i) + v(i));
+            for (EA::Index k; k.is_not_at_end(); ++k)
+                std::cout << e2[k] << ", ";
+            std::cout << '\n';
             std::cout << '\n';
         }
 
@@ -758,6 +764,12 @@ int main (int argc, char **argv)
             for (EA::Index k; k.is_not_at_end(); ++k)
                 std::cout << e[k] << ", ";
             std::cout << '\n';
+            
+            std::cout << "operator + with same index order\n";
+            EA e2(u(i,j) + v(i,j));
+            for (EA::Index k; k.is_not_at_end(); ++k)
+                std::cout << e2[k] << ", ";
+            std::cout << '\n';
             std::cout << '\n';
         }
         
@@ -769,22 +781,44 @@ int main (int argc, char **argv)
             J j;
             typedef ExpressionTemplate_IndexAsTensor2_t<Float3x3,I,J> EIJ;
             typedef ExpressionTemplate_IndexAsTensor2_t<Float3x3,J,I> EJI;
-            typedef ExpressionTemplate_Addition_t<EIJ,EJI> EA;
+            typedef ExpressionTemplate_Addition_t<EIJ,EIJ> EA;
+            typedef ExpressionTemplate_Addition_t<EIJ,EJI> EB;
             Float3x3 u(WITHOUT_INITIALIZATION);
+            Float3x3 v(WITHOUT_INITIALIZATION);
+            // dummy values that aren't symmetric
             for (Uint32 k = 0; k < Float3x3::DIM; ++k)
+            {
                 u[k] = k*k;
-            EA e(u(i,j), u(j,i));
-            for (EA::Index k; k.is_not_at_end(); ++k)
+                v[k] = k*k + 2*k;
+            }
+
+            std::cout << FORMAT_VALUE(u) << '\n';            
+            std::cout << FORMAT_VALUE(v) << '\n';            
+            
+            EB e(u(i,j), u(j,i));
+            for (EB::Index k; k.is_not_at_end(); ++k)
                 std::cout << e[k] << ", ";
+            std::cout << '\n';
                 
             // uncommenting this should cause an error regarding prohibiting repeated indices in sums
 //             typedef ExpressionTemplate_IndexAsTensor2_t<Float3x3,I,I> EII;
 //             typedef ExpressionTemplate_Addition_t<EII,EII> EB;
-//             EB e2(u(i,i), u(i,i));
-//             for (EB::Index k; k.is_not_at_end(); ++k)
-//                 std::cout << e2[k] << ", ";
+//             EB e_bad(u(i,i), u(i,i));
+                            
+            std::cout << "operator + with same index order\n";
+            EA e2(u(i,j) + v(i,j));
+            for (EA::Index k; k.is_not_at_end(); ++k)
+                std::cout << e2[k] << ", ";
+            std::cout << '\n';
+            
+            std::cout << "operator + with opposite index order\n";
+            EB e3(u(i,j) + v(j,i));
+            for (EB::Index k; k.is_not_at_end(); ++k)
+                std::cout << e3[k] << ", ";
                 
-                
+            u.expr<'i','j'>();
+            u.expr<'i','j'>() + v.expr<'i','j'>();
+            u.expr<1,2>() + v.expr<1,2>();
             std::cout << '\n';
             std::cout << '\n';
         }

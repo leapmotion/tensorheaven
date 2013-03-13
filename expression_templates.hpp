@@ -87,6 +87,33 @@ private:
     RightOperand const &m_right_operand;
 };
 
+template <typename LeftOperand, 
+          typename RightOperand, 
+          typename IndexType>
+ExpressionTemplate_Addition_t<ExpressionTemplate_IndexAsVector_t<LeftOperand,IndexType>,
+                              ExpressionTemplate_IndexAsVector_t<RightOperand,IndexType> >
+    operator + (ExpressionTemplate_IndexAsVector_t<LeftOperand,IndexType> const &left_operand,
+                ExpressionTemplate_IndexAsVector_t<RightOperand,IndexType> const &right_operand)
+{
+    return ExpressionTemplate_Addition_t<ExpressionTemplate_IndexAsVector_t<LeftOperand,IndexType>,
+                                         ExpressionTemplate_IndexAsVector_t<RightOperand,IndexType> >(left_operand, right_operand);
+}
+
+template <typename LeftOperand, 
+          typename RightOperand, 
+          typename F1IndexType, 
+          typename F2IndexType, 
+          typename F3IndexType, 
+          typename F4IndexType>
+ExpressionTemplate_Addition_t<ExpressionTemplate_IndexAsTensor2_t<LeftOperand,F1IndexType,F2IndexType>,
+                              ExpressionTemplate_IndexAsTensor2_t<RightOperand,F3IndexType,F4IndexType> >
+    operator + (ExpressionTemplate_IndexAsTensor2_t<LeftOperand,F1IndexType,F2IndexType> const &left_operand,
+                ExpressionTemplate_IndexAsTensor2_t<RightOperand,F3IndexType,F4IndexType> const &right_operand)
+{
+    return ExpressionTemplate_Addition_t<ExpressionTemplate_IndexAsTensor2_t<LeftOperand,F1IndexType,F2IndexType>,
+                                         ExpressionTemplate_IndexAsTensor2_t<RightOperand,F3IndexType,F4IndexType> >(left_operand, right_operand);
+}
+
 template <typename LeftOperand, typename RightOperand, typename FreeIndexTypeList, typename SummedIndexTypeList>
 struct Summation_t
 {

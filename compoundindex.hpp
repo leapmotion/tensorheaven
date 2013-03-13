@@ -1,5 +1,5 @@
-#ifndef COMPOUND_INDEX_HPP_
-#define COMPOUND_INDEX_HPP_
+#ifndef COMPOUNDINDEX_HPP_
+#define COMPOUNDINDEX_HPP_
 
 #include "core.hpp"
 #include "list.hpp"
@@ -143,6 +143,7 @@ struct CompoundIndex_t<TypeList_t<HeadIndexType> > : public List_t<TypeList_t<He
     static std::string type_as_string () { return "CompoundIndex_t<" + TypeStringOf_t<IndexTypeList>::eval() + '>'; }
 };
 
+// TODO: check if this is actually made, and if not, prohibit making them
 template <>
 struct CompoundIndex_t<EmptyTypeList> : public List_t<EmptyTypeList>
 {
@@ -220,45 +221,4 @@ struct CompoundIndexMap_t<DomainIndexTypeList,TypeList_t<CodomainIndexType> >
 //     }
 // };
 
-
-
-
-
-
-
-// template <typename TypeList, typename UniqueTypes_ = typename UniqueTypesIn_t<TypeList>::T>
-// struct CompoundIndexMap_t
-// {
-// private:
-//
-//     typedef UniqueTypes_ UniqueTypes;
-//     static Uint32 const HEAD_INDEX = UniqueTypes::template IndexOf_t<typename TypeList::HeadType>::V;
-//
-// public:
-//
-//     typedef CompoundIndex_t<TypeList> (*EvalMapType) (CompoundIndex_t<UniqueTypes> const &index);
-//     static CompoundIndex_t<TypeList> eval (CompoundIndex_t<UniqueTypes> const &index)
-//     {
-//         return CompoundIndex_t<TypeList>(index.template value<HEAD_INDEX>(),
-//                                                CompoundIndexMap_t<typename TypeList::BodyTypeList, UniqueTypes>::eval(index));
-//     }
-// };
-//
-// template <typename HeadType, typename UniqueTypes_>
-// struct CompoundIndexMap_t<TypeList_t<HeadType>, UniqueTypes_>
-// {
-// private:
-//
-//     typedef UniqueTypes_ UniqueTypes;
-//     static Uint32 const HEAD_INDEX = 0;
-//
-// public:
-//
-//     typedef CompoundIndex_t<TypeList_t<HeadType> > (*EvalMapType) (CompoundIndex_t<UniqueTypes> const &index);
-//     static CompoundIndex_t<TypeList_t<HeadType> > eval (CompoundIndex_t<UniqueTypes> const &index)
-//     {
-//         return CompoundIndex_t<TypeList_t<HeadType> >(index.template el<HEAD_INDEX>());
-//     }
-// };
-
-#endif // COMPOUND_INDEX_HPP_
+#endif // COMPOUNDINDEX_HPP_
