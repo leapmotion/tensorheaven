@@ -37,7 +37,7 @@ template <>
 struct Tuple_t<NullType,NullType,NullType,NullType,NullType,NullType,NullType,NullType>
     :
     public List_t<EmptyTypeList>
-{ 
+{
     typedef List_t<EmptyTypeList> Parent;
     Tuple_t ()
         :
@@ -199,28 +199,28 @@ struct Tuple_t<TypeList_t<T0> > : public List_t<TypeList_t<T0> >
         :
         List_t<TypeList_t<T0> >(v0)
     { }
-    
+
     // type cast operator for T0?
 };
 
 template <typename T0, typename T1>
 struct Tuple_t<TypeList_t<T0,
-               TypeList_t<T1> > > 
+               TypeList_t<T1> > >
     : public List_t<TypeList_t<T0,
                     TypeList_t<T1> > >
 {
     Tuple_t (T0 const &v0, T1 const &v1)
         :
         List_t<TypeList_t<T0,
-               TypeList_t<T1> > >(v0, 
+               TypeList_t<T1> > >(v0,
         List_t<TypeList_t<T1> >(v1))
-    { }    
+    { }
 };
 
 template <typename T0, typename T1, typename T2>
 struct Tuple_t<TypeList_t<T0,
-               TypeList_t<T1, 
-               TypeList_t<T2> > > > 
+               TypeList_t<T1,
+               TypeList_t<T2> > > >
     : public List_t<TypeList_t<T0,
                     TypeList_t<T1,
                     TypeList_t<T2> > > >
@@ -229,18 +229,18 @@ struct Tuple_t<TypeList_t<T0,
         :
         List_t<TypeList_t<T0,
                TypeList_t<T1,
-               TypeList_t<T2> > > >(v0, 
+               TypeList_t<T2> > > >(v0,
         List_t<TypeList_t<T1,
                TypeList_t<T2> > >(v1,
         List_t<TypeList_t<T2> >(v2)))
-    { }    
+    { }
 };
 
 template <typename T0, typename T1, typename T2, typename T3>
 struct Tuple_t<TypeList_t<T0,
-               TypeList_t<T1, 
-               TypeList_t<T2, 
-               TypeList_t<T3> > > > > 
+               TypeList_t<T1,
+               TypeList_t<T2,
+               TypeList_t<T3> > > > >
     : public List_t<TypeList_t<T0,
                     TypeList_t<T1,
                     TypeList_t<T2,
@@ -251,22 +251,22 @@ struct Tuple_t<TypeList_t<T0,
         List_t<TypeList_t<T0,
                TypeList_t<T1,
                TypeList_t<T2,
-               TypeList_t<T3> > > > >(v0, 
+               TypeList_t<T3> > > > >(v0,
         List_t<TypeList_t<T1,
                TypeList_t<T2,
                TypeList_t<T3> > > >(v1,
         List_t<TypeList_t<T2,
                TypeList_t<T3> > >(v2,
         List_t<TypeList_t<T3> >(v3))))
-    { }    
+    { }
 };
 
 template <typename T0, typename T1, typename T2, typename T3, typename T4>
 struct Tuple_t<TypeList_t<T0,
-               TypeList_t<T1, 
-               TypeList_t<T2, 
-               TypeList_t<T3, 
-               TypeList_t<T4> > > > > > 
+               TypeList_t<T1,
+               TypeList_t<T2,
+               TypeList_t<T3,
+               TypeList_t<T4> > > > > >
     : public List_t<TypeList_t<T0,
                     TypeList_t<T1,
                     TypeList_t<T2,
@@ -279,7 +279,7 @@ struct Tuple_t<TypeList_t<T0,
                TypeList_t<T1,
                TypeList_t<T2,
                TypeList_t<T3,
-               TypeList_t<T4> > > > > >(v0, 
+               TypeList_t<T4> > > > > >(v0,
         List_t<TypeList_t<T1,
                TypeList_t<T2,
                TypeList_t<T3,

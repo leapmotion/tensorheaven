@@ -13,7 +13,7 @@ template <typename T0 = NullType,
           typename T4 = NullType,
           typename T5 = NullType,
           typename T6 = NullType,
-          typename T7 = NullType> 
+          typename T7 = NullType>
 struct TypeTuple_t
 {
     typedef TypeList_t<T0,

@@ -5,7 +5,7 @@
 #include "compoundindex.hpp"
 #include "typelist.hpp"
 
-template <typename Operand, typename IndexType>
+template <typename Operand, typename IndexType> // TODO: change IndexType to IndexTypeList, and combine ExpressionTemplate_IndexAsTensor2_t with this
 struct ExpressionTemplate_IndexAsVector_t
 {
     typedef typename Operand::Scalar Scalar;
@@ -58,7 +58,7 @@ struct ExpressionTemplate_Addition_t
     // be good to do the check here so that an error will be more obvious.
     enum { _ = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v>::v &&
                Lvd::Meta::Assert<AreEqualAsSets_t<typename LeftOperand::FreeIndexTypeList,typename RightOperand::FreeIndexTypeList>::V>::v &&
-               Lvd::Meta::Assert<!ContainsDuplicates_t<typename LeftOperand::FreeIndexTypeList>::V>::v && 
+               Lvd::Meta::Assert<!ContainsDuplicates_t<typename LeftOperand::FreeIndexTypeList>::V>::v &&
                Lvd::Meta::Assert<!ContainsDuplicates_t<typename RightOperand::FreeIndexTypeList>::V>::v };
 
     typedef typename LeftOperand::Scalar Scalar;
@@ -72,8 +72,8 @@ struct ExpressionTemplate_Addition_t
         m_right_operand(right_operand)
     { }
 
-    Scalar operator [] (Index const &i) const 
-    { 
+    Scalar operator [] (Index const &i) const
+    {
         typedef CompoundIndexMap_t<FreeIndexTypeList,typename LeftOperand::FreeIndexTypeList> LeftOperandIndexMap;
         typedef CompoundIndexMap_t<FreeIndexTypeList,typename RightOperand::FreeIndexTypeList> RightOperandIndexMap;
         typename LeftOperandIndexMap::EvalMapType left_operand_index_map = LeftOperandIndexMap::eval;
@@ -87,8 +87,8 @@ private:
     RightOperand const &m_right_operand;
 };
 
-template <typename LeftOperand, 
-          typename RightOperand, 
+template <typename LeftOperand,
+          typename RightOperand,
           typename IndexType>
 ExpressionTemplate_Addition_t<ExpressionTemplate_IndexAsVector_t<LeftOperand,IndexType>,
                               ExpressionTemplate_IndexAsVector_t<RightOperand,IndexType> >
@@ -99,11 +99,11 @@ ExpressionTemplate_Addition_t<ExpressionTemplate_IndexAsVector_t<LeftOperand,Ind
                                          ExpressionTemplate_IndexAsVector_t<RightOperand,IndexType> >(left_operand, right_operand);
 }
 
-template <typename LeftOperand, 
-          typename RightOperand, 
-          typename F1IndexType, 
-          typename F2IndexType, 
-          typename F3IndexType, 
+template <typename LeftOperand,
+          typename RightOperand,
+          typename F1IndexType,
+          typename F2IndexType,
+          typename F3IndexType,
           typename F4IndexType>
 ExpressionTemplate_Addition_t<ExpressionTemplate_IndexAsTensor2_t<LeftOperand,F1IndexType,F2IndexType>,
                               ExpressionTemplate_IndexAsTensor2_t<RightOperand,F3IndexType,F4IndexType> >

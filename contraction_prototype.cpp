@@ -493,11 +493,14 @@ int main (int argc, char **argv)
     typedef Vector_t<float,2> Float2;
     typedef Vector_t<float,3> Float3;
     typedef Vector_t<float,4> Float4;
+    typedef Vector_t<float,5> Float5;
     typedef Tensor2_t<Float3,Float4> Float3x4;
     typedef Tensor2Simple_t<Float3,Float4> SimpleFloat3x4;
     typedef Tensor3_t<Float2,Float3,Float4> Float2x3x4;
     typedef Tensor3Simple_t<Float2,Float3,Float4> SimpleFloat2x3x4;
     typedef Tensor2_t<Float3,Float3> Float3x3;
+    typedef Tensor2_t<Float4,Float5> Float4x5;
+    typedef Tensor2_t<Float5,Float2> Float5x2;
 
     // testing various tensor access and operations
     {
@@ -639,7 +642,7 @@ int main (int argc, char **argv)
             for (Uint32 k = 0; k < 3; ++k)
                 std::cout << u[k] + v[k] << ", ";
             std::cout << '\n';
-                
+
             std::cout << "operator +\n";
             EA e2(u(i) + v(i));
             for (EA::Index k; k.is_not_at_end(); ++k)
@@ -764,7 +767,7 @@ int main (int argc, char **argv)
             for (EA::Index k; k.is_not_at_end(); ++k)
                 std::cout << e[k] << ", ";
             std::cout << '\n';
-            
+
             std::cout << "operator + with same index order\n";
             EA e2(u(i,j) + v(i,j));
             for (EA::Index k; k.is_not_at_end(); ++k)
@@ -772,7 +775,7 @@ int main (int argc, char **argv)
             std::cout << '\n';
             std::cout << '\n';
         }
-        
+
         {
             std::cout << "symmetrizing a 2-tensor:\n";
             typedef Float3::Index_t<'i'> I;
@@ -792,33 +795,101 @@ int main (int argc, char **argv)
                 v[k] = k*k + 2*k;
             }
 
-            std::cout << FORMAT_VALUE(u) << '\n';            
-            std::cout << FORMAT_VALUE(v) << '\n';            
-            
+            std::cout << FORMAT_VALUE(u) << '\n';
+            std::cout << FORMAT_VALUE(v) << '\n';
+
             EB e(u(i,j), u(j,i));
             for (EB::Index k; k.is_not_at_end(); ++k)
                 std::cout << e[k] << ", ";
             std::cout << '\n';
-                
+
             // uncommenting this should cause an error regarding prohibiting repeated indices in sums
 //             typedef ExpressionTemplate_IndexAsTensor2_t<Float3x3,I,I> EII;
 //             typedef ExpressionTemplate_Addition_t<EII,EII> EB;
 //             EB e_bad(u(i,i), u(i,i));
-                            
+
             std::cout << "operator + with same index order\n";
             EA e2(u(i,j) + v(i,j));
             for (EA::Index k; k.is_not_at_end(); ++k)
                 std::cout << e2[k] << ", ";
             std::cout << '\n';
-            
+
             std::cout << "operator + with opposite index order\n";
             EB e3(u(i,j) + v(j,i));
             for (EB::Index k; k.is_not_at_end(); ++k)
                 std::cout << e3[k] << ", ";
-                
+
             u.expr<'i','j'>();
             u.expr<'i','j'>() + v.expr<'i','j'>();
             u.expr<1,2>() + v.expr<1,2>();
+            std::cout << '\n';
+            std::cout << '\n';
+        }
+
+        {
+            std::cout << "2-tensor contraction (matrix multiplication)\n";
+            Float3x4 u(WITHOUT_INITIALIZATION);
+            Float4x5 v(WITHOUT_INITIALIZATION);
+            Float5x2 w(WITHOUT_INITIALIZATION);
+            for (Uint32 k = 0; k < Float3x4::DIM; ++k)
+                u[k] = k*k;
+            for (Uint32 k = 0; k < Float4x5::DIM; ++k)
+                v[k] = 2*k + 3;
+            for (Uint32 k = 0; k < Float5x2::DIM; ++k)
+                w[k] = k + 1;
+            std::cout << FORMAT_VALUE(u) << '\n';
+            std::cout << FORMAT_VALUE(v) << '\n';
+            std::cout << FORMAT_VALUE(w) << '\n';
+            typedef Float3::Index_t<'i'> I;
+            typedef Float4::Index_t<'j'> J;
+            typedef Float5::Index_t<'k'> K;
+            typedef Float2::Index_t<'l'> L;
+            I i;
+            J j;
+            K k;
+            L l;
+            typedef ExpressionTemplate_IndexAsTensor2_t<Float3x4,I,J> EIJ;
+            typedef ExpressionTemplate_IndexAsTensor2_t<Float4x5,J,K> EJK;
+            typedef ExpressionTemplate_IndexAsTensor2_t<Float5x2,K,L> EKL;
+            typedef ExpressionTemplate_Multiplication_t<EIJ,EJK> EM;
+            typedef ExpressionTemplate_Multiplication_t<EM,EKL> EMM;
+            std::cout << "expression template contraction u(i,j)*v(j,k):\n";
+            EM e(u(i,j), v(j,k));
+            for (EM::Index c; c.is_not_at_end(); ++c)
+                std::cout << e[c] << ", ";
+            std::cout << '\n';
+
+            std::cout << "hand-computed answer:\n";
+            for (Uint32 a = 0; a < 3; ++a)
+            {
+                for (Uint32 b = 0; b < 5; ++b)
+                {
+                    float accum = 0;
+                    for (Uint32 c = 0; c < 4; ++c)
+                        accum += u[Float3x4::IndexBlah(a,c)] * v[Float4x5::IndexBlah(c,b)];
+                    std::cout << accum << ", ";
+                }
+            }
+            std::cout << '\n';
+
+            std::cout << "expression template contraction u(i,j)*v(j,k)*w(k,l):\n";
+            EMM e2(e, w(k,l));
+            for (EMM::Index c; c.is_not_at_end(); ++c)
+                std::cout << e2[c] << ", ";
+            std::cout << '\n';
+
+            std::cout << "hand-computed answer:\n";
+            for (Uint32 a = 0; a < 3; ++a)
+            {
+                for (Uint32 b = 0; b < 2; ++b)
+                {
+                    float accum = 0;
+                    for (Uint32 c = 0; c < 4; ++c)
+                        for (Uint32 d = 0; d < 5; ++d)
+                        accum += u[Float3x4::IndexBlah(a,c)] * v[Float4x5::IndexBlah(c,d)] * w[Float5x2::IndexBlah(d,b)];
+                    std::cout << accum << ", ";
+                }
+            }
             std::cout << '\n';
             std::cout << '\n';
         }
