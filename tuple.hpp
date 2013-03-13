@@ -1,6 +1,7 @@
 #ifndef TUPLE_HPP_
 #define TUPLE_HPP_
 
+#include "core.hpp"
 #include "list.hpp"
 #include "typetuple.hpp"
 

@@ -4,7 +4,7 @@
 #include <ostream>
 #include <string>
 
-#include "lvd.hpp"
+#include "core.hpp"
 #include "typelist.hpp"
 
 template <typename TypeList, Uint32 INDEX> struct ListHelper_t;

@@ -1,7 +1,7 @@
 #ifndef TYPELIST_UTILITY_HPP_
 #define TYPELIST_UTILITY_HPP_
 
-#include "lvd.hpp"
+#include "core.hpp"
 #include "typelist.hpp"
 
 // returns the last element of a TypeList_t
@@ -142,6 +142,14 @@ struct ElementsHavingMultiplicity_t
     typedef typename ElementsOfListHavingMultiplicity_t<TypeList,UniqueTypeList,MULTIPLICITY>::T T;
 };
 
+
+
+// determines if there are duplicate types in the given type list
+template <typename TypeList>
+struct ContainsDuplicates_t
+{
+    static bool const V = UniqueTypesIn_t<TypeList>::T::LENGTH < TypeList::LENGTH;
+};
 
 
 

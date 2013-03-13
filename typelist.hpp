@@ -4,10 +4,8 @@
 #include <ostream>
 #include <string>
 
-#include "lvd.hpp"
+#include "core.hpp"
 #include "typestringof.hpp"
-
-typedef Lvd::Uint32 Uint32;
 
 // shouldn't ever actually construct one of these
 struct NullType

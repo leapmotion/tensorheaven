@@ -1,6 +1,7 @@
 #ifndef COMPOUND_INDEX_HPP_
 #define COMPOUND_INDEX_HPP_
 
+#include "core.hpp"
 #include "list.hpp"
 #include "typelist_utility.hpp"
 
@@ -179,7 +180,7 @@ private:
 template <typename DomainIndexTypeList, typename CodomainIndexTypeList>
 struct CompoundIndexMap_t
 {
-    enum { _ = Lvd::Meta::Assert<(DomainIndexTypeList::LENGTH == UniqueTypesIn_t<DomainIndexTypeList>::T::LENGTH)>::v };
+    enum { _ = Lvd::Meta::Assert<!ContainsDuplicates_t<DomainIndexTypeList>::V>::v };
 
     typedef CompoundIndex_t<DomainIndexTypeList> DomainIndex;
     typedef CompoundIndex_t<CodomainIndexTypeList> CodomainIndex;
@@ -194,7 +195,7 @@ struct CompoundIndexMap_t
 template <typename DomainIndexTypeList, typename CodomainIndexType>
 struct CompoundIndexMap_t<DomainIndexTypeList,TypeList_t<CodomainIndexType> >
 {
-    enum { _ = Lvd::Meta::Assert<(DomainIndexTypeList::LENGTH == UniqueTypesIn_t<DomainIndexTypeList>::T::LENGTH)>::v };
+    enum { _ = Lvd::Meta::Assert<!ContainsDuplicates_t<DomainIndexTypeList>::V>::v };
 
     typedef TypeList_t<CodomainIndexType> CodomainIndexTypeList;
     typedef CompoundIndex_t<DomainIndexTypeList> DomainIndex;

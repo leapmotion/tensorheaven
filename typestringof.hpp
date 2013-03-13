@@ -4,7 +4,7 @@
 #include <string>
 #include <sstream>
 
-#include "lvd.hpp"
+#include "core.hpp"
 
 #define AS_STRING(x) static_cast<std::ostringstream &>(std::ostringstream().flush() << x).str()
 

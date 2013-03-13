@@ -1,6 +1,7 @@
 #ifndef TYPETUPLE_HPP_
 #define TYPETUPLE_HPP_
 
+#include "core.hpp"
 #include "typelist.hpp"
 
 // fucking stupid kludge to deal with the lack of variadic templates

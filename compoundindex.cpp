@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "compound_index.hpp"
+#include "compoundindex.hpp"
 #include "typetuple.hpp"
 
 template <Uint32 DIM>

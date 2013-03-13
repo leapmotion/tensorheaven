@@ -2,27 +2,15 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "compound_index.hpp"
+#include "core.hpp" // everything should include this
+#include "compoundindex.hpp"
+#include "expression_templates.hpp"
+#include "tensor2.hpp"
 #include "typelist.hpp"
 #include "typelist_utility.hpp"
+#include "vector.hpp"
 
-#define FORMAT_VALUE(expr) #expr << " = " << (expr)
-
-typedef Lvd::Uint32 Uint32;
-
-// for use when you want to return a const reference to a zero
-template <typename Scalar>
-struct Static
-{
-    static Scalar const ZERO;
-};
-
-template <typename Scalar>
-Scalar const Static<Scalar>::ZERO(0);
-
-struct WithoutInitialization { };
-
-static WithoutInitialization const WITHOUT_INITIALIZATION = WithoutInitialization();
+WithoutInitialization const WITHOUT_INITIALIZATION = WithoutInitialization();
 
 /*
 if A is a tensor type, and i is an index compatible with A, then A(i) returns an expression template.
@@ -188,415 +176,79 @@ and a set of free and summed indices for each operand.
   u(i) + v(i)*a(i,j)    should be an error (an index was used more than twice).
 
 
+
+
+
+
+given a tuple of values, values which may repeat up to twice, what is the map of unique indices to that tuple?
+
+e.g.
+
+(i,j,j,i,k) has unique indices (i,j,k), and the map is given by (0,1,1,0,2)
+
+so in the expression a(i,j)*b(j)*c(i)*d(k), the object a*b*c*d has 5 indices, and (a*b*c*d)(i,j,j,i,k) is a(i,j)*b(j)*c(i)*d(k),
+
+and so if R is the reindexing map (i,j,k) -> (i,j,j,i,k), then the value is
+
+(a*b*c*d)(R(i,j,k))
+
+--------------
+
+another problem is identifying free indices and identifying summation indices.
+
+in (i,j,j,i,k), the summation indices are (i,j) and the free indices are (k).
+
+so the expression a(i,j)*b(j)*c(i)*d(k) is really a map
+
+k -> (a*b*c*d)(R(i,j,k))
+
+the free indices are the ones which occur exactly once.  the summation indices are the ones which occur exactly twice.
+
+--------------
+
+regarding conversion between different tensor types, the product * should produce "simple tensors",
+where the type of each factor is "in parentheses", e.g.
+
+(V1 \otimes V2) \otimes V3 \otimes V4 -- this would be a simple 3-tensor, where the first factor has type "V1 \otimes V2".
+
+to "break open" the factor types, a "down cast" should be made;
+
+the above examples were simplified.  if "a" was a Nonsymmetric2Tensor, then it would be indexed by a single
+Nonsymmetric2Tensor::Index.  but to break this apart to get the individual factors, use
+
+a(Nonsymmetric2Tensor::Index(i,j))
+
+and then the above expression would be
+
+a(Nonsymmetric2Tensor::Index(i,j))*b(j)*c(i)*d(k).
+
+the "() operator" for "a" would need to be overloaded to return an expression template for this.  in fact, all tensors/vectors
+need to implement the "() operator" for indexing to return expression templates on which the "* operator" is defined.
+
+NOTE: make all indices' numerical constructors (e.g. Index (Uint32 i) ...) explicit, so that literal expressions like
+a(Nonsymmetric2Tensor::Index(1,3))*b(0)*c(2)*d(1) can be evaluated conventionally.
+
+--------------
+
+handling simple tensor contraction:
+
+whenever two factors of identical type are contracted without "breaking apart" a factor, the contraction can be
+simplified and expedited.  for example,
+
+(A \otimes B) : (C \otimes D) := (A \cdot C)(B \cdot D), which is a scalar value, and therefore can be
+computed up front and factored out of the summation.  this step should be done as the expression templates are being
+accumulated grammatically (if an index is seen a second time and neither is part of a "down cast", then compute
+the contraction immediately and cache it for the later evaluation/assignment).
+
+IDEA: keep a scalar factor in tensor products for storing these sorts of things -- the alternative is to multiply
+this scalar in at each step, which for something like a Nonsymmetric3Tensor, would be O(mnp) (where the tensor is
+m x n x p).  but perhaps when the end result to calculate is something like an n-vector, saving scalars as separate
+factors would allow lazy multiplication of these factors and save time (at the expense of the storage of one extra
+scalar value).
+
+--------------
+
 */
-
-template <typename Operand, typename IndexType>
-struct ExpressionTemplate_IndexAsVector_t
-{
-    typedef typename Operand::Scalar Scalar;
-
-    typedef TypeList_t<IndexType> FreeIndexTypeList;
-    typedef EmptyTypeList SummedIndexTypeList;
-    typedef CompoundIndex_t<FreeIndexTypeList> Index;
-
-    ExpressionTemplate_IndexAsVector_t (Operand const &operand) : m_operand(operand) { }
-
-    // read-only, because it doesn't necessarily make sense to assign to an expression
-    // template -- the expression may be a product or some such, where each component
-    // is not an L-value.
-    Scalar operator [] (IndexType const &i) const { return m_operand[i]; }
-
-private:
-
-    Operand const &m_operand;
-};
-
-template <typename Operand, typename F1IndexType, typename F2IndexType>
-struct ExpressionTemplate_IndexAsTensor2_t
-{
-    typedef typename Operand::Scalar Scalar;
-
-    typedef TypeList_t<F1IndexType, TypeList_t<F2IndexType> > FreeIndexTypeList;
-    typedef EmptyTypeList SummedIndexTypeList;
-    typedef CompoundIndex_t<FreeIndexTypeList> Index;
-
-    ExpressionTemplate_IndexAsTensor2_t (Operand const &operand) : m_operand(operand) { }
-
-    // read-only, because it doesn't necessarily make sense to assign to an expression
-    // template -- the expression may be a product or some such, where each component
-    // is not an L-value.
-    Scalar operator [] (Index const &i) const { return m_operand[i.value()]; }
-
-private:
-
-    Operand const &m_operand;
-};
-
-template <typename LeftOperand, typename RightOperand>
-struct ExpressionTemplate_Addition_t
-{
-    // TODO: check that the summed indices from each operand have no indices in common
-    // though technically this is unnecessary, because the summed indices are "private"
-    // to each contraction, so this is really for the human's benefit, not getting
-    // confused by multiple repeated indices that have nothing to do with each other.
-    enum { _ = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v>::v &&
-               Lvd::Meta::Assert<AreEqualAsSets_t<typename LeftOperand::FreeIndexTypeList,typename RightOperand::FreeIndexTypeList>::V>::v };
-
-    typedef typename LeftOperand::Scalar Scalar;
-    typedef typename LeftOperand::FreeIndexTypeList FreeIndexTypeList;
-    typedef EmptyTypeList SummedIndexTypeList; // TEMP: see above comment about "private" indices
-    typedef typename LeftOperand::Index Index;
-
-    ExpressionTemplate_Addition_t (LeftOperand const &left_operand, RightOperand const &right_operand)
-        :
-        m_left_operand(left_operand),
-        m_right_operand(right_operand)
-    { }
-
-    Scalar operator [] (Index const &i) const 
-    { 
-        typedef CompoundIndexMap_t<FreeIndexTypeList,typename LeftOperand::FreeIndexTypeList> LeftOperandIndexMap;
-        typedef CompoundIndexMap_t<FreeIndexTypeList,typename RightOperand::FreeIndexTypeList> RightOperandIndexMap;
-        typename LeftOperandIndexMap::EvalMapType left_operand_index_map = LeftOperandIndexMap::eval;
-        typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
-        return m_left_operand[left_operand_index_map(i)] + m_right_operand[right_operand_index_map(i)];
-    }
-
-private:
-
-    LeftOperand const &m_left_operand;
-    RightOperand const &m_right_operand;
-};
-
-template <typename LeftOperand, typename RightOperand, typename FreeIndexTypeList, typename SummedIndexTypeList>
-struct Summation_t
-{
-    enum { _ = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v>::v &&
-               Lvd::Meta::Assert<(SummedIndexTypeList::LENGTH > 0)>::v };
-
-    typedef typename LeftOperand::Scalar Scalar;
-
-    static Scalar eval (LeftOperand const &left_operand, RightOperand const &right_operand, CompoundIndex_t<FreeIndexTypeList> const &i)
-    {
-        typedef typename ConcatenationOfTypeLists_t<FreeIndexTypeList,SummedIndexTypeList>::T TotalIndexTypeList;
-        typedef CompoundIndex_t<TotalIndexTypeList> TotalIndex;
-        typedef CompoundIndex_t<SummedIndexTypeList> SummedIndex;
-
-        // the operands take indices that are a subset of the summed indices and free indices.
-
-        // constructing t with i initializes the first elements which correpond to
-        // Index with the value of i, and initializes the remaining elements to zero.
-        TotalIndex t(i);
-        Scalar retval(0);
-        // get the map which produces the CompoundIndex for each operand from the TotalIndex t
-        typedef CompoundIndexMap_t<TotalIndexTypeList,typename LeftOperand::FreeIndexTypeList> LeftOperandIndexMap;
-        typedef CompoundIndexMap_t<TotalIndexTypeList,typename RightOperand::FreeIndexTypeList> RightOperandIndexMap;
-        typename LeftOperandIndexMap::EvalMapType left_operand_index_map = LeftOperandIndexMap::eval;
-        typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
-        // t = (f,s), which is a concatenation of the free access indices and the summed access indices.
-        // s is a reference to the second part, which is what is iterated over in the summation.
-        for (SummedIndex &s = t.template trailing_list<FreeIndexTypeList::LENGTH>(); s.is_not_at_end(); ++s)
-            retval += left_operand[left_operand_index_map(t)] * right_operand[right_operand_index_map(t)];
-        return retval;
-    }
-};
-
-// template specialization handles summation over no indices
-template <typename LeftOperand, typename RightOperand, typename FreeIndexTypeList>
-struct Summation_t<LeftOperand,RightOperand,FreeIndexTypeList,EmptyTypeList>
-{
-    enum { _ = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v>::v };
-
-    typedef typename LeftOperand::Scalar Scalar;
-
-    static Scalar eval (LeftOperand const &left_operand, RightOperand const &right_operand, CompoundIndex_t<FreeIndexTypeList> const &i)
-    {
-        // get the map which produces the CompoundIndex for each operand from the free indices i
-        typedef CompoundIndexMap_t<FreeIndexTypeList,typename LeftOperand::FreeIndexTypeList> LeftOperandIndexMap;
-        typedef CompoundIndexMap_t<FreeIndexTypeList,typename RightOperand::FreeIndexTypeList> RightOperandIndexMap;
-        typename LeftOperandIndexMap::EvalMapType left_operand_index_map = LeftOperandIndexMap::eval;
-        typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
-        return left_operand[left_operand_index_map(i)] * right_operand[right_operand_index_map(i)];
-    }
-};
-
-// TODO: there is an issue to think about: while it is totally valid to do
-// u(i)*v(j)*w(j) (this is an outer product contracted with a vector), the
-// expression v(j)*w(j) can be computed first and factored out of the whole
-// thing, instead of needing to be multiplied out for each access of the i index.
-// this may be somewhat difficult to do, as it would require searching the
-// expression template AST for such contractions and restructuring the AST.
-template <typename LeftOperand, typename RightOperand>
-struct ExpressionTemplate_Multiplication_t
-{
-    // TODO: check that the summed indices from each operand have no indices in common
-    // though technically this is unnecessary, because the summed indices are "private"
-    // to each contraction, so this is really for the human's benefit, not getting
-    // confused by multiple repeated indices that have nothing to do with each other.
-    enum { _ = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v>::v };
-    // TODO: ensure there are no indices that occur 3+ times (?)
-
-    typedef typename LeftOperand::Scalar Scalar;
-    // the free indices are the single-occurrence indices of the concatenated
-    // list of free indices from the left and right operands
-    typedef typename ConcatenationOfTypeLists_t<typename LeftOperand::FreeIndexTypeList,
-                                                typename RightOperand::FreeIndexTypeList>::T CombinedFreeIndexTypeList;
-    typedef typename ElementsHavingMultiplicity_t<CombinedFreeIndexTypeList,1>::T FreeIndexTypeList;
-    // the summed indices (at this level) are the double-occurrences indices
-    // of the concatenated list of free indices from the left and right operands
-    typedef typename ElementsHavingMultiplicity_t<CombinedFreeIndexTypeList,2>::T SummedIndexTypeList;
-    // Index is a list (TODO: change to tuple) of type FreeIndices
-    typedef CompoundIndex_t<FreeIndexTypeList> Index;
-
-    ExpressionTemplate_Multiplication_t (LeftOperand const &left_operand, RightOperand const &right_operand)
-        :
-        m_left_operand(left_operand),
-        m_right_operand(right_operand)
-    { }
-
-    Scalar operator [] (Index const &i) const
-    {
-        return Summation_t<LeftOperand,RightOperand,FreeIndexTypeList,SummedIndexTypeList>::eval(m_left_operand, m_right_operand, i);
-    }
-
-private:
-
-    LeftOperand const &m_left_operand;
-    RightOperand const &m_right_operand;
-};
-
-template <typename Scalar_, Uint32 DIM_> // don't worry about type ID for now
-struct Vector_t
-{
-    typedef Scalar_ Scalar;
-    static Uint32 const DIM = DIM_;
-//     static Uint32 const DEGREE = 1; // vector quantities are used as 1-tensors.
-
-    // for use in operator [] for actual evaluation of tensor components
-    struct Index
-    {
-        static Uint32 const COMPONENT_COUNT = Vector_t::DIM;
-
-        Index () : m(0) { }
-        Index (Uint32 i) : m(i) { }
-
-        bool is_at_end () const { return m >= COMPONENT_COUNT; }
-        bool is_not_at_end () const { return m < COMPONENT_COUNT; }
-        Uint32 value () const { return m; } // for the specific memory addressing scheme that Vector_t uses
-        void operator ++ () { ++m; }
-        void reset () { m = 0; }
-
-        static std::string type_as_string () { return TypeStringOf_t<Vector_t>::eval() + "::Index"; }
-
-    private:
-
-        Uint32 m;
-    };
-
-    // for use in operator () for creation of expression templates (indexed tensor expressions)
-    template <char SYMBOL>
-    struct Index_t : public Index
-    {
-        Index_t () { }
-        Index_t (Uint32 i) : Index(i) { }
-
-        static std::string type_as_string () { return TypeStringOf_t<Vector_t>::eval() + "::Index_t<'" + SYMBOL + "'>"; }
-    };
-
-    explicit Vector_t (WithoutInitialization const &) { }
-    Vector_t (Scalar fill) { for (Uint32 i = 0; i < DIM; ++i) m[i] = fill; }
-    Vector_t (Scalar x0, Scalar x1) { Lvd::Meta::Assert<(DIM == 2)>(); m[0] = x0; m[1] = x1; }
-    Vector_t (Scalar x0, Scalar x1, Scalar x2) { Lvd::Meta::Assert<(DIM == 3)>(); m[0] = x0; m[1] = x1; m[2] = x2; }
-    Vector_t (Scalar x0, Scalar x1, Scalar x2, Scalar x3) { Lvd::Meta::Assert<(DIM == 4)>(); m[0] = x0; m[1] = x1; m[2] = x2; m[3] = x3; }
-
-    // NOTE: operator [] will be used to return values, while
-    // operator () will be used to create expression templates
-    // for the purposes of indexed contractions.
-    // TODO: make Index type encode the guarantee that it's value will always be valid
-    Scalar operator [] (Index const &i) const
-    {
-        if (i.is_at_end())
-            throw std::invalid_argument("index out of range");
-        else
-            return m[i.value()];
-    }
-    Scalar &operator [] (Index const &i)
-    {
-        if (i.is_at_end())
-            throw std::invalid_argument("index out of range");
-        else
-            return m[i.value()];
-    }
-
-    // the argument is technically unnecessary, as its value is not used.  however,
-    // this allows the template system to deduce the SYMBOL of the IndexType_t, so
-    // it doesn't need to be specified explicitly.
-    // in this, an outer product would be
-    // IndexType_t<'i'> i;
-    // IndexType_t<'j'> j;
-    // u(i)*v(j)
-    template <char SYMBOL>
-    ExpressionTemplate_IndexAsVector_t<Vector_t,Index_t<SYMBOL> > operator () (Index_t<SYMBOL> const &) const
-    {
-        return expr<SYMBOL>();
-    }
-    // the corresponding outer product example here would be
-    // u.expr<'i'>() * v.expr<'j'>()
-    template <char SYMBOL>
-    ExpressionTemplate_IndexAsVector_t<Vector_t,Index_t<SYMBOL> > expr () const
-    {
-        Lvd::Meta::Assert<(SYMBOL != '\0')>();
-        return ExpressionTemplate_IndexAsVector_t<Vector_t,Index_t<SYMBOL> >(*this);
-    }
-
-    static std::string type_as_string () { return "Vector_t<" + TypeStringOf_t<Scalar>::eval() + ',' + AS_STRING(DIM) + '>'; }
-
-protected:
-
-    Scalar m[DIM];
-};
-
-template <typename Scalar, Uint32 DIM>
-std::ostream &operator << (std::ostream &out, Vector_t<Scalar,DIM> const &v)
-{
-    typedef Vector_t<Scalar,DIM> Vector;
-    typedef typename Vector::Index Index;
-
-    if (DIM == 0)
-        return out << "()";
-
-    Index i; // initialized to the beginning automatically
-    out << '(' << v[i];
-    ++i;
-    for ( ; i.is_not_at_end(); ++i)
-        out << ", " << v[i];
-    return out << ')';
-}
-
-// NOTE: these don't seem to work -- maybe the compiler isn't smart enough to match the types
-template <typename Scalar, Uint32 DIM>
-std::ostream &operator << (std::ostream &out, typename Vector_t<Scalar,DIM>::Index const &i)
-{
-    return out << i.value();
-}
-
-template <typename Scalar, Uint32 DIM, char SYMBOL>
-std::ostream &operator << (std::ostream &out, typename Vector_t<Scalar,DIM>::template Index_t<SYMBOL> const &i)
-{
-    return out << i.value();
-}
-
-// this default implementation should work for any vector space that has an Index type (but not e.g. Tensor2Simple_t).
-// template specialization can be used to define other implementations (e.g. Tensor2Simple_t).
-template <typename Vector>
-struct DotProduct_t
-{
-    typedef typename Vector::Scalar Scalar;
-    typedef typename Vector::Index Index;
-
-    static Scalar eval (Vector const &l, Vector const &r)
-    {
-        Scalar retval(0);
-        for (Index i; i.is_not_at_end(); ++i)
-            retval += l[i]*r[i];
-        return retval;
-    }
-};
-
-// general 2-tensor with no symmetries -- most general type of 2-tensor
-template <typename F1_, typename F2_>
-struct Tensor2_t : Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM>
-{
-    enum { _ = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename F1_::Scalar,typename F2_::Scalar>::v>::v };
-
-    typedef Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM> Parent;
-    typedef typename Parent::Scalar Scalar;
-    using Parent::DIM;
-//     static Uint32 const DEGREE = 2; // there are two factors in this tensor type (F1 and F2)
-
-    typedef F1_ F1;
-    typedef F2_ F2;
-
-    Tensor2_t (WithoutInitialization const &w) : Parent(w) { }
-    Tensor2_t (Scalar fill) : Parent(fill) { }
-
-    struct IndexBlah : public Parent::Index // TODO: deprecate (it's only used in the test code below)
-    {
-        IndexBlah () { } // default constructor initializes to beginning
-        explicit IndexBlah (Uint32 i) : Parent::Index(i) { }
-        IndexBlah (typename F1::Index i1, typename F2::Index i2) : Parent::Index(F2::DIM*i1.value()+i2.value()) { }
-        typename F1::Index subindex1 () const { return this->value() / F2::DIM; }
-        typename F2::Index subindex2 () const { return this->value() % F2::DIM; }
-    };
-
-    // the argument is technically unnecessary, as its value is not used.  however,
-    // this allows the template system to deduce the SYMBOL of the IndexType_t, so
-    // it doesn't need to be specified explicitly.
-    // in this, an outer product would be
-    // IndexType_t<'i'> i;
-    // IndexType_t<'j'> j;
-    // u(i)*v(j)
-    template <char SYMBOL>
-    ExpressionTemplate_IndexAsVector_t<Tensor2_t,typename Parent::template Index_t<SYMBOL> > operator () (
-        typename Parent::template Index_t<SYMBOL> const &) const
-    {
-        return expr<SYMBOL>();
-    }
-    // the corresponding outer product example here would be
-    // u.expr<'i'>() * v.expr<'j'>()
-    template <char SYMBOL>
-    ExpressionTemplate_IndexAsVector_t<Tensor2_t,typename Parent::template Index_t<SYMBOL> > expr () const
-    {
-        Lvd::Meta::Assert<(SYMBOL != '\0')>();
-        return ExpressionTemplate_IndexAsVector_t<Tensor2_t,typename Parent::template Index_t<SYMBOL> >(*this);
-    }
-    
-    // a 2-tensor can be indexed by the pair of factor indices (F1::Index, F2::Index)
-    template <char F1_SYMBOL, char F2_SYMBOL>
-    ExpressionTemplate_IndexAsTensor2_t<Tensor2_t,
-                                        typename F1::template Index_t<F1_SYMBOL>, 
-                                        typename F2::template Index_t<F2_SYMBOL> > operator () (
-        typename F1::template Index_t<F1_SYMBOL> const &, 
-        typename F2::template Index_t<F2_SYMBOL> const &) const
-    {
-        return expr<F1_SYMBOL,F2_SYMBOL>();
-    }
-    // the 2-index analog of expr<SYMBOL>()
-    template <char F1_SYMBOL, char F2_SYMBOL>
-    ExpressionTemplate_IndexAsTensor2_t<Tensor2_t,
-                                        typename F1::template Index_t<F1_SYMBOL>, 
-                                        typename F2::template Index_t<F2_SYMBOL> > expr () const
-    {
-        Lvd::Meta::Assert<(F1_SYMBOL != '\0')>();
-        Lvd::Meta::Assert<(F2_SYMBOL != '\0')>();
-        return ExpressionTemplate_IndexAsTensor2_t<Tensor2_t,
-                                                   typename F1::template Index_t<F1_SYMBOL>, 
-                                                   typename F2::template Index_t<F2_SYMBOL> >(*this);
-    }
-};
-
-template <typename F1, typename F2>
-std::ostream &operator << (std::ostream &out, Tensor2_t<F1,F2> const &t)
-{
-    typedef Tensor2_t<F1,F2> Tensor2;
-
-    if (Tensor2::DIM == 0)
-        return out << "[]";
-
-    Uint32 k = 0;
-    out << '\n';
-    for (typename F1::Index i; i.is_not_at_end(); ++i)
-    {
-        out << '[';
-        for (typename F2::Index j; j.is_not_at_end(); ++j)
-        {
-            out << t[k] << '\t';
-            ++k;
-        }
-        out << "]\n";
-    }
-    return out;
-}
 
 
 // general 3-tensor with no symmetries -- most general type of 3-tensor
@@ -1124,6 +776,15 @@ int main (int argc, char **argv)
             EA e(u(i,j), u(j,i));
             for (EA::Index k; k.is_not_at_end(); ++k)
                 std::cout << e[k] << ", ";
+                
+            // uncommenting this should cause an error regarding prohibiting repeated indices in sums
+//             typedef ExpressionTemplate_IndexAsTensor2_t<Float3x3,I,I> EII;
+//             typedef ExpressionTemplate_Addition_t<EII,EII> EB;
+//             EB e2(u(i,i), u(i,i));
+//             for (EB::Index k; k.is_not_at_end(); ++k)
+//                 std::cout << e2[k] << ", ";
+                
+                
             std::cout << '\n';
             std::cout << '\n';
         }
