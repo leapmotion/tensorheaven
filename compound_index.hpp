@@ -13,7 +13,7 @@ struct CompoundIndex_t : List_t<IndexTypeList_>
     typedef typename IndexTypeList::HeadType HeadIndexType;
     typedef typename IndexTypeList::BodyTypeList BodyIndexTypeList;
     typedef CompoundIndex_t<BodyIndexTypeList> BodyCompoundIndex;
-    // TODO: static Uint32 const COMPONENT_COUNT (this must be recursively defined)
+    static Uint32 const COMPONENT_COUNT = HeadIndexType::COMPONENT_COUNT * BodyCompoundIndex::COMPONENT_COUNT;
 
     CompoundIndex_t () { } // default constructor initializes to "first" component
     CompoundIndex_t (HeadIndexType const &head, BodyCompoundIndex const &body) : Parent(head, body) { }
@@ -32,6 +32,7 @@ struct CompoundIndex_t : List_t<IndexTypeList_>
 
     bool is_at_end () const { return this->head().is_at_end(); } // because the head is the last one incremented
     bool is_not_at_end () const { return this->head().is_not_at_end(); } // because the head is the last one incremented
+    Uint32 value () const { return BodyCompoundIndex::COMPONENT_COUNT*this->head().value() + this->body().value(); } 
     void operator ++ ()
     {
         BodyList &b = body();
@@ -88,7 +89,7 @@ struct CompoundIndex_t<TypeList_t<HeadIndexType> > : public List_t<TypeList_t<He
 {
     typedef List_t<TypeList_t<HeadIndexType> > Parent;
     typedef TypeList_t<HeadIndexType> IndexTypeList;
-    // TODO: static Uint32 const COMPONENT_COUNT
+    static Uint32 const COMPONENT_COUNT = HeadIndexType::COMPONENT_COUNT;
 
     CompoundIndex_t () { } // default constructor initializes to "first" component
     CompoundIndex_t (HeadIndexType const &head) : Parent(head) { }
@@ -107,6 +108,7 @@ struct CompoundIndex_t<TypeList_t<HeadIndexType> > : public List_t<TypeList_t<He
 
     bool is_at_end () const { return this->head().is_at_end(); }
     bool is_not_at_end () const { return this->head().is_not_at_end(); }
+    Uint32 value () const { return this->head().value(); }
     void operator ++ () { ++(this->head()); }
     void reset () { this->head().reset(); }
 
@@ -147,7 +149,7 @@ struct CompoundIndex_t<EmptyTypeList> : public List_t<EmptyTypeList>
 
     typedef List_t<EmptyTypeList> Parent;
     typedef EmptyTypeList IndexTypeList;
-    // TODO: static Uint32 const COMPONENT_COUNT
+//     static Uint32 const COMPONENT_COUNT
 
     CompoundIndex_t () : m_value(0) { } // default constructor initializes to "first" component (which in this case happens to be at end)
 

@@ -191,20 +191,41 @@ and a set of free and summed indices for each operand.
 */
 
 template <typename Operand, typename IndexType>
-struct ExpressionTemplate_Evaluation_t
+struct ExpressionTemplate_IndexAsVector_t
 {
     typedef typename Operand::Scalar Scalar;
 
     typedef TypeList_t<IndexType> FreeIndexTypeList;
     typedef EmptyTypeList SummedIndexTypeList;
-    typedef CompoundIndex_t<TypeList_t<IndexType> > Index; // an index composed of all free indices
+    typedef CompoundIndex_t<FreeIndexTypeList> Index;
 
-    ExpressionTemplate_Evaluation_t (Operand const &operand) : m_operand(operand) { }
+    ExpressionTemplate_IndexAsVector_t (Operand const &operand) : m_operand(operand) { }
 
     // read-only, because it doesn't necessarily make sense to assign to an expression
     // template -- the expression may be a product or some such, where each component
     // is not an L-value.
     Scalar operator [] (IndexType const &i) const { return m_operand[i]; }
+
+private:
+
+    Operand const &m_operand;
+};
+
+template <typename Operand, typename F1IndexType, typename F2IndexType>
+struct ExpressionTemplate_IndexAsTensor2_t
+{
+    typedef typename Operand::Scalar Scalar;
+
+    typedef TypeList_t<F1IndexType, TypeList_t<F2IndexType> > FreeIndexTypeList;
+    typedef EmptyTypeList SummedIndexTypeList;
+    typedef CompoundIndex_t<FreeIndexTypeList> Index;
+
+    ExpressionTemplate_IndexAsTensor2_t (Operand const &operand) : m_operand(operand) { }
+
+    // read-only, because it doesn't necessarily make sense to assign to an expression
+    // template -- the expression may be a product or some such, where each component
+    // is not an L-value.
+    Scalar operator [] (Index const &i) const { return m_operand[i.value()]; }
 
 private:
 
@@ -219,7 +240,7 @@ struct ExpressionTemplate_Addition_t
     // to each contraction, so this is really for the human's benefit, not getting
     // confused by multiple repeated indices that have nothing to do with each other.
     enum { _ = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v>::v &&
-               Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename LeftOperand::FreeIndexTypeList,typename RightOperand::FreeIndexTypeList>::v>::v };
+               Lvd::Meta::Assert<AreEqualAsSets_t<typename LeftOperand::FreeIndexTypeList,typename RightOperand::FreeIndexTypeList>::V>::v };
 
     typedef typename LeftOperand::Scalar Scalar;
     typedef typename LeftOperand::FreeIndexTypeList FreeIndexTypeList;
@@ -232,7 +253,14 @@ struct ExpressionTemplate_Addition_t
         m_right_operand(right_operand)
     { }
 
-    Scalar operator [] (Index const &i) const { return m_left_operand[i] + m_right_operand[i]; }
+    Scalar operator [] (Index const &i) const 
+    { 
+        typedef CompoundIndexMap_t<FreeIndexTypeList,typename LeftOperand::FreeIndexTypeList> LeftOperandIndexMap;
+        typedef CompoundIndexMap_t<FreeIndexTypeList,typename RightOperand::FreeIndexTypeList> RightOperandIndexMap;
+        typename LeftOperandIndexMap::EvalMapType left_operand_index_map = LeftOperandIndexMap::eval;
+        typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
+        return m_left_operand[left_operand_index_map(i)] + m_right_operand[right_operand_index_map(i)];
+    }
 
 private:
 
@@ -342,18 +370,18 @@ struct Vector_t
 {
     typedef Scalar_ Scalar;
     static Uint32 const DIM = DIM_;
-    static Uint32 const DEGREE = 1; // vector quantities are used as 1-tensors.
+//     static Uint32 const DEGREE = 1; // vector quantities are used as 1-tensors.
 
     // for use in operator [] for actual evaluation of tensor components
     struct Index
     {
-        static Uint32 const DIM = Vector_t::DIM;
+        static Uint32 const COMPONENT_COUNT = Vector_t::DIM;
 
         Index () : m(0) { }
         Index (Uint32 i) : m(i) { }
 
-        bool is_at_end () const { return m >= DIM; }
-        bool is_not_at_end () const { return m < DIM; }
+        bool is_at_end () const { return m >= COMPONENT_COUNT; }
+        bool is_not_at_end () const { return m < COMPONENT_COUNT; }
         Uint32 value () const { return m; } // for the specific memory addressing scheme that Vector_t uses
         void operator ++ () { ++m; }
         void reset () { m = 0; }
@@ -408,18 +436,17 @@ struct Vector_t
     // IndexType_t<'j'> j;
     // u(i)*v(j)
     template <char SYMBOL>
-    ExpressionTemplate_Evaluation_t<Vector_t,Index_t<SYMBOL> > operator () (Index_t<SYMBOL> const &) const
+    ExpressionTemplate_IndexAsVector_t<Vector_t,Index_t<SYMBOL> > operator () (Index_t<SYMBOL> const &) const
     {
-        Lvd::Meta::Assert<(SYMBOL != '\0')>();
         return expr<SYMBOL>();
     }
-
     // the corresponding outer product example here would be
     // u.expr<'i'>() * v.expr<'j'>()
     template <char SYMBOL>
-    ExpressionTemplate_Evaluation_t<Vector_t,Index_t<SYMBOL> > expr () const
+    ExpressionTemplate_IndexAsVector_t<Vector_t,Index_t<SYMBOL> > expr () const
     {
-        return ExpressionTemplate_Evaluation_t<Vector_t,Index_t<SYMBOL> >(*this);
+        Lvd::Meta::Assert<(SYMBOL != '\0')>();
+        return ExpressionTemplate_IndexAsVector_t<Vector_t,Index_t<SYMBOL> >(*this);
     }
 
     static std::string type_as_string () { return "Vector_t<" + TypeStringOf_t<Scalar>::eval() + ',' + AS_STRING(DIM) + '>'; }
@@ -485,22 +512,92 @@ struct Tensor2_t : Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM>
     typedef Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM> Parent;
     typedef typename Parent::Scalar Scalar;
     using Parent::DIM;
-    static Uint32 const DEGREE = 2; // there are two factors in this tensor type (F1 and F2)
+//     static Uint32 const DEGREE = 2; // there are two factors in this tensor type (F1 and F2)
 
     typedef F1_ F1;
     typedef F2_ F2;
 
     Tensor2_t (WithoutInitialization const &w) : Parent(w) { }
+    Tensor2_t (Scalar fill) : Parent(fill) { }
 
-    struct Index : public Parent::Index
+    struct IndexBlah : public Parent::Index // TODO: deprecate (it's only used in the test code below)
     {
-        Index () { } // default constructor initializes to beginning
-        explicit Index (Uint32 i) : Parent::Index(i) { }
-        Index (typename F1::Index i1, typename F2::Index i2) : Parent::Index(F2::DIM*i1.value()+i2.value()) { }
+        IndexBlah () { } // default constructor initializes to beginning
+        explicit IndexBlah (Uint32 i) : Parent::Index(i) { }
+        IndexBlah (typename F1::Index i1, typename F2::Index i2) : Parent::Index(F2::DIM*i1.value()+i2.value()) { }
         typename F1::Index subindex1 () const { return this->value() / F2::DIM; }
         typename F2::Index subindex2 () const { return this->value() % F2::DIM; }
     };
+
+    // the argument is technically unnecessary, as its value is not used.  however,
+    // this allows the template system to deduce the SYMBOL of the IndexType_t, so
+    // it doesn't need to be specified explicitly.
+    // in this, an outer product would be
+    // IndexType_t<'i'> i;
+    // IndexType_t<'j'> j;
+    // u(i)*v(j)
+    template <char SYMBOL>
+    ExpressionTemplate_IndexAsVector_t<Tensor2_t,typename Parent::template Index_t<SYMBOL> > operator () (
+        typename Parent::template Index_t<SYMBOL> const &) const
+    {
+        return expr<SYMBOL>();
+    }
+    // the corresponding outer product example here would be
+    // u.expr<'i'>() * v.expr<'j'>()
+    template <char SYMBOL>
+    ExpressionTemplate_IndexAsVector_t<Tensor2_t,typename Parent::template Index_t<SYMBOL> > expr () const
+    {
+        Lvd::Meta::Assert<(SYMBOL != '\0')>();
+        return ExpressionTemplate_IndexAsVector_t<Tensor2_t,typename Parent::template Index_t<SYMBOL> >(*this);
+    }
+    
+    // a 2-tensor can be indexed by the pair of factor indices (F1::Index, F2::Index)
+    template <char F1_SYMBOL, char F2_SYMBOL>
+    ExpressionTemplate_IndexAsTensor2_t<Tensor2_t,
+                                        typename F1::template Index_t<F1_SYMBOL>, 
+                                        typename F2::template Index_t<F2_SYMBOL> > operator () (
+        typename F1::template Index_t<F1_SYMBOL> const &, 
+        typename F2::template Index_t<F2_SYMBOL> const &) const
+    {
+        return expr<F1_SYMBOL,F2_SYMBOL>();
+    }
+    // the 2-index analog of expr<SYMBOL>()
+    template <char F1_SYMBOL, char F2_SYMBOL>
+    ExpressionTemplate_IndexAsTensor2_t<Tensor2_t,
+                                        typename F1::template Index_t<F1_SYMBOL>, 
+                                        typename F2::template Index_t<F2_SYMBOL> > expr () const
+    {
+        Lvd::Meta::Assert<(F1_SYMBOL != '\0')>();
+        Lvd::Meta::Assert<(F2_SYMBOL != '\0')>();
+        return ExpressionTemplate_IndexAsTensor2_t<Tensor2_t,
+                                                   typename F1::template Index_t<F1_SYMBOL>, 
+                                                   typename F2::template Index_t<F2_SYMBOL> >(*this);
+    }
 };
+
+template <typename F1, typename F2>
+std::ostream &operator << (std::ostream &out, Tensor2_t<F1,F2> const &t)
+{
+    typedef Tensor2_t<F1,F2> Tensor2;
+
+    if (Tensor2::DIM == 0)
+        return out << "[]";
+
+    Uint32 k = 0;
+    out << '\n';
+    for (typename F1::Index i; i.is_not_at_end(); ++i)
+    {
+        out << '[';
+        for (typename F2::Index j; j.is_not_at_end(); ++j)
+        {
+            out << t[k] << '\t';
+            ++k;
+        }
+        out << "]\n";
+    }
+    return out;
+}
+
 
 // general 3-tensor with no symmetries -- most general type of 3-tensor
 template <typename F1_, typename F2_, typename F3_>
@@ -511,7 +608,7 @@ struct Tensor3_t : Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM*F3_::DIM>
     typedef Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM*F3_::DIM> Parent;
     typedef typename Parent::Scalar Scalar;
     using Parent::DIM;
-    static Uint32 const DEGREE = 3; // there are two factors in this tensor type (F1 and F2)
+//     static Uint32 const DEGREE = 3; // there are two factors in this tensor type (F1 and F2)
 
     typedef F1_ F1;
     typedef F2_ F2;
@@ -543,14 +640,14 @@ struct Tensor2Simple_t
     typedef F2_ F2;
     typedef typename F1::Scalar Scalar;
     // there is no dimension because this is not a vector space (not even a manifold -- it is an algebraic variety)
-    static Uint32 const DEGREE = 2; // there are two factors in this tensor type (F1 and F2)
+//     static Uint32 const DEGREE = 2; // there are two factors in this tensor type (F1 and F2)
 
     Tensor2Simple_t (F1 const &f1, F2 const &f2) : m1(f1), m2(f2) { }
 
     F1 const &factor1 () const { return m1; }
     F2 const &factor2 () const { return m2; }
 
-    Scalar operator [] (typename Tensor2_t<F1,F2>::Index const &i) const
+    Scalar operator [] (typename Tensor2_t<F1,F2>::IndexBlah const &i) const
     {
         if (i.is_at_end())
             throw std::invalid_argument("index out of range");
@@ -602,7 +699,7 @@ struct Tensor3Simple_t
     typedef F3_ F3;
     typedef typename F1::Scalar Scalar;
     // there is no dimension because this is not a vector space (not even a manifold -- it is an algebraic variety)
-    static Uint32 const DEGREE = 3; // there are two factors in this tensor type (F1 and F2)
+//     static Uint32 const DEGREE = 3; // there are two factors in this tensor type (F1 and F2)
 
     Tensor3Simple_t (F1 const &f1, F2 const &f2, F3 const &f3) : m1(f1), m2(f2), m3(f3) { }
 
@@ -690,7 +787,7 @@ struct Tensor2Antisymmetric_t : public Vector_t<typename F_::Scalar,((F_::DIM-1)
     typedef typename Parent::Index Index;
     using Parent::DIM;
     typedef F_ F;
-    static Uint32 const DEGREE = 2; // there are two factors in this tensor type (F1 and F2)
+//     static Uint32 const DEGREE = 2; // there are two factors in this tensor type (F1 and F2)
 
     // TODO: make Index in this class, and make it construct with a Tensor<T,T>::Index
 
@@ -744,6 +841,11 @@ int main (int argc, char **argv)
     typedef Vector_t<float,2> Float2;
     typedef Vector_t<float,3> Float3;
     typedef Vector_t<float,4> Float4;
+    typedef Tensor2_t<Float3,Float4> Float3x4;
+    typedef Tensor2Simple_t<Float3,Float4> SimpleFloat3x4;
+    typedef Tensor3_t<Float2,Float3,Float4> Float2x3x4;
+    typedef Tensor3Simple_t<Float2,Float3,Float4> SimpleFloat2x3x4;
+    typedef Tensor2_t<Float3,Float3> Float3x3;
 
     // testing various tensor access and operations
     {
@@ -755,31 +857,28 @@ int main (int argc, char **argv)
         std::cout << FORMAT_VALUE(v) << '\n';
         std::cout << FORMAT_VALUE(w) << '\n';
 
-        typedef Tensor2Simple_t<Float3,Float4> SimpleFloat3x4;
         SimpleFloat3x4 X(v,w);
 
         std::cout << "X := v \\otimes w = " << X << ", and " << v%w << '\n';
 
-        typedef Tensor2_t<Float3,Float4> Float3x4;
 
         for (Uint32 r = 0; r < 3; ++r)
         {
             for (Uint32 c = 0; c < 4; ++c)
             {
-                std::cout << "\t" << X[Float3x4::Index(r,c)];
+                std::cout << "\t" << X[Float3x4::IndexBlah(r,c)];
             }
             std::cout << '\n';
         }
 
         std::cout << '\n';
 
-        typedef Tensor3_t<Float2,Float3,Float4> Float2x3x4;
 
         for (Uint32 i = 0; i < Float3x4::DIM; ++i)
         {
-            Float3x4::Index index(i);
+            Float3x4::IndexBlah index(i);
             std::cout << i << " -> " << index.subindex1().value() << ", " << index.subindex2().value()
-                      << " -> " << Float3x4::Index(index.subindex1().value(), index.subindex2().value()).value() << '\n';
+                      << " -> " << Float3x4::IndexBlah(index.subindex1().value(), index.subindex2().value()).value() << '\n';
         }
 
         std::cout << '\n';
@@ -793,7 +892,6 @@ int main (int argc, char **argv)
 
         std::cout << '\n';
 
-        typedef Tensor3Simple_t<Float2,Float3,Float4> SimpleFloat2x3x4;
         SimpleFloat2x3x4 Z(u%v%w);
         std::cout << "u \\otimes v \\otimes w = " << Z << '\n';
         for (Uint32 s = 0; s < 2; ++s)
@@ -822,7 +920,7 @@ int main (int argc, char **argv)
         {
             for (Uint32 c = 0; c < 4; ++c)
             {
-                std::cout << "\t" << Y[Float3x4::Index(r,c)];
+                std::cout << "\t" << Y[Float3x4::IndexBlah(r,c)];
             }
             std::cout << '\n';
         }
@@ -835,19 +933,18 @@ int main (int argc, char **argv)
         float accumulator = 0;
         for (Uint32 r = 0; r < 3; ++r)
             for (Uint32 c = 0; c < 4; ++c)
-                accumulator += X[Float3x4::Index(r,c)] * Y[Float3x4::Index(r,c)];
+                accumulator += X[Float3x4::IndexBlah(r,c)] * Y[Float3x4::IndexBlah(r,c)];
         std::cout << "actual answer = " << accumulator << ")\n\n";
 
-        typedef Tensor2_t<Float3,Float3> Float3x3;
         Float3x3 W(WITHOUT_INITIALIZATION);
         for (Uint32 i = 0; i < 3; ++i)
             for (Uint32 j = 0; j < 3; ++j)
                 for (Uint32 k = 0; k < 4; ++k)
-                    W[Float3x3::Index(i,j)] = X[Float3x4::Index(i,k)] * Y[Float3x4::Index(j,k)];
+                    W[Float3x3::IndexBlah(i,j)] = X[Float3x4::IndexBlah(i,k)] * Y[Float3x4::IndexBlah(j,k)];
         for (Uint32 i = 0; i < 3; ++i)
         {
             for (Uint32 j = 0; j < 3; ++j)
-                std::cout << '\t' << W[Float3x3::Index(i,j)];
+                std::cout << '\t' << W[Float3x3::IndexBlah(i,j)];
             std::cout << '\n';
         }
     }
@@ -862,8 +959,8 @@ int main (int argc, char **argv)
         I i;
         J j;
         {
-            typedef ExpressionTemplate_Evaluation_t<Float3,I> EI;
-            typedef ExpressionTemplate_Evaluation_t<Float3,J> EJ;
+            typedef ExpressionTemplate_IndexAsVector_t<Float3,I> EI;
+            typedef ExpressionTemplate_IndexAsVector_t<Float3,J> EJ;
 
 //             std::cout << i << '\n';
 //             std::cout << Float3::Index(0) << '\n';
@@ -879,7 +976,7 @@ int main (int argc, char **argv)
 
         {
             std::cout << "addition:\n";
-            typedef ExpressionTemplate_Evaluation_t<Float3,I> EE;
+            typedef ExpressionTemplate_IndexAsVector_t<Float3,I> EE;
             typedef ExpressionTemplate_Addition_t<EE,EE> EA;
             EA e(u(i), v(i));
             std::cout << "expression template value:\n";
@@ -895,11 +992,11 @@ int main (int argc, char **argv)
 
         {
             std::cout << "inner product:\n";
-            typedef ExpressionTemplate_Evaluation_t<Float3,I> EE;
+            typedef ExpressionTemplate_IndexAsVector_t<Float3,I> EE;
             typedef ExpressionTemplate_Multiplication_t<EE,EE> EM;
             EM e(u(i), v(i));
             Float3::Index k;
-            std::cout << FORMAT_VALUE(k.DIM) << '\n';
+            std::cout << FORMAT_VALUE(k.COMPONENT_COUNT) << '\n';
             std::cout << FORMAT_VALUE(TypeStringOf_t<EE::Index>::eval()) << '\n';
             std::cout << "expression template value:\n";
             std::cout << FORMAT_VALUE(e[EM::Index()]) << '\n';
@@ -914,8 +1011,8 @@ int main (int argc, char **argv)
 
         {
             std::cout << "outer product:\n";
-            typedef ExpressionTemplate_Evaluation_t<Float3,I> EI;
-            typedef ExpressionTemplate_Evaluation_t<Float3,J> EJ;
+            typedef ExpressionTemplate_IndexAsVector_t<Float3,I> EI;
+            typedef ExpressionTemplate_IndexAsVector_t<Float3,J> EJ;
             typedef ExpressionTemplate_Multiplication_t<EI,EJ> EM;
             EM e(u(i), v(j));
             std::cout << FORMAT_VALUE(TypeStringOf_t<EM::Index>::eval()) << '\n';
@@ -937,8 +1034,8 @@ int main (int argc, char **argv)
 
         {
             std::cout << "contraction with simple tensor:\n";
-            typedef ExpressionTemplate_Evaluation_t<Float3,I> EI;
-            typedef ExpressionTemplate_Evaluation_t<Float3,J> EJ;
+            typedef ExpressionTemplate_IndexAsVector_t<Float3,I> EI;
+            typedef ExpressionTemplate_IndexAsVector_t<Float3,J> EJ;
             typedef ExpressionTemplate_Multiplication_t<EI,EJ> EM;
             typedef ExpressionTemplate_Multiplication_t<EM,EJ> EMJ;
             EMJ e(EM(u(i), v(j)), w(j));
@@ -957,6 +1054,76 @@ int main (int argc, char **argv)
                     accum += u[ii] * v[jj] * w[jj];
                 std::cout << accum << ", ";
             }
+            std::cout << '\n';
+            std::cout << '\n';
+        }
+
+        {
+            std::cout << "addition of 2-tensors:\n";
+            typedef Float3x4::Index_t<'i'> I;
+            I i;
+            typedef ExpressionTemplate_IndexAsVector_t<Float3x4,I> EE;
+            typedef ExpressionTemplate_Addition_t<EE,EE> EA;
+            Float3x4 u(WITHOUT_INITIALIZATION);
+            Float3x4 v(WITHOUT_INITIALIZATION);
+            for (Uint32 k = 0; k < Float3x4::DIM; ++k)
+            {
+                u[k] = k;
+                v[k] = 13+k;
+            }
+            std::cout << FORMAT_VALUE(u) << '\n';
+            std::cout << FORMAT_VALUE(v) << '\n';
+            std::cout << FORMAT_VALUE(u(i)[0]) << '\n';
+            std::cout << FORMAT_VALUE(u(i)[11]) << '\n';
+            EA e(u(i), v(i));
+            std::cout << "expression template value:\n";
+            for (EA::Index k; k.is_not_at_end(); ++k)
+                std::cout << e[k] << ", ";
+            std::cout << '\n';
+            std::cout << "hand-calculated value:\n";
+            for (Uint32 k = 0; k < Float3x4::DIM; ++k)
+                std::cout << u[k] + v[k] << ", ";
+            std::cout << '\n';
+            std::cout << '\n';
+        }
+
+        {
+            std::cout << "expression template for 2-tensor:\n";
+            typedef Float3::Index_t<'i'> I;
+            typedef Float4::Index_t<'j'> J;
+            I i;
+            J j;
+            typedef ExpressionTemplate_IndexAsTensor2_t<Float3x4,I,J> EIJ;
+            typedef ExpressionTemplate_Addition_t<EIJ,EIJ> EA;
+            Float3x4 u(WITHOUT_INITIALIZATION);
+            Float3x4 v(WITHOUT_INITIALIZATION);
+            for (Uint32 k = 0; k < Float3x4::DIM; ++k)
+            {
+                u[k] = k;
+                v[k] = 13+k;
+            }
+            EA e(u(i,j), v(i,j));
+            for (EA::Index k; k.is_not_at_end(); ++k)
+                std::cout << e[k] << ", ";
+            std::cout << '\n';
+            std::cout << '\n';
+        }
+        
+        {
+            std::cout << "symmetrizing a 2-tensor:\n";
+            typedef Float3::Index_t<'i'> I;
+            typedef Float3::Index_t<'j'> J;
+            I i;
+            J j;
+            typedef ExpressionTemplate_IndexAsTensor2_t<Float3x3,I,J> EIJ;
+            typedef ExpressionTemplate_IndexAsTensor2_t<Float3x3,J,I> EJI;
+            typedef ExpressionTemplate_Addition_t<EIJ,EJI> EA;
+            Float3x3 u(WITHOUT_INITIALIZATION);
+            for (Uint32 k = 0; k < Float3x3::DIM; ++k)
+                u[k] = k*k;
+            EA e(u(i,j), u(j,i));
+            for (EA::Index k; k.is_not_at_end(); ++k)
+                std::cout << e[k] << ", ";
             std::cout << '\n';
             std::cout << '\n';
         }

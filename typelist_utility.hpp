@@ -167,4 +167,35 @@ struct ConcatenationOfTypeLists_t<EmptyTypeList,SecondTypeList>
     typedef SecondTypeList T;
 };
 
+
+
+// determines if the types of A are contained in B
+template <typename TypeListA, typename TypeListB>
+struct IsASubsetOf_t
+{
+    static bool const V = TypeListB::template Contains_t<typename TypeListA::HeadType>::V && IsASubsetOf_t<typename TypeListA::BodyTypeList,TypeListB>::V;
+};
+
+template <typename TypeListAHead, typename TypeListB>
+struct IsASubsetOf_t<TypeList_t<TypeListAHead>,TypeListB>
+{
+    static bool const V = TypeListB::template Contains_t<TypeListAHead>::V;
+};
+
+template <typename TypeListB>
+struct IsASubsetOf_t<EmptyTypeList,TypeListB>
+{
+    static bool const V = true;
+};
+
+
+
+
+// determines if the type lists contain the same types (set equality, ignoring repeated elements)
+template <typename TypeListA, typename TypeListB>
+struct AreEqualAsSets_t
+{
+    static bool const V = IsASubsetOf_t<TypeListA,TypeListB>::V && IsASubsetOf_t<TypeListB,TypeListA>::V;
+};
+
 #endif // TYPELIST_UTILITY_HPP_
