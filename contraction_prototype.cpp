@@ -6,6 +6,8 @@
 #include "typelist.hpp"
 #include "typelist_utility.hpp"
 
+#define FORMAT_VALUE(expr) #expr << " = " << (expr)
+
 typedef Lvd::Uint32 Uint32;
 
 // for use when you want to return a const reference to a zero
@@ -238,6 +240,58 @@ private:
     RightOperand const &m_right_operand;
 };
 
+template <typename LeftOperand, typename RightOperand, typename FreeIndexTypeList, typename SummedIndexTypeList>
+struct Summation_t
+{
+    enum { _ = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v>::v &&
+               Lvd::Meta::Assert<(SummedIndexTypeList::LENGTH > 0)>::v };
+
+    typedef typename LeftOperand::Scalar Scalar;
+
+    static Scalar eval (LeftOperand const &left_operand, RightOperand const &right_operand, CompoundIndex_t<FreeIndexTypeList> const &i)
+    {
+        typedef typename ConcatenationOfTypeLists_t<FreeIndexTypeList,SummedIndexTypeList>::T TotalIndexTypeList;
+        typedef CompoundIndex_t<TotalIndexTypeList> TotalIndex;
+        typedef CompoundIndex_t<SummedIndexTypeList> SummedIndex;
+
+        // the operands take indices that are a subset of the summed indices and free indices.
+
+        // constructing t with i initializes the first elements which correpond to
+        // Index with the value of i, and initializes the remaining elements to zero.
+        TotalIndex t(i);
+        Scalar retval(0);
+        // get the map which produces the CompoundIndex for each operand from the TotalIndex t
+        typedef CompoundIndexMap_t<TotalIndexTypeList,typename LeftOperand::FreeIndexTypeList> LeftOperandIndexMap;
+        typedef CompoundIndexMap_t<TotalIndexTypeList,typename RightOperand::FreeIndexTypeList> RightOperandIndexMap;
+        typename LeftOperandIndexMap::EvalMapType left_operand_index_map = LeftOperandIndexMap::eval;
+        typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
+        // t = (f,s), which is a concatenation of the free access indices and the summed access indices.
+        // s is a reference to the second part, which is what is iterated over in the summation.
+        for (SummedIndex &s = t.template trailing_list<FreeIndexTypeList::LENGTH>(); s.is_not_at_end(); ++s)
+            retval += left_operand[left_operand_index_map(t)] * right_operand[right_operand_index_map(t)];
+        return retval;
+    }
+};
+
+// template specialization handles summation over no indices
+template <typename LeftOperand, typename RightOperand, typename FreeIndexTypeList>
+struct Summation_t<LeftOperand,RightOperand,FreeIndexTypeList,EmptyTypeList>
+{
+    enum { _ = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v>::v };
+
+    typedef typename LeftOperand::Scalar Scalar;
+
+    static Scalar eval (LeftOperand const &left_operand, RightOperand const &right_operand, CompoundIndex_t<FreeIndexTypeList> const &i)
+    {
+        // get the map which produces the CompoundIndex for each operand from the free indices i
+        typedef CompoundIndexMap_t<FreeIndexTypeList,typename LeftOperand::FreeIndexTypeList> LeftOperandIndexMap;
+        typedef CompoundIndexMap_t<FreeIndexTypeList,typename RightOperand::FreeIndexTypeList> RightOperandIndexMap;
+        typename LeftOperandIndexMap::EvalMapType left_operand_index_map = LeftOperandIndexMap::eval;
+        typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
+        return left_operand[left_operand_index_map(i)] * right_operand[right_operand_index_map(i)];
+    }
+};
+
 // TODO: there is an issue to think about: while it is totally valid to do
 // u(i)*v(j)*w(j) (this is an outer product contracted with a vector), the
 // expression v(j)*w(j) can be computed first and factored out of the whole
@@ -274,28 +328,29 @@ struct ExpressionTemplate_Multiplication_t
 
     Scalar operator [] (Index const &i) const
     {
-        typedef typename ConcatenationOfTypeLists_t<FreeIndexTypeList,SummedIndexTypeList>::T TotalIndexTypeList;
-        typedef CompoundIndex_t<TotalIndexTypeList> TotalIndex;
-        typedef CompoundIndex_t<SummedIndexTypeList> SummedIndex;
-
-        // TODO: iterate over the indices that are summed at this level
-
-        // the operands take indices that are a subset of the summed indices and access index.
-
-        // constructing t with i initializes the first elements which correpond to
-        // Index with the value of i, and initializes the remaining elements to zero.
-        TotalIndex t(i);
-        Scalar retval(0);
-        // get the map which produces the CompoundIndex for each operand from the TotalIndex t
-        typedef CompoundIndexMap_t<TotalIndexTypeList,typename LeftOperand::FreeIndexTypeList> LeftOperandIndexMap;
-        typedef CompoundIndexMap_t<TotalIndexTypeList,typename RightOperand::FreeIndexTypeList> RightOperandIndexMap;
-        typename LeftOperandIndexMap::EvalMapType left_operand_index_map = LeftOperandIndexMap::eval;
-        typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
-        // t = (f,s), which is a concatenation of the free access indices and the summed access indices.
-        // s is a reference to the second part, which is what is iterated over in the summation.
-        for (SummedIndex &s = t.template trailing_list<FreeIndexTypeList::LENGTH>(); s.is_not_at_end(); ++s)
-            retval += m_left_operand[left_operand_index_map(t)] * m_right_operand[right_operand_index_map(t)];
-        return retval;
+        return Summation_t<LeftOperand,RightOperand,FreeIndexTypeList,SummedIndexTypeList>::eval(m_left_operand, m_right_operand, i);
+//         typedef typename ConcatenationOfTypeLists_t<FreeIndexTypeList,SummedIndexTypeList>::T TotalIndexTypeList;
+//         typedef CompoundIndex_t<TotalIndexTypeList> TotalIndex;
+//         typedef CompoundIndex_t<SummedIndexTypeList> SummedIndex;
+//
+//         // TODO: iterate over the indices that are summed at this level
+//
+//         // the operands take indices that are a subset of the summed indices and access index.
+//
+//         // constructing t with i initializes the first elements which correpond to
+//         // Index with the value of i, and initializes the remaining elements to zero.
+//         TotalIndex t(i);
+//         Scalar retval(0);
+//         // get the map which produces the CompoundIndex for each operand from the TotalIndex t
+//         typedef CompoundIndexMap_t<TotalIndexTypeList,typename LeftOperand::FreeIndexTypeList> LeftOperandIndexMap;
+//         typedef CompoundIndexMap_t<TotalIndexTypeList,typename RightOperand::FreeIndexTypeList> RightOperandIndexMap;
+//         typename LeftOperandIndexMap::EvalMapType left_operand_index_map = LeftOperandIndexMap::eval;
+//         typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
+//         // t = (f,s), which is a concatenation of the free access indices and the summed access indices.
+//         // s is a reference to the second part, which is what is iterated over in the summation.
+//         for (SummedIndex &s = t.template trailing_list<FreeIndexTypeList::LENGTH>(); s.is_not_at_end(); ++s)
+//             retval += m_left_operand[left_operand_index_map(t)] * m_right_operand[right_operand_index_map(t)];
+//         return retval;
     }
 
 private:
@@ -311,9 +366,8 @@ struct Vector_t
     static Uint32 const DIM = DIM_;
     static Uint32 const FACTOR_COUNT = 1; // vector quantities are used as 1-tensors.
 
-    // for use in operator [] for actual evaluation of tensor components (should have SYMBOL_ = '\0')
-    // also for use in operator () for creating expression templates (should have SYMBOL_ != '\0')
-    struct Index // TODO: change back to Index
+    // for use in operator [] for actual evaluation of tensor components
+    struct Index
     {
         static Uint32 const DIM = Vector_t::DIM;
 
@@ -333,6 +387,7 @@ struct Vector_t
         Uint32 m;
     };
 
+    // for use in operator () for creation of expression templates (indexed tensor expressions)
     template <char SYMBOL>
     struct Index_t : public Index
     {
@@ -411,6 +466,18 @@ std::ostream &operator << (std::ostream &out, Vector_t<Scalar,DIM> const &v)
     for ( ; i.is_not_at_end(); ++i)
         out << ", " << v[i];
     return out << ')';
+}
+
+template <typename Scalar, Uint32 DIM>
+std::ostream &operator << (std::ostream &out, typename Vector_t<Scalar,DIM>::Index const &i)
+{
+    return out << i.value();
+}
+
+template <typename Scalar, Uint32 DIM, char SYMBOL>
+std::ostream &operator << (std::ostream &out, typename Vector_t<Scalar,DIM>::template Index_t<SYMBOL> const &i)
+{
+    return out << i.value();
 }
 
 // this default implementation should work for any vector space that has an Index type (but not e.g. Simple2Tensor_t).
@@ -754,9 +821,9 @@ int main (int argc, char **argv)
         Float3 v(1,2,3);
         Float4 w(4,5,6,7);
 
-        std::cout << "u = " << u << '\n';
-        std::cout << "v = " << v << '\n';
-        std::cout << "w = " << w << '\n';
+        std::cout << FORMAT_VALUE(u) << '\n';
+        std::cout << FORMAT_VALUE(v) << '\n';
+        std::cout << FORMAT_VALUE(w) << '\n';
 
         typedef Simple2Tensor_t<Float3,Float4> SimpleFloat3x4;
         SimpleFloat3x4 X(v,w);
@@ -859,6 +926,7 @@ int main (int argc, char **argv)
     {
         Float3 u(-0.1, 2.0, 8);
         Float3 v(4.1, 5.2, 6.3);
+        Float3 w(1.2, -2.0, 3.8);
         typedef Float3::Index_t<'i'> I;
         typedef Float3::Index_t<'j'> J;
         I i;
@@ -867,12 +935,15 @@ int main (int argc, char **argv)
             typedef ExpressionTemplate_Evaluation_t<Float3,I> EI;
             typedef ExpressionTemplate_Evaluation_t<Float3,J> EJ;
 
-            std::cout << v(i)[EI::Index(0)] << '\n';
+//             std::cout << i << '\n';
+//             std::cout << Float3::Index(0) << '\n';
+            std::cout << FORMAT_VALUE(v(i)[EI::Index(0)]) << '\n';
 
-            std::cout << v.expr<'j'>()[EJ::Index(1)] << '\n';
+            std::cout << FORMAT_VALUE(v.expr<'j'>()[EJ::Index(1)]) << '\n';
 
             for (Float3::Index k; k.is_not_at_end(); ++k)
                 std::cout << u[k] + v[k] << ", ";
+            std::cout << '\n';
             std::cout << '\n';
         }
 
@@ -881,24 +952,34 @@ int main (int argc, char **argv)
             typedef ExpressionTemplate_Evaluation_t<Float3,I> EE;
             typedef ExpressionTemplate_Addition_t<EE,EE> EA;
             EA e(u(i), v(i));
+            std::cout << "expression template value:\n";
             for (EA::Index k; k.is_not_at_end(); ++k)
                 std::cout << e[k] << ", ";
+            std::cout << '\n';
+            std::cout << "hand-calculated value:\n";
+            for (Uint32 k = 0; k < 3; ++k)
+                std::cout << u[k] + v[k] << ", ";
+            std::cout << '\n';
             std::cout << '\n';
         }
 
         {
-            std::cout << "contraction:\n";
+            std::cout << "inner product:\n";
             typedef ExpressionTemplate_Evaluation_t<Float3,I> EE;
             typedef ExpressionTemplate_Multiplication_t<EE,EE> EM;
             EM e(u(i), v(i));
             Float3::Index k;
-            std::cout << k.DIM << '\n';
-//             std::cout << TypeStringOf_t<EE::Index>::eval() << '\n';
-            std::cout << e[EM::Index()] << '\n';
+            std::cout << FORMAT_VALUE(k.DIM) << '\n';
+            std::cout << FORMAT_VALUE(TypeStringOf_t<EE::Index>::eval()) << '\n';
+            std::cout << "expression template value:\n";
+            std::cout << FORMAT_VALUE(e[EM::Index()]) << '\n';
+            std::cout << "hand-calculated value:\n";
             float dot = 0;
             for (Uint32 k = 0; k < 3; ++k)
                 dot += u[k]*v[k];
             std::cout << dot << '\n';
+            std::cout << '\n';
+            std::cout << '\n';
         }
 
         {
@@ -907,23 +988,47 @@ int main (int argc, char **argv)
             typedef ExpressionTemplate_Evaluation_t<Float3,J> EJ;
             typedef ExpressionTemplate_Multiplication_t<EI,EJ> EM;
             EM e(u(i), v(j));
-            std::cout << TypeStringOf_t<EM::Index>::eval() << '\n';
-            std::cout << TypeStringOf_t<EM::FreeIndexTypeList>::eval() << '\n';
-            std::cout << TypeStringOf_t<EM::SummedIndexTypeList>::eval() << '\n';
-//             EM::Index k;
+            std::cout << FORMAT_VALUE(TypeStringOf_t<EM::Index>::eval()) << '\n';
+            std::cout << FORMAT_VALUE(TypeStringOf_t<EM::FreeIndexTypeList>::eval()) << '\n';
+            std::cout << FORMAT_VALUE(TypeStringOf_t<EM::SummedIndexTypeList>::eval()) << '\n';
+            std::cout << FORMAT_VALUE(u) << '\n';
+            std::cout << FORMAT_VALUE(v) << '\n';
+            std::cout << "expression template value:\n";
             for (EM::Index k; k.is_not_at_end(); ++k)
+                std::cout << e[k] << ", ";
+            std::cout << '\n';
+            std::cout << "hand-calculated value:\n";
+            for (Uint32 ii = 0; ii < 3; ++ii)
+                for (Uint32 jj = 0; jj < 3; ++jj)
+                    std::cout << u[ii] * v[jj] << ", ";
+            std::cout << '\n';
+            std::cout << '\n';
+        }
+
+        {
+            std::cout << "contraction with simple tensor:\n";
+            typedef ExpressionTemplate_Evaluation_t<Float3,I> EI;
+            typedef ExpressionTemplate_Evaluation_t<Float3,J> EJ;
+            typedef ExpressionTemplate_Multiplication_t<EI,EJ> EM;
+            typedef ExpressionTemplate_Multiplication_t<EM,EJ> EMJ;
+            EMJ e(EM(u(i), v(j)), w(j));
+            std::cout << FORMAT_VALUE(TypeStringOf_t<EMJ::Index>::eval()) << '\n';
+            std::cout << FORMAT_VALUE(TypeStringOf_t<EMJ::FreeIndexTypeList>::eval()) << '\n';
+            std::cout << FORMAT_VALUE(TypeStringOf_t<EMJ::SummedIndexTypeList>::eval()) << '\n';
+            std::cout << "expression template value:\n";
+            for (EMJ::Index k; k.is_not_at_end(); ++k)
+                std::cout << e[k] << ", ";
+            std::cout << '\n';
+            std::cout << "hand-calculated value:\n";
+            for (Uint32 ii = 0; ii < 3; ++ii)
             {
-                k.print(std::cout); std::cout << " -> " << e[k] << '\n';
+                float accum = 0;
+                for (Uint32 jj = 0; jj < 3; ++jj)
+                    accum += u[ii] * v[jj] * w[jj];
+                std::cout << accum << ", ";
             }
-//             std::cout << e[k] << '\n';
-//             for (EM::Index k; k.is_not_at_end(); ++k)
-//                 std::cout << e[k] << ", ";
-//             std::cout << TypeStringOf_t<EM::Index>::eval() << '\n';
-//             std::cout << e[EM::Index()] << '\n';
-//             float dot = 0;
-//             for (Uint32 k = 0; k < 3; ++k)
-//                 dot += u[k]*v[k];
-//             std::cout << dot << '\n';
+            std::cout << '\n';
+            std::cout << '\n';
         }
     }
 

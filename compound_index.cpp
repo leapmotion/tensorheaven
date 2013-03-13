@@ -84,8 +84,7 @@ int main (int argc, char **argv)
         CompoundIndex_t<UniqueTypeList> u;
         for (Uint32 i = 0; i < 202; ++i)
             ++u;
-        std::cout << u << '\n';
-//         CompoundIndexMap_t<UniqueTypeList,TargetTypeList>::eval(u);
+        std::cout << u << " -> " << CompoundIndexMap_t<UniqueTypeList,TargetTypeList>::eval(u) << '\n';
     }
 
     return 0;

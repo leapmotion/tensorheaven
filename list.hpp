@@ -79,8 +79,8 @@ struct List_t
     {
         if (print_parens)
             out << '(';
-        out << head() << ", ";
-        body().print(out, false);
+        out << m_head << ", ";
+        m_body.print(out, false);
         if (print_parens)
             out << ')';
     }
@@ -262,7 +262,7 @@ std::ostream &operator << (std::ostream &out, List_t<TypeList> const &l)
 
 
 
-// for use in the el() method in List_t
+// for use in the el() and trailing_list() methods in List_t
 template <typename TypeList, Uint32 INDEX>
 struct ListHelper_t
 {
@@ -276,7 +276,8 @@ struct ListHelper_t
     static TrailingListType &trailing_list (List &list) { return ListHelper_t<typename TypeList::BodyTypeList,INDEX-1>::trailing_list(list.body()); }
 };
 
-template <typename TypeList> struct ListHelper_t<TypeList,0>
+template <typename TypeList>
+struct ListHelper_t<TypeList,0>
 {
     typedef List_t<TypeList> List;
     typedef typename List::HeadType ValueType;

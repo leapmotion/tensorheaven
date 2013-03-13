@@ -11,9 +11,12 @@ struct CompoundIndex_t : List_t<IndexTypeList_>
     typedef List_t<IndexTypeList_> Parent;
     typedef IndexTypeList_ IndexTypeList;
     typedef typename IndexTypeList::HeadType HeadIndexType;
+    typedef typename IndexTypeList::BodyTypeList BodyIndexTypeList;
+    typedef CompoundIndex_t<BodyIndexTypeList> BodyCompoundIndex;
     // TODO: static Uint32 const COMPONENT_COUNT (this must be recursively defined)
 
     CompoundIndex_t () { } // default constructor initializes to "first" component
+    CompoundIndex_t (HeadIndexType const &head, BodyCompoundIndex const &body) : Parent(head, body) { }
 
     CompoundIndex_t (CompoundIndex_t<EmptyTypeList> const &) { } // default construction
     CompoundIndex_t (CompoundIndex_t<TypeList_t<HeadIndexType> > const &leading_compound_index)
