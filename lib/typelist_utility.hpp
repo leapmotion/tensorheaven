@@ -206,4 +206,21 @@ struct AreEqualAsSets_t
     static bool const V = IsASubsetOf_t<TypeListA,TypeListB>::V && IsASubsetOf_t<TypeListB,TypeListA>::V;
 };
 
+
+
+template <typename TypeListA, typename TypeListB>
+struct HasNontrivialIntersectionAsSets_t
+{
+    static bool const V = TypeListB::template Contains_t<typename TypeListA::HeadType>::V || 
+                          HasNontrivialIntersectionAsSets_t<typename TypeListA::BodyTypeList,TypeListB>::V;
+};
+
+template <typename TypeListB>
+struct HasNontrivialIntersectionAsSets_t<EmptyTypeList,TypeListB>
+{
+    static bool const V = false;
+};
+
+
+
 #endif // TYPELIST_UTILITY_HPP_

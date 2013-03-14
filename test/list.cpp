@@ -2,6 +2,7 @@
 #include <string>
 
 #include "list.hpp"
+#include "typelist_utility.hpp"
 #include "typetuple.hpp"
 
 int main (int argc, char **argv)
@@ -9,6 +10,11 @@ int main (int argc, char **argv)
     typedef TypeTuple_t<int,char>::T X;
     typedef TypeTuple_t<int,char,float>::T Y;
     typedef TypeTuple_t<List_t<X>,List_t<Y> >::T Z;
+
+    std::cout << HasNontrivialIntersectionAsSets_t<X,Y>::V << '\n';
+    std::cout << HasNontrivialIntersectionAsSets_t<Z,Y>::V << '\n';
+    std::cout << HasNontrivialIntersectionAsSets_t<EmptyTypeList,Y>::V << '\n';
+    std::cout << HasNontrivialIntersectionAsSets_t<EmptyTypeList,EmptyTypeList>::V << '\n';
 
     typedef List_t<X> LX;
     typedef List_t<Y> LY;

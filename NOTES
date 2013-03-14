@@ -9,7 +9,10 @@ NOTES -- this is an informal/temporary TODO file
 goals for today:
 - interop with some basic Eigen stuff (calling SVD, etc on 2-tensors)
   * API for calling external methods on the arrays stored by vectors and 2-tensors (use eigen's "Map" class/function)
+  * have a set of wrapper functions for common Eigen operations (e.g. SVD, LDLT, etc) which hide Eigen
+    within the strongly typed formalism.
   * some sort of abstraction layer for using Eigen methods on our tensor classes.  self-contained and NOT intertwined in the tensor lib
+  * could use templatized conversion method which converts to generic type
 x operator overloads for expression templates
 - symmetric and antisymmetric 2 tensors (full contraction here requires a custom natural pairing -- make this a
   parameter of the multiplication expression template -- NOTE: it should also depend on the basis, and in the situation where
@@ -17,12 +20,15 @@ x operator overloads for expression templates
 - down-casting (to more-specific types) (up-casting (to less-specific types) already happens through expression templates)
 - strong typing for vectors -- named vector spaces (including "Generic") and prime/dual distinction (including self-dual)
   * default values should be "Generic" vector space ID and self-dual
+  * canonical isomorphism for tensor2 -> vector will need to take into account basis
 - trace-type expression templates (where a tensor is contracted with itself, a case which is distinct from * style expression templates)
+- prohibiting 3+ summed index expressions
 - assignment expression templates (which check for aliasing)
 
 
 
 future goals:
+- column/row/block extraction/addressing
 - standard in-line linear algebra notation
   * for example, if A is a matrix and v is a vector, "A*v" should be equivalent to "A(i,j)*v(j)", but obviously
     without the need to used an indexed expression.
@@ -31,6 +37,8 @@ future goals:
 - template specializations for particular tensor contractions for speed (using mathematical special cases)
   * for example, an antisymmetric 3x3 2-tensor contracted with a 3-vector is just a cross product
   * a diagonal 2-tensor contracted with a vector is just component-wise scaling
+- in strongly typed vector template identifier types, require certain tags (e.g. static member constants)
+  in the template parameters -- vector space identifier, vector space basis, etc.
 
 features:
 - vectors and non-symmetric 2-tensors

@@ -16,6 +16,7 @@ struct ExpressionTemplate_IndexAsVector_t
 
     typedef TypeList_t<IndexType> FreeIndexTypeList;
     typedef EmptyTypeList SummedIndexTypeList;
+    typedef EmptyTypeList UsedIndexTypeList;
     typedef CompoundIndex_t<FreeIndexTypeList> Index;
 
     static bool const IS_EXPRESSION_TEMPLATE = true;
@@ -39,6 +40,7 @@ struct ExpressionTemplate_IndexAsTensor2_t
 
     typedef TypeList_t<F1IndexType, TypeList_t<F2IndexType> > FreeIndexTypeList;
     typedef EmptyTypeList SummedIndexTypeList;
+    typedef EmptyTypeList UsedIndexTypeList;
     typedef CompoundIndex_t<FreeIndexTypeList> Index;
 
     static bool const IS_EXPRESSION_TEMPLATE = true;
@@ -78,6 +80,7 @@ struct ExpressionTemplate_Addition_t
     typedef typename LeftOperand::Scalar Scalar;
     typedef typename LeftOperand::FreeIndexTypeList FreeIndexTypeList;
     typedef EmptyTypeList SummedIndexTypeList; // TEMP: see above comment about "private" indices
+    typedef EmptyTypeList UsedIndexTypeList;
     typedef typename LeftOperand::Index Index;
 
     static bool const IS_EXPRESSION_TEMPLATE = true;
@@ -181,15 +184,6 @@ struct Summation_t<LeftOperand,RightOperand,FreeIndexTypeList,EmptyTypeList>
 template <typename LeftOperand, typename RightOperand>
 struct ExpressionTemplate_Multiplication_t
 {
-    // TODO: check that the summed indices from each operand have no indices in common
-    // though technically this is unnecessary, because the summed indices are "private"
-    // to each contraction, so this is really for the human's benefit, not getting
-    // confused by multiple repeated indices that have nothing to do with each other.
-    enum { _ = Lvd::Meta::Assert<LeftOperand::IS_EXPRESSION_TEMPLATE>::v &&
-               Lvd::Meta::Assert<RightOperand::IS_EXPRESSION_TEMPLATE>::v &&
-               Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v>::v };
-    // TODO: ensure there are no indices that occur 3+ times (?)
-
     typedef typename LeftOperand::Scalar Scalar;
     // the free indices are the single-occurrence indices of the concatenated
     // list of free indices from the left and right operands
@@ -199,8 +193,27 @@ struct ExpressionTemplate_Multiplication_t
     // the summed indices (at this level) are the double-occurrences indices
     // of the concatenated list of free indices from the left and right operands
     typedef typename ElementsHavingMultiplicity_t<CombinedFreeIndexTypeList,2>::T SummedIndexTypeList;
+    // typelist of used indices which are prohibited from using higher up in the AST
+    typedef typename UniqueTypesIn_t<
+        typename ConcatenationOfTypeLists_t<
+            typename ConcatenationOfTypeLists_t<typename LeftOperand::UsedIndexTypeList,
+                                                typename RightOperand::UsedIndexTypeList>::T,
+            SummedIndexTypeList>::T>::T UsedIndexTypeList;
     // Index is a list (TODO: change to tuple) of type FreeIndices
     typedef CompoundIndex_t<FreeIndexTypeList> Index;
+
+    // TODO: check that the summed indices from each operand have no indices in common
+    // though technically this is unnecessary, because the summed indices are "private"
+    // to each contraction, so this is really for the human's benefit, not getting
+    // confused by multiple repeated indices that have nothing to do with each other.
+    enum
+    {
+        LEFT_OPERAND_IS_EXPRESSION_TEMPLATE  = Lvd::Meta::Assert<LeftOperand::IS_EXPRESSION_TEMPLATE>::v,
+        RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE = Lvd::Meta::Assert<RightOperand::IS_EXPRESSION_TEMPLATE>::v,
+        OPERAND_SCALAR_TYPES_ARE_EQUAL       = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v>::v,
+        FREE_INDICES_DONT_COLLIDE_WITH_USED  = Lvd::Meta::Assert<(!HasNontrivialIntersectionAsSets_t<FreeIndexTypeList,UsedIndexTypeList>::V)>::v
+    };
+    // TODO: ensure there are no indices that occur 3+ times (?)
 
     static bool const IS_EXPRESSION_TEMPLATE = true;
 

@@ -23,13 +23,19 @@ struct Tensor2_t : Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM>
     Tensor2_t (WithoutInitialization const &w) : Parent(w) { }
     Tensor2_t (Scalar fill) : Parent(fill) { }
 
-    // type conversion operator for canonical coersion to the F1 factor type when the
-    // tensor is a tensor product of F1 with a 1-dimensional vector space.
-    operator F1 const & () const
+    // type conversion operator for canonical coersion to the F1 or F2 factor type when the
+    // tensor is F1 \otimes OneDimVectorSpace  or  OneDimVectorSpace \otimes F2.
+    template <typename Factor>
+    operator Factor const & () const
     {
-        Lvd::Meta::Assert<(F2::DIM == 1)>();
-        return *reinterpret_cast<F1 const *>(&Parent::m[0]); // super C-like, but should be no problem because there is no virtual inheritance
+        Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<Factor,F1>::v || Lvd::Meta::TypesAreEqual<Factor,F2>::v>();
+        return *reinterpret_cast<Factor const *>(&Parent::m[0]);
     }
+//     operator F1 const & () const
+//     {
+//         Lvd::Meta::Assert<(F2::DIM == 1)>();
+//         return *reinterpret_cast<F1 const *>(&Parent::m[0]); // super C-like, but should be no problem because there is no virtual inheritance
+//     }
     // this could be implemented as "operator F1 & ()" but it would be bad to make implicit casts that can be used to change the value of this.
     F1 &as_factor1 ()
     {
@@ -38,11 +44,11 @@ struct Tensor2_t : Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM>
     }
     // type conversion operator for canonical coersion to the F2 factor type when the
     // tensor is a tensor product of a 1-dimensional vector space with F2.
-    operator F2 const & () const
-    {
-        Lvd::Meta::Assert<(F1::DIM == 1)>();
-        return *reinterpret_cast<F2 const *>(&Parent::m[0]); // super C-like, but should be no problem because there is no virtual inheritance
-    }
+//     operator F2 const & () const
+//     {
+//         Lvd::Meta::Assert<(F1::DIM == 1)>();
+//         return *reinterpret_cast<F2 const *>(&Parent::m[0]); // super C-like, but should be no problem because there is no virtual inheritance
+//     }
     // this could be implemented as "operator F2 & ()" but it would be bad to make implicit casts that can be used to change the value of this.
     F2 &as_factor2 ()
     {

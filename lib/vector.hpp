@@ -19,7 +19,7 @@ struct Vector_t
         static Uint32 const COMPONENT_COUNT = Vector_t::DIM;
 
         Index () : m(0) { }
-        Index (Uint32 i) : m(i) { }
+        Index (Uint32 i) : m(i) { } // TODO: think about explicit
 
         bool is_at_end () const { return m >= COMPONENT_COUNT; }
         bool is_not_at_end () const { return m < COMPONENT_COUNT; }

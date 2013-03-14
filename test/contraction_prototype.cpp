@@ -535,6 +535,9 @@ int main (int argc, char **argv)
         bor(b);
         b.as_factor2() = Float4(42);
         std::cout << "assignment via float coersion (b should equal [42  42  42  42]): " << FORMAT_VALUE(b) << "\n\n";
+        
+        // uncommenting the following should produce a compile error (no type conversion to Float3)
+        //Float3 x(b);
     }
 
     // testing various tensor access and operations
@@ -762,6 +765,11 @@ int main (int argc, char **argv)
                 std::cout << e2[k] << ", ";
             std::cout << '\n';
             std::cout << '\n';
+            // uncommenting this should produce a compile error
+            //u(i) * v(i) * w(i); 
+            
+            // same thing here
+            //u(i)*v(i) + w(i);
         }
 
         {
@@ -936,7 +944,7 @@ int main (int argc, char **argv)
                     float accum = 0;
                     for (Uint32 c = 0; c < 4; ++c)
                         for (Uint32 d = 0; d < 5; ++d)
-                        accum += u[Float3x4::DeprecatedIndex(a,c)] * v[Float4x5::DeprecatedIndex(c,d)] * w[Float5x2::DeprecatedIndex(d,b)];
+                            accum += u[Float3x4::DeprecatedIndex(a,c)] * v[Float4x5::DeprecatedIndex(c,d)] * w[Float5x2::DeprecatedIndex(d,b)];
                     std::cout << accum << ", ";
                 }
             }
