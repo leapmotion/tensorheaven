@@ -2,11 +2,12 @@ goals for today:
 - interop with some basic Eigen stuff (calling SVD, etc on 2-tensors)
   * API for calling external methods on the arrays stored by vectors and 2-tensors (use eigen's "Map" class/function)
   * some sort of abstraction layer for using Eigen methods on our tensor classes.  self-contained and NOT intertwined in the tensor lib
-- operator overloads for expression templates
+x operator overloads for expression templates
 - symmetric and antisymmetric 2 tensors (full contraction here requires a custom natural pairing -- make this a
   parameter of the multiplication expression template -- NOTE: it should also depend on the basis, and in the situation where
   the natural pairing is "perfect", it will be the "standard inner product" on the components)
 - down-casting (to more-specific types) (up-casting (to less-specific types) already happens through expression templates)
 - strong typing for vectors -- named vector spaces (including "Generic") and prime/dual distinction (including self-dual)
   * default values should be "Generic" vector space ID and self-dual
+- assignment expression templates (which check for aliasing)
 
