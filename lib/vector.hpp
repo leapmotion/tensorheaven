@@ -59,7 +59,8 @@ struct Vector_t
     // operator () will be used to create expression templates
     // for the purposes of indexed contractions.
     // TODO: make Index type encode the guarantee that it's value will always be valid
-    Scalar operator [] (Index const &i) const
+    // TODO: make range-unchecked version that doesn't check/throw, when it's provable that the index is valid
+    Scalar const &operator [] (Index const &i) const
     {
         if (i.is_at_end())
             throw std::invalid_argument("index out of range");
@@ -82,17 +83,28 @@ struct Vector_t
     // IndexType_t<'j'> j;
     // u(i)*v(j)
     template <char SYMBOL>
-    ExpressionTemplate_IndexAsVector_t<Vector_t,Index_t<SYMBOL> > operator () (Index_t<SYMBOL> const &) const
+    ExpressionTemplate_IndexedTensor_t<Vector_t,TypeList_t<Index_t<SYMBOL> > > operator () (Index_t<SYMBOL> const &) const
+    {
+        return expr<SYMBOL>();
+    }
+    template <char SYMBOL>
+    ExpressionTemplate_AssignableIndexedTensor_t<Vector_t,TypeList_t<Index_t<SYMBOL> > > operator () (Index_t<SYMBOL> const &)
     {
         return expr<SYMBOL>();
     }
     // the corresponding outer product example here would be
     // u.expr<'i'>() * v.expr<'j'>()
     template <char SYMBOL>
-    ExpressionTemplate_IndexAsVector_t<Vector_t,Index_t<SYMBOL> > expr () const
+    ExpressionTemplate_IndexedTensor_t<Vector_t,TypeList_t<Index_t<SYMBOL> > > expr () const
     {
         Lvd::Meta::Assert<(SYMBOL != '\0')>();
-        return ExpressionTemplate_IndexAsVector_t<Vector_t,Index_t<SYMBOL> >(*this);
+        return ExpressionTemplate_IndexedTensor_t<Vector_t,TypeList_t<Index_t<SYMBOL> > >(*this);
+    }
+    template <char SYMBOL>
+    ExpressionTemplate_AssignableIndexedTensor_t<Vector_t,TypeList_t<Index_t<SYMBOL> > > expr ()
+    {
+        Lvd::Meta::Assert<(SYMBOL != '\0')>();
+        return ExpressionTemplate_AssignableIndexedTensor_t<Vector_t,TypeList_t<Index_t<SYMBOL> > >(*this);
     }
 
     static std::string type_as_string () { return "Vector_t<" + TypeStringOf_t<Scalar>::eval() + ',' + AS_STRING(DIM) + '>'; }

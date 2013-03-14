@@ -25,17 +25,22 @@ struct Tensor2_t : Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM>
 
     // type conversion operator for canonical coersion to the F1 or F2 factor type when the
     // tensor is F1 \otimes OneDimVectorSpace  or  OneDimVectorSpace \otimes F2.
-    template <typename Factor>
-    operator Factor const & () const
-    {
-        Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<Factor,F1>::v || Lvd::Meta::TypesAreEqual<Factor,F2>::v>();
-        return *reinterpret_cast<Factor const *>(&Parent::m[0]);
-    }
+//     template <typename Factor>
+//     operator Factor const & () const
+//     {
+//         Lvd::Meta::Assert<(Lvd::Meta::TypesAreEqual<Factor,F1>::v && F2::DIM == 1) || (Lvd::Meta::TypesAreEqual<Factor,F2>::v && F1::DIM == 1)>();
+//         return *reinterpret_cast<Factor const *>(&Parent::m[0]);
+//     }
 //     operator F1 const & () const
 //     {
 //         Lvd::Meta::Assert<(F2::DIM == 1)>();
 //         return *reinterpret_cast<F1 const *>(&Parent::m[0]); // super C-like, but should be no problem because there is no virtual inheritance
 //     }
+    F1 const &as_factor1 () const
+    {
+        Lvd::Meta::Assert<(F2::DIM == 1)>();
+        return *reinterpret_cast<F1 *>(&Parent::m[0]); // super C-like, but should be no problem because there is no virtual inheritance
+    }
     // this could be implemented as "operator F1 & ()" but it would be bad to make implicit casts that can be used to change the value of this.
     F1 &as_factor1 ()
     {
@@ -49,6 +54,11 @@ struct Tensor2_t : Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM>
 //         Lvd::Meta::Assert<(F1::DIM == 1)>();
 //         return *reinterpret_cast<F2 const *>(&Parent::m[0]); // super C-like, but should be no problem because there is no virtual inheritance
 //     }
+    F2 const &as_factor2 () const
+    {
+        Lvd::Meta::Assert<(F1::DIM == 1)>();
+        return *reinterpret_cast<F2 *>(&Parent::m[0]); // super C-like, but should be no problem because there is no virtual inheritance
+    }
     // this could be implemented as "operator F2 & ()" but it would be bad to make implicit casts that can be used to change the value of this.
     F2 &as_factor2 ()
     {
@@ -72,42 +82,78 @@ struct Tensor2_t : Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM>
     // IndexType_t<'i'> i;
     // IndexType_t<'j'> j;
     // u(i)*v(j)
+    // this override of the Parent's operator() is necessary so that the expression template
+    // knows that the operand is actually a Tensor2_t.
     template <char SYMBOL>
-    ExpressionTemplate_IndexAsVector_t<Tensor2_t,typename Parent::template Index_t<SYMBOL> > operator () (
+    ExpressionTemplate_IndexedTensor_t<Tensor2_t,TypeList_t<typename Parent::template Index_t<SYMBOL> > > operator () (
         typename Parent::template Index_t<SYMBOL> const &) const
+    {
+        return expr<SYMBOL>();
+    }
+    template <char SYMBOL>
+    ExpressionTemplate_AssignableIndexedTensor_t<Tensor2_t,TypeList_t<typename Parent::template Index_t<SYMBOL> > > operator () (
+        typename Parent::template Index_t<SYMBOL> const &)
     {
         return expr<SYMBOL>();
     }
     // the corresponding outer product example here would be
     // u.expr<'i'>() * v.expr<'j'>()
+    // this override of the Parent's operator() is necessary so that the expression template
+    // knows that the operand is actually a Tensor2_t.
     template <char SYMBOL>
-    ExpressionTemplate_IndexAsVector_t<Tensor2_t,typename Parent::template Index_t<SYMBOL> > expr () const
+    ExpressionTemplate_IndexedTensor_t<Tensor2_t,TypeList_t<typename Parent::template Index_t<SYMBOL> > > expr () const
     {
         Lvd::Meta::Assert<(SYMBOL != '\0')>();
-        return ExpressionTemplate_IndexAsVector_t<Tensor2_t,typename Parent::template Index_t<SYMBOL> >(*this);
+        return ExpressionTemplate_IndexedTensor_t<Tensor2_t,TypeList_t<typename Parent::template Index_t<SYMBOL> > >(*this);
+    }
+    template <char SYMBOL>
+    ExpressionTemplate_AssignableIndexedTensor_t<Tensor2_t,TypeList_t<typename Parent::template Index_t<SYMBOL> > > expr ()
+    {
+        Lvd::Meta::Assert<(SYMBOL != '\0')>();
+        return ExpressionTemplate_AssignableIndexedTensor_t<Tensor2_t,TypeList_t<typename Parent::template Index_t<SYMBOL> > >(*this);
     }
 
     // a 2-tensor can be indexed by the pair of factor indices (F1::Index, F2::Index)
     template <char F1_SYMBOL, char F2_SYMBOL>
-    ExpressionTemplate_IndexAsTensor2_t<Tensor2_t,
-                                        typename F1::template Index_t<F1_SYMBOL>,
-                                        typename F2::template Index_t<F2_SYMBOL> > operator () (
+    ExpressionTemplate_IndexedTensor_t<Tensor2_t,
+                                       TypeList_t<typename F1::template Index_t<F1_SYMBOL>,
+                                       TypeList_t<typename F2::template Index_t<F2_SYMBOL> > > > operator () (
         typename F1::template Index_t<F1_SYMBOL> const &,
         typename F2::template Index_t<F2_SYMBOL> const &) const
     {
         return expr<F1_SYMBOL,F2_SYMBOL>();
     }
+    template <char F1_SYMBOL, char F2_SYMBOL>
+    ExpressionTemplate_AssignableIndexedTensor_t<Tensor2_t,
+                                                 TypeList_t<typename F1::template Index_t<F1_SYMBOL>,
+                                                 TypeList_t<typename F2::template Index_t<F2_SYMBOL> > > > operator () (
+        typename F1::template Index_t<F1_SYMBOL> const &,
+        typename F2::template Index_t<F2_SYMBOL> const &)
+    {
+        return expr<F1_SYMBOL,F2_SYMBOL>();
+    }
     // the 2-index analog of expr<SYMBOL>()
     template <char F1_SYMBOL, char F2_SYMBOL>
-    ExpressionTemplate_IndexAsTensor2_t<Tensor2_t,
-                                        typename F1::template Index_t<F1_SYMBOL>,
-                                        typename F2::template Index_t<F2_SYMBOL> > expr () const
+    ExpressionTemplate_IndexedTensor_t<Tensor2_t,
+                                       TypeList_t<typename F1::template Index_t<F1_SYMBOL>,
+                                       TypeList_t<typename F2::template Index_t<F2_SYMBOL> > > > expr () const
     {
         Lvd::Meta::Assert<(F1_SYMBOL != '\0')>();
         Lvd::Meta::Assert<(F2_SYMBOL != '\0')>();
-        return ExpressionTemplate_IndexAsTensor2_t<Tensor2_t,
-                                                   typename F1::template Index_t<F1_SYMBOL>,
-                                                   typename F2::template Index_t<F2_SYMBOL> >(*this);
+        return ExpressionTemplate_IndexedTensor_t<Tensor2_t,
+                                                  TypeList_t<typename F1::template Index_t<F1_SYMBOL>,
+                                                  TypeList_t<typename F2::template Index_t<F2_SYMBOL> > > >(*this);
+    }
+    template <char F1_SYMBOL, char F2_SYMBOL>
+    ExpressionTemplate_AssignableIndexedTensor_t<Tensor2_t,
+                                                 TypeList_t<typename F1::template Index_t<F1_SYMBOL>,
+                                                 TypeList_t<typename F2::template Index_t<F2_SYMBOL> > > > expr ()
+    {
+        Lvd::Meta::Assert<(F1_SYMBOL != '\0')>();
+        Lvd::Meta::Assert<(F2_SYMBOL != '\0')>();
+        return ExpressionTemplate_AssignableIndexedTensor_t<Tensor2_t,
+                                                            TypeList_t<typename F1::template Index_t<F1_SYMBOL>,
+                                                            TypeList_t<typename F2::template Index_t<F2_SYMBOL> > > >(*this);
     }
 };
 

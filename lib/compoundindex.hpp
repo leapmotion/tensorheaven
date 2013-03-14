@@ -18,6 +18,25 @@ struct CompoundIndex_t : List_t<IndexTypeList_>
 
     CompoundIndex_t () { } // default constructor initializes to "first" component
     CompoundIndex_t (HeadIndexType const &head, BodyCompoundIndex const &body) : Parent(head, body) { }
+    // tuple-like initializers
+    CompoundIndex_t (Uint32 i0, Uint32 i1)
+        :
+        Parent(HeadIndexType(i0), BodyCompoundIndex(i1))
+    {
+        Lvd::Meta::Assert<Parent::LENGTH == 2>();
+    }
+    CompoundIndex_t (Uint32 i0, Uint32 i1, Uint32 i2)
+        :
+        Parent(HeadIndexType(i0), BodyCompoundIndex(i1, i2))
+    {
+        Lvd::Meta::Assert<Parent::LENGTH == 3>();
+    }
+    CompoundIndex_t (Uint32 i0, Uint32 i1, Uint32 i2, Uint32 i3)
+        :
+        Parent(HeadIndexType(i0), BodyCompoundIndex(i1, i2, i3))
+    {
+        Lvd::Meta::Assert<Parent::LENGTH == 4>();
+    }
 
     CompoundIndex_t (CompoundIndex_t<EmptyTypeList> const &) { } // default construction
     CompoundIndex_t (CompoundIndex_t<TypeList_t<HeadIndexType> > const &leading_compound_index)
@@ -33,10 +52,11 @@ struct CompoundIndex_t : List_t<IndexTypeList_>
 
     bool is_at_end () const { return this->head().is_at_end(); } // because the head is the last one incremented
     bool is_not_at_end () const { return this->head().is_not_at_end(); } // because the head is the last one incremented
-    Uint32 value () const { return BodyCompoundIndex::COMPONENT_COUNT*this->head().value() + this->body().value(); } 
+    Uint32 value () const { return BodyCompoundIndex::COMPONENT_COUNT*this->head().value() + this->body().value(); }
+    // TODO: think about adding a redundant single index that just increments and can be returned directly in value()
     void operator ++ ()
     {
-        BodyList &b = body();
+        BodyCompoundIndex &b = body();
         ++b; // increment the body index
         if (b.is_at_end()) // if it hit the end, reset it and increment the head
         {
@@ -49,14 +69,13 @@ struct CompoundIndex_t : List_t<IndexTypeList_>
     // slighty hacky way to use List_t's existing functionality -- NOTE: this only
     // works because CompoundIndex_t<IndexTypeList> inherits non-virtually from
     // List_t<IndexTypeList> and has no members.
-    typedef CompoundIndex_t<typename IndexTypeList::BodyTypeList> BodyList;
-    BodyList &body ()
+    BodyCompoundIndex &body ()
     {
-        return *static_cast<BodyList *>(&Parent::body());
+        return *static_cast<BodyCompoundIndex *>(&Parent::body());
     }
-    BodyList const &body () const
+    BodyCompoundIndex const &body () const
     {
-        return *static_cast<BodyList const *>(&Parent::body());
+        return *static_cast<BodyCompoundIndex const *>(&Parent::body());
     }
 
     // slighty hacky way to use List_t's existing functionality -- NOTE: this only
@@ -93,6 +112,7 @@ struct CompoundIndex_t<TypeList_t<HeadIndexType> > : public List_t<TypeList_t<He
     static Uint32 const COMPONENT_COUNT = HeadIndexType::COMPONENT_COUNT;
 
     CompoundIndex_t () { } // default constructor initializes to "first" component
+    /*explicit*/ CompoundIndex_t (Uint32 i) : Parent(HeadIndexType(i)) { }
     CompoundIndex_t (HeadIndexType const &head) : Parent(head) { }
 
     CompoundIndex_t (CompoundIndex_t<EmptyTypeList> const &) { } // default construction

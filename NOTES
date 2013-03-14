@@ -22,8 +22,9 @@ x operator overloads for expression templates
   * default values should be "Generic" vector space ID and self-dual
   * canonical isomorphism for tensor2 -> vector will need to take into account basis
 - trace-type expression templates (where a tensor is contracted with itself, a case which is distinct from * style expression templates)
-- prohibiting 3+ summed index expressions
-- assignment expression templates (which check for aliasing)
+x prohibiting 3+ summed index expressions
+x assignment expression templates
+- check assignment for aliasing
 
 
 

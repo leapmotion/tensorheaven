@@ -211,7 +211,7 @@ struct AreEqualAsSets_t
 template <typename TypeListA, typename TypeListB>
 struct HasNontrivialIntersectionAsSets_t
 {
-    static bool const V = TypeListB::template Contains_t<typename TypeListA::HeadType>::V || 
+    static bool const V = TypeListB::template Contains_t<typename TypeListA::HeadType>::V ||
                           HasNontrivialIntersectionAsSets_t<typename TypeListA::BodyTypeList,TypeListB>::V;
 };
 

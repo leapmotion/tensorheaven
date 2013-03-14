@@ -9,52 +9,81 @@
 // expression-template-generation (making ETs from vectors/tensors)
 // ////////////////////////////////////////////////////////////////////////////
 
-template <typename Operand, typename IndexType> // TODO: change IndexType to IndexTypeList, and combine ExpressionTemplate_IndexAsTensor2_t with this
-struct ExpressionTemplate_IndexAsVector_t
+template <typename Tensor, typename IndexTypeList>
+struct ExpressionTemplate_IndexedTensor_t
 {
-    typedef typename Operand::Scalar Scalar;
+    typedef typename Tensor::Scalar Scalar;
 
-    typedef TypeList_t<IndexType> FreeIndexTypeList;
+    typedef IndexTypeList FreeIndexTypeList;
     typedef EmptyTypeList SummedIndexTypeList;
     typedef EmptyTypeList UsedIndexTypeList;
     typedef CompoundIndex_t<FreeIndexTypeList> Index;
 
     static bool const IS_EXPRESSION_TEMPLATE = true;
 
-    ExpressionTemplate_IndexAsVector_t (Operand const &operand) : m_operand(operand) { }
+    ExpressionTemplate_IndexedTensor_t (Tensor const &tensor) : m_tensor(tensor) { }
 
     // read-only, because it doesn't necessarily make sense to assign to an expression
     // template -- the expression may be a product or some such, where each component
     // is not an L-value.
-    Scalar operator [] (IndexType const &i) const { return m_operand[i]; }
+    Scalar const &operator [] (Index const &i) const { return m_tensor[i.value()]; }
 
 private:
 
-    Operand const &m_operand;
+    Tensor const &m_tensor;
 };
 
-template <typename Operand, typename F1IndexType, typename F2IndexType>
-struct ExpressionTemplate_IndexAsTensor2_t
+// TODO: is there a way to combine this with the above?
+template <typename Tensor, typename IndexTypeList>
+struct ExpressionTemplate_AssignableIndexedTensor_t
 {
-    typedef typename Operand::Scalar Scalar;
+    typedef typename Tensor::Scalar Scalar;
 
-    typedef TypeList_t<F1IndexType, TypeList_t<F2IndexType> > FreeIndexTypeList;
+    typedef IndexTypeList FreeIndexTypeList;
     typedef EmptyTypeList SummedIndexTypeList;
     typedef EmptyTypeList UsedIndexTypeList;
     typedef CompoundIndex_t<FreeIndexTypeList> Index;
 
     static bool const IS_EXPRESSION_TEMPLATE = true;
 
-    ExpressionTemplate_IndexAsTensor2_t (Operand const &operand) : m_operand(operand) { }
+    ExpressionTemplate_AssignableIndexedTensor_t (Tensor &tensor) : m_tensor(tensor) { }
 
     // read-only, because it doesn't necessarily make sense to assign to an expression
     // template -- the expression may be a product or some such, where each component
     // is not an L-value.
-    Scalar operator [] (Index const &i) const { return m_operand[i.value()]; }
+    Scalar const &operator [] (Index const &i) const { return m_tensor[i.value()]; }
+
+    // for some dumb reason, the compiler needed a non-templatized assignment operator for the exact matching type
+    void operator = (ExpressionTemplate_AssignableIndexedTensor_t const &right_operand)
+    {
+        for (Index i; i.is_not_at_end(); ++i)
+            m_tensor[i.value()] = right_operand[i];
+    }
+    template <typename RightOperand>
+    void operator = (RightOperand const &right_operand)
+    {
+        enum
+        {
+            RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE        = Lvd::Meta::Assert<RightOperand::IS_EXPRESSION_TEMPLATE>::v,
+            OPERAND_SCALAR_TYPES_ARE_EQUAL              = Lvd::Meta::Assert<(Lvd::Meta::TypesAreEqual<Scalar,typename RightOperand::Scalar>::v)>::v,
+            OPERANDS_HAVE_SAME_FREE_INDICES             = Lvd::Meta::Assert<AreEqualAsSets_t<FreeIndexTypeList,typename RightOperand::FreeIndexTypeList>::V>::v,
+            LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES  = Lvd::Meta::Assert<!ContainsDuplicates_t<FreeIndexTypeList>::V>::v,
+            RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES = Lvd::Meta::Assert<!ContainsDuplicates_t<typename RightOperand::FreeIndexTypeList>::V>::v
+        };
+
+        // TODO: check for aliasing
+
+        typedef CompoundIndexMap_t<FreeIndexTypeList,typename RightOperand::FreeIndexTypeList> RightOperandIndexMap;
+        typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
+
+        // component-wise assignment via the free index type.
+        for (Index i; i.is_not_at_end(); ++i)
+            m_tensor[i.value()] = right_operand[right_operand_index_map(i)];
+    }
 
 private:
 
-    Operand const &m_operand;
+    Tensor &m_tensor;
 };
 
 // ////////////////////////////////////////////////////////////////////////////
@@ -70,12 +99,15 @@ struct ExpressionTemplate_Addition_t
     // confused by multiple repeated indices that have nothing to do with each other.
     // NOTE: technically this check is already done inside CompoundIndex_t, but it would
     // be good to do the check here so that an error will be more obvious.
-    enum { _ = Lvd::Meta::Assert<LeftOperand::IS_EXPRESSION_TEMPLATE>::v &&
-               Lvd::Meta::Assert<RightOperand::IS_EXPRESSION_TEMPLATE>::v &&
-               Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v>::v &&
-               Lvd::Meta::Assert<AreEqualAsSets_t<typename LeftOperand::FreeIndexTypeList,typename RightOperand::FreeIndexTypeList>::V>::v &&
-               Lvd::Meta::Assert<!ContainsDuplicates_t<typename LeftOperand::FreeIndexTypeList>::V>::v &&
-               Lvd::Meta::Assert<!ContainsDuplicates_t<typename RightOperand::FreeIndexTypeList>::V>::v };
+    enum
+    {
+        LEFT_OPERAND_IS_EXPRESSION_TEMPLATE         = Lvd::Meta::Assert<LeftOperand::IS_EXPRESSION_TEMPLATE>::v,
+        RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE        = Lvd::Meta::Assert<RightOperand::IS_EXPRESSION_TEMPLATE>::v,
+        OPERAND_SCALAR_TYPES_ARE_EQUAL              = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v>::v,
+        OPERANDS_HAVE_SAME_FREE_INDICES             = Lvd::Meta::Assert<AreEqualAsSets_t<typename LeftOperand::FreeIndexTypeList,typename RightOperand::FreeIndexTypeList>::V>::v,
+        LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES  = Lvd::Meta::Assert<!ContainsDuplicates_t<typename LeftOperand::FreeIndexTypeList>::V>::v,
+        RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES = Lvd::Meta::Assert<!ContainsDuplicates_t<typename RightOperand::FreeIndexTypeList>::V>::v
+    };
 
     typedef typename LeftOperand::Scalar Scalar;
     typedef typename LeftOperand::FreeIndexTypeList FreeIndexTypeList;

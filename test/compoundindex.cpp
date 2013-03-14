@@ -38,6 +38,13 @@ int main (int argc, char **argv)
     typedef CompoundIndex_t<TypeTuple_t<I3,I4>::T> Y;
     typedef CompoundIndex_t<TypeTuple_t<I3,I4,I5>::T> Z;
 
+    {
+        X x(2);
+        Y y(1,2);
+        Z z(1,0,3);
+    }
+
+
     for (X x; x.is_not_at_end(); ++x)
         std::cout << x << '\n';
     std::cout << '\n';
