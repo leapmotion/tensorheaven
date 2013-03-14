@@ -51,11 +51,11 @@ struct Tensor2_t : Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM>
         return *reinterpret_cast<F2 *>(&Parent::m[0]); // super C-like, but should be no problem because there is no virtual inheritance
     }
 
-    struct IndexBlah : public Parent::Index // TODO: deprecate (it's only used in the test code below)
+    struct DeprecatedIndex : public Parent::Index // TODO: deprecate (it's only used in the test code below)
     {
-        IndexBlah () { } // default constructor initializes to beginning
-        explicit IndexBlah (Uint32 i) : Parent::Index(i) { }
-        IndexBlah (typename F1::Index i1, typename F2::Index i2) : Parent::Index(F2::DIM*i1.value()+i2.value()) { }
+        DeprecatedIndex () { } // default constructor initializes to beginning
+        explicit DeprecatedIndex (Uint32 i) : Parent::Index(i) { }
+        DeprecatedIndex (typename F1::Index i1, typename F2::Index i2) : Parent::Index(F2::DIM*i1.value()+i2.value()) { }
         typename F1::Index subindex1 () const { return this->value() / F2::DIM; }
         typename F2::Index subindex2 () const { return this->value() % F2::DIM; }
     };

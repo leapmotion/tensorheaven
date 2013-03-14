@@ -299,7 +299,7 @@ struct Tensor2Simple_t
     F1 const &factor1 () const { return m1; }
     F2 const &factor2 () const { return m2; }
 
-    Scalar operator [] (typename Tensor2_t<F1,F2>::IndexBlah const &i) const
+    Scalar operator [] (typename Tensor2_t<F1,F2>::DeprecatedIndex const &i) const
     {
         if (i.is_at_end())
             throw std::invalid_argument("index out of range");
@@ -505,7 +505,6 @@ void bor (Float4 const &x) { std::cout << "bor(" << x << ")\n"; }
 
 int main (int argc, char **argv)
 {
-
     // 1-dimensional vector to scalar coersion
     {
         typedef Vector_t<float,1> Float1;
@@ -561,7 +560,7 @@ int main (int argc, char **argv)
         {
             for (Uint32 c = 0; c < 4; ++c)
             {
-                std::cout << "\t" << X[Float3x4::IndexBlah(r,c)];
+                std::cout << "\t" << X[Float3x4::DeprecatedIndex(r,c)];
             }
             std::cout << '\n';
         }
@@ -571,9 +570,9 @@ int main (int argc, char **argv)
 
         for (Uint32 i = 0; i < Float3x4::DIM; ++i)
         {
-            Float3x4::IndexBlah index(i);
+            Float3x4::DeprecatedIndex index(i);
             std::cout << i << " -> " << index.subindex1().value() << ", " << index.subindex2().value()
-                      << " -> " << Float3x4::IndexBlah(index.subindex1().value(), index.subindex2().value()).value() << '\n';
+                      << " -> " << Float3x4::DeprecatedIndex(index.subindex1().value(), index.subindex2().value()).value() << '\n';
         }
 
         std::cout << '\n';
@@ -615,7 +614,7 @@ int main (int argc, char **argv)
         {
             for (Uint32 c = 0; c < 4; ++c)
             {
-                std::cout << "\t" << Y[Float3x4::IndexBlah(r,c)];
+                std::cout << "\t" << Y[Float3x4::DeprecatedIndex(r,c)];
             }
             std::cout << '\n';
         }
@@ -628,18 +627,18 @@ int main (int argc, char **argv)
         float accumulator = 0;
         for (Uint32 r = 0; r < 3; ++r)
             for (Uint32 c = 0; c < 4; ++c)
-                accumulator += X[Float3x4::IndexBlah(r,c)] * Y[Float3x4::IndexBlah(r,c)];
+                accumulator += X[Float3x4::DeprecatedIndex(r,c)] * Y[Float3x4::DeprecatedIndex(r,c)];
         std::cout << "actual answer = " << accumulator << ")\n\n";
 
         Float3x3 W(WITHOUT_INITIALIZATION);
         for (Uint32 i = 0; i < 3; ++i)
             for (Uint32 j = 0; j < 3; ++j)
                 for (Uint32 k = 0; k < 4; ++k)
-                    W[Float3x3::IndexBlah(i,j)] = X[Float3x4::IndexBlah(i,k)] * Y[Float3x4::IndexBlah(j,k)];
+                    W[Float3x3::DeprecatedIndex(i,j)] = X[Float3x4::DeprecatedIndex(i,k)] * Y[Float3x4::DeprecatedIndex(j,k)];
         for (Uint32 i = 0; i < 3; ++i)
         {
             for (Uint32 j = 0; j < 3; ++j)
-                std::cout << '\t' << W[Float3x3::IndexBlah(i,j)];
+                std::cout << '\t' << W[Float3x3::DeprecatedIndex(i,j)];
             std::cout << '\n';
         }
     }
@@ -730,6 +729,11 @@ int main (int argc, char **argv)
                 for (Uint32 jj = 0; jj < 3; ++jj)
                     std::cout << u[ii] * v[jj] << ", ";
             std::cout << '\n';
+            std::cout << "operator *\n";
+            EM e2(u(i) * v(j));
+            for (EM::Index k; k.is_not_at_end(); ++k)
+                std::cout << e2[k] << ", ";
+            std::cout << '\n';
             std::cout << '\n';
         }
 
@@ -755,6 +759,11 @@ int main (int argc, char **argv)
                     accum += u[ii] * v[jj] * w[jj];
                 std::cout << accum << ", ";
             }
+            std::cout << '\n';
+            std::cout << "operator *\n";
+            EMJ e2(u(i) * v(j) * w(j));
+            for (EMJ::Index k; k.is_not_at_end(); ++k)
+                std::cout << e2[k] << ", ";
             std::cout << '\n';
             std::cout << '\n';
         }
@@ -784,6 +793,11 @@ int main (int argc, char **argv)
             std::cout << "hand-calculated value:\n";
             for (Uint32 k = 0; k < Float3x4::DIM; ++k)
                 std::cout << u[k] + v[k] << ", ";
+            std::cout << '\n';
+            std::cout << "operator +\n";
+            EA e2(u(i) + v(i));
+            for (EA::Index k; k.is_not_at_end(); ++k)
+                std::cout << e2[k] << ", ";
             std::cout << '\n';
             std::cout << '\n';
         }
@@ -906,7 +920,7 @@ int main (int argc, char **argv)
                 {
                     float accum = 0;
                     for (Uint32 c = 0; c < 4; ++c)
-                        accum += u[Float3x4::IndexBlah(a,c)] * v[Float4x5::IndexBlah(c,b)];
+                        accum += u[Float3x4::DeprecatedIndex(a,c)] * v[Float4x5::DeprecatedIndex(c,b)];
                     std::cout << accum << ", ";
                 }
             }
@@ -926,10 +940,15 @@ int main (int argc, char **argv)
                     float accum = 0;
                     for (Uint32 c = 0; c < 4; ++c)
                         for (Uint32 d = 0; d < 5; ++d)
-                        accum += u[Float3x4::IndexBlah(a,c)] * v[Float4x5::IndexBlah(c,d)] * w[Float5x2::IndexBlah(d,b)];
+                        accum += u[Float3x4::DeprecatedIndex(a,c)] * v[Float4x5::DeprecatedIndex(c,d)] * w[Float5x2::DeprecatedIndex(d,b)];
                     std::cout << accum << ", ";
                 }
             }
+            std::cout << '\n';
+            std::cout << "operator *:\n";
+            EMM e3(u(i,j)*v(j,k)*w(k,l));
+            for (EMM::Index c; c.is_not_at_end(); ++c)
+                std::cout << e3[c] << ", ";
             std::cout << '\n';
             std::cout << '\n';
         }
@@ -958,7 +977,7 @@ int main (int argc, char **argv)
 //                 {
 //                     float accum = 0;
 //                     for (Uint32 c = 0; c < 4; ++c)
-//                         accum += u[Float3x4::IndexBlah(a,c)] * v[Float4x5::IndexBlah(c,b)];
+//                         accum += u[Float3x4::DeprecatedIndex(a,c)] * v[Float4x5::DeprecatedIndex(c,b)];
 //                     std::cout << accum << ", ";
 //                 }
 //             }

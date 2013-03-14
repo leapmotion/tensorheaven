@@ -5,6 +5,10 @@
 #include "compoundindex.hpp"
 #include "typelist.hpp"
 
+// ////////////////////////////////////////////////////////////////////////////
+// expression-template-generation (making ETs from vectors/tensors)
+// ////////////////////////////////////////////////////////////////////////////
+
 template <typename Operand, typename IndexType> // TODO: change IndexType to IndexTypeList, and combine ExpressionTemplate_IndexAsTensor2_t with this
 struct ExpressionTemplate_IndexAsVector_t
 {
@@ -13,6 +17,8 @@ struct ExpressionTemplate_IndexAsVector_t
     typedef TypeList_t<IndexType> FreeIndexTypeList;
     typedef EmptyTypeList SummedIndexTypeList;
     typedef CompoundIndex_t<FreeIndexTypeList> Index;
+
+    static bool const IS_EXPRESSION_TEMPLATE = true;
 
     ExpressionTemplate_IndexAsVector_t (Operand const &operand) : m_operand(operand) { }
 
@@ -35,6 +41,8 @@ struct ExpressionTemplate_IndexAsTensor2_t
     typedef EmptyTypeList SummedIndexTypeList;
     typedef CompoundIndex_t<FreeIndexTypeList> Index;
 
+    static bool const IS_EXPRESSION_TEMPLATE = true;
+
     ExpressionTemplate_IndexAsTensor2_t (Operand const &operand) : m_operand(operand) { }
 
     // read-only, because it doesn't necessarily make sense to assign to an expression
@@ -47,6 +55,10 @@ private:
     Operand const &m_operand;
 };
 
+// ////////////////////////////////////////////////////////////////////////////
+// addition of expression templates
+// ////////////////////////////////////////////////////////////////////////////
+
 template <typename LeftOperand, typename RightOperand>
 struct ExpressionTemplate_Addition_t
 {
@@ -56,7 +68,9 @@ struct ExpressionTemplate_Addition_t
     // confused by multiple repeated indices that have nothing to do with each other.
     // NOTE: technically this check is already done inside CompoundIndex_t, but it would
     // be good to do the check here so that an error will be more obvious.
-    enum { _ = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v>::v &&
+    enum { _ = Lvd::Meta::Assert<LeftOperand::IS_EXPRESSION_TEMPLATE>::v &&
+               Lvd::Meta::Assert<RightOperand::IS_EXPRESSION_TEMPLATE>::v &&
+               Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v>::v &&
                Lvd::Meta::Assert<AreEqualAsSets_t<typename LeftOperand::FreeIndexTypeList,typename RightOperand::FreeIndexTypeList>::V>::v &&
                Lvd::Meta::Assert<!ContainsDuplicates_t<typename LeftOperand::FreeIndexTypeList>::V>::v &&
                Lvd::Meta::Assert<!ContainsDuplicates_t<typename RightOperand::FreeIndexTypeList>::V>::v };
@@ -65,6 +79,8 @@ struct ExpressionTemplate_Addition_t
     typedef typename LeftOperand::FreeIndexTypeList FreeIndexTypeList;
     typedef EmptyTypeList SummedIndexTypeList; // TEMP: see above comment about "private" indices
     typedef typename LeftOperand::Index Index;
+
+    static bool const IS_EXPRESSION_TEMPLATE = true;
 
     ExpressionTemplate_Addition_t (LeftOperand const &left_operand, RightOperand const &right_operand)
         :
@@ -88,36 +104,24 @@ private:
 };
 
 template <typename LeftOperand,
-          typename RightOperand,
-          typename IndexType>
-ExpressionTemplate_Addition_t<ExpressionTemplate_IndexAsVector_t<LeftOperand,IndexType>,
-                              ExpressionTemplate_IndexAsVector_t<RightOperand,IndexType> >
-    operator + (ExpressionTemplate_IndexAsVector_t<LeftOperand,IndexType> const &left_operand,
-                ExpressionTemplate_IndexAsVector_t<RightOperand,IndexType> const &right_operand)
+          typename RightOperand>
+ExpressionTemplate_Addition_t<LeftOperand,RightOperand>
+    operator + (LeftOperand const &left_operand,
+                RightOperand const &right_operand)
 {
-    return ExpressionTemplate_Addition_t<ExpressionTemplate_IndexAsVector_t<LeftOperand,IndexType>,
-                                         ExpressionTemplate_IndexAsVector_t<RightOperand,IndexType> >(left_operand, right_operand);
+    return ExpressionTemplate_Addition_t<LeftOperand,RightOperand>(left_operand, right_operand);
 }
 
-template <typename LeftOperand,
-          typename RightOperand,
-          typename F1IndexType,
-          typename F2IndexType,
-          typename F3IndexType,
-          typename F4IndexType>
-ExpressionTemplate_Addition_t<ExpressionTemplate_IndexAsTensor2_t<LeftOperand,F1IndexType,F2IndexType>,
-                              ExpressionTemplate_IndexAsTensor2_t<RightOperand,F3IndexType,F4IndexType> >
-    operator + (ExpressionTemplate_IndexAsTensor2_t<LeftOperand,F1IndexType,F2IndexType> const &left_operand,
-                ExpressionTemplate_IndexAsTensor2_t<RightOperand,F3IndexType,F4IndexType> const &right_operand)
-{
-    return ExpressionTemplate_Addition_t<ExpressionTemplate_IndexAsTensor2_t<LeftOperand,F1IndexType,F2IndexType>,
-                                         ExpressionTemplate_IndexAsTensor2_t<RightOperand,F3IndexType,F4IndexType> >(left_operand, right_operand);
-}
+// ////////////////////////////////////////////////////////////////////////////
+// multiplication of expression templates (tensor product and contraction)
+// ////////////////////////////////////////////////////////////////////////////
 
 template <typename LeftOperand, typename RightOperand, typename FreeIndexTypeList, typename SummedIndexTypeList>
 struct Summation_t
 {
-    enum { _ = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v>::v &&
+    enum { _ = Lvd::Meta::Assert<LeftOperand::IS_EXPRESSION_TEMPLATE>::v &&
+               Lvd::Meta::Assert<RightOperand::IS_EXPRESSION_TEMPLATE>::v &&
+               Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v>::v &&
                Lvd::Meta::Assert<(SummedIndexTypeList::LENGTH > 0)>::v };
 
     typedef typename LeftOperand::Scalar Scalar;
@@ -151,7 +155,9 @@ struct Summation_t
 template <typename LeftOperand, typename RightOperand, typename FreeIndexTypeList>
 struct Summation_t<LeftOperand,RightOperand,FreeIndexTypeList,EmptyTypeList>
 {
-    enum { _ = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v>::v };
+    enum { _ = Lvd::Meta::Assert<LeftOperand::IS_EXPRESSION_TEMPLATE>::v &&
+               Lvd::Meta::Assert<RightOperand::IS_EXPRESSION_TEMPLATE>::v &&
+               Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v>::v };
 
     typedef typename LeftOperand::Scalar Scalar;
 
@@ -179,7 +185,9 @@ struct ExpressionTemplate_Multiplication_t
     // though technically this is unnecessary, because the summed indices are "private"
     // to each contraction, so this is really for the human's benefit, not getting
     // confused by multiple repeated indices that have nothing to do with each other.
-    enum { _ = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v>::v };
+    enum { _ = Lvd::Meta::Assert<LeftOperand::IS_EXPRESSION_TEMPLATE>::v &&
+               Lvd::Meta::Assert<RightOperand::IS_EXPRESSION_TEMPLATE>::v &&
+               Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v>::v };
     // TODO: ensure there are no indices that occur 3+ times (?)
 
     typedef typename LeftOperand::Scalar Scalar;
@@ -193,6 +201,8 @@ struct ExpressionTemplate_Multiplication_t
     typedef typename ElementsHavingMultiplicity_t<CombinedFreeIndexTypeList,2>::T SummedIndexTypeList;
     // Index is a list (TODO: change to tuple) of type FreeIndices
     typedef CompoundIndex_t<FreeIndexTypeList> Index;
+
+    static bool const IS_EXPRESSION_TEMPLATE = true;
 
     ExpressionTemplate_Multiplication_t (LeftOperand const &left_operand, RightOperand const &right_operand)
         :
@@ -211,5 +221,13 @@ private:
     RightOperand const &m_right_operand;
 };
 
+template <typename LeftOperand,
+          typename RightOperand>
+ExpressionTemplate_Multiplication_t<LeftOperand,RightOperand>
+    operator * (LeftOperand const &left_operand,
+                RightOperand const &right_operand)
+{
+    return ExpressionTemplate_Multiplication_t<LeftOperand,RightOperand>(left_operand, right_operand);
+}
 
 #endif // EXPRESSION_TEMPLATES_HPP_
