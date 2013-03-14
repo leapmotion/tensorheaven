@@ -158,7 +158,7 @@ for i in I: // where I is considered to be a set of indices
     for j in J:
         retval(i,j,s) = 0
         for s in S:
-            retval(i,j,s) += c(i,j,s)*g(s)*b_(s) // where g(s) is the weight of element s 
+            retval(i,j,s) += c(i,j,s)*g(s)*b_(s) // where g(s) is the weight of element s
                                                  // QUESTION: it's concievable that this would need to
                                                  // be a full matrix, but maybe for a natural pairing
                                                  // for tensors with non-fucked-up symmetries, it wouldn't be.
@@ -180,7 +180,7 @@ IndexMap<From,To>,
 where From is the index type of the passed-in index, and To is the type of the tensor argument itself.
 there would be an associated natural pairing weight as well.
 
-IDEA: an expression like c(i,j,Tensor<W,W>::Index(k,l))*b_(Tensor<W,W>::Dual::Index(k,l)) makes 
+IDEA: an expression like c(i,j,Tensor<W,W>::Index(k,l))*b_(Tensor<W,W>::Dual::Index(k,l)) makes
 an AST object which, once coerced into a tensor type, does the evaluation.  in theory this could
 use fewer and smaller intermediate values, e.g. a(i)*m(i,j)*b(j) could be evaluated directly to
 a scalar, instead of a(i)*m(i,j) to a covector and then to a scalar.
@@ -209,7 +209,7 @@ an explicit trace on particular indices.
 TODO: also make permutations of tensors, which doesn't change any memory, but only changes the indexing
 scheme?  this would potentially be a huge savings.
 
-TODO: make down-cast tensors (?), where e.g. a symmetric tensor can be used (and indexed) as a 
+TODO: make down-cast tensors (?), where e.g. a symmetric tensor can be used (and indexed) as a
 non-symmetric tensor.  this would probably save design complexity by putting the reindexing scheme
 in the down-cast tensor class.  and if the parameter type of the down-cast is left as a template
 parameter, template specialization can be used to define these down-casts later -- say if you
@@ -231,7 +231,7 @@ handled efficiently.  e.g. (A \otimes B) \otimes (C \otimes D) could be contract
 "simple tensor" space just by (A \cdot C)(B \cdot D), but if the simple tensor type is
 inside another tensor product, this wouldn't work.
 
-TODO: make "identity tensor" and "zero tensor" types (which represent sets having exactly one element), 
+TODO: make "identity tensor" and "zero tensor" types (which represent sets having exactly one element),
 which just returns a hardcoded value, so that nothing needs to be stored to use an identity or zero tensor
 for example.
 
@@ -246,7 +246,7 @@ struct Vector_t
     static Uint32 const DIM = DIM_;
     typedef TypeID_ TypeID;
     typedef Vector_t<Scalar,DIM,typename ReflexiveDualOf_t<TypeID_>::TypeID> Dual;
-    
+
     static Vector_t const ZERO;
 
     Vector_t (WithoutInitialization const &) { }
@@ -273,19 +273,19 @@ private:
     Scalar_ m[DIM];
 }; // end of struct Vector_t<>
 
-template <typename Scalar_, Uint32 DIM_, typename TypeID_> 
+template <typename Scalar_, Uint32 DIM_, typename TypeID_>
 Vector_t<Scalar_,DIM_,TypeID_> const Vector_t<Scalar_,DIM_,TypeID_>::ZERO(0);
 
-template <typename Scalar_, Uint32 DIM_, typename TypeID_> 
+template <typename Scalar_, Uint32 DIM_, typename TypeID_>
 Scalar_ operator * (Vector_t<Scalar_,DIM_,TypeID_> const &v, typename Vector_t<Scalar_,DIM_,TypeID_>::Dual const &d)
-{ 
-    Scalar_ retval(v[0]*d[0]); 
-    for (Uint32 i = 1; i < DIM_; ++i) 
+{
+    Scalar_ retval(v[0]*d[0]);
+    for (Uint32 i = 1; i < DIM_; ++i)
         retval += v[i]*d[i];
     return retval;
 }
 
-template <typename Scalar_, Uint32 DIM_, typename TypeID_> 
+template <typename Scalar_, Uint32 DIM_, typename TypeID_>
 std::ostream &operator << (std::ostream &out, Vector_t<Scalar_,DIM_,TypeID_> const &v)
 {
     out << "\n[" << v[0];
@@ -294,7 +294,7 @@ std::ostream &operator << (std::ostream &out, Vector_t<Scalar_,DIM_,TypeID_> con
     return out << ']';
 }
 
-template <typename Scalar_, Uint32 DIM_, typename PrimalTypeID_> 
+template <typename Scalar_, Uint32 DIM_, typename PrimalTypeID_>
 std::ostream &operator << (std::ostream &out, Vector_t<Scalar_,DIM_,Dual_TypeID_t<PrimalTypeID_> > const &d)
 {
     out << "[" << d[0];
@@ -315,14 +315,14 @@ struct Tensor_t : public Vector_t<typename Factor1_::Scalar,
     typedef Vector_t<typename Factor1_::Scalar,
                      Factor1_::DIM * Factor2_::DIM,
                      Tensor_TypeID_t<Factor1_,Factor2_> > ParentVector;
-    
+
     typedef typename ParentVector::Scalar Scalar;
     static Uint32 const DIM = ParentVector::DIM;
     typedef typename ParentVector::TypeID TypeID;
-    
+
     typedef Factor1_ Factor1;
     typedef Factor2_ Factor2;
-    
+
     Tensor_t (WithoutInitialization const &w) : ParentVector(w) { }
 }; // end of struct Tensor_t<>
 
@@ -348,7 +348,7 @@ Tensor_t<Factor1_,Factor2_> operator & (Factor1_ const &f1, Factor2_ const &f2)
     return retval;
 }
 
-template <typename Factor1_, typename Factor2_> 
+template <typename Factor1_, typename Factor2_>
 std::ostream &operator << (std::ostream &out, Tensor_t<Factor1_,Factor2_> const &t)
 {
     if (Factor1_::DIM > 1)
@@ -370,25 +370,25 @@ int main (int argc, char **argv)
 {
     typedef Vector_t<float,3,R3> Float3;
     typedef Tensor_t<Float3,Float3::Dual> Float3x3;
-    
+
     Float3 v(1,2,3);
     std::cout << "v = " << v << '\n';
     std::cout << v[0] << ", " << v[1] << ", " << v[2] << '\n';
-    
+
     Float3::Dual d(4,5,6);
     std::cout << "d = " << d << '\n';
-    
+
     std::cout << "v*d = " << v*d << '\n';
-    
+
     std::cout << "Float3::ZERO = " << Float3::ZERO << '\n';
     std::cout << "Float3::Dual::ZERO = " << Float3::Dual::ZERO << '\n';
 
     Float3x3 const &z = *reinterpret_cast<Float3x3 const *>(&Float3x3::ZERO);
     std::cout << "Float3x3::ZERO = " << z << '\n';
-    
+
     std::cout << "z*v = " << z*v << '\n';
-    
+
     std::cout << "v \\otimes d = " << (v&d) << '\n';
-    
+
     return 0;
 }

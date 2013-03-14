@@ -260,7 +260,6 @@ struct Tensor3_t : Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM*F3_::DIM>
     typedef Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM*F3_::DIM> Parent;
     typedef typename Parent::Scalar Scalar;
     using Parent::DIM;
-//     static Uint32 const DEGREE = 3; // there are two factors in this tensor type (F1 and F2)
 
     typedef F1_ F1;
     typedef F2_ F2;
@@ -292,7 +291,6 @@ struct Tensor2Simple_t
     typedef F2_ F2;
     typedef typename F1::Scalar Scalar;
     // there is no dimension because this is not a vector space (not even a manifold -- it is an algebraic variety)
-//     static Uint32 const DEGREE = 2; // there are two factors in this tensor type (F1 and F2)
 
     Tensor2Simple_t (F1 const &f1, F2 const &f2) : m1(f1), m2(f2) { }
 
@@ -351,7 +349,6 @@ struct Tensor3Simple_t
     typedef F3_ F3;
     typedef typename F1::Scalar Scalar;
     // there is no dimension because this is not a vector space (not even a manifold -- it is an algebraic variety)
-//     static Uint32 const DEGREE = 3; // there are two factors in this tensor type (F1 and F2)
 
     Tensor3Simple_t (F1 const &f1, F2 const &f2, F3 const &f3) : m1(f1), m2(f2), m3(f3) { }
 
@@ -439,7 +436,6 @@ struct Tensor2Antisymmetric_t : public Vector_t<typename F_::Scalar,((F_::DIM-1)
     typedef typename Parent::Index Index;
     using Parent::DIM;
     typedef F_ F;
-//     static Uint32 const DEGREE = 2; // there are two factors in this tensor type (F1 and F2)
 
     // TODO: make Index in this class, and make it construct with a Tensor<T,T>::Index
 

@@ -2,7 +2,9 @@ NOTES -- this is an informal/temporary TODO file
 - all library code is in lib/
   * ideally there will be few/no cpp files, so using the library just amounts to adding the lib/ directory to your include path
 - all test code is in test/ -- these are just informal ad-hoc tests and prototype code, nothing that will be kept around
-
+- the "actual" tensor lib prototype code is in test/contraction_prototype.cpp
+- some prototype code for strongly-typed vectors (which distinguish prime/dual spaces and "named" spaces)
+  is in test/strongly_typed_vector_prototype.cpp
 
 goals for today:
 - interop with some basic Eigen stuff (calling SVD, etc on 2-tensors)
@@ -15,5 +17,25 @@ x operator overloads for expression templates
 - down-casting (to more-specific types) (up-casting (to less-specific types) already happens through expression templates)
 - strong typing for vectors -- named vector spaces (including "Generic") and prime/dual distinction (including self-dual)
   * default values should be "Generic" vector space ID and self-dual
+- trace-type expression templates (where a tensor is contracted with itself, a case which is distinct from * style expression templates)
 - assignment expression templates (which check for aliasing)
 
+
+
+future goals:
+- standard in-line linear algebra notation
+  * for example, if A is a matrix and v is a vector, "A*v" should be equivalent to "A(i,j)*v(j)", but obviously
+    without the need to used an indexed expression.
+- optimize evaluation algorithm (ordering operations to do the minimal amount of computation)
+- vectorizing as many operations as possible
+- template specializations for particular tensor contractions for speed (using mathematical special cases)
+  * for example, an antisymmetric 3x3 2-tensor contracted with a 3-vector is just a cross product
+  * a diagonal 2-tensor contracted with a vector is just component-wise scaling
+
+features:
+- vectors and non-symmetric 2-tensors
+- indexed tensor expressions, such as "A(i,j)*u(j) + v(i)"
+- for 1-dimensional vectors, type coersion to/from the scalar type via canonical
+  isomorphism (a 1-dimensional real vector space is canonically isomorphic to R)
+- for 2-tensors of the form Nx1 or 1xN (referring to the dimension of the factors), type coersion
+  to/from the factor types via canonical isomorphisms (R \otimes V = V  and  V \otimes R = V)

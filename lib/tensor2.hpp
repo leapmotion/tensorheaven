@@ -16,7 +16,6 @@ struct Tensor2_t : Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM>
     typedef Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM> Parent;
     typedef typename Parent::Scalar Scalar;
     using Parent::DIM;
-//     static Uint32 const DEGREE = 2; // there are two factors in this tensor type (F1 and F2)
 
     typedef F1_ F1;
     typedef F2_ F2;

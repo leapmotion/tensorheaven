@@ -12,7 +12,6 @@ struct Vector_t
 {
     typedef Scalar_ Scalar;
     static Uint32 const DIM = DIM_;
-//     static Uint32 const DEGREE = 1; // vector quantities are used as 1-tensors.
 
     // for use in operator [] for actual evaluation of tensor components
     struct Index
@@ -133,6 +132,8 @@ std::ostream &operator << (std::ostream &out, typename Vector_t<Scalar,DIM>::tem
     return out << i.value();
 }
 
+// NOTE: this is not used yet, but is sort of the conceptual placeholder for the natural pairing on a
+// vector space (with respect to a particular basis)
 // this default implementation should work for any vector space that has an Index type (but not e.g. Tensor2Simple_t).
 // template specialization can be used to define other implementations (e.g. Tensor2Simple_t).
 template <typename Vector>
