@@ -40,6 +40,8 @@ future goals:
   * a diagonal 2-tensor contracted with a vector is just component-wise scaling
 - in strongly typed vector template identifier types, require certain tags (e.g. static member constants)
   in the template parameters -- vector space identifier, vector space basis, etc.
+- certain linear algebraic expressions simplify greatly when expressed in a particular basis,
+  so having a formal mechanism to work with explicit bases may clarify and simplify some calculations
 
 features:
 - vectors and non-symmetric 2-tensors
