@@ -5,6 +5,7 @@
 
 #include "core.hpp"
 #include "expression_templates.hpp"
+#include "typetuple.hpp"
 #include "vector.hpp"
 
 // general 2-tensor with no symmetries -- most general type of 2-tensor
@@ -85,13 +86,13 @@ struct Tensor2_t : Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM>
     // this override of the Parent's operator() is necessary so that the expression template
     // knows that the operand is actually a Tensor2_t.
     template <char SYMBOL>
-    ExpressionTemplate_IndexedTensor_t<Tensor2_t,TypeList_t<typename Parent::template Index_t<SYMBOL> > > operator () (
+    ExpressionTemplate_IndexedTensor_t<Tensor2_t,TypeList_t<typename Parent::template Index_t<SYMBOL> >,EmptyTypeList> operator () (
         typename Parent::template Index_t<SYMBOL> const &) const
     {
         return expr<SYMBOL>();
     }
     template <char SYMBOL>
-    ExpressionTemplate_AssignableIndexedTensor_t<Tensor2_t,TypeList_t<typename Parent::template Index_t<SYMBOL> > > operator () (
+    ExpressionTemplate_IndexedTensor_t<Tensor2_t,TypeList_t<typename Parent::template Index_t<SYMBOL> >,EmptyTypeList> operator () (
         typename Parent::template Index_t<SYMBOL> const &)
     {
         return expr<SYMBOL>();
@@ -101,32 +102,51 @@ struct Tensor2_t : Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM>
     // this override of the Parent's operator() is necessary so that the expression template
     // knows that the operand is actually a Tensor2_t.
     template <char SYMBOL>
-    ExpressionTemplate_IndexedTensor_t<Tensor2_t,TypeList_t<typename Parent::template Index_t<SYMBOL> > > expr () const
+    ExpressionTemplate_IndexedTensor_t<Tensor2_t,TypeList_t<typename Parent::template Index_t<SYMBOL> >,EmptyTypeList> expr () const
     {
         Lvd::Meta::Assert<(SYMBOL != '\0')>();
-        return ExpressionTemplate_IndexedTensor_t<Tensor2_t,TypeList_t<typename Parent::template Index_t<SYMBOL> > >(*this);
+        return ExpressionTemplate_IndexedTensor_t<Tensor2_t,TypeList_t<typename Parent::template Index_t<SYMBOL> >,EmptyTypeList>(*this);
     }
     template <char SYMBOL>
-    ExpressionTemplate_AssignableIndexedTensor_t<Tensor2_t,TypeList_t<typename Parent::template Index_t<SYMBOL> > > expr ()
+    ExpressionTemplate_IndexedTensor_t<Tensor2_t,TypeList_t<typename Parent::template Index_t<SYMBOL> >,EmptyTypeList> expr ()
     {
         Lvd::Meta::Assert<(SYMBOL != '\0')>();
-        return ExpressionTemplate_AssignableIndexedTensor_t<Tensor2_t,TypeList_t<typename Parent::template Index_t<SYMBOL> > >(*this);
+        return ExpressionTemplate_IndexedTensor_t<Tensor2_t,TypeList_t<typename Parent::template Index_t<SYMBOL> >,EmptyTypeList>(*this);
     }
 
     // a 2-tensor can be indexed by the pair of factor indices (F1::Index, F2::Index)
+    // Dear Bjarne, please forgive me for this template metaprogramming atrocity.  Sincerely, Victor.
     template <char F1_SYMBOL, char F2_SYMBOL>
     ExpressionTemplate_IndexedTensor_t<Tensor2_t,
-                                       TypeList_t<typename F1::template Index_t<F1_SYMBOL>,
-                                       TypeList_t<typename F2::template Index_t<F2_SYMBOL> > > > operator () (
+                                       typename TypeTuple_t<
+                                           typename F1::template Index_t<F1_SYMBOL>,
+                                           typename F2::template Index_t<F2_SYMBOL>
+                                           >::T,
+                                       typename SummedIndexTypeList_t<
+                                           typename TypeTuple_t<
+                                               typename F1::template Index_t<F1_SYMBOL>,
+                                               typename F2::template Index_t<F2_SYMBOL>
+                                               >::T
+                                           >::T
+                                       > operator () (
         typename F1::template Index_t<F1_SYMBOL> const &,
         typename F2::template Index_t<F2_SYMBOL> const &) const
     {
         return expr<F1_SYMBOL,F2_SYMBOL>();
     }
     template <char F1_SYMBOL, char F2_SYMBOL>
-    ExpressionTemplate_AssignableIndexedTensor_t<Tensor2_t,
-                                                 TypeList_t<typename F1::template Index_t<F1_SYMBOL>,
-                                                 TypeList_t<typename F2::template Index_t<F2_SYMBOL> > > > operator () (
+    ExpressionTemplate_IndexedTensor_t<Tensor2_t,
+                                       typename TypeTuple_t<
+                                           typename F1::template Index_t<F1_SYMBOL>,
+                                           typename F2::template Index_t<F2_SYMBOL>
+                                           >::T,
+                                       typename SummedIndexTypeList_t<
+                                           typename TypeTuple_t<
+                                               typename F1::template Index_t<F1_SYMBOL>,
+                                               typename F2::template Index_t<F2_SYMBOL>
+                                               >::T
+                                           >::T
+                                       > operator () (
         typename F1::template Index_t<F1_SYMBOL> const &,
         typename F2::template Index_t<F2_SYMBOL> const &)
     {
@@ -135,25 +155,61 @@ struct Tensor2_t : Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM>
     // the 2-index analog of expr<SYMBOL>()
     template <char F1_SYMBOL, char F2_SYMBOL>
     ExpressionTemplate_IndexedTensor_t<Tensor2_t,
-                                       TypeList_t<typename F1::template Index_t<F1_SYMBOL>,
-                                       TypeList_t<typename F2::template Index_t<F2_SYMBOL> > > > expr () const
+                                       typename TypeTuple_t<
+                                           typename F1::template Index_t<F1_SYMBOL>,
+                                           typename F2::template Index_t<F2_SYMBOL>
+                                           >::T,
+                                       typename SummedIndexTypeList_t<
+                                           typename TypeTuple_t<
+                                               typename F1::template Index_t<F1_SYMBOL>,
+                                               typename F2::template Index_t<F2_SYMBOL>
+                                               >::T
+                                           >::T
+                                       > expr () const
     {
         Lvd::Meta::Assert<(F1_SYMBOL != '\0')>();
         Lvd::Meta::Assert<(F2_SYMBOL != '\0')>();
         return ExpressionTemplate_IndexedTensor_t<Tensor2_t,
-                                                  TypeList_t<typename F1::template Index_t<F1_SYMBOL>,
-                                                  TypeList_t<typename F2::template Index_t<F2_SYMBOL> > > >(*this);
+                                                  typename TypeTuple_t<
+                                                      typename F1::template Index_t<F1_SYMBOL>,
+                                                      typename F2::template Index_t<F2_SYMBOL>
+                                                      >::T,
+                                                  typename SummedIndexTypeList_t<
+                                                      typename TypeTuple_t<
+                                                          typename F1::template Index_t<F1_SYMBOL>,
+                                                          typename F2::template Index_t<F2_SYMBOL>
+                                                          >::T
+                                                      >::T
+                                                  >(*this);
     }
     template <char F1_SYMBOL, char F2_SYMBOL>
-    ExpressionTemplate_AssignableIndexedTensor_t<Tensor2_t,
-                                                 TypeList_t<typename F1::template Index_t<F1_SYMBOL>,
-                                                 TypeList_t<typename F2::template Index_t<F2_SYMBOL> > > > expr ()
+    ExpressionTemplate_IndexedTensor_t<Tensor2_t,
+                                       typename TypeTuple_t<
+                                           typename F1::template Index_t<F1_SYMBOL>,
+                                           typename F2::template Index_t<F2_SYMBOL>
+                                           >::T,
+                                       typename SummedIndexTypeList_t<
+                                           typename TypeTuple_t<
+                                               typename F1::template Index_t<F1_SYMBOL>,
+                                               typename F2::template Index_t<F2_SYMBOL>
+                                               >::T
+                                           >::T
+                                       > expr ()
     {
         Lvd::Meta::Assert<(F1_SYMBOL != '\0')>();
         Lvd::Meta::Assert<(F2_SYMBOL != '\0')>();
-        return ExpressionTemplate_AssignableIndexedTensor_t<Tensor2_t,
-                                                            TypeList_t<typename F1::template Index_t<F1_SYMBOL>,
-                                                            TypeList_t<typename F2::template Index_t<F2_SYMBOL> > > >(*this);
+        return ExpressionTemplate_IndexedTensor_t<Tensor2_t,
+                                                  typename TypeTuple_t<
+                                                      typename F1::template Index_t<F1_SYMBOL>,
+                                                      typename F2::template Index_t<F2_SYMBOL>
+                                                      >::T,
+                                                  typename SummedIndexTypeList_t<
+                                                      typename TypeTuple_t<
+                                                          typename F1::template Index_t<F1_SYMBOL>,
+                                                          typename F2::template Index_t<F2_SYMBOL>
+                                                          >::T
+                                                      >::T
+                                                  >(*this);
     }
 };
 

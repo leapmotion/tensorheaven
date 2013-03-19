@@ -6,58 +6,122 @@
 #include "typelist.hpp"
 
 // ////////////////////////////////////////////////////////////////////////////
+// summation over repeated indices
+// ////////////////////////////////////////////////////////////////////////////
+
+template <typename IndexTypeList>
+struct SummedIndexTypeList_t
+{
+    typedef typename ElementsHavingMultiplicity_t<IndexTypeList,2>::T T;
+};
+
+template <typename IndexTypeList>
+struct FreeIndexTypeList_t
+{
+    typedef typename ElementsHavingMultiplicity_t<IndexTypeList,1>::T T;
+};
+
+// this is designed to handle trace-type expression templates, such as u(i,i) or v(i,j,i)
+// technically SummedIndexTypeList is a redundant argument (as it is derivable from TensorIndexTypeList),
+// but it is necessary so that a template specialization can be made for when it is EmptyTypeList.
+template <typename Tensor, typename TensorIndexTypeList, typename SummedIndexTypeList>
+struct UnarySummation_t
+{
+    typedef typename Tensor::Scalar Scalar;
+    typedef typename FreeIndexTypeList_t<TensorIndexTypeList>::T FreeIndexTypeList;
+    typedef CompoundIndex_t<FreeIndexTypeList> Index;
+
+    static Scalar eval (Tensor const &tensor, Index const &i)
+    {
+        typedef typename ConcatenationOfTypeLists_t<FreeIndexTypeList,SummedIndexTypeList>::T TotalIndexTypeList;
+        typedef CompoundIndex_t<TotalIndexTypeList> TotalIndex;
+        typedef CompoundIndex_t<SummedIndexTypeList> SummedIndex;
+
+        // the operands take indices that are a subset of the summed indices and free indices.
+
+        // constructing t with i initializes the first elements which correpond to
+        // Index with the value of i, and initializes the remaining elements to zero.
+        TotalIndex t(i);
+        Scalar retval(0);
+        // get the map which produces the CompoundIndex for each tensor from the TotalIndex t
+        typedef CompoundIndexMap_t<TotalIndexTypeList,TensorIndexTypeList> TensorIndexMap;
+        typename TensorIndexMap::EvalMapType tensor_index_map = TensorIndexMap::eval;
+        // t = (f,s), which is a concatenation of the free access indices and the summed access indices.
+        // s is a reference to the second part, which is what is iterated over in the summation.
+        for (SummedIndex &s = t.template trailing_list<FreeIndexTypeList::LENGTH>(); s.is_not_at_end(); ++s)
+            retval += tensor[tensor_index_map(t).value()]; // TODO: allow index type to be used directly
+        return retval;
+    }
+};
+
+template <typename Tensor, typename TensorIndexTypeList>
+struct UnarySummation_t<Tensor,TensorIndexTypeList,EmptyTypeList>
+{
+    typedef typename Tensor::Scalar Scalar;
+    typedef typename FreeIndexTypeList_t<TensorIndexTypeList>::T FreeIndexTypeList;
+    typedef CompoundIndex_t<FreeIndexTypeList> Index;
+
+    static Scalar eval (Tensor const &tensor, Index const &i) { return tensor[i]; }
+};
+
+// ////////////////////////////////////////////////////////////////////////////
 // expression-template-generation (making ETs from vectors/tensors)
 // ////////////////////////////////////////////////////////////////////////////
 
-template <typename Tensor, typename IndexTypeList>
+// this is the "const" version of an indexed tensor expression (it has summed indices, so it doesn't make sense to assign to it)
+template <typename Tensor, typename TensorIndexTypeList, typename SummedIndexTypeList>
 struct ExpressionTemplate_IndexedTensor_t
 {
-    typedef typename Tensor::Scalar Scalar;
+    // TODO: some consistency checks on TensorIndexTypeList and SummedIndexTypeList
 
-    typedef IndexTypeList FreeIndexTypeList;
-    typedef EmptyTypeList SummedIndexTypeList;
-    typedef EmptyTypeList UsedIndexTypeList;
+    typedef typename Tensor::Scalar Scalar;
+    typedef typename FreeIndexTypeList_t<TensorIndexTypeList>::T FreeIndexTypeList;
+    // typelist of used indices which are prohibited from using higher up in the AST
+    typedef SummedIndexTypeList UsedIndexTypeList;
     typedef CompoundIndex_t<FreeIndexTypeList> Index;
 
     static bool const IS_EXPRESSION_TEMPLATE = true;
 
     ExpressionTemplate_IndexedTensor_t (Tensor const &tensor) : m_tensor(tensor) { }
 
-    // read-only, because it doesn't necessarily make sense to assign to an expression
-    // template -- the expression may be a product or some such, where each component
-    // is not an L-value.
-    Scalar const &operator [] (Index const &i) const { return m_tensor[i.value()]; }
+    // read-only, because it doesn't make sense to assign to an expression which is a summation.
+    Scalar operator [] (Index const &i) const
+    {
+        return UnarySummation_t<Tensor,TensorIndexTypeList,SummedIndexTypeList>::eval(m_tensor, i);
+    }
 
 private:
 
     Tensor const &m_tensor;
 };
 
-// TODO: is there a way to combine this with the above?
-template <typename Tensor, typename IndexTypeList>
-struct ExpressionTemplate_AssignableIndexedTensor_t
+// this is the "non-const" version of an indexed tensor expression (it has no summed indices, so it makes sense to assign to it)
+template <typename Tensor, typename TensorIndexTypeList>
+struct ExpressionTemplate_IndexedTensor_t<Tensor,TensorIndexTypeList,EmptyTypeList>
 {
     typedef typename Tensor::Scalar Scalar;
-
-    typedef IndexTypeList FreeIndexTypeList;
-    typedef EmptyTypeList SummedIndexTypeList;
+    typedef typename FreeIndexTypeList_t<TensorIndexTypeList>::T FreeIndexTypeList;
+    // typelist of used indices which are prohibited from using higher up in the AST
     typedef EmptyTypeList UsedIndexTypeList;
     typedef CompoundIndex_t<FreeIndexTypeList> Index;
 
     static bool const IS_EXPRESSION_TEMPLATE = true;
 
-    ExpressionTemplate_AssignableIndexedTensor_t (Tensor &tensor) : m_tensor(tensor) { }
+    ExpressionTemplate_IndexedTensor_t (Tensor &tensor) : m_tensor(tensor) { }
 
     // read-only, because it doesn't necessarily make sense to assign to an expression
     // template -- the expression may be a product or some such, where each component
     // is not an L-value.
-    Scalar const &operator [] (Index const &i) const { return m_tensor[i.value()]; }
+    Scalar const &operator [] (Index const &i) const
+    {
+        return m_tensor[i.value()]; // TODO: allow index type to be used directly
+    }
 
     // for some dumb reason, the compiler needed a non-templatized assignment operator for the exact matching type
-    void operator = (ExpressionTemplate_AssignableIndexedTensor_t const &right_operand)
+    void operator = (ExpressionTemplate_IndexedTensor_t const &right_operand)
     {
         for (Index i; i.is_not_at_end(); ++i)
-            m_tensor[i.value()] = right_operand[i];
+            m_tensor[i.value()] = right_operand[i]; // TODO: allow index type to be used directly
     }
     template <typename RightOperand>
     void operator = (RightOperand const &right_operand)
@@ -78,7 +142,7 @@ struct ExpressionTemplate_AssignableIndexedTensor_t
 
         // component-wise assignment via the free index type.
         for (Index i; i.is_not_at_end(); ++i)
-            m_tensor[i.value()] = right_operand[right_operand_index_map(i)];
+            m_tensor[i.value()] = right_operand[right_operand_index_map(i)]; // TODO: allow index type to be used directly
     }
 
 private:
@@ -266,11 +330,9 @@ private:
     RightOperand const &m_right_operand;
 };
 
-template <typename LeftOperand,
-          typename RightOperand>
+template <typename LeftOperand, typename RightOperand>
 ExpressionTemplate_Multiplication_t<LeftOperand,RightOperand>
-    operator * (LeftOperand const &left_operand,
-                RightOperand const &right_operand)
+    operator * (LeftOperand const &left_operand, RightOperand const &right_operand)
 {
     return ExpressionTemplate_Multiplication_t<LeftOperand,RightOperand>(left_operand, right_operand);
 }

@@ -653,8 +653,8 @@ int main (int argc, char **argv)
         I i;
         J j;
         {
-            typedef ExpressionTemplate_AssignableIndexedTensor_t<Float3,TypeList_t<I> > EI;
-            typedef ExpressionTemplate_AssignableIndexedTensor_t<Float3,TypeList_t<J> > EJ;
+            typedef ExpressionTemplate_IndexedTensor_t<Float3,TypeList_t<I>,EmptyTypeList> EI;
+            typedef ExpressionTemplate_IndexedTensor_t<Float3,TypeList_t<J>,EmptyTypeList> EJ;
 
 //             std::cout << i << '\n';
 //             std::cout << Float3::Index(0) << '\n';
@@ -671,7 +671,7 @@ int main (int argc, char **argv)
 
         {
             std::cout << "addition:\n";
-            typedef ExpressionTemplate_AssignableIndexedTensor_t<Float3,TypeList_t<I> > EE;
+            typedef ExpressionTemplate_IndexedTensor_t<Float3,TypeList_t<I>,EmptyTypeList> EE;
             typedef ExpressionTemplate_Addition_t<EE,EE> EA;
             EA e(u(i), v(i));
             std::cout << "expression template value:\n";
@@ -693,7 +693,7 @@ int main (int argc, char **argv)
 
         {
             std::cout << "inner product:\n";
-            typedef ExpressionTemplate_AssignableIndexedTensor_t<Float3,TypeList_t<I> > EE;
+            typedef ExpressionTemplate_IndexedTensor_t<Float3,TypeList_t<I>,EmptyTypeList> EE;
             typedef ExpressionTemplate_Multiplication_t<EE,EE> EM;
             EM e(u(i), v(i));
             Float3::Index k;
@@ -712,8 +712,8 @@ int main (int argc, char **argv)
 
         {
             std::cout << "outer product:\n";
-            typedef ExpressionTemplate_AssignableIndexedTensor_t<Float3,TypeList_t<I> > EI;
-            typedef ExpressionTemplate_AssignableIndexedTensor_t<Float3,TypeList_t<J> > EJ;
+            typedef ExpressionTemplate_IndexedTensor_t<Float3,TypeList_t<I>,EmptyTypeList> EI;
+            typedef ExpressionTemplate_IndexedTensor_t<Float3,TypeList_t<J>,EmptyTypeList> EJ;
             typedef ExpressionTemplate_Multiplication_t<EI,EJ> EM;
             EM e(u(i), v(j));
             std::cout << FORMAT_VALUE(TypeStringOf_t<EM::Index>::eval()) << '\n';
@@ -740,8 +740,8 @@ int main (int argc, char **argv)
 
         {
             std::cout << "contraction with simple tensor:\n";
-            typedef ExpressionTemplate_AssignableIndexedTensor_t<Float3,TypeList_t<I> > EI;
-            typedef ExpressionTemplate_AssignableIndexedTensor_t<Float3,TypeList_t<J> > EJ;
+            typedef ExpressionTemplate_IndexedTensor_t<Float3,TypeList_t<I>,EmptyTypeList> EI;
+            typedef ExpressionTemplate_IndexedTensor_t<Float3,TypeList_t<J>,EmptyTypeList> EJ;
             typedef ExpressionTemplate_Multiplication_t<EI,EJ> EM;
             typedef ExpressionTemplate_Multiplication_t<EM,EJ> EMJ;
             EMJ e(EM(u(i), v(j)), w(j));
@@ -778,7 +778,7 @@ int main (int argc, char **argv)
             std::cout << "addition of 2-tensors:\n";
             typedef Float3x4::Index_t<'i'> I;
             I i;
-            typedef ExpressionTemplate_AssignableIndexedTensor_t<Float3x4,TypeList_t<I> > EE;
+            typedef ExpressionTemplate_IndexedTensor_t<Float3x4,TypeList_t<I>,EmptyTypeList> EE;
             typedef ExpressionTemplate_Addition_t<EE,EE> EA;
             Float3x4 u(WITHOUT_INITIALIZATION);
             Float3x4 v(WITHOUT_INITIALIZATION);
@@ -814,7 +814,7 @@ int main (int argc, char **argv)
             typedef Float4::Index_t<'j'> J;
             I i;
             J j;
-            typedef ExpressionTemplate_AssignableIndexedTensor_t<Float3x4,TypeTuple_t<I,J>::T> EIJ;
+            typedef ExpressionTemplate_IndexedTensor_t<Float3x4,TypeTuple_t<I,J>::T,EmptyTypeList> EIJ;
             typedef ExpressionTemplate_Addition_t<EIJ,EIJ> EA;
             Float3x4 u(WITHOUT_INITIALIZATION);
             Float3x4 v(WITHOUT_INITIALIZATION);
@@ -842,8 +842,8 @@ int main (int argc, char **argv)
             typedef Float3::Index_t<'j'> J;
             I i;
             J j;
-            typedef ExpressionTemplate_AssignableIndexedTensor_t<Float3x3,TypeTuple_t<I,J>::T> EIJ;
-            typedef ExpressionTemplate_AssignableIndexedTensor_t<Float3x3,TypeTuple_t<J,I>::T> EJI;
+            typedef ExpressionTemplate_IndexedTensor_t<Float3x3,TypeTuple_t<I,J>::T,EmptyTypeList> EIJ;
+            typedef ExpressionTemplate_IndexedTensor_t<Float3x3,TypeTuple_t<J,I>::T,EmptyTypeList> EJI;
             typedef ExpressionTemplate_Addition_t<EIJ,EIJ> EA;
             typedef ExpressionTemplate_Addition_t<EIJ,EJI> EB;
             Float3x3 u(WITHOUT_INITIALIZATION);
@@ -864,7 +864,7 @@ int main (int argc, char **argv)
             std::cout << '\n';
 
             // uncommenting this should cause an error regarding prohibiting repeated indices in sums
-//             typedef ExpressionTemplate_AssignableIndexedTensor_t<Float3x3,TypeTuple_t<I,I>::T> EII;
+//             typedef ExpressionTemplate_IndexedTensor_t<Float3x3,TypeTuple_t<I,I>::T,EmptyTypeList> EII;
 //             typedef ExpressionTemplate_Addition_t<EII,EII> EC;
 //             EC e_bad(u(i,i), u(i,i));
 
@@ -908,9 +908,9 @@ int main (int argc, char **argv)
             J j;
             K k;
             L l;
-            typedef ExpressionTemplate_AssignableIndexedTensor_t<Float3x4,TypeTuple_t<I,J>::T> EIJ;
-            typedef ExpressionTemplate_AssignableIndexedTensor_t<Float4x5,TypeTuple_t<J,K>::T> EJK;
-            typedef ExpressionTemplate_AssignableIndexedTensor_t<Float5x2,TypeTuple_t<K,L>::T> EKL;
+            typedef ExpressionTemplate_IndexedTensor_t<Float3x4,TypeTuple_t<I,J>::T,EmptyTypeList> EIJ;
+            typedef ExpressionTemplate_IndexedTensor_t<Float4x5,TypeTuple_t<J,K>::T,EmptyTypeList> EJK;
+            typedef ExpressionTemplate_IndexedTensor_t<Float5x2,TypeTuple_t<K,L>::T,EmptyTypeList> EKL;
             typedef ExpressionTemplate_Multiplication_t<EIJ,EJK> EM;
             typedef ExpressionTemplate_Multiplication_t<EM,EKL> EMM;
             std::cout << "expression template contraction u(i,j)*v(j,k):\n";
@@ -999,6 +999,29 @@ int main (int argc, char **argv)
             std::cout << "symmetrized assignment m(i,j) = n(i,j) + n(j,i):\n";
             m(i,j) = n(i,j) + n(j,i);
             std::cout << FORMAT_VALUE(m) << '\n';
+            std::cout << '\n';
+        }
+
+        {
+            Float3x3 u(3);
+            typedef Float3::Index_t<'i'> I;
+            typedef Float3::Index_t<'j'> J;
+            I i;
+            J j;
+            std::cout << FORMAT_VALUE(u) << '\n';
+            typedef ExpressionTemplate_IndexedTensor_t<Float3x3,EmptyTypeList,TypeTuple_t<I>::T> ET;
+            ET::Index k;
+            std::cout << "trace(u) = " << u(i,i)[k] << '\n';
+            std::cout << "trace(u) = " << u.expr<'i','i'>()[k] << '\n';
+            std::cout << '\n';
+
+            Float3 v(1,2,3);
+            u(i,j) = v(i)*v(j);
+            std::cout << FORMAT_VALUE(v) << '\n';
+            std::cout << "v \\otimes v = ";
+            for (Uint32 k = 0; k < Float3x3::DIM; ++k)
+                std::cout << u[k] << ", ";
+            std::cout << '\n';
             std::cout << '\n';
         }
     }

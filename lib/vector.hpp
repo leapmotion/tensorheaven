@@ -50,6 +50,7 @@ struct Vector_t
     Vector_t (Scalar x0, Scalar x1, Scalar x2) { Lvd::Meta::Assert<(DIM == 3)>(); m[0] = x0; m[1] = x1; m[2] = x2; }
     Vector_t (Scalar x0, Scalar x1, Scalar x2, Scalar x3) { Lvd::Meta::Assert<(DIM == 4)>(); m[0] = x0; m[1] = x1; m[2] = x2; m[3] = x3; }
 
+    // TODO: only allow when Basis = Unit (or generic) once strongly-typed vectors are implemented
     // type conversion operator for canonical coersion to Scalar type when the vector is 1-dimensional
     operator Scalar const & () const { Lvd::Meta::Assert<(DIM == 1)>(); return m[0]; }
     // this could be implemented as "operator Scalar & ()" but it would be bad to make implicit casts that can be used to change the value of this.
@@ -83,28 +84,28 @@ struct Vector_t
     // IndexType_t<'j'> j;
     // u(i)*v(j)
     template <char SYMBOL>
-    ExpressionTemplate_IndexedTensor_t<Vector_t,TypeList_t<Index_t<SYMBOL> > > operator () (Index_t<SYMBOL> const &) const
+    ExpressionTemplate_IndexedTensor_t<Vector_t,TypeList_t<Index_t<SYMBOL> >,EmptyTypeList> operator () (Index_t<SYMBOL> const &) const
     {
         return expr<SYMBOL>();
     }
     template <char SYMBOL>
-    ExpressionTemplate_AssignableIndexedTensor_t<Vector_t,TypeList_t<Index_t<SYMBOL> > > operator () (Index_t<SYMBOL> const &)
+    ExpressionTemplate_IndexedTensor_t<Vector_t,TypeList_t<Index_t<SYMBOL> >,EmptyTypeList > operator () (Index_t<SYMBOL> const &)
     {
         return expr<SYMBOL>();
     }
     // the corresponding outer product example here would be
     // u.expr<'i'>() * v.expr<'j'>()
     template <char SYMBOL>
-    ExpressionTemplate_IndexedTensor_t<Vector_t,TypeList_t<Index_t<SYMBOL> > > expr () const
+    ExpressionTemplate_IndexedTensor_t<Vector_t,TypeList_t<Index_t<SYMBOL> >,EmptyTypeList> expr () const
     {
         Lvd::Meta::Assert<(SYMBOL != '\0')>();
-        return ExpressionTemplate_IndexedTensor_t<Vector_t,TypeList_t<Index_t<SYMBOL> > >(*this);
+        return ExpressionTemplate_IndexedTensor_t<Vector_t,TypeList_t<Index_t<SYMBOL> >,EmptyTypeList>(*this);
     }
     template <char SYMBOL>
-    ExpressionTemplate_AssignableIndexedTensor_t<Vector_t,TypeList_t<Index_t<SYMBOL> > > expr ()
+    ExpressionTemplate_IndexedTensor_t<Vector_t,TypeList_t<Index_t<SYMBOL> >,EmptyTypeList> expr ()
     {
         Lvd::Meta::Assert<(SYMBOL != '\0')>();
-        return ExpressionTemplate_AssignableIndexedTensor_t<Vector_t,TypeList_t<Index_t<SYMBOL> > >(*this);
+        return ExpressionTemplate_IndexedTensor_t<Vector_t,TypeList_t<Index_t<SYMBOL> >,EmptyTypeList>(*this);
     }
 
     static std::string type_as_string () { return "Vector_t<" + TypeStringOf_t<Scalar>::eval() + ',' + AS_STRING(DIM) + '>'; }

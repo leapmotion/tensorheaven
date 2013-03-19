@@ -21,7 +21,7 @@ x operator overloads for expression templates
 - strong typing for vectors -- named vector spaces (including "Generic") and prime/dual distinction (including self-dual)
   * default values should be "Generic" vector space ID and self-dual
   * canonical isomorphism for tensor2 -> vector will need to take into account basis
-- trace-type expression templates (where a tensor is contracted with itself, a case which is distinct from * style expression templates)
+x trace-type expression templates (where a tensor is contracted with itself, a case which is distinct from * style expression templates)
 x prohibiting 3+ summed index expressions
 x assignment expression templates
 - check assignment for aliasing
