@@ -24,7 +24,7 @@ x operator overloads for expression templates
 x trace-type expression templates (where a tensor is contracted with itself, a case which is distinct from * style expression templates)
 x prohibiting 3+ summed index expressions
 x assignment expression templates
-- check assignment for aliasing
+x check assignment for aliasing
 
 
 

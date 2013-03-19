@@ -21,6 +21,8 @@ struct FreeIndexTypeList_t
     typedef typename ElementsHavingMultiplicity_t<IndexTypeList,1>::T T;
 };
 
+// TODO: think about how UnarySummation_t and BinarySummation_t could be combined (if it makes sense to do it)
+
 // this is designed to handle trace-type expression templates, such as u(i,i) or v(i,j,i)
 // technically SummedIndexTypeList is a redundant argument (as it is derivable from TensorIndexTypeList),
 // but it is necessary so that a template specialization can be made for when it is EmptyTypeList.
@@ -90,6 +92,14 @@ struct ExpressionTemplate_IndexedTensor_t
         return UnarySummation_t<Tensor,TensorIndexTypeList,SummedIndexTypeList>::eval(m_tensor, i);
     }
 
+    template <typename OtherTensor>
+    bool uses_tensor (OtherTensor const &t) const
+    {
+        // the reinterpret_cast is safe because we're dealing with POD types and there
+        // is an explicit type-check at compiletime (TypesAreEqual)
+        return Lvd::Meta::TypesAreEqual<OtherTensor,Tensor>::v && reinterpret_cast<Tensor const *>(&t) == &m_tensor;
+    }
+
 private:
 
     Tensor const &m_tensor;
@@ -120,6 +130,11 @@ struct ExpressionTemplate_IndexedTensor_t<Tensor,TensorIndexTypeList,EmptyTypeLi
     // for some dumb reason, the compiler needed a non-templatized assignment operator for the exact matching type
     void operator = (ExpressionTemplate_IndexedTensor_t const &right_operand)
     {
+        // if right and left operands are the same, this is a no-op
+        if (&right_operand == this)
+            return;
+
+        // TODO: replace with memcpy? (this would require that Scalar is a POD type)
         for (Index i; i.is_not_at_end(); ++i)
             m_tensor[i.value()] = right_operand[i]; // TODO: allow index type to be used directly
     }
@@ -135,7 +150,9 @@ struct ExpressionTemplate_IndexedTensor_t<Tensor,TensorIndexTypeList,EmptyTypeLi
             RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES = Lvd::Meta::Assert<!ContainsDuplicates_t<typename RightOperand::FreeIndexTypeList>::V>::v
         };
 
-        // TODO: check for aliasing
+        // check for aliasing (where source and destination memory overlap)
+        if (right_operand.uses_tensor(m_tensor))
+            throw std::invalid_argument("invalid aliased tensor assignment (source and destination memory overlap) -- use an intermediate value");
 
         typedef CompoundIndexMap_t<FreeIndexTypeList,typename RightOperand::FreeIndexTypeList> RightOperandIndexMap;
         typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
@@ -143,6 +160,14 @@ struct ExpressionTemplate_IndexedTensor_t<Tensor,TensorIndexTypeList,EmptyTypeLi
         // component-wise assignment via the free index type.
         for (Index i; i.is_not_at_end(); ++i)
             m_tensor[i.value()] = right_operand[right_operand_index_map(i)]; // TODO: allow index type to be used directly
+    }
+
+    template <typename OtherTensor>
+    bool uses_tensor (OtherTensor const &t) const
+    {
+        // the reinterpret_cast is safe because we're dealing with POD types and there
+        // is an explicit type-check at compiletime (TypesAreEqual)
+        return Lvd::Meta::TypesAreEqual<OtherTensor,Tensor>::v && reinterpret_cast<Tensor const *>(&t) == &m_tensor;
     }
 
 private:
@@ -196,6 +221,12 @@ struct ExpressionTemplate_Addition_t
         return m_left_operand[left_operand_index_map(i)] + m_right_operand[right_operand_index_map(i)];
     }
 
+    template <typename OtherTensor>
+    bool uses_tensor (OtherTensor const &t) const
+    {
+        return m_left_operand.uses_tensor(t) || m_right_operand.uses_tensor(t);
+    }
+
 private:
 
     LeftOperand const &m_left_operand;
@@ -216,7 +247,7 @@ ExpressionTemplate_Addition_t<LeftOperand,RightOperand>
 // ////////////////////////////////////////////////////////////////////////////
 
 template <typename LeftOperand, typename RightOperand, typename FreeIndexTypeList, typename SummedIndexTypeList>
-struct Summation_t
+struct BinarySummation_t
 {
     enum { _ = Lvd::Meta::Assert<LeftOperand::IS_EXPRESSION_TEMPLATE>::v &&
                Lvd::Meta::Assert<RightOperand::IS_EXPRESSION_TEMPLATE>::v &&
@@ -252,7 +283,7 @@ struct Summation_t
 
 // template specialization handles summation over no indices
 template <typename LeftOperand, typename RightOperand, typename FreeIndexTypeList>
-struct Summation_t<LeftOperand,RightOperand,FreeIndexTypeList,EmptyTypeList>
+struct BinarySummation_t<LeftOperand,RightOperand,FreeIndexTypeList,EmptyTypeList>
 {
     enum { _ = Lvd::Meta::Assert<LeftOperand::IS_EXPRESSION_TEMPLATE>::v &&
                Lvd::Meta::Assert<RightOperand::IS_EXPRESSION_TEMPLATE>::v &&
@@ -321,7 +352,13 @@ struct ExpressionTemplate_Multiplication_t
 
     Scalar operator [] (Index const &i) const
     {
-        return Summation_t<LeftOperand,RightOperand,FreeIndexTypeList,SummedIndexTypeList>::eval(m_left_operand, m_right_operand, i);
+        return BinarySummation_t<LeftOperand,RightOperand,FreeIndexTypeList,SummedIndexTypeList>::eval(m_left_operand, m_right_operand, i);
+    }
+
+    template <typename OtherTensor>
+    bool uses_tensor (OtherTensor const &t) const
+    {
+        return m_left_operand.uses_tensor(t) || m_right_operand.uses_tensor(t);
     }
 
 private:

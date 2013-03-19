@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cassert>
 #include <iostream>
 #include <stdexcept>
 
@@ -1022,6 +1023,28 @@ int main (int argc, char **argv)
             for (Uint32 k = 0; k < Float3x3::DIM; ++k)
                 std::cout << u[k] << ", ";
             std::cout << '\n';
+            std::cout << '\n';
+        }
+
+        // checking for aliasing
+        {
+            Float3 u(1,2,3);
+            Float3 v(4,5,6);
+            Float3x3 a(10);
+            typedef Float3::Index_t<'i'> I;
+            typedef Float3::Index_t<'j'> J;
+            I i;
+            J j;
+            std::cout << FORMAT_VALUE(u(i).uses_tensor(u)) << '\n';
+            std::cout << FORMAT_VALUE(u(i).uses_tensor(v)) << '\n';
+            u(i) = u(i); // this should be a no-op
+            try {
+                // this should throw an exception
+                u(i) = a(i,j)*u(j);
+                assert(false && "an exception didn't occur when it was supposed to");
+            } catch (std::invalid_argument const &e) {
+                std::cout << "correctly caught an exception indicating an aliased template expression\n";
+            }
             std::cout << '\n';
         }
     }
