@@ -13,7 +13,6 @@ current goals:
     within the strongly typed formalism.
   * some sort of abstraction layer for using Eigen methods on our tensor classes.  self-contained and NOT intertwined in the tensor lib
   * could use templatized conversion method which converts to generic type
-x operator overloads for expression templates
 - scalar multiplication/division in expression templates
 - symmetric and antisymmetric 2 tensors (full contraction here requires a custom natural pairing -- make this a
   parameter of the multiplication expression template --
@@ -21,23 +20,23 @@ x operator overloads for expression templates
     "standard inner product" on the components)
   * NOTE: that there is a mutually exclusive choice between having a perfect natural pairing (no extra scalar multiples of components
     necessary when contracting) and an isometric vector representation (so that the norm of the vector is the norm of the tensor).
+  * the natural pairing is in general a bilinear form, but should usually be picked to be diagonal.
+  * the natural pairing should depend on the Vector_t type and its basis.
 - down-casting (to more-specific types) (up-casting (to less-specific types) already happens through expression templates)
   * something like
-      (a(i,j)*m(j,k)*a(k,l)).the_human_guarantees_that_this_is_a_Tensor2Symmetric<i,j>(I)
-    which would produce an expression template -- the indices (i,j) would be "bundled" into the index I,
+      (a(i,j)*m(j,k)*a(k,l)).the_human_guarantees_that_this_is_a_Tensor2Symmetric(i,l,I)
+    which would produce an expression template -- the indices (i,l) would be "bundled" into the index I,
     which is of type Tensor2Symmetric_t<...>::Index_t<...>
 - strong typing for vectors -- named vector spaces (including "Generic") and prime/dual distinction (including self-dual)
   * default values should be "Generic" vector space ID and self-dual
   * canonical isomorphism for tensor2 -> vector will need to take into account basis
-x trace-type expression templates (where a tensor is contracted with itself, a case which is distinct from * style expression templates)
-x prohibiting 3+ summed index expressions
-x assignment expression templates
-x check assignment for aliasing
 - column/row/block extraction/addressing
 - "eval" method on expression templates (which take a list of free indices) which produce an intermediate value
 
 
 future goals:
+- a rigorous test suite, using Lvd test code -- it can handle everything up through seg faults -- and negative compile
+  tests implemented at the build level, so that particular intentional compile errors can be verified to work.
 - standard in-line linear algebra notation
   * for example, if A is a matrix and v is a vector, "A*v" should be equivalent to "A(i,j)*v(j)", but obviously
     without the need to used an indexed expression.
@@ -58,3 +57,10 @@ features:
   isomorphism (a 1-dimensional real vector space is canonically isomorphic to R)
 - for 2-tensors of the form Nx1 or 1xN (referring to the dimension of the factors), type coersion
   to/from the factor types via canonical isomorphisms (R \otimes V = V  and  V \otimes R = V)
+
+implemented features/items:
+x operator overloads for expression templates
+x trace-type expression templates (where a tensor is contracted with itself, a case which is distinct from * style expression templates)
+x prohibiting 3+ summed index expressions
+x assignment expression templates
+x check assignment for aliasing

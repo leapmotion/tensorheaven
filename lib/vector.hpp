@@ -18,6 +18,7 @@ struct Vector_t
     // for use in operator [] for actual evaluation of tensor components
     struct Index
     {
+        typedef Vector_t OwnerVector;
         static Uint32 const COMPONENT_COUNT = Vector_t::DIM;
 
         // default is to initialize to start of iteration
@@ -56,6 +57,8 @@ struct Vector_t
     template <char SYMBOL>
     struct Index_t : public Index
     {
+        typedef typename Index::OwnerVector OwnerVector;
+
         Index_t () { }
         explicit Index_t (Uint32 i) : Index(i) { }
         Index_t (Index const &i) : Index(i) { }
@@ -197,6 +200,5 @@ struct DotProduct_t
         return retval;
     }
 };
-
 
 #endif // VECTOR_HPP_

@@ -3,6 +3,7 @@
 
 #include "core.hpp"
 #include "compoundindex.hpp"
+#include "naturalpairing.hpp"
 #include "typelist.hpp"
 
 // ////////////////////////////////////////////////////////////////////////////
@@ -20,6 +21,18 @@ struct FreeIndexTypeList_t
 {
     typedef typename ElementsHavingMultiplicity_t<IndexTypeList,1>::T T;
 };
+
+template <typename HeadType>
+typename HeadType::OwnerVector::Scalar summation_component_factor (CompoundIndex_t<TypeList_t<HeadType> > const &s)
+{
+    return NaturalPairing_t<typename HeadType::OwnerVector>::component(s.head());
+}
+
+template <typename HeadType, typename BodyTypeList>
+typename HeadType::OwnerVector::Scalar summation_component_factor (CompoundIndex_t<TypeList_t<HeadType,BodyTypeList> > const &s)
+{
+    return NaturalPairing_t<typename HeadType::OwnerVector>::component(s.head()) * summation_component_factor(s.body());
+}
 
 // TODO: think about how UnarySummation_t and BinarySummation_t could be combined (if it makes sense to do it)
 
@@ -51,7 +64,7 @@ struct UnarySummation_t
         // t = (f,s), which is a concatenation of the free access indices and the summed access indices.
         // s is a reference to the second part, which is what is iterated over in the summation.
         for (SummedIndex &s = t.template trailing_list<FreeIndexTypeList::LENGTH>(); s.is_not_at_end(); ++s)
-            retval += tensor[tensor_index_map(t)];
+            retval += tensor[tensor_index_map(t)] * summation_component_factor(s);
         return retval;
     }
 };
@@ -275,7 +288,9 @@ struct BinarySummation_t
         // t = (f,s), which is a concatenation of the free access indices and the summed access indices.
         // s is a reference to the second part, which is what is iterated over in the summation.
         for (SummedIndex &s = t.template trailing_list<FreeIndexTypeList::LENGTH>(); s.is_not_at_end(); ++s)
-            retval += left_operand[left_operand_index_map(t)] * right_operand[right_operand_index_map(t)];
+            retval += left_operand[left_operand_index_map(t)] *
+                      right_operand[right_operand_index_map(t)] *
+                      summation_component_factor(s);
         return retval;
     }
 };
