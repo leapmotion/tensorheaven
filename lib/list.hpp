@@ -53,6 +53,12 @@ struct List_t
         Lvd::Meta::Assert<(INDEX < LENGTH)>();
         return ListHelper_t<TypeList,INDEX>::el(*this);
     }
+    template <Uint32 INDEX>
+    typename Type_t<INDEX>::T &el ()
+    {
+        Lvd::Meta::Assert<(INDEX < LENGTH)>();
+        return ListHelper_t<TypeList,INDEX>::el(*this);
+    }
 
     // returns the type of the trailing List_t starting at the INDEXth element
     template <Uint32 INDEX>

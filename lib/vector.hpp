@@ -3,10 +3,12 @@
 
 #include <string>
 
+#include "compoundindex.hpp"
 #include "core.hpp"
 #include "expression_templates.hpp"
 #include "typestringof.hpp"
 
+// NOTE: Scalar_ MUST be a POD data type.
 template <typename Scalar_, Uint32 DIM_> // don't worry about type ID for now
 struct Vector_t
 {
@@ -18,8 +20,19 @@ struct Vector_t
     {
         static Uint32 const COMPONENT_COUNT = Vector_t::DIM;
 
+        // default is to initialize to start of iteration
         Index () : m(0) { }
-        Index (Uint32 i) : m(i) { } // TODO: think about explicit
+        // this is explicit because it's expensive -- the index value has to pass the range-checking
+        // gatekeeper, but once it's inside, it gets to run around freely and safely.
+        explicit Index (Uint32 i)
+            :
+            m(i)
+        {
+            if (m >= DIM)
+                throw std::out_of_range("raw-integer argument to Vector_t<>::Index constructor was out of range");
+        }
+        // no range-checking necessary
+        Index (Index const &i) : m(i.m) { }
 
         bool is_at_end () const { return m >= COMPONENT_COUNT; }
         bool is_not_at_end () const { return m < COMPONENT_COUNT; }
@@ -31,21 +44,28 @@ struct Vector_t
 
     private:
 
+        // TODO: store m as Uint16, and keep "is at end" flag as some separate bool or Uint16.
+        // this will allow value() to always return valid index integers, and the system can be safer
         Uint32 m;
     };
+
+    // the CompoundIndex_t encapsulation of Index
+    typedef CompoundIndex_t<typename TypeTuple_t<Index>::T> CompoundIndex;
 
     // for use in operator () for creation of expression templates (indexed tensor expressions)
     template <char SYMBOL>
     struct Index_t : public Index
     {
         Index_t () { }
-        Index_t (Uint32 i) : Index(i) { }
+        explicit Index_t (Uint32 i) : Index(i) { }
+        Index_t (Index const &i) : Index(i) { }
+        Index_t (Index_t const &i) : Index(i) { }
 
         static std::string type_as_string () { return TypeStringOf_t<Vector_t>::eval() + "::Index_t<'" + SYMBOL + "'>"; }
     };
 
     explicit Vector_t (WithoutInitialization const &) { }
-    explicit Vector_t (Scalar fill) { for (Uint32 i = 0; i < DIM; ++i) m[i] = fill; }
+    explicit Vector_t (Scalar fill_with) { for (Uint32 i = 0; i < DIM; ++i) m[i] = fill_with; }
     Vector_t (Scalar x0, Scalar x1) { Lvd::Meta::Assert<(DIM == 2)>(); m[0] = x0; m[1] = x1; }
     Vector_t (Scalar x0, Scalar x1, Scalar x2) { Lvd::Meta::Assert<(DIM == 3)>(); m[0] = x0; m[1] = x1; m[2] = x2; }
     Vector_t (Scalar x0, Scalar x1, Scalar x2, Scalar x3) { Lvd::Meta::Assert<(DIM == 4)>(); m[0] = x0; m[1] = x1; m[2] = x2; m[3] = x3; }
@@ -56,11 +76,15 @@ struct Vector_t
     // this could be implemented as "operator Scalar & ()" but it would be bad to make implicit casts that can be used to change the value of this.
     Scalar &as_scalar () { Lvd::Meta::Assert<(DIM == 1)>(); return m[0]; } // can use this to assign from Scalar
 
+    // this SHOULD be inconvenient and ugly to call.  it should be used ONLY when you know for certain that 0 <= i < DIM
+    Scalar const &component_access_without_range_check (Uint32 i) const { return m[i]; }
+    // this SHOULD be inconvenient and ugly to call.  it should be used ONLY when you know for certain that 0 <= i < DIM
+    Scalar &component_access_without_range_check (Uint32 i) { return m[i]; }
+
     // NOTE: operator [] will be used to return values, while
     // operator () will be used to create expression templates
     // for the purposes of indexed contractions.
     // TODO: make Index type encode the guarantee that it's value will always be valid
-    // TODO: make range-unchecked version that doesn't check/throw, when it's provable that the index is valid
     Scalar const &operator [] (Index const &i) const
     {
         if (i.is_at_end())
@@ -74,6 +98,16 @@ struct Vector_t
             throw std::invalid_argument("index out of range");
         else
             return m[i.value()];
+    }
+    template <typename Index_>
+    Scalar const &operator [] (CompoundIndex_t<TypeList_t<Index_> > const &c) const
+    {
+        return operator[](c.template el<0>());
+    }
+    template <typename Index_>
+    Scalar &operator [] (CompoundIndex_t<TypeList_t<Index_> > const &c)
+    {
+        return operator[](c.template el<0>());
     }
 
     // the argument is technically unnecessary, as its value is not used.  however,

@@ -31,9 +31,9 @@ struct UnarySummation_t
 {
     typedef typename Tensor::Scalar Scalar;
     typedef typename FreeIndexTypeList_t<TensorIndexTypeList>::T FreeIndexTypeList;
-    typedef CompoundIndex_t<FreeIndexTypeList> Index;
+    typedef CompoundIndex_t<FreeIndexTypeList> CompoundIndex;
 
-    static Scalar eval (Tensor const &tensor, Index const &i)
+    static Scalar eval (Tensor const &tensor, CompoundIndex const &c)
     {
         typedef typename ConcatenationOfTypeLists_t<FreeIndexTypeList,SummedIndexTypeList>::T TotalIndexTypeList;
         typedef CompoundIndex_t<TotalIndexTypeList> TotalIndex;
@@ -41,9 +41,9 @@ struct UnarySummation_t
 
         // the operands take indices that are a subset of the summed indices and free indices.
 
-        // constructing t with i initializes the first elements which correpond to
-        // Index with the value of i, and initializes the remaining elements to zero.
-        TotalIndex t(i);
+        // constructing t with c initializes the first elements which correpond to
+        // CompoundIndex with the value of c, and initializes the remaining elements to zero.
+        TotalIndex t(c);
         Scalar retval(0);
         // get the map which produces the CompoundIndex for each tensor from the TotalIndex t
         typedef CompoundIndexMap_t<TotalIndexTypeList,TensorIndexTypeList> TensorIndexMap;
@@ -51,7 +51,7 @@ struct UnarySummation_t
         // t = (f,s), which is a concatenation of the free access indices and the summed access indices.
         // s is a reference to the second part, which is what is iterated over in the summation.
         for (SummedIndex &s = t.template trailing_list<FreeIndexTypeList::LENGTH>(); s.is_not_at_end(); ++s)
-            retval += tensor[tensor_index_map(t).value()]; // TODO: allow index type to be used directly
+            retval += tensor[tensor_index_map(t)];
         return retval;
     }
 };
@@ -61,9 +61,9 @@ struct UnarySummation_t<Tensor,TensorIndexTypeList,EmptyTypeList>
 {
     typedef typename Tensor::Scalar Scalar;
     typedef typename FreeIndexTypeList_t<TensorIndexTypeList>::T FreeIndexTypeList;
-    typedef CompoundIndex_t<FreeIndexTypeList> Index;
+    typedef CompoundIndex_t<FreeIndexTypeList> CompoundIndex;
 
-    static Scalar eval (Tensor const &tensor, Index const &i) { return tensor[i]; }
+    static Scalar eval (Tensor const &tensor, CompoundIndex const &c) { return tensor[c]; }
 };
 
 // ////////////////////////////////////////////////////////////////////////////
@@ -80,16 +80,16 @@ struct ExpressionTemplate_IndexedTensor_t
     typedef typename FreeIndexTypeList_t<TensorIndexTypeList>::T FreeIndexTypeList;
     // typelist of used indices which are prohibited from using higher up in the AST
     typedef SummedIndexTypeList UsedIndexTypeList;
-    typedef CompoundIndex_t<FreeIndexTypeList> Index;
+    typedef CompoundIndex_t<FreeIndexTypeList> CompoundIndex;
 
     static bool const IS_EXPRESSION_TEMPLATE = true;
 
     ExpressionTemplate_IndexedTensor_t (Tensor const &tensor) : m_tensor(tensor) { }
 
     // read-only, because it doesn't make sense to assign to an expression which is a summation.
-    Scalar operator [] (Index const &i) const
+    Scalar operator [] (CompoundIndex const &c) const
     {
-        return UnarySummation_t<Tensor,TensorIndexTypeList,SummedIndexTypeList>::eval(m_tensor, i);
+        return UnarySummation_t<Tensor,TensorIndexTypeList,SummedIndexTypeList>::eval(m_tensor, c);
     }
 
     template <typename OtherTensor>
@@ -113,7 +113,7 @@ struct ExpressionTemplate_IndexedTensor_t<Tensor,TensorIndexTypeList,EmptyTypeLi
     typedef typename FreeIndexTypeList_t<TensorIndexTypeList>::T FreeIndexTypeList;
     // typelist of used indices which are prohibited from using higher up in the AST
     typedef EmptyTypeList UsedIndexTypeList;
-    typedef CompoundIndex_t<FreeIndexTypeList> Index;
+    typedef CompoundIndex_t<FreeIndexTypeList> CompoundIndex;
 
     static bool const IS_EXPRESSION_TEMPLATE = true;
 
@@ -122,21 +122,19 @@ struct ExpressionTemplate_IndexedTensor_t<Tensor,TensorIndexTypeList,EmptyTypeLi
     // read-only, because it doesn't necessarily make sense to assign to an expression
     // template -- the expression may be a product or some such, where each component
     // is not an L-value.
-    Scalar const &operator [] (Index const &i) const
-    {
-        return m_tensor[i.value()]; // TODO: allow index type to be used directly
-    }
+    Scalar const &operator [] (typename Tensor::Index const &i) const { return m_tensor[i]; }
+    Scalar const &operator [] (CompoundIndex const &c) const { return m_tensor[c]; }
 
     // for some dumb reason, the compiler needed a non-templatized assignment operator for the exact matching type
     void operator = (ExpressionTemplate_IndexedTensor_t const &right_operand)
     {
-        // if right and left operands are the same, this is a no-op
-        if (&right_operand == this)
+        // if right and left operands' m_tensor references are the same, this is a no-op
+        if (&right_operand.m_tensor == &m_tensor)
             return;
 
         // TODO: replace with memcpy? (this would require that Scalar is a POD type)
-        for (Index i; i.is_not_at_end(); ++i)
-            m_tensor[i.value()] = right_operand[i]; // TODO: allow index type to be used directly
+        for (typename Tensor::Index i; i.is_not_at_end(); ++i)
+            m_tensor[i] = right_operand[i];
     }
     template <typename RightOperand>
     void operator = (RightOperand const &right_operand)
@@ -158,8 +156,8 @@ struct ExpressionTemplate_IndexedTensor_t<Tensor,TensorIndexTypeList,EmptyTypeLi
         typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
 
         // component-wise assignment via the free index type.
-        for (Index i; i.is_not_at_end(); ++i)
-            m_tensor[i.value()] = right_operand[right_operand_index_map(i)]; // TODO: allow index type to be used directly
+        for (CompoundIndex c; c.is_not_at_end(); ++c)
+            m_tensor[c] = right_operand[right_operand_index_map(c)];
     }
 
     template <typename OtherTensor>
@@ -202,7 +200,7 @@ struct ExpressionTemplate_Addition_t
     typedef typename LeftOperand::FreeIndexTypeList FreeIndexTypeList;
     typedef EmptyTypeList SummedIndexTypeList; // TEMP: see above comment about "private" indices
     typedef EmptyTypeList UsedIndexTypeList;
-    typedef typename LeftOperand::Index Index;
+    typedef typename LeftOperand::CompoundIndex CompoundIndex;
 
     static bool const IS_EXPRESSION_TEMPLATE = true;
 
@@ -212,13 +210,13 @@ struct ExpressionTemplate_Addition_t
         m_right_operand(right_operand)
     { }
 
-    Scalar operator [] (Index const &i) const
+    Scalar operator [] (CompoundIndex const &c) const
     {
         typedef CompoundIndexMap_t<FreeIndexTypeList,typename LeftOperand::FreeIndexTypeList> LeftOperandIndexMap;
         typedef CompoundIndexMap_t<FreeIndexTypeList,typename RightOperand::FreeIndexTypeList> RightOperandIndexMap;
         typename LeftOperandIndexMap::EvalMapType left_operand_index_map = LeftOperandIndexMap::eval;
         typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
-        return m_left_operand[left_operand_index_map(i)] + m_right_operand[right_operand_index_map(i)];
+        return m_left_operand[left_operand_index_map(c)] + m_right_operand[right_operand_index_map(c)];
     }
 
     template <typename OtherTensor>
@@ -255,8 +253,9 @@ struct BinarySummation_t
                Lvd::Meta::Assert<(SummedIndexTypeList::LENGTH > 0)>::v };
 
     typedef typename LeftOperand::Scalar Scalar;
+    typedef CompoundIndex_t<FreeIndexTypeList> CompoundIndex;
 
-    static Scalar eval (LeftOperand const &left_operand, RightOperand const &right_operand, CompoundIndex_t<FreeIndexTypeList> const &i)
+    static Scalar eval (LeftOperand const &left_operand, RightOperand const &right_operand, CompoundIndex const &c)
     {
         typedef typename ConcatenationOfTypeLists_t<FreeIndexTypeList,SummedIndexTypeList>::T TotalIndexTypeList;
         typedef CompoundIndex_t<TotalIndexTypeList> TotalIndex;
@@ -264,9 +263,9 @@ struct BinarySummation_t
 
         // the operands take indices that are a subset of the summed indices and free indices.
 
-        // constructing t with i initializes the first elements which correpond to
-        // Index with the value of i, and initializes the remaining elements to zero.
-        TotalIndex t(i);
+        // constructing t with c initializes the first elements which correpond to
+        // CompoundIndex with the value of c, and initializes the remaining elements to zero.
+        TotalIndex t(c);
         Scalar retval(0);
         // get the map which produces the CompoundIndex for each operand from the TotalIndex t
         typedef CompoundIndexMap_t<TotalIndexTypeList,typename LeftOperand::FreeIndexTypeList> LeftOperandIndexMap;
@@ -290,15 +289,16 @@ struct BinarySummation_t<LeftOperand,RightOperand,FreeIndexTypeList,EmptyTypeLis
                Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v>::v };
 
     typedef typename LeftOperand::Scalar Scalar;
+    typedef CompoundIndex_t<FreeIndexTypeList> CompoundIndex;
 
-    static Scalar eval (LeftOperand const &left_operand, RightOperand const &right_operand, CompoundIndex_t<FreeIndexTypeList> const &i)
+    static Scalar eval (LeftOperand const &left_operand, RightOperand const &right_operand, CompoundIndex const &c)
     {
-        // get the map which produces the CompoundIndex for each operand from the free indices i
+        // get the map which produces the CompoundIndex for each operand from the free indices c
         typedef CompoundIndexMap_t<FreeIndexTypeList,typename LeftOperand::FreeIndexTypeList> LeftOperandIndexMap;
         typedef CompoundIndexMap_t<FreeIndexTypeList,typename RightOperand::FreeIndexTypeList> RightOperandIndexMap;
         typename LeftOperandIndexMap::EvalMapType left_operand_index_map = LeftOperandIndexMap::eval;
         typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
-        return left_operand[left_operand_index_map(i)] * right_operand[right_operand_index_map(i)];
+        return left_operand[left_operand_index_map(c)] * right_operand[right_operand_index_map(c)];
     }
 };
 
@@ -326,8 +326,8 @@ struct ExpressionTemplate_Multiplication_t
             typename ConcatenationOfTypeLists_t<typename LeftOperand::UsedIndexTypeList,
                                                 typename RightOperand::UsedIndexTypeList>::T,
             SummedIndexTypeList>::T>::T UsedIndexTypeList;
-    // Index is a list (TODO: change to tuple) of type FreeIndices
-    typedef CompoundIndex_t<FreeIndexTypeList> Index;
+    // CompoundIndex is a list (TODO: change to tuple) of type FreeIndices
+    typedef CompoundIndex_t<FreeIndexTypeList> CompoundIndex;
 
     // TODO: check that the summed indices from each operand have no indices in common
     // though technically this is unnecessary, because the summed indices are "private"
@@ -350,9 +350,9 @@ struct ExpressionTemplate_Multiplication_t
         m_right_operand(right_operand)
     { }
 
-    Scalar operator [] (Index const &i) const
+    Scalar operator [] (CompoundIndex const &c) const
     {
-        return BinarySummation_t<LeftOperand,RightOperand,FreeIndexTypeList,SummedIndexTypeList>::eval(m_left_operand, m_right_operand, i);
+        return BinarySummation_t<LeftOperand,RightOperand,FreeIndexTypeList,SummedIndexTypeList>::eval(m_left_operand, m_right_operand, c);
     }
 
     template <typename OtherTensor>

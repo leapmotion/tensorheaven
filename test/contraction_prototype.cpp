@@ -540,107 +540,108 @@ int main (int argc, char **argv)
 //         Float3 x(b);
     }
 
-    // testing various tensor access and operations
-    {
-        Float2 u(10,20);
-        Float3 v(1,2,3);
-        Float4 w(4,5,6,7);
 
-        std::cout << FORMAT_VALUE(u) << '\n';
-        std::cout << FORMAT_VALUE(v) << '\n';
-        std::cout << FORMAT_VALUE(w) << '\n';
-
-        SimpleFloat3x4 X(v,w);
-
-        std::cout << "X := v \\otimes w = " << X << ", and " << v%w << '\n';
-
-
-        for (Uint32 r = 0; r < 3; ++r)
-        {
-            for (Uint32 c = 0; c < 4; ++c)
-            {
-                std::cout << "\t" << X[Float3x4::DeprecatedIndex(r,c)];
-            }
-            std::cout << '\n';
-        }
-
-        std::cout << '\n';
-
-
-        for (Uint32 i = 0; i < Float3x4::DIM; ++i)
-        {
-            Float3x4::DeprecatedIndex index(i);
-            std::cout << i << " -> " << index.subindex1().value() << ", " << index.subindex2().value()
-                      << " -> " << Float3x4::DeprecatedIndex(index.subindex1().value(), index.subindex2().value()).value() << '\n';
-        }
-
-        std::cout << '\n';
-
-        for (Uint32 i = 0; i < Float2x3x4::DIM; ++i)
-        {
-            Float2x3x4::Index index(i);
-            std::cout << i << " -> " << index.subindex1().value() << ", " << index.subindex2().value() << ", " << index.subindex3().value()
-                      << " -> " << Float2x3x4::Index(index.subindex1().value(), index.subindex2().value(), index.subindex3().value()).value() << '\n';
-        }
-
-        std::cout << '\n';
-
-        SimpleFloat2x3x4 Z(u%v%w);
-        std::cout << "u \\otimes v \\otimes w = " << Z << '\n';
-        for (Uint32 s = 0; s < 2; ++s)
-        {
-            for (Uint32 r = 0; r < 3; ++r)
-            {
-                for (Uint32 c = 0; c < 4; ++c)
-                {
-                    std::cout << "\t" << Z[Float2x3x4::Index(s,r,c)];
-                }
-                std::cout << '\n';
-            }
-            std::cout << '\n';
-        }
-
-
-        Float3 a(0,-2,4);
-        Float4 b(8,4,2,1);
-        SimpleFloat3x4 Y(a,b);
-
-        std::cout << "a = " << a << '\n';
-        std::cout << "b = " << b << '\n';
-        std::cout << "Y := a \\otimes b = " << Y << '\n';
-
-        for (Uint32 r = 0; r < 3; ++r)
-        {
-            for (Uint32 c = 0; c < 4; ++c)
-            {
-                std::cout << "\t" << Y[Float3x4::DeprecatedIndex(r,c)];
-            }
-            std::cout << '\n';
-        }
-
-        std::cout << '\n';
-
-        std::cout << "X * Y = " << DotProduct_t<SimpleFloat3x4>::eval(X,Y) << " (";
-
-        // done the hard way -- compute the inner product of X and Y
-        float accumulator = 0;
-        for (Uint32 r = 0; r < 3; ++r)
-            for (Uint32 c = 0; c < 4; ++c)
-                accumulator += X[Float3x4::DeprecatedIndex(r,c)] * Y[Float3x4::DeprecatedIndex(r,c)];
-        std::cout << "actual answer = " << accumulator << ")\n\n";
-
-        Float3x3 W(Static<>::WITHOUT_INITIALIZATION);
-        for (Uint32 i = 0; i < 3; ++i)
-            for (Uint32 j = 0; j < 3; ++j)
-                for (Uint32 k = 0; k < 4; ++k)
-                    W[Float3x3::DeprecatedIndex(i,j)] = X[Float3x4::DeprecatedIndex(i,k)] * Y[Float3x4::DeprecatedIndex(j,k)];
-        for (Uint32 i = 0; i < 3; ++i)
-        {
-            for (Uint32 j = 0; j < 3; ++j)
-                std::cout << '\t' << W[Float3x3::DeprecatedIndex(i,j)];
-            std::cout << '\n';
-        }
-    }
+//     // testing various tensor access and operations
+//     {
+//         Float2 u(10,20);
+//         Float3 v(1,2,3);
+//         Float4 w(4,5,6,7);
+//
+//         std::cout << FORMAT_VALUE(u) << '\n';
+//         std::cout << FORMAT_VALUE(v) << '\n';
+//         std::cout << FORMAT_VALUE(w) << '\n';
+//
+//         SimpleFloat3x4 X(v,w);
+//
+//         std::cout << "X := v \\otimes w = " << X << ", and " << v%w << '\n';
+//
+//
+//         for (Uint32 r = 0; r < 3; ++r)
+//         {
+//             for (Uint32 c = 0; c < 4; ++c)
+//             {
+//                 std::cout << "\t" << X[Float3x4::DeprecatedIndex(r,c)];
+//             }
+//             std::cout << '\n';
+//         }
+//
+//         std::cout << '\n';
+//
+//
+//         for (Uint32 i = 0; i < Float3x4::DIM; ++i)
+//         {
+//             Float3x4::DeprecatedIndex index(i);
+//             std::cout << i << " -> " << index.subindex1().value() << ", " << index.subindex2().value()
+//                       << " -> " << Float3x4::DeprecatedIndex(index.subindex1().value(), index.subindex2().value()).value() << '\n';
+//         }
+//
+//         std::cout << '\n';
+//
+//         for (Uint32 i = 0; i < Float2x3x4::DIM; ++i)
+//         {
+//             Float2x3x4::Index index(i);
+//             std::cout << i << " -> " << index.subindex1().value() << ", " << index.subindex2().value() << ", " << index.subindex3().value()
+//                       << " -> " << Float2x3x4::Index(index.subindex1().value(), index.subindex2().value(), index.subindex3().value()).value() << '\n';
+//         }
+//
+//         std::cout << '\n';
+//
+//         SimpleFloat2x3x4 Z(u%v%w);
+//         std::cout << "u \\otimes v \\otimes w = " << Z << '\n';
+//         for (Uint32 s = 0; s < 2; ++s)
+//         {
+//             for (Uint32 r = 0; r < 3; ++r)
+//             {
+//                 for (Uint32 c = 0; c < 4; ++c)
+//                 {
+//                     std::cout << "\t" << Z[Float2x3x4::Index(s,r,c)];
+//                 }
+//                 std::cout << '\n';
+//             }
+//             std::cout << '\n';
+//         }
+//
+//
+//         Float3 a(0,-2,4);
+//         Float4 b(8,4,2,1);
+//         SimpleFloat3x4 Y(a,b);
+//
+//         std::cout << "a = " << a << '\n';
+//         std::cout << "b = " << b << '\n';
+//         std::cout << "Y := a \\otimes b = " << Y << '\n';
+//
+//         for (Uint32 r = 0; r < 3; ++r)
+//         {
+//             for (Uint32 c = 0; c < 4; ++c)
+//             {
+//                 std::cout << "\t" << Y[Float3x4::DeprecatedIndex(r,c)];
+//             }
+//             std::cout << '\n';
+//         }
+//
+//         std::cout << '\n';
+//
+//         std::cout << "X * Y = " << DotProduct_t<SimpleFloat3x4>::eval(X,Y) << " (";
+//
+//         // done the hard way -- compute the inner product of X and Y
+//         float accumulator = 0;
+//         for (Uint32 r = 0; r < 3; ++r)
+//             for (Uint32 c = 0; c < 4; ++c)
+//                 accumulator += X[Float3x4::DeprecatedIndex(r,c)] * Y[Float3x4::DeprecatedIndex(r,c)];
+//         std::cout << "actual answer = " << accumulator << ")\n\n";
+//
+//         Float3x3 W(Static<>::WITHOUT_INITIALIZATION);
+//         for (Uint32 i = 0; i < 3; ++i)
+//             for (Uint32 j = 0; j < 3; ++j)
+//                 for (Uint32 k = 0; k < 4; ++k)
+//                     W[Float3x3::DeprecatedIndex(i,j)] = X[Float3x4::DeprecatedIndex(i,k)] * Y[Float3x4::DeprecatedIndex(j,k)];
+//         for (Uint32 i = 0; i < 3; ++i)
+//         {
+//             for (Uint32 j = 0; j < 3; ++j)
+//                 std::cout << '\t' << W[Float3x3::DeprecatedIndex(i,j)];
+//             std::cout << '\n';
+//         }
+//     }
 
     // testing expression templates
     {
@@ -658,9 +659,9 @@ int main (int argc, char **argv)
 //             std::cout << i << '\n';
 //             std::cout << Float3::Index(0) << '\n';
             v(i);
-            std::cout << FORMAT_VALUE(v(i)[EI::Index(0)]) << '\n';
+            std::cout << FORMAT_VALUE(v(i)[EI::CompoundIndex(0)]) << '\n';
 
-            std::cout << FORMAT_VALUE(v.expr<'j'>()[EJ::Index(1)]) << '\n';
+            std::cout << FORMAT_VALUE(v.expr<'j'>()[EJ::CompoundIndex(1)]) << '\n';
 
             for (Float3::Index k; k.is_not_at_end(); ++k)
                 std::cout << u[k] + v[k] << ", ";
@@ -674,17 +675,17 @@ int main (int argc, char **argv)
             typedef ExpressionTemplate_Addition_t<EE,EE> EA;
             EA e(u(i), v(i));
             std::cout << "expression template value:\n";
-            for (EA::Index k; k.is_not_at_end(); ++k)
+            for (EA::CompoundIndex k; k.is_not_at_end(); ++k)
                 std::cout << e[k] << ", ";
             std::cout << '\n';
             std::cout << "hand-calculated value:\n";
-            for (Uint32 k = 0; k < 3; ++k)
+            for (Float3::Index k; k.is_not_at_end(); ++k)
                 std::cout << u[k] + v[k] << ", ";
             std::cout << '\n';
 
             std::cout << "operator +\n";
             EA e2(u(i) + v(i));
-            for (EA::Index k; k.is_not_at_end(); ++k)
+            for (EA::CompoundIndex k; k.is_not_at_end(); ++k)
                 std::cout << e2[k] << ", ";
             std::cout << '\n';
             std::cout << '\n';
@@ -697,12 +698,12 @@ int main (int argc, char **argv)
             EM e(u(i), v(i));
             Float3::Index k;
             std::cout << FORMAT_VALUE(k.COMPONENT_COUNT) << '\n';
-            std::cout << FORMAT_VALUE(TypeStringOf_t<EE::Index>::eval()) << '\n';
+            std::cout << FORMAT_VALUE(TypeStringOf_t<EE::CompoundIndex>::eval()) << '\n';
             std::cout << "expression template value:\n";
-            std::cout << FORMAT_VALUE(e[EM::Index()]) << '\n';
+            std::cout << FORMAT_VALUE(e[EM::CompoundIndex()]) << '\n';
             std::cout << "hand-calculated value:\n";
             float dot = 0;
-            for (Uint32 k = 0; k < 3; ++k)
+            for (Float3::Index k; k.is_not_at_end(); ++k)
                 dot += u[k]*v[k];
             std::cout << dot << '\n';
             std::cout << '\n';
@@ -715,23 +716,23 @@ int main (int argc, char **argv)
             typedef ExpressionTemplate_IndexedTensor_t<Float3,TypeList_t<J>,EmptyTypeList> EJ;
             typedef ExpressionTemplate_Multiplication_t<EI,EJ> EM;
             EM e(u(i), v(j));
-            std::cout << FORMAT_VALUE(TypeStringOf_t<EM::Index>::eval()) << '\n';
+            std::cout << FORMAT_VALUE(TypeStringOf_t<EM::CompoundIndex>::eval()) << '\n';
             std::cout << FORMAT_VALUE(TypeStringOf_t<EM::FreeIndexTypeList>::eval()) << '\n';
             std::cout << FORMAT_VALUE(TypeStringOf_t<EM::SummedIndexTypeList>::eval()) << '\n';
             std::cout << FORMAT_VALUE(u) << '\n';
             std::cout << FORMAT_VALUE(v) << '\n';
             std::cout << "expression template value:\n";
-            for (EM::Index k; k.is_not_at_end(); ++k)
+            for (EM::CompoundIndex k; k.is_not_at_end(); ++k)
                 std::cout << e[k] << ", ";
             std::cout << '\n';
             std::cout << "hand-calculated value:\n";
-            for (Uint32 ii = 0; ii < 3; ++ii)
-                for (Uint32 jj = 0; jj < 3; ++jj)
+            for (Float3::Index ii; ii.is_not_at_end(); ++ii)
+                for (Float3::Index jj; jj.is_not_at_end(); ++jj)
                     std::cout << u[ii] * v[jj] << ", ";
             std::cout << '\n';
             std::cout << "operator *\n";
             EM e2(u(i) * v(j));
-            for (EM::Index k; k.is_not_at_end(); ++k)
+            for (EM::CompoundIndex k; k.is_not_at_end(); ++k)
                 std::cout << e2[k] << ", ";
             std::cout << '\n';
             std::cout << '\n';
@@ -744,25 +745,25 @@ int main (int argc, char **argv)
             typedef ExpressionTemplate_Multiplication_t<EI,EJ> EM;
             typedef ExpressionTemplate_Multiplication_t<EM,EJ> EMJ;
             EMJ e(EM(u(i), v(j)), w(j));
-            std::cout << FORMAT_VALUE(TypeStringOf_t<EMJ::Index>::eval()) << '\n';
+            std::cout << FORMAT_VALUE(TypeStringOf_t<EMJ::CompoundIndex>::eval()) << '\n';
             std::cout << FORMAT_VALUE(TypeStringOf_t<EMJ::FreeIndexTypeList>::eval()) << '\n';
             std::cout << FORMAT_VALUE(TypeStringOf_t<EMJ::SummedIndexTypeList>::eval()) << '\n';
             std::cout << "expression template value:\n";
-            for (EMJ::Index k; k.is_not_at_end(); ++k)
+            for (EMJ::CompoundIndex k; k.is_not_at_end(); ++k)
                 std::cout << e[k] << ", ";
             std::cout << '\n';
             std::cout << "hand-calculated value:\n";
-            for (Uint32 ii = 0; ii < 3; ++ii)
+            for (Float3::Index ii; ii.is_not_at_end(); ++ii)
             {
                 float accum = 0;
-                for (Uint32 jj = 0; jj < 3; ++jj)
+                for (Float3::Index jj; jj.is_not_at_end(); ++jj)
                     accum += u[ii] * v[jj] * w[jj];
                 std::cout << accum << ", ";
             }
             std::cout << '\n';
             std::cout << "operator *\n";
             EMJ e2(u(i) * v(j) * w(j));
-            for (EMJ::Index k; k.is_not_at_end(); ++k)
+            for (EMJ::CompoundIndex k; k.is_not_at_end(); ++k)
                 std::cout << e2[k] << ", ";
             std::cout << '\n';
             std::cout << '\n';
@@ -781,27 +782,27 @@ int main (int argc, char **argv)
             typedef ExpressionTemplate_Addition_t<EE,EE> EA;
             Float3x4 u(Static<>::WITHOUT_INITIALIZATION);
             Float3x4 v(Static<>::WITHOUT_INITIALIZATION);
-            for (Uint32 k = 0; k < Float3x4::DIM; ++k)
+            for (Float3x4::Index k; k.is_not_at_end(); ++k)
             {
-                u[k] = k;
-                v[k] = 13+k;
+                u[k] = k.value();
+                v[k] = 13+k.value();
             }
             std::cout << FORMAT_VALUE(u) << '\n';
             std::cout << FORMAT_VALUE(v) << '\n';
-            std::cout << FORMAT_VALUE(u(i)[0]) << '\n';
-            std::cout << FORMAT_VALUE(u(i)[11]) << '\n';
+            std::cout << FORMAT_VALUE(u(i)[Float3x4::Index_t<'i'>(0)]) << '\n';
+            std::cout << FORMAT_VALUE(u(i)[Float3x4::Index_t<'i'>(11)]) << '\n';
             EA e(u(i), v(i));
             std::cout << "expression template value:\n";
-            for (EA::Index k; k.is_not_at_end(); ++k)
+            for (EA::CompoundIndex k; k.is_not_at_end(); ++k)
                 std::cout << e[k] << ", ";
             std::cout << '\n';
             std::cout << "hand-calculated value:\n";
-            for (Uint32 k = 0; k < Float3x4::DIM; ++k)
+            for (Float3x4::Index k; k.is_not_at_end(); ++k)
                 std::cout << u[k] + v[k] << ", ";
             std::cout << '\n';
             std::cout << "operator +\n";
             EA e2(u(i) + v(i));
-            for (EA::Index k; k.is_not_at_end(); ++k)
+            for (EA::CompoundIndex k; k.is_not_at_end(); ++k)
                 std::cout << e2[k] << ", ";
             std::cout << '\n';
             std::cout << '\n';
@@ -817,19 +818,19 @@ int main (int argc, char **argv)
             typedef ExpressionTemplate_Addition_t<EIJ,EIJ> EA;
             Float3x4 u(Static<>::WITHOUT_INITIALIZATION);
             Float3x4 v(Static<>::WITHOUT_INITIALIZATION);
-            for (Uint32 k = 0; k < Float3x4::DIM; ++k)
+            for (Float3x4::Index k; k.is_not_at_end(); ++k)
             {
-                u[k] = k;
-                v[k] = 13+k;
+                u[k] = k.value();
+                v[k] = 13+k.value();
             }
             EA e(u(i,j), v(i,j));
-            for (EA::Index k; k.is_not_at_end(); ++k)
+            for (EA::CompoundIndex k; k.is_not_at_end(); ++k)
                 std::cout << e[k] << ", ";
             std::cout << '\n';
 
             std::cout << "operator + with same index order\n";
             EA e2(u(i,j) + v(i,j));
-            for (EA::Index k; k.is_not_at_end(); ++k)
+            for (EA::CompoundIndex k; k.is_not_at_end(); ++k)
                 std::cout << e2[k] << ", ";
             std::cout << '\n';
             std::cout << '\n';
@@ -848,17 +849,17 @@ int main (int argc, char **argv)
             Float3x3 u(Static<>::WITHOUT_INITIALIZATION);
             Float3x3 v(Static<>::WITHOUT_INITIALIZATION);
             // dummy values that aren't symmetric
-            for (Uint32 k = 0; k < Float3x3::DIM; ++k)
+            for (Float3x3::Index k; k.is_not_at_end(); ++k)
             {
-                u[k] = k*k;
-                v[k] = k*k + 2*k;
+                u[k] = sqr(k.value());
+                v[k] = sqr(k.value()) + 2*k.value();
             }
 
             std::cout << FORMAT_VALUE(u) << '\n';
             std::cout << FORMAT_VALUE(v) << '\n';
 
             EB e(u(i,j), u(j,i));
-            for (EB::Index k; k.is_not_at_end(); ++k)
+            for (EB::CompoundIndex k; k.is_not_at_end(); ++k)
                 std::cout << e[k] << ", ";
             std::cout << '\n';
 
@@ -869,13 +870,13 @@ int main (int argc, char **argv)
 
             std::cout << "operator + with same index order\n";
             EA e2(u(i,j) + v(i,j));
-            for (EA::Index k; k.is_not_at_end(); ++k)
+            for (EA::CompoundIndex k; k.is_not_at_end(); ++k)
                 std::cout << e2[k] << ", ";
             std::cout << '\n';
 
             std::cout << "operator + with opposite index order\n";
             EB e3(u(i,j) + v(j,i));
-            for (EB::Index k; k.is_not_at_end(); ++k)
+            for (EB::CompoundIndex k; k.is_not_at_end(); ++k)
                 std::cout << e3[k] << ", ";
 
             u.expr<'i','j'>();
@@ -890,12 +891,12 @@ int main (int argc, char **argv)
             Float3x4 u(Static<>::WITHOUT_INITIALIZATION);
             Float4x5 v(Static<>::WITHOUT_INITIALIZATION);
             Float5x2 w(Static<>::WITHOUT_INITIALIZATION);
-            for (Uint32 k = 0; k < Float3x4::DIM; ++k)
-                u[k] = k*k;
-            for (Uint32 k = 0; k < Float4x5::DIM; ++k)
-                v[k] = 2*k + 3;
-            for (Uint32 k = 0; k < Float5x2::DIM; ++k)
-                w[k] = k + 1;
+            for (Float3x4::Index k; k.is_not_at_end(); ++k)
+                u[k] = sqr(k.value());
+            for (Float4x5::Index k; k.is_not_at_end(); ++k)
+                v[k] = 2*k.value() + 3;
+            for (Float5x2::Index k; k.is_not_at_end(); ++k)
+                w[k] = k.value() + 1;
             std::cout << FORMAT_VALUE(u) << '\n';
             std::cout << FORMAT_VALUE(v) << '\n';
             std::cout << FORMAT_VALUE(w) << '\n';
@@ -914,18 +915,18 @@ int main (int argc, char **argv)
             typedef ExpressionTemplate_Multiplication_t<EM,EKL> EMM;
             std::cout << "expression template contraction u(i,j)*v(j,k):\n";
             EM e(u(i,j), v(j,k));
-            for (EM::Index c; c.is_not_at_end(); ++c)
+            for (EM::CompoundIndex c; c.is_not_at_end(); ++c)
                 std::cout << e[c] << ", ";
             std::cout << '\n';
 
             std::cout << "hand-computed answer:\n";
-            for (Uint32 a = 0; a < 3; ++a)
+            for (Float3::Index a; a.is_not_at_end(); ++a)
             {
-                for (Uint32 b = 0; b < 5; ++b)
+                for (Float5::Index b; b.is_not_at_end(); ++b)
                 {
                     float accum = 0;
-                    for (Uint32 c = 0; c < 4; ++c)
-                        accum += u[Float3x4::DeprecatedIndex(a,c)] * v[Float4x5::DeprecatedIndex(c,b)];
+                    for (Float4::Index c; c.is_not_at_end(); ++c)
+                        accum += u[Float3x4::CompoundIndex(a,c)] * v[Float4x5::CompoundIndex(c,b)];
                     std::cout << accum << ", ";
                 }
             }
@@ -933,7 +934,7 @@ int main (int argc, char **argv)
 
             std::cout << "expression template contraction u(i,j)*v(j,k)*w(k,l):\n";
             EMM e2(e, w(k,l));
-            for (EMM::Index c; c.is_not_at_end(); ++c)
+            for (EMM::CompoundIndex c; c.is_not_at_end(); ++c)
                 std::cout << e2[c] << ", ";
             std::cout << '\n';
 
@@ -945,14 +946,14 @@ int main (int argc, char **argv)
                     float accum = 0;
                     for (Uint32 c = 0; c < 4; ++c)
                         for (Uint32 d = 0; d < 5; ++d)
-                            accum += u[Float3x4::DeprecatedIndex(a,c)] * v[Float4x5::DeprecatedIndex(c,d)] * w[Float5x2::DeprecatedIndex(d,b)];
+                            accum += u[Float3x4::CompoundIndex(a,c)] * v[Float4x5::CompoundIndex(c,d)] * w[Float5x2::CompoundIndex(d,b)];
                     std::cout << accum << ", ";
                 }
             }
             std::cout << '\n';
             std::cout << "operator *:\n";
             EMM e3(u(i,j)*v(j,k)*w(k,l));
-            for (EMM::Index c; c.is_not_at_end(); ++c)
+            for (EMM::CompoundIndex c; c.is_not_at_end(); ++c)
                 std::cout << e3[c] << ", ";
             std::cout << '\n';
             std::cout << '\n';
@@ -972,14 +973,14 @@ int main (int argc, char **argv)
             std::cout << '\n';
 
             Float3x3 m(Static<>::WITHOUT_INITIALIZATION);
-            for (Uint32 k = 0; k < Float3x3::DIM; ++k)
-                m[k] = k;
+            for (Float3x3::Index k; k.is_not_at_end(); ++k)
+                m[k] = k.value();
             std::cout << FORMAT_VALUE(m) << '\n';
             std::cout << '\n';
 
             Float3x3 n(Static<>::WITHOUT_INITIALIZATION);
-            for (Uint32 k = 0; k < Float3x3::DIM; ++k)
-                n[k] = 3*k + 2;
+            for (Float3x3::Index k; k.is_not_at_end(); ++k)
+                n[k] = 3*k.value() + 2;
             std::cout << FORMAT_VALUE(n) << '\n';
             std::cout << '\n';
 
@@ -1009,7 +1010,7 @@ int main (int argc, char **argv)
             J j;
             std::cout << FORMAT_VALUE(u) << '\n';
             typedef ExpressionTemplate_IndexedTensor_t<Float3x3,EmptyTypeList,TypeTuple_t<I>::T> ET;
-            ET::Index k;
+            ET::CompoundIndex k;
             std::cout << "trace(u) = " << u(i,i)[k] << '\n';
             std::cout << "trace(u) = " << u.expr<'i','i'>()[k] << '\n';
             std::cout << '\n';
@@ -1018,7 +1019,7 @@ int main (int argc, char **argv)
             u(i,j) = v(i)*v(j);
             std::cout << FORMAT_VALUE(v) << '\n';
             std::cout << "v \\otimes v = ";
-            for (Uint32 k = 0; k < Float3x3::DIM; ++k)
+            for (Float3x3::Index k; k.is_not_at_end(); ++k)
                 std::cout << u[k] << ", ";
             std::cout << '\n';
             std::cout << '\n';

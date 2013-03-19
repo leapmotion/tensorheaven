@@ -42,4 +42,11 @@ struct Static
 template <typename DummyType>
 WithoutInitialization const Static<DummyType>::WITHOUT_INITIALIZATION;
 
+// convenient notation for the square of something without evaluating the expression twice.
+template <typename T>
+T sqr (T const &t)
+{
+    return t*t;
+}
+
 #endif // CORE_HPP_

@@ -6,7 +6,7 @@ NOTES -- this is an informal/temporary TODO file
 - some prototype code for strongly-typed vectors (which distinguish prime/dual spaces and "named" spaces)
   is in test/strongly_typed_vector_prototype.cpp
 
-goals for today:
+current goals:
 - interop with some basic Eigen stuff (calling SVD, etc on 2-tensors)
   * API for calling external methods on the arrays stored by vectors and 2-tensors (use eigen's "Map" class/function)
   * have a set of wrapper functions for common Eigen operations (e.g. SVD, LDLT, etc) which hide Eigen
@@ -14,6 +14,7 @@ goals for today:
   * some sort of abstraction layer for using Eigen methods on our tensor classes.  self-contained and NOT intertwined in the tensor lib
   * could use templatized conversion method which converts to generic type
 x operator overloads for expression templates
+- scalar multiplication/division in expression templates
 - symmetric and antisymmetric 2 tensors (full contraction here requires a custom natural pairing -- make this a
   parameter of the multiplication expression template --
   * NOTE: it should also depend on the basis, and in the situation where the natural pairing is "perfect", it will be the
@@ -21,6 +22,10 @@ x operator overloads for expression templates
   * NOTE: that there is a mutually exclusive choice between having a perfect natural pairing (no extra scalar multiples of components
     necessary when contracting) and an isometric vector representation (so that the norm of the vector is the norm of the tensor).
 - down-casting (to more-specific types) (up-casting (to less-specific types) already happens through expression templates)
+  * something like
+      (a(i,j)*m(j,k)*a(k,l)).the_human_guarantees_that_this_is_a_Tensor2Symmetric<i,j>(I)
+    which would produce an expression template -- the indices (i,j) would be "bundled" into the index I,
+    which is of type Tensor2Symmetric_t<...>::Index_t<...>
 - strong typing for vectors -- named vector spaces (including "Generic") and prime/dual distinction (including self-dual)
   * default values should be "Generic" vector space ID and self-dual
   * canonical isomorphism for tensor2 -> vector will need to take into account basis
@@ -28,11 +33,11 @@ x trace-type expression templates (where a tensor is contracted with itself, a c
 x prohibiting 3+ summed index expressions
 x assignment expression templates
 x check assignment for aliasing
-
+- column/row/block extraction/addressing
+- "eval" method on expression templates (which take a list of free indices) which produce an intermediate value
 
 
 future goals:
-- column/row/block extraction/addressing
 - standard in-line linear algebra notation
   * for example, if A is a matrix and v is a vector, "A*v" should be equivalent to "A(i,j)*v(j)", but obviously
     without the need to used an indexed expression.

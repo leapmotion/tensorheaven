@@ -19,7 +19,7 @@ struct CompoundIndex_t : List_t<IndexTypeList_>
     CompoundIndex_t () { } // default constructor initializes to "first" component
     CompoundIndex_t (HeadIndexType const &head, BodyCompoundIndex const &body) : Parent(head, body) { }
     // tuple-like initializers
-    CompoundIndex_t (Uint32 i0, Uint32 i1)
+    CompoundIndex_t (Uint32 i0, Uint32 i1) // TODO: replace with IndexTypeList::HeadType i0, IndexTypeList::BodyTypeList::HeadType i1 ?
         :
         Parent(HeadIndexType(i0), BodyCompoundIndex(i1))
     {
@@ -112,7 +112,8 @@ struct CompoundIndex_t<TypeList_t<HeadIndexType> > : public List_t<TypeList_t<He
     static Uint32 const COMPONENT_COUNT = HeadIndexType::COMPONENT_COUNT;
 
     CompoundIndex_t () { } // default constructor initializes to "first" component
-    /*explicit*/ CompoundIndex_t (Uint32 i) : Parent(HeadIndexType(i)) { }
+    // explicit because it has a range-check (in the HeadIndexType constructor)
+    explicit CompoundIndex_t (Uint32 i) : Parent(HeadIndexType(i)) { }
     CompoundIndex_t (HeadIndexType const &head) : Parent(head) { }
 
     CompoundIndex_t (CompoundIndex_t<EmptyTypeList> const &) { } // default construction
