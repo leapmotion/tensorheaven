@@ -15,8 +15,11 @@ goals for today:
   * could use templatized conversion method which converts to generic type
 x operator overloads for expression templates
 - symmetric and antisymmetric 2 tensors (full contraction here requires a custom natural pairing -- make this a
-  parameter of the multiplication expression template -- NOTE: it should also depend on the basis, and in the situation where
-  the natural pairing is "perfect", it will be the "standard inner product" on the components)
+  parameter of the multiplication expression template --
+  * NOTE: it should also depend on the basis, and in the situation where the natural pairing is "perfect", it will be the
+    "standard inner product" on the components)
+  * NOTE: that there is a mutually exclusive choice between having a perfect natural pairing (no extra scalar multiples of components
+    necessary when contracting) and an isometric vector representation (so that the norm of the vector is the norm of the tensor).
 - down-casting (to more-specific types) (up-casting (to less-specific types) already happens through expression templates)
 - strong typing for vectors -- named vector spaces (including "Generic") and prime/dual distinction (including self-dual)
   * default values should be "Generic" vector space ID and self-dual

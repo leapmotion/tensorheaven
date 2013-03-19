@@ -12,8 +12,6 @@
 #include "typetuple.hpp"
 #include "vector.hpp"
 
-WithoutInitialization const WITHOUT_INITIALIZATION = WithoutInitialization();
-
 /*
 if A is a tensor type, and i is an index compatible with A, then A(i) returns an expression template.
 
@@ -631,7 +629,7 @@ int main (int argc, char **argv)
                 accumulator += X[Float3x4::DeprecatedIndex(r,c)] * Y[Float3x4::DeprecatedIndex(r,c)];
         std::cout << "actual answer = " << accumulator << ")\n\n";
 
-        Float3x3 W(WITHOUT_INITIALIZATION);
+        Float3x3 W(Static<>::WITHOUT_INITIALIZATION);
         for (Uint32 i = 0; i < 3; ++i)
             for (Uint32 j = 0; j < 3; ++j)
                 for (Uint32 k = 0; k < 4; ++k)
@@ -781,8 +779,8 @@ int main (int argc, char **argv)
             I i;
             typedef ExpressionTemplate_IndexedTensor_t<Float3x4,TypeList_t<I>,EmptyTypeList> EE;
             typedef ExpressionTemplate_Addition_t<EE,EE> EA;
-            Float3x4 u(WITHOUT_INITIALIZATION);
-            Float3x4 v(WITHOUT_INITIALIZATION);
+            Float3x4 u(Static<>::WITHOUT_INITIALIZATION);
+            Float3x4 v(Static<>::WITHOUT_INITIALIZATION);
             for (Uint32 k = 0; k < Float3x4::DIM; ++k)
             {
                 u[k] = k;
@@ -817,8 +815,8 @@ int main (int argc, char **argv)
             J j;
             typedef ExpressionTemplate_IndexedTensor_t<Float3x4,TypeTuple_t<I,J>::T,EmptyTypeList> EIJ;
             typedef ExpressionTemplate_Addition_t<EIJ,EIJ> EA;
-            Float3x4 u(WITHOUT_INITIALIZATION);
-            Float3x4 v(WITHOUT_INITIALIZATION);
+            Float3x4 u(Static<>::WITHOUT_INITIALIZATION);
+            Float3x4 v(Static<>::WITHOUT_INITIALIZATION);
             for (Uint32 k = 0; k < Float3x4::DIM; ++k)
             {
                 u[k] = k;
@@ -847,8 +845,8 @@ int main (int argc, char **argv)
             typedef ExpressionTemplate_IndexedTensor_t<Float3x3,TypeTuple_t<J,I>::T,EmptyTypeList> EJI;
             typedef ExpressionTemplate_Addition_t<EIJ,EIJ> EA;
             typedef ExpressionTemplate_Addition_t<EIJ,EJI> EB;
-            Float3x3 u(WITHOUT_INITIALIZATION);
-            Float3x3 v(WITHOUT_INITIALIZATION);
+            Float3x3 u(Static<>::WITHOUT_INITIALIZATION);
+            Float3x3 v(Static<>::WITHOUT_INITIALIZATION);
             // dummy values that aren't symmetric
             for (Uint32 k = 0; k < Float3x3::DIM; ++k)
             {
@@ -889,9 +887,9 @@ int main (int argc, char **argv)
 
         {
             std::cout << "2-tensor contraction (matrix multiplication)\n";
-            Float3x4 u(WITHOUT_INITIALIZATION);
-            Float4x5 v(WITHOUT_INITIALIZATION);
-            Float5x2 w(WITHOUT_INITIALIZATION);
+            Float3x4 u(Static<>::WITHOUT_INITIALIZATION);
+            Float4x5 v(Static<>::WITHOUT_INITIALIZATION);
+            Float5x2 w(Static<>::WITHOUT_INITIALIZATION);
             for (Uint32 k = 0; k < Float3x4::DIM; ++k)
                 u[k] = k*k;
             for (Uint32 k = 0; k < Float4x5::DIM; ++k)
@@ -973,13 +971,13 @@ int main (int argc, char **argv)
             std::cout << FORMAT_VALUE(u) << '\n';
             std::cout << '\n';
 
-            Float3x3 m(WITHOUT_INITIALIZATION);
+            Float3x3 m(Static<>::WITHOUT_INITIALIZATION);
             for (Uint32 k = 0; k < Float3x3::DIM; ++k)
                 m[k] = k;
             std::cout << FORMAT_VALUE(m) << '\n';
             std::cout << '\n';
 
-            Float3x3 n(WITHOUT_INITIALIZATION);
+            Float3x3 n(Static<>::WITHOUT_INITIALIZATION);
             for (Uint32 k = 0; k < Float3x3::DIM; ++k)
                 n[k] = 3*k + 2;
             std::cout << FORMAT_VALUE(n) << '\n';

@@ -7,18 +7,6 @@
 #include "core.hpp"
 #include "typestringof.hpp"
 
-// shouldn't ever actually construct one of these
-struct NullType
-{
-private:
-
-    NullType () { }
-
-public:
-
-    static std::string type_as_string () { return "NullType"; }
-};
-
 struct EmptyTypeList
 {
     // there is no HeadType
