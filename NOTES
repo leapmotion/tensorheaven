@@ -53,9 +53,9 @@ future goals:
 features:
 - vectors and non-symmetric 2-tensors
 - indexed tensor expressions, such as "A(i,j)*u(j) + v(i)"
-- for 1-dimensional vectors, type coersion to/from the scalar type via canonical
+- for 1-dimensional vectors, type coercion to/from the scalar type via canonical
   isomorphism (a 1-dimensional real vector space is canonically isomorphic to R)
-- for 2-tensors of the form Nx1 or 1xN (referring to the dimension of the factors), type coersion
+- for 2-tensors of the form Nx1 or 1xN (referring to the dimension of the factors), type coercion
   to/from the factor types via canonical isomorphisms (R \otimes V = V  and  V \otimes R = V)
 
 implemented features/items:

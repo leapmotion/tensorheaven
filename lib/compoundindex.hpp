@@ -69,14 +69,8 @@ struct CompoundIndex_t : List_t<IndexTypeList_>
     // slighty hacky way to use List_t's existing functionality -- NOTE: this only
     // works because CompoundIndex_t<IndexTypeList> inherits non-virtually from
     // List_t<IndexTypeList> and has no members.
-    BodyCompoundIndex &body ()
-    {
-        return *static_cast<BodyCompoundIndex *>(&Parent::body());
-    }
-    BodyCompoundIndex const &body () const
-    {
-        return *static_cast<BodyCompoundIndex const *>(&Parent::body());
-    }
+    BodyCompoundIndex const &body () const { return *static_cast<BodyCompoundIndex const *>(&Parent::body()); }
+    BodyCompoundIndex &body () { return *static_cast<BodyCompoundIndex *>(&Parent::body()); }
 
     // slighty hacky way to use List_t's existing functionality -- NOTE: this only
     // works because CompoundIndex_t<IndexTypeList> inherits non-virtually from

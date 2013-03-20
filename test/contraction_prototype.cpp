@@ -7,6 +7,7 @@
 #include "compoundindex.hpp"
 #include "expression_templates.hpp"
 #include "tensor2.hpp"
+// #include "tensor2symmetric.hpp"
 #include "typelist.hpp"
 #include "typelist_utility.hpp"
 #include "typetuple.hpp"
@@ -322,19 +323,19 @@ std::ostream &operator << (std::ostream &out, Tensor2Simple_t<F1,F2> const &s)
     return out << s.factor1() << " \\otimes " << s.factor2();
 }
 
-// template specialization for the contraction of simple 2-tensors
-// (A \otimes B) : (C \otimes D) := (A \cdot C)(B \cdot D)
-template <typename F1, typename F2>
-struct DotProduct_t<Tensor2Simple_t<F1,F2> >
-{
-    typedef Tensor2Simple_t<F1,F2> Tensor2Simple;
-    typedef typename Tensor2Simple::Scalar Scalar;
-
-    static Scalar eval (Tensor2Simple const &l, Tensor2Simple const &r)
-    {
-        return DotProduct_t<F1>::eval(l.factor1(),r.factor1()) * DotProduct_t<F2>::eval(l.factor2(),r.factor2());
-    }
-};
+// // template specialization for the contraction of simple 2-tensors
+// // (A \otimes B) : (C \otimes D) := (A \cdot C)(B \cdot D)
+// template <typename F1, typename F2>
+// struct DotProduct_t<Tensor2Simple_t<F1,F2> >
+// {
+//     typedef Tensor2Simple_t<F1,F2> Tensor2Simple;
+//     typedef typename Tensor2Simple::Scalar Scalar;
+//
+//     static Scalar eval (Tensor2Simple const &l, Tensor2Simple const &r)
+//     {
+//         return DotProduct_t<F1>::eval(l.factor1(),r.factor1()) * DotProduct_t<F2>::eval(l.factor2(),r.factor2());
+//     }
+// };
 
 // Tensor3Simple_t
 
@@ -377,21 +378,21 @@ std::ostream &operator << (std::ostream &out, Tensor3Simple_t<F1,F2,F3> const &s
     return out << s.factor1() << " \\otimes " << s.factor2() << " \\otimes " << s.factor3();
 }
 
-// template specialization for the contraction of simple 2-tensors
-// (A \otimes B \otimes C) : (P \otimes Q \otimes R) := (A \cdot P)(B \cdot Q)(C \cdot R)
-template <typename F1, typename F2, typename F3>
-struct DotProduct_t<Tensor3Simple_t<F1,F2,F3> >
-{
-    typedef Tensor3Simple_t<F1,F2,F3> Tensor3Simple;
-    typedef typename Tensor3Simple::Scalar Scalar;
-
-    static Scalar eval (Tensor3Simple const &l, Tensor3Simple const &r)
-    {
-        return DotProduct_t<F1>::eval(l.factor1(),r.factor1()) *
-               DotProduct_t<F2>::eval(l.factor2(),r.factor2()) *
-               DotProduct_t<F3>::eval(l.factor3(),r.factor3());
-    }
-};
+// // template specialization for the contraction of simple 2-tensors
+// // (A \otimes B \otimes C) : (P \otimes Q \otimes R) := (A \cdot P)(B \cdot Q)(C \cdot R)
+// template <typename F1, typename F2, typename F3>
+// struct DotProduct_t<Tensor3Simple_t<F1,F2,F3> >
+// {
+//     typedef Tensor3Simple_t<F1,F2,F3> Tensor3Simple;
+//     typedef typename Tensor3Simple::Scalar Scalar;
+//
+//     static Scalar eval (Tensor3Simple const &l, Tensor3Simple const &r)
+//     {
+//         return DotProduct_t<F1>::eval(l.factor1(),r.factor1()) *
+//                DotProduct_t<F2>::eval(l.factor2(),r.factor2()) *
+//                DotProduct_t<F3>::eval(l.factor3(),r.factor3());
+//     }
+// };
 
 // TODO: symmetric outer product of one vector with itself producing a special type of simple tensor
 // TODO: symmetrization and antisymmetrization of outer product
@@ -501,14 +502,14 @@ void bor (Float4 const &x) { std::cout << "bor(" << x << ")\n"; }
 
 int main (int argc, char **argv)
 {
-    // 1-dimensional vector to scalar coersion
+    // 1-dimensional vector to scalar coercion
     {
         typedef Vector_t<float,1> Float1;
         Float1 v(3);
-        std::cout << "type coersion from Vector_t<float,1> to float:\n";
+        std::cout << "type coercion from Vector_t<float,1> to float:\n";
         foo(v);
         v.as_scalar() = 2;
-        std::cout << "assignment via float coersion (v should equal (2)): " << FORMAT_VALUE(v) << "\n\n";
+        std::cout << "assignment via float coercion (v should equal (2)): " << FORMAT_VALUE(v) << "\n\n";
 
         // this should produce a compile error -- no canonical conversion from 2d vector to scalar
 //         typedef Vector_t<float,2> Float2;
@@ -517,24 +518,24 @@ int main (int argc, char **argv)
 
         typedef Tensor2_t<Float1,Float1> Float1x1;
         Float1x1 m(4);
-        std::cout << "type coersion from Tensor2_t<Float1,Float1> to float:\n";
+        std::cout << "type coercion from Tensor2_t<Float1,Float1> to float:\n";
         foo(m);
         m = 8;
-        std::cout << "assignment via float coersion (m should equal [8]): " << FORMAT_VALUE(m) << "\n\n";
+        std::cout << "assignment via float coercion (m should equal [8]): " << FORMAT_VALUE(m) << "\n\n";
 
         typedef Tensor2_t<Float3,Float1> Float3x1;
         Float3x1 a(5);
-        std::cout << "type coersion from Tensor2_t<Float3,Float1> to Float3:\n";
-        bar(a);
+        std::cout << "type coercion from Tensor2_t<Float3,Float1> to Float3:\n";
+        bar(a.as_factor1());
         a.as_factor1() = Float3(20);
-        std::cout << "assignment via float coersion (a should equal [20  20  20]^T): " << FORMAT_VALUE(a) << "\n\n";
+        std::cout << "assignment via float coercion (a should equal [20  20  20]^T): " << FORMAT_VALUE(a) << "\n\n";
 
         typedef Tensor2_t<Float1,Float4> Float1x4;
         Float1x4 b(6);
-        std::cout << "type coersion from Tensor2_t<Float1,Float4> to Float4:\n";
-        bor(b);
+        std::cout << "type coercion from Tensor2_t<Float1,Float4> to Float4:\n";
+        bor(b.as_factor2());
         b.as_factor2() = Float4(42);
-        std::cout << "assignment via float coersion (b should equal [42  42  42  42]): " << FORMAT_VALUE(b) << "\n\n";
+        std::cout << "assignment via float coercion (b should equal [42  42  42  42]): " << FORMAT_VALUE(b) << "\n\n";
 
         // uncommenting the following should produce a compile error (no type conversion to Float3)
 //         Float3 x(b);
@@ -643,13 +644,23 @@ int main (int argc, char **argv)
 //         }
 //     }
 
+    // a few type strings
+    {
+        std::cout << FORMAT_VALUE(TypeStringOf_t<float>::eval()) << '\n';
+        std::cout << FORMAT_VALUE(TypeStringOf_t<Float3>::eval()) << '\n';
+        std::cout << FORMAT_VALUE(TypeStringOf_t<Float3x3>::eval()) << '\n';
+        std::cout << '\n';
+    }
+
     // testing expression templates
     {
         Float3 u(-0.1, 2.0, 8);
         Float3 v(4.1, 5.2, 6.3);
         Float3 w(1.2, -2.0, 3.8);
-        typedef Float3::Index_t<'i'> I;
-        typedef Float3::Index_t<'j'> J;
+//         typedef Float3::Index_t<'i'> I;
+//         typedef Float3::Index_t<'j'> J;
+        typedef NamedIndex_t<Float3,'i'> I;
+        typedef NamedIndex_t<Float3,'j'> J;
         I i;
         J j;
         {
@@ -776,7 +787,8 @@ int main (int argc, char **argv)
 
         {
             std::cout << "addition of 2-tensors:\n";
-            typedef Float3x4::Index_t<'i'> I;
+//             typedef Float3x4::Index_t<'i'> I;
+            typedef NamedIndex_t<Float3x4,'i'> I;
             I i;
             typedef ExpressionTemplate_IndexedTensor_t<Float3x4,TypeList_t<I>,EmptyTypeList> EE;
             typedef ExpressionTemplate_Addition_t<EE,EE> EA;
@@ -789,8 +801,8 @@ int main (int argc, char **argv)
             }
             std::cout << FORMAT_VALUE(u) << '\n';
             std::cout << FORMAT_VALUE(v) << '\n';
-            std::cout << FORMAT_VALUE(u(i)[Float3x4::Index_t<'i'>(0)]) << '\n';
-            std::cout << FORMAT_VALUE(u(i)[Float3x4::Index_t<'i'>(11)]) << '\n';
+            std::cout << FORMAT_VALUE(u(i)[I(0)]) << '\n';
+            std::cout << FORMAT_VALUE(u(i)[I(11)]) << '\n';
             EA e(u(i), v(i));
             std::cout << "expression template value:\n";
             for (EA::CompoundIndex k; k.is_not_at_end(); ++k)
@@ -810,8 +822,8 @@ int main (int argc, char **argv)
 
         {
             std::cout << "expression template for 2-tensor:\n";
-            typedef Float3::Index_t<'i'> I;
-            typedef Float4::Index_t<'j'> J;
+            typedef NamedIndex_t<Float3,'i'> I;
+            typedef NamedIndex_t<Float4,'j'> J;
             I i;
             J j;
             typedef ExpressionTemplate_IndexedTensor_t<Float3x4,TypeTuple_t<I,J>::T,EmptyTypeList> EIJ;
@@ -823,6 +835,10 @@ int main (int argc, char **argv)
                 u[k] = k.value();
                 v[k] = 13+k.value();
             }
+            u.expr<'i','j'>();
+            u(i,j);
+            u(i,j) + v(i,j);
+            EA e_(u.expr<'i','j'>(), v.expr<'i','j'>());
             EA e(u(i,j), v(i,j));
             for (EA::CompoundIndex k; k.is_not_at_end(); ++k)
                 std::cout << e[k] << ", ";
@@ -838,8 +854,8 @@ int main (int argc, char **argv)
 
         {
             std::cout << "symmetrizing a 2-tensor:\n";
-            typedef Float3::Index_t<'i'> I;
-            typedef Float3::Index_t<'j'> J;
+            typedef NamedIndex_t<Float3,'i'> I;
+            typedef NamedIndex_t<Float3,'j'> J;
             I i;
             J j;
             typedef ExpressionTemplate_IndexedTensor_t<Float3x3,TypeTuple_t<I,J>::T,EmptyTypeList> EIJ;
@@ -900,10 +916,10 @@ int main (int argc, char **argv)
             std::cout << FORMAT_VALUE(u) << '\n';
             std::cout << FORMAT_VALUE(v) << '\n';
             std::cout << FORMAT_VALUE(w) << '\n';
-            typedef Float3::Index_t<'i'> I;
-            typedef Float4::Index_t<'j'> J;
-            typedef Float5::Index_t<'k'> K;
-            typedef Float2::Index_t<'l'> L;
+            typedef NamedIndex_t<Float3,'i'> I;
+            typedef NamedIndex_t<Float4,'j'> J;
+            typedef NamedIndex_t<Float5,'k'> K;
+            typedef NamedIndex_t<Float2,'l'> L;
             I i;
             J j;
             K k;
@@ -963,7 +979,7 @@ int main (int argc, char **argv)
             std::cout << "assignment via expression templates:\n";
             Float3 u(4);
             Float3 v(5,6,7);
-            Float3::Index_t<'i'> i;
+            NamedIndex_t<Float3,'i'> i;
             u(i) = v(i);
             std::cout << FORMAT_VALUE(u) << '\n';
             std::cout << '\n';
@@ -984,7 +1000,7 @@ int main (int argc, char **argv)
             std::cout << FORMAT_VALUE(n) << '\n';
             std::cout << '\n';
 
-            Float3::Index_t<'j'> j;
+            NamedIndex_t<Float3,'j'> j;
 
             std::cout << "direct assignment m(i,j) = n(i,j):\n";
             m(i,j) = n(i,j);
@@ -1004,8 +1020,8 @@ int main (int argc, char **argv)
 
         {
             Float3x3 u(3);
-            typedef Float3::Index_t<'i'> I;
-            typedef Float3::Index_t<'j'> J;
+            typedef NamedIndex_t<Float3,'i'> I;
+            typedef NamedIndex_t<Float3,'j'> J;
             I i;
             J j;
             std::cout << FORMAT_VALUE(u) << '\n';
@@ -1030,8 +1046,8 @@ int main (int argc, char **argv)
             Float3 u(1,2,3);
             Float3 v(4,5,6);
             Float3x3 a(10);
-            typedef Float3::Index_t<'i'> I;
-            typedef Float3::Index_t<'j'> J;
+            typedef NamedIndex_t<Float3,'i'> I;
+            typedef NamedIndex_t<Float3,'j'> J;
             I i;
             J j;
             std::cout << FORMAT_VALUE(u(i).uses_tensor(u)) << '\n';
@@ -1046,6 +1062,72 @@ int main (int argc, char **argv)
             }
             std::cout << '\n';
         }
+
+        // testing Tensor2Symmetric_t
+//         {
+//             typedef Tensor2Symmetric_t<Float2> Float2x2Symmetric;
+//             std::cout << FORMAT_VALUE(Float2x2Symmetric::DIM) << '\n';
+//
+//             Float2x2Symmetric u(Static<>::WITHOUT_INITIALIZATION);
+//             Float2x2Symmetric v(Static<>::WITHOUT_INITIALIZATION);
+//             for (Float2x2Symmetric::Index i; i.is_not_at_end(); ++i)
+//             {
+//                 u[i] = i.value() + 1;
+//                 v[i] = sqr(i.value()) + 5;
+//             }
+//             std::cout << FORMAT_VALUE(u) << '\n';
+//             std::cout << FORMAT_VALUE(v) << '\n';
+//             std::cout << FORMAT_VALUE(u.expr<'i'>()*v.expr<'i'>()) << '\n';
+//
+//             float hand_computed_value = 0.0f;
+//             for (Float2x2Symmetric::CompoundIndex i; i.is_not_at_end(); ++i)
+//                 hand_computed_value += u[i]*v[i];
+//             std::cout << FORMAT_VALUE(hand_computed_value) << '\n';
+//             std::cout << '\n';
+//         }
+//         {
+//             typedef Tensor2Symmetric_t<Float3> Float3x3Symmetric;
+//             std::cout << FORMAT_VALUE(Float3x3Symmetric::DIM) << '\n';
+//
+//             Float3x3Symmetric u(Static<>::WITHOUT_INITIALIZATION);
+//             Float3x3Symmetric v(Static<>::WITHOUT_INITIALIZATION);
+//             for (Float3x3Symmetric::Index i; i.is_not_at_end(); ++i)
+//             {
+//                 u[i] = i.value();
+//                 v[i] = sqr(i.value()) + 2;
+//             }
+//             std::cout << FORMAT_VALUE(u) << '\n';
+//             std::cout << '\n';
+//         }
+//         {
+//             typedef Tensor2Symmetric_t<Float4> Float4x4Symmetric;
+//             std::cout << FORMAT_VALUE(Float4x4Symmetric::DIM) << '\n';
+//
+//             Float4x4Symmetric u(Static<>::WITHOUT_INITIALIZATION);
+//             Float4x4Symmetric v(Static<>::WITHOUT_INITIALIZATION);
+//             for (Float4x4Symmetric::Index i; i.is_not_at_end(); ++i)
+//             {
+//                 u[i] = i.value();
+//                 v[i] = sqr(i.value()) + 2;
+//             }
+//             std::cout << FORMAT_VALUE(u) << '\n';
+//             std::cout << '\n';
+//         }
+//         {
+//             typedef Vector_t<float,10> Float10;
+//             typedef Tensor2Symmetric_t<Float10> Float10x10Symmetric;
+//             std::cout << FORMAT_VALUE(Float10x10Symmetric::DIM) << '\n';
+//
+//             Float10x10Symmetric u(Static<>::WITHOUT_INITIALIZATION);
+//             Float10x10Symmetric v(Static<>::WITHOUT_INITIALIZATION);
+//             for (Float10x10Symmetric::Index i; i.is_not_at_end(); ++i)
+//             {
+//                 u[i] = i.value();
+//                 v[i] = sqr(i.value()) + 2;
+//             }
+//             std::cout << FORMAT_VALUE(u) << '\n';
+//             std::cout << '\n';
+//         }
     }
 
     return 0;

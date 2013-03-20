@@ -288,9 +288,12 @@ struct BinarySummation_t
         // t = (f,s), which is a concatenation of the free access indices and the summed access indices.
         // s is a reference to the second part, which is what is iterated over in the summation.
         for (SummedIndex &s = t.template trailing_list<FreeIndexTypeList::LENGTH>(); s.is_not_at_end(); ++s)
+        {
+            std::cout << s.value() << " -> " << summation_component_factor(s) << '\n';
             retval += left_operand[left_operand_index_map(t)] *
                       right_operand[right_operand_index_map(t)] *
                       summation_component_factor(s);
+        }
         return retval;
     }
 };
@@ -364,6 +367,13 @@ struct ExpressionTemplate_Multiplication_t
         m_left_operand(left_operand),
         m_right_operand(right_operand)
     { }
+
+    // available ONLY if FreeIndexTypeList is EmptyTypeList
+    operator Scalar () const
+    {
+        Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<FreeIndexTypeList,EmptyTypeList>::v>();
+        return operator[](CompoundIndex());
+    }
 
     Scalar operator [] (CompoundIndex const &c) const
     {
