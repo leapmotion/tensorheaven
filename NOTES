@@ -33,7 +33,6 @@ current goals:
 - column/row/block extraction/addressing
 - "eval" method on expression templates (which take a list of free indices) which produce an intermediate value
 
-
 future goals:
 - a rigorous test suite, using Lvd test code -- it can handle everything up through seg faults -- and negative compile
   tests implemented at the build level, so that particular intentional compile errors can be verified to work.
@@ -50,7 +49,11 @@ future goals:
 - certain linear algebraic expressions simplify greatly when expressed in a particular basis,
   so having a formal mechanism to work with explicit bases may clarify and simplify some calculations
 
-features:
+random TODOs:
+- simplify usage of indices.  Use "Index_t<'i'> i", just to carry the letter, then have that create the stronger type
+  NamedIndex_t<Derived,'i'> in the expression template when you call operator() with the index.
+
+planned features:
 - vectors and non-symmetric 2-tensors
 - indexed tensor expressions, such as "A(i,j)*u(j) + v(i)"
 - for 1-dimensional vectors, type coercion to/from the scalar type via canonical
@@ -64,3 +67,6 @@ x trace-type expression templates (where a tensor is contracted with itself, a c
 x prohibiting 3+ summed index expressions
 x assignment expression templates
 x check assignment for aliasing
+x symmetric 2-tensors
+x custom natural pairing (for non-isometric parameterizations)
+

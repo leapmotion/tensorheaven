@@ -288,12 +288,9 @@ struct BinarySummation_t
         // t = (f,s), which is a concatenation of the free access indices and the summed access indices.
         // s is a reference to the second part, which is what is iterated over in the summation.
         for (SummedIndex &s = t.template trailing_list<FreeIndexTypeList::LENGTH>(); s.is_not_at_end(); ++s)
-        {
-            std::cout << s.value() << " -> " << summation_component_factor(s) << '\n';
             retval += left_operand[left_operand_index_map(t)] *
                       right_operand[right_operand_index_map(t)] *
                       summation_component_factor(s);
-        }
         return retval;
     }
 };

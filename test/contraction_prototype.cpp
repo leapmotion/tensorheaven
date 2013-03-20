@@ -7,7 +7,7 @@
 #include "compoundindex.hpp"
 #include "expression_templates.hpp"
 #include "tensor2.hpp"
-// #include "tensor2symmetric.hpp"
+#include "tensor2symmetric.hpp"
 #include "typelist.hpp"
 #include "typelist_utility.hpp"
 #include "typetuple.hpp"
@@ -500,6 +500,56 @@ void foo (float x) { std::cout << "foo(" << x << ")\n"; }
 void bar (Float3 const &x) { std::cout << "bar(" << x << ")\n"; }
 void bor (Float4 const &x) { std::cout << "bor(" << x << ")\n"; }
 
+
+template <Uint32 DIM>
+void test_Tensor2Symmetric_t ()
+{
+    typedef Vector_t<float,DIM> Vector;
+    typedef Tensor2Symmetric_t<Vector> Tensor2Symmetric;
+    std::cout << FORMAT_VALUE(Tensor2Symmetric::DIM) << '\n';
+
+    Tensor2Symmetric a(Static<>::WITHOUT_INITIALIZATION);
+    Tensor2Symmetric b(Static<>::WITHOUT_INITIALIZATION);
+    for (typename Tensor2Symmetric::Index i; i.is_not_at_end(); ++i)
+    {
+        a[i] = i.value() + 1;
+        b[i] = sqr(i.value()) + 5;
+    }
+    std::cout << FORMAT_VALUE(a) << '\n';
+    std::cout << FORMAT_VALUE(b) << '\n';
+    a.template expr<'i'>();
+    std::cout << FORMAT_VALUE(a.template expr<'i'>()*b.template expr<'i'>()) << '\n';
+
+    float hand_computed_value = 0.0f;
+    for (typename Tensor2Symmetric::CompoundIndex i; i.is_not_at_end(); ++i)
+        hand_computed_value += a[i]*b[i];
+    std::cout << FORMAT_VALUE(hand_computed_value) << '\n';
+    std::cout << '\n';
+    
+    Vector v(Static<>::WITHOUT_INITIALIZATION);
+    Vector w(Static<>::WITHOUT_INITIALIZATION);
+    for (typename Vector::Index i; i.is_not_at_end(); ++i)
+        v[i] = i.value() + 5;
+    a.template expr<'i','j'>();
+    a.template expr<'i','j'>() * v.template expr<'j'>();
+    w.template expr<'i'>() = a.template expr<'i','j'>() * v.template expr<'j'>();
+    std::cout << FORMAT_VALUE(v) << '\n';
+    std::cout << FORMAT_VALUE(w) << '\n';
+    
+    NamedIndex_t<Vector,'i'> i;
+    NamedIndex_t<Vector,'j'> j;
+    w(i) = a(i,j)*v(j);
+    std::cout << FORMAT_VALUE(w) << '\n';
+    std::cout << FORMAT_VALUE((v(i)*a(i,j)*v(j))) << '\n';
+    std::cout << '\n';
+    
+    std::cout << "zero'ing out the diagonal of a\n";
+    for (typename Vector::Index i; i.is_not_at_end(); ++i)
+        a[typename Tensor2Symmetric::CompoundIndex(i,i)] = 0;
+    std::cout << FORMAT_VALUE(a) << '\n';
+    std::cout << '\n';
+}
+
 int main (int argc, char **argv)
 {
     // 1-dimensional vector to scalar coercion
@@ -657,8 +707,6 @@ int main (int argc, char **argv)
         Float3 u(-0.1, 2.0, 8);
         Float3 v(4.1, 5.2, 6.3);
         Float3 w(1.2, -2.0, 3.8);
-//         typedef Float3::Index_t<'i'> I;
-//         typedef Float3::Index_t<'j'> J;
         typedef NamedIndex_t<Float3,'i'> I;
         typedef NamedIndex_t<Float3,'j'> J;
         I i;
@@ -667,8 +715,8 @@ int main (int argc, char **argv)
             typedef ExpressionTemplate_IndexedTensor_t<Float3,TypeList_t<I>,EmptyTypeList> EI;
             typedef ExpressionTemplate_IndexedTensor_t<Float3,TypeList_t<J>,EmptyTypeList> EJ;
 
-//             std::cout << i << '\n';
-//             std::cout << Float3::Index(0) << '\n';
+            std::cout << i << '\n';
+            std::cout << Float3::Index(0) << '\n';
             v(i);
             std::cout << FORMAT_VALUE(v(i)[EI::CompoundIndex(0)]) << '\n';
 
@@ -787,7 +835,6 @@ int main (int argc, char **argv)
 
         {
             std::cout << "addition of 2-tensors:\n";
-//             typedef Float3x4::Index_t<'i'> I;
             typedef NamedIndex_t<Float3x4,'i'> I;
             I i;
             typedef ExpressionTemplate_IndexedTensor_t<Float3x4,TypeList_t<I>,EmptyTypeList> EE;
@@ -1064,70 +1111,10 @@ int main (int argc, char **argv)
         }
 
         // testing Tensor2Symmetric_t
-//         {
-//             typedef Tensor2Symmetric_t<Float2> Float2x2Symmetric;
-//             std::cout << FORMAT_VALUE(Float2x2Symmetric::DIM) << '\n';
-//
-//             Float2x2Symmetric u(Static<>::WITHOUT_INITIALIZATION);
-//             Float2x2Symmetric v(Static<>::WITHOUT_INITIALIZATION);
-//             for (Float2x2Symmetric::Index i; i.is_not_at_end(); ++i)
-//             {
-//                 u[i] = i.value() + 1;
-//                 v[i] = sqr(i.value()) + 5;
-//             }
-//             std::cout << FORMAT_VALUE(u) << '\n';
-//             std::cout << FORMAT_VALUE(v) << '\n';
-//             std::cout << FORMAT_VALUE(u.expr<'i'>()*v.expr<'i'>()) << '\n';
-//
-//             float hand_computed_value = 0.0f;
-//             for (Float2x2Symmetric::CompoundIndex i; i.is_not_at_end(); ++i)
-//                 hand_computed_value += u[i]*v[i];
-//             std::cout << FORMAT_VALUE(hand_computed_value) << '\n';
-//             std::cout << '\n';
-//         }
-//         {
-//             typedef Tensor2Symmetric_t<Float3> Float3x3Symmetric;
-//             std::cout << FORMAT_VALUE(Float3x3Symmetric::DIM) << '\n';
-//
-//             Float3x3Symmetric u(Static<>::WITHOUT_INITIALIZATION);
-//             Float3x3Symmetric v(Static<>::WITHOUT_INITIALIZATION);
-//             for (Float3x3Symmetric::Index i; i.is_not_at_end(); ++i)
-//             {
-//                 u[i] = i.value();
-//                 v[i] = sqr(i.value()) + 2;
-//             }
-//             std::cout << FORMAT_VALUE(u) << '\n';
-//             std::cout << '\n';
-//         }
-//         {
-//             typedef Tensor2Symmetric_t<Float4> Float4x4Symmetric;
-//             std::cout << FORMAT_VALUE(Float4x4Symmetric::DIM) << '\n';
-//
-//             Float4x4Symmetric u(Static<>::WITHOUT_INITIALIZATION);
-//             Float4x4Symmetric v(Static<>::WITHOUT_INITIALIZATION);
-//             for (Float4x4Symmetric::Index i; i.is_not_at_end(); ++i)
-//             {
-//                 u[i] = i.value();
-//                 v[i] = sqr(i.value()) + 2;
-//             }
-//             std::cout << FORMAT_VALUE(u) << '\n';
-//             std::cout << '\n';
-//         }
-//         {
-//             typedef Vector_t<float,10> Float10;
-//             typedef Tensor2Symmetric_t<Float10> Float10x10Symmetric;
-//             std::cout << FORMAT_VALUE(Float10x10Symmetric::DIM) << '\n';
-//
-//             Float10x10Symmetric u(Static<>::WITHOUT_INITIALIZATION);
-//             Float10x10Symmetric v(Static<>::WITHOUT_INITIALIZATION);
-//             for (Float10x10Symmetric::Index i; i.is_not_at_end(); ++i)
-//             {
-//                 u[i] = i.value();
-//                 v[i] = sqr(i.value()) + 2;
-//             }
-//             std::cout << FORMAT_VALUE(u) << '\n';
-//             std::cout << '\n';
-//         }
+        test_Tensor2Symmetric_t<2>();
+        test_Tensor2Symmetric_t<3>();
+        test_Tensor2Symmetric_t<4>();
+        test_Tensor2Symmetric_t<10>();
     }
 
     return 0;

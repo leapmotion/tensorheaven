@@ -28,6 +28,10 @@ struct Vector_t
     Vector_t (Scalar x0, Scalar x1, Scalar x2) { Lvd::Meta::Assert<(DIM == 3)>(); m[0] = x0; m[1] = x1; m[2] = x2; }
     Vector_t (Scalar x0, Scalar x1, Scalar x2, Scalar x3) { Lvd::Meta::Assert<(DIM == 4)>(); m[0] = x0; m[1] = x1; m[2] = x2; m[3] = x3; }
 
+    // accessor as Derived type
+    Derived const &as_derived () const { return *static_cast<Derived const *>(this); }
+    Derived &as_derived () { return *static_cast<Derived *>(this); }
+
     // TODO: only allow when Basis = Unit (or generic) once strongly-typed vectors are implemented
     // type conversion operator for canonical coercion to Scalar type when the vector is 1-dimensional
     operator Scalar const & () const { Lvd::Meta::Assert<(DIM == 1)>(); return m[0]; }
@@ -76,32 +80,38 @@ struct Vector_t
     // IndexType_t<'j'> j;
     // u(i)*v(j)
     template <char SYMBOL> // TODO: should the expression template know about Derived instead of Vector_t ?
-    ExpressionTemplate_IndexedTensor_t<Vector_t,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList> operator () (NamedIndex_t<Derived,SYMBOL> const &) const
+    ExpressionTemplate_IndexedTensor_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList> operator () (NamedIndex_t<Derived,SYMBOL> const &) const
     {
         return expr<SYMBOL>();
     }
     template <char SYMBOL>
-    ExpressionTemplate_IndexedTensor_t<Vector_t,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList > operator () (NamedIndex_t<Derived,SYMBOL> const &)
+    ExpressionTemplate_IndexedTensor_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList > operator () (NamedIndex_t<Derived,SYMBOL> const &)
     {
         return expr<SYMBOL>();
     }
     // the corresponding outer product example here would be
     // u.expr<'i'>() * v.expr<'j'>()
     template <char SYMBOL>
-    ExpressionTemplate_IndexedTensor_t<Vector_t,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList> expr () const
+    ExpressionTemplate_IndexedTensor_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList> expr () const
     {
         Lvd::Meta::Assert<(SYMBOL != '\0')>();
-        return ExpressionTemplate_IndexedTensor_t<Vector_t,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList>(*this);
+        return ExpressionTemplate_IndexedTensor_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList>(as_derived());
     }
     template <char SYMBOL>
-    ExpressionTemplate_IndexedTensor_t<Vector_t,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList> expr ()
+    ExpressionTemplate_IndexedTensor_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList> expr ()
     {
         Lvd::Meta::Assert<(SYMBOL != '\0')>();
-        return ExpressionTemplate_IndexedTensor_t<Vector_t,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList>(*this);
+        return ExpressionTemplate_IndexedTensor_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList>(as_derived());
     }
 
     static std::string type_as_string ()
     {
+        // TODO: return Derived's type_as_string value?
+//         if (Lvd::Meta::TypesAreEqual<Derived_,NullType>::v)
+//             return "Vector_t<" + TypeStringOf_t<Scalar>::eval() + ',' + AS_STRING(DIM) + '>';
+//         else
+//             return Derived::type_as_string();
+        // for now, just return this type string
         if (Lvd::Meta::TypesAreEqual<Derived_,NullType>::v)
             return "Vector_t<" + TypeStringOf_t<Scalar>::eval() + ',' + AS_STRING(DIM) + '>';
         else

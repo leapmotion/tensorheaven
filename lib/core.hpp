@@ -40,7 +40,7 @@ struct Static
 };
 
 template <typename DummyType>
-WithoutInitialization const Static<DummyType>::WITHOUT_INITIALIZATION;
+WithoutInitialization const Static<DummyType>::WITHOUT_INITIALIZATION = WithoutInitialization();
 
 // convenient notation for the square of something without evaluating the expression twice.
 template <typename T>
