@@ -1,7 +1,7 @@
 #ifndef TENSOR2_HPP_
 #define TENSOR2_HPP_
 
-#include <iostream>
+#include <ostream>
 
 #include "core.hpp"
 #include "expression_templates.hpp"

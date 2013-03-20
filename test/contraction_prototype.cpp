@@ -7,6 +7,7 @@
 #include "compoundindex.hpp"
 #include "expression_templates.hpp"
 #include "tensor2.hpp"
+#include "tensor2antisymmetric.hpp"
 #include "tensor2symmetric.hpp"
 #include "typelist.hpp"
 #include "typelist_utility.hpp"
@@ -396,75 +397,6 @@ std::ostream &operator << (std::ostream &out, Tensor3Simple_t<F1,F2,F3> const &s
 
 // TODO: symmetric outer product of one vector with itself producing a special type of simple tensor
 // TODO: symmetrization and antisymmetrization of outer product
-/*
-// 2-tensor which is self-adjoint with respect to the natural pairing
-template <typename T_>
-struct Symmetric2Tensor_t : public Vector_t<T_::Scalar,((T_::DIM+1)*T_::DIM)/2>
-{
-    typedef Vector_t<T_::Scalar,((T_::DIM+1)*T_::DIM)/2> Parent;
-    typedef Parent::Index Index; // TODO: make actual Index struct?
-
-    // TODO: make Index in this class, and make it construct with a Tensor<T,T>::Index
-
-    Scalar &operator [] (Tensor<T,T>::Index const &i)
-    {
-        Uint32 r = i.subindex1().value();
-        Uint32 c = i.subindex2().value();
-        // here is where the fancy indexing happens -- the symmetric tensor is stored as upper-diagonal
-        // the sequence of offsets per row r is
-        // 0 -> 0
-        // 1 -> 0+D-0 = 1*D - 0
-        // 2 -> 0+D-0+D-1 = 2*D - 1
-        // 3 -> 0+D-0+D-1+D-2 = 3*D - 3
-        // ...
-        // r -> ... = r*D - r*(r-1)/2,
-        // because the columns start at the r value, there is a column offset per row as well, of r.
-        // so if the general index is (r,c), then the offset in the symmetric representation is
-        // r*D - r*(r-1)/2 + c - r = r*D - r*(r+1)/2 + c
-        // if we're in the subdiagonal, switch the indices to get into the superdiagonal
-        if (r > c)
-            std::swap(r, c);
-        Index symmetric_index(r*D - (r*(r+1) >> 1) + c);
-        return operator[](symmetric_index);
-    }
-};
-*/
-template <typename F_>
-struct Tensor2Antisymmetric_t : public Vector_t<typename F_::Scalar,((F_::DIM-1)*F_::DIM)/2>
-{
-    typedef Vector_t<typename F_::Scalar,((F_::DIM-1)*F_::DIM)/2> Parent;
-    typedef typename Parent::Scalar Scalar;
-    typedef typename Parent::Index Index;
-    using Parent::DIM;
-    typedef F_ F;
-
-    // TODO: make Index in this class, and make it construct with a Tensor<T,T>::Index
-
-    Scalar &operator [] (typename Tensor2_t<F,F>::Index const &i)
-    {
-        Uint32 r = i.subindex1().value();
-        Uint32 c = i.subindex2().value();
-        if (r == c)
-            return Static<Scalar>::ZERO; // need an actual reference, not a temporary
-        // here is where the fancy indexing happens -- the antisymmetric tensor is
-        // stored as strict upper-diagonal
-        // the sequence of offsets per row r is
-        // 0 -> 0
-        // 1 -> 0+D-1 = D - 1
-        // 2 -> 0+D-1+D-2 = 2*D - 3
-        // 3 -> 0+D-1+D-2+D-3 = 3*D - 6
-        // ...
-        // r -> ... = r*D - r*(r+1)/2,
-        // because the columns start at the r+1 value, there is a column offset per row as well, of r+1.
-        // so if the general index is (r,c), then the offset in the symmetric representation is
-        // r*D - r*(r+1)/2 + c - (r+1) = r*D - r*(r+3)/2 + c - 1
-        // if we're in the subdiagonal, switch the indices to get into the superdiagonal
-        if (r > c)
-            std::swap(r, c);
-        Index antisymmetric_2_tensor_index(r*DIM - (r*(r+3) >> 1) + c - 1);
-        return operator[](antisymmetric_2_tensor_index); // should call Vector_t::operator[]
-    }
-};
 
 template <typename F1, typename F2>
 Tensor2Simple_t<F1,F2> operator % (F1 const &l, F2 const &r)
@@ -504,6 +436,8 @@ void bor (Float4 const &x) { std::cout << "bor(" << x << ")\n"; }
 template <Uint32 DIM>
 void test_Tensor2Symmetric_t ()
 {
+    std::cout << "test_Tensor2Symmetric_t<" << DIM << ">\n";
+    
     typedef Vector_t<float,DIM> Vector;
     typedef Tensor2Symmetric_t<Vector> Tensor2Symmetric;
     std::cout << FORMAT_VALUE(Tensor2Symmetric::DIM) << '\n';
@@ -547,6 +481,97 @@ void test_Tensor2Symmetric_t ()
     for (typename Vector::Index i; i.is_not_at_end(); ++i)
         a[typename Tensor2Symmetric::CompoundIndex(i,i)] = 0;
     std::cout << FORMAT_VALUE(a) << '\n';
+    std::cout << '\n';
+}
+
+template <Uint32 DIM>
+void test_Tensor2Antisymmetric_t ()
+{
+    std::cout << "test_Tensor2Antisymmetric_t<" << DIM << ">\n";
+    
+    typedef Vector_t<float,DIM> Vector;
+    typedef Tensor2Antisymmetric_t<Vector> Tensor2Antisymmetric;
+    std::cout << FORMAT_VALUE(Tensor2Antisymmetric::DIM) << '\n';
+
+    Tensor2Antisymmetric a(Static<>::WITHOUT_INITIALIZATION);
+    Tensor2Antisymmetric b(Static<>::WITHOUT_INITIALIZATION);
+    for (typename Tensor2Antisymmetric::Index i; i.is_not_at_end(); ++i)
+    {
+        a[i] = i.value() + 1;
+        b[i] = sqr(i.value()) + 5;
+    }
+    std::cout << FORMAT_VALUE(a) << '\n';
+    std::cout << FORMAT_VALUE(b) << '\n';
+    a.template expr<'i'>();
+    std::cout << FORMAT_VALUE(a.template expr<'i'>()*b.template expr<'i'>()) << '\n';
+
+    float hand_computed_value = 0.0f;
+    for (typename Tensor2Antisymmetric::CompoundIndex i; i.is_not_at_end(); ++i)
+        hand_computed_value += a[i]*b[i];
+    std::cout << FORMAT_VALUE(hand_computed_value) << '\n';
+    std::cout << '\n';
+    
+    Vector v(Static<>::WITHOUT_INITIALIZATION);
+    Vector w(Static<>::WITHOUT_INITIALIZATION);
+    for (typename Vector::Index i; i.is_not_at_end(); ++i)
+        v[i] = i.value() + 5;
+    a.template expr<'i','j'>();
+    a.template expr<'i','j'>() * v.template expr<'j'>();
+    w.template expr<'i'>() = a.template expr<'i','j'>() * v.template expr<'j'>();
+    std::cout << FORMAT_VALUE(v) << '\n';
+    std::cout << FORMAT_VALUE(w) << '\n';
+    
+    NamedIndex_t<Vector,'i'> i;
+    NamedIndex_t<Vector,'j'> j;
+    w(i) = a(i,j)*v(j);
+    std::cout << FORMAT_VALUE(w) << '\n';
+    std::cout << FORMAT_VALUE((v(i)*a(i,j)*v(j))) << '\n';
+    std::cout << '\n';
+}
+
+template <Uint32 DIM>
+void test_symmetric_and_antisymmetric_2_tensors ()
+{
+    std::cout << "test_symmetric_and_antisymmetric_2_tensors<" << DIM << ">\n";
+
+    typedef Vector_t<float,DIM> Vector;
+    typedef Tensor2_t<Vector,Vector> Tensor2;
+    typedef Tensor2Symmetric_t<Vector> Tensor2Symmetric;
+    typedef Tensor2Antisymmetric_t<Vector> Tensor2Antisymmetric;
+    std::cout << FORMAT_VALUE(TypeStringOf_t<Tensor2>::eval()) << '\n';
+    std::cout << FORMAT_VALUE(TypeStringOf_t<Tensor2Symmetric>::eval()) << '\n';
+    std::cout << FORMAT_VALUE(TypeStringOf_t<Tensor2Antisymmetric>::eval()) << '\n';
+
+    Tensor2Symmetric s(Static<>::WITHOUT_INITIALIZATION);
+    Tensor2Antisymmetric a(Static<>::WITHOUT_INITIALIZATION);
+    for (typename Tensor2Symmetric::Index i; i.is_not_at_end(); ++i)
+        s[i] = i.value() + 1;
+    for (typename Tensor2Antisymmetric::Index i; i.is_not_at_end(); ++i)
+        a[i] = sqr(i.value()) + 5;
+    std::cout << FORMAT_VALUE(s) << '\n';
+    std::cout << FORMAT_VALUE(a) << '\n';
+    
+    Tensor2 c(Static<>::WITHOUT_INITIALIZATION);
+    {
+        {
+            NamedIndex_t<Vector,'i'> i;
+            NamedIndex_t<Vector,'j'> j;
+            NamedIndex_t<Vector,'k'> k;
+            std::cout << "full contraction of symmetric with antisymmetric (should be exactly zero): " << FORMAT_VALUE(s(i,j)*a(i,j)) << '\n';
+            c(i,k) = s(i,j)*a(j,k);
+        }
+        std::cout << "product s(i,j)*a(j,k) = " << c << '\n';
+        
+        for (typename Vector::Index i; i.is_not_at_end(); ++i)
+            for (typename Vector::Index k; k.is_not_at_end(); ++k)
+            {
+                c[typename Tensor2::CompoundIndex(i,k)] = 0;
+                for (typename Vector::Index j; j.is_not_at_end(); ++j)
+                    c[typename Tensor2::CompoundIndex(i,k)] += s[typename Tensor2Symmetric::CompoundIndex(i,j)] * 
+                                                               a[typename Tensor2Antisymmetric::CompoundIndex(j,k)];
+            }
+        std::cout << "hand-computed value = " << c << '\n';
+    }
     std::cout << '\n';
 }
 
@@ -1115,6 +1140,18 @@ int main (int argc, char **argv)
         test_Tensor2Symmetric_t<3>();
         test_Tensor2Symmetric_t<4>();
         test_Tensor2Symmetric_t<10>();
+        
+        // testing Tensor2Antisymmetric_t
+        test_Tensor2Antisymmetric_t<2>();
+        test_Tensor2Antisymmetric_t<3>();
+        test_Tensor2Antisymmetric_t<4>();
+        test_Tensor2Antisymmetric_t<10>();
+        
+        // testing interaction between symmetric and antisymmetric 2-tensors
+        test_symmetric_and_antisymmetric_2_tensors<2>();
+        test_symmetric_and_antisymmetric_2_tensors<3>();
+        test_symmetric_and_antisymmetric_2_tensors<4>();
+        test_symmetric_and_antisymmetric_2_tensors<10>();
     }
 
     return 0;

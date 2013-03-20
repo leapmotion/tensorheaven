@@ -136,7 +136,7 @@ struct ExpressionTemplate_IndexedTensor_t<Tensor,TensorIndexTypeList,EmptyTypeLi
     // template -- the expression may be a product or some such, where each component
     // is not an L-value.
     Scalar const &operator [] (typename Tensor::Index const &i) const { return m_tensor[i]; }
-    Scalar const &operator [] (CompoundIndex const &c) const { return m_tensor[c]; }
+    Scalar operator [] (CompoundIndex const &c) const { return m_tensor[c]; }
 
     // for some dumb reason, the compiler needed a non-templatized assignment operator for the exact matching type
     void operator = (ExpressionTemplate_IndexedTensor_t const &right_operand)

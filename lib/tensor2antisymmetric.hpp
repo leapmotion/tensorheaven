@@ -1,5 +1,5 @@
-#ifndef TENSOR2SYMMETRIC_HPP_
-#define TENSOR2SYMMETRIC_HPP_
+#ifndef TENSOR2ANTISYMMETRIC_HPP_
+#define TENSOR2ANTISYMMETRIC_HPP_
 
 #include <ostream>
 
@@ -9,18 +9,18 @@
 #include "typetuple.hpp"
 #include "vector.hpp"
 
-// symmetric 2-tensor (it is equal to its transpose)
+// antisymmetric 2-tensor (its transpose is equal to its negative)
 template <typename Factor_, typename Derived_ = NullType>
-struct Tensor2Symmetric_t : public Vector_t<typename Factor_::Scalar,
-                                            ((Factor_::DIM+1)*Factor_::DIM)/2,
-                                            typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
-                                                                   Tensor2Symmetric_t<Factor_,Derived_>,
-                                                                   Derived_>::T>
+struct Tensor2Antisymmetric_t : public Vector_t<typename Factor_::Scalar,
+                                                ((Factor_::DIM-1)*Factor_::DIM)/2,
+                                                typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
+                                                                       Tensor2Antisymmetric_t<Factor_,Derived_>,
+                                                                       Derived_>::T>
 {
     typedef Vector_t<typename Factor_::Scalar,
-                     ((Factor_::DIM+1)*Factor_::DIM)/2,
+                     ((Factor_::DIM-1)*Factor_::DIM)/2,
                      typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
-                                            Tensor2Symmetric_t<Factor_,Derived_>,
+                                            Tensor2Antisymmetric_t<Factor_,Derived_>,
                                             Derived_>::T> Parent;
     typedef typename Parent::Scalar Scalar;
     using Parent::DIM;
@@ -30,27 +30,27 @@ struct Tensor2Symmetric_t : public Vector_t<typename Factor_::Scalar,
     typedef Factor Factor1;
     typedef Factor Factor2;
     typedef CompoundIndex_t<typename TypeTuple_t<typename Factor::Index,typename Factor::Index>::T> CompoundIndex;
-    static Uint32 const DIAGONAL_COMPONENT_COUNT = Factor::DIM;
     static Uint32 const STRICTLY_UPPER_TRIANGULAR_COMPONENT_COUNT = ((Factor::DIM-1)*Factor::DIM)/2;
 
-    Tensor2Symmetric_t (WithoutInitialization const &w) : Parent(w) { }
-    Tensor2Symmetric_t (Scalar fill_with) : Parent(fill_with) { }
+    Tensor2Antisymmetric_t (WithoutInitialization const &w) : Parent(w) { }
+    Tensor2Antisymmetric_t (Scalar fill_with) : Parent(fill_with) { }
 
     // TODO: because Factor1 and Factor2 are identical, it doesn't make sense to
     // have a type coercion to either one unless they are 1-dimensional, in which case
-    // it can be a type coercion to the Scalar type.
+    // it can be a type coercion to the Scalar type.  however, an antisymmetric
+    // 2-tensor on a 1-dimensional space is always zero.
 
-    // TODO: because the diagonal is indexed contiguously first, there is an easy type coercion to Tensor2Diagonal_t
+    // TODO: because the diagonal is always zero, there is an easy type coercion to Tensor2Diagonal_t
 
     // dumb, but the compiler wouldn't inherit implicitly, and won't parse a "using" statement
     Scalar const &operator [] (Index const &i) const { return Parent::operator[](i); }
     // dumb, but the compiler wouldn't inherit implicitly, and won't parse a "using" statement
     Scalar &operator [] (Index const &i) { return Parent::operator[](i); }
 
-    // using two indices in a Tensor2Symmetric_t is breaking apart the Index type and using it
+    // using two indices in a Tensor2Antisymmetric_t is breaking apart the Index type and using it
     // as a general tensor -- this is where the fancy indexing scheme happens.
     template <typename Index1, typename Index2>
-    Scalar const &operator [] (CompoundIndex_t<TypeList_t<Index1,TypeList_t<Index2> > > const &c) const
+    Scalar operator [] (CompoundIndex_t<TypeList_t<Index1,TypeList_t<Index2> > > const &c) const
     {
         if (c.is_at_end())
             throw std::invalid_argument("index out of range");
@@ -65,13 +65,9 @@ struct Tensor2Symmetric_t : public Vector_t<typename Factor_::Scalar,
 
         // index the diagonal first, then the strictly upper triangular in row-major order
         if (row == col)
-            return this->component_access_without_range_check(row);
+            return Scalar(0);
 
-        // if we're in the strict lower triangle, switch the indices to get into the strict upper triangle
-        if (col < row)
-            std::swap(row, col);
-
-        // strict upper triangle components are stored contiguously in row-major order, starting at element D := DIM,
+        // strict upper triangle elements are stored contiguously in row-major order, starting at element D := DIM,
         // being the shared dimension of the tensor factors.
         //    [ x 1*D 1*D+1 ... 2*D-2 ]  there are D-1 elements in this row, starting column is 1
         //    [ x   x 2*D-1 ... 3*D-4 ]  there are D-2 elements in this row, starting column is 2
@@ -79,27 +75,40 @@ struct Tensor2Symmetric_t : public Vector_t<typename Factor_::Scalar,
         // in row R, there are D-(R+1) elements in the row, starting in column R+1.
         // thus (R,C) (with R > C) refers to offset:
         //    R*D+C - (1 + 2 + ... R + (R+1)) = R*D+C - (R+1)*(R+2)/2
-        // because this starts at offset D, the actual offset is
-        //    D + R*D+C - (R+1)*(R+2)/2 = (R+1)*(2*D - (R+2))/2 + C
-        return this->component_access_without_range_check((row+1)*(2*Factor::DIM-(row+2))/2 + col);
+        bool swapped = row >= col;
+        if (swapped)
+            std::swap(row,col);
+        Scalar component(this->component_access_without_range_check(row*Factor::DIM + col - (row+1)*(row+2)/2));
+        return swapped ? -component : component;
+//         if (row < col)
+//             return this->component_access_without_range_check(row*Factor::DIM + col - (row+1)*(row+2)/2);
+//         else // return the negative of the transposed strictly upper triangular component.
+//             return -this->component_access_without_range_check(col*Factor::DIM + row - (col+1)*(col+2)/2);
     }
-    // there is redundant access to components here, since the strict lower triangle components are
-    // really just aliases for the strict upper triangle components.  
+    // for notational completeness (see the non-const component method).  this is effectively an alias for operator[].
     template <typename Index1, typename Index2>
-    Scalar &operator [] (CompoundIndex_t<TypeList_t<Index1,TypeList_t<Index2> > > const &c)
+    Scalar component (CompoundIndex_t<TypeList_t<Index1,TypeList_t<Index2> > > const &c) const
     {
-        // see the comments in the const version of operator[] for your code-diving pleasure
+        return operator[](c);
+    }
+    // you may only access the strict upper triangle components -- where the 0th element of c
+    // is less than the 1st element of c.  this is because the exact values of each component in
+    // the 2-tensor don't necessarily correspond to memory locations (the diagonal components are 
+    // all zero so aren't stored in memory, and the strict lower triangle components are the
+    // negatives of the upper ones, so don't correspond to direct memory access).
+    template <typename Index1, typename Index2>
+    Scalar &component (CompoundIndex_t<TypeList_t<Index1,TypeList_t<Index2> > > const &c)
+    {
         if (c.is_at_end())
             throw std::invalid_argument("index out of range");
         typename Factor::Index(c.template el<0>());
         typename Factor::Index(c.template el<1>());
         Uint32 row = c.template el<0>().value();
         Uint32 col = c.template el<1>().value();
-        if (row == col)
-            return this->component_access_without_range_check(row);
-        if (col < row)
-            std::swap(row, col);
-        return this->component_access_without_range_check(((row+1)*(2*DIAGONAL_COMPONENT_COUNT - (row+2)) >> 1) + col);
+        // throw an error if the diagonal or strict lower triangle is accessed
+        if (row >= col)
+            return throw std::invalid_argument("can only write to the strict upper triangle components of a Tensor2Antisymmetric_t");
+        return this->component_access_without_range_check(row*Factor::DIM + col - (row+1)*(row+2)/2);
     }
 
     // the argument is technically unnecessary, as its value is not used.  however,
@@ -242,26 +251,26 @@ struct Tensor2Symmetric_t : public Vector_t<typename Factor_::Scalar,
     {
         // TODO: return Derived's type_as_string value?
 //         if (Lvd::Meta::TypesAreEqual<Derived_,NullType>::v)
-//             return "Tensor2Symmetric_t<" + TypeStringOf_t<Factor>::eval() + '>';
+//             return "Tensor2Antisymmetric_t<" + TypeStringOf_t<Factor>::eval() + '>';
 //         else
 //             return Derived::type_as_string();
         // for now, just return this type string
         if (Lvd::Meta::TypesAreEqual<Derived_,NullType>::v)
-            return "Tensor2Symmetric_t<" + TypeStringOf_t<Factor>::eval() + '>';
+            return "Tensor2Antisymmetric_t<" + TypeStringOf_t<Factor>::eval() + '>';
         else
-            return "Tensor2Symmetric_t<" + TypeStringOf_t<Factor>::eval() + ',' + TypeStringOf_t<Derived>::eval() + '>';
+            return "Tensor2Antisymmetric_t<" + TypeStringOf_t<Factor>::eval() + ',' + TypeStringOf_t<Derived>::eval() + '>';
     }
 };
 
 template <typename Factor>
-std::ostream &operator << (std::ostream &out, Tensor2Symmetric_t<Factor> const &t)
+std::ostream &operator << (std::ostream &out, Tensor2Antisymmetric_t<Factor> const &t)
 {
-    typedef Tensor2Symmetric_t<Factor> Tensor2Symmetric;
+    typedef Tensor2Antisymmetric_t<Factor> Tensor2Antisymmetric;
 
-    if (Tensor2Symmetric::DIM == 0)
+    if (Tensor2Antisymmetric::DIM == 0)
         return out << "[]";
 
-    typename Tensor2Symmetric::CompoundIndex c;
+    typename Tensor2Antisymmetric::CompoundIndex c;
     out << '\n';
     for (typename Factor::Index i; i.is_not_at_end(); ++i)
     {
@@ -276,21 +285,18 @@ std::ostream &operator << (std::ostream &out, Tensor2Symmetric_t<Factor> const &
     return out;
 }
 
-// template specialization for the natural pairing in this particular coordinatization of Tensor2Symmetric_t
+// template specialization for the natural pairing in this particular coordinatization of Tensor2Antisymmetric_t
 template <typename Factor>
-struct NaturalPairing_t<Tensor2Symmetric_t<Factor> >
+struct NaturalPairing_t<Tensor2Antisymmetric_t<Factor> >
 {
-    typedef Tensor2Symmetric_t<Factor> Tensor2Symmetric;
-    typedef typename Tensor2Symmetric::Scalar Scalar;
-    typedef typename Tensor2Symmetric::Index Index;
+    typedef Tensor2Antisymmetric_t<Factor> Tensor2Antisymmetric;
+    typedef typename Tensor2Antisymmetric::Scalar Scalar;
+    typedef typename Tensor2Antisymmetric::Index Index;
 
     static Scalar component (Index const &i)
     {
-        if (i.value() < Tensor2Symmetric::DIAGONAL_COMPONENT_COUNT)
-            return Scalar(1); // the diagonal components occur only once (in the component matrix)
-        else
-            return Scalar(2); // but the off-diagonal components occur twice (in the component matrix)
+        return Scalar(2); // the off-diagonal components occur twice (in the component matrix)
     }
 };
 
-#endif // TENSOR2SYMMETRIC_HPP_
+#endif // TENSOR2ANTISYMMETRIC_HPP_

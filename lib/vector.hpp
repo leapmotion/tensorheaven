@@ -1,6 +1,7 @@
 #ifndef VECTOR_HPP_
 #define VECTOR_HPP_
 
+#include <ostream>
 #include <string>
 
 #include "compoundindex.hpp"
