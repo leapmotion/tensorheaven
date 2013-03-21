@@ -13,7 +13,6 @@ current goals:
     within the strongly typed formalism.
   * some sort of abstraction layer for using Eigen methods on our tensor classes.  self-contained and NOT intertwined in the tensor lib
   * could use templatized conversion method which converts to generic type
-- scalar multiplication/division in expression templates
 - down-casting (to more-specific types) (up-casting (to less-specific types) already happens through expression templates)
   * something like
       (a(i,j)*m(j,k)*a(k,l)).the_human_guarantees_that_this_is_a_Tensor2Symmetric(i,l,I)
@@ -48,14 +47,6 @@ random TODOs:
   NamedIndex_t<Derived,'i'> in the expression template when you call operator() with the index.  maybe use TypedIndex_t
   instead of NamedIndex_t.
 
-planned features:
-- vectors and non-symmetric 2-tensors
-- indexed tensor expressions, such as "A(i,j)*u(j) + v(i)"
-- for 1-dimensional vectors, type coercion to/from the scalar type via canonical
-  isomorphism (a 1-dimensional real vector space is canonically isomorphic to R)
-- for 2-tensors of the form Nx1 or 1xN (referring to the dimension of the factors), type coercion
-  to/from the factor types via canonical isomorphisms (R \otimes V = V  and  V \otimes R = V)
-
 implemented features/items:
 x operator overloads for expression templates
 x trace-type expression templates (where a tensor is contracted with itself, a case which is distinct from * style expression templates)
@@ -65,4 +56,6 @@ x check assignment for aliasing
 x symmetric 2-tensors
 x antisymmetric 2-tensors
 x custom natural pairing (for non-isometric parameterizations)
+x scalar multiplication/division in expression templates
+x unary negation in expression templates
 

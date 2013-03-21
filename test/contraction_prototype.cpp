@@ -452,7 +452,8 @@ void test_Tensor2Symmetric_t ()
     std::cout << FORMAT_VALUE(a) << '\n';
     std::cout << FORMAT_VALUE(b) << '\n';
     a.template expr<'i'>();
-    std::cout << FORMAT_VALUE(a.template expr<'i'>()*b.template expr<'i'>()) << '\n';
+    std::cout << FORMAT_VALUE(a.template expr<'i'>()*b.template expr<'i'>()) << '\n';    
+    //std::cout << FORMAT_VALUE(a.template expr<'i'>() + b.template expr<'i'>()) << '\n';
 
     float hand_computed_value = 0.0f;
     for (typename Tensor2Symmetric::CompoundIndex i; i.is_not_at_end(); ++i)
@@ -504,6 +505,7 @@ void test_Tensor2Antisymmetric_t ()
     std::cout << FORMAT_VALUE(b) << '\n';
     a.template expr<'i'>();
     std::cout << FORMAT_VALUE(a.template expr<'i'>()*b.template expr<'i'>()) << '\n';
+    //std::cout << FORMAT_VALUE(a.template expr<'i'>() + b.template expr<'i'>()) << '\n';
 
     float hand_computed_value = 0.0f;
     for (typename Tensor2Antisymmetric::CompoundIndex i; i.is_not_at_end(); ++i)
@@ -572,6 +574,71 @@ void test_symmetric_and_antisymmetric_2_tensors ()
             }
         std::cout << "hand-computed value = " << c << '\n';
     }
+    {
+        NamedIndex_t<Vector,'i'> i;
+        NamedIndex_t<Vector,'j'> j;
+        c(i,j) = s(i,j) + a(i,j);
+        std::cout << "sum s(i,j)+a(i,j) = " << c << '\n';
+    }
+    std::cout << '\n';
+}
+
+template <Uint32 FACTOR1_DIM, Uint32 FACTOR2_DIM>
+void test_scalar_multiplication_and_division ()
+{
+    std::cout << "test_scalar_multiplication_and_division<" << FACTOR1_DIM << ',' << FACTOR2_DIM << ">\n";
+
+    typedef Vector_t<float,FACTOR1_DIM> Factor1;
+    typedef Vector_t<float,FACTOR2_DIM> Factor2;
+    typedef Tensor2_t<Factor1,Factor2> Tensor2;
+    std::cout << FORMAT_VALUE(TypeStringOf_t<Factor1>::eval()) << '\n';
+    std::cout << FORMAT_VALUE(TypeStringOf_t<Factor2>::eval()) << '\n';
+    std::cout << FORMAT_VALUE(TypeStringOf_t<Tensor2>::eval()) << '\n';
+    std::cout << '\n';
+    
+    Factor1 u1(Static<>::WITHOUT_INITIALIZATION);
+    Factor1 u2(Static<>::WITHOUT_INITIALIZATION);
+    for (typename Factor1::Index i; i.is_not_at_end(); ++i)
+        u1[i] = 3*i.value() + 8;
+    std::cout << FORMAT_VALUE(u1) << '\n';
+    std::cout << '\n';
+    
+    NamedIndex_t<Factor1,'i'> i;
+    u2(i) = u1(i) * 3.0f;
+    std::cout << "u1(i) * 3.0f = " << u2 << '\n';
+    u2(i) = u1(i) * 3; // testing scalar multiplication using integer literal
+    std::cout << "u1(i) * 3 (using integer literal for scalar) = " << u2 << '\n';
+    std::cout << '\n';
+
+    u2(i) = 20.0f * u1(i);
+    std::cout << "20.0f * u1(i) = " << u2 << '\n';
+    u2(i) = 20 * u1(i); // testing scalar multiplication using integer literal
+    std::cout << "20 * u1(i) (using integer literal for scalar) = " << u2 << '\n';
+    std::cout << '\n';
+
+    u2(i) = u1(i) / 2.0f;
+    std::cout << "u1(i) / 2.0f = " << u2 << '\n';
+    u2(i) = u1(i) / 2; // testing scalar multiplication using integer literal
+    std::cout << "u1(i) / 2 (using integer literal for scalar) = " << u2 << '\n';
+    std::cout << '\n';
+    
+    u2(i) = -u1(i);
+    std::cout << "-u1(i) = " << u2 << '\n';
+    std::cout << '\n';
+    
+    Factor2 v1(Static<>::WITHOUT_INITIALIZATION);
+    Factor2 v2(Static<>::WITHOUT_INITIALIZATION);
+    for (typename Factor2::Index i; i.is_not_at_end(); ++i)
+        v1[i] = sqr(i.value());
+    std::cout << FORMAT_VALUE(v1) << '\n';
+        
+    Tensor2 a(Static<>::WITHOUT_INITIALIZATION);
+    Tensor2 b(Static<>::WITHOUT_INITIALIZATION);
+    NamedIndex_t<Factor2,'j'> j;
+    a(i,j) = u1(i)*v1(j);
+    std::cout << "a(i,j) = u1(i)*v1(j) = " << a << '\n';
+    b(i,j) = 42 * a(i,j);
+    std::cout << "b(i,j) = 42 * a(i,j) = " << b << '\n';
     std::cout << '\n';
 }
 
@@ -756,7 +823,7 @@ int main (int argc, char **argv)
         {
             std::cout << "addition:\n";
             typedef ExpressionTemplate_IndexedTensor_t<Float3,TypeList_t<I>,EmptyTypeList> EE;
-            typedef ExpressionTemplate_Addition_t<EE,EE> EA;
+            typedef ExpressionTemplate_Addition_t<EE,EE,'+'> EA;
             EA e(u(i), v(i));
             std::cout << "expression template value:\n";
             for (EA::CompoundIndex k; k.is_not_at_end(); ++k)
@@ -863,7 +930,7 @@ int main (int argc, char **argv)
             typedef NamedIndex_t<Float3x4,'i'> I;
             I i;
             typedef ExpressionTemplate_IndexedTensor_t<Float3x4,TypeList_t<I>,EmptyTypeList> EE;
-            typedef ExpressionTemplate_Addition_t<EE,EE> EA;
+            typedef ExpressionTemplate_Addition_t<EE,EE,'+'> EA;
             Float3x4 u(Static<>::WITHOUT_INITIALIZATION);
             Float3x4 v(Static<>::WITHOUT_INITIALIZATION);
             for (Float3x4::Index k; k.is_not_at_end(); ++k)
@@ -899,7 +966,7 @@ int main (int argc, char **argv)
             I i;
             J j;
             typedef ExpressionTemplate_IndexedTensor_t<Float3x4,TypeTuple_t<I,J>::T,EmptyTypeList> EIJ;
-            typedef ExpressionTemplate_Addition_t<EIJ,EIJ> EA;
+            typedef ExpressionTemplate_Addition_t<EIJ,EIJ,'+'> EA;
             Float3x4 u(Static<>::WITHOUT_INITIALIZATION);
             Float3x4 v(Static<>::WITHOUT_INITIALIZATION);
             for (Float3x4::Index k; k.is_not_at_end(); ++k)
@@ -932,8 +999,8 @@ int main (int argc, char **argv)
             J j;
             typedef ExpressionTemplate_IndexedTensor_t<Float3x3,TypeTuple_t<I,J>::T,EmptyTypeList> EIJ;
             typedef ExpressionTemplate_IndexedTensor_t<Float3x3,TypeTuple_t<J,I>::T,EmptyTypeList> EJI;
-            typedef ExpressionTemplate_Addition_t<EIJ,EIJ> EA;
-            typedef ExpressionTemplate_Addition_t<EIJ,EJI> EB;
+            typedef ExpressionTemplate_Addition_t<EIJ,EIJ,'+'> EA;
+            typedef ExpressionTemplate_Addition_t<EIJ,EJI,'+'> EB;
             Float3x3 u(Static<>::WITHOUT_INITIALIZATION);
             Float3x3 v(Static<>::WITHOUT_INITIALIZATION);
             // dummy values that aren't symmetric
@@ -953,7 +1020,7 @@ int main (int argc, char **argv)
 
             // uncommenting this should cause an error regarding prohibiting repeated indices in sums
 //             typedef ExpressionTemplate_IndexedTensor_t<Float3x3,TypeTuple_t<I,I>::T,EmptyTypeList> EII;
-//             typedef ExpressionTemplate_Addition_t<EII,EII> EC;
+//             typedef ExpressionTemplate_Addition_t<EII,EII,'+'> EC;
 //             EC e_bad(u(i,i), u(i,i));
 
             std::cout << "operator + with same index order\n";
@@ -1057,7 +1124,11 @@ int main (int argc, char **argv)
             std::cout << '\n';
 
             u(i) = v(i) + v(i);
-            std::cout << FORMAT_VALUE(u) << '\n';
+            std::cout << "v(i) + v(i) = " << FORMAT_VALUE(u) << '\n';
+            std::cout << '\n';
+
+            u(i) = v(i) - v(i);
+            std::cout << "v(i) - v(i) = " << FORMAT_VALUE(u) << '\n';
             std::cout << '\n';
 
             Float3x3 m(Static<>::WITHOUT_INITIALIZATION);
@@ -1074,6 +1145,15 @@ int main (int argc, char **argv)
 
             NamedIndex_t<Float3,'j'> j;
 
+            std::cout << "trace (and testing operator Scalar () type conversion):\n";
+            std::cout << FORMAT_VALUE(m(i,i)) << '\n';
+            std::cout << FORMAT_VALUE(n(j,j)) << '\n';
+            std::cout << '\n';
+
+            std::cout << "addition of traces:\n";
+            std::cout << FORMAT_VALUE(m(i,i) + n(j,j)) << '\n';
+            std::cout << '\n';
+
             std::cout << "direct assignment m(i,j) = n(i,j):\n";
             m(i,j) = n(i,j);
             std::cout << FORMAT_VALUE(m) << '\n';
@@ -1086,6 +1166,11 @@ int main (int argc, char **argv)
 
             std::cout << "symmetrized assignment m(i,j) = n(i,j) + n(j,i):\n";
             m(i,j) = n(i,j) + n(j,i);
+            std::cout << FORMAT_VALUE(m) << '\n';
+            std::cout << '\n';
+            
+            std::cout << "antisymmetrized assignment m(i,j) = n(i,j) - n(j,i):\n";
+            m(i,j) = n(i,j) - n(j,i);
             std::cout << FORMAT_VALUE(m) << '\n';
             std::cout << '\n';
         }
@@ -1152,6 +1237,12 @@ int main (int argc, char **argv)
         test_symmetric_and_antisymmetric_2_tensors<3>();
         test_symmetric_and_antisymmetric_2_tensors<4>();
         test_symmetric_and_antisymmetric_2_tensors<10>();
+        
+        // testing scalar multiplication/division of expression templates
+        test_scalar_multiplication_and_division<2,1>();
+        test_scalar_multiplication_and_division<2,3>();
+        test_scalar_multiplication_and_division<4,1>();
+        test_scalar_multiplication_and_division<4,4>();
     }
 
     return 0;
