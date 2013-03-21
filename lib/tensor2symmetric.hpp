@@ -84,7 +84,7 @@ struct Tensor2Symmetric_t : public Vector_t<typename Factor_::Scalar,
         return this->component_access_without_range_check((row+1)*(2*Factor::DIM-(row+2))/2 + col);
     }
     // there is redundant access to components here, since the strict lower triangle components are
-    // really just aliases for the strict upper triangle components.  
+    // really just aliases for the strict upper triangle components.
     template <typename Index1, typename Index2>
     Scalar &operator [] (CompoundIndex_t<TypeList_t<Index1,TypeList_t<Index2> > > const &c)
     {

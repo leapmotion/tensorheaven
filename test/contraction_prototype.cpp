@@ -437,7 +437,7 @@ template <Uint32 DIM>
 void test_Tensor2Symmetric_t ()
 {
     std::cout << "test_Tensor2Symmetric_t<" << DIM << ">\n";
-    
+
     typedef Vector_t<float,DIM> Vector;
     typedef Tensor2Symmetric_t<Vector> Tensor2Symmetric;
     std::cout << FORMAT_VALUE(Tensor2Symmetric::DIM) << '\n';
@@ -452,7 +452,7 @@ void test_Tensor2Symmetric_t ()
     std::cout << FORMAT_VALUE(a) << '\n';
     std::cout << FORMAT_VALUE(b) << '\n';
     a.template expr<'i'>();
-    std::cout << FORMAT_VALUE(a.template expr<'i'>()*b.template expr<'i'>()) << '\n';    
+    std::cout << FORMAT_VALUE(a.template expr<'i'>()*b.template expr<'i'>()) << '\n';
     //std::cout << FORMAT_VALUE(a.template expr<'i'>() + b.template expr<'i'>()) << '\n';
 
     float hand_computed_value = 0.0f;
@@ -460,7 +460,7 @@ void test_Tensor2Symmetric_t ()
         hand_computed_value += a[i]*b[i];
     std::cout << FORMAT_VALUE(hand_computed_value) << '\n';
     std::cout << '\n';
-    
+
     Vector v(Static<>::WITHOUT_INITIALIZATION);
     Vector w(Static<>::WITHOUT_INITIALIZATION);
     for (typename Vector::Index i; i.is_not_at_end(); ++i)
@@ -470,14 +470,14 @@ void test_Tensor2Symmetric_t ()
     w.template expr<'i'>() = a.template expr<'i','j'>() * v.template expr<'j'>();
     std::cout << FORMAT_VALUE(v) << '\n';
     std::cout << FORMAT_VALUE(w) << '\n';
-    
+
     NamedIndex_t<Vector,'i'> i;
     NamedIndex_t<Vector,'j'> j;
     w(i) = a(i,j)*v(j);
     std::cout << FORMAT_VALUE(w) << '\n';
     std::cout << FORMAT_VALUE((v(i)*a(i,j)*v(j))) << '\n';
     std::cout << '\n';
-    
+
     std::cout << "zero'ing out the diagonal of a\n";
     for (typename Vector::Index i; i.is_not_at_end(); ++i)
         a[typename Tensor2Symmetric::CompoundIndex(i,i)] = 0;
@@ -489,7 +489,7 @@ template <Uint32 DIM>
 void test_Tensor2Antisymmetric_t ()
 {
     std::cout << "test_Tensor2Antisymmetric_t<" << DIM << ">\n";
-    
+
     typedef Vector_t<float,DIM> Vector;
     typedef Tensor2Antisymmetric_t<Vector> Tensor2Antisymmetric;
     std::cout << FORMAT_VALUE(Tensor2Antisymmetric::DIM) << '\n';
@@ -512,7 +512,7 @@ void test_Tensor2Antisymmetric_t ()
         hand_computed_value += a[i]*b[i];
     std::cout << FORMAT_VALUE(hand_computed_value) << '\n';
     std::cout << '\n';
-    
+
     Vector v(Static<>::WITHOUT_INITIALIZATION);
     Vector w(Static<>::WITHOUT_INITIALIZATION);
     for (typename Vector::Index i; i.is_not_at_end(); ++i)
@@ -522,7 +522,7 @@ void test_Tensor2Antisymmetric_t ()
     w.template expr<'i'>() = a.template expr<'i','j'>() * v.template expr<'j'>();
     std::cout << FORMAT_VALUE(v) << '\n';
     std::cout << FORMAT_VALUE(w) << '\n';
-    
+
     NamedIndex_t<Vector,'i'> i;
     NamedIndex_t<Vector,'j'> j;
     w(i) = a(i,j)*v(j);
@@ -552,7 +552,7 @@ void test_symmetric_and_antisymmetric_2_tensors ()
         a[i] = sqr(i.value()) + 5;
     std::cout << FORMAT_VALUE(s) << '\n';
     std::cout << FORMAT_VALUE(a) << '\n';
-    
+
     Tensor2 c(Static<>::WITHOUT_INITIALIZATION);
     {
         {
@@ -563,13 +563,13 @@ void test_symmetric_and_antisymmetric_2_tensors ()
             c(i,k) = s(i,j)*a(j,k);
         }
         std::cout << "product s(i,j)*a(j,k) = " << c << '\n';
-        
+
         for (typename Vector::Index i; i.is_not_at_end(); ++i)
             for (typename Vector::Index k; k.is_not_at_end(); ++k)
             {
                 c[typename Tensor2::CompoundIndex(i,k)] = 0;
                 for (typename Vector::Index j; j.is_not_at_end(); ++j)
-                    c[typename Tensor2::CompoundIndex(i,k)] += s[typename Tensor2Symmetric::CompoundIndex(i,j)] * 
+                    c[typename Tensor2::CompoundIndex(i,k)] += s[typename Tensor2Symmetric::CompoundIndex(i,j)] *
                                                                a[typename Tensor2Antisymmetric::CompoundIndex(j,k)];
             }
         std::cout << "hand-computed value = " << c << '\n';
@@ -595,14 +595,14 @@ void test_scalar_multiplication_and_division ()
     std::cout << FORMAT_VALUE(TypeStringOf_t<Factor2>::eval()) << '\n';
     std::cout << FORMAT_VALUE(TypeStringOf_t<Tensor2>::eval()) << '\n';
     std::cout << '\n';
-    
+
     Factor1 u1(Static<>::WITHOUT_INITIALIZATION);
     Factor1 u2(Static<>::WITHOUT_INITIALIZATION);
     for (typename Factor1::Index i; i.is_not_at_end(); ++i)
         u1[i] = 3*i.value() + 8;
     std::cout << FORMAT_VALUE(u1) << '\n';
     std::cout << '\n';
-    
+
     NamedIndex_t<Factor1,'i'> i;
     u2(i) = u1(i) * 3.0f;
     std::cout << "u1(i) * 3.0f = " << u2 << '\n';
@@ -621,17 +621,17 @@ void test_scalar_multiplication_and_division ()
     u2(i) = u1(i) / 2; // testing scalar multiplication using integer literal
     std::cout << "u1(i) / 2 (using integer literal for scalar) = " << u2 << '\n';
     std::cout << '\n';
-    
+
     u2(i) = -u1(i);
     std::cout << "-u1(i) = " << u2 << '\n';
     std::cout << '\n';
-    
+
     Factor2 v1(Static<>::WITHOUT_INITIALIZATION);
     Factor2 v2(Static<>::WITHOUT_INITIALIZATION);
     for (typename Factor2::Index i; i.is_not_at_end(); ++i)
         v1[i] = sqr(i.value());
     std::cout << FORMAT_VALUE(v1) << '\n';
-        
+
     Tensor2 a(Static<>::WITHOUT_INITIALIZATION);
     Tensor2 b(Static<>::WITHOUT_INITIALIZATION);
     NamedIndex_t<Factor2,'j'> j;
@@ -1168,7 +1168,7 @@ int main (int argc, char **argv)
             m(i,j) = n(i,j) + n(j,i);
             std::cout << FORMAT_VALUE(m) << '\n';
             std::cout << '\n';
-            
+
             std::cout << "antisymmetrized assignment m(i,j) = n(i,j) - n(j,i):\n";
             m(i,j) = n(i,j) - n(j,i);
             std::cout << FORMAT_VALUE(m) << '\n';
@@ -1225,19 +1225,19 @@ int main (int argc, char **argv)
         test_Tensor2Symmetric_t<3>();
         test_Tensor2Symmetric_t<4>();
         test_Tensor2Symmetric_t<10>();
-        
+
         // testing Tensor2Antisymmetric_t
         test_Tensor2Antisymmetric_t<2>();
         test_Tensor2Antisymmetric_t<3>();
         test_Tensor2Antisymmetric_t<4>();
         test_Tensor2Antisymmetric_t<10>();
-        
+
         // testing interaction between symmetric and antisymmetric 2-tensors
         test_symmetric_and_antisymmetric_2_tensors<2>();
         test_symmetric_and_antisymmetric_2_tensors<3>();
         test_symmetric_and_antisymmetric_2_tensors<4>();
         test_symmetric_and_antisymmetric_2_tensors<10>();
-        
+
         // testing scalar multiplication/division of expression templates
         test_scalar_multiplication_and_division<2,1>();
         test_scalar_multiplication_and_division<2,3>();

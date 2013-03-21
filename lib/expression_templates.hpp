@@ -2,115 +2,8 @@
 #define EXPRESSION_TEMPLATES_HPP_
 
 #include "core.hpp"
-#include "compoundindex.hpp"
-#include "naturalpairing.hpp"
-#include "typelist.hpp"
-
-// this is essentially a compile-time interface, requiring:
-// - a Derived type (should be the type of the thing that ultimately inherits this)
-// - a Scalar type (should be the scalar type of the expression template's tensor operand)
-// - a FreeIndexTypeList type (the free indices of this expression template)
-// - a UsedIndexTypeList type (the indices that have been used further down the AST)
-// requires also particular methods:
-//   operator Scalar () const // conversion to scalar -- always declared, but should 
-//                            // only compile if the conversion is well-defined (e.g. no free indices)
-//   Scalar operator [] (CompoundIndex const &) const // accessor using CompoundIndex_t<FreeIndexTypeList>
-//   template <typename OtherTensor> bool uses_tensor (OtherTensor const &) const // used in checking for aliasing
-template <typename Derived_, typename Scalar_, typename FreeIndexTypeList_, typename UsedIndexTypeList_>
-struct ExpressionTemplate_i // _i is for "compile-time interface"
-{
-    typedef Derived_ Derived;
-    // these typedefs make the Derived-specified typedefs available at the baseclass level,
-    typedef Scalar_ Scalar;
-    typedef FreeIndexTypeList_ FreeIndexTypeList;
-    typedef UsedIndexTypeList_ UsedIndexTypeList;
-    typedef CompoundIndex_t<FreeIndexTypeList> CompoundIndex;
-    static bool const IS_EXPRESSION_TEMPLATE = true;
- 
-    // TODO: some consistency checks on the various types
-
-    // compile-time interface methods    
-    operator Scalar () const { return as_derived().operator Scalar(); }
-    Scalar operator [] (CompoundIndex const &c) const { return as_derived().operator[](c); }
-    template <typename OtherTensor> bool uses_tensor (OtherTensor const &t) const { return as_derived().template uses_tensor<OtherTensor>(t); }
-
-    // for accessing this as the Derived type
-    Derived const &as_derived () const { return *static_cast<Derived const *>(this); }
-    Derived &as_derived () { return *static_cast<Derived *>(this); }
-};
-
-// ////////////////////////////////////////////////////////////////////////////
-// summation over repeated indices
-// ////////////////////////////////////////////////////////////////////////////
-
-template <typename IndexTypeList>
-struct SummedIndexTypeList_t
-{
-    typedef typename ElementsHavingMultiplicity_t<IndexTypeList,2>::T T;
-};
-
-template <typename IndexTypeList>
-struct FreeIndexTypeList_t
-{
-    typedef typename ElementsHavingMultiplicity_t<IndexTypeList,1>::T T;
-};
-
-template <typename HeadType>
-typename HeadType::OwnerVector::Scalar summation_component_factor (CompoundIndex_t<TypeList_t<HeadType> > const &s)
-{
-    return NaturalPairing_t<typename HeadType::OwnerVector>::component(s.head());
-}
-
-template <typename HeadType, typename BodyTypeList>
-typename HeadType::OwnerVector::Scalar summation_component_factor (CompoundIndex_t<TypeList_t<HeadType,BodyTypeList> > const &s)
-{
-    return NaturalPairing_t<typename HeadType::OwnerVector>::component(s.head()) * summation_component_factor(s.body());
-}
-
-// TODO: think about how UnarySummation_t and BinarySummation_t could be combined (if it makes sense to do it)
-
-// this is designed to handle trace-type expression templates, such as u(i,i) or v(i,j,i)
-// technically SummedIndexTypeList is a redundant argument (as it is derivable from TensorIndexTypeList),
-// but it is necessary so that a template specialization can be made for when it is EmptyTypeList.
-template <typename Tensor, typename TensorIndexTypeList, typename SummedIndexTypeList>
-struct UnarySummation_t
-{
-    typedef typename Tensor::Scalar Scalar;
-    typedef typename FreeIndexTypeList_t<TensorIndexTypeList>::T FreeIndexTypeList;
-    typedef CompoundIndex_t<FreeIndexTypeList> CompoundIndex;
-
-    static Scalar eval (Tensor const &tensor, CompoundIndex const &c)
-    {
-        typedef typename ConcatenationOfTypeLists_t<FreeIndexTypeList,SummedIndexTypeList>::T TotalIndexTypeList;
-        typedef CompoundIndex_t<TotalIndexTypeList> TotalIndex;
-        typedef CompoundIndex_t<SummedIndexTypeList> SummedIndex;
-
-        // the operands take indices that are a subset of the summed indices and free indices.
-
-        // constructing t with c initializes the first elements which correpond to
-        // CompoundIndex with the value of c, and initializes the remaining elements to zero.
-        TotalIndex t(c);
-        Scalar retval(0);
-        // get the map which produces the CompoundIndex for each tensor from the TotalIndex t
-        typedef CompoundIndexMap_t<TotalIndexTypeList,TensorIndexTypeList> TensorIndexMap;
-        typename TensorIndexMap::EvalMapType tensor_index_map = TensorIndexMap::eval;
-        // t = (f,s), which is a concatenation of the free access indices and the summed access indices.
-        // s is a reference to the second part, which is what is iterated over in the summation.
-        for (SummedIndex &s = t.template trailing_list<FreeIndexTypeList::LENGTH>(); s.is_not_at_end(); ++s)
-            retval += tensor[tensor_index_map(t)] * summation_component_factor(s);
-        return retval;
-    }
-};
-
-template <typename Tensor, typename TensorIndexTypeList>
-struct UnarySummation_t<Tensor,TensorIndexTypeList,EmptyTypeList>
-{
-    typedef typename Tensor::Scalar Scalar;
-    typedef typename FreeIndexTypeList_t<TensorIndexTypeList>::T FreeIndexTypeList;
-    typedef CompoundIndex_t<FreeIndexTypeList> CompoundIndex;
-
-    static Scalar eval (Tensor const &tensor, CompoundIndex const &c) { return tensor[c]; }
-};
+#include "expressiontemplate.hpp"
+#include "expression_templates_utility.hpp"
 
 // ////////////////////////////////////////////////////////////////////////////
 // expression-template-generation (making ETs from vectors/tensors)
@@ -119,8 +12,8 @@ struct UnarySummation_t<Tensor,TensorIndexTypeList,EmptyTypeList>
 // this is the "const" version of an indexed tensor expression (it has summed indices, so it doesn't make sense to assign to it)
 // NOTE: if this is ever subclassed, then it will be necessary to change the inheritance to pass in the Derived type
 template <typename Tensor, typename TensorIndexTypeList, typename SummedIndexTypeList>
-struct ExpressionTemplate_IndexedTensor_t 
-    : 
+struct ExpressionTemplate_IndexedTensor_t
+    :
     public ExpressionTemplate_i<ExpressionTemplate_IndexedTensor_t<Tensor,TensorIndexTypeList,SummedIndexTypeList>,
                                 typename Tensor::Scalar,
                                 typename FreeIndexTypeList_t<TensorIndexTypeList>::T,
@@ -136,7 +29,7 @@ struct ExpressionTemplate_IndexedTensor_t
     typedef typename Parent::UsedIndexTypeList UsedIndexTypeList;
     typedef typename Parent::CompoundIndex CompoundIndex;
     using Parent::IS_EXPRESSION_TEMPLATE;
-    
+
     ExpressionTemplate_IndexedTensor_t (Tensor const &tensor) : m_tensor(tensor) { }
 
     operator Scalar () const
@@ -144,7 +37,7 @@ struct ExpressionTemplate_IndexedTensor_t
         Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<FreeIndexTypeList,EmptyTypeList>::v>();
         return operator[](CompoundIndex());
     }
-    
+
     // read-only, because it doesn't make sense to assign to an expression which is a summation.
     Scalar operator [] (CompoundIndex const &c) const
     {
@@ -167,7 +60,7 @@ private:
 // this is the "non-const" version of an indexed tensor expression (it has no summed indices, so it makes sense to assign to it)
 template <typename Tensor, typename TensorIndexTypeList>
 struct ExpressionTemplate_IndexedTensor_t<Tensor,TensorIndexTypeList,EmptyTypeList>
-    : 
+    :
     public ExpressionTemplate_i<ExpressionTemplate_IndexedTensor_t<Tensor,TensorIndexTypeList,EmptyTypeList>,
                                 typename Tensor::Scalar,
                                 typename FreeIndexTypeList_t<TensorIndexTypeList>::T,
@@ -191,7 +84,7 @@ struct ExpressionTemplate_IndexedTensor_t<Tensor,TensorIndexTypeList,EmptyTypeLi
         Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<FreeIndexTypeList,EmptyTypeList>::v>();
         return operator[](CompoundIndex());
     }
-    
+
     // read-only, because it doesn't necessarily make sense to assign to an expression
     // template -- the expression may be a product or some such, where each component
     // is not an L-value.
@@ -269,7 +162,7 @@ struct ExpressionTemplate_Addition_t
     typedef typename Parent::UsedIndexTypeList UsedIndexTypeList;
     typedef typename Parent::CompoundIndex CompoundIndex;
     using Parent::IS_EXPRESSION_TEMPLATE;
-                                 
+
     // TODO: check that the summed indices from each operand have no indices in common
     // though technically this is unnecessary, because the summed indices are "private"
     // to each contraction, so this is really for the human's benefit, not getting
@@ -351,22 +244,22 @@ struct ExpressionTemplate_ScalarMultiplication_t
     typedef typename Parent::UsedIndexTypeList UsedIndexTypeList;
     typedef typename Parent::CompoundIndex CompoundIndex;
     using Parent::IS_EXPRESSION_TEMPLATE;
-    
+
     enum
     {
         OPERAND_IS_EXPRESSION_TEMPLATE = Lvd::Meta::Assert<Operand::IS_EXPRESSION_TEMPLATE>::v,
         OPERAND_SCALAR_MATCHES_SCALAR  = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename Operand::Scalar,Scalar_>::v>::v,
         OPERATOR_IS_VALID              = Lvd::Meta::Assert<(OPERATOR == '*' || OPERATOR == '/')>::v
     };
-    
+
     ExpressionTemplate_ScalarMultiplication_t (Operand const &operand, Scalar scalar_operand)
         :
         m_operand(operand),
         m_scalar_operand(scalar_operand)
-    { 
+    {
         // TODO: should there be a runtime check here if OPERATOR is '/' and scalar_operand is zero (or close to zero)?
     }
-    
+
     operator Scalar () const
     {
         Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<FreeIndexTypeList,EmptyTypeList>::v>();
@@ -380,7 +273,7 @@ struct ExpressionTemplate_ScalarMultiplication_t
         else
             return m_operand[c] / m_scalar_operand;
     }
-    
+
     template <typename OtherTensor>
     bool uses_tensor (OtherTensor const &t) const
     {
@@ -396,106 +289,6 @@ private:
 // ////////////////////////////////////////////////////////////////////////////
 // multiplication of expression templates (tensor product and contraction)
 // ////////////////////////////////////////////////////////////////////////////
-
-template <typename LeftOperand, typename RightOperand, typename FreeIndexTypeList, typename SummedIndexTypeList>
-struct BinarySummation_t
-{
-    enum { _ = Lvd::Meta::Assert<LeftOperand::IS_EXPRESSION_TEMPLATE>::v &&
-               Lvd::Meta::Assert<RightOperand::IS_EXPRESSION_TEMPLATE>::v &&
-               Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v>::v &&
-               Lvd::Meta::Assert<(SummedIndexTypeList::LENGTH > 0)>::v };
-
-    typedef typename LeftOperand::Scalar Scalar;
-    typedef CompoundIndex_t<FreeIndexTypeList> CompoundIndex;
-
-    static Scalar eval (LeftOperand const &left_operand, RightOperand const &right_operand, CompoundIndex const &c)
-    {
-        typedef typename ConcatenationOfTypeLists_t<FreeIndexTypeList,SummedIndexTypeList>::T TotalIndexTypeList;
-        typedef CompoundIndex_t<TotalIndexTypeList> TotalIndex;
-        typedef CompoundIndex_t<SummedIndexTypeList> SummedIndex;
-
-        // the operands take indices that are a subset of the summed indices and free indices.
-
-        // constructing t with c initializes the first elements which correpond to
-        // CompoundIndex with the value of c, and initializes the remaining elements to zero.
-        TotalIndex t(c);
-        Scalar retval(0);
-        // get the map which produces the CompoundIndex for each operand from the TotalIndex t
-        typedef CompoundIndexMap_t<TotalIndexTypeList,typename LeftOperand::FreeIndexTypeList> LeftOperandIndexMap;
-        typedef CompoundIndexMap_t<TotalIndexTypeList,typename RightOperand::FreeIndexTypeList> RightOperandIndexMap;
-        typename LeftOperandIndexMap::EvalMapType left_operand_index_map = LeftOperandIndexMap::eval;
-        typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
-        // t = (f,s), which is a concatenation of the free access indices and the summed access indices.
-        // s is a reference to the second part, which is what is iterated over in the summation.
-        for (SummedIndex &s = t.template trailing_list<FreeIndexTypeList::LENGTH>(); s.is_not_at_end(); ++s)
-            retval += left_operand[left_operand_index_map(t)] *
-                      right_operand[right_operand_index_map(t)] *
-                      summation_component_factor(s);
-        return retval;
-    }
-};
-
-// template specialization handles summation over no indices
-template <typename LeftOperand, typename RightOperand, typename FreeIndexTypeList>
-struct BinarySummation_t<LeftOperand,RightOperand,FreeIndexTypeList,EmptyTypeList>
-{
-    enum { _ = Lvd::Meta::Assert<LeftOperand::IS_EXPRESSION_TEMPLATE>::v &&
-               Lvd::Meta::Assert<RightOperand::IS_EXPRESSION_TEMPLATE>::v &&
-               Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v>::v };
-
-    typedef typename LeftOperand::Scalar Scalar;
-    typedef CompoundIndex_t<FreeIndexTypeList> CompoundIndex;
-
-    static Scalar eval (LeftOperand const &left_operand, RightOperand const &right_operand, CompoundIndex const &c)
-    {
-        // get the map which produces the CompoundIndex for each operand from the free indices c
-        typedef CompoundIndexMap_t<FreeIndexTypeList,typename LeftOperand::FreeIndexTypeList> LeftOperandIndexMap;
-        typedef CompoundIndexMap_t<FreeIndexTypeList,typename RightOperand::FreeIndexTypeList> RightOperandIndexMap;
-        typename LeftOperandIndexMap::EvalMapType left_operand_index_map = LeftOperandIndexMap::eval;
-        typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
-        return left_operand[left_operand_index_map(c)] * right_operand[right_operand_index_map(c)];
-    }
-};
-
-template <typename LeftOperand, typename RightOperand>
-struct FreeIndexTypeListOfMultiplication_t
-{
-private:
-    // the free indices are the single-occurrence indices of the concatenated
-    // list of free indices from the left and right operands
-    typedef typename ConcatenationOfTypeLists_t<typename LeftOperand::FreeIndexTypeList,
-                                                typename RightOperand::FreeIndexTypeList>::T CombinedFreeIndexTypeList;
-public:
-    typedef typename ElementsHavingMultiplicity_t<CombinedFreeIndexTypeList,1>::T T;
-};
-
-template <typename LeftOperand, typename RightOperand>
-struct SummedIndexTypeListOfMultiplication_t
-{
-private:
-    // the free indices are the single-occurrence indices of the concatenated
-    // list of free indices from the left and right operands
-    typedef typename ConcatenationOfTypeLists_t<typename LeftOperand::FreeIndexTypeList,
-                                                typename RightOperand::FreeIndexTypeList>::T CombinedFreeIndexTypeList;
-public:
-    // the summed indices (at this level) are the double-occurrences indices
-    // of the concatenated list of free indices from the left and right operands
-    typedef typename ElementsHavingMultiplicity_t<CombinedFreeIndexTypeList,2>::T T;
-};
-
-template <typename LeftOperand, typename RightOperand>
-struct UsedIndexTypeListOfMultiplication_t
-{
-private:
-    typedef typename SummedIndexTypeListOfMultiplication_t<LeftOperand,RightOperand>::T SummedIndexTypeList;
-public:
-    // typelist of used indices which are prohibited from using higher up in the AST
-    typedef typename UniqueTypesIn_t<
-        typename ConcatenationOfTypeLists_t<
-            typename ConcatenationOfTypeLists_t<typename LeftOperand::UsedIndexTypeList,
-                                                typename RightOperand::UsedIndexTypeList>::T,
-            SummedIndexTypeList>::T>::T T;
-};
 
 // TODO: there is an issue to think about: while it is totally valid to do
 // u(i)*v(j)*w(j) (this is an outer product contracted with a vector), the
@@ -522,7 +315,7 @@ struct ExpressionTemplate_Multiplication_t
     typedef typename Parent::UsedIndexTypeList UsedIndexTypeList;
     typedef typename Parent::CompoundIndex CompoundIndex;
     using Parent::IS_EXPRESSION_TEMPLATE;
-    
+
     typedef typename SummedIndexTypeListOfMultiplication_t<LeftOperand,RightOperand>::T SummedIndexTypeList;
 
     // TODO: check that the summed indices from each operand have no indices in common
@@ -598,8 +391,8 @@ ExpressionTemplate_Addition_t<LeftDerived,RightDerived,'-'>
 
 // scalar multiplication on the right
 template <typename Derived, typename FreeIndexTypeList, typename UsedIndexTypeList>
-ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'> 
-    operator * (ExpressionTemplate_i<Derived,typename Derived::Scalar,FreeIndexTypeList,UsedIndexTypeList> const &operand, 
+ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
+    operator * (ExpressionTemplate_i<Derived,typename Derived::Scalar,FreeIndexTypeList,UsedIndexTypeList> const &operand,
                 typename Derived::Scalar scalar_operand)
 {
     return ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>(operand.as_derived(), scalar_operand);
@@ -607,8 +400,8 @@ ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
 
 // scalar multiplication on the right -- this overload allows integer literals to be used in scalar multiplications
 template <typename Derived, typename FreeIndexTypeList, typename UsedIndexTypeList>
-ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'> 
-    operator * (ExpressionTemplate_i<Derived,typename Derived::Scalar,FreeIndexTypeList,UsedIndexTypeList> const &operand, 
+ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
+    operator * (ExpressionTemplate_i<Derived,typename Derived::Scalar,FreeIndexTypeList,UsedIndexTypeList> const &operand,
                 int scalar_operand)
 {
     return ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>(operand.as_derived(), scalar_operand);
@@ -616,7 +409,7 @@ ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
 
 // scalar multiplication on the left
 template <typename Derived, typename FreeIndexTypeList, typename UsedIndexTypeList>
-ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'> 
+ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
     operator * (typename Derived::Scalar scalar_operand,
                 ExpressionTemplate_i<Derived,typename Derived::Scalar,FreeIndexTypeList,UsedIndexTypeList> const &operand)
 {
@@ -625,7 +418,7 @@ ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
 
 // scalar multiplication on the left -- this overload allows integer literals to be used in scalar multiplications
 template <typename Derived, typename FreeIndexTypeList, typename UsedIndexTypeList>
-ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'> 
+ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
     operator * (int scalar_operand,
                 ExpressionTemplate_i<Derived,typename Derived::Scalar,FreeIndexTypeList,UsedIndexTypeList> const &operand)
 {
@@ -634,8 +427,8 @@ ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
 
 // scalar division on the right
 template <typename Derived, typename FreeIndexTypeList, typename UsedIndexTypeList>
-ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'/'> 
-    operator / (ExpressionTemplate_i<Derived,typename Derived::Scalar,FreeIndexTypeList,UsedIndexTypeList> const &operand, 
+ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'/'>
+    operator / (ExpressionTemplate_i<Derived,typename Derived::Scalar,FreeIndexTypeList,UsedIndexTypeList> const &operand,
                 typename Derived::Scalar scalar_operand)
 {
     return ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'/'>(operand.as_derived(), scalar_operand);
@@ -643,8 +436,8 @@ ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'/'>
 
 // scalar division on the right -- this overload allows integer literals to be used in scalar divisions (it's Scalar division, not integer division)
 template <typename Derived, typename FreeIndexTypeList, typename UsedIndexTypeList>
-ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'/'> 
-    operator / (ExpressionTemplate_i<Derived,typename Derived::Scalar,FreeIndexTypeList,UsedIndexTypeList> const &operand, 
+ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'/'>
+    operator / (ExpressionTemplate_i<Derived,typename Derived::Scalar,FreeIndexTypeList,UsedIndexTypeList> const &operand,
                 int scalar_operand)
 {
     return ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'/'>(operand.as_derived(), scalar_operand);
@@ -652,7 +445,7 @@ ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'/'>
 
 // unary negation
 template <typename Derived, typename FreeIndexTypeList, typename UsedIndexTypeList>
-ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'> 
+ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
     operator - (ExpressionTemplate_i<Derived,typename Derived::Scalar,FreeIndexTypeList,UsedIndexTypeList> const &operand)
 {
     return ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>(operand.as_derived(), -1);
