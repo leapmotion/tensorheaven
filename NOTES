@@ -21,6 +21,8 @@ current goals:
 - strong typing for vectors -- named vector spaces (including "Generic") and prime/dual distinction (including self-dual)
   * default values should be "Generic" vector space ID and self-dual
   * canonical isomorphism for tensor2 -> vector will need to take into account basis
+  * canonical isomorphism for vector -> scalar will need to take into account basis (a 1-dimensional vector space always has a
+    canonical "unit" basis element which is the real number 1)
 - column/row/block extraction/addressing
 - "eval" method on expression templates (which take a list of free indices) which produce an intermediate value
   * something like  (a(i,j)*m(j,k)*a(k,l)).eval(l,i)  (this one makes l the first index, and i the second).

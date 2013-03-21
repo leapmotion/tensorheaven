@@ -40,6 +40,31 @@ struct Tensor2Symmetric_t : public Vector_t<typename Factor_::Scalar,
     // have a type coercion to either one unless they are 1-dimensional, in which case
     // it can be a type coercion to the Scalar type.
 
+//     // "break apart" a symmetric 2-tensor index (Index) into a tuple of indices (CompoundIndex)
+//     static CompoundIndex Index_to_CompoundIndex (Index const &i)
+//     {
+//         return
+//     }
+//     // "bundle" a tuple of indices (CompoundIndex) back into a single symmetric 2-tensor index (Index).
+//     static Index CompoundIndex_to_Index (CompoundIndex const &c)
+//     {
+//         // strict upper triangle components are stored contiguously in row-major order, starting at element D := DIM,
+//         // being the shared dimension of the tensor factors.
+//         //    [ x 1*D 1*D+1 ... 2*D-2 ]  there are D-1 elements in this row, starting column is 1
+//         //    [ x   x 2*D-1 ... 3*D-4 ]  there are D-2 elements in this row, starting column is 2
+//         //    [ ..................... ]  ...
+//         // in row R, there are D-(R+1) elements in the row, starting in column R+1.
+//         // thus (R,C) (with R > C) refers to offset:
+//         //    R*D+C - (1 + 2 + ... R + (R+1)) = R*D+C - (R+1)*(R+2)/2
+//         // because this starts at offset D, the actual offset is
+//         //    D + R*D+C - (R+1)*(R+2)/2 = (R+1)*(2*D - (R+2))/2 + C
+//         Uint32 row = c.el<0>().value();
+//         Uint32 col = c.el<0>().value();
+//         if (row >= col)
+//             std::swap(row, col);
+//         return (row+1)*(2*Factor::DIM-(row+2))/2 + col;
+//     }
+
     // TODO: because the diagonal is indexed contiguously first, there is an easy type coercion to Tensor2Diagonal_t
 
     // dumb, but the compiler wouldn't inherit implicitly, and won't parse a "using" statement
