@@ -50,11 +50,13 @@ std::ostream &operator << (std::ostream &out, Index_t<OwnerVector> const &i)
 }
 
 // for use in operator () for creation of expression templates (indexed tensor expressions)
-template <typename OwnerVector_, char SYMBOL>
+template <typename OwnerVector_, char SYMBOL_>
 struct NamedIndex_t : public Index_t<OwnerVector_>
 {
     typedef Index_t<OwnerVector_> Parent;
     typedef OwnerVector_ OwnerVector;
+    static char const SYMBOL = SYMBOL_;
+    using Parent::COMPONENT_COUNT;
 
     NamedIndex_t () { }
     explicit NamedIndex_t (Uint32 i) : Parent(i) { }

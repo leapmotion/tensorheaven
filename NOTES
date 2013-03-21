@@ -24,7 +24,6 @@ current goals:
 - column/row/block extraction/addressing
 - "eval" method on expression templates (which take a list of free indices) which produce an intermediate value
   * something like  (a(i,j)*m(j,k)*a(k,l)).eval(l,i)  (this one makes l the first index, and i the second).
-- printing expression templates
 
 future goals:
 - a rigorous test suite, using Lvd test code -- it can handle everything up through seg faults -- and negative compile
@@ -58,4 +57,5 @@ x antisymmetric 2-tensors
 x custom natural pairing (for non-isometric parameterizations)
 x scalar multiplication/division in expression templates
 x unary negation in expression templates
+x printing expression templates
 

@@ -14,6 +14,8 @@
 template <typename Scalar_, Uint32 DIM_, typename Derived_ = NullType> // don't worry about type ID for now
 struct Vector_t
 {
+    enum { DIMENSION_MUST_BE_POSITIVE = Lvd::Meta::Assert<(DIM_ > 0)>::v };
+
     typedef Scalar_ Scalar;
     static Uint32 const DIM = DIM_;
     // if Derived_ was the default NullType, then just use Vector_t as Derived.

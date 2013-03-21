@@ -642,6 +642,61 @@ void test_scalar_multiplication_and_division ()
     std::cout << '\n';
 }
 
+template <Uint32 FREE_INDEX_COUNT, Uint32 COMPONENT_COUNT1, Uint32 COMPONENT_COUNT2, Uint32 COMPONENT_COUNT3>
+void test_printing_expression_templates ()
+{
+    if (FREE_INDEX_COUNT == 1)
+    {
+        std::cout << "test_printing_expression_templates<...>() degree 1 expression template, COMPONENT_COUNT1 = " << COMPONENT_COUNT1 << '\n';
+        typedef Vector_t<float,COMPONENT_COUNT1> Vector;
+        Vector v(Static<>::WITHOUT_INITIALIZATION);
+        for (typename Vector::Index i; i.is_not_at_end(); ++i)
+            v[i] = sqr(i.value()) + 1;
+        NamedIndex_t<Vector,'i'> i;
+        std::cout << FORMAT_VALUE(v(i)) << '\n';
+        std::cout << '\n';
+    }
+    else if (FREE_INDEX_COUNT == 2)
+    {
+        std::cout << "test_printing_expression_templates<...>() degree 2 expression template, COMPONENT_COUNT1 = " << COMPONENT_COUNT1
+                                                                                        << ", COMPONENT_COUNT2 = " << COMPONENT_COUNT2 << '\n';
+        typedef Vector_t<float,COMPONENT_COUNT1> Factor1;
+        typedef Vector_t<float,COMPONENT_COUNT2> Factor2;
+        typedef Tensor2_t<Factor1,Factor2> Tensor2;
+        Tensor2 a(Static<>::WITHOUT_INITIALIZATION);
+        for (typename Tensor2::Index i; i.is_not_at_end(); ++i)
+            a[i] = sqr(i.value()) + 1;
+        NamedIndex_t<Factor1,'i'> i;
+        NamedIndex_t<Factor2,'j'> j;
+        std::cout << FORMAT_VALUE(a(i,j)) << '\n';
+        std::cout << '\n';
+    }
+    else if (FREE_INDEX_COUNT == 3)
+    {
+        std::cout << "test_printing_expression_templates<...>() degree 3 expression template, COMPONENT_COUNT1 = " << COMPONENT_COUNT1
+                                                                                        << ", COMPONENT_COUNT2 = " << COMPONENT_COUNT2
+                                                                                        << ", COMPONENT_COUNT3 = " << COMPONENT_COUNT3 << '\n';
+        typedef Vector_t<float,COMPONENT_COUNT1> Factor1;
+        typedef Vector_t<float,COMPONENT_COUNT2> Factor2;
+        typedef Vector_t<float,COMPONENT_COUNT3> Factor3;
+        typedef Tensor2_t<Factor1,Factor2> Tensor2;
+        Tensor2 a(Static<>::WITHOUT_INITIALIZATION);
+        Factor3 v(Static<>::WITHOUT_INITIALIZATION);
+        for (typename Tensor2::Index i; i.is_not_at_end(); ++i)
+            a[i] = sqr(i.value()) + 1;
+        for (typename Factor3::Index i; i.is_not_at_end(); ++i)
+            v[i] = i.value() + 2;
+        NamedIndex_t<Factor1,'i'> i;
+        NamedIndex_t<Factor2,'j'> j;
+        NamedIndex_t<Factor3,'k'> k;
+        // Tensor3_t isn't implemented yet, so use a decomposable tensor
+        std::cout << FORMAT_VALUE(a(i,j)*v(k)) << '\n';
+        std::cout << '\n';
+    }
+    else
+        assert(false && "not implemented");
+}
+
 int main (int argc, char **argv)
 {
     // 1-dimensional vector to scalar coercion
@@ -1243,6 +1298,28 @@ int main (int argc, char **argv)
         test_scalar_multiplication_and_division<2,3>();
         test_scalar_multiplication_and_division<4,1>();
         test_scalar_multiplication_and_division<4,4>();
+
+        // testing printing expression templates of various degrees
+        test_printing_expression_templates<1,1,1,1>();
+        test_printing_expression_templates<1,5,1,1>();
+        test_printing_expression_templates<1,20,1,1>();
+
+        test_printing_expression_templates<2,1,1,1>();
+        test_printing_expression_templates<2,5,1,1>();
+        test_printing_expression_templates<2,1,4,1>();
+        test_printing_expression_templates<2,2,2,1>();
+        test_printing_expression_templates<2,6,7,1>();
+
+        test_printing_expression_templates<3,1,1,1>();
+        test_printing_expression_templates<3,5,1,1>();
+        test_printing_expression_templates<3,1,4,1>();
+        test_printing_expression_templates<3,2,2,1>();
+        test_printing_expression_templates<3,6,7,1>();
+        test_printing_expression_templates<3,1,1,3>();
+        test_printing_expression_templates<3,5,1,3>();
+        test_printing_expression_templates<3,1,4,3>();
+        test_printing_expression_templates<3,2,2,3>();
+        test_printing_expression_templates<3,6,7,3>();
     }
 
     return 0;
