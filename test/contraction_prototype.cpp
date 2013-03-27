@@ -483,6 +483,27 @@ void test_Tensor2Symmetric_t ()
         a[typename Tensor2Symmetric::CompoundIndex(i,i)] = 0;
     std::cout << FORMAT_VALUE(a) << '\n';
     std::cout << '\n';
+    
+//     std::cout << "checking Tensor2Symmetric_t::contiguous_index_to_rowcol_index()\n";
+//     for (typename Tensor2Symmetric::Index k; k.is_not_at_end(); ++k)
+//     {
+//         Uint32 row;
+//         Uint32 col;
+//         Tensor2Symmetric::contiguous_index_to_rowcol_index(k.value(), row, col);
+//         std::cout << '(' << row << ',' << col << "), ";
+//     }
+//     std::cout << '\n';
+//     for (typename Tensor2Symmetric::Index k; k.is_not_at_end(); ++k)
+//     {
+//         Uint32 row;
+//         Uint32 col;
+//         Tensor2Symmetric::contiguous_index_to_rowcol_index(k.value(), row, col);
+//         Uint32 k2 = Tensor2Symmetric::rowcol_index_to_contiguous_index(row, col);
+//         std::cout << '(' << k.value() << ',' << k2 << "), ";
+//         assert(k.value() == k2);
+//     }
+//     std::cout << '\n';
+//     std::cout << '\n';
 }
 
 template <Uint32 DIM>
@@ -529,6 +550,26 @@ void test_Tensor2Antisymmetric_t ()
     std::cout << FORMAT_VALUE(w) << '\n';
     std::cout << FORMAT_VALUE((v(i)*a(i,j)*v(j))) << '\n';
     std::cout << '\n';
+    
+//     std::cout << "checking Tensor2Antisymmetric_t::contiguous_index_to_rowcol_index()\n";
+//     for (typename Tensor2Antisymmetric::Index k; k.is_not_at_end(); ++k)
+//     {
+//         Uint32 row;
+//         Uint32 col;
+//         Tensor2Antisymmetric::contiguous_index_to_rowcol_index(k.value(), row, col);
+//         std::cout << '(' << row << ',' << col << "), ";
+//     }
+//     std::cout << '\n';
+//     for (typename Tensor2Antisymmetric::Index k; k.is_not_at_end(); ++k)
+//     {
+//         Uint32 row;
+//         Uint32 col;
+//         Tensor2Antisymmetric::contiguous_index_to_rowcol_index(k.value(), row, col);
+//         Uint32 k2 = Tensor2Antisymmetric::rowcol_index_to_contiguous_index(row, col);
+//         assert(k.value() == k2);
+//     }
+//     std::cout << '\n';
+//     std::cout << '\n';
 }
 
 template <Uint32 DIM>

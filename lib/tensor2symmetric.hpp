@@ -1,6 +1,7 @@
 #ifndef TENSOR2SYMMETRIC_HPP_
 #define TENSOR2SYMMETRIC_HPP_
 
+#include <cmath> // TEMP until rowcol/contiguous index map is implemented as a lookup table
 #include <ostream>
 
 #include "core.hpp"
@@ -31,7 +32,7 @@ struct Tensor2Symmetric_t : public Vector_t<typename Factor_::Scalar,
     typedef Factor Factor2;
     typedef CompoundIndex_t<typename TypeTuple_t<typename Factor::Index,typename Factor::Index>::T> CompoundIndex;
     static Uint32 const DIAGONAL_COMPONENT_COUNT = Factor::DIM;
-    static Uint32 const STRICTLY_UPPER_TRIANGULAR_COMPONENT_COUNT = ((Factor::DIM-1)*Factor::DIM)/2;
+    static Uint32 const STRICTLY_LOWER_TRIANGULAR_COMPONENT_COUNT = ((Factor::DIM-1)*Factor::DIM)/2;
 
     Tensor2Symmetric_t (WithoutInitialization const &w) : Parent(w) { }
     Tensor2Symmetric_t (Scalar fill_with) : Parent(fill_with) { }
@@ -40,32 +41,7 @@ struct Tensor2Symmetric_t : public Vector_t<typename Factor_::Scalar,
     // have a type coercion to either one unless they are 1-dimensional, in which case
     // it can be a type coercion to the Scalar type.
 
-//     // "break apart" a symmetric 2-tensor index (Index) into a tuple of indices (CompoundIndex)
-//     static CompoundIndex Index_to_CompoundIndex (Index const &i)
-//     {
-//         return
-//     }
-//     // "bundle" a tuple of indices (CompoundIndex) back into a single symmetric 2-tensor index (Index).
-//     static Index CompoundIndex_to_Index (CompoundIndex const &c)
-//     {
-//         // strict upper triangle components are stored contiguously in row-major order, starting at element D := DIM,
-//         // being the shared dimension of the tensor factors.
-//         //    [ x 1*D 1*D+1 ... 2*D-2 ]  there are D-1 elements in this row, starting column is 1
-//         //    [ x   x 2*D-1 ... 3*D-4 ]  there are D-2 elements in this row, starting column is 2
-//         //    [ ..................... ]  ...
-//         // in row R, there are D-(R+1) elements in the row, starting in column R+1.
-//         // thus (R,C) (with R > C) refers to offset:
-//         //    R*D+C - (1 + 2 + ... R + (R+1)) = R*D+C - (R+1)*(R+2)/2
-//         // because this starts at offset D, the actual offset is
-//         //    D + R*D+C - (R+1)*(R+2)/2 = (R+1)*(2*D - (R+2))/2 + C
-//         Uint32 row = c.el<0>().value();
-//         Uint32 col = c.el<0>().value();
-//         if (row >= col)
-//             std::swap(row, col);
-//         return (row+1)*(2*Factor::DIM-(row+2))/2 + col;
-//     }
-
-    // TODO: because the diagonal is indexed contiguously first, there is an easy type coercion to Tensor2Diagonal_t
+    // TODO: because the diagonal is indexed contiguously last, there is an easy type coercion to Tensor2Diagonal_t
 
     // dumb, but the compiler wouldn't inherit implicitly, and won't parse a "using" statement
     Scalar const &operator [] (Index const &i) const { return Parent::operator[](i); }
@@ -88,28 +64,23 @@ struct Tensor2Symmetric_t : public Vector_t<typename Factor_::Scalar,
         Uint32 row = c.template el<0>().value();
         Uint32 col = c.template el<1>().value();
 
-        // index the diagonal first, then the strictly upper triangular in row-major order
-        if (row == col)
-            return this->component_access_without_range_check(row);
-
-        // if we're in the strict lower triangle, switch the indices to get into the strict upper triangle
-        if (col < row)
+        // if we're in the strict upper triangle, switch the indices to get into the strict lower triangle
+        if (row < col)
             std::swap(row, col);
 
-        // strict upper triangle components are stored contiguously in row-major order, starting at element D := DIM,
-        // being the shared dimension of the tensor factors.
-        //    [ x 1*D 1*D+1 ... 2*D-2 ]  there are D-1 elements in this row, starting column is 1
-        //    [ x   x 2*D-1 ... 3*D-4 ]  there are D-2 elements in this row, starting column is 2
-        //    [ ..................... ]  ...
-        // in row R, there are D-(R+1) elements in the row, starting in column R+1.
-        // thus (R,C) (with R > C) refers to offset:
-        //    R*D+C - (1 + 2 + ... R + (R+1)) = R*D+C - (R+1)*(R+2)/2
-        // because this starts at offset D, the actual offset is
-        //    D + R*D+C - (R+1)*(R+2)/2 = (R+1)*(2*D - (R+2))/2 + C
-        return this->component_access_without_range_check((row+1)*(2*Factor::DIM-(row+2))/2 + col);
+        // strict lower triangle elements are stored contiguously in row-major order:
+        // [ d0  .  . ... ]
+        // [  0 d1  . ... ]
+        // [  1  2 d2 ... ]
+        // [  3  4  5 ... ]
+        // ...
+        // the index of the first element in row R is the (R-1)th triangular number, so the mapping
+        // (row,col) to contiguous index i is i := r*(r-1)/2 + c.
+        // the diagonal is indexed contiguously after the strictly lower triangular components.
+        return this->component_access_without_range_check(rowcol_index_to_contiguous_index(row, col));
     }
-    // there is redundant access to components here, since the strict lower triangle components are
-    // really just aliases for the strict upper triangle components.
+    // there is redundant access to components here, since the strict upper triangle components are
+    // really just aliases for the strict lower triangle components.
     template <typename Index1, typename Index2>
     Scalar &operator [] (CompoundIndex_t<TypeList_t<Index1,TypeList_t<Index2> > > const &c)
     {
@@ -120,11 +91,9 @@ struct Tensor2Symmetric_t : public Vector_t<typename Factor_::Scalar,
         typename Factor::Index(c.template el<1>());
         Uint32 row = c.template el<0>().value();
         Uint32 col = c.template el<1>().value();
-        if (row == col)
-            return this->component_access_without_range_check(row);
-        if (col < row)
+        if (row < col)
             std::swap(row, col);
-        return this->component_access_without_range_check(((row+1)*(2*DIAGONAL_COMPONENT_COUNT - (row+2)) >> 1) + col);
+        return this->component_access_without_range_check(rowcol_index_to_contiguous_index(row, col));
     }
 
     // the argument is technically unnecessary, as its value is not used.  however,
@@ -275,6 +244,34 @@ struct Tensor2Symmetric_t : public Vector_t<typename Factor_::Scalar,
             return "Tensor2Symmetric_t<" + TypeStringOf_t<Factor>::eval() + '>';
         else
             return "Tensor2Symmetric_t<" + TypeStringOf_t<Factor>::eval() + ',' + TypeStringOf_t<Derived>::eval() + '>';
+    }
+
+private:
+
+    // functions between the indexing schemes -- compound index is (row,col) with row >= col and vector index is contiguous.
+    static Uint32 rowcol_index_to_contiguous_index (Uint32 row, Uint32 col) 
+    {
+        if (row < col)
+            throw std::invalid_argument("row must be greater than col");
+        else if (row == col)
+            return STRICTLY_LOWER_TRIANGULAR_COMPONENT_COUNT + row;
+        else // same as antisymmetric indexig
+            return row*(row-1)/2 + col;
+    }
+    static void contiguous_index_to_rowcol_index (Uint32 i, Uint32 &row, Uint32 &col)
+    {
+        // TODO: implement as lookup table
+        if (i >= STRICTLY_LOWER_TRIANGULAR_COMPONENT_COUNT)
+        {
+            row = i - STRICTLY_LOWER_TRIANGULAR_COMPONENT_COUNT;
+            col = row;
+        }
+        else // same as antisymmetric indexing
+        {
+            // given i, row = floor((1 + sqrt(1+8*i))/2) and col = i - r*(r-1)/2.
+            row = Uint32(std::floor(0.5f + std::sqrt(0.25f + 2.0f*i)));
+            col = i - row*(row-1)/2;
+        }
     }
 };
 

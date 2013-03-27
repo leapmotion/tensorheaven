@@ -66,11 +66,4 @@ struct NamedIndex_t : public Index_t<OwnerVector_>
     static std::string type_as_string () { return "NamedIndex_t<" + TypeStringOf_t<OwnerVector>::eval() + ",'" + SYMBOL + "'>"; }
 };
 
-// template <typename OwnerVector, char SYMBOL>
-// std::ostream &operator << (std::ostream &out, typename NamedIndex_t<OwnerVector,SYMBOL> const &i)
-// {
-//     return out << i.value();
-// }
-
-
 #endif // INDEX_HPP_

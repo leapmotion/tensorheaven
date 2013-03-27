@@ -47,6 +47,7 @@ random TODOs:
 - simplify usage of indices.  Use "Index_t<'i'> i", just to carry the letter, then have that create the stronger type
   NamedIndex_t<Derived,'i'> in the expression template when you call operator() with the index.  maybe use TypedIndex_t
   instead of NamedIndex_t.
+- implement [anti]symmetric contiguous_index_to_rowcol_index as a lookup table for speed.
 
 implemented features/items:
 x operator overloads for expression templates

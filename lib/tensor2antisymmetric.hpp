@@ -1,6 +1,7 @@
 #ifndef TENSOR2ANTISYMMETRIC_HPP_
 #define TENSOR2ANTISYMMETRIC_HPP_
 
+#include <cmath> // TEMP until rowcol/contiguous index map is implemented as a lookup table
 #include <ostream>
 
 #include "core.hpp"
@@ -30,7 +31,7 @@ struct Tensor2Antisymmetric_t : public Vector_t<typename Factor_::Scalar,
     typedef Factor Factor1;
     typedef Factor Factor2;
     typedef CompoundIndex_t<typename TypeTuple_t<typename Factor::Index,typename Factor::Index>::T> CompoundIndex;
-    static Uint32 const STRICTLY_UPPER_TRIANGULAR_COMPONENT_COUNT = ((Factor::DIM-1)*Factor::DIM)/2;
+    static Uint32 const STRICTLY_LOWER_TRIANGULAR_COMPONENT_COUNT = ((Factor::DIM-1)*Factor::DIM)/2;
 
     Tensor2Antisymmetric_t (WithoutInitialization const &w) : Parent(w) { }
     Tensor2Antisymmetric_t (Scalar fill_with) : Parent(fill_with) { }
@@ -63,27 +64,23 @@ struct Tensor2Antisymmetric_t : public Vector_t<typename Factor_::Scalar,
         Uint32 row = c.template el<0>().value();
         Uint32 col = c.template el<1>().value();
 
-        // index the diagonal first, then the strictly upper triangular in row-major order
+        // index the diagonal first, then the strictly lower triangular in row-major order
         if (row == col)
             return Scalar(0);
 
-        // strict upper triangle elements are stored contiguously in row-major order, starting at element D := DIM,
-        // being the shared dimension of the tensor factors.
-        //    [ x 1*D 1*D+1 ... 2*D-2 ]  there are D-1 elements in this row, starting column is 1
-        //    [ x   x 2*D-1 ... 3*D-4 ]  there are D-2 elements in this row, starting column is 2
-        //    [ ..................... ]  ...
-        // in row R, there are D-(R+1) elements in the row, starting in column R+1.
-        // thus (R,C) (with R > C) refers to offset:
-        //    R*D+C - (1 + 2 + ... R + (R+1)) = R*D+C - (R+1)*(R+2)/2
-        bool swapped = row >= col;
+        // strict lower triangle elements are stored contiguously in row-major order:
+        // [ . . . ... ]
+        // [ 0 . . ... ]
+        // [ 1 2 . ... ]
+        // [ 3 4 5 ... ]
+        // ...
+        // the index of the first element in row R is the (R-1)th triangular number, so the mapping
+        // (row,col) to contiguous index i is i := r*(r-1)/2 + c.
+        bool swapped = row <= col;
         if (swapped)
             std::swap(row,col);
-        Scalar component(this->component_access_without_range_check(row*Factor::DIM + col - (row+1)*(row+2)/2));
+        Scalar component(this->component_access_without_range_check(rowcol_index_to_contiguous_index(row, col)));
         return swapped ? -component : component;
-//         if (row < col)
-//             return this->component_access_without_range_check(row*Factor::DIM + col - (row+1)*(row+2)/2);
-//         else // return the negative of the transposed strictly upper triangular component.
-//             return -this->component_access_without_range_check(col*Factor::DIM + row - (col+1)*(col+2)/2);
     }
     // for notational completeness (see the non-const component method).  this is effectively an alias for operator[].
     template <typename Index1, typename Index2>
@@ -91,7 +88,7 @@ struct Tensor2Antisymmetric_t : public Vector_t<typename Factor_::Scalar,
     {
         return operator[](c);
     }
-    // you may only access the strict upper triangle components -- where the 0th element of c
+    // you may only write-access the strict upper triangle components -- where the 0th element of c
     // is less than the 1st element of c.  this is because the exact values of each component in
     // the 2-tensor don't necessarily correspond to memory locations (the diagonal components are 
     // all zero so aren't stored in memory, and the strict lower triangle components are the
@@ -105,10 +102,10 @@ struct Tensor2Antisymmetric_t : public Vector_t<typename Factor_::Scalar,
         typename Factor::Index(c.template el<1>());
         Uint32 row = c.template el<0>().value();
         Uint32 col = c.template el<1>().value();
-        // throw an error if the diagonal or strict lower triangle is accessed
-        if (row >= col)
-            return throw std::invalid_argument("can only write to the strict upper triangle components of a Tensor2Antisymmetric_t");
-        return this->component_access_without_range_check(row*Factor::DIM + col - (row+1)*(row+2)/2);
+        // throw an error if the diagonal or strict upper triangle is accessed
+        if (row <= col)
+            return throw std::invalid_argument("can only write to the strict lower triangle components of a Tensor2Antisymmetric_t");
+        return this->component_access_without_range_check(rowcol_index_to_contiguous_index(row, col));
     }
 
     // the argument is technically unnecessary, as its value is not used.  however,
@@ -259,6 +256,23 @@ struct Tensor2Antisymmetric_t : public Vector_t<typename Factor_::Scalar,
             return "Tensor2Antisymmetric_t<" + TypeStringOf_t<Factor>::eval() + '>';
         else
             return "Tensor2Antisymmetric_t<" + TypeStringOf_t<Factor>::eval() + ',' + TypeStringOf_t<Derived>::eval() + '>';
+    }
+
+private:
+
+    // functions between the indexing schemes -- compound index is (row,col) with row > col and vector index is contiguous.
+    static Uint32 rowcol_index_to_contiguous_index (Uint32 row, Uint32 col) 
+    {
+        if (row <= col)
+            throw std::invalid_argument("row must be greater than col");
+        return row*(row-1)/2 + col;
+    }
+    static void contiguous_index_to_rowcol_index (Uint32 i, Uint32 &row, Uint32 &col)
+    {
+        // given i, row = floor((1 + sqrt(1+8*i))/2) and col = i - r*(r-1)/2.
+        // TODO: implement as lookup table
+        row = Uint32(std::floor(0.5f + std::sqrt(0.25f + 2.0f*i)));
+        col = i - row*(row-1)/2;
     }
 };
 
