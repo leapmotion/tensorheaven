@@ -37,6 +37,26 @@ struct Tensor2Symmetric_t : public Vector_t<typename Factor_::Scalar,
     Tensor2Symmetric_t (WithoutInitialization const &w) : Parent(w) { }
     Tensor2Symmetric_t (Scalar fill_with) : Parent(fill_with) { }
 
+    template <typename Index1, typename Index2, typename BundledIndex>
+    static CompoundIndex_t<TypeList_t<Index1,TypeList_t<Index2> > > bundle_index_map (BundledIndex const &b)
+    {
+        // this is just to check that there is a valid conversion to the requested CompoundIndex type.
+        // it doesn't actually produce any side-effects, and should be optimized out.
+        {
+            Index1 i1;
+            Index2 i2;
+            typename Factor1::Index f1(i1);
+            typename Factor2::Index f2(i2);
+            // check that the parameter BundleIndex type is compatible with Index
+            Index i(b);
+        }
+            
+        Uint32 row;
+        Uint32 col;
+        contiguous_index_to_rowcol_index(b.value(), row, col);
+        return CompoundIndex_t<TypeList_t<Index1,TypeList_t<Index2> > >(Index1(row), Index2(col));
+    }
+
     // TODO: because Factor1 and Factor2 are identical, it doesn't make sense to
     // have a type coercion to either one unless they are 1-dimensional, in which case
     // it can be a type coercion to the Scalar type.

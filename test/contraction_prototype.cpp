@@ -738,6 +738,54 @@ void test_printing_expression_templates ()
         assert(false && "not implemented");
 }
 
+template <Uint32 DIM>
+void test_IndexBundle ()
+{
+// template <typename Tensor, typename TensorIndexTypeList, typename SummedIndexTypeList_, typename Derived_ = NullType>
+// struct ExpressionTemplate_IndexedTensor_t
+
+// template <typename Operand, typename BundleIndexTypeList, typename ResultingIndexType, CompoundIndex_t<BundleIndexTypeList> (*BUNDLE_INDEX_MAP)(ResultingIndexType const &)>
+// struct ExpressionTemplate_IndexBundle_t 
+
+    std::cout << "test_IndexBundle<" << DIM << ">()\n";
+    
+    typedef Vector_t<float,DIM> Vector;
+    typedef Tensor2_t<Vector,Vector> Tensor2;
+    typedef Tensor2Symmetric_t<Vector> Tensor2Symmetric;
+    typedef Tensor2Antisymmetric_t<Vector> Tensor2Antisymmetric;
+    
+    Tensor2 t(Static<>::WITHOUT_INITIALIZATION);
+    for (typename Tensor2::Index k; k.is_not_at_end(); ++k)
+        t[k] = k.value();
+    std::cout << FORMAT_VALUE(t) << '\n';
+
+    typedef NamedIndex_t<Vector,'i'> I;
+    typedef NamedIndex_t<Vector,'j'> J;
+    typedef NamedIndex_t<Tensor2Symmetric,'q'> Q;
+    typedef TypeList_t<I,TypeList_t<J> > BundleIndexTypeList;
+    typedef ExpressionTemplate_IndexedTensor_t<Tensor2,BundleIndexTypeList,EmptyTypeList> EI;
+    I i;
+    J j;
+    Q q;
+    EI ei(t(i,j));
+    for (typename Tensor2Symmetric::Index p; p.is_not_at_end(); ++p)
+        std::cout << FORMAT_VALUE((Tensor2Symmetric::template bundle_index_map<I,J,Q>(p))) << '\n';
+    std::cout << '\n';
+        
+    typedef CompoundIndex_t<TypeList_t<I,TypeList_t<J> > > (*BundleIndexMap) (Q const &);
+    static BundleIndexMap const BUNDLE_INDEX_MAP = Tensor2Symmetric::template bundle_index_map<I,J,Q>;
+    typedef ExpressionTemplate_IndexBundle_t<EI,BundleIndexTypeList,Q,BUNDLE_INDEX_MAP> EB;
+    EB eb(t(i,j));
+    for (typename EB::CompoundIndex c; c.is_not_at_end(); ++c)
+        std::cout << FORMAT_VALUE(c) << " --> " << FORMAT_VALUE(eb[c]) << '\n';
+    std::cout << '\n';
+    
+    Tensor2Symmetric s(Static<>::WITHOUT_INITIALIZATION);
+    s(q) = eb;
+    std::cout << FORMAT_VALUE(s) << '\n';
+    std::cout << '\n';
+}
+
 int main (int argc, char **argv)
 {
     // 1-dimensional vector to scalar coercion
@@ -1361,6 +1409,9 @@ int main (int argc, char **argv)
         test_printing_expression_templates<3,1,4,3>();
         test_printing_expression_templates<3,2,2,3>();
         test_printing_expression_templates<3,6,7,3>();
+        
+        // testing index bundling
+        test_IndexBundle<3>();
     }
 
     return 0;

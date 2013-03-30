@@ -223,4 +223,22 @@ struct HasNontrivialIntersectionAsSets_t<EmptyTypeList,TypeListB>
 
 
 
+// renders the subtraction of TypeListB from TypeListA, as sets
+template <typename TypeListA, typename TypeListB>
+struct SetSubtraction_t
+{
+private:
+    typedef typename Lvd::Meta::If<TypeListB::template Contains_t<typename TypeListA::HeadType>::V,
+                                   EmptyTypeList,
+                                   TypeList_t<typename TypeListA::HeadType> >::T HeadTypeList;
+public:
+    typedef typename ConcatenationOfTypeLists_t<HeadTypeList,typename SetSubtraction_t<typename TypeListA::BodyTypeList,TypeListB>::T>::T T;
+};
+
+template <typename TypeListB>
+struct SetSubtraction_t<EmptyTypeList,TypeListB>
+{
+    typedef EmptyTypeList T;
+};
+
 #endif // TYPELIST_UTILITY_HPP_

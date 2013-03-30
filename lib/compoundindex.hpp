@@ -103,6 +103,8 @@ struct CompoundIndex_t<TypeList_t<HeadIndexType> > : public List_t<TypeList_t<He
 {
     typedef List_t<TypeList_t<HeadIndexType> > Parent;
     typedef TypeList_t<HeadIndexType> IndexTypeList;
+    typedef typename IndexTypeList::BodyTypeList BodyIndexTypeList;
+    typedef CompoundIndex_t<BodyIndexTypeList> BodyCompoundIndex;
     static Uint32 const COMPONENT_COUNT = HeadIndexType::COMPONENT_COUNT;
 
     CompoundIndex_t () { } // default constructor initializes to "first" component
@@ -127,6 +129,11 @@ struct CompoundIndex_t<TypeList_t<HeadIndexType> > : public List_t<TypeList_t<He
     Uint32 value () const { return this->head().value(); }
     void operator ++ () { ++(this->head()); }
     void reset () { this->head().reset(); }
+
+    // slighty hacky way to use List_t's existing functionality -- NOTE: this only
+    // works because CompoundIndex_t<IndexTypeList> inherits non-virtually from
+    // List_t<IndexTypeList> and has no members.
+    BodyCompoundIndex const &body () const { return *static_cast<BodyCompoundIndex const *>(&Parent::body()); }
 
     // type conversion operator -- because this CompoundIndex_t only has one component,
     // it can be canonically identified as its component type.
@@ -166,22 +173,92 @@ struct CompoundIndex_t<EmptyTypeList> : public List_t<EmptyTypeList>
 
     typedef List_t<EmptyTypeList> Parent;
     typedef EmptyTypeList IndexTypeList;
-//     static Uint32 const COMPONENT_COUNT
+    typedef EmptyTypeList BodyIndexTypeList;
+    typedef CompoundIndex_t<BodyIndexTypeList> BodyCompoundIndex;
+    static Uint32 const COMPONENT_COUNT = 0;
 
-    CompoundIndex_t () : m_value(0) { } // default constructor initializes to "first" component (which in this case happens to be at end)
+    CompoundIndex_t () { }
 
-    bool is_at_end () const { return m_value > 0; }
-    bool is_not_at_end () const { return m_value == 0; }
-    void operator ++ () { ++m_value; } // no-op
-    void reset () { m_value = 0; } // no-op
+    bool is_at_end () const { return true; }
+    bool is_not_at_end () const { return false; }
+    void operator ++ () { } // no-op
+    void reset () { } // no-op
+
+    // slighty hacky way to use List_t's existing functionality -- NOTE: this only
+    // works because CompoundIndex_t<IndexTypeList> inherits non-virtually from
+    // List_t<IndexTypeList> and has no members.
+    BodyCompoundIndex const &body () const { return *static_cast<BodyCompoundIndex const *>(&Parent::body()); }
 
     static std::string type_as_string () { return "CompoundIndex_t<" + TypeStringOf_t<IndexTypeList>::eval() + '>'; }
-
-private:
-
-    Uint32 m_value;
 };
 
+
+
+
+
+// type-specific analogs of all the operator overloads for List_t
+
+// tack an element onto the beginning of a list (where the list is empty)
+template <typename HeadType>
+CompoundIndex_t<TypeList_t<HeadType> > operator >>= (HeadType const &head, CompoundIndex_t<EmptyTypeList> const &) 
+{ 
+    return CompoundIndex_t<TypeList_t<HeadType> >(head); 
+}
+
+// tack an element onto the beginning of a list (catch-all case)
+template <typename HeadType, typename BodyTypeList>
+CompoundIndex_t<TypeList_t<HeadType,BodyTypeList> > operator >>= (HeadType const &head, CompoundIndex_t<BodyTypeList> const &body) 
+{ 
+    return CompoundIndex_t<TypeList_t<HeadType,BodyTypeList> >(head, body); 
+}
+
+
+
+// concatenate two lists (where both are empty)
+CompoundIndex_t<EmptyTypeList> operator |= (CompoundIndex_t<EmptyTypeList> const &, CompoundIndex_t<EmptyTypeList> const &)
+{
+    return CompoundIndex_t<EmptyTypeList>();
+}
+
+// concatenate two lists (where the second is empty)
+template <typename LeadingHeadType, typename LeadingBodyTypeList>
+CompoundIndex_t<TypeList_t<LeadingHeadType,LeadingBodyTypeList> > operator |= (
+    CompoundIndex_t<TypeList_t<LeadingHeadType,LeadingBodyTypeList> > const &leading_list, 
+    CompoundIndex_t<EmptyTypeList> const &)
+{
+    return leading_list;
+}
+
+// concatenate two lists (where the first is empty)
+template <typename TrailingHeadType, typename TrailingBodyTypeList>
+CompoundIndex_t<TypeList_t<TrailingHeadType,TrailingBodyTypeList> > operator |= (
+    CompoundIndex_t<EmptyTypeList> const &, 
+    CompoundIndex_t<TypeList_t<TrailingHeadType,TrailingBodyTypeList> > const &trailing_type_list)
+{
+    return trailing_type_list;
+}
+
+// concatenate two lists (where the first has only one element)
+template <typename LeadingHeadType, typename TrailingHeadType, typename TrailingBodyTypeList>
+CompoundIndex_t<TypeList_t<LeadingHeadType,TypeList_t<TrailingHeadType,TrailingBodyTypeList> > > operator |= (
+    CompoundIndex_t<TypeList_t<LeadingHeadType> > const &leading_list,
+    CompoundIndex_t<TypeList_t<TrailingHeadType,TrailingBodyTypeList> > const &trailing_list)
+{
+    return CompoundIndex_t<TypeList_t<LeadingHeadType,TypeList_t<TrailingHeadType,TrailingBodyTypeList> > >(
+        leading_list.head(), 
+        trailing_list);
+}
+
+// concatenate two lists (catch-all case)
+template <typename LeadingTypeList, typename TrailingTypeList>
+CompoundIndex_t<typename ConcatenationOfTypeLists_t<LeadingTypeList,TrailingTypeList>::T> operator |= (
+    CompoundIndex_t<LeadingTypeList> const &leading_list,
+    CompoundIndex_t<TrailingTypeList> const &trailing_list)
+{
+    return CompoundIndex_t<typename ConcatenationOfTypeLists_t<LeadingTypeList,TrailingTypeList>::T>(
+        leading_list.head(), 
+        (leading_list.body() |= trailing_list));
+}
 
 
 

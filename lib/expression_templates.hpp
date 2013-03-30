@@ -10,25 +10,29 @@
 // ////////////////////////////////////////////////////////////////////////////
 
 // this is the "const" version of an indexed tensor expression (it has summed indices, so it doesn't make sense to assign to it)
-// NOTE: if this is ever subclassed, then it will be necessary to change the inheritance to pass in the Derived type
-template <typename Tensor, typename TensorIndexTypeList, typename SummedIndexTypeList>
+template <typename Tensor, typename TensorIndexTypeList, typename SummedIndexTypeList_, typename Derived_ = NullType>
 struct ExpressionTemplate_IndexedTensor_t
     :
-    public ExpressionTemplate_i<ExpressionTemplate_IndexedTensor_t<Tensor,TensorIndexTypeList,SummedIndexTypeList>,
+    public ExpressionTemplate_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
+                                                       ExpressionTemplate_IndexedTensor_t<Tensor,TensorIndexTypeList,SummedIndexTypeList_,Derived_>,
+                                                       Derived_>::T,
                                 typename Tensor::Scalar,
                                 typename FreeIndexTypeList_t<TensorIndexTypeList>::T,
-                                SummedIndexTypeList>
+                                SummedIndexTypeList_>
 {
-    typedef ExpressionTemplate_i<ExpressionTemplate_IndexedTensor_t<Tensor,TensorIndexTypeList,SummedIndexTypeList>,
+    typedef ExpressionTemplate_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
+                                                       ExpressionTemplate_IndexedTensor_t<Tensor,TensorIndexTypeList,SummedIndexTypeList_,Derived_>,
+                                                       Derived_>::T,
                                  typename Tensor::Scalar,
                                  typename FreeIndexTypeList_t<TensorIndexTypeList>::T,
-                                 SummedIndexTypeList> Parent;
+                                 SummedIndexTypeList_> Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
     typedef typename Parent::FreeIndexTypeList FreeIndexTypeList;
     typedef typename Parent::UsedIndexTypeList UsedIndexTypeList;
     typedef typename Parent::CompoundIndex CompoundIndex;
     using Parent::IS_EXPRESSION_TEMPLATE;
+    typedef SummedIndexTypeList_ SummedIndexTypeList;
 
     ExpressionTemplate_IndexedTensor_t (Tensor const &tensor) : m_tensor(tensor) { }
 
@@ -359,6 +363,106 @@ private:
 
     LeftOperand const &m_left_operand;
     RightOperand const &m_right_operand;
+};
+
+// ////////////////////////////////////////////////////////////////////////////
+// bundling multiple indices into a single compound index (tensor downcasting)
+// ////////////////////////////////////////////////////////////////////////////
+
+template <typename Operand, typename BundleIndexTypeList, typename ResultingIndexType>
+struct IndexTypeListOfIndexBundle_t
+{
+    
+    typedef typename SetSubtraction_t<TypeList_t<ResultingIndexType,typename Operand::FreeIndexTypeList>,BundleIndexTypeList>::T T;
+};
+
+template <typename Operand, typename BundleIndexTypeList, typename ResultingIndexType>
+struct UsedIndexTypeListOfIndexBundle_t
+{
+    enum 
+    { 
+        BUNDLE_INDICES_MUST_BE_FREE           = Lvd::Meta::Assert<!HasNontrivialIntersectionAsSets_t<BundleIndexTypeList,typename Operand::FreeIndexTypeList>::V>::v,
+        BUNDLE_AND_RESULTING_MUST_BE_DISTINCT = Lvd::Meta::Assert<!HasNontrivialIntersectionAsSets_t<BundleIndexTypeList,TypeList_t<ResultingIndexType> >::V>::v
+    };
+    
+    typedef typename ConcatenationOfTypeLists_t<typename Operand::UsedIndexTypeList,BundleIndexTypeList>::T T;
+};
+
+// not an expression template, but just something that handles the bundled indices
+template <typename Operand, typename BundleIndexTypeList, typename ResultingIndexType, CompoundIndex_t<BundleIndexTypeList> (*BUNDLE_INDEX_MAP)(ResultingIndexType const &)>
+struct IndexBundle_t
+{
+    enum 
+    { 
+        BUNDLE_INDICES_MUST_BE_FREE           = Lvd::Meta::Assert<IsASubsetOf_t<BundleIndexTypeList,typename Operand::FreeIndexTypeList>::V>::v,
+        BUNDLE_AND_RESULTING_MUST_BE_DISTINCT = Lvd::Meta::Assert<!HasNontrivialIntersectionAsSets_t<BundleIndexTypeList,TypeList_t<ResultingIndexType> >::V>::v,
+        OPERAND_IS_EXPRESSION_TEMPLATE        = Lvd::Meta::Assert<Operand::IS_EXPRESSION_TEMPLATE>::v
+    };
+    
+    typedef typename Operand::Scalar Scalar;
+    // ResultingIndexType comes first in IndexTypeList
+    typedef typename SetSubtraction_t<TypeList_t<ResultingIndexType,typename Operand::FreeIndexTypeList>,BundleIndexTypeList>::T IndexTypeList;
+    typedef typename ConcatenationOfTypeLists_t<typename Operand::UsedIndexTypeList,BundleIndexTypeList>::T UsedIndexTypeList;
+    typedef CompoundIndex_t<IndexTypeList> CompoundIndex;
+
+    IndexBundle_t (Operand const &operand) : m_operand(operand) { }
+
+    Scalar operator [] (CompoundIndex const &c) const
+    {
+        // replace the head of c with the separate indices that it bundles
+        return m_operand[BUNDLE_INDEX_MAP(c.head()) |= c.body()]; // |= is concatenation of CompoundIndex_t instances
+    }
+
+    template <typename OtherTensor>
+    bool uses_tensor (OtherTensor const &t) const { return m_operand.uses_tensor(t); }
+    
+private:
+
+    Operand const &m_operand;
+};
+
+template <typename Operand, typename BundleIndexTypeList, typename ResultingIndexType, CompoundIndex_t<BundleIndexTypeList> (*BUNDLE_INDEX_MAP)(ResultingIndexType const &)>
+struct ExpressionTemplate_IndexBundle_t 
+    : 
+    public ExpressionTemplate_IndexedTensor_t<IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP>,
+                                              typename IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP>::IndexTypeList,
+                                              typename SummedIndexTypeList_t<typename IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP>::IndexTypeList>::T,
+                                              ExpressionTemplate_IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP> >
+{
+    typedef ExpressionTemplate_IndexedTensor_t<IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP>,
+                                               typename IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP>::IndexTypeList,
+                                               typename SummedIndexTypeList_t<typename IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP>::IndexTypeList>::T,
+                                               ExpressionTemplate_IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP> > Parent;
+    typedef typename Parent::Derived Derived;
+    typedef typename Parent::Scalar Scalar;
+    typedef typename Parent::FreeIndexTypeList FreeIndexTypeList;
+    typedef typename Parent::UsedIndexTypeList UsedIndexTypeList;
+    typedef typename Parent::CompoundIndex CompoundIndex;
+    using Parent::IS_EXPRESSION_TEMPLATE;
+    typedef typename Parent::SummedIndexTypeList SummedIndexTypeList;
+
+    typedef IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP> IndexBundle;
+
+    ExpressionTemplate_IndexBundle_t (Operand const &operand) : Parent(m_index_bundle), m_index_bundle(operand) { }
+
+    operator Scalar () const
+    {
+        Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<FreeIndexTypeList,EmptyTypeList>::v>();
+        return operator[](CompoundIndex());
+    }
+
+    // read-only, because it doesn't make sense to assign to an index-bundled expression (which is possibly also a summation).
+    Scalar operator [] (CompoundIndex const &c) const
+    {
+        return UnarySummation_t<IndexBundle,typename IndexBundle::IndexTypeList,SummedIndexTypeList>::eval(m_index_bundle, c);
+    }
+
+    template <typename OtherTensor>
+    bool uses_tensor (OtherTensor const &t) const { return m_index_bundle.uses_tensor(t); }
+
+private:
+
+    IndexBundle m_index_bundle;
 };
 
 // ////////////////////////////////////////////////////////////////////////////

@@ -6,6 +6,7 @@
 
 #include "core.hpp"
 #include "typelist.hpp"
+#include "typelist_utility.hpp"
 
 template <typename TypeList, Uint32 INDEX> struct ListHelper_t;
 
@@ -116,7 +117,8 @@ struct List_t<EmptyTypeList>
 //     template <typename TypeList>
 //     List_t (List_t<TypeList> const &) { }
 
-    // there is no head or body, so there are no accessors for them.
+    // there is no head, so there is no accessors for it.
+    List_t<EmptyTypeList> const &body () const { return List_t<EmptyTypeList>::SINGLETON; } // TEMP?
 
     template <Uint32 INDEX>
     struct Type_t
@@ -170,6 +172,11 @@ struct List_t<EmptyTypeList>
 // TODO: make into extern variable
 List_t<EmptyTypeList> const List_t<EmptyTypeList>::SINGLETON;
 
+typedef List_t<EmptyTypeList> EmptyList;
+
+
+
+
 template <typename HeadType_>
 struct List_t<TypeList_t<HeadType_> >
 {
@@ -194,8 +201,7 @@ struct List_t<TypeList_t<HeadType_> >
 
     HeadType const &head () const { return m_head; }
     HeadType &head () { return m_head; }
-    // there is no body, so there is no accessor for it.
-//     List_t<EmptyTypeList> const &body () const { return List_t<EmptyTypeList>::SINGLETON; } // TEMP?
+    List_t<EmptyTypeList> const &body () const { return List_t<EmptyTypeList>::SINGLETON; } // TEMP?
 
     // type cast operator for HeadType?
 
@@ -296,6 +302,101 @@ struct ListHelper_t<TypeList,0>
 
 
 
+
+
+
+
+
+// tack an element onto the beginning of a list (where the list is empty)
+template <typename HeadType>
+List_t<TypeList_t<HeadType> > operator >>= (HeadType const &head, List_t<EmptyTypeList> const &) 
+{ 
+    return List_t<TypeList_t<HeadType> >(head); 
+}
+
+// tack an element onto the beginning of a list (catch-all case)
+template <typename HeadType, typename BodyTypeList>
+List_t<TypeList_t<HeadType,BodyTypeList> > operator >>= (HeadType const &head, List_t<BodyTypeList> const &body) 
+{ 
+    return List_t<TypeList_t<HeadType,BodyTypeList> >(head, body); 
+}
+
+
+
+// concatenate two lists (where both are empty)
+List_t<EmptyTypeList> operator |= (List_t<EmptyTypeList> const &, List_t<EmptyTypeList> const &)
+{
+    return List_t<EmptyTypeList>();
+}
+
+// concatenate two lists (where the second is empty)
+template <typename LeadingHeadType, typename LeadingBodyTypeList>
+List_t<TypeList_t<LeadingHeadType,LeadingBodyTypeList> > operator |= (
+    List_t<TypeList_t<LeadingHeadType,LeadingBodyTypeList> > const &leading_list, 
+    List_t<EmptyTypeList> const &)
+{
+    return leading_list;
+}
+
+// concatenate two lists (where the first is empty)
+template <typename TrailingHeadType, typename TrailingBodyTypeList>
+List_t<TypeList_t<TrailingHeadType,TrailingBodyTypeList> > operator |= (
+    List_t<EmptyTypeList> const &, 
+    List_t<TypeList_t<TrailingHeadType,TrailingBodyTypeList> > const &trailing_type_list)
+{
+    return trailing_type_list;
+}
+
+// concatenate two lists (where the first has only one element)
+template <typename LeadingHeadType, typename TrailingHeadType, typename TrailingBodyTypeList>
+List_t<TypeList_t<LeadingHeadType,TypeList_t<TrailingHeadType,TrailingBodyTypeList> > > operator |= (
+    List_t<TypeList_t<LeadingHeadType> > const &leading_list,
+    List_t<TypeList_t<TrailingHeadType,TrailingBodyTypeList> > const &trailing_list)
+{
+    return List_t<TypeList_t<LeadingHeadType,TypeList_t<TrailingHeadType,TrailingBodyTypeList> > >(
+        leading_list.head(), 
+        trailing_list);
+}
+
+// concatenate two lists (catch-all case)
+template <typename LeadingTypeList, typename TrailingTypeList>
+List_t<typename ConcatenationOfTypeLists_t<LeadingTypeList,TrailingTypeList>::T> operator |= (
+    List_t<LeadingTypeList> const &leading_list,
+    List_t<TrailingTypeList> const &trailing_list)
+{
+    return List_t<typename ConcatenationOfTypeLists_t<LeadingTypeList,TrailingTypeList>::T>(
+        leading_list.head(), 
+        (leading_list.body() |= trailing_list));
+}
+
+/*
+// the operator associativity for <<= is semantically wrong for this operation
+
+// tack an element onto the end of a list
+template <typename TailType>
+List_t<TypeList_t<TailType> > operator <<= (List_t<EmptyTypeList> const &, TailType const &tail) 
+{ 
+    return List_t<TypeList_t<TailType> >(tail); 
+}
+
+// tack an element onto the end of a list
+template <typename LeadingHeadType, typename TailType>
+List_t<TypeList_t<LeadingHeadType,TypeList_t<TailType> > > operator <<= (List_t<LeadingHeadType> const &leading_list, TailType const &tail) 
+{ 
+    return List_t<TypeList_t<LeadingTypeList,TypeList_t<TailType> > >(leading_list.head(), (leading_list.body() <<= tail)); 
+}
+
+// tack an element onto the end of a list
+template <typename LeadingTypeList, typename TailType>
+List_t<typename ConcatenationOfTypeLists_t<LeadingTypeList,TypeList_t<TailType> >::T> operator <<= (
+    List_t<LeadingTypeList> const &leading_list, 
+    TailType const &tail) 
+{ 
+    return List_t<typename ConcatenationOfTypeLists_t<LeadingTypeList,TypeList_t<TailType> >::T>(
+        leading_list.head(), 
+        (leading_list.body() <<= tail)); 
+}
+*/
 
 
 
