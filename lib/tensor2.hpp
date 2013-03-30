@@ -34,6 +34,28 @@ struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
     Tensor2_t (WithoutInitialization const &w) : Parent(w) { }
     Tensor2_t (Scalar fill_with) : Parent(fill_with) { }
 
+    template <typename BundleIndexTypeList, typename BundledIndex>
+    static CompoundIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)
+    {
+        typedef typename BundleIndexTypeList::template El_t<0>::T Index1;
+        typedef typename BundleIndexTypeList::template El_t<1>::T Index2;
+        // this is just to check that there is a valid conversion to the requested CompoundIndex type.
+        // it doesn't actually produce any side-effects, and should be optimized out.
+        {
+            Lvd::Meta::Assert<BundleIndexTypeList::LENGTH == 2>();
+            Index1 i1;
+            Index2 i2;
+            typename Factor1::Index f1(i1);
+            typename Factor2::Index f2(i2);
+            // check that the parameter BundleIndex type is compatible with Index
+            Index i(b);
+        }
+            
+        Uint32 row = b.value() / Factor2::DIM;
+        Uint32 col = b.value() % Factor2::DIM;
+        return CompoundIndex_t<BundleIndexTypeList>(Index1(row), Index2(col));
+    }
+    
     // type conversion operator for canonical coercion to the Factor1 or Factor2 factor type when the
     // tensor is Factor1 \otimes OneDimVectorSpace  or  OneDimVectorSpace \otimes Factor2.
 //     template <typename Factor>

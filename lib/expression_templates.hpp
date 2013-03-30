@@ -43,8 +43,8 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     Derived const &as_derived () const { return *static_cast<Derived const *>(this); }
     Derived &as_derived () { return *static_cast<Derived *>(this); }
     
-    // semi-temporary methods for "bundling" two separate indices into a single 2-tensor index
-    // (m(j,i)*a(j,k)*m(k,l)).bundle(i,j,Q) -- bundle (i,l) into Q
+    // methods for "bundling" two separate indices into a single 2-tensor index
+    // (m(j,i)*a(j,k)*m(k,l)).bundle(i,l,Q) -- bundle (i,l) into Q
     template <typename Index1, typename Index2, typename ResultingIndexType>
     ExpressionTemplate_IndexBundle_t<Derived,TypeList_t<Index1,TypeList_t<Index2> >,ResultingIndexType> bundle (
         Index1 const &, 

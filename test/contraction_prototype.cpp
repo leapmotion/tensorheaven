@@ -776,8 +776,7 @@ void test_IndexBundle ()
     std::cout << '\n';
         
     typedef CompoundIndex_t<BundleIndexTypeList> (*BundleIndexMap) (Q const &);
-//     static BundleIndexMap const BUNDLE_INDEX_MAP = Tensor2Symmetric::template bundle_index_map<BundleIndexTypeList,Q>;
-    typedef ExpressionTemplate_IndexBundle_t<EI,BundleIndexTypeList,Q/*,BUNDLE_INDEX_MAP*/> EB;
+    typedef ExpressionTemplate_IndexBundle_t<EI,BundleIndexTypeList,Q> EB;
     EB eb(t(i,j));
     for (typename EB::CompoundIndex c; c.is_not_at_end(); ++c)
         std::cout << FORMAT_VALUE(c) << " --> " << FORMAT_VALUE(eb[c]) << '\n';
@@ -788,10 +787,10 @@ void test_IndexBundle ()
     std::cout << FORMAT_VALUE(s) << '\n';
     std::cout << '\n';
     
-    std::cout << FORMAT_VALUE((t(i,j).template bundle<BundleIndexTypeList,Q/*,BUNDLE_INDEX_MAP*/>())) << '\n';
+    std::cout << FORMAT_VALUE((t(i,j).template bundle<BundleIndexTypeList,Q>())) << '\n';
     std::cout << '\n';
     
-    s(q) = ((t(i,j) + t(j,i))/2).template bundle<BundleIndexTypeList,Q/*,BUNDLE_INDEX_MAP*/>();
+    s(q) = ((t(i,j) + t(j,i))/2).template bundle<BundleIndexTypeList,Q>();
     std::cout << "(t(i,j) + t(j,i))/2 = " << FORMAT_VALUE(s) << '\n';
     std::cout << '\n';
     
@@ -811,6 +810,10 @@ void test_IndexBundle ()
     std::cout << "recombined: " << FORMAT_VALUE(x) << '\n';
     
     x(i,j).template bundle<typename TypeTuple_t<I,J>::T,Q>();
+    
+    typedef NamedIndex_t<Tensor2,'g'> G;
+    G g;
+    std::cout << FORMAT_VALUE(x(i,j).bundle(i,j,g)) << '\n';
 }
 
 int main (int argc, char **argv)
