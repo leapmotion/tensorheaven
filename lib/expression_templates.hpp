@@ -6,25 +6,153 @@
 #include "expression_templates_utility.hpp"
 
 // ////////////////////////////////////////////////////////////////////////////
+// compile-time interface for expression templates
+// ////////////////////////////////////////////////////////////////////////////
+
+template <typename Operand, typename BundleIndexTypeList, typename ResultingIndexType, CompoundIndex_t<BundleIndexTypeList> (*BUNDLE_INDEX_MAP)(ResultingIndexType const &)>
+struct ExpressionTemplate_IndexBundle_t;
+
+// this is essentially a compile-time interface, requiring:
+// - a Derived type (should be the type of the thing that ultimately inherits this)
+// - a Scalar type (should be the scalar type of the expression template's tensor operand)
+// - a FreeIndexTypeList type (the free indices of this expression template)
+// - a UsedIndexTypeList type (the indices that have been used further down the AST)
+// requires also particular methods:
+//   operator Scalar () const // conversion to scalar -- always declared, but should
+//                            // only compile if the conversion is well-defined (e.g. no free indices)
+//   Scalar operator [] (CompoundIndex const &) const // accessor using CompoundIndex_t<FreeIndexTypeList>
+//   template <typename OtherTensor> bool uses_tensor (OtherTensor const &) const // used in checking for aliasing
+template <typename Derived_, typename Scalar_, typename FreeIndexTypeList_, typename UsedIndexTypeList_>
+struct ExpressionTemplate_i // _i is for "compile-time interface"
+{
+    typedef Derived_ Derived;
+    // these typedefs make the Derived-specified typedefs available at the baseclass level,
+    typedef Scalar_ Scalar;
+    typedef FreeIndexTypeList_ FreeIndexTypeList;
+    typedef UsedIndexTypeList_ UsedIndexTypeList;
+    typedef CompoundIndex_t<FreeIndexTypeList> CompoundIndex;
+    static bool const IS_EXPRESSION_TEMPLATE = true;
+
+    // TODO: some consistency checks on the various types
+
+    // compile-time interface methods
+    operator Scalar () const { return as_derived().operator Scalar(); }
+    Scalar operator [] (CompoundIndex const &c) const { return as_derived().operator[](c); }
+    template <typename OtherTensor> bool uses_tensor (OtherTensor const &t) const { return as_derived().template uses_tensor<OtherTensor>(t); }
+
+    // for accessing this as the Derived type
+    Derived const &as_derived () const { return *static_cast<Derived const *>(this); }
+    Derived &as_derived () { return *static_cast<Derived *>(this); }
+    
+    // semi-temporary methods for "bundling" two separate indices into a single 2-tensor index
+    // (m(j,i)*a(j,k)*m(k,l)).index_bundle(Q << i << l) -- bundle (i,l) into Q
+    template <typename BundleIndexTypeList, typename ResultingIndexType, CompoundIndex_t<BundleIndexTypeList> (*BUNDLE_INDEX_MAP) (ResultingIndexType const &)>
+    ExpressionTemplate_IndexBundle_t<Derived,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP> bundle () const
+    {
+        return ExpressionTemplate_IndexBundle_t<Derived,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP>(as_derived());
+    }
+};
+
+// template <typename Operand, typename BundleIndexTypeList, typename ResultingIndexType, CompoundIndex_t<BundleIndexTypeList> (*bundle_index_map)(ResultingIndexType const &)>
+// struct IndexBundle_t
+
+// it's just more convenient to write specializations for particular numbers of free indices
+
+// specialization for 1 index
+template <typename Derived, typename Scalar, typename FreeIndex1, typename UsedIndexTypeList>
+std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scalar,TypeList_t<FreeIndex1>,UsedIndexTypeList> const &e)
+{
+    FreeIndex1 i; // initialized to the beginning automatically
+    out << '(' << e[i];
+    ++i;
+    for ( ; i.is_not_at_end(); ++i)
+        out << ", " << e[i];
+    return out << ")(" << FreeIndex1::SYMBOL << ')';
+}
+
+// specialization for 2 indices
+template <typename Derived, typename Scalar, typename FreeIndex1, typename FreeIndex2, typename UsedIndexTypeList>
+std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scalar,TypeList_t<FreeIndex1,TypeList_t<FreeIndex2> >,UsedIndexTypeList> const &e)
+{
+    typename Derived::CompoundIndex c;
+    out << "\n[";
+    for (FreeIndex1 i; i.is_not_at_end(); ++i)
+    {
+        if (i.value() != 0)
+            out << ' ';
+        out << '[';
+        for (FreeIndex2 j; j.is_not_at_end(); ++j)
+        {
+            out << e[c] << '\t';
+            ++c;
+        }
+        out << ']';
+        FreeIndex1 next(i);
+        ++next;
+        if (next.is_not_at_end())
+            out << '\n';
+    }
+    out << "](" << FreeIndex1::SYMBOL << ',' << FreeIndex2::SYMBOL << ")\n";
+    return out;
+}
+
+// specialization for 3 indices
+template <typename Derived, typename Scalar, typename FreeIndex1, typename FreeIndex2, typename FreeIndex3, typename UsedIndexTypeList>
+std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scalar,TypeList_t<FreeIndex1,TypeList_t<FreeIndex2,TypeList_t<FreeIndex3> > >,UsedIndexTypeList> const &e)
+{
+    typename Derived::CompoundIndex c;
+    out << "\n[";
+    for (FreeIndex1 i; i.is_not_at_end(); ++i)
+    {
+        if (i.value() != 0)
+            out << ' ';
+        out << '[';
+        for (FreeIndex2 j; j.is_not_at_end(); ++j)
+        {
+            if (j.value() != 0)
+                out << "  ";
+            out << '[';
+            for (FreeIndex3 k; k.is_not_at_end(); ++k)
+            {
+                out << e[c] << '\t';
+                ++c;
+            }
+            out << ']';
+            FreeIndex2 next(j);
+            ++next;
+            if (next.is_not_at_end())
+                out << '\n';
+        }
+        out << ']';
+        FreeIndex1 next(i);
+        ++next;
+        if (next.is_not_at_end())
+            out << "\n\n";
+    }
+    out << "](" << FreeIndex1::SYMBOL << ',' << FreeIndex2::SYMBOL << ',' << FreeIndex3::SYMBOL << ")\n";
+    return out;
+}
+
+// ////////////////////////////////////////////////////////////////////////////
 // expression-template-generation (making ETs from vectors/tensors)
 // ////////////////////////////////////////////////////////////////////////////
 
 // this is the "const" version of an indexed tensor expression (it has summed indices, so it doesn't make sense to assign to it)
-template <typename Tensor, typename TensorIndexTypeList, typename SummedIndexTypeList_, typename Derived_ = NullType>
-struct ExpressionTemplate_IndexedTensor_t
+template <typename Object, typename IndexTypeList, typename SummedIndexTypeList_, typename Derived_ = NullType>
+struct ExpressionTemplate_IndexedObject_t
     :
     public ExpressionTemplate_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
-                                                       ExpressionTemplate_IndexedTensor_t<Tensor,TensorIndexTypeList,SummedIndexTypeList_,Derived_>,
+                                                       ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,SummedIndexTypeList_,Derived_>,
                                                        Derived_>::T,
-                                typename Tensor::Scalar,
-                                typename FreeIndexTypeList_t<TensorIndexTypeList>::T,
+                                typename Object::Scalar,
+                                typename FreeIndexTypeList_t<IndexTypeList>::T,
                                 SummedIndexTypeList_>
 {
     typedef ExpressionTemplate_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
-                                                       ExpressionTemplate_IndexedTensor_t<Tensor,TensorIndexTypeList,SummedIndexTypeList_,Derived_>,
+                                                       ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,SummedIndexTypeList_,Derived_>,
                                                        Derived_>::T,
-                                 typename Tensor::Scalar,
-                                 typename FreeIndexTypeList_t<TensorIndexTypeList>::T,
+                                 typename Object::Scalar,
+                                 typename FreeIndexTypeList_t<IndexTypeList>::T,
                                  SummedIndexTypeList_> Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
@@ -34,7 +162,7 @@ struct ExpressionTemplate_IndexedTensor_t
     using Parent::IS_EXPRESSION_TEMPLATE;
     typedef SummedIndexTypeList_ SummedIndexTypeList;
 
-    ExpressionTemplate_IndexedTensor_t (Tensor const &tensor) : m_tensor(tensor) { }
+    ExpressionTemplate_IndexedObject_t (Object const &object) : m_object(object) { }
 
     operator Scalar () const
     {
@@ -45,7 +173,7 @@ struct ExpressionTemplate_IndexedTensor_t
     // read-only, because it doesn't make sense to assign to an expression which is a summation.
     Scalar operator [] (CompoundIndex const &c) const
     {
-        return UnarySummation_t<Tensor,TensorIndexTypeList,SummedIndexTypeList>::eval(m_tensor, c);
+        return UnarySummation_t<Object,IndexTypeList,SummedIndexTypeList>::eval(m_object, c);
     }
 
     template <typename OtherTensor>
@@ -53,26 +181,26 @@ struct ExpressionTemplate_IndexedTensor_t
     {
         // the reinterpret_cast is safe because we're dealing with POD types and there
         // is an explicit type-check at compiletime (TypesAreEqual)
-        return Lvd::Meta::TypesAreEqual<OtherTensor,Tensor>::v && reinterpret_cast<Tensor const *>(&t) == &m_tensor;
+        return Lvd::Meta::TypesAreEqual<OtherTensor,Object>::v && reinterpret_cast<Object const *>(&t) == &m_object;
     }
 
 private:
 
-    Tensor const &m_tensor;
+    Object const &m_object;
 };
 
 // this is the "non-const" version of an indexed tensor expression (it has no summed indices, so it makes sense to assign to it)
-template <typename Tensor, typename TensorIndexTypeList>
-struct ExpressionTemplate_IndexedTensor_t<Tensor,TensorIndexTypeList,EmptyTypeList>
+template <typename Object, typename IndexTypeList>
+struct ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,EmptyTypeList>
     :
-    public ExpressionTemplate_i<ExpressionTemplate_IndexedTensor_t<Tensor,TensorIndexTypeList,EmptyTypeList>,
-                                typename Tensor::Scalar,
-                                typename FreeIndexTypeList_t<TensorIndexTypeList>::T,
+    public ExpressionTemplate_i<ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,EmptyTypeList>,
+                                typename Object::Scalar,
+                                typename FreeIndexTypeList_t<IndexTypeList>::T,
                                 EmptyTypeList>
 {
-    typedef ExpressionTemplate_i<ExpressionTemplate_IndexedTensor_t<Tensor,TensorIndexTypeList,EmptyTypeList>,
-                                 typename Tensor::Scalar,
-                                 typename FreeIndexTypeList_t<TensorIndexTypeList>::T,
+    typedef ExpressionTemplate_i<ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,EmptyTypeList>,
+                                 typename Object::Scalar,
+                                 typename FreeIndexTypeList_t<IndexTypeList>::T,
                                  EmptyTypeList> Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
@@ -81,7 +209,7 @@ struct ExpressionTemplate_IndexedTensor_t<Tensor,TensorIndexTypeList,EmptyTypeLi
     typedef typename Parent::CompoundIndex CompoundIndex;
     using Parent::IS_EXPRESSION_TEMPLATE;
 
-    ExpressionTemplate_IndexedTensor_t (Tensor &tensor) : m_tensor(tensor) { }
+    ExpressionTemplate_IndexedObject_t (Object &object) : m_object(object) { }
 
     operator Scalar () const
     {
@@ -92,19 +220,19 @@ struct ExpressionTemplate_IndexedTensor_t<Tensor,TensorIndexTypeList,EmptyTypeLi
     // read-only, because it doesn't necessarily make sense to assign to an expression
     // template -- the expression may be a product or some such, where each component
     // is not an L-value.
-    Scalar const &operator [] (typename Tensor::Index const &i) const { return m_tensor[i]; }
-    Scalar operator [] (CompoundIndex const &c) const { return m_tensor[c]; }
+    Scalar const &operator [] (typename Object::Index const &i) const { return m_object[i]; }
+    Scalar operator [] (CompoundIndex const &c) const { return m_object[c]; }
 
     // for some dumb reason, the compiler needed a non-templatized assignment operator for the exact matching type
-    void operator = (ExpressionTemplate_IndexedTensor_t const &right_operand)
+    void operator = (ExpressionTemplate_IndexedObject_t const &right_operand)
     {
         // if right and left operands' m_tensor references are the same, this is a no-op
-        if (&right_operand.m_tensor == &m_tensor)
+        if (&right_operand.m_object == &m_object)
             return;
 
         // TODO: replace with memcpy? (this would require that Scalar is a POD type)
-        for (typename Tensor::Index i; i.is_not_at_end(); ++i)
-            m_tensor[i] = right_operand[i];
+        for (typename Object::Index i; i.is_not_at_end(); ++i)
+            m_object[i] = right_operand[i];
     }
     template <typename RightOperand>
     void operator = (RightOperand const &right_operand)
@@ -119,7 +247,7 @@ struct ExpressionTemplate_IndexedTensor_t<Tensor,TensorIndexTypeList,EmptyTypeLi
         };
 
         // check for aliasing (where source and destination memory overlap)
-        if (right_operand.uses_tensor(m_tensor))
+        if (right_operand.uses_tensor(m_object))
             throw std::invalid_argument("invalid aliased tensor assignment (source and destination memory overlap) -- use an intermediate value");
 
         typedef CompoundIndexMap_t<FreeIndexTypeList,typename RightOperand::FreeIndexTypeList> RightOperandIndexMap;
@@ -127,7 +255,7 @@ struct ExpressionTemplate_IndexedTensor_t<Tensor,TensorIndexTypeList,EmptyTypeLi
 
         // component-wise assignment via the free index type.
         for (CompoundIndex c; c.is_not_at_end(); ++c)
-            m_tensor[c] = right_operand[right_operand_index_map(c)];
+            m_object[c] = right_operand[right_operand_index_map(c)];
     }
 
     template <typename OtherTensor>
@@ -135,12 +263,12 @@ struct ExpressionTemplate_IndexedTensor_t<Tensor,TensorIndexTypeList,EmptyTypeLi
     {
         // the reinterpret_cast is safe because we're dealing with POD types and there
         // is an explicit type-check at compiletime (TypesAreEqual)
-        return Lvd::Meta::TypesAreEqual<OtherTensor,Tensor>::v && reinterpret_cast<Tensor const *>(&t) == &m_tensor;
+        return Lvd::Meta::TypesAreEqual<OtherTensor,Object>::v && reinterpret_cast<Object const *>(&t) == &m_object;
     }
 
 private:
 
-    Tensor &m_tensor;
+    Object &m_object;
 };
 
 // ////////////////////////////////////////////////////////////////////////////
@@ -369,67 +497,15 @@ private:
 // bundling multiple indices into a single compound index (tensor downcasting)
 // ////////////////////////////////////////////////////////////////////////////
 
-template <typename Operand, typename BundleIndexTypeList, typename ResultingIndexType>
-struct IndexTypeListOfIndexBundle_t
-{
-    
-    typedef typename SetSubtraction_t<TypeList_t<ResultingIndexType,typename Operand::FreeIndexTypeList>,BundleIndexTypeList>::T T;
-};
-
-template <typename Operand, typename BundleIndexTypeList, typename ResultingIndexType>
-struct UsedIndexTypeListOfIndexBundle_t
-{
-    enum 
-    { 
-        BUNDLE_INDICES_MUST_BE_FREE           = Lvd::Meta::Assert<!HasNontrivialIntersectionAsSets_t<BundleIndexTypeList,typename Operand::FreeIndexTypeList>::V>::v,
-        BUNDLE_AND_RESULTING_MUST_BE_DISTINCT = Lvd::Meta::Assert<!HasNontrivialIntersectionAsSets_t<BundleIndexTypeList,TypeList_t<ResultingIndexType> >::V>::v
-    };
-    
-    typedef typename ConcatenationOfTypeLists_t<typename Operand::UsedIndexTypeList,BundleIndexTypeList>::T T;
-};
-
-// not an expression template, but just something that handles the bundled indices
-template <typename Operand, typename BundleIndexTypeList, typename ResultingIndexType, CompoundIndex_t<BundleIndexTypeList> (*BUNDLE_INDEX_MAP)(ResultingIndexType const &)>
-struct IndexBundle_t
-{
-    enum 
-    { 
-        BUNDLE_INDICES_MUST_BE_FREE           = Lvd::Meta::Assert<IsASubsetOf_t<BundleIndexTypeList,typename Operand::FreeIndexTypeList>::V>::v,
-        BUNDLE_AND_RESULTING_MUST_BE_DISTINCT = Lvd::Meta::Assert<!HasNontrivialIntersectionAsSets_t<BundleIndexTypeList,TypeList_t<ResultingIndexType> >::V>::v,
-        OPERAND_IS_EXPRESSION_TEMPLATE        = Lvd::Meta::Assert<Operand::IS_EXPRESSION_TEMPLATE>::v
-    };
-    
-    typedef typename Operand::Scalar Scalar;
-    // ResultingIndexType comes first in IndexTypeList
-    typedef typename SetSubtraction_t<TypeList_t<ResultingIndexType,typename Operand::FreeIndexTypeList>,BundleIndexTypeList>::T IndexTypeList;
-    typedef typename ConcatenationOfTypeLists_t<typename Operand::UsedIndexTypeList,BundleIndexTypeList>::T UsedIndexTypeList;
-    typedef CompoundIndex_t<IndexTypeList> CompoundIndex;
-
-    IndexBundle_t (Operand const &operand) : m_operand(operand) { }
-
-    Scalar operator [] (CompoundIndex const &c) const
-    {
-        // replace the head of c with the separate indices that it bundles
-        return m_operand[BUNDLE_INDEX_MAP(c.head()) |= c.body()]; // |= is concatenation of CompoundIndex_t instances
-    }
-
-    template <typename OtherTensor>
-    bool uses_tensor (OtherTensor const &t) const { return m_operand.uses_tensor(t); }
-    
-private:
-
-    Operand const &m_operand;
-};
-
 template <typename Operand, typename BundleIndexTypeList, typename ResultingIndexType, CompoundIndex_t<BundleIndexTypeList> (*BUNDLE_INDEX_MAP)(ResultingIndexType const &)>
 struct ExpressionTemplate_IndexBundle_t 
     : 
-    public ExpressionTemplate_IndexedTensor_t<IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP>,
+    public ExpressionTemplate_IndexedObject_t<IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP>,
                                               typename IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP>::IndexTypeList,
                                               typename SummedIndexTypeList_t<typename IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP>::IndexTypeList>::T,
                                               ExpressionTemplate_IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP> >
 {
-    typedef ExpressionTemplate_IndexedTensor_t<IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP>,
+    typedef ExpressionTemplate_IndexedObject_t<IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP>,
                                                typename IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP>::IndexTypeList,
                                                typename SummedIndexTypeList_t<typename IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP>::IndexTypeList>::T,
                                                ExpressionTemplate_IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP> > Parent;

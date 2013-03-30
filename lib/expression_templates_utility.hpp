@@ -177,4 +177,37 @@ public:
             SummedIndexTypeList>::T>::T T;
 };
 
+// not an expression template, but just something that handles the bundled indices
+template <typename Operand, typename BundleIndexTypeList, typename ResultingIndexType, CompoundIndex_t<BundleIndexTypeList> (*BUNDLE_INDEX_MAP)(ResultingIndexType const &)>
+struct IndexBundle_t
+{
+    enum 
+    { 
+        BUNDLE_INDICES_MUST_BE_FREE           = Lvd::Meta::Assert<IsASubsetOf_t<BundleIndexTypeList,typename Operand::FreeIndexTypeList>::V>::v,
+        BUNDLE_AND_RESULTING_MUST_BE_DISTINCT = Lvd::Meta::Assert<!HasNontrivialIntersectionAsSets_t<BundleIndexTypeList,TypeList_t<ResultingIndexType> >::V>::v,
+        OPERAND_IS_EXPRESSION_TEMPLATE        = Lvd::Meta::Assert<Operand::IS_EXPRESSION_TEMPLATE>::v
+    };
+    
+    typedef typename Operand::Scalar Scalar;
+    // ResultingIndexType comes first in IndexTypeList
+    typedef typename SetSubtraction_t<TypeList_t<ResultingIndexType,typename Operand::FreeIndexTypeList>,BundleIndexTypeList>::T IndexTypeList;
+    typedef typename ConcatenationOfTypeLists_t<typename Operand::UsedIndexTypeList,BundleIndexTypeList>::T UsedIndexTypeList;
+    typedef CompoundIndex_t<IndexTypeList> CompoundIndex;
+
+    IndexBundle_t (Operand const &operand) : m_operand(operand) { }
+
+    Scalar operator [] (CompoundIndex const &c) const
+    {
+        // replace the head of c with the separate indices that it bundles
+        return m_operand[BUNDLE_INDEX_MAP(c.head()) |= c.body()]; // |= is concatenation of CompoundIndex_t instances
+    }
+
+    template <typename OtherTensor>
+    bool uses_tensor (OtherTensor const &t) const { return m_operand.uses_tensor(t); }
+    
+private:
+
+    Operand const &m_operand;
+};
+
 #endif // EXPRESSION_TEMPLATES_UTILITY_HPP_
