@@ -36,6 +36,29 @@ struct Tensor2Antisymmetric_t : public Vector_t<typename Factor_::Scalar,
     Tensor2Antisymmetric_t (WithoutInitialization const &w) : Parent(w) { }
     Tensor2Antisymmetric_t (Scalar fill_with) : Parent(fill_with) { }
 
+    template <typename BundleIndexTypeList, typename BundledIndex>
+    static CompoundIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)
+    {
+        typedef typename BundleIndexTypeList::template El_t<0>::T Index1;
+        typedef typename BundleIndexTypeList::template El_t<1>::T Index2;
+        // this is just to check that there is a valid conversion to the requested CompoundIndex type.
+        // it doesn't actually produce any side-effects, and should be optimized out.
+        {
+            Lvd::Meta::Assert<BundleIndexTypeList::LENGTH == 2>();
+            Index1 i1;
+            Index2 i2;
+            typename Factor1::Index f1(i1);
+            typename Factor2::Index f2(i2);
+            // check that the parameter BundleIndex type is compatible with Index
+            Index i(b);
+        }
+            
+        Uint32 row;
+        Uint32 col;
+        contiguous_index_to_rowcol_index(b.value(), row, col);
+        return CompoundIndex_t<BundleIndexTypeList>(Index1(row), Index2(col));
+    }
+
     // TODO: because Factor1 and Factor2 are identical, it doesn't make sense to
     // have a type coercion to either one unless they are 1-dimensional, in which case
     // it can be a type coercion to the Scalar type.  however, an antisymmetric

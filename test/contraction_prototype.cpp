@@ -762,20 +762,22 @@ void test_IndexBundle ()
     typedef NamedIndex_t<Vector,'i'> I;
     typedef NamedIndex_t<Vector,'j'> J;
     typedef NamedIndex_t<Tensor2Symmetric,'q'> Q;
+    typedef NamedIndex_t<Tensor2Antisymmetric,'p'> P;
     typedef TypeList_t<I,TypeList_t<J> > BundleIndexTypeList;
     typedef ExpressionTemplate_IndexedObject_t<Tensor2,BundleIndexTypeList,EmptyTypeList> EI;
     I i;
     J j;
     typedef TypeList_t<I,TypeList_t<J> > BundleIndexTypeList;
     Q q;
+    P p;
     EI ei(t(i,j));
-    for (typename Tensor2Symmetric::Index p; p.is_not_at_end(); ++p)
-        std::cout << FORMAT_VALUE((Tensor2Symmetric::template bundle_index_map<BundleIndexTypeList,Q>(p))) << '\n';
+    for (typename Tensor2Symmetric::Index r; r.is_not_at_end(); ++r)
+        std::cout << FORMAT_VALUE((Tensor2Symmetric::template bundle_index_map<BundleIndexTypeList,Q>(r))) << '\n';
     std::cout << '\n';
         
     typedef CompoundIndex_t<BundleIndexTypeList> (*BundleIndexMap) (Q const &);
-    static BundleIndexMap const BUNDLE_INDEX_MAP = Tensor2Symmetric::template bundle_index_map<BundleIndexTypeList,Q>;
-    typedef ExpressionTemplate_IndexBundle_t<EI,BundleIndexTypeList,Q,BUNDLE_INDEX_MAP> EB;
+//     static BundleIndexMap const BUNDLE_INDEX_MAP = Tensor2Symmetric::template bundle_index_map<BundleIndexTypeList,Q>;
+    typedef ExpressionTemplate_IndexBundle_t<EI,BundleIndexTypeList,Q/*,BUNDLE_INDEX_MAP*/> EB;
     EB eb(t(i,j));
     for (typename EB::CompoundIndex c; c.is_not_at_end(); ++c)
         std::cout << FORMAT_VALUE(c) << " --> " << FORMAT_VALUE(eb[c]) << '\n';
@@ -786,12 +788,29 @@ void test_IndexBundle ()
     std::cout << FORMAT_VALUE(s) << '\n';
     std::cout << '\n';
     
-    std::cout << FORMAT_VALUE((t(i,j).template bundle<BundleIndexTypeList,Q,BUNDLE_INDEX_MAP>())) << '\n';
+    std::cout << FORMAT_VALUE((t(i,j).template bundle<BundleIndexTypeList,Q/*,BUNDLE_INDEX_MAP*/>())) << '\n';
     std::cout << '\n';
     
-    s(q) = ((t(i,j) + t(j,i))/2).template bundle<BundleIndexTypeList,Q,BUNDLE_INDEX_MAP>();
+    s(q) = ((t(i,j) + t(j,i))/2).template bundle<BundleIndexTypeList,Q/*,BUNDLE_INDEX_MAP*/>();
     std::cout << "(t(i,j) + t(j,i))/2 = " << FORMAT_VALUE(s) << '\n';
     std::cout << '\n';
+    
+    std::cout << (0.5f*(t(i,j) + t(j,i))).bundle(i,j,q) << '\n';
+    std::cout << '\n';
+    std::cout << (0.5f*(t(i,j) - t(j,i))).bundle(i,j,p) << '\n';
+    std::cout << '\n';
+
+    Tensor2Antisymmetric a(Static<>::WITHOUT_INITIALIZATION);
+    s(q) = ((t(i,j) + t(j,i))/2).bundle(i,j,q);
+    a(p) = ((t(i,j) - t(j,i))/2).bundle(i,j,p);
+    std::cout << FORMAT_VALUE(t) << '\n';
+    std::cout << "symmetric part of t: " << FORMAT_VALUE(s) << '\n';
+    std::cout << "antisymmetric part of t: " << FORMAT_VALUE(a) << '\n';
+    Tensor2 x(Static<>::WITHOUT_INITIALIZATION);
+    x(i,j) = s(i,j) + a(i,j);
+    std::cout << "recombined: " << FORMAT_VALUE(x) << '\n';
+    
+    x(i,j).template bundle<typename TypeTuple_t<I,J>::T,Q>();
 }
 
 int main (int argc, char **argv)
@@ -1419,7 +1438,9 @@ int main (int argc, char **argv)
         test_printing_expression_templates<3,6,7,3>();
         
         // testing index bundling
+        test_IndexBundle<2>();
         test_IndexBundle<3>();
+        test_IndexBundle<10>();
     }
 
     return 0;

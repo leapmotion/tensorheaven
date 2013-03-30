@@ -13,11 +13,6 @@ current goals:
     within the strongly typed formalism.
   * some sort of abstraction layer for using Eigen methods on our tensor classes.  self-contained and NOT intertwined in the tensor lib
   * could use templatized conversion method which converts to generic type
-- down-casting (to more-specific types) (up-casting (to less-specific types) already happens through expression templates)
-  * something like
-      (a(i,j)*m(j,k)*a(k,l)).the_human_guarantees_that_this_is_a_Tensor2Symmetric(i,l,I)
-    which would produce an expression template -- the indices (i,l) would be "bundled" into the index I,
-    which is of type Tensor2Symmetric_t<...>::Index_t<...>
 - strong typing for vectors -- named vector spaces (including "Generic") and prime/dual distinction (including self-dual)
   * default values should be "Generic" vector space ID and self-dual
   * canonical isomorphism for tensor2 -> vector will need to take into account basis
@@ -26,15 +21,17 @@ current goals:
 - column/row/block extraction/addressing
 - "eval" method on expression templates (which take a list of free indices) which produce an intermediate value
   * something like  (a(i,j)*m(j,k)*a(k,l)).eval(l,i)  (this one makes l the first index, and i the second).
+- single-vector indexing of built-up tensors of type e.g. Tensor2_t<Tensor2Symmetric,Tensor2Symmetric>
+  e.g. in the expression t(i,j,k,l), where t is of type Tensor2_t<Tensor2Symmetric,Tensor2Symmetric>
 
 future goals:
 - a rigorous test suite, using Lvd test code -- it can handle everything up through seg faults -- and negative compile
   tests implemented at the build level, so that particular intentional compile errors can be verified to work.
 - standard in-line linear algebra notation
   * for example, if A is a matrix and v is a vector, "A*v" should be equivalent to "A(i,j)*v(j)", but obviously
-    without the need to used an indexed expression.
+    without the need to use an indexed expression.
 - optimize evaluation algorithm (ordering operations to do the minimal amount of computation)
-- vectorizing as many operations as possible
+- vectorizing as many operations as possible (in cooperation with loop-unrolling?)
 - template specializations for particular tensor contractions for speed (using mathematical special cases)
   * for example, an antisymmetric 3x3 2-tensor contracted with a 3-vector is just a cross product
   * a diagonal 2-tensor contracted with a vector is just component-wise scaling
@@ -61,4 +58,5 @@ x custom natural pairing (for non-isometric parameterizations)
 x scalar multiplication/division in expression templates
 x unary negation in expression templates
 x printing expression templates
-
+x down-casting tensors (extracting symmetries out of "broken apart" indexed tensor expressions);
+  "bundling" indices into symmetric and antisymmetric "total" indices

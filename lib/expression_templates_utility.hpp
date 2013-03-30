@@ -177,8 +177,18 @@ public:
             SummedIndexTypeList>::T>::T T;
 };
 
+template <typename BundleIndexTypeList, typename ResultingIndexType>
+struct BundleIndexMap_t
+{
+    typedef CompoundIndex_t<BundleIndexTypeList> (*T) (ResultingIndexType const &);
+    static T const V;
+};
+
+template <typename BundleIndexTypeList, typename ResultingIndexType>
+typename BundleIndexMap_t<BundleIndexTypeList,ResultingIndexType>::T const BundleIndexMap_t<BundleIndexTypeList,ResultingIndexType>::V = ResultingIndexType::OwnerVector::Derived::template bundle_index_map<BundleIndexTypeList,ResultingIndexType>;
+
 // not an expression template, but just something that handles the bundled indices
-template <typename Operand, typename BundleIndexTypeList, typename ResultingIndexType, CompoundIndex_t<BundleIndexTypeList> (*BUNDLE_INDEX_MAP)(ResultingIndexType const &)>
+template <typename Operand, typename BundleIndexTypeList, typename ResultingIndexType>
 struct IndexBundle_t
 {
     enum 
@@ -193,13 +203,15 @@ struct IndexBundle_t
     typedef typename SetSubtraction_t<TypeList_t<ResultingIndexType,typename Operand::FreeIndexTypeList>,BundleIndexTypeList>::T IndexTypeList;
     typedef typename ConcatenationOfTypeLists_t<typename Operand::UsedIndexTypeList,BundleIndexTypeList>::T UsedIndexTypeList;
     typedef CompoundIndex_t<IndexTypeList> CompoundIndex;
+    typedef typename BundleIndexMap_t<BundleIndexTypeList,ResultingIndexType>::T BundleIndexMap;
 
     IndexBundle_t (Operand const &operand) : m_operand(operand) { }
 
     Scalar operator [] (CompoundIndex const &c) const
     {
-        // replace the head of c with the separate indices that it bundles
-        return m_operand[BUNDLE_INDEX_MAP(c.head()) |= c.body()]; // |= is concatenation of CompoundIndex_t instances
+        // replace the head of c with the separate indices that it bundles.
+        // |= is concatenation of CompoundIndex_t instances
+        return m_operand[(BundleIndexMap_t<BundleIndexTypeList,ResultingIndexType>::V)(c.head()) |= c.body()];
     }
 
     template <typename OtherTensor>

@@ -2,14 +2,13 @@
 #define EXPRESSION_TEMPLATES_HPP_
 
 #include "core.hpp"
-#include "expressiontemplate.hpp"
 #include "expression_templates_utility.hpp"
 
 // ////////////////////////////////////////////////////////////////////////////
 // compile-time interface for expression templates
 // ////////////////////////////////////////////////////////////////////////////
 
-template <typename Operand, typename BundleIndexTypeList, typename ResultingIndexType, CompoundIndex_t<BundleIndexTypeList> (*BUNDLE_INDEX_MAP)(ResultingIndexType const &)>
+template <typename Operand, typename BundleIndexTypeList, typename ResultingIndexType>
 struct ExpressionTemplate_IndexBundle_t;
 
 // this is essentially a compile-time interface, requiring:
@@ -45,16 +44,21 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     Derived &as_derived () { return *static_cast<Derived *>(this); }
     
     // semi-temporary methods for "bundling" two separate indices into a single 2-tensor index
-    // (m(j,i)*a(j,k)*m(k,l)).index_bundle(Q << i << l) -- bundle (i,l) into Q
-    template <typename BundleIndexTypeList, typename ResultingIndexType, CompoundIndex_t<BundleIndexTypeList> (*BUNDLE_INDEX_MAP) (ResultingIndexType const &)>
-    ExpressionTemplate_IndexBundle_t<Derived,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP> bundle () const
+    // (m(j,i)*a(j,k)*m(k,l)).bundle(i,j,Q) -- bundle (i,l) into Q
+    template <typename Index1, typename Index2, typename ResultingIndexType>
+    ExpressionTemplate_IndexBundle_t<Derived,TypeList_t<Index1,TypeList_t<Index2> >,ResultingIndexType> bundle (
+        Index1 const &, 
+        Index2 const &, 
+        ResultingIndexType const &) const
     {
-        return ExpressionTemplate_IndexBundle_t<Derived,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP>(as_derived());
+        return bundle<TypeList_t<Index1,TypeList_t<Index2> >,ResultingIndexType>();
+    }
+    template <typename BundleIndexTypeList, typename ResultingIndexType>
+    ExpressionTemplate_IndexBundle_t<Derived,BundleIndexTypeList,ResultingIndexType> bundle () const
+    {
+        return ExpressionTemplate_IndexBundle_t<Derived,BundleIndexTypeList,ResultingIndexType>(as_derived());
     }
 };
-
-// template <typename Operand, typename BundleIndexTypeList, typename ResultingIndexType, CompoundIndex_t<BundleIndexTypeList> (*bundle_index_map)(ResultingIndexType const &)>
-// struct IndexBundle_t
 
 // it's just more convenient to write specializations for particular numbers of free indices
 
@@ -497,18 +501,18 @@ private:
 // bundling multiple indices into a single compound index (tensor downcasting)
 // ////////////////////////////////////////////////////////////////////////////
 
-template <typename Operand, typename BundleIndexTypeList, typename ResultingIndexType, CompoundIndex_t<BundleIndexTypeList> (*BUNDLE_INDEX_MAP)(ResultingIndexType const &)>
+template <typename Operand, typename BundleIndexTypeList, typename ResultingIndexType>
 struct ExpressionTemplate_IndexBundle_t 
     : 
-    public ExpressionTemplate_IndexedObject_t<IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP>,
-                                              typename IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP>::IndexTypeList,
-                                              typename SummedIndexTypeList_t<typename IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP>::IndexTypeList>::T,
-                                              ExpressionTemplate_IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP> >
+    public ExpressionTemplate_IndexedObject_t<IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType>,
+                                              typename IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType>::IndexTypeList,
+                                              typename SummedIndexTypeList_t<typename IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType>::IndexTypeList>::T,
+                                              ExpressionTemplate_IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType> >
 {
-    typedef ExpressionTemplate_IndexedObject_t<IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP>,
-                                               typename IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP>::IndexTypeList,
-                                               typename SummedIndexTypeList_t<typename IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP>::IndexTypeList>::T,
-                                               ExpressionTemplate_IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP> > Parent;
+    typedef ExpressionTemplate_IndexedObject_t<IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType>,
+                                               typename IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType>::IndexTypeList,
+                                               typename SummedIndexTypeList_t<typename IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType>::IndexTypeList>::T,
+                                               ExpressionTemplate_IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType> > Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
     typedef typename Parent::FreeIndexTypeList FreeIndexTypeList;
@@ -517,7 +521,7 @@ struct ExpressionTemplate_IndexBundle_t
     using Parent::IS_EXPRESSION_TEMPLATE;
     typedef typename Parent::SummedIndexTypeList SummedIndexTypeList;
 
-    typedef IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType,BUNDLE_INDEX_MAP> IndexBundle;
+    typedef IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType> IndexBundle;
 
     ExpressionTemplate_IndexBundle_t (Operand const &operand) : Parent(m_index_bundle), m_index_bundle(operand) { }
 
