@@ -1,6 +1,8 @@
 #ifndef EXPRESSION_TEMPLATES_HPP_
 #define EXPRESSION_TEMPLATES_HPP_
 
+#include <stdexcept>
+
 #include "core.hpp"
 #include "expression_templates_utility.hpp"
 

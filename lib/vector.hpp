@@ -121,6 +121,10 @@ struct Vector_t
             return "Vector_t<" + TypeStringOf_t<Scalar>::eval() + ',' + AS_STRING(DIM) + ',' + TypeStringOf_t<Derived>::eval() + '>';
     }
 
+    Uint32 data_size_in_bytes () const { return sizeof(m); }
+    Scalar const *data_pointer () const { return &m[0]; }
+    Scalar *data_pointer () { return &m[0]; }
+
 protected:
 
     Scalar m[DIM];

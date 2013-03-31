@@ -8,6 +8,7 @@
 #include "expression_templates.hpp"
 #include "tensor2.hpp"
 #include "tensor2antisymmetric.hpp"
+#include "tensor2diagonal.hpp"
 #include "tensor2symmetric.hpp"
 #include "typelist.hpp"
 #include "typelist_utility.hpp"
@@ -814,6 +815,22 @@ void test_IndexBundle ()
     typedef NamedIndex_t<Tensor2,'g'> G;
     G g;
     std::cout << FORMAT_VALUE(x(i,j).bundle(i,j,g)) << '\n';
+    std::cout << '\n';
+}
+
+template <Uint32 ROWS, Uint32 COLS>
+void test_Tensor2Diagonal_t ()
+{
+    std::cout << "test_Tensor2Diagonal_t<" << ROWS << ',' << COLS << ">\n";
+
+    typedef Vector_t<float,ROWS> V1;
+    typedef Vector_t<float,COLS> V2;
+    typedef Tensor2Diagonal_t<V1,V2> Tensor2Diagonal;
+    
+    Tensor2Diagonal t(Static<>::WITHOUT_INITIALIZATION);
+    for (typename Tensor2Diagonal::Index i; i.is_not_at_end(); ++i)
+        t[i] = i.value()+1;
+    std::cout << FORMAT_VALUE(t) << '\n';
 }
 
 int main (int argc, char **argv)
@@ -1444,6 +1461,12 @@ int main (int argc, char **argv)
         test_IndexBundle<2>();
         test_IndexBundle<3>();
         test_IndexBundle<10>();
+        
+        // testing Tensor2Diagonal_t
+        test_Tensor2Diagonal_t<1,1>();
+        test_Tensor2Diagonal_t<1,3>();
+        test_Tensor2Diagonal_t<2,2>();
+        test_Tensor2Diagonal_t<3,4>();
     }
 
     return 0;

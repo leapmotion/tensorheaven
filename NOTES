@@ -45,6 +45,7 @@ random TODOs:
   NamedIndex_t<Derived,'i'> in the expression template when you call operator() with the index.  maybe use TypedIndex_t
   instead of NamedIndex_t.
 - implement [anti]symmetric contiguous_index_to_rowcol_index as a lookup table for speed.
+- create Tensor2_i compile-time interface that handles 2-index indexing, printing and so forth
 
 implemented features/items:
 x operator overloads for expression templates
@@ -60,3 +61,5 @@ x unary negation in expression templates
 x printing expression templates
 x down-casting tensors (extracting symmetries out of "broken apart" indexed tensor expressions);
   "bundling" indices into symmetric and antisymmetric "total" indices
+x diagonal 2-tensors
+
