@@ -22,7 +22,7 @@
 template <Uint32 ROWS, Uint32 COLS>
 void test_SVD ()
 {
-    std::cout << "test<" << ROWS << ',' << COLS << ">\n";
+    std::cout << "test_SVD<" << ROWS << ',' << COLS << ">\n";
     std::cout << "*************************************************************************\n";
 
     typedef Vector_t<float,ROWS> V1;
@@ -35,26 +35,6 @@ void test_SVD ()
     Tensor2 t(Static<>::WITHOUT_INITIALIZATION);
     for (typename Tensor2::Index i; i.is_not_at_end(); ++i)
         t[i] = i.value() + 1;
-/*
-    
-    typedef Eigen::Matrix<float,ROWS,COLS,Eigen::RowMajor> EigenMatrix;
-    Eigen::Map<EigenMatrix> map(t.data_pointer());
-    
-    std::cout << FORMAT_VALUE(t) << '\n';
-    std::cout << FORMAT_VALUE(map) << '\n';
-    
-    Eigen::JacobiSVD<EigenMatrix> svd(map.jacobiSvd(Eigen::ComputeFullU|Eigen::ComputeFullV));
-    std::cout << FORMAT_VALUE(svd.matrixU()) << '\n';
-    std::cout << FORMAT_VALUE(svd.matrixV()) << '\n';
-    std::cout << FORMAT_VALUE(svd.singularValues()) << '\n';
-    
-    U u(Static<>::WITHOUT_INITIALIZATION);
-    S s(Static<>::WITHOUT_INITIALIZATION);
-    V v(Static<>::WITHOUT_INITIALIZATION);
-    memcpy(u.data_pointer(), &svd.matrixU()(0,0), u.data_size_in_bytes());
-    memcpy(s.data_pointer(), &svd.singularValues()(0,0), s.data_size_in_bytes());
-    memcpy(v.data_pointer(), &svd.matrixV()(0,0), v.data_size_in_bytes());
-  */
   
     U u(Static<>::WITHOUT_INITIALIZATION);
     S s(Static<>::WITHOUT_INITIALIZATION);
@@ -104,28 +84,6 @@ void test_diagonalization ()
     D eval(Static<>::WITHOUT_INITIALIZATION);
     T evec(Static<>::WITHOUT_INITIALIZATION);
     diagonalize_Tensor2Symmetric(s, eval, evec);
-    /*
-    // "blow up" s into t (redundant -- Eigen really only needs lower-triangular part)
-    T t(Static<>::WITHOUT_INITIALIZATION);
-    NamedIndex_t<V,'i'> i;
-    NamedIndex_t<V,'j'> j;
-    NamedIndex_t<V,'k'> k;
-    NamedIndex_t<V,'l'> l;
-    t(i,j) = s(i,j);
-    std::cout << FORMAT_VALUE(t) << '\n';
-
-    typedef Eigen::Matrix<float,DIM,DIM,Eigen::RowMajor> EigenMatrix;
-    Eigen::Map<EigenMatrix> map(t.data_pointer());
-    
-    Eigen::SelfAdjointEigenSolver<EigenMatrix> solver(map);
-    std::cout << FORMAT_VALUE(solver.eigenvectors()) << '\n';
-    std::cout << FORMAT_VALUE(solver.eigenvalues()) << '\n';
-    
-    T evec(Static<>::WITHOUT_INITIALIZATION);
-    D eval(Static<>::WITHOUT_INITIALIZATION);
-    memcpy(evec.data_pointer(), &solver.eigenvectors(), evec.data_size_in_bytes());
-    memcpy(eval.data_pointer(), &solver.eigenvalues(), eval.data_size_in_bytes());
-    */
     std::cout << FORMAT_VALUE(evec) << '\n';
     std::cout << FORMAT_VALUE(eval) << '\n';
     
