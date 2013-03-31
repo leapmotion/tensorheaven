@@ -51,8 +51,9 @@ struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
             Index i(b);
         }
             
-        Uint32 row = b.value() / Factor2::DIM;
-        Uint32 col = b.value() % Factor2::DIM;
+        Uint32 row;
+        Uint32 col;
+        contiguous_index_to_rowcol_index(b.value(), row, col);
         return CompoundIndex_t<BundleIndexTypeList>(Index1(row), Index2(col));
     }
     
@@ -277,6 +278,19 @@ struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
             return "Tensor2_t<" + TypeStringOf_t<Factor1>::eval() + ',' + TypeStringOf_t<Factor2>::eval() + '>';
         else
             return "Tensor2_t<" + TypeStringOf_t<Factor1>::eval() + ',' + TypeStringOf_t<Factor2>::eval() + ',' + TypeStringOf_t<Derived>::eval() + '>';
+    }
+
+private:
+
+    // functions between the indexing schemes -- compound index is (row,col) with row > col and vector index is contiguous.
+    static Uint32 rowcol_index_to_contiguous_index (Uint32 row, Uint32 col) 
+    {
+        return Factor2::DIM*row + col;
+    }
+    static void contiguous_index_to_rowcol_index (Uint32 i, Uint32 &row, Uint32 &col)
+    {
+        row = i / Factor2::DIM;
+        col = i % Factor2::DIM;
     }
 };
 
