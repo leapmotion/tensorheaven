@@ -4,6 +4,8 @@
 #include "core.hpp" // everything should include this
 #include "compoundindex.hpp"
 #include "expression_templates.hpp"
+#include "interop_eigen_selfadjointeigendecomp.hpp"
+#include "interop_eigen_svd.hpp"
 #include "tensor2.hpp"
 #include "tensor2antisymmetric.hpp"
 #include "tensor2diagonal.hpp"
@@ -33,6 +35,7 @@ void test_SVD ()
     Tensor2 t(Static<>::WITHOUT_INITIALIZATION);
     for (typename Tensor2::Index i; i.is_not_at_end(); ++i)
         t[i] = i.value() + 1;
+/*
     
     typedef Eigen::Matrix<float,ROWS,COLS,Eigen::RowMajor> EigenMatrix;
     Eigen::Map<EigenMatrix> map(t.data_pointer());
@@ -51,7 +54,12 @@ void test_SVD ()
     memcpy(u.data_pointer(), &svd.matrixU()(0,0), u.data_size_in_bytes());
     memcpy(s.data_pointer(), &svd.singularValues()(0,0), s.data_size_in_bytes());
     memcpy(v.data_pointer(), &svd.matrixV()(0,0), v.data_size_in_bytes());
-    
+  */
+  
+    U u(Static<>::WITHOUT_INITIALIZATION);
+    S s(Static<>::WITHOUT_INITIALIZATION);
+    V v(Static<>::WITHOUT_INITIALIZATION);
+    SVD_of_Tensor2(t, u, s, v);
     std::cout << FORMAT_VALUE(u) << '\n';
     std::cout << FORMAT_VALUE(s) << '\n';
     std::cout << FORMAT_VALUE(v) << '\n';
@@ -92,7 +100,11 @@ void test_diagonalization ()
     S s(Static<>::WITHOUT_INITIALIZATION);
     for (typename S::Index i; i.is_not_at_end(); ++i)
         s[i] = i.value() + 1;
-        
+    
+    D eval(Static<>::WITHOUT_INITIALIZATION);
+    T evec(Static<>::WITHOUT_INITIALIZATION);
+    diagonalize_Tensor2Symmetric(s, eval, evec);
+    /*
     // "blow up" s into t (redundant -- Eigen really only needs lower-triangular part)
     T t(Static<>::WITHOUT_INITIALIZATION);
     NamedIndex_t<V,'i'> i;
@@ -113,10 +125,14 @@ void test_diagonalization ()
     D eval(Static<>::WITHOUT_INITIALIZATION);
     memcpy(evec.data_pointer(), &solver.eigenvectors(), evec.data_size_in_bytes());
     memcpy(eval.data_pointer(), &solver.eigenvalues(), eval.data_size_in_bytes());
-    
+    */
     std::cout << FORMAT_VALUE(evec) << '\n';
     std::cout << FORMAT_VALUE(eval) << '\n';
     
+    NamedIndex_t<V,'i'> i;
+    NamedIndex_t<V,'j'> j;
+    NamedIndex_t<V,'k'> k;
+    NamedIndex_t<V,'l'> l;
     std::cout << FORMAT_VALUE(evec(i,j)*eval(j,k)*evec(l,k)) << '\n';
     
     std::cout << '\n';

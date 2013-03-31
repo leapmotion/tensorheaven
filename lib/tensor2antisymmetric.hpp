@@ -141,13 +141,13 @@ struct Tensor2Antisymmetric_t : public Vector_t<typename Factor_::Scalar,
     // this override of the Parent's operator() is necessary so that the expression template
     // knows that the operand is actually a Tensor2_t.
     template <char SYMBOL>
-    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList> operator () (
+    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,FORCE_CONST> operator () (
         NamedIndex_t<Derived,SYMBOL> const &) const
     {
         return expr<SYMBOL>();
     }
     template <char SYMBOL>
-    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList> operator () (
+    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,DONT_FORCE_CONST> operator () (
         NamedIndex_t<Derived,SYMBOL> const &)
     {
         return expr<SYMBOL>();
@@ -157,16 +157,16 @@ struct Tensor2Antisymmetric_t : public Vector_t<typename Factor_::Scalar,
     // this override of the Parent's operator() is necessary so that the expression template
     // knows that the operand is actually a Tensor2_t.
     template <char SYMBOL>
-    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList> expr () const
+    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,FORCE_CONST> expr () const
     {
         Lvd::Meta::Assert<(SYMBOL != '\0')>();
-        return ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList>(this->as_derived());
+        return ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,FORCE_CONST>(this->as_derived());
     }
     template <char SYMBOL>
-    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList> expr ()
+    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,DONT_FORCE_CONST> expr ()
     {
         Lvd::Meta::Assert<(SYMBOL != '\0')>();
-        return ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList>(this->as_derived());
+        return ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,DONT_FORCE_CONST>(this->as_derived());
     }
 
     // a 2-tensor can be indexed by the pair of factor indices (Factor1::Index, Factor2::Index)
@@ -182,7 +182,8 @@ struct Tensor2Antisymmetric_t : public Vector_t<typename Factor_::Scalar,
                                                NamedIndex_t<Factor,FACTOR1_SYMBOL>,
                                                NamedIndex_t<Factor,FACTOR2_SYMBOL>
                                                >::T
-                                           >::T
+                                           >::T,
+                                       FORCE_CONST 
                                        > operator () (
         NamedIndex_t<Factor,FACTOR1_SYMBOL> const &,
         NamedIndex_t<Factor,FACTOR2_SYMBOL> const &) const
@@ -200,7 +201,8 @@ struct Tensor2Antisymmetric_t : public Vector_t<typename Factor_::Scalar,
                                                NamedIndex_t<Factor,FACTOR1_SYMBOL>,
                                                NamedIndex_t<Factor,FACTOR2_SYMBOL>
                                                >::T
-                                           >::T
+                                           >::T,
+                                       DONT_FORCE_CONST
                                        > operator () (
         NamedIndex_t<Factor,FACTOR1_SYMBOL> const &,
         NamedIndex_t<Factor,FACTOR2_SYMBOL> const &)
@@ -219,7 +221,8 @@ struct Tensor2Antisymmetric_t : public Vector_t<typename Factor_::Scalar,
                                                NamedIndex_t<Factor,FACTOR1_SYMBOL>,
                                                NamedIndex_t<Factor,FACTOR2_SYMBOL>
                                                >::T
-                                           >::T
+                                           >::T,
+                                       FORCE_CONST
                                        > expr () const
     {
         Lvd::Meta::Assert<(FACTOR1_SYMBOL != '\0')>();
@@ -234,7 +237,8 @@ struct Tensor2Antisymmetric_t : public Vector_t<typename Factor_::Scalar,
                                                           NamedIndex_t<Factor,FACTOR1_SYMBOL>,
                                                           NamedIndex_t<Factor,FACTOR2_SYMBOL>
                                                           >::T
-                                                      >::T
+                                                      >::T,
+                                                  FORCE_CONST
                                                   >(this->as_derived());
     }
     template <char FACTOR1_SYMBOL, char FACTOR2_SYMBOL>
@@ -248,7 +252,8 @@ struct Tensor2Antisymmetric_t : public Vector_t<typename Factor_::Scalar,
                                                NamedIndex_t<Factor,FACTOR1_SYMBOL>,
                                                NamedIndex_t<Factor,FACTOR2_SYMBOL>
                                                >::T
-                                           >::T
+                                           >::T,
+                                       DONT_FORCE_CONST
                                        > expr ()
     {
         Lvd::Meta::Assert<(FACTOR1_SYMBOL != '\0')>();
@@ -263,7 +268,8 @@ struct Tensor2Antisymmetric_t : public Vector_t<typename Factor_::Scalar,
                                                           NamedIndex_t<Factor,FACTOR1_SYMBOL>,
                                                           NamedIndex_t<Factor,FACTOR2_SYMBOL>
                                                           >::T
-                                                      >::T
+                                                      >::T,
+                                                  DONT_FORCE_CONST
                                                   >(this->as_derived());
     }
 

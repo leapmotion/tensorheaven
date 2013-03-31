@@ -143,19 +143,22 @@ std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scala
 // expression-template-generation (making ETs from vectors/tensors)
 // ////////////////////////////////////////////////////////////////////////////
 
+static bool const FORCE_CONST = true;
+static bool const DONT_FORCE_CONST = false;
+
 // this is the "const" version of an indexed tensor expression (it has summed indices, so it doesn't make sense to assign to it)
-template <typename Object, typename IndexTypeList, typename SummedIndexTypeList_, typename Derived_ = NullType>
+template <typename Object, typename IndexTypeList, typename SummedIndexTypeList_, bool FORCE_CONST_, typename Derived_ = NullType>
 struct ExpressionTemplate_IndexedObject_t
     :
     public ExpressionTemplate_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
-                                                       ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,SummedIndexTypeList_,Derived_>,
+                                                       ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,SummedIndexTypeList_,FORCE_CONST_,Derived_>,
                                                        Derived_>::T,
                                 typename Object::Scalar,
                                 typename FreeIndexTypeList_t<IndexTypeList>::T,
                                 SummedIndexTypeList_>
 {
     typedef ExpressionTemplate_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
-                                                       ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,SummedIndexTypeList_,Derived_>,
+                                                       ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,SummedIndexTypeList_,FORCE_CONST_,Derived_>,
                                                        Derived_>::T,
                                  typename Object::Scalar,
                                  typename FreeIndexTypeList_t<IndexTypeList>::T,
@@ -196,15 +199,15 @@ private:
 };
 
 // this is the "non-const" version of an indexed tensor expression (it has no summed indices, so it makes sense to assign to it)
-template <typename Object, typename IndexTypeList>
-struct ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,EmptyTypeList>
+template <typename Object, typename IndexTypeList, typename Derived_>
+struct ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,EmptyTypeList,DONT_FORCE_CONST,Derived_>
     :
-    public ExpressionTemplate_i<ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,EmptyTypeList>,
+    public ExpressionTemplate_i<ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,EmptyTypeList,DONT_FORCE_CONST,Derived_>,
                                 typename Object::Scalar,
                                 typename FreeIndexTypeList_t<IndexTypeList>::T,
                                 EmptyTypeList>
 {
-    typedef ExpressionTemplate_i<ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,EmptyTypeList>,
+    typedef ExpressionTemplate_i<ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,EmptyTypeList,DONT_FORCE_CONST,Derived_>,
                                  typename Object::Scalar,
                                  typename FreeIndexTypeList_t<IndexTypeList>::T,
                                  EmptyTypeList> Parent;
@@ -509,11 +512,13 @@ struct ExpressionTemplate_IndexBundle_t
     public ExpressionTemplate_IndexedObject_t<IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType>,
                                               typename IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType>::IndexTypeList,
                                               typename SummedIndexTypeList_t<typename IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType>::IndexTypeList>::T,
+                                              FORCE_CONST,
                                               ExpressionTemplate_IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType> >
 {
     typedef ExpressionTemplate_IndexedObject_t<IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType>,
                                                typename IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType>::IndexTypeList,
                                                typename SummedIndexTypeList_t<typename IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType>::IndexTypeList>::T,
+                                               FORCE_CONST,
                                                ExpressionTemplate_IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType> > Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;

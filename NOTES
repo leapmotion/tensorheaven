@@ -62,4 +62,7 @@ x printing expression templates
 x down-casting tensors (extracting symmetries out of "broken apart" indexed tensor expressions);
   "bundling" indices into symmetric and antisymmetric "total" indices
 x diagonal 2-tensors
+x SVD on 2-tensors, using Eigen
+x eigen-decomposition of symmetric 2-tensors, using Eigen
+
 

@@ -742,12 +742,6 @@ void test_printing_expression_templates ()
 template <Uint32 DIM>
 void test_IndexBundle ()
 {
-// template <typename Tensor, typename TensorIndexTypeList, typename SummedIndexTypeList_, typename Derived_ = NullType>
-// struct ExpressionTemplate_IndexedObject_t
-
-// template <typename Operand, typename BundleIndexTypeList, typename ResultingIndexType, CompoundIndex_t<BundleIndexTypeList> (*BUNDLE_INDEX_MAP)(ResultingIndexType const &)>
-// struct ExpressionTemplate_IndexBundle_t 
-
     std::cout << "test_IndexBundle<" << DIM << ">()\n";
     
     typedef Vector_t<float,DIM> Vector;
@@ -765,13 +759,17 @@ void test_IndexBundle ()
     typedef NamedIndex_t<Tensor2Symmetric,'q'> Q;
     typedef NamedIndex_t<Tensor2Antisymmetric,'p'> P;
     typedef TypeList_t<I,TypeList_t<J> > BundleIndexTypeList;
-    typedef ExpressionTemplate_IndexedObject_t<Tensor2,BundleIndexTypeList,EmptyTypeList> EI;
+    typedef ExpressionTemplate_IndexedObject_t<Tensor2,BundleIndexTypeList,EmptyTypeList,DONT_FORCE_CONST> EI;
     I i;
     J j;
     typedef TypeList_t<I,TypeList_t<J> > BundleIndexTypeList;
     Q q;
     P p;
-    EI ei(t(i,j));
+    {
+        Tensor2 const &t2 = t;
+        typedef ExpressionTemplate_IndexedObject_t<Tensor2,BundleIndexTypeList,EmptyTypeList,FORCE_CONST> EI2;
+        EI2 ei(t2(i,j));
+    }
     for (typename Tensor2Symmetric::Index r; r.is_not_at_end(); ++r)
         std::cout << FORMAT_VALUE((Tensor2Symmetric::template bundle_index_map<BundleIndexTypeList,Q>(r))) << '\n';
     std::cout << '\n';
@@ -995,8 +993,8 @@ int main (int argc, char **argv)
         I i;
         J j;
         {
-            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<I>,EmptyTypeList> EI;
-            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<J>,EmptyTypeList> EJ;
+            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<I>,EmptyTypeList,DONT_FORCE_CONST> EI;
+            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<J>,EmptyTypeList,DONT_FORCE_CONST> EJ;
 
             std::cout << i << '\n';
             std::cout << Float3::Index(0) << '\n';
@@ -1013,7 +1011,7 @@ int main (int argc, char **argv)
 
         {
             std::cout << "addition:\n";
-            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<I>,EmptyTypeList> EE;
+            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<I>,EmptyTypeList,DONT_FORCE_CONST> EE;
             typedef ExpressionTemplate_Addition_t<EE,EE,'+'> EA;
             EA e(u(i), v(i));
             std::cout << "expression template value:\n";
@@ -1035,7 +1033,7 @@ int main (int argc, char **argv)
 
         {
             std::cout << "inner product:\n";
-            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<I>,EmptyTypeList> EE;
+            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<I>,EmptyTypeList,DONT_FORCE_CONST> EE;
             typedef ExpressionTemplate_Multiplication_t<EE,EE> EM;
             EM e(u(i), v(i));
             Float3::Index k;
@@ -1054,8 +1052,8 @@ int main (int argc, char **argv)
 
         {
             std::cout << "outer product:\n";
-            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<I>,EmptyTypeList> EI;
-            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<J>,EmptyTypeList> EJ;
+            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<I>,EmptyTypeList,DONT_FORCE_CONST> EI;
+            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<J>,EmptyTypeList,DONT_FORCE_CONST> EJ;
             typedef ExpressionTemplate_Multiplication_t<EI,EJ> EM;
             EM e(u(i), v(j));
             std::cout << FORMAT_VALUE(TypeStringOf_t<EM::CompoundIndex>::eval()) << '\n';
@@ -1082,8 +1080,8 @@ int main (int argc, char **argv)
 
         {
             std::cout << "contraction with simple tensor:\n";
-            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<I>,EmptyTypeList> EI;
-            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<J>,EmptyTypeList> EJ;
+            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<I>,EmptyTypeList,DONT_FORCE_CONST> EI;
+            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<J>,EmptyTypeList,DONT_FORCE_CONST> EJ;
             typedef ExpressionTemplate_Multiplication_t<EI,EJ> EM;
             typedef ExpressionTemplate_Multiplication_t<EM,EJ> EMJ;
             EMJ e(EM(u(i), v(j)), w(j));
@@ -1120,7 +1118,7 @@ int main (int argc, char **argv)
             std::cout << "addition of 2-tensors:\n";
             typedef NamedIndex_t<Float3x4,'i'> I;
             I i;
-            typedef ExpressionTemplate_IndexedObject_t<Float3x4,TypeList_t<I>,EmptyTypeList> EE;
+            typedef ExpressionTemplate_IndexedObject_t<Float3x4,TypeList_t<I>,EmptyTypeList,DONT_FORCE_CONST> EE;
             typedef ExpressionTemplate_Addition_t<EE,EE,'+'> EA;
             Float3x4 u(Static<>::WITHOUT_INITIALIZATION);
             Float3x4 v(Static<>::WITHOUT_INITIALIZATION);
@@ -1156,7 +1154,7 @@ int main (int argc, char **argv)
             typedef NamedIndex_t<Float4,'j'> J;
             I i;
             J j;
-            typedef ExpressionTemplate_IndexedObject_t<Float3x4,TypeTuple_t<I,J>::T,EmptyTypeList> EIJ;
+            typedef ExpressionTemplate_IndexedObject_t<Float3x4,TypeTuple_t<I,J>::T,EmptyTypeList,DONT_FORCE_CONST> EIJ;
             typedef ExpressionTemplate_Addition_t<EIJ,EIJ,'+'> EA;
             Float3x4 u(Static<>::WITHOUT_INITIALIZATION);
             Float3x4 v(Static<>::WITHOUT_INITIALIZATION);
@@ -1188,8 +1186,8 @@ int main (int argc, char **argv)
             typedef NamedIndex_t<Float3,'j'> J;
             I i;
             J j;
-            typedef ExpressionTemplate_IndexedObject_t<Float3x3,TypeTuple_t<I,J>::T,EmptyTypeList> EIJ;
-            typedef ExpressionTemplate_IndexedObject_t<Float3x3,TypeTuple_t<J,I>::T,EmptyTypeList> EJI;
+            typedef ExpressionTemplate_IndexedObject_t<Float3x3,TypeTuple_t<I,J>::T,EmptyTypeList,DONT_FORCE_CONST> EIJ;
+            typedef ExpressionTemplate_IndexedObject_t<Float3x3,TypeTuple_t<J,I>::T,EmptyTypeList,DONT_FORCE_CONST> EJI;
             typedef ExpressionTemplate_Addition_t<EIJ,EIJ,'+'> EA;
             typedef ExpressionTemplate_Addition_t<EIJ,EJI,'+'> EB;
             Float3x3 u(Static<>::WITHOUT_INITIALIZATION);
@@ -1210,7 +1208,7 @@ int main (int argc, char **argv)
             std::cout << '\n';
 
             // uncommenting this should cause an error regarding prohibiting repeated indices in sums
-//             typedef ExpressionTemplate_IndexedObject_t<Float3x3,TypeTuple_t<I,I>::T,EmptyTypeList> EII;
+//             typedef ExpressionTemplate_IndexedObject_t<Float3x3,TypeTuple_t<I,I>::T,EmptyTypeList,DONT_FORCE_CONST> EII;
 //             typedef ExpressionTemplate_Addition_t<EII,EII,'+'> EC;
 //             EC e_bad(u(i,i), u(i,i));
 
@@ -1254,9 +1252,9 @@ int main (int argc, char **argv)
             J j;
             K k;
             L l;
-            typedef ExpressionTemplate_IndexedObject_t<Float3x4,TypeTuple_t<I,J>::T,EmptyTypeList> EIJ;
-            typedef ExpressionTemplate_IndexedObject_t<Float4x5,TypeTuple_t<J,K>::T,EmptyTypeList> EJK;
-            typedef ExpressionTemplate_IndexedObject_t<Float5x2,TypeTuple_t<K,L>::T,EmptyTypeList> EKL;
+            typedef ExpressionTemplate_IndexedObject_t<Float3x4,TypeTuple_t<I,J>::T,EmptyTypeList,DONT_FORCE_CONST> EIJ;
+            typedef ExpressionTemplate_IndexedObject_t<Float4x5,TypeTuple_t<J,K>::T,EmptyTypeList,DONT_FORCE_CONST> EJK;
+            typedef ExpressionTemplate_IndexedObject_t<Float5x2,TypeTuple_t<K,L>::T,EmptyTypeList,DONT_FORCE_CONST> EKL;
             typedef ExpressionTemplate_Multiplication_t<EIJ,EJK> EM;
             typedef ExpressionTemplate_Multiplication_t<EM,EKL> EMM;
             std::cout << "expression template contraction u(i,j)*v(j,k):\n";
@@ -1373,7 +1371,7 @@ int main (int argc, char **argv)
             I i;
             J j;
             std::cout << FORMAT_VALUE(u) << '\n';
-            typedef ExpressionTemplate_IndexedObject_t<Float3x3,EmptyTypeList,TypeTuple_t<I>::T> ET;
+            typedef ExpressionTemplate_IndexedObject_t<Float3x3,EmptyTypeList,TypeTuple_t<I>::T,DONT_FORCE_CONST> ET;
             ET::CompoundIndex k;
             std::cout << "trace(u) = " << u(i,i)[k] << '\n';
             std::cout << "trace(u) = " << u.expr<'i','i'>()[k] << '\n';
