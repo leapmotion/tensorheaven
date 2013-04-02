@@ -1,3 +1,8 @@
+// ///////////////////////////////////////////////////////////////////////////
+// interop_eigen_selfadjointeigendecomp.hpp by Victor Dods, created 2013/03/31
+// Copyright Leap Motion Inc.
+// ///////////////////////////////////////////////////////////////////////////
+
 #ifndef INTEROP_EIGEN_SELFADJOINTEIGENDECOMP_HPP_
 #define INTEROP_EIGEN_SELFADJOINTEIGENDECOMP_HPP_
 
