@@ -115,7 +115,7 @@ struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
         if (c.is_at_end())
             throw std::invalid_argument("index out of range");
         else
-            return component_access_without_range_check(c.value());
+            return this->component_access_without_range_check(c.value());
     }
     template <typename Index1, typename Index2>
     Scalar &operator [] (CompoundIndex_t<TypeList_t<Index1,TypeList_t<Index2> > > const &c)
@@ -127,7 +127,7 @@ struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
         if (c.is_at_end())
             throw std::invalid_argument("index out of range");
         else
-            return component_access_without_range_check(c.value());
+            return this->component_access_without_range_check(c.value());
     }
 
     // the argument is technically unnecessary, as its value is not used.  however,
