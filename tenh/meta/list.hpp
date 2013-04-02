@@ -47,7 +47,7 @@ struct List_t
     BodyList const &body () const { return m_body; }
     BodyList &body () { return m_body; }
 
-    // returns the INDEXth element type of this List_t
+    // returns the type of the INDEXth element of this List_t
     template <Uint32 INDEX>
     struct Type_t
     {
@@ -289,10 +289,13 @@ struct ListHelper_t
     typedef List_t<TypeList> List;
     typedef typename TypeList::template El_t<INDEX>::T ValueType;
     typedef List_t<typename TypeList::template TrailingTypeList_t<INDEX>::T> TrailingListType;
-    static ValueType const &el (List const &list) { return ListHelper_t<typename TypeList::BodyTypeList,INDEX-1>::el(list.body()); }
+    static ValueType const &el (List const &list)
+		{ return ListHelper_t<typename TypeList::BodyTypeList,INDEX-1>::el(list.body()); }
     static ValueType &el (List &list) { return ListHelper_t<typename TypeList::BodyTypeList,INDEX-1>::el(list.body()); }
-    static TrailingListType const &trailing_list (List const &list) { return ListHelper_t<typename TypeList::BodyTypeList,INDEX-1>::trailing_list(list.body()); }
-    static TrailingListType &trailing_list (List &list) { return ListHelper_t<typename TypeList::BodyTypeList,INDEX-1>::trailing_list(list.body()); }
+    static TrailingListType const &trailing_list (List const &list)
+		{ return ListHelper_t<typename TypeList::BodyTypeList,INDEX-1>::trailing_list(list.body()); }
+    static TrailingListType &trailing_list (List &list)
+		{ return ListHelper_t<typename TypeList::BodyTypeList,INDEX-1>::trailing_list(list.body()); }
 };
 
 template <typename TypeList>
@@ -388,9 +391,11 @@ List_t<TypeList_t<TailType> > operator <<= (List_t<EmptyTypeList> const &, TailT
 
 // tack an element onto the end of a list
 template <typename LeadingHeadType, typename TailType>
-List_t<TypeList_t<LeadingHeadType,TypeList_t<TailType> > > operator <<= (List_t<LeadingHeadType> const &leading_list, TailType const &tail) 
+List_t<TypeList_t<LeadingHeadType,TypeList_t<TailType> > > operator <<= (List_t<LeadingHeadType> const &leading_list,
+                                                                         TailType const &tail) 
 { 
-    return List_t<TypeList_t<LeadingTypeList,TypeList_t<TailType> > >(leading_list.head(), (leading_list.body() <<= tail)); 
+    return List_t<TypeList_t<LeadingTypeList,TypeList_t<TailType> > >(leading_list.head(), 
+		(leading_list.body() <<= tail)); 
 }
 
 // tack an element onto the end of a list
