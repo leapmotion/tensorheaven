@@ -7,22 +7,35 @@ NOTES -- this is an informal/temporary TODO file
   is in test/strongly_typed_vector_prototype.cpp
 
 current goals:
-- interop with some basic Eigen stuff (calling SVD, etc on 2-tensors)
-  * API for calling external methods on the arrays stored by vectors and 2-tensors (use eigen's "Map" class/function)
-  * have a set of wrapper functions for common Eigen operations (e.g. SVD, LDLT, etc) which hide Eigen
-    within the strongly typed formalism.
-  * some sort of abstraction layer for using Eigen methods on our tensor classes.  self-contained and NOT intertwined in the tensor lib
-  * could use templatized conversion method which converts to generic type
+- more frontends for Eigen functionality -- LDLT, QR, linear solve, etc
 - strong typing for vectors -- named vector spaces (including "Generic") and prime/dual distinction (including self-dual)
   * default values should be "Generic" vector space ID and self-dual
   * canonical isomorphism for tensor2 -> vector will need to take into account basis
   * canonical isomorphism for vector -> scalar will need to take into account basis (a 1-dimensional vector space always has a
-    canonical "unit" basis element which is the real number 1)
+    canonical "unit" basis element which is the real number 1 (?))
+  * template <typename Scalar, Uint32 DIM, typename VectorSpaceId, typename BasisId> struct Vector_t (NO default values)
+  * VectorSpaceId should have the Dual space type (can specify self-dual here), and a static type_as_string method
+  * BasisId should just be a "name" (a type, e.g. struct DiagonalizedBasis)
+  * There should be a generic vector space type -- EuclideanSpace (?)
+  * There should be a generic basis type -- StandardBasis (?) -- where the inner product is the identity
 - column/row/block extraction/addressing
 - "eval" method on expression templates (which take a list of free indices) which produce an intermediate value
   * something like  (a(i,j)*m(j,k)*a(k,l)).eval(l,i)  (this one makes l the first index, and i the second).
 - single-vector indexing of built-up tensors of type e.g. Tensor2_t<Tensor2Symmetric,Tensor2Symmetric>
   e.g. in the expression t(i,j,k,l), where t is of type Tensor2_t<Tensor2Symmetric,Tensor2Symmetric>
+  * allowing expressions like t(i,j,k,l) would be problematic because there would need to be an unlimited
+    number of methods, accepting more and more indices -- which would not be a problem with variadic templates.
+  * "inverse" to the "bundle" method for ExpressionTemplate_i -- call it "split".
+    e.g. if A is of type Tensor2_t<Tensor2Symmetric,Vector>, then A(I,j).split(I,k,l), where I is an index
+    of type Tensor2Symmetric and k and l are its factor indices.  Then this expression has free indices (j,k,l).
+- implement natural pairings as 2-tensors (most are the identity tensor, diagonal, etc)
+- this regularizes the implementation and relates to metrics/inner products
+  * contractions will "request" the pairing, and if the type exists, the contraction works
+    this would allow more flexibility in contractions (e.g. contracting a vector space V with itself via an inner product).
+- isometric embedding for various types (e.g. Tensor2Symmetric_t, Tensor2Antisymmetric_t, so that SVD and other
+  stuff can be used on them meaningfully, as the SVD and so forth depends on the metric of the relevant space,
+  and the way Tensor2Symmetric_t is implemented does not use an isometric representation).
+  * the isometric embedding should be the square root of the inner product.
 
 future goals:
 - a rigorous test suite, using Lvd test code -- it can handle everything up through seg faults -- and negative compile
@@ -64,5 +77,24 @@ x down-casting tensors (extracting symmetries out of "broken apart" indexed tens
 x diagonal 2-tensors
 x SVD on 2-tensors, using Eigen
 x eigen-decomposition of symmetric 2-tensors, using Eigen
+x Eigen interop for using Tensor2_t as Eigen::Map (no memory copy necessary)
+x functions for converting Tensor2Antisymmetric_t and Tensor2Symmetric_t to Eigen::Matrix types
 
+---------------------------
+
+different multi-indexing schemes
+- "split"                 : if t is Tensor2<Tensor2Sym<V>,Tensor2Sym<V> >, then t(P,Q).split(P,i,j),split(Q,k,l)
+                            converse to bundle, implementation would be similar.
+- "multi-index"           : if s is Tensor2<Tensor5,V>, then s(i,j,k,l,m,T) would be s(multiindex(i,j,k,l,m),T)
+                            implementation may be difficult if there are nested multi-indices
+- "streaming multi-index" : s/i/j/k/l/m/T or s^i^j^k^l^m^T -- need intermediate "streaming" type
+                            left to right, breaking types until there is a match, implementation is probably
+                            recursive and relatively easy.  "breaking tensor type boxes apart recursively"
+
+handling more general symmetries
+- each "linear" symmetry is an inclusion of a linear subspace into a more general type
+- any type hierarchy can be encoded this way -- e.g. including Tensor2Simple into Tensor2
+- "split" would be used to "use" the inclusions, going to more general types
+- "bundle" would be used to "reassert" the symmetries, if you know that the expression has that symmetry.
+  would this work for simple tensors?  there would be a nontrivial calculation to assign to a simple tensor.
 

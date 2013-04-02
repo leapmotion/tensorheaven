@@ -16,7 +16,7 @@ void diagonalize_Tensor2Symmetric (Tensor2Symmetric_t<Factor> const &s,
                                    Tensor2_t<Factor,Factor> &eigenvectors)
 {
     typedef Eigen::Matrix<typename Factor::Scalar,Factor::DIM,Factor::DIM,Eigen::RowMajor> EigenMatrix;
-    Eigen::SelfAdjointEigenSolver<EigenMatrix> solver(EigenMatrix_of_Tensor2Symmetric(s));               // do the diagonalization
+    Eigen::SelfAdjointEigenSolver<EigenMatrix> solver(EigenMatrix_of(s));                                // do the diagonalization
     memcpy(eigenvectors.data_pointer(), &solver.eigenvectors()(0,0), eigenvectors.data_size_in_bytes()); // copy the eigenvectors
     memcpy(eigenvalues.data_pointer(), &solver.eigenvalues()(0,0), eigenvalues.data_size_in_bytes());    // copy the eigenvalues
 }
@@ -26,8 +26,8 @@ void eigenvalues_of_Tensor2Symmetric (Tensor2Symmetric_t<Factor> const &s,
                                       Tensor2Diagonal_t<Factor,Factor> &eigenvalues)
 {
     typedef Eigen::Matrix<typename Factor::Scalar,Factor::DIM,Factor::DIM,Eigen::RowMajor> EigenMatrix;
-    Eigen::SelfAdjointEigenSolver<EigenMatrix> solver(EigenMatrix_of_Tensor2Symmetric(s), Eigen::EigenvaluesOnly); // compute eigenvalues
-    memcpy(eigenvalues.data_pointer(), &solver.eigenvalues()(0,0), eigenvalues.data_size_in_bytes());              // copy the eigenvalues
+    Eigen::SelfAdjointEigenSolver<EigenMatrix> solver(EigenMatrix_of(s), Eigen::EigenvaluesOnly);     // compute eigenvalues
+    memcpy(eigenvalues.data_pointer(), &solver.eigenvalues()(0,0), eigenvalues.data_size_in_bytes()); // copy the eigenvalues
 }
 
 #endif // INTEROP_EIGEN_SELFADJOINTEIGENDECOMP_HPP_

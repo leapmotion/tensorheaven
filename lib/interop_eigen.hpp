@@ -3,8 +3,6 @@
 
 #include "core.hpp"
 #include "tensor2.hpp"
-#include "tensor2antisymmetric.hpp"
-#include "tensor2symmetric.hpp"
 
 #include "Eigen/Core"
 
@@ -22,48 +20,15 @@ Eigen::Map<Eigen::Matrix<typename Factor1::Scalar,Factor1::DIM,Factor2::DIM,Eige
     return Eigen::Map<Eigen::Matrix<typename Factor1::Scalar,Factor1::DIM,Factor2::DIM,Eigen::RowMajor> >(t.data_pointer());
 }
 
-template <typename Factor>
-Eigen::Matrix<typename Factor::Scalar,Factor::DIM,Factor::DIM,Eigen::RowMajor>
-    EigenMatrix_of_Tensor2Antisymmetric (Tensor2Antisymmetric_t<Factor> const &a)
+template <typename Tensor2Type>
+Eigen::Matrix<typename Tensor2Type::Scalar,Tensor2Type::Factor1::DIM,Tensor2Type::Factor2::DIM,Eigen::RowMajor>
+    EigenMatrix_of (Tensor2Type const &t)
 {
-    Tensor2_t<Factor,Factor> t(Static<>::WITHOUT_INITIALIZATION);
-    NamedIndex_t<Factor,'i'> i;
-    NamedIndex_t<Factor,'j'> j;
-    t(i,j) = a(i,j); // "blow up" a into t
-    return EigenMap_of_Tensor2(t);
-}
-
-template <typename Factor>
-Eigen::Matrix<typename Factor::Scalar,Factor::DIM,Factor::DIM,Eigen::RowMajor>
-    EigenMatrix_of_Tensor2Antisymmetric (Tensor2Antisymmetric_t<Factor> &a)
-{
-    Tensor2_t<Factor,Factor> t(Static<>::WITHOUT_INITIALIZATION);
-    NamedIndex_t<Factor,'i'> i;
-    NamedIndex_t<Factor,'j'> j;
-    t(i,j) = a(i,j); // "blow up" a into t
-    return EigenMap_of_Tensor2(t);
-}
-
-template <typename Factor>
-Eigen::Matrix<typename Factor::Scalar,Factor::DIM,Factor::DIM,Eigen::RowMajor>
-    EigenMatrix_of_Tensor2Symmetric (Tensor2Symmetric_t<Factor> const &s)
-{
-    Tensor2_t<Factor,Factor> t(Static<>::WITHOUT_INITIALIZATION);
-    NamedIndex_t<Factor,'i'> i;
-    NamedIndex_t<Factor,'j'> j;
-    t(i,j) = s(i,j); // "blow up" s into t
-    return EigenMap_of_Tensor2(t);
-}
-
-template <typename Factor>
-Eigen::Matrix<typename Factor::Scalar,Factor::DIM,Factor::DIM,Eigen::RowMajor>
-    EigenMatrix_of_Tensor2Symmetric (Tensor2Symmetric_t<Factor> &s)
-{
-    Tensor2_t<Factor,Factor> t(Static<>::WITHOUT_INITIALIZATION);
-    NamedIndex_t<Factor,'i'> i;
-    NamedIndex_t<Factor,'j'> j;
-    t(i,j) = s(i,j); // "blow up" s into t
-    return EigenMap_of_Tensor2(t);
+    Tensor2_t<typename Tensor2Type::Factor1,typename Tensor2Type::Factor2> temp(Static<>::WITHOUT_INITIALIZATION);
+    NamedIndex_t<typename Tensor2Type::Factor1,'i'> i;
+    NamedIndex_t<typename Tensor2Type::Factor2,'j'> j;
+    temp(i,j) = t(i,j); // "blow up" t into temp
+    return EigenMap_of_Tensor2(temp); // NOTE: this converts into Eigen::Matrix upon return
 }
 
 #endif // INTEROP_EIGEN_HPP_

@@ -117,7 +117,7 @@ template <unsigned long arg_> struct Log<1,arg_> { /* v is intentionally undefin
 
 template <unsigned long base_, unsigned long exp_> struct Pow { static unsigned long const v = base_ * Pow<base_,exp_-1>::v; };
 template <unsigned long base_> struct Pow<base_,0> { static unsigned long const v = 1; };
-template <> struct Pow<0,0> { /* v is intentionally undefined because 0^0 is undefined */ };
+template <> struct Pow<0,0> { static unsigned long const v = 1; }; // "0^0 is indeed defined for integers" -Dr. Ted Nitz.
 
 template <unsigned long base_, unsigned long arg_> struct LogRemainder { static unsigned long const v = arg_ - Pow<base_,(Log<base_,arg_>::v)>::v; };
 
