@@ -1,16 +1,18 @@
 // ///////////////////////////////////////////////////////////////////////////
-// index.hpp by Victor Dods, created 2013/03/20
+// tenh/index.hpp by Victor Dods, created 2013/03/20
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#ifndef INDEX_HPP_
-#define INDEX_HPP_
+#ifndef TENH_INDEX_HPP_
+#define TENH_INDEX_HPP_
 
 #include <ostream>
 #include <string>
 
-#include "core.hpp"
-#include "typestringof.hpp"
+#include "tenh/core.hpp"
+#include "tenh/meta/typestringof.hpp"
+
+namespace Tenh {
 
 // for use in operator [] for actual evaluation of tensor components
 template <typename OwnerVector_>
@@ -71,4 +73,6 @@ struct NamedIndex_t : public Index_t<OwnerVector_>
     static std::string type_as_string () { return "NamedIndex_t<" + TypeStringOf_t<OwnerVector>::eval() + ",'" + SYMBOL + "'>"; }
 };
 
-#endif // INDEX_HPP_
+} // end of namespace Tenh
+
+#endif // TENH_INDEX_HPP_

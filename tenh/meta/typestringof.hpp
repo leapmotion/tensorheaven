@@ -1,15 +1,17 @@
 // ///////////////////////////////////////////////////////////////////////////
-// typestringof.hpp by Victor Dods, created 2013/02/16
+// tenh/meta/typestringof.hpp by Victor Dods, created 2013/02/16
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#ifndef TYPESTRINGOF_HPP_
-#define TYPESTRINGOF_HPP_
+#ifndef TENH_META_TYPESTRINGOF_HPP_
+#define TENH_META_TYPESTRINGOF_HPP_
 
 #include <string>
-#include <sstream>
+// #include <sstream> // include this only if AS_STRING is used
 
-#include "core.hpp"
+#include "tenh/core.hpp"
+
+namespace Tenh {
 
 #define AS_STRING(x) static_cast<std::ostringstream &>(std::ostringstream().flush() << x).str()
 
@@ -26,4 +28,6 @@ template <> struct TypeStringOf_t<float> { static std::string eval () { return "
 template <> struct TypeStringOf_t<double> { static std::string eval () { return "double"; } };
 template <> struct TypeStringOf_t<std::string> { static std::string eval () { return "std::string"; } };
 
-#endif // TYPESTRINGOF_HPP_
+} // end of namespace Tenh
+
+#endif // TENH_META_TYPESTRINGOF_HPP_

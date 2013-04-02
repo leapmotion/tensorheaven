@@ -1,15 +1,17 @@
 // ///////////////////////////////////////////////////////////////////////////
-// expression_templates.hpp by Victor Dods, created 2013/03/13
+// tenh/expression_templates.hpp by Victor Dods, created 2013/03/13
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#ifndef EXPRESSION_TEMPLATES_HPP_
-#define EXPRESSION_TEMPLATES_HPP_
+#ifndef TENH_EXPRESSION_TEMPLATES_HPP_
+#define TENH_EXPRESSION_TEMPLATES_HPP_
 
 #include <stdexcept>
 
-#include "core.hpp"
-#include "expression_templates_utility.hpp"
+#include "tenh/core.hpp"
+#include "tenh/expression_templates_utility.hpp"
+
+namespace Tenh {
 
 // ////////////////////////////////////////////////////////////////////////////
 // compile-time interface for expression templates
@@ -658,4 +660,6 @@ ExpressionTemplate_Multiplication_t<LeftDerived,RightDerived>
     return ExpressionTemplate_Multiplication_t<LeftDerived,RightDerived>(left_operand.as_derived(), right_operand.as_derived());
 }
 
-#endif // EXPRESSION_TEMPLATES_HPP_
+} // end of namespace Tenh
+
+#endif // TENH_EXPRESSION_TEMPLATES_HPP_

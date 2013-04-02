@@ -1,7 +1,9 @@
 #include <iostream>
 
-#include "compoundindex.hpp"
-#include "typetuple.hpp"
+#include "tenh/compoundindex.hpp"
+#include "tenh/meta/typetuple.hpp"
+
+using namespace Tenh;
 
 template <Uint32 DIM>
 struct Index_t

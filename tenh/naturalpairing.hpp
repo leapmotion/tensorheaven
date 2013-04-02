@@ -1,12 +1,14 @@
 // ///////////////////////////////////////////////////////////////////////////
-// naturalpairing.hpp by Victor Dods, created 2013/03/19
+// tenh/naturalpairing.hpp by Victor Dods, created 2013/03/19
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#ifndef NATURALPAIRING_HPP_
-#define NATURALPAIRING_HPP_
+#ifndef TENH_NATURALPAIRING_HPP_
+#define TENH_NATURALPAIRING_HPP_
 
-#include "core.hpp"
+#include "tenh/core.hpp"
+
+namespace Tenh {
 
 // template specializations of this is what allows you to specify custom natural pairings (dot products) for particular
 // vector and tensor types.  For example, the space of 3x3 symmetric matrices
@@ -26,4 +28,6 @@ struct NaturalPairing_t
     static Scalar component (Index const &i) { return Scalar(1); }
 };
 
-#endif // NATURALPAIRING_HPP_
+} // end of namespace Tenh
+
+#endif // TENH_NATURALPAIRING_HPP_

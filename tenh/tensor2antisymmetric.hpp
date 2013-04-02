@@ -1,19 +1,21 @@
 // ///////////////////////////////////////////////////////////////////////////
-// tensor2antisymmetric.hpp by Victor Dods, created 2013/03/20
+// tenh/tensor2antisymmetric.hpp by Victor Dods, created 2013/03/20
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#ifndef TENSOR2ANTISYMMETRIC_HPP_
-#define TENSOR2ANTISYMMETRIC_HPP_
+#ifndef TENH_TENSOR2ANTISYMMETRIC_HPP_
+#define TENH_TENSOR2ANTISYMMETRIC_HPP_
 
 #include <cmath> // TEMP until rowcol/contiguous index map is implemented as a lookup table
 #include <ostream>
 
-#include "core.hpp"
-#include "expression_templates.hpp"
-#include "naturalpairing.hpp"
-#include "typetuple.hpp"
-#include "vector.hpp"
+#include "tenh/core.hpp"
+#include "tenh/expression_templates.hpp"
+#include "tenh/naturalpairing.hpp"
+#include "tenh/meta/typetuple.hpp"
+#include "tenh/vector.hpp"
+
+namespace Tenh {
 
 // antisymmetric 2-tensor (its transpose is equal to its negative)
 template <typename Factor_, typename Derived_ = NullType>
@@ -347,4 +349,6 @@ struct NaturalPairing_t<Tensor2Antisymmetric_t<Factor> >
     }
 };
 
-#endif // TENSOR2ANTISYMMETRIC_HPP_
+} // end of namespace Tenh
+
+#endif // TENH_TENSOR2ANTISYMMETRIC_HPP_

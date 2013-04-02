@@ -1,19 +1,21 @@
 // ///////////////////////////////////////////////////////////////////////////
-// interop_eigen_selfadjointeigendecomp.hpp by Victor Dods, created 2013/03/31
+// tenh/interop/eigen_selfadjointeigendecomp.hpp by Victor Dods, created 2013/03/31
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#ifndef INTEROP_EIGEN_SELFADJOINTEIGENDECOMP_HPP_
-#define INTEROP_EIGEN_SELFADJOINTEIGENDECOMP_HPP_
+#ifndef TENH_INTEROP_EIGEN_SELFADJOINTEIGENDECOMP_HPP_
+#define TENH_INTEROP_EIGEN_SELFADJOINTEIGENDECOMP_HPP_
 
-#include "core.hpp"
-#include "interop_eigen.hpp"
-#include "tensor2.hpp"
-#include "tensor2diagonal.hpp"
-#include "tensor2symmetric.hpp"
+#include "tenh/core.hpp"
+#include "tenh/interop/eigen.hpp"
+#include "tenh/tensor2.hpp"
+#include "tenh/tensor2diagonal.hpp"
+#include "tenh/tensor2symmetric.hpp"
 
 #include "Eigen/Core"
 #include "Eigen/Eigenvalues"
+
+namespace Tenh {
 
 template <typename Factor>
 void diagonalize_Tensor2Symmetric (Tensor2Symmetric_t<Factor> const &s,
@@ -35,4 +37,6 @@ void eigenvalues_of_Tensor2Symmetric (Tensor2Symmetric_t<Factor> const &s,
     memcpy(eigenvalues.data_pointer(), &solver.eigenvalues()(0,0), eigenvalues.data_size_in_bytes()); // copy the eigenvalues
 }
 
-#endif // INTEROP_EIGEN_SELFADJOINTEIGENDECOMP_HPP_
+} // end of namespace Tenh
+
+#endif // TENH_INTEROP_EIGEN_SELFADJOINTEIGENDECOMP_HPP_

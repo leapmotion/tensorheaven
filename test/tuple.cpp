@@ -1,8 +1,9 @@
 #include <iostream>
 #include <string>
 
-#include "tuple.hpp"
+#include "tenh/meta/tuple.hpp"
 
+using namespace Tenh;
 using namespace std;
 
 int main (int argc, char **argv)

@@ -1,46 +1,45 @@
 // ///////////////////////////////////////////////////////////////////////////
-// tensor2symmetric.hpp by Victor Dods, created 2013/03/20
+// tenh/tensor2diagonal.hpp by Victor Dods, created 2013/03/30
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#ifndef TENSOR2SYMMETRIC_HPP_
-#define TENSOR2SYMMETRIC_HPP_
+#ifndef TENH_TENSOR2DIAGONAL_HPP_
+#define TENH_TENSOR2DIAGONAL_HPP_
 
-#include <cmath> // TEMP until rowcol/contiguous index map is implemented as a lookup table
 #include <ostream>
 
-#include "core.hpp"
-#include "expression_templates.hpp"
-#include "naturalpairing.hpp"
-#include "typetuple.hpp"
-#include "vector.hpp"
+#include "tenh/core.hpp"
+#include "tenh/expression_templates.hpp"
+#include "tenh/meta/typetuple.hpp"
+#include "tenh/vector.hpp"
+
+namespace Tenh {
 
 // symmetric 2-tensor (it is equal to its transpose)
-template <typename Factor_, typename Derived_ = NullType>
-struct Tensor2Symmetric_t : public Vector_t<typename Factor_::Scalar,
-                                            ((Factor_::DIM+1)*Factor_::DIM)/2,
-                                            typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
-                                                                   Tensor2Symmetric_t<Factor_,Derived_>,
-                                                                   Derived_>::T>
+template <typename Factor1_, typename Factor2_, typename Derived_ = NullType>
+struct Tensor2Diagonal_t : public Vector_t<typename Factor1_::Scalar,
+                                           ((Factor1_::DIM < Factor2_::DIM) ? Factor1_::DIM : Factor2_::DIM),
+                                           typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
+                                                                  Tensor2Diagonal_t<Factor1_,Factor2_,Derived_>,
+                                                                  Derived_>::T>
 {
-    typedef Vector_t<typename Factor_::Scalar,
-                     ((Factor_::DIM+1)*Factor_::DIM)/2,
+    enum { FACTOR_SCALAR_TYPES_ARE_EQUAL = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename Factor1_::Scalar,typename Factor2_::Scalar>::v>::v };
+
+    typedef Vector_t<typename Factor1_::Scalar,
+                     (Factor1_::DIM < Factor2_::DIM ? Factor1_::DIM : Factor2_::DIM),
                      typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
-                                            Tensor2Symmetric_t<Factor_,Derived_>,
+                                            Tensor2Diagonal_t<Factor1_,Factor2_,Derived_>,
                                             Derived_>::T> Parent;
     typedef typename Parent::Scalar Scalar;
     using Parent::DIM;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Index Index;
-    typedef Factor_ Factor;
-    typedef Factor Factor1;
-    typedef Factor Factor2;
-    typedef CompoundIndex_t<typename TypeTuple_t<typename Factor::Index,typename Factor::Index>::T> CompoundIndex;
-    static Uint32 const DIAGONAL_COMPONENT_COUNT = Factor::DIM;
-    static Uint32 const STRICTLY_LOWER_TRIANGULAR_COMPONENT_COUNT = ((Factor::DIM-1)*Factor::DIM)/2;
+    typedef Factor1_ Factor1;
+    typedef Factor2_ Factor2;
+    typedef CompoundIndex_t<typename TypeTuple_t<typename Factor1::Index,typename Factor2::Index>::T> CompoundIndex;
 
-    Tensor2Symmetric_t (WithoutInitialization const &w) : Parent(w) { }
-    Tensor2Symmetric_t (Scalar fill_with) : Parent(fill_with) { }
+    Tensor2Diagonal_t (WithoutInitialization const &w) : Parent(w) { }
+    Tensor2Diagonal_t (Scalar fill_with) : Parent(fill_with) { }
 
     template <typename BundleIndexTypeList, typename BundledIndex>
     static CompoundIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)
@@ -76,52 +75,44 @@ struct Tensor2Symmetric_t : public Vector_t<typename Factor_::Scalar,
     // dumb, but the compiler wouldn't inherit implicitly, and won't parse a "using" statement
     Scalar &operator [] (Index const &i) { return Parent::operator[](i); }
 
-    // using two indices in a Tensor2Symmetric_t is breaking apart the Index type and using it
+    // using two indices in a Tensor2Diagonal_t is breaking apart the Index type and using it
     // as a general tensor -- this is where the fancy indexing scheme happens.
     template <typename Index1, typename Index2>
-    Scalar const &operator [] (CompoundIndex_t<TypeList_t<Index1,TypeList_t<Index2> > > const &c) const
+    Scalar operator [] (CompoundIndex_t<TypeList_t<Index1,TypeList_t<Index2> > > const &c) const
     {
         if (c.is_at_end())
             throw std::invalid_argument("index out of range");
 
         // NOTE: these constructions are unnecessary to the code, but ARE necessary to the compile-time type checking
         // the compiler should optimize it out anyway.
-        typename Factor::Index(c.template el<0>());
-        typename Factor::Index(c.template el<1>());
+        typename Factor1::Index(c.template el<0>());
+        typename Factor2::Index(c.template el<1>());
 
         Uint32 row = c.template el<0>().value();
         Uint32 col = c.template el<1>().value();
 
-        // if we're in the strict upper triangle, switch the indices to get into the strict lower triangle
-        if (row < col)
-            std::swap(row, col);
-
-        // strict lower triangle elements are stored contiguously in row-major order:
-        // [ d0  .  . ... ]
-        // [  0 d1  . ... ]
-        // [  1  2 d2 ... ]
-        // [  3  4  5 ... ]
-        // ...
-        // the index of the first element in row R is the (R-1)th triangular number, so the mapping
-        // (row,col) to contiguous index i is i := r*(r-1)/2 + c.
-        // the diagonal is indexed contiguously after the strictly lower triangular components.
-        return this->component_access_without_range_check(rowcol_index_to_contiguous_index(row, col));
+        // if we're off the diagonal, return 0
+        if (row != col)
+            return Scalar(0);
+        else
+            return this->component_access_without_range_check(rowcol_index_to_contiguous_index(row, col));
     }
     // there is redundant access to components here, since the strict upper triangle components are
     // really just aliases for the strict lower triangle components.
     template <typename Index1, typename Index2>
-    Scalar &operator [] (CompoundIndex_t<TypeList_t<Index1,TypeList_t<Index2> > > const &c)
+    Scalar operator [] (CompoundIndex_t<TypeList_t<Index1,TypeList_t<Index2> > > const &c)
     {
         // see the comments in the const version of operator[] for your code-diving pleasure
         if (c.is_at_end())
             throw std::invalid_argument("index out of range");
-        typename Factor::Index(c.template el<0>());
-        typename Factor::Index(c.template el<1>());
+        typename Factor1::Index(c.template el<0>());
+        typename Factor2::Index(c.template el<1>());
         Uint32 row = c.template el<0>().value();
         Uint32 col = c.template el<1>().value();
-        if (row < col)
-            std::swap(row, col);
-        return this->component_access_without_range_check(rowcol_index_to_contiguous_index(row, col));
+        if (row != col)
+            return Scalar(0);
+        else
+            return this->component_access_without_range_check(rowcol_index_to_contiguous_index(row, col));
     }
 
     // the argument is technically unnecessary, as its value is not used.  however,
@@ -167,38 +158,38 @@ struct Tensor2Symmetric_t : public Vector_t<typename Factor_::Scalar,
     template <char FACTOR1_SYMBOL, char FACTOR2_SYMBOL>
     ExpressionTemplate_IndexedObject_t<Derived,
                                        typename TypeTuple_t<
-                                           NamedIndex_t<Factor,FACTOR1_SYMBOL>,
-                                           NamedIndex_t<Factor,FACTOR2_SYMBOL>
+                                           NamedIndex_t<Factor1,FACTOR1_SYMBOL>,
+                                           NamedIndex_t<Factor2,FACTOR2_SYMBOL>
                                            >::T,
                                        typename SummedIndexTypeList_t<
                                            typename TypeTuple_t<
-                                               NamedIndex_t<Factor,FACTOR1_SYMBOL>,
-                                               NamedIndex_t<Factor,FACTOR2_SYMBOL>
+                                               NamedIndex_t<Factor1,FACTOR1_SYMBOL>,
+                                               NamedIndex_t<Factor2,FACTOR2_SYMBOL>
                                                >::T
                                            >::T,
                                        FORCE_CONST
                                        > operator () (
-        NamedIndex_t<Factor,FACTOR1_SYMBOL> const &,
-        NamedIndex_t<Factor,FACTOR2_SYMBOL> const &) const
+        NamedIndex_t<Factor1,FACTOR1_SYMBOL> const &,
+        NamedIndex_t<Factor2,FACTOR2_SYMBOL> const &) const
     {
         return expr<FACTOR1_SYMBOL,FACTOR2_SYMBOL>();
     }
     template <char FACTOR1_SYMBOL, char FACTOR2_SYMBOL>
     ExpressionTemplate_IndexedObject_t<Derived,
                                        typename TypeTuple_t<
-                                           NamedIndex_t<Factor,FACTOR1_SYMBOL>,
-                                           NamedIndex_t<Factor,FACTOR2_SYMBOL>
+                                           NamedIndex_t<Factor1,FACTOR1_SYMBOL>,
+                                           NamedIndex_t<Factor2,FACTOR2_SYMBOL>
                                            >::T,
                                        typename SummedIndexTypeList_t<
                                            typename TypeTuple_t<
-                                               NamedIndex_t<Factor,FACTOR1_SYMBOL>,
-                                               NamedIndex_t<Factor,FACTOR2_SYMBOL>
+                                               NamedIndex_t<Factor1,FACTOR1_SYMBOL>,
+                                               NamedIndex_t<Factor2,FACTOR2_SYMBOL>
                                                >::T
                                            >::T,
                                        DONT_FORCE_CONST
                                        > operator () (
-        NamedIndex_t<Factor,FACTOR1_SYMBOL> const &,
-        NamedIndex_t<Factor,FACTOR2_SYMBOL> const &)
+        NamedIndex_t<Factor1,FACTOR1_SYMBOL> const &,
+        NamedIndex_t<Factor2,FACTOR2_SYMBOL> const &)
     {
         return expr<FACTOR1_SYMBOL,FACTOR2_SYMBOL>();
     }
@@ -206,13 +197,13 @@ struct Tensor2Symmetric_t : public Vector_t<typename Factor_::Scalar,
     template <char FACTOR1_SYMBOL, char FACTOR2_SYMBOL>
     ExpressionTemplate_IndexedObject_t<Derived,
                                        typename TypeTuple_t<
-                                           NamedIndex_t<Factor,FACTOR1_SYMBOL>,
-                                           NamedIndex_t<Factor,FACTOR2_SYMBOL>
+                                           NamedIndex_t<Factor1,FACTOR1_SYMBOL>,
+                                           NamedIndex_t<Factor2,FACTOR2_SYMBOL>
                                            >::T,
                                        typename SummedIndexTypeList_t<
                                            typename TypeTuple_t<
-                                               NamedIndex_t<Factor,FACTOR1_SYMBOL>,
-                                               NamedIndex_t<Factor,FACTOR2_SYMBOL>
+                                               NamedIndex_t<Factor1,FACTOR1_SYMBOL>,
+                                               NamedIndex_t<Factor2,FACTOR2_SYMBOL>
                                                >::T
                                            >::T,
                                        FORCE_CONST
@@ -222,13 +213,13 @@ struct Tensor2Symmetric_t : public Vector_t<typename Factor_::Scalar,
         Lvd::Meta::Assert<(FACTOR2_SYMBOL != '\0')>();
         return ExpressionTemplate_IndexedObject_t<Derived,
                                                   typename TypeTuple_t<
-                                                      NamedIndex_t<Factor,FACTOR1_SYMBOL>,
-                                                      NamedIndex_t<Factor,FACTOR2_SYMBOL>
+                                                      NamedIndex_t<Factor1,FACTOR1_SYMBOL>,
+                                                      NamedIndex_t<Factor2,FACTOR2_SYMBOL>
                                                       >::T,
                                                   typename SummedIndexTypeList_t<
                                                       typename TypeTuple_t<
-                                                          NamedIndex_t<Factor,FACTOR1_SYMBOL>,
-                                                          NamedIndex_t<Factor,FACTOR2_SYMBOL>
+                                                          NamedIndex_t<Factor1,FACTOR1_SYMBOL>,
+                                                          NamedIndex_t<Factor2,FACTOR2_SYMBOL>
                                                           >::T
                                                       >::T,
                                                   FORCE_CONST
@@ -237,13 +228,13 @@ struct Tensor2Symmetric_t : public Vector_t<typename Factor_::Scalar,
     template <char FACTOR1_SYMBOL, char FACTOR2_SYMBOL>
     ExpressionTemplate_IndexedObject_t<Derived,
                                        typename TypeTuple_t<
-                                           NamedIndex_t<Factor,FACTOR1_SYMBOL>,
-                                           NamedIndex_t<Factor,FACTOR2_SYMBOL>
+                                           NamedIndex_t<Factor1,FACTOR1_SYMBOL>,
+                                           NamedIndex_t<Factor2,FACTOR2_SYMBOL>
                                            >::T,
                                        typename SummedIndexTypeList_t<
                                            typename TypeTuple_t<
-                                               NamedIndex_t<Factor,FACTOR1_SYMBOL>,
-                                               NamedIndex_t<Factor,FACTOR2_SYMBOL>
+                                               NamedIndex_t<Factor1,FACTOR1_SYMBOL>,
+                                               NamedIndex_t<Factor2,FACTOR2_SYMBOL>
                                                >::T
                                            >::T,
                                        DONT_FORCE_CONST
@@ -253,13 +244,13 @@ struct Tensor2Symmetric_t : public Vector_t<typename Factor_::Scalar,
         Lvd::Meta::Assert<(FACTOR2_SYMBOL != '\0')>();
         return ExpressionTemplate_IndexedObject_t<Derived,
                                                   typename TypeTuple_t<
-                                                      NamedIndex_t<Factor,FACTOR1_SYMBOL>,
-                                                      NamedIndex_t<Factor,FACTOR2_SYMBOL>
+                                                      NamedIndex_t<Factor1,FACTOR1_SYMBOL>,
+                                                      NamedIndex_t<Factor2,FACTOR2_SYMBOL>
                                                       >::T,
                                                   typename SummedIndexTypeList_t<
                                                       typename TypeTuple_t<
-                                                          NamedIndex_t<Factor,FACTOR1_SYMBOL>,
-                                                          NamedIndex_t<Factor,FACTOR2_SYMBOL>
+                                                          NamedIndex_t<Factor1,FACTOR1_SYMBOL>,
+                                                          NamedIndex_t<Factor2,FACTOR2_SYMBOL>
                                                           >::T
                                                       >::T,
                                                   DONT_FORCE_CONST
@@ -270,59 +261,47 @@ struct Tensor2Symmetric_t : public Vector_t<typename Factor_::Scalar,
     {
         // TODO: return Derived's type_as_string value?
 //         if (Lvd::Meta::TypesAreEqual<Derived_,NullType>::v)
-//             return "Tensor2Symmetric_t<" + TypeStringOf_t<Factor>::eval() + '>';
+//             return "Tensor2Diagonal_t<" + TypeStringOf_t<Factor1>::eval() + ',' + TypeStringOf_t<Factor2>::eval() + '>';
 //         else
 //             return Derived::type_as_string();
         // for now, just return this type string
         if (Lvd::Meta::TypesAreEqual<Derived_,NullType>::v)
-            return "Tensor2Symmetric_t<" + TypeStringOf_t<Factor>::eval() + '>';
+            return "Tensor2Diagonal_t<" + TypeStringOf_t<Factor1>::eval() + ',' + TypeStringOf_t<Factor2>::eval() + '>';
         else
-            return "Tensor2Symmetric_t<" + TypeStringOf_t<Factor>::eval() + ',' + TypeStringOf_t<Derived>::eval() + '>';
+            return "Tensor2Diagonal_t<" + TypeStringOf_t<Factor1>::eval() + ',' + TypeStringOf_t<Factor2>::eval() + ',' + TypeStringOf_t<Derived>::eval() + '>';
     }
 
 private:
 
-    // functions between the indexing schemes -- compound index is (row,col) with row >= col and vector index is contiguous.
+    // functions between the indexing schemes -- compound index is (row,col) with row == col and vector index is contiguous.
     static Uint32 rowcol_index_to_contiguous_index (Uint32 row, Uint32 col) 
     {
-        if (row < col)
-            throw std::invalid_argument("row must be greater than col");
-        else if (row == col)
-            return STRICTLY_LOWER_TRIANGULAR_COMPONENT_COUNT + row;
-        else // same as antisymmetric indexig
-            return row*(row-1)/2 + col;
+        if (row != col)
+            throw std::invalid_argument("row must be equal to col");
+        else
+            return row;
     }
     static void contiguous_index_to_rowcol_index (Uint32 i, Uint32 &row, Uint32 &col)
     {
-        // TODO: implement as lookup table
-        if (i >= STRICTLY_LOWER_TRIANGULAR_COMPONENT_COUNT)
-        {
-            row = i - STRICTLY_LOWER_TRIANGULAR_COMPONENT_COUNT;
-            col = row;
-        }
-        else // same as antisymmetric indexing
-        {
-            // given i, row = floor((1 + sqrt(1+8*i))/2) and col = i - r*(r-1)/2.
-            row = Uint32(std::floor(0.5f + std::sqrt(0.25f + 2.0f*i)));
-            col = i - row*(row-1)/2;
-        }
+        row = i*(Factor2::DIM+1);
+        col = row;
     }
 };
 
-template <typename Factor>
-std::ostream &operator << (std::ostream &out, Tensor2Symmetric_t<Factor> const &t)
+template <typename Factor1, typename Factor2>
+std::ostream &operator << (std::ostream &out, Tensor2Diagonal_t<Factor1,Factor2> const &t)
 {
-    typedef Tensor2Symmetric_t<Factor> Tensor2Symmetric;
+    typedef Tensor2Diagonal_t<Factor1,Factor2> Tensor2Diagonal;
 
-    if (Tensor2Symmetric::DIM == 0)
+    if (Tensor2Diagonal::DIM == 0)
         return out << "[]";
 
-    typename Tensor2Symmetric::CompoundIndex c;
+    typename Tensor2Diagonal::CompoundIndex c;
     out << '\n';
-    for (typename Factor::Index i; i.is_not_at_end(); ++i)
+    for (typename Factor1::Index i; i.is_not_at_end(); ++i)
     {
         out << '[';
-        for (typename Factor::Index j; j.is_not_at_end(); ++j)
+        for (typename Factor2::Index j; j.is_not_at_end(); ++j)
         {
             out << t[c] << '\t';
             ++c;
@@ -332,21 +311,6 @@ std::ostream &operator << (std::ostream &out, Tensor2Symmetric_t<Factor> const &
     return out;
 }
 
-// template specialization for the natural pairing in this particular coordinatization of Tensor2Symmetric_t
-template <typename Factor>
-struct NaturalPairing_t<Tensor2Symmetric_t<Factor> >
-{
-    typedef Tensor2Symmetric_t<Factor> Tensor2Symmetric;
-    typedef typename Tensor2Symmetric::Scalar Scalar;
-    typedef typename Tensor2Symmetric::Index Index;
+} // end of namespace Tenh
 
-    static Scalar component (Index const &i)
-    {
-        if (i.value() < Tensor2Symmetric::DIAGONAL_COMPONENT_COUNT)
-            return Scalar(1); // the diagonal components occur only once (in the component matrix)
-        else
-            return Scalar(2); // but the off-diagonal components occur twice (in the component matrix)
-    }
-};
-
-#endif // TENSOR2SYMMETRIC_HPP_
+#endif // TENH_TENSOR2DIAGONAL_HPP_

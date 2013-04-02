@@ -1,23 +1,26 @@
 #include <iostream>
+#include <sstream>
 #include <string>
 
-#include "core.hpp" // everything should include this
-#include "compoundindex.hpp"
-#include "expression_templates.hpp"
-#include "interop_eigen_selfadjointeigendecomp.hpp"
-#include "interop_eigen_svd.hpp"
-#include "tensor2.hpp"
-#include "tensor2antisymmetric.hpp"
-#include "tensor2diagonal.hpp"
-#include "tensor2symmetric.hpp"
-#include "typelist.hpp"
-#include "typelist_utility.hpp"
-#include "typetuple.hpp"
-#include "vector.hpp"
+#include "tenh/core.hpp" // everything should include this
+#include "tenh/compoundindex.hpp"
+#include "tenh/expression_templates.hpp"
+#include "tenh/interop/eigen_selfadjointeigendecomp.hpp"
+#include "tenh/interop/eigen_svd.hpp"
+#include "tenh/meta/typelist.hpp"
+#include "tenh/meta/typelist_utility.hpp"
+#include "tenh/meta/typetuple.hpp"
+#include "tenh/tensor2.hpp"
+#include "tenh/tensor2antisymmetric.hpp"
+#include "tenh/tensor2diagonal.hpp"
+#include "tenh/tensor2symmetric.hpp"
+#include "tenh/vector.hpp"
 
 #include "Eigen/Core"
 #include "Eigen/Eigenvalues"
 #include "Eigen/SVD"
+
+using namespace Tenh;
 
 template <Uint32 ROWS, Uint32 COLS>
 void test_SVD ()

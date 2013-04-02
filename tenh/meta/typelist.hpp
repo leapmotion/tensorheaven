@@ -1,16 +1,18 @@
 // ///////////////////////////////////////////////////////////////////////////
-// typelist.hpp by Victor Dods, created 2013/02/16
+// tenh/meta/typelist.hpp by Victor Dods, created 2013/02/16
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#ifndef TYPELIST_HPP_
-#define TYPELIST_HPP_
+#ifndef TENH_META_TYPELIST_HPP_
+#define TENH_META_TYPELIST_HPP_
 
 #include <ostream>
 #include <string>
 
-#include "core.hpp"
-#include "typestringof.hpp"
+#include "tenh/core.hpp"
+#include "tenh/meta/typestringof.hpp"
+
+namespace Tenh {
 
 struct EmptyTypeList
 {
@@ -93,4 +95,6 @@ struct TypeList_t
     }
 };
 
-#endif // TYPELIST_HPP_
+} // end of namespace Tenh
+
+#endif // TENH_META_TYPELIST_HPP_

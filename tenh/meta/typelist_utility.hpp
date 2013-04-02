@@ -1,13 +1,15 @@
 // ///////////////////////////////////////////////////////////////////////////
-// typelist_utility.hpp by Victor Dods, created 2013/03/12
+// tenh/meta/typelist_utility.hpp by Victor Dods, created 2013/03/12
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#ifndef TYPELIST_UTILITY_HPP_
-#define TYPELIST_UTILITY_HPP_
+#ifndef TENH_META_TYPELIST_UTILITY_HPP_
+#define TENH_META_TYPELIST_UTILITY_HPP_
 
-#include "core.hpp"
-#include "typelist.hpp"
+#include "tenh/core.hpp"
+#include "tenh/meta/typelist.hpp"
+
+namespace Tenh {
 
 // returns the last element of a TypeList_t
 template <typename TypeList>
@@ -246,4 +248,6 @@ struct SetSubtraction_t<EmptyTypeList,TypeListB>
     typedef EmptyTypeList T;
 };
 
-#endif // TYPELIST_UTILITY_HPP_
+} // end of namespace Tenh
+
+#endif // TENH_META_TYPELIST_UTILITY_HPP_

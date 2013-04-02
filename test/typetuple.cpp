@@ -1,8 +1,9 @@
 #include <iostream>
 #include <string>
 
-#include "typetuple.hpp"
+#include "tenh/meta/typetuple.hpp"
 
+using namespace Tenh;
 using namespace std;
 
 int main (int argc, char **argv)

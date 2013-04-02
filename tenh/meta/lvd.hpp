@@ -1,15 +1,16 @@
 // ///////////////////////////////////////////////////////////////////////////
-// lvd.hpp by Victor Dods, created 2006/11/29
+// tenh/meta/lvd.hpp by Victor Dods, created 2006/11/29
 // Copyright Victor Dods, licensed for use by Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#if !defined(LVD_HPP_)
-#define LVD_HPP_
+#ifndef TENH_META_LVD_HPP_
+#define TENH_META_LVD_HPP_
 
-#if defined(HAVE_CONFIG_H)
-    #include "config.h"
-#endif // defined(HAVE_CONFIG_H)
+// #if defined(HAVE_CONFIG_H)
+//     #include "config.h"
+// #endif // defined(HAVE_CONFIG_H)
 
+namespace Tenh {
 namespace Lvd {
 namespace Meta {
 
@@ -574,5 +575,6 @@ enum
 };
 
 } // end of namespace Lvd
+} // end of namespace Tenh
 
-#endif // !defined(LVD_HPP_)
+#endif // !defined(TENH_META_LVD_HPP_)

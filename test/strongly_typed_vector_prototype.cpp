@@ -2,7 +2,7 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "lvd.hpp"
+#include "tenh/lvd.hpp"
 
 /*
 design goals:
@@ -23,6 +23,8 @@ design goals:
   out in some compatible way in memory.  how would tensor symmetries be handled
   in this scheme?
 */
+
+using namespace Tenh;
 
 typedef Lvd::Uint32 Uint32;
 

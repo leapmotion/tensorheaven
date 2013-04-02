@@ -1,17 +1,19 @@
 // ///////////////////////////////////////////////////////////////////////////
-// list.hpp by Victor Dods, created 2013/02/16
+// tenh/meta/list.hpp by Victor Dods, created 2013/02/16
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#ifndef LIST_HPP_
-#define LIST_HPP_
+#ifndef TENH_META_LIST_HPP_
+#define TENH_META_LIST_HPP_
 
 #include <ostream>
 #include <string>
 
-#include "core.hpp"
-#include "typelist.hpp"
-#include "typelist_utility.hpp"
+#include "tenh/core.hpp"
+#include "tenh/meta/typelist.hpp"
+#include "tenh/meta/typelist_utility.hpp"
+
+namespace Tenh {
 
 template <typename TypeList, Uint32 INDEX> struct ListHelper_t;
 
@@ -403,6 +405,6 @@ List_t<typename ConcatenationOfTypeLists_t<LeadingTypeList,TypeList_t<TailType> 
 }
 */
 
+} // end of namespace Tenh
 
-
-#endif // LIST_HPP_
+#endif // TENH_META_LIST_HPP_

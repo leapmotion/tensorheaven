@@ -1,15 +1,17 @@
 // ///////////////////////////////////////////////////////////////////////////
-// expression_templates_utility.hpp by Victor Dods, created 2013/03/20
+// tenh/expression_templates_utility.hpp by Victor Dods, created 2013/03/20
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#ifndef EXPRESSION_TEMPLATES_UTILITY_HPP_
-#define EXPRESSION_TEMPLATES_UTILITY_HPP_
+#ifndef TENH_EXPRESSION_TEMPLATES_UTILITY_HPP_
+#define TENH_EXPRESSION_TEMPLATES_UTILITY_HPP_
 
-#include "core.hpp"
-#include "compoundindex.hpp"
-#include "naturalpairing.hpp"
-#include "typelist.hpp"
+#include "tenh/core.hpp"
+#include "tenh/compoundindex.hpp"
+#include "tenh/meta/typelist.hpp"
+#include "tenh/naturalpairing.hpp"
+
+namespace Tenh {
 
 // this file contains template metaprograms which assist in the construction and evaluation of expression templates
 
@@ -227,4 +229,6 @@ private:
     Operand const &m_operand;
 };
 
-#endif // EXPRESSION_TEMPLATES_UTILITY_HPP_
+} // end of namespace Tenh
+
+#endif // TENH_EXPRESSION_TEMPLATES_UTILITY_HPP_

@@ -1,13 +1,15 @@
 // ///////////////////////////////////////////////////////////////////////////
-// typetuple.hpp by Victor Dods, created 2013/02/16
+// tenh/meta/typetuple.hpp by Victor Dods, created 2013/02/16
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#ifndef TYPETUPLE_HPP_
-#define TYPETUPLE_HPP_
+#ifndef TENH_META_TYPETUPLE_HPP_
+#define TENH_META_TYPETUPLE_HPP_
 
-#include "core.hpp"
-#include "typelist.hpp"
+#include "tenh/core.hpp"
+#include "tenh/meta/typelist.hpp"
+
+namespace Tenh {
 
 // fucking stupid kludge to deal with the lack of variadic templates
 
@@ -121,4 +123,6 @@ struct TypeTuple_t<T0,T1,T2,T3,T4,T5,T6,NullType>
             TypeList_t<T6> > > > > > > T;
 };
 
-#endif // TYPETUPLE_HPP_
+} // end of namespace Tenh
+
+#endif // TENH_META_TYPETUPLE_HPP_

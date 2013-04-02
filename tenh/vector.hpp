@@ -1,19 +1,21 @@
 // ///////////////////////////////////////////////////////////////////////////
-// vector.hpp by Victor Dods, created 2013/03/12
+// tenh/vector.hpp by Victor Dods, created 2013/03/12
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#ifndef VECTOR_HPP_
-#define VECTOR_HPP_
+#ifndef TENH_VECTOR_HPP_
+#define TENH_VECTOR_HPP_
 
 #include <ostream>
 #include <string>
 
-#include "compoundindex.hpp"
-#include "core.hpp"
-#include "expression_templates.hpp"
-#include "index.hpp"
-#include "typestringof.hpp"
+#include "tenh/compoundindex.hpp"
+#include "tenh/core.hpp"
+#include "tenh/expression_templates.hpp"
+#include "tenh/index.hpp"
+#include "tenh/meta/typestringof.hpp"
+
+namespace Tenh {
 
 // NOTE: Scalar_ MUST be a POD data type.
 template <typename Scalar_, Uint32 DIM_, typename Derived_ = NullType> // don't worry about type ID for now
@@ -152,4 +154,6 @@ std::ostream &operator << (std::ostream &out, Vector_t<Scalar,DIM> const &v)
     return out << ')';
 }
 
-#endif // VECTOR_HPP_
+} // end of namespace Tenh
+
+#endif // TENH_VECTOR_HPP_

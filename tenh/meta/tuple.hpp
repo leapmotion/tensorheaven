@@ -1,14 +1,16 @@
 // ///////////////////////////////////////////////////////////////////////////
-// tuple.hpp by Victor Dods, created 2013/02/16
+// tenh/meta/tuple.hpp by Victor Dods, created 2013/02/16
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#ifndef TUPLE_HPP_
-#define TUPLE_HPP_
+#ifndef TENH_META_TUPLE_HPP_
+#define TENH_META_TUPLE_HPP_
 
-#include "core.hpp"
-#include "list.hpp"
-#include "typetuple.hpp"
+#include "tenh/core.hpp"
+#include "tenh/meta/list.hpp"
+#include "tenh/meta/typetuple.hpp"
+
+namespace Tenh {
 
 // should match the template params for TypeTuple_t
 template <typename T0 = NullType,
@@ -298,4 +300,7 @@ struct Tuple_t<TypeList_t<T0,
     { }
 };
 */
-#endif // TUPLE_HPP_
+
+} // end of namespace Tenh
+
+#endif // TENH_META_TUPLE_HPP_

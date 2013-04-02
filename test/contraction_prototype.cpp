@@ -2,18 +2,19 @@
 #include <cassert>
 #include <iostream>
 #include <stdexcept>
+#include <sstream>
 
-#include "core.hpp" // everything should include this
-#include "compoundindex.hpp"
-#include "expression_templates.hpp"
-#include "tensor2.hpp"
-#include "tensor2antisymmetric.hpp"
-#include "tensor2diagonal.hpp"
-#include "tensor2symmetric.hpp"
-#include "typelist.hpp"
-#include "typelist_utility.hpp"
-#include "typetuple.hpp"
-#include "vector.hpp"
+#include "tenh/core.hpp" // everything should include this
+#include "tenh/compoundindex.hpp"
+#include "tenh/expression_templates.hpp"
+#include "tenh/meta/typelist.hpp"
+#include "tenh/meta/typelist_utility.hpp"
+#include "tenh/meta/typetuple.hpp"
+#include "tenh/tensor2.hpp"
+#include "tenh/tensor2antisymmetric.hpp"
+#include "tenh/tensor2diagonal.hpp"
+#include "tenh/tensor2symmetric.hpp"
+#include "tenh/vector.hpp"
 
 /*
 if A is a tensor type, and i is an index compatible with A, then A(i) returns an expression template.
@@ -253,6 +254,7 @@ scalar value).
 
 */
 
+using namespace Tenh;
 
 // general 3-tensor with no symmetries -- most general type of 3-tensor
 template <typename F1_, typename F2_, typename F3_>
@@ -1465,6 +1467,31 @@ int main (int argc, char **argv)
         test_Tensor2Diagonal_t<1,3>();
         test_Tensor2Diagonal_t<2,2>();
         test_Tensor2Diagonal_t<3,4>();
+        
+/*
+        {
+            std::cout << "********************************\n\n";
+            typedef Tensor2_t<Float3,Float4> Float3x4;
+            Float3x4 u(Static<>::WITHOUT_INITIALIZATION);
+            for (Float3x4::Index i; i.is_not_at_end(); ++i)
+                u[i] = i.value() + 1;
+            std::cout << FORMAT_VALUE(u) << '\n';
+            
+            typedef Tensor2_t<Float4,Float3> Float4x3;
+            Float4x3 v(Static<>::WITHOUT_INITIALIZATION);
+            NamedIndex_t<Float3,'i'> i;
+            NamedIndex_t<Float3,'k'> k;
+            NamedIndex_t<Float4,'j'> j;
+            v(j,i) = u(i,j);
+            std::cout << FORMAT_VALUE(v) << '\n';
+            
+            typedef Tensor2Symmetric_t<Float3,Float3> Float3x3Symmetric;
+            NamedIndex_t<Float3x3Symmetric,'q'> q;
+            Float3x3Symmetric s(1);
+            s(q) = (u(i,j)*u(k,j)).bundle(i,k,q);
+            std::cout << FORMAT_VALUE(s) << '\n';
+        }
+        */
     }
 
     return 0;

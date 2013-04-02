@@ -1,3 +1,5 @@
+TENSOR HEAVEN - Tenh (pronounced "tench", similar to hyperbolic tangent tanh)
+
 NOTES -- this is an informal/temporary TODO file
 - all library code is in lib/
   * ideally there will be few/no cpp files, so using the library just amounts to adding the lib/ directory to your include path

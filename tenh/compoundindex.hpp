@@ -1,14 +1,16 @@
 // ///////////////////////////////////////////////////////////////////////////
-// compoundindex.hpp by Victor Dods, created 2013/03/12
+// tenh/compoundindex.hpp by Victor Dods, created 2013/03/12
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#ifndef COMPOUNDINDEX_HPP_
-#define COMPOUNDINDEX_HPP_
+#ifndef TENH_COMPOUNDINDEX_HPP_
+#define TENH_COMPOUNDINDEX_HPP_
 
-#include "core.hpp"
-#include "list.hpp"
-#include "typelist_utility.hpp"
+#include "tenh/core.hpp"
+#include "tenh/meta/list.hpp"
+#include "tenh/meta/typelist_utility.hpp"
+
+namespace Tenh {
 
 // IndexTypeList should be a TypeList_t containing Index types (e.g. Vector_t::Index)
 template <typename IndexTypeList_>
@@ -318,4 +320,6 @@ struct CompoundIndexMap_t<DomainIndexTypeList,TypeList_t<CodomainIndexType> >
 //     }
 // };
 
-#endif // COMPOUNDINDEX_HPP_
+} // end of namespace Tenh
+
+#endif // TENH_COMPOUNDINDEX_HPP_

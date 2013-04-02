@@ -1,14 +1,16 @@
 // ///////////////////////////////////////////////////////////////////////////
-// core.hpp by Victor Dods, created 2013/03/13
+// tenh/core.hpp by Victor Dods, created 2013/03/13
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#ifndef CORE_HPP_
-#define CORE_HPP_
+#ifndef TENH_CORE_HPP_
+#define TENH_CORE_HPP_
 
-#include "lvd.hpp"
+#include "tenh/meta/lvd.hpp"
 
-#define FORMAT_VALUE(expr) #expr << " = " << (expr)
+#define FORMAT_VALUE(expr) #expr << " = " << (expr) // TODO: move this out into test code
+
+namespace Tenh {
 
 typedef Lvd::Uint32 Uint32;
 
@@ -54,4 +56,6 @@ T sqr (T const &t)
     return t*t;
 }
 
-#endif // CORE_HPP_
+} // end of namespace Tenh
+
+#endif // TENH_CORE_HPP_

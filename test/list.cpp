@@ -1,10 +1,11 @@
 #include <iostream>
 #include <string>
 
-#include "list.hpp"
-#include "typelist_utility.hpp"
-#include "typetuple.hpp"
+#include "tenh/meta/list.hpp"
+#include "tenh/meta/typelist_utility.hpp"
+#include "tenh/meta/typetuple.hpp"
 
+using namespace Tenh;
 
 int main (int argc, char **argv)
 {
