@@ -1,8 +1,9 @@
 #include <cassert>
 #include <iostream>
+#include <sstream>
 #include <stdexcept>
 
-#include "tenh/lvd.hpp"
+#include "tenh/meta/lvd.hpp"
 
 /*
 design goals:

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 
 #include "tenh/compoundindex.hpp"
 #include "tenh/meta/typetuple.hpp"
