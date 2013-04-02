@@ -1468,7 +1468,6 @@ int main (int argc, char **argv)
         test_Tensor2Diagonal_t<2,2>();
         test_Tensor2Diagonal_t<3,4>();
         
-/*
         {
             std::cout << "********************************\n\n";
             typedef Tensor2_t<Float3,Float4> Float3x4;
@@ -1485,13 +1484,12 @@ int main (int argc, char **argv)
             v(j,i) = u(i,j);
             std::cout << FORMAT_VALUE(v) << '\n';
             
-            typedef Tensor2Symmetric_t<Float3,Float3> Float3x3Symmetric;
+            typedef Tensor2Symmetric_t<Float3> Float3x3Symmetric;
             NamedIndex_t<Float3x3Symmetric,'q'> q;
-            Float3x3Symmetric s(1);
+            Float3x3Symmetric s(Static<>::WITHOUT_INITIALIZATION);
             s(q) = (u(i,j)*u(k,j)).bundle(i,k,q);
             std::cout << FORMAT_VALUE(s) << '\n';
         }
-        */
     }
 
     return 0;

@@ -18,25 +18,27 @@
 namespace Tenh {
 
 // symmetric 2-tensor (it is equal to its transpose)
-template <typename Factor_, typename Derived_ = NullType>
-struct Tensor2Symmetric_t : public Vector_t<typename Factor_::Scalar,
-                                            ((Factor_::DIM+1)*Factor_::DIM)/2,
+template <typename Factor1_, typename Factor2_ = Factor1_, typename Derived_ = NullType>
+struct Tensor2Symmetric_t : public Vector_t<typename Factor1_::Scalar,
+                                            ((Factor1_::DIM+1)*Factor1_::DIM)/2,
                                             typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
-                                                                   Tensor2Symmetric_t<Factor_,Derived_>,
+                                                                   Tensor2Symmetric_t<Factor1_,Factor2_,Derived_>,
                                                                    Derived_>::T>
 {
-    typedef Vector_t<typename Factor_::Scalar,
-                     ((Factor_::DIM+1)*Factor_::DIM)/2,
+    enum { FACTOR1_AND_FACTOR2_MUST_BE_IDENTICAL = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<Factor1_,Factor2_>::v>::v };
+
+    typedef Vector_t<typename Factor1_::Scalar,
+                     ((Factor1_::DIM+1)*Factor1_::DIM)/2,
                      typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
-                                            Tensor2Symmetric_t<Factor_,Derived_>,
+                                            Tensor2Symmetric_t<Factor1_,Factor2_,Derived_>,
                                             Derived_>::T> Parent;
     typedef typename Parent::Scalar Scalar;
     using Parent::DIM;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Index Index;
-    typedef Factor_ Factor;
-    typedef Factor Factor1;
-    typedef Factor Factor2;
+    typedef Factor1_ Factor;
+    typedef Factor1_ Factor1;
+    typedef Factor2_ Factor2;
     typedef CompoundIndex_t<typename TypeTuple_t<typename Factor::Index,typename Factor::Index>::T> CompoundIndex;
     static Uint32 const DIAGONAL_COMPONENT_COUNT = Factor::DIM;
     static Uint32 const STRICTLY_LOWER_TRIANGULAR_COMPONENT_COUNT = ((Factor::DIM-1)*Factor::DIM)/2;

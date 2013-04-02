@@ -1,8 +1,9 @@
 TENSOR HEAVEN - Tenh (pronounced "tench", similar to hyperbolic tangent tanh)
 
-NOTES -- this is an informal/temporary TODO file
-- all library code is in lib/
-  * ideally there will be few/no cpp files, so using the library just amounts to adding the lib/ directory to your include path
+NOTES
+- all library code is in tenh/
+  * ideally there will be few/no cpp files
+- only the root directory (the directory containing tenh/) should be included, in the same manner as Eigen.
 - all test code is in test/ -- these are just informal ad-hoc tests and prototype code, nothing that will be kept around
 - the "actual" tensor lib prototype code is in test/contraction_prototype.cpp
 - some prototype code for strongly-typed vectors (which distinguish prime/dual spaces and "named" spaces)
