@@ -6,11 +6,7 @@
 #ifndef TENH_META_LVD_HPP_
 #define TENH_META_LVD_HPP_
 
-// #if defined(HAVE_CONFIG_H)
-//     #include "config.h"
-// #endif // defined(HAVE_CONFIG_H)
-
-namespace Tenh {
+//namespace Tenh {
 namespace Lvd {
 namespace Meta {
 
@@ -575,6 +571,6 @@ enum
 };
 
 } // end of namespace Lvd
-} // end of namespace Tenh
+//} // end of namespace Tenh
 
 #endif // !defined(TENH_META_LVD_HPP_)

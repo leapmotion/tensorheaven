@@ -62,6 +62,7 @@ random TODOs:
   instead of NamedIndex_t.
 - implement [anti]symmetric contiguous_index_to_rowcol_index as a lookup table for speed.
 - create Tensor2_i compile-time interface that handles 2-index indexing, printing and so forth
+- allow use of same indices across different terms (distinguishing multiplication and addition)
 
 implemented features/items:
 x operator overloads for expression templates

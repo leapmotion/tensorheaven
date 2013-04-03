@@ -25,7 +25,7 @@ design goals:
   in this scheme?
 */
 
-using namespace Tenh;
+//using namespace Tenh;
 
 typedef Lvd::Uint32 Uint32;
 
