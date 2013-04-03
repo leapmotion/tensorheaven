@@ -67,11 +67,11 @@ void add_particular_tests_for_scalar (Directory *parent)
 
 void AddTests (Directory *parent)
 {
-    add_particular_tests_for_scalar<float>(parent);
-    add_particular_tests_for_scalar<double>(parent);
-    add_particular_tests_for_scalar<complex<float> >(parent);
-    add_particular_tests_for_scalar<complex<double> >(parent);
-    // TODO: complex scalar (?) -- this would use the standard C++ complex<> type
+    Directory *vector = new Directory("Vector_t", parent);
+    add_particular_tests_for_scalar<float>(vector);
+    add_particular_tests_for_scalar<double>(vector);
+    add_particular_tests_for_scalar<complex<float> >(vector);
+    add_particular_tests_for_scalar<complex<double> >(vector);
 }
 
 } // end of namespace Vector

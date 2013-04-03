@@ -20,6 +20,8 @@ struct EmptyTypeList
     typedef EmptyTypeList BodyTypeList;
     static Uint32 const LENGTH = 0;
 
+    static Uint32 length () { return LENGTH; } // this is necessary to avoid a linker error complaining about undefined LENGTH member
+
     template <typename Type>
     struct Contains_t
     {
@@ -34,6 +36,12 @@ struct EmptyTypeList
     };
 
     template <Uint32 INDEX>
+    struct LeadingTypeList_t
+    {
+        typedef EmptyTypeList T;
+    };
+
+    template <Uint32 INDEX>
     struct TrailingTypeList_t
     {
         typedef EmptyTypeList T;
@@ -43,6 +51,7 @@ struct EmptyTypeList
     struct IndexOf_t
     {
         static Uint32 const V = 0; // this is past the end of the indexing
+        operator bool () const { return V; }
     };
 
     static std::string type_as_string (bool with_angle_brackets = true) { return with_angle_brackets ? "TypeList_t<>" : ""; }
@@ -54,6 +63,8 @@ struct TypeList_t
     typedef HeadType_ HeadType;
     typedef BodyTypeList_ BodyTypeList;
     static Uint32 const LENGTH = 1+BodyTypeList::LENGTH;
+
+    static Uint32 length () { return LENGTH; }
 
     template <typename Type>
     struct Contains_t
@@ -71,11 +82,23 @@ struct TypeList_t
         typedef typename Lvd::Meta::If<(INDEX == 0), HeadType, typename BodyTypeList::template El_t<I>::T >::T T;
     };
 
+    // returns the TypeList_t which ends at the INDEXth element
+    template <Uint32 INDEX>
+    struct LeadingTypeList_t
+    {
+    private:
+        static Uint32 const I = (INDEX == 0) ? 0 : INDEX-1;
+    public:
+        typedef typename Lvd::Meta::If<(INDEX == 0), EmptyTypeList, TypeList_t<HeadType,typename BodyTypeList::template LeadingTypeList_t<I>::T> >::T T;
+    };
+
     // returns the TypeList_t which starts at the INDEXth element
     template <Uint32 INDEX>
     struct TrailingTypeList_t
     {
+    private:
         static Uint32 const I = (INDEX == 0) ? 0 : INDEX-1;
+    public:
         typedef typename Lvd::Meta::If<(INDEX == 0), TypeList_t, typename BodyTypeList::template TrailingTypeList_t<I>::T >::T T;
     };
 
@@ -83,13 +106,14 @@ struct TypeList_t
     struct IndexOf_t
     {
         static Uint32 const V = Lvd::Meta::TypesAreEqual<Type,HeadType>::v ? 0 : (1 + BodyTypeList::template IndexOf_t<Type>::V);
+        operator bool () const { return V; }
     };
 
     static std::string type_as_string (bool with_angle_brackets = true)
     {
         return std::string(with_angle_brackets ? "TypeList_t<" : "") +
                TypeStringOf_t<HeadType>::eval() +
-               std::string(BodyTypeList::LENGTH > 0 ? ", " : "") +
+               std::string(BodyTypeList::LENGTH > 0 ? "," : "") +
                BodyTypeList::type_as_string(false) + // no brackets, so it's not cluttered from nesting
                std::string(with_angle_brackets ? ">" : "");
     }

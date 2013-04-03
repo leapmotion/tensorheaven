@@ -3,6 +3,7 @@
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
+#include "test_typelist.hpp"
 #include "test_vector.hpp"
 
 // this is included last because it redefines the `assert` macro,
@@ -17,6 +18,7 @@ int main (int argc, char **argv, char **envp)
 {
     Directory root;
 
+    Test::TypeList::AddTests(&root);
     Test::Vector::AddTests(&root);
 
     int failure_count = RunScheduled(argc, argv, envp, root);
