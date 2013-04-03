@@ -8,6 +8,7 @@
 #include <iomanip>
 #include <sstream>
 #include <vector>
+#include <complex>
 
 #include "tenh/vector.hpp"
 
@@ -68,6 +69,8 @@ void AddTests (Directory *parent)
 {
     add_particular_tests_for_scalar<float>(parent);
     add_particular_tests_for_scalar<double>(parent);
+    add_particular_tests_for_scalar<complex<float> >(parent);
+    add_particular_tests_for_scalar<complex<double> >(parent);
     // TODO: complex scalar (?) -- this would use the standard C++ complex<> type
 }
 
