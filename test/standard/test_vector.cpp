@@ -44,6 +44,18 @@ void constructor_fill_with (Context const &context)
     }
 }
 
+template <typename Scalar>
+void check_filled_values (Context const &context)
+{
+    typedef Tenh::Vector_t<Scalar,4> Vector;
+    
+    Vector v(0,2,4,6);
+    for (typename Vector::Index i; i.is_not_at_end(); ++i)
+    {
+        assert_eq(v[i], Scalar(2*i.value()));
+    }
+}
+
 #define FORMAT(x) static_cast<ostringstream &>(ostringstream().flush() << x).str()
 
 template <typename Scalar, Uint32 DIM>
@@ -59,15 +71,17 @@ void add_particular_tests_for_scalar (Directory *parent)
 {
     add_particular_tests<Scalar,1>(parent);
     add_particular_tests<Scalar,2>(parent);
-    add_particular_tests<Scalar,3>(parent);
-    add_particular_tests<Scalar,4>(parent);
-    add_particular_tests<Scalar,10>(parent);
     add_particular_tests<Scalar,100>(parent);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent, FORMAT("check_filled_values<" << Tenh::TypeStringOf_t<Scalar>::eval() << ">"), check_filled_values<Scalar>, RESULT_NO_ERROR);
+    
 }
 
 void AddTests (Directory *parent)
 {
     Directory *vector = new Directory("Vector_t", parent);
+    add_particular_tests_for_scalar<char>(vector);
+    add_particular_tests_for_scalar<unsigned int>(vector);
+    add_particular_tests_for_scalar<long>(vector);
     add_particular_tests_for_scalar<float>(vector);
     add_particular_tests_for_scalar<double>(vector);
     add_particular_tests_for_scalar<complex<float> >(vector);
