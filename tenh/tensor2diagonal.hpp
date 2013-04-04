@@ -269,7 +269,7 @@ struct Tensor2Diagonal_t : public Vector_t<typename Factor1_::Scalar,
     // Index1 could be Factor1::Index or Factor1::CompoundIndex (checked by its use in the other functions)
     // Index2 could be Factor2::Index or Factor2::CompoundIndex (checked by its use in the other functions)
     template <typename Index1, typename Index2>
-    Scalar &set_component (Index1 const &i1, Index2 const &i2, Scalar s)
+    void set_component (Index1 const &i1, Index2 const &i2, Scalar s)
     {
         if (i1.is_at_end() || i2.is_at_end())
             throw std::invalid_argument("index/indices out of range");

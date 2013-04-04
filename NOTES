@@ -65,6 +65,7 @@ random TODOs:
 - allow use of same indices across different terms (distinguishing multiplication and addition)
 - see if it's possible to do strong range check guarantees for indices (Index_t) -- this would probably
   require a "for each" construct which would best be accomplished with lambda expressions
+- the compiler flags don't appear to be doing anything in clang, and possibly gcc.
 
 implemented features/items:
 x operator overloads for expression templates
