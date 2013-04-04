@@ -35,6 +35,13 @@ struct EmptyTypeList
         typedef NullType T;
     };
 
+    // returns the TypeList_t which is the range [START_INDEX, END_INDEX) (right endpoint not included)
+    template <Uint32 START_INDEX, Uint32 END_INDEX>
+    struct Range_t
+    {
+        typedef EmptyTypeList T;
+    };
+
     template <Uint32 INDEX>
     struct LeadingTypeList_t
     {
@@ -100,6 +107,17 @@ struct TypeList_t
         static Uint32 const I = (INDEX == 0) ? 0 : INDEX-1;
     public:
         typedef typename Lvd::Meta::If<(INDEX == 0), TypeList_t, typename BodyTypeList::template TrailingTypeList_t<I>::T >::T T;
+    };
+
+    // returns the TypeList_t which is the range [START_INDEX, END_INDEX) (right endpoint not included)
+    template <Uint32 START_INDEX, Uint32 END_INDEX>
+    struct Range_t
+    {
+    private:
+        enum { START_INDEX_MUST_NOT_EXCEED_END_INDEX = Lvd::Meta::Assert<(START_INDEX <= END_INDEX)>::v };
+        typedef typename TypeList_t::template TrailingTypeList_t<START_INDEX>::T LeadingRange;
+    public:
+        typedef typename LeadingRange::template LeadingTypeList_t<END_INDEX-START_INDEX>::T T;
     };
 
     template <typename Type>

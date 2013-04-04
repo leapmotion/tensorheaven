@@ -35,6 +35,18 @@ struct Index_t
     // no range-checking necessary
     Index_t (Index_t const &i) : m(i.m) { }
 
+    // for when you know that 0 <= i < COMPONENT_COUNT -- bypass the range check
+    static Index_t range_unchecked (Uint32 i)
+    {
+        Index_t retval(Static_t<WithoutInitialization>::SINGLETON);
+        retval.m = i;
+        return retval;
+    }
+
+    bool operator == (Index_t const &i) const { return m == i.m; }
+    bool operator != (Index_t const &i) const { return m != i.m; }
+    bool operator < (Index_t const &i) const { return m < i.m; }
+
     bool is_at_end () const { return m >= COMPONENT_COUNT; }
     bool is_not_at_end () const { return m < COMPONENT_COUNT; }
     Uint32 value () const { return m; } // for the specific memory addressing scheme that Vector_t uses
@@ -44,6 +56,8 @@ struct Index_t
     static std::string type_as_string () { return "Index_t<" + TypeStringOf_t<OwnerVector>::eval() + '>'; }
 
 private:
+
+    Index_t (WithoutInitialization const &) { }
 
     // TODO: store m as Uint16, and keep "is at end" flag as some separate bool or Uint16.
     // this will allow value() to always return valid index integers, and the system can be safer

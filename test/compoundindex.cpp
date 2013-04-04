@@ -45,6 +45,16 @@ int main (int argc, char **argv)
         X x(2);
         Y y(1,2);
         Z z(1,0,3);
+        std::cout << FORMAT_VALUE((z.range<0,0>())) << '\n';
+        std::cout << FORMAT_VALUE((z.range<0,1>())) << '\n';
+        std::cout << FORMAT_VALUE((z.range<0,2>())) << '\n';
+        std::cout << FORMAT_VALUE((z.range<0,3>())) << '\n';
+        std::cout << FORMAT_VALUE((z.range<1,1>())) << '\n';
+        std::cout << FORMAT_VALUE((z.range<1,2>())) << '\n';
+        std::cout << FORMAT_VALUE((z.range<1,3>())) << '\n';
+        std::cout << FORMAT_VALUE((z.range<2,2>())) << '\n';
+        std::cout << FORMAT_VALUE((z.range<2,3>())) << '\n';
+        std::cout << FORMAT_VALUE((z.range<3,3>())) << '\n';
     }
 
 

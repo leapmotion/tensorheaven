@@ -63,6 +63,8 @@ random TODOs:
 - implement [anti]symmetric contiguous_index_to_rowcol_index as a lookup table for speed.
 - create Tensor2_i compile-time interface that handles 2-index indexing, printing and so forth
 - allow use of same indices across different terms (distinguishing multiplication and addition)
+- see if it's possible to do strong range check guarantees for indices (Index_t) -- this would probably
+  require a "for each" construct which would best be accomplished with lambda expressions
 
 implemented features/items:
 x operator overloads for expression templates

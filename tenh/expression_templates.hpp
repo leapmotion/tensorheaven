@@ -20,6 +20,9 @@ namespace Tenh {
 template <typename Operand, typename BundleIndexTypeList, typename ResultingIndexType>
 struct ExpressionTemplate_IndexBundle_t;
 
+template <typename Operand, typename SourceIndexType, typename SplitIndexTypeList>
+struct ExpressionTemplate_IndexSplit_t;
+
 // this is essentially a compile-time interface, requiring:
 // - a Derived type (should be the type of the thing that ultimately inherits this)
 // - a Scalar type (should be the scalar type of the expression template's tensor operand)
@@ -51,13 +54,13 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     // for accessing this as the Derived type
     Derived const &as_derived () const { return *static_cast<Derived const *>(this); }
     Derived &as_derived () { return *static_cast<Derived *>(this); }
-    
+
     // methods for "bundling" two separate indices into a single 2-tensor index
     // (m(j,i)*a(j,k)*m(k,l)).bundle(i,l,Q) -- bundle (i,l) into Q
     template <typename Index1, typename Index2, typename ResultingIndexType>
     ExpressionTemplate_IndexBundle_t<Derived,TypeList_t<Index1,TypeList_t<Index2> >,ResultingIndexType> bundle (
-        Index1 const &, 
-        Index2 const &, 
+        Index1 const &,
+        Index2 const &,
         ResultingIndexType const &) const
     {
         return bundle<TypeList_t<Index1,TypeList_t<Index2> >,ResultingIndexType>();
@@ -66,6 +69,22 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     ExpressionTemplate_IndexBundle_t<Derived,BundleIndexTypeList,ResultingIndexType> bundle () const
     {
         return ExpressionTemplate_IndexBundle_t<Derived,BundleIndexTypeList,ResultingIndexType>(as_derived());
+    }
+    // methods for "splitting" a tensor index into a separate indices.
+    // a(P,Q).split(P,i,j).split(Q,k,l) -- split the tensor indices P and Q into the pairs (i,j) and (k,l),
+    // so that the expression now has the four free indices (i,j,k,l).
+    template <typename SourceIndexType, typename Index1, typename Index2>
+    ExpressionTemplate_IndexSplit_t<Derived,SourceIndexType,TypeList_t<Index1,TypeList_t<Index2> > > split (
+        SourceIndexType const &,
+        Index1 const &,
+        Index2 const &) const
+    {
+        return split<SourceIndexType,TypeList_t<Index1,TypeList_t<Index2> > >();
+    }
+    template <typename SourceIndexType, typename SplitIndexTypeList>
+    ExpressionTemplate_IndexSplit_t<Derived,SourceIndexType,SplitIndexTypeList> split () const
+    {
+        return ExpressionTemplate_IndexSplit_t<Derived,SourceIndexType,SplitIndexTypeList>(as_derived());
     }
 };
 
@@ -514,8 +533,8 @@ private:
 // ////////////////////////////////////////////////////////////////////////////
 
 template <typename Operand, typename BundleIndexTypeList, typename ResultingIndexType>
-struct ExpressionTemplate_IndexBundle_t 
-    : 
+struct ExpressionTemplate_IndexBundle_t
+    :
     public ExpressionTemplate_IndexedObject_t<IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType>,
                                               typename IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType>::IndexTypeList,
                                               typename SummedIndexTypeList_t<typename IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType>::IndexTypeList>::T,
@@ -560,6 +579,56 @@ private:
 };
 
 // ////////////////////////////////////////////////////////////////////////////
+// splitting a single compound index into multiple indices (tensor upcasting)
+// ////////////////////////////////////////////////////////////////////////////
+
+template <typename Operand, typename SourceIndexType, typename SplitIndexTypeList>
+struct ExpressionTemplate_IndexSplit_t
+    :
+    public ExpressionTemplate_IndexedObject_t<IndexSplitter_t<Operand,SourceIndexType,SplitIndexTypeList>,
+                                              typename IndexSplitter_t<Operand,SourceIndexType,SplitIndexTypeList>::IndexTypeList,
+                                              typename SummedIndexTypeList_t<typename IndexSplitter_t<Operand,SourceIndexType,SplitIndexTypeList>::IndexTypeList>::T,
+                                              FORCE_CONST,
+                                              ExpressionTemplate_IndexSplit_t<Operand,SourceIndexType,SplitIndexTypeList> >
+{
+    typedef ExpressionTemplate_IndexedObject_t<IndexSplitter_t<Operand,SourceIndexType,SplitIndexTypeList>,
+                                               typename IndexSplitter_t<Operand,SourceIndexType,SplitIndexTypeList>::IndexTypeList,
+                                               typename SummedIndexTypeList_t<typename IndexSplitter_t<Operand,SourceIndexType,SplitIndexTypeList>::IndexTypeList>::T,
+                                               FORCE_CONST,
+                                               ExpressionTemplate_IndexSplit_t<Operand,SourceIndexType,SplitIndexTypeList> > Parent;
+    typedef typename Parent::Derived Derived;
+    typedef typename Parent::Scalar Scalar;
+    typedef typename Parent::FreeIndexTypeList FreeIndexTypeList;
+    typedef typename Parent::UsedIndexTypeList UsedIndexTypeList;
+    typedef typename Parent::CompoundIndex CompoundIndex;
+    using Parent::IS_EXPRESSION_TEMPLATE;
+    typedef typename Parent::SummedIndexTypeList SummedIndexTypeList;
+
+    typedef IndexSplitter_t<Operand,SourceIndexType,SplitIndexTypeList> IndexSplitter;
+
+    ExpressionTemplate_IndexSplit_t (Operand const &operand) : Parent(m_index_splitter), m_index_splitter(operand) { }
+
+    operator Scalar () const
+    {
+        Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<FreeIndexTypeList,EmptyTypeList>::v>();
+        return operator[](CompoundIndex());
+    }
+
+    // read-only, because it doesn't make sense to assign to an index-bundled expression (which is possibly also a summation).
+    Scalar operator [] (CompoundIndex const &c) const
+    {
+        return UnarySummation_t<IndexSplitter,typename IndexSplitter::IndexTypeList,SummedIndexTypeList>::eval(m_index_splitter, c);
+    }
+
+    template <typename OtherTensor>
+    bool uses_tensor (OtherTensor const &t) const { return m_index_splitter.uses_tensor(t); }
+
+private:
+
+    IndexSplitter m_index_splitter;
+};
+
+// ////////////////////////////////////////////////////////////////////////////
 // operator overloads for expression templates
 // ////////////////////////////////////////////////////////////////////////////
 
@@ -568,7 +637,7 @@ private:
 // addition
 template <typename LeftDerived, typename LeftFreeIndexTypeList, typename LeftUsedIndexTypeList,
           typename RightDerived, typename RightFreeIndexTypeList, typename RightUsedIndexTypeList>
-ExpressionTemplate_Addition_t<LeftDerived,RightDerived,'+'>
+inline ExpressionTemplate_Addition_t<LeftDerived,RightDerived,'+'>
     operator + (ExpressionTemplate_i<LeftDerived,typename LeftDerived::Scalar,LeftFreeIndexTypeList,LeftUsedIndexTypeList> const &left_operand,
                 ExpressionTemplate_i<RightDerived,typename RightDerived::Scalar,RightFreeIndexTypeList,RightUsedIndexTypeList> const &right_operand)
 {
@@ -578,7 +647,7 @@ ExpressionTemplate_Addition_t<LeftDerived,RightDerived,'+'>
 // subtraction
 template <typename LeftDerived, typename LeftFreeIndexTypeList, typename LeftUsedIndexTypeList,
           typename RightDerived, typename RightFreeIndexTypeList, typename RightUsedIndexTypeList>
-ExpressionTemplate_Addition_t<LeftDerived,RightDerived,'-'>
+inline ExpressionTemplate_Addition_t<LeftDerived,RightDerived,'-'>
     operator - (ExpressionTemplate_i<LeftDerived,typename LeftDerived::Scalar,LeftFreeIndexTypeList,LeftUsedIndexTypeList> const &left_operand,
                 ExpressionTemplate_i<RightDerived,typename RightDerived::Scalar,RightFreeIndexTypeList,RightUsedIndexTypeList> const &right_operand)
 {
@@ -589,7 +658,7 @@ ExpressionTemplate_Addition_t<LeftDerived,RightDerived,'-'>
 
 // scalar multiplication on the right
 template <typename Derived, typename FreeIndexTypeList, typename UsedIndexTypeList>
-ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
+inline ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
     operator * (ExpressionTemplate_i<Derived,typename Derived::Scalar,FreeIndexTypeList,UsedIndexTypeList> const &operand,
                 typename Derived::Scalar scalar_operand)
 {
@@ -598,7 +667,7 @@ ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
 
 // scalar multiplication on the right -- this overload allows integer literals to be used in scalar multiplications
 template <typename Derived, typename FreeIndexTypeList, typename UsedIndexTypeList>
-ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
+inline ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
     operator * (ExpressionTemplate_i<Derived,typename Derived::Scalar,FreeIndexTypeList,UsedIndexTypeList> const &operand,
                 int scalar_operand)
 {
@@ -607,7 +676,7 @@ ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
 
 // scalar multiplication on the left
 template <typename Derived, typename FreeIndexTypeList, typename UsedIndexTypeList>
-ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
+inline ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
     operator * (typename Derived::Scalar scalar_operand,
                 ExpressionTemplate_i<Derived,typename Derived::Scalar,FreeIndexTypeList,UsedIndexTypeList> const &operand)
 {
@@ -616,7 +685,7 @@ ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
 
 // scalar multiplication on the left -- this overload allows integer literals to be used in scalar multiplications
 template <typename Derived, typename FreeIndexTypeList, typename UsedIndexTypeList>
-ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
+inline ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
     operator * (int scalar_operand,
                 ExpressionTemplate_i<Derived,typename Derived::Scalar,FreeIndexTypeList,UsedIndexTypeList> const &operand)
 {
@@ -625,7 +694,7 @@ ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
 
 // scalar division on the right
 template <typename Derived, typename FreeIndexTypeList, typename UsedIndexTypeList>
-ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'/'>
+inline ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'/'>
     operator / (ExpressionTemplate_i<Derived,typename Derived::Scalar,FreeIndexTypeList,UsedIndexTypeList> const &operand,
                 typename Derived::Scalar scalar_operand)
 {
@@ -634,7 +703,7 @@ ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'/'>
 
 // scalar division on the right -- this overload allows integer literals to be used in scalar divisions (it's Scalar division, not integer division)
 template <typename Derived, typename FreeIndexTypeList, typename UsedIndexTypeList>
-ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'/'>
+inline ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'/'>
     operator / (ExpressionTemplate_i<Derived,typename Derived::Scalar,FreeIndexTypeList,UsedIndexTypeList> const &operand,
                 int scalar_operand)
 {
@@ -643,7 +712,7 @@ ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'/'>
 
 // unary negation
 template <typename Derived, typename FreeIndexTypeList, typename UsedIndexTypeList>
-ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
+inline ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
     operator - (ExpressionTemplate_i<Derived,typename Derived::Scalar,FreeIndexTypeList,UsedIndexTypeList> const &operand)
 {
     return ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>(operand.as_derived(), -1);
@@ -653,7 +722,7 @@ ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
 
 template <typename LeftDerived, typename LeftFreeIndexTypeList, typename LeftUsedIndexTypeList,
           typename RightDerived, typename RightFreeIndexTypeList, typename RightUsedIndexTypeList>
-ExpressionTemplate_Multiplication_t<LeftDerived,RightDerived>
+inline ExpressionTemplate_Multiplication_t<LeftDerived,RightDerived>
     operator * (ExpressionTemplate_i<LeftDerived,typename LeftDerived::Scalar,LeftFreeIndexTypeList,LeftUsedIndexTypeList> const &left_operand,
                 ExpressionTemplate_i<RightDerived,typename RightDerived::Scalar,RightFreeIndexTypeList,RightUsedIndexTypeList> const &right_operand)
 {

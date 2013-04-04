@@ -115,6 +115,19 @@ struct Vector_t
         return ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,DONT_FORCE_CONST>(as_derived());
     }
 
+    // if the return value for a particular CompoundIndex is false, then that component is understood to be zero.
+    // TODO: make this a part of a Vector_i compile-time interface?
+    static bool component_corresponds_to_memory_location (Index const &i) { return true; }
+    static bool component_corresponds_to_memory_location (CompoundIndex const &c) { return true; }
+    static Scalar scalar_factor_for_component (Index const &c) { return Scalar(1); }
+    static Scalar scalar_factor_for_component (CompoundIndex const &c) { return Scalar(1); }
+    static Index vector_index_of (Index const &i) { return i; }
+    static Index vector_index_of (CompoundIndex const &c) { return c.head(); }
+
+    Uint32 data_size_in_bytes () const { return sizeof(m); }
+    Scalar const *data_pointer () const { return &m[0]; }
+    Scalar *data_pointer () { return &m[0]; }
+
     static std::string type_as_string ()
     {
         // TODO: return Derived's type_as_string value?
@@ -128,10 +141,6 @@ struct Vector_t
         else
             return "Vector_t<" + TypeStringOf_t<Scalar>::eval() + ',' + AS_STRING(DIM) + ',' + TypeStringOf_t<Derived>::eval() + '>';
     }
-
-    Uint32 data_size_in_bytes () const { return sizeof(m); }
-    Scalar const *data_pointer () const { return &m[0]; }
-    Scalar *data_pointer () { return &m[0]; }
 
 protected:
 

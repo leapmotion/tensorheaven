@@ -50,7 +50,7 @@ struct Tensor2Antisymmetric_t : public Vector_t<typename Factor1_::Scalar,
     {
         typedef typename BundleIndexTypeList::template El_t<0>::T Index1;
         typedef typename BundleIndexTypeList::template El_t<1>::T Index2;
-        // this is just to check that there is a valid conversion to the requested CompoundIndex type.
+        // this is just to check that there is a valid conversion to the requested CompoundIndex_t type.
         // it doesn't actually produce any side-effects, and should be optimized out.
         {
             Lvd::Meta::Assert<BundleIndexTypeList::LENGTH == 2>();
@@ -61,12 +61,29 @@ struct Tensor2Antisymmetric_t : public Vector_t<typename Factor1_::Scalar,
             // check that the parameter BundleIndex type is compatible with Index
             Index i(b);
         }
-            
+
         Uint32 row;
         Uint32 col;
         contiguous_index_to_rowcol_index(b.value(), row, col);
         return CompoundIndex_t<BundleIndexTypeList>(Index1(row), Index2(col));
     }
+//     template <typename SourceIndexType, typename SplitIndexTypeList>
+//     static SourceIndexType split_index_map (CompoundIndex_t<SplitIndexTypeList> const &s)
+//     {
+//         // this is just to check that there is a valid conversion from the requested CompoundIndex_t type.
+//         // it doesn't actually produce any side-effects, and should be optimized out.
+//         {
+//             Lvd::Meta::Assert<SplitIndexTypeList::LENGTH == 2>();
+//             typename Factor1::Index i1(s.template el<0>());
+//             typename Factor2::Index i2(s.template el<1>());
+//             // check that SourceIndexType has a conversion to Index
+//             SourceIndexType t;
+//             Index i(t);
+//         }
+//         Uint32 row = s.template el<0>().value();
+//         Uint32 col = s.template el<1>().value();
+//         return SourceIndexType(rowcol_index_to_contiguous_index(row, col));
+//     }
 
     // TODO: because Factor1 and Factor2 are identical, it doesn't make sense to
     // have a type coercion to either one unless they are 1-dimensional, in which case
@@ -75,69 +92,20 @@ struct Tensor2Antisymmetric_t : public Vector_t<typename Factor1_::Scalar,
 
     // TODO: because the diagonal is always zero, there is an easy type coercion to Tensor2Diagonal_t
 
-    // dumb, but the compiler wouldn't inherit implicitly, and won't parse a "using" statement
-    Scalar const &operator [] (Index const &i) const { return Parent::operator[](i); }
-    // dumb, but the compiler wouldn't inherit implicitly, and won't parse a "using" statement
-    Scalar &operator [] (Index const &i) { return Parent::operator[](i); }
+    using Parent::operator[];
 
     // using two indices in a Tensor2Antisymmetric_t is breaking apart the Index type and using it
     // as a general tensor -- this is where the fancy indexing scheme happens.
+    // Index1 could be Factor1::Index or Factor1::CompoundIndex (checked by its use in the other functions)
+    // Index2 could be Factor2::Index or Factor2::CompoundIndex (checked by its use in the other functions)
     template <typename Index1, typename Index2>
     Scalar operator [] (CompoundIndex_t<TypeList_t<Index1,TypeList_t<Index2> > > const &c) const
     {
-        if (c.is_at_end())
-            throw std::invalid_argument("index out of range");
-
-        // NOTE: these constructions are unnecessary to the code, but ARE necessary to the compile-time type checking
-        // the compiler should optimize it out anyway.
-        typename Factor::Index(c.template el<0>());
-        typename Factor::Index(c.template el<1>());
-
-        Uint32 row = c.template el<0>().value();
-        Uint32 col = c.template el<1>().value();
-
-        // index the diagonal first, then the strictly lower triangular in row-major order
-        if (row == col)
-            return Scalar(0);
-
-        // strict lower triangle elements are stored contiguously in row-major order:
-        // [ . . . ... ]
-        // [ 0 . . ... ]
-        // [ 1 2 . ... ]
-        // [ 3 4 5 ... ]
-        // ...
-        // the index of the first element in row R is the (R-1)th triangular number, so the mapping
-        // (row,col) to contiguous index i is i := r*(r-1)/2 + c.
-        bool swapped = row <= col;
-        if (swapped)
-            std::swap(row,col);
-        Scalar component(this->component_access_without_range_check(rowcol_index_to_contiguous_index(row, col)));
-        return swapped ? -component : component;
-    }
-    // for notational completeness (see the non-const component method).  this is effectively an alias for operator[].
-    template <typename Index1, typename Index2>
-    Scalar component (CompoundIndex_t<TypeList_t<Index1,TypeList_t<Index2> > > const &c) const
-    {
-        return operator[](c);
-    }
-    // you may only write-access the strict upper triangle components -- where the 0th element of c
-    // is less than the 1st element of c.  this is because the exact values of each component in
-    // the 2-tensor don't necessarily correspond to memory locations (the diagonal components are 
-    // all zero so aren't stored in memory, and the strict lower triangle components are the
-    // negatives of the upper ones, so don't correspond to direct memory access).
-    template <typename Index1, typename Index2>
-    Scalar &component (CompoundIndex_t<TypeList_t<Index1,TypeList_t<Index2> > > const &c)
-    {
-        if (c.is_at_end())
-            throw std::invalid_argument("index out of range");
-        typename Factor::Index(c.template el<0>());
-        typename Factor::Index(c.template el<1>());
-        Uint32 row = c.template el<0>().value();
-        Uint32 col = c.template el<1>().value();
-        // throw an error if the diagonal or strict upper triangle is accessed
-        if (row <= col)
-            return throw std::invalid_argument("can only write to the strict lower triangle components of a Tensor2Antisymmetric_t");
-        return this->component_access_without_range_check(rowcol_index_to_contiguous_index(row, col));
+//         // NOTE: these constructions are unnecessary to the code, but ARE necessary to the compile-time type checking
+//         // the compiler should optimize it out anyway.
+//         typename Factor1::Index(c.template el<0>());
+//         typename Factor2::Index(c.template el<1>());
+        return component(c.template el<0>(), c.template el<1>());
     }
 
     // the argument is technically unnecessary, as its value is not used.  however,
@@ -192,7 +160,7 @@ struct Tensor2Antisymmetric_t : public Vector_t<typename Factor1_::Scalar,
                                                NamedIndex_t<Factor,FACTOR2_SYMBOL>
                                                >::T
                                            >::T,
-                                       FORCE_CONST 
+                                       FORCE_CONST
                                        > operator () (
         NamedIndex_t<Factor,FACTOR1_SYMBOL> const &,
         NamedIndex_t<Factor,FACTOR2_SYMBOL> const &) const
@@ -282,6 +250,70 @@ struct Tensor2Antisymmetric_t : public Vector_t<typename Factor1_::Scalar,
                                                   >(this->as_derived());
     }
 
+    // access 2-tensor components
+    // Index1 could be Factor1::Index or Factor1::CompoundIndex (checked by its use in the other functions)
+    // Index2 could be Factor2::Index or Factor2::CompoundIndex (checked by its use in the other functions)
+    template <typename Index1, typename Index2>
+    Scalar component (Index1 const &i1, Index2 const &i2) const
+    {
+        if (i1.is_at_end() || i2.is_at_end())
+            throw std::invalid_argument("index/indices out of range");
+
+        if (!Factor1::component_corresponds_to_memory_location(i1) || !Factor2::component_corresponds_to_memory_location(i2))
+            return Scalar(0);
+
+        CompoundIndex c(Factor1::vector_index_of(i1), Factor2::vector_index_of(i2));
+        if (!component_corresponds_to_memory_location(c))
+            return Scalar(0);
+
+        return Factor1::scalar_factor_for_component(i1) *
+               Factor2::scalar_factor_for_component(i2) *
+               scalar_factor_for_component(c) *
+               operator[](vector_index_of(c));
+    }
+    // write 2-tensor components -- will throw if a component doesn't correspond to a memory location
+    // Index1 could be Factor1::Index or Factor1::CompoundIndex (checked by its use in the other functions)
+    // Index2 could be Factor2::Index or Factor2::CompoundIndex (checked by its use in the other functions)
+    template <typename Index1, typename Index2>
+    Scalar &set_component (Index1 const &i1, Index2 const &i2, Scalar s)
+    {
+        if (i1.is_at_end() || i2.is_at_end())
+            throw std::invalid_argument("index/indices out of range");
+
+        if (!Factor1::component_corresponds_to_memory_location(i1) || !Factor2::component_corresponds_to_memory_location(i2))
+            throw std::invalid_argument("this tensor component is not writable");
+
+        CompoundIndex c(Factor1::vector_index_of(i1), Factor2::vector_index_of(i2));
+        if (!component_corresponds_to_memory_location(c))
+            throw std::invalid_argument("this tensor component is not writable");
+
+        // write to the component, but divide through by the total scale factor for the component.
+        operator[](vector_index_of(c)) = s / (Factor1::scalar_factor_for_component(i1) * Factor2::scalar_factor_for_component(i2) * scalar_factor_for_component(c));
+    }
+    using Parent::component_corresponds_to_memory_location;
+    using Parent::scalar_factor_for_component;
+    using Parent::vector_index_of;
+    // the diagonal is not stored in memory -- all components are zero.
+    static bool component_corresponds_to_memory_location (CompoundIndex const &c)
+    {
+        return c.template el<0>() != c.template el<1>(); // off diagonal elements correspond to memory locations
+    }
+    // the diagonal is zero, the upper triangular components have a scalar factor of -1, and 1 otherwise.
+    static Scalar scalar_factor_for_component (CompoundIndex const &c)
+    {
+        if (c.template el<0>() == c.template el<1>()) // diagonal component
+            return Scalar(0); // not actually used, but there for completeness
+        else if (c.template el<0>() < c.template el<1>()) // upper triangular component
+            return Scalar(-1);
+        else // lower triangular component
+            return Scalar(1);
+    }
+    // this should return iff component_corresponds_to_memory_location(c) returns true.
+    static Index vector_index_of (CompoundIndex const &c)
+    {
+        return Index::range_unchecked(rowcol_index_to_contiguous_index(c.template el<0>().value(), c.template el<1>().value()));
+    }
+
     static std::string type_as_string ()
     {
         // TODO: return Derived's type_as_string value?
@@ -299,10 +331,20 @@ struct Tensor2Antisymmetric_t : public Vector_t<typename Factor1_::Scalar,
 private:
 
     // functions between the indexing schemes -- compound index is (row,col) with row > col and vector index is contiguous.
-    static Uint32 rowcol_index_to_contiguous_index (Uint32 row, Uint32 col) 
+    static Uint32 rowcol_index_to_contiguous_index (Uint32 row, Uint32 col)
     {
-        if (row <= col)
-            throw std::invalid_argument("row must be greater than col");
+        // strict lower triangle elements are stored contiguously in row-major order:
+        // [ . . . ... ]
+        // [ 0 . . ... ]
+        // [ 1 2 . ... ]
+        // [ 3 4 5 ... ]
+        // ...
+        // the index of the first element in row R is the (R-1)th triangular number, so the mapping
+        // (row,col) to contiguous index i is i := r*(r-1)/2 + c.
+        if (row == col)
+            throw std::invalid_argument("there is no contiguous index corresponding to a diagonal component index");
+        if (row < col)
+            std::swap(row, col);
         return row*(row-1)/2 + col;
     }
     static void contiguous_index_to_rowcol_index (Uint32 i, Uint32 &row, Uint32 &col)

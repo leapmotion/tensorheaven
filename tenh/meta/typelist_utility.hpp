@@ -124,6 +124,28 @@ struct Occurrence_t<EmptyTypeList,Type>
     static Uint32 const COUNT = 0;
 };
 
+
+// input: TypeList_t TypeList, typename Type -- output: the Uint32 INDEX such that TypeList::El_t<INDEX>::T is the first occurrence of Type
+// will compile-time assert if there is no occurrence
+template <typename TypeList, typename Type>
+struct FirstMatchingIn_t
+{
+    enum { TYPE_MUST_APPEAR_IN_TYPELIST = Lvd::Meta::Assert<(Occurrence_t<TypeList,Type>::COUNT > 0)>::v };
+    static Uint32 const INDEX = Lvd::Meta::TypesAreEqual<typename TypeList::HeadType,Type>::v ?
+                                0 :
+                                1+FirstMatchingIn_t<typename TypeList::BodyTypeList,Type>::INDEX;
+};
+
+template <typename HeadType, typename Type>
+struct FirstMatchingIn_t<TypeList_t<HeadType>,Type>
+{
+//     enum { TYPE_MUST_APPEAR_IN_TYPELIST = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<HeadType,Type>::v>::v };
+    static Uint32 const INDEX = 0;
+};
+
+
+
+
 // input: TypeList_t TypeList, typename UniqueTypeList, Uint32 MULTIPLICITY -- output: the types in UniqueTypeList which occur
 // exactly MULTIPLICITY times in TypeList
 template <typename TypeList, typename UniqueTypeList, Uint32 MULTIPLICITY>

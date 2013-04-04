@@ -75,6 +75,29 @@ struct List_t
         return ListElement_t<TypeList,INDEX>::el(*this);
     }
 
+    // returns the type of the List_t having the specified range
+    template <Uint32 START_INDEX, Uint32 END_INDEX>
+    struct RangeType_t
+    {
+        typedef List_t<typename TypeList::template Range_t<START_INDEX,END_INDEX>::T> T;
+    };
+
+    // returns the List_t which is the given range of elements
+    template <Uint32 START_INDEX, Uint32 END_INDEX>
+    typename RangeType_t<START_INDEX,END_INDEX>::T const &range () const
+    {
+        Lvd::Meta::Assert<(END_INDEX <= LENGTH)>();
+        // slightly yucky, but the elements are laid out in memory in a way that makes this totally valid.
+        return *reinterpret_cast<typename RangeType_t<START_INDEX,END_INDEX>::T const *>(&(trailing_list<START_INDEX>()));
+    }
+    template <Uint32 START_INDEX, Uint32 END_INDEX>
+    typename RangeType_t<START_INDEX,END_INDEX>::T &range ()
+    {
+        Lvd::Meta::Assert<(END_INDEX <= LENGTH)>();
+        // slightly yucky, but the elements are laid out in memory in a way that makes this totally valid.
+        return *reinterpret_cast<typename RangeType_t<START_INDEX,END_INDEX>::T *>(&(trailing_list<START_INDEX>()));
+    }
+
     // returns the type of the leading List_t ending at the INDEXth element.
     // i.e. elements [0,INDEX), where INDEX is excluded.
     template <Uint32 INDEX>
@@ -92,7 +115,7 @@ struct List_t
         return *reinterpret_cast<typename LeadingListType_t<INDEX>::T const *>(this);
     }
     template <Uint32 INDEX>
-    typename LeadingListType_t<INDEX>::T const &leading_list ()
+    typename LeadingListType_t<INDEX>::T &leading_list ()
     {
         Lvd::Meta::Assert<(INDEX <= LENGTH)>();
         // slightly yucky, but the elements are laid out in memory in a way that makes this totally valid.
@@ -110,13 +133,13 @@ struct List_t
     template <Uint32 INDEX>
     typename TrailingListType_t<INDEX>::T const &trailing_list () const
     {
-        Lvd::Meta::Assert<(INDEX < LENGTH)>();
+        Lvd::Meta::Assert<(INDEX <= LENGTH)>();
         return ListHelper_t<TypeList,INDEX>::trailing_list(*this);
     };
     template <Uint32 INDEX>
     typename TrailingListType_t<INDEX>::T &trailing_list ()
     {
-        Lvd::Meta::Assert<(INDEX < LENGTH)>();
+        Lvd::Meta::Assert<(INDEX <= LENGTH)>();
         return ListHelper_t<TypeList,INDEX>::trailing_list(*this);
     };
 
@@ -179,6 +202,29 @@ struct List_t<EmptyTypeList>
         return ListElement_t<TypeList,INDEX>::value(*this);
     }
 
+    // returns the type of the List_t having the specified range
+    template <Uint32 START_INDEX, Uint32 END_INDEX>
+    struct RangeType_t
+    {
+        typedef List_t<typename TypeList::template Range_t<START_INDEX,END_INDEX>::T> T;
+    };
+
+    // returns the List_t which is the given range of elements
+    template <Uint32 START_INDEX, Uint32 END_INDEX>
+    typename RangeType_t<START_INDEX,END_INDEX>::T const &range () const
+    {
+        Lvd::Meta::Assert<(END_INDEX <= LENGTH)>();
+        // slightly yucky, but the elements are laid out in memory in a way that makes this totally valid.
+        return *reinterpret_cast<typename RangeType_t<START_INDEX,END_INDEX>::T const *>(&(trailing_list<START_INDEX>()));
+    }
+    template <Uint32 START_INDEX, Uint32 END_INDEX>
+    typename RangeType_t<START_INDEX,END_INDEX>::T &range ()
+    {
+        Lvd::Meta::Assert<(END_INDEX <= LENGTH)>();
+        // slightly yucky, but the elements are laid out in memory in a way that makes this totally valid.
+        return *reinterpret_cast<typename RangeType_t<START_INDEX,END_INDEX>::T *>(&(trailing_list<START_INDEX>()));
+    }
+
     // returns the type of the leading List_t ending at the INDEXth element.
     // i.e. elements [0,INDEX), where INDEX is excluded.
     template <Uint32 INDEX>
@@ -196,7 +242,7 @@ struct List_t<EmptyTypeList>
         return *reinterpret_cast<typename LeadingListType_t<INDEX>::T const *>(this);
     }
     template <Uint32 INDEX>
-    typename LeadingListType_t<INDEX>::T const &leading_list ()
+    typename LeadingListType_t<INDEX>::T &leading_list ()
     {
         Lvd::Meta::Assert<(INDEX <= LENGTH)>();
         // slightly yucky, but the elements are laid out in memory in a way that makes this totally valid.
@@ -292,6 +338,29 @@ struct List_t<TypeList_t<HeadType_> >
         return m_head;
     }
 
+    // returns the type of the List_t having the specified range
+    template <Uint32 START_INDEX, Uint32 END_INDEX>
+    struct RangeType_t
+    {
+        typedef List_t<typename TypeList::template Range_t<START_INDEX,END_INDEX>::T> T;
+    };
+
+    // returns the List_t which is the given range of elements
+    template <Uint32 START_INDEX, Uint32 END_INDEX>
+    typename RangeType_t<START_INDEX,END_INDEX>::T const &range () const
+    {
+        Lvd::Meta::Assert<(END_INDEX <= LENGTH)>();
+        // slightly yucky, but the elements are laid out in memory in a way that makes this totally valid.
+        return *reinterpret_cast<typename RangeType_t<START_INDEX,END_INDEX>::T const *>(&(trailing_list<START_INDEX>()));
+    }
+    template <Uint32 START_INDEX, Uint32 END_INDEX>
+    typename RangeType_t<START_INDEX,END_INDEX>::T &range ()
+    {
+        Lvd::Meta::Assert<(END_INDEX <= LENGTH)>();
+        // slightly yucky, but the elements are laid out in memory in a way that makes this totally valid.
+        return *reinterpret_cast<typename RangeType_t<START_INDEX,END_INDEX>::T *>(&(trailing_list<START_INDEX>()));
+    }
+
     // returns the type of the leading List_t ending at the INDEXth element.
     // i.e. elements [0,INDEX), where INDEX is excluded.
     template <Uint32 INDEX>
@@ -309,7 +378,7 @@ struct List_t<TypeList_t<HeadType_> >
         return *reinterpret_cast<typename LeadingListType_t<INDEX>::T const *>(this);
     }
     template <Uint32 INDEX>
-    typename LeadingListType_t<INDEX>::T const &leading_list ()
+    typename LeadingListType_t<INDEX>::T &leading_list ()
     {
         Lvd::Meta::Assert<(INDEX <= LENGTH)>();
         // slightly yucky, but the elements are laid out in memory in a way that makes this totally valid.

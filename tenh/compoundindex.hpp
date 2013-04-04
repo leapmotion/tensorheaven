@@ -57,6 +57,10 @@ struct CompoundIndex_t : List_t<IndexTypeList_>
         Parent(leading_compound_index)
     { }
 
+    bool operator == (CompoundIndex_t const &c) const { return this->head() == c.head() && body() == c.body(); }
+    bool operator != (CompoundIndex_t const &c) const { return this->head() != c.head() || body() != c.body(); }
+    bool operator < (CompoundIndex_t const &c) const { return this->head() < c.head() && body() < c.body(); }
+
     bool is_at_end () const { return this->head().is_at_end(); } // because the head is the last one incremented
     bool is_not_at_end () const { return this->head().is_not_at_end(); } // because the head is the last one incremented
     Uint32 value () const { return BodyCompoundIndex::COMPONENT_COUNT*this->head().value() + this->body().value(); }
@@ -79,6 +83,56 @@ struct CompoundIndex_t : List_t<IndexTypeList_>
     BodyCompoundIndex const &body () const { return *static_cast<BodyCompoundIndex const *>(&Parent::body()); }
     BodyCompoundIndex &body () { return *static_cast<BodyCompoundIndex *>(&Parent::body()); }
 
+    // TODO: rename to LeadingCompoundIndex_t
+
+    // slighty hacky way to use List_t's existing functionality -- NOTE: this only
+    // works because CompoundIndex_t<IndexTypeList> inherits non-virtually from
+    // List_t<IndexTypeList> and has no members.
+    // returns the type of the CompoundIndex_t having the specified range
+    template <Uint32 START_INDEX, Uint32 END_INDEX>
+    struct RangeType_t
+    {
+        typedef CompoundIndex_t<typename IndexTypeList::template Range_t<START_INDEX,END_INDEX>::T> T;
+    };
+
+    // returns the CompoundIndex_t which is the given range of elements
+    template <Uint32 START_INDEX, Uint32 END_INDEX>
+    typename RangeType_t<START_INDEX,END_INDEX>::T const &range () const
+    {
+        return *static_cast<typename RangeType_t<START_INDEX,END_INDEX>::T const *>(&(this->Parent::template range<START_INDEX,END_INDEX>()));
+    }
+    template <Uint32 START_INDEX, Uint32 END_INDEX>
+    typename RangeType_t<START_INDEX,END_INDEX>::T &range ()
+    {
+        return *static_cast<typename RangeType_t<START_INDEX,END_INDEX>::T *>(&(this->Parent::template range<START_INDEX,END_INDEX>()));
+    }
+
+    // slighty hacky way to use List_t's existing functionality -- NOTE: this only
+    // works because CompoundIndex_t<IndexTypeList> inherits non-virtually from
+    // List_t<IndexTypeList> and has no members.
+    // returns the type of the leading CompoundIndex_t ending at the INDEXth element
+    template <Uint32 INDEX>
+    struct LeadingListType_t
+    {
+//         typedef List_t<typename TypeList::template LeadingTypeList_t<INDEX>::T> T;
+        typedef CompoundIndex_t<typename IndexTypeList::template LeadingTypeList_t<INDEX>::T> T;
+    };
+
+    // TODO: rename to leading_compound_index
+    // returns the leading CompoundIndex_t ending at the INDEXth element.
+    template <Uint32 INDEX>
+    typename LeadingListType_t<INDEX>::T const &leading_list () const
+    {
+        return *static_cast<typename LeadingListType_t<INDEX>::T const *>(&(this->Parent::template leading_list<INDEX>()));
+    }
+    template <Uint32 INDEX>
+    typename LeadingListType_t<INDEX>::T &leading_list ()
+    {
+        return *static_cast<typename LeadingListType_t<INDEX>::T *>(&(this->Parent::template leading_list<INDEX>()));
+    }
+
+    // TODO: rename to TrailingCompoundIndex_t
+
     // slighty hacky way to use List_t's existing functionality -- NOTE: this only
     // works because CompoundIndex_t<IndexTypeList> inherits non-virtually from
     // List_t<IndexTypeList> and has no members.
@@ -89,6 +143,7 @@ struct CompoundIndex_t : List_t<IndexTypeList_>
         typedef CompoundIndex_t<typename IndexTypeList::template TrailingTypeList_t<INDEX>::T> T;
     };
 
+    // TODO: rename to trailing_compound_index
     // returns the trailing CompoundIndex_t starting at the INDEXth element
     template <Uint32 INDEX>
     typename TrailingListType_t<INDEX>::T const &trailing_list () const
@@ -131,6 +186,10 @@ struct CompoundIndex_t<TypeList_t<HeadIndexType> > : public List_t<TypeList_t<He
         Parent(leading_compound_index)
     { }
 
+    bool operator == (CompoundIndex_t const &c) const { return this->head() == c.head(); }
+    bool operator != (CompoundIndex_t const &c) const { return this->head() != c.head(); }
+    bool operator < (CompoundIndex_t const &c) const { return this->head() < c.head(); }
+
     bool is_at_end () const { return this->head().is_at_end(); }
     bool is_not_at_end () const { return this->head().is_not_at_end(); }
     Uint32 value () const { return this->head().value(); }
@@ -141,11 +200,60 @@ struct CompoundIndex_t<TypeList_t<HeadIndexType> > : public List_t<TypeList_t<He
     // works because CompoundIndex_t<IndexTypeList> inherits non-virtually from
     // List_t<IndexTypeList> and has no members.
     BodyCompoundIndex const &body () const { return *static_cast<BodyCompoundIndex const *>(&Parent::body()); }
+    BodyCompoundIndex &body () { return *static_cast<BodyCompoundIndex *>(&Parent::body()); }
 
     // type conversion operator -- because this CompoundIndex_t only has one component,
     // it can be canonically identified as its component type.
     operator HeadIndexType const & () const { return this->head(); }
     operator HeadIndexType & () { return this->head(); }
+
+    // TODO: rename to LeadingCompoundIndex_t
+
+    // slighty hacky way to use List_t's existing functionality -- NOTE: this only
+    // works because CompoundIndex_t<IndexTypeList> inherits non-virtually from
+    // List_t<IndexTypeList> and has no members.
+    // returns the type of the CompoundIndex_t having the specified range
+    template <Uint32 START_INDEX, Uint32 END_INDEX>
+    struct RangeType_t
+    {
+        typedef CompoundIndex_t<typename IndexTypeList::template Range_t<START_INDEX,END_INDEX>::T> T;
+    };
+
+    // returns the CompoundIndex_t which is the given range of elements
+    template <Uint32 START_INDEX, Uint32 END_INDEX>
+    typename RangeType_t<START_INDEX,END_INDEX>::T const &range () const
+    {
+        return *static_cast<typename RangeType_t<START_INDEX,END_INDEX>::T const *>(&(this->Parent::template range<START_INDEX,END_INDEX>()));
+    }
+    template <Uint32 START_INDEX, Uint32 END_INDEX>
+    typename RangeType_t<START_INDEX,END_INDEX>::T &range ()
+    {
+        return *static_cast<typename RangeType_t<START_INDEX,END_INDEX>::T *>(&(this->Parent::template range<START_INDEX,END_INDEX>()));
+    }
+
+    // slighty hacky way to use List_t's existing functionality -- NOTE: this only
+    // works because CompoundIndex_t<IndexTypeList> inherits non-virtually from
+    // List_t<IndexTypeList> and has no members.
+    // returns the type of the leading CompoundIndex_t ending at the INDEXth element
+    template <Uint32 INDEX>
+    struct LeadingListType_t
+    {
+//         typedef List_t<typename TypeList::template LeadingTypeList_t<INDEX>::T> T;
+        typedef CompoundIndex_t<typename IndexTypeList::template LeadingTypeList_t<INDEX>::T> T;
+    };
+
+    // TODO: rename to leading_compound_index
+    // returns the leading CompoundIndex_t ending at the INDEXth element.
+    template <Uint32 INDEX>
+    typename LeadingListType_t<INDEX>::T const &leading_list () const
+    {
+        return *static_cast<typename LeadingListType_t<INDEX>::T const *>(&(this->Parent::template leading_list<INDEX>()));
+    }
+    template <Uint32 INDEX>
+    typename LeadingListType_t<INDEX>::T &leading_list ()
+    {
+        return *static_cast<typename LeadingListType_t<INDEX>::T *>(&(this->Parent::template leading_list<INDEX>()));
+    }
 
     // slighty hacky way to use List_t's existing functionality -- NOTE: this only
     // works because CompoundIndex_t<IndexTypeList> inherits non-virtually from
@@ -186,6 +294,10 @@ struct CompoundIndex_t<EmptyTypeList> : public List_t<EmptyTypeList>
 
     CompoundIndex_t () { }
 
+    bool operator == (CompoundIndex_t const &c) const { return true; }  // there is only one of these, so it must be equal
+    bool operator != (CompoundIndex_t const &c) const { return false; } // there is only one of these, so it must not be unequal
+    bool operator < (CompoundIndex_t const &c) const { return false; }  // there is only one of these, so it can't be less than
+
     bool is_at_end () const { return true; }
     bool is_not_at_end () const { return false; }
     void operator ++ () { } // no-op
@@ -195,6 +307,7 @@ struct CompoundIndex_t<EmptyTypeList> : public List_t<EmptyTypeList>
     // works because CompoundIndex_t<IndexTypeList> inherits non-virtually from
     // List_t<IndexTypeList> and has no members.
     BodyCompoundIndex const &body () const { return *static_cast<BodyCompoundIndex const *>(&Parent::body()); }
+    BodyCompoundIndex &body () { return *static_cast<BodyCompoundIndex *>(&Parent::body()); }
 
     static std::string type_as_string () { return "CompoundIndex_t<" + TypeStringOf_t<IndexTypeList>::eval() + '>'; }
 };
@@ -207,30 +320,30 @@ struct CompoundIndex_t<EmptyTypeList> : public List_t<EmptyTypeList>
 
 // tack an element onto the beginning of a list (where the list is empty)
 template <typename HeadType>
-CompoundIndex_t<TypeList_t<HeadType> > operator >>= (HeadType const &head, CompoundIndex_t<EmptyTypeList> const &) 
-{ 
-    return CompoundIndex_t<TypeList_t<HeadType> >(head); 
+inline CompoundIndex_t<TypeList_t<HeadType> > operator >>= (HeadType const &head, CompoundIndex_t<EmptyTypeList> const &)
+{
+    return CompoundIndex_t<TypeList_t<HeadType> >(head);
 }
 
 // tack an element onto the beginning of a list (catch-all case)
 template <typename HeadType, typename BodyTypeList>
-CompoundIndex_t<TypeList_t<HeadType,BodyTypeList> > operator >>= (HeadType const &head, CompoundIndex_t<BodyTypeList> const &body) 
-{ 
-    return CompoundIndex_t<TypeList_t<HeadType,BodyTypeList> >(head, body); 
+inline CompoundIndex_t<TypeList_t<HeadType,BodyTypeList> > operator >>= (HeadType const &head, CompoundIndex_t<BodyTypeList> const &body)
+{
+    return CompoundIndex_t<TypeList_t<HeadType,BodyTypeList> >(head, body);
 }
 
 
 
 // concatenate two lists (where both are empty)
-CompoundIndex_t<EmptyTypeList> operator |= (CompoundIndex_t<EmptyTypeList> const &, CompoundIndex_t<EmptyTypeList> const &)
+inline CompoundIndex_t<EmptyTypeList> operator |= (CompoundIndex_t<EmptyTypeList> const &, CompoundIndex_t<EmptyTypeList> const &)
 {
     return CompoundIndex_t<EmptyTypeList>();
 }
 
 // concatenate two lists (where the second is empty)
 template <typename LeadingHeadType, typename LeadingBodyTypeList>
-CompoundIndex_t<TypeList_t<LeadingHeadType,LeadingBodyTypeList> > operator |= (
-    CompoundIndex_t<TypeList_t<LeadingHeadType,LeadingBodyTypeList> > const &leading_list, 
+inline CompoundIndex_t<TypeList_t<LeadingHeadType,LeadingBodyTypeList> > operator |= (
+    CompoundIndex_t<TypeList_t<LeadingHeadType,LeadingBodyTypeList> > const &leading_list,
     CompoundIndex_t<EmptyTypeList> const &)
 {
     return leading_list;
@@ -238,8 +351,8 @@ CompoundIndex_t<TypeList_t<LeadingHeadType,LeadingBodyTypeList> > operator |= (
 
 // concatenate two lists (where the first is empty)
 template <typename TrailingHeadType, typename TrailingBodyTypeList>
-CompoundIndex_t<TypeList_t<TrailingHeadType,TrailingBodyTypeList> > operator |= (
-    CompoundIndex_t<EmptyTypeList> const &, 
+inline CompoundIndex_t<TypeList_t<TrailingHeadType,TrailingBodyTypeList> > operator |= (
+    CompoundIndex_t<EmptyTypeList> const &,
     CompoundIndex_t<TypeList_t<TrailingHeadType,TrailingBodyTypeList> > const &trailing_type_list)
 {
     return trailing_type_list;
@@ -247,23 +360,23 @@ CompoundIndex_t<TypeList_t<TrailingHeadType,TrailingBodyTypeList> > operator |= 
 
 // concatenate two lists (where the first has only one element)
 template <typename LeadingHeadType, typename TrailingHeadType, typename TrailingBodyTypeList>
-CompoundIndex_t<TypeList_t<LeadingHeadType,TypeList_t<TrailingHeadType,TrailingBodyTypeList> > > operator |= (
+inline CompoundIndex_t<TypeList_t<LeadingHeadType,TypeList_t<TrailingHeadType,TrailingBodyTypeList> > > operator |= (
     CompoundIndex_t<TypeList_t<LeadingHeadType> > const &leading_list,
     CompoundIndex_t<TypeList_t<TrailingHeadType,TrailingBodyTypeList> > const &trailing_list)
 {
     return CompoundIndex_t<TypeList_t<LeadingHeadType,TypeList_t<TrailingHeadType,TrailingBodyTypeList> > >(
-        leading_list.head(), 
+        leading_list.head(),
         trailing_list);
 }
 
 // concatenate two lists (catch-all case)
 template <typename LeadingTypeList, typename TrailingTypeList>
-CompoundIndex_t<typename ConcatenationOfTypeLists_t<LeadingTypeList,TrailingTypeList>::T> operator |= (
+inline CompoundIndex_t<typename ConcatenationOfTypeLists_t<LeadingTypeList,TrailingTypeList>::T> operator |= (
     CompoundIndex_t<LeadingTypeList> const &leading_list,
     CompoundIndex_t<TrailingTypeList> const &trailing_list)
 {
     return CompoundIndex_t<typename ConcatenationOfTypeLists_t<LeadingTypeList,TrailingTypeList>::T>(
-        leading_list.head(), 
+        leading_list.head(),
         (leading_list.body() |= trailing_list));
 }
 
