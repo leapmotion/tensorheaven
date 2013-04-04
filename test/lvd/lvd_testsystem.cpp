@@ -562,6 +562,7 @@ unsigned int Directory::SpawnScheduled (char *argv0, char **envp, string const &
         argv[6] = NULL;
 
 // NOTE: this might be necessary for Linux, but it messes up Mac OS X
+// NOTE update: this is apparently also unnecessary for Linux.
 //         // sync the input stream (which effectively dumps the unread bytes)
 //         cin.sync();
         // set the child process running on the current test
@@ -701,8 +702,8 @@ unsigned int Directory::RunScheduled ()
                 PRINT_DEBUG_MESSAGE("succeeded\n");
             }
             catch (exception &e)
-            { 
-                result = RESULT_UNCAUGHT_EXCEPTION; 
+            {
+                result = RESULT_UNCAUGHT_EXCEPTION;
                 g_test_stage = STAGE_INITIALIZE;
                 message = e.what();
                 PRINT_DEBUG_MESSAGE("uncaught exception: " << e.what() << '\n');
@@ -850,10 +851,31 @@ void Directory::SetIsScheduled (std::string const &test_path, bool is_scheduled)
 
 void Directory::AddSubDirectory (string const &sub_directory_name, Directory &sub_directory)
 {
-    assert(!sub_directory_name.empty() && "every (non-root) Directory name must be non-empty");
-    assert(sub_directory_name.find_first_of("/") == string::npos && "every Directory name must not contain any forwardslashes");
-    assert(m_test_case_map.find(sub_directory_name) == m_test_case_map.end() && "subdirectory name collision with existing test case");
-    assert(m_sub_directory_map.find(sub_directory_name) == m_sub_directory_map.end() && "subdirectory name collision with existing subdirectory");
+    bool error_encountered = false;
+    if (sub_directory_name.empty())
+    {
+        cerr << "TEST CODE PROGRAMMER ERROR in adding a Directory: every (non-root) Directory name must be non-empty\n";
+        error_encountered = true;
+    }
+    if (sub_directory_name.find_first_of("/") != string::npos)
+    {
+        cerr << "TEST CODE PROGRAMMER ERROR in adding a Directory: every Directory name must not contain any forwardslashes \""
+             << sub_directory_name << "\"\n";
+        error_encountered = true;
+    }
+    if (m_test_case_map.find(sub_directory_name) != m_test_case_map.end())
+    {
+        cerr << "TEST CODE PROGRAMMER ERROR in adding a Directory: subdirectory name collision with existing test case \""
+             << sub_directory_name << "\"\n";
+        error_encountered = true;
+    }
+    if (m_sub_directory_map.find(sub_directory_name) != m_sub_directory_map.end())
+    {
+        cerr << "TEST CODE PROGRAMMER ERROR in adding a Directory: subdirectory name collision with existing subdirectory \""
+             << sub_directory_name << "\"\n";
+        error_encountered = true;
+    }
+    assert(!error_encountered && "there was an error in adding the subdirectory");
     m_sub_directory_map[sub_directory_name] = &sub_directory;
 }
 
