@@ -6,6 +6,8 @@
 #if !defined(TEST_VECTOR_HPP_)
 #define TEST_VECTOR_HPP_
 
+#include "test.hpp"
+
 namespace Lvd {
 namespace TestSystem {
 

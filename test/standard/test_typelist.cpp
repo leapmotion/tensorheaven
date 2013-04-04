@@ -18,14 +18,13 @@ using namespace TestSystem;
 namespace Test {
 namespace TypeList {
 
-#define FORMAT(x) static_cast<ostringstream &>(ostringstream().flush() << x).str()
-
 void test_EmptyTypeList (Context const &context)
 {
     assert((Lvd::Meta::TypesAreEqual<Tenh::EmptyTypeList::BodyTypeList,Tenh::EmptyTypeList>()));
     assert_eq(Tenh::EmptyTypeList::length(), 0);
     assert(!Tenh::EmptyTypeList::Contains_t<int>());
     assert((Lvd::Meta::TypesAreEqual<Tenh::EmptyTypeList::LeadingTypeList_t<0>::T,Tenh::EmptyTypeList>()));
+    assert((Lvd::Meta::TypesAreEqual<Tenh::EmptyTypeList::TrailingTypeList_t<0>::T,Tenh::EmptyTypeList>()));
 }
 
 template <typename TypeList>
@@ -48,49 +47,84 @@ void test_leading_type_list (Context const &context)
     assert((Lvd::Meta::TypesAreEqual<typename TypeList::template LeadingTypeList_t<INDEX>::T,ExpectedLeadingTypeList>()));
 }
 
-void add_leading_type_list_tests (Directory *parent)
+template <typename TypeList, Uint32 INDEX, typename ExpectedTrailingTypeList>
+void test_trailing_type_list (Context const &context)
 {
-    typedef Tenh::TypeList_t<char> Tl1;
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent, 
-                                     FORMAT(Tenh::TypeStringOf_t<Tl1>::eval() << "::LeadingTypeList_t<" << 0 << '>'),
-                                     test_leading_type_list<Tl1,0,Tenh::EmptyTypeList>,
-                                     RESULT_NO_ERROR);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent, 
-                                     FORMAT(Tenh::TypeStringOf_t<Tl1>::eval() << "::LeadingTypeList_t<" << 1 << '>'),
-                                     test_leading_type_list<Tl1,1,Tl1>,
-                                     RESULT_NO_ERROR);
+    assert((Lvd::Meta::TypesAreEqual<typename TypeList::template TrailingTypeList_t<INDEX>::T,ExpectedTrailingTypeList>()));
+}
 
-    typedef Tenh::TypeList_t<char,Tenh::TypeList_t<int> > Tl2;
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent, 
-                                     FORMAT(Tenh::TypeStringOf_t<Tl2>::eval() << "::LeadingTypeList_t<" << 0 << '>'),
-                                     test_leading_type_list<Tl2,0,Tenh::EmptyTypeList>,
+template <typename TypeList, Uint32 INDEX, typename ExpectedLeadingTypeList, typename ExpectedTrailingTypeList>
+void add_leading_and_trailing_type_list_test (Directory *parent)
+{
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent,
+                                     FORMAT(Tenh::TypeStringOf_t<TypeList>::eval() << "::LeadingTypeList_t<" << INDEX << '>'),
+                                     test_leading_type_list<TypeList,INDEX,ExpectedLeadingTypeList>,
                                      RESULT_NO_ERROR);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent, 
-                                     FORMAT(Tenh::TypeStringOf_t<Tl2>::eval() << "::LeadingTypeList_t<" << 1 << '>'),
-                                     test_leading_type_list<Tl2,1,Tl1>,
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent,
+                                     FORMAT(Tenh::TypeStringOf_t<TypeList>::eval() << "::TrailingTypeList_t<" << INDEX << '>'),
+                                     test_trailing_type_list<TypeList,INDEX,ExpectedTrailingTypeList>,
                                      RESULT_NO_ERROR);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent, 
-                                     FORMAT(Tenh::TypeStringOf_t<Tl2>::eval() << "::LeadingTypeList_t<" << 2 << '>'),
-                                     test_leading_type_list<Tl2,2,Tl2>,
-                                     RESULT_NO_ERROR);
+}
 
-    typedef Tenh::TypeList_t<char,Tenh::TypeList_t<int,Tenh::TypeList_t<double> > > Tl3;
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent, 
-                                     FORMAT(Tenh::TypeStringOf_t<Tl3>::eval() << "::LeadingTypeList_t<" << 0 << '>'),
-                                     test_leading_type_list<Tl3,0,Tenh::EmptyTypeList>,
-                                     RESULT_NO_ERROR);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent, 
-                                     FORMAT(Tenh::TypeStringOf_t<Tl3>::eval() << "::LeadingTypeList_t<" << 1 << '>'),
-                                     test_leading_type_list<Tl3,1,Tl1>,
-                                     RESULT_NO_ERROR);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent, 
-                                     FORMAT(Tenh::TypeStringOf_t<Tl3>::eval() << "::LeadingTypeList_t<" << 2 << '>'),
-                                     test_leading_type_list<Tl3,2,Tl2>,
-                                     RESULT_NO_ERROR);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent, 
-                                     FORMAT(Tenh::TypeStringOf_t<Tl3>::eval() << "::LeadingTypeList_t<" << 3 << '>'),
-                                     test_leading_type_list<Tl3,3,Tl3>,
-                                     RESULT_NO_ERROR);
+void add_leading_and_trailing_type_list_tests (Directory *parent)
+{
+    // length 0 type list
+    add_leading_and_trailing_type_list_test<Tenh::EmptyTypeList,
+                                            0,
+                                            Tenh::EmptyTypeList, // expected leading type list
+                                            Tenh::EmptyTypeList  // expected trailing type list
+                                            >(parent);
+
+    // length 1 type list
+    add_leading_and_trailing_type_list_test<Tenh::TypeList_t<char>,
+                                            0,
+                                            Tenh::EmptyTypeList,   // expected leading type list
+                                            Tenh::TypeList_t<char> // expected trailing type list
+                                            >(parent);
+    add_leading_and_trailing_type_list_test<Tenh::TypeList_t<char>,
+                                            1,
+                                            Tenh::TypeList_t<char>, // expected leading type list
+                                            Tenh::EmptyTypeList     // expected trailing type list
+                                            >(parent);
+
+    // length 2 type list
+    add_leading_and_trailing_type_list_test<Tenh::TypeList_t<char,Tenh::TypeList_t<int> >,
+                                            0,
+                                            Tenh::EmptyTypeList,                           // expected leading type list
+                                            Tenh::TypeList_t<char,Tenh::TypeList_t<int> >  // expected trailing type list
+                                            >(parent);
+    add_leading_and_trailing_type_list_test<Tenh::TypeList_t<char,Tenh::TypeList_t<int> >,
+                                            1,
+                                            Tenh::TypeList_t<char>,                        // expected leading type list
+                                            Tenh::TypeList_t<int>                          // expected trailing type list
+                                            >(parent);
+    add_leading_and_trailing_type_list_test<Tenh::TypeList_t<char,Tenh::TypeList_t<int> >,
+                                            2,
+                                            Tenh::TypeList_t<char,Tenh::TypeList_t<int> >, // expected leading type list
+                                            Tenh::EmptyTypeList                            // expected trailing type list
+                                            >(parent);
+
+    // length 3 type list
+    add_leading_and_trailing_type_list_test<Tenh::TypeList_t<char,Tenh::TypeList_t<int,Tenh::TypeList_t<double> > >,
+                                            0,
+                                            Tenh::EmptyTypeList,                                                     // expected leading type list
+                                            Tenh::TypeList_t<char,Tenh::TypeList_t<int,Tenh::TypeList_t<double> > >  // expected trailing type list
+                                            >(parent);
+    add_leading_and_trailing_type_list_test<Tenh::TypeList_t<char,Tenh::TypeList_t<int,Tenh::TypeList_t<double> > >,
+                                            1,
+                                            Tenh::TypeList_t<char>,                                                  // expected leading type list
+                                            Tenh::TypeList_t<int,Tenh::TypeList_t<double> >                          // expected trailing type list
+                                            >(parent);
+    add_leading_and_trailing_type_list_test<Tenh::TypeList_t<char,Tenh::TypeList_t<int,Tenh::TypeList_t<double> > >,
+                                            2,
+                                            Tenh::TypeList_t<char,Tenh::TypeList_t<int> >,                           // expected leading type list
+                                            Tenh::TypeList_t<double>                                                 // expected trailing type list
+                                            >(parent);
+    add_leading_and_trailing_type_list_test<Tenh::TypeList_t<char,Tenh::TypeList_t<int,Tenh::TypeList_t<double> > >,
+                                            3,
+                                            Tenh::TypeList_t<char,Tenh::TypeList_t<int,Tenh::TypeList_t<double> > >, // expected leading type list
+                                            Tenh::EmptyTypeList                                                      // expected trailing type list
+                                            >(parent);
 }
 
 void AddTests (Directory *parent)
@@ -101,7 +135,7 @@ void AddTests (Directory *parent)
     add_particular_tests_for_typelist<Tenh::TypeList_t<int>,1>(typelist);
     add_particular_tests_for_typelist<Tenh::TypeList_t<int,Tenh::TypeList_t<char> >,2>(typelist);
 
-    add_leading_type_list_tests(typelist);
+    add_leading_and_trailing_type_list_tests(typelist);
 }
 
 } // end of namespace TypeList

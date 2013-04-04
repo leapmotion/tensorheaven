@@ -1,10 +1,10 @@
 // ///////////////////////////////////////////////////////////////////////////
-// test_typelist.hpp by Victor Dods, created 2013/04/03
+// test_list.hpp by Victor Dods, created 2013/04/03
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#if !defined(TEST_TYPELIST_HPP_)
-#define TEST_TYPELIST_HPP_
+#if !defined(TEST_LIST_HPP_)
+#define TEST_LIST_HPP_
 
 #include "test.hpp"
 
@@ -17,11 +17,11 @@ struct Directory;
 } // end of namespace Lvd
 
 namespace Test {
-namespace TypeList {
+namespace List {
 
 void AddTests (Lvd::TestSystem::Directory *parent);
 
-} // end of namespace TypeList
+} // end of namespace List
 } // end of namespace Test
 
-#endif // !defined(TEST_TYPELIST_HPP_)
+#endif // !defined(TEST_LIST_HPP_)

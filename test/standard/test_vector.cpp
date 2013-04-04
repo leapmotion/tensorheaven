@@ -5,7 +5,7 @@
 
 #include "test_vector.hpp"
 
-#include <iomanip>
+// #include <iomanip>
 #include <sstream>
 #include <vector>
 #include <complex>
@@ -27,7 +27,7 @@ template <typename Scalar, Uint32 DIM>
 void constructor_without_initialization (Context const &context)
 {
     typedef Tenh::Vector_t<Scalar,DIM> Vector;
-    
+
     Vector v(Tenh::Static<>::WITHOUT_INITIALIZATION);
 }
 
@@ -35,7 +35,7 @@ template <typename Scalar, Uint32 DIM>
 void constructor_fill_with (Context const &context)
 {
     typedef Tenh::Vector_t<Scalar,DIM> Vector;
-    
+
     Scalar fill = context.DataAs<Scalar>();
     Vector v(fill);
     for (typename Vector::Index i; i.is_not_at_end(); ++i)
@@ -55,8 +55,6 @@ void check_filled_values (Context const &context)
         assert_eq(v[i], Scalar(2*i.value()));
     }
 }
-
-#define FORMAT(x) static_cast<ostringstream &>(ostringstream().flush() << x).str()
 
 template <typename Scalar, Uint32 DIM>
 void add_particular_tests (Directory *parent)

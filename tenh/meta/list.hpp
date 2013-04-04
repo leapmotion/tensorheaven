@@ -15,8 +15,10 @@
 
 namespace Tenh {
 
+template <typename TypeList, Uint32 INDEX> struct ListElement_t;
 template <typename TypeList, Uint32 INDEX> struct ListHelper_t;
 
+// List_t is effectively a tuple, but implemented recursively as a (headelement,bodylist) pair.
 template <typename TypeList_>
 struct List_t
 {
@@ -42,6 +44,11 @@ struct List_t
         m_body(leading_list.body())
     { }
 
+    bool operator == (List_t const &l) const { return head() == l.head() && body() == l.body(); }
+    bool operator != (List_t const &l) const { return head() != l.head() || body() != l.body(); }
+
+    static Uint32 length () { return LENGTH; }
+
     HeadType const &head () const { return m_head; }
     HeadType &head () { return m_head; }
     BodyList const &body () const { return m_body; }
@@ -59,13 +66,37 @@ struct List_t
     typename Type_t<INDEX>::T const &el () const
     {
         Lvd::Meta::Assert<(INDEX < LENGTH)>();
-        return ListHelper_t<TypeList,INDEX>::el(*this);
+        return ListElement_t<TypeList,INDEX>::el(*this);
     }
     template <Uint32 INDEX>
     typename Type_t<INDEX>::T &el ()
     {
         Lvd::Meta::Assert<(INDEX < LENGTH)>();
-        return ListHelper_t<TypeList,INDEX>::el(*this);
+        return ListElement_t<TypeList,INDEX>::el(*this);
+    }
+
+    // returns the type of the leading List_t ending at the INDEXth element.
+    // i.e. elements [0,INDEX), where INDEX is excluded.
+    template <Uint32 INDEX>
+    struct LeadingListType_t
+    {
+        typedef List_t<typename TypeList::template LeadingTypeList_t<INDEX>::T> T;
+    };
+
+    // returns the leading List_t ending at the INDEXth element.
+    template <Uint32 INDEX>
+    typename LeadingListType_t<INDEX>::T const &leading_list () const
+    {
+        Lvd::Meta::Assert<(INDEX <= LENGTH)>();
+        // slightly yucky, but the elements are laid out in memory in a way that makes this totally valid.
+        return *reinterpret_cast<typename LeadingListType_t<INDEX>::T const *>(this);
+    }
+    template <Uint32 INDEX>
+    typename LeadingListType_t<INDEX>::T const &leading_list ()
+    {
+        Lvd::Meta::Assert<(INDEX <= LENGTH)>();
+        // slightly yucky, but the elements are laid out in memory in a way that makes this totally valid.
+        return *reinterpret_cast<typename LeadingListType_t<INDEX>::T *>(this);
     }
 
     // returns the type of the trailing List_t starting at the INDEXth element
@@ -105,8 +136,6 @@ private:
 
     HeadType m_head;
     BodyList m_body;
-
-    template <typename TypeList__, Uint32 INDEX_> friend struct ListHelper_t;
 };
 
 // try not to actually construct a List_t<EmptyTypeList>, because it isn't guaranteed to take 0 memory
@@ -114,18 +143,22 @@ template <>
 struct List_t<EmptyTypeList>
 {
     typedef EmptyTypeList TypeList;
-    typedef NullType HeadType;
     typedef EmptyTypeList BodyTypeList;
     typedef List_t<EmptyTypeList> BodyList;
     static Uint32 const LENGTH = 0;
-    static List_t const SINGLETON; // so you never have to allocate another -- it's not guaranteed to take 0 memory
 
     List_t () { }
 //     template <typename TypeList>
 //     List_t (List_t<TypeList> const &) { }
 
+    bool operator == (List_t const &l) const { return true; }  // there is only one of these, so it must be equal
+    bool operator != (List_t const &l) const { return false; } // there is only one of these, so it can't be unequal
+
+    static Uint32 length () { return LENGTH; }
+
     // there is no head, so there is no accessors for it.
-    List_t<EmptyTypeList> const &body () const { return List_t<EmptyTypeList>::SINGLETON; } // TEMP?
+    List_t<EmptyTypeList> const &body () const { return Static_t<List_t<EmptyTypeList> >::SINGLETON; }
+    List_t<EmptyTypeList> &body () { return Static_t<List_t<EmptyTypeList> >::SINGLETON; }
 
     template <Uint32 INDEX>
     struct Type_t
@@ -137,13 +170,37 @@ struct List_t<EmptyTypeList>
     typename Type_t<INDEX>::T const &el () const
     {
         Lvd::Meta::Assert<(INDEX < LENGTH)>();
-        return ListHelper_t<TypeList,INDEX>::value(*this);
+        return ListElement_t<TypeList,INDEX>::value(*this);
     }
     template <Uint32 INDEX>
     typename Type_t<INDEX>::T &el ()
     {
         Lvd::Meta::Assert<(INDEX < LENGTH)>();
-        return ListHelper_t<TypeList,INDEX>::value(*this);
+        return ListElement_t<TypeList,INDEX>::value(*this);
+    }
+
+    // returns the type of the leading List_t ending at the INDEXth element.
+    // i.e. elements [0,INDEX), where INDEX is excluded.
+    template <Uint32 INDEX>
+    struct LeadingListType_t
+    {
+        typedef List_t<typename TypeList::template LeadingTypeList_t<INDEX>::T> T;
+    };
+
+    // returns the leading List_t ending at the INDEXth element.
+    template <Uint32 INDEX>
+    typename LeadingListType_t<INDEX>::T const &leading_list () const
+    {
+        Lvd::Meta::Assert<(INDEX <= LENGTH)>();
+        // slightly yucky, but the elements are laid out in memory in a way that makes this totally valid.
+        return *reinterpret_cast<typename LeadingListType_t<INDEX>::T const *>(this);
+    }
+    template <Uint32 INDEX>
+    typename LeadingListType_t<INDEX>::T const &leading_list ()
+    {
+        Lvd::Meta::Assert<(INDEX <= LENGTH)>();
+        // slightly yucky, but the elements are laid out in memory in a way that makes this totally valid.
+        return *reinterpret_cast<typename LeadingListType_t<INDEX>::T *>(this);
     }
 
     // returns the type of the trailing List_t starting at the INDEXth element
@@ -157,13 +214,13 @@ struct List_t<EmptyTypeList>
     template <Uint32 INDEX>
     typename TrailingListType_t<INDEX>::T const &trailing_list () const
     {
-        Lvd::Meta::Assert<(INDEX < LENGTH)>();
+        Lvd::Meta::Assert<(INDEX <= LENGTH)>();
         return ListHelper_t<TypeList,INDEX>::trailing_list(*this);
     };
     template <Uint32 INDEX>
     typename TrailingListType_t<INDEX>::T &trailing_list ()
     {
-        Lvd::Meta::Assert<(INDEX < LENGTH)>();
+        Lvd::Meta::Assert<(INDEX <= LENGTH)>();
         return ListHelper_t<TypeList,INDEX>::trailing_list(*this);
     };
 
@@ -176,14 +233,12 @@ struct List_t<EmptyTypeList>
     static std::string type_as_string () { return "List_t<" + TypeStringOf_t<TypeList>::eval() + '>'; }
 };
 
-// TODO: make into extern variable
-List_t<EmptyTypeList> const List_t<EmptyTypeList>::SINGLETON;
-
+// you can use this to access the static const singleton as Static_t<EmptyList>::SINGLETON
 typedef List_t<EmptyTypeList> EmptyList;
 
 
 
-
+// template specialization for a single-element list
 template <typename HeadType_>
 struct List_t<TypeList_t<HeadType_> >
 {
@@ -206,9 +261,15 @@ struct List_t<TypeList_t<HeadType_> >
         m_head(leading_list.head())
     { }
 
+    bool operator == (List_t const &l) const { return head() == l.head(); }
+    bool operator != (List_t const &l) const { return head() != l.head(); }
+
+    static Uint32 length () { return LENGTH; }
+
     HeadType const &head () const { return m_head; }
     HeadType &head () { return m_head; }
-    List_t<EmptyTypeList> const &body () const { return List_t<EmptyTypeList>::SINGLETON; } // TEMP?
+    List_t<EmptyTypeList> const &body () const { return Static_t<List_t<EmptyTypeList> >::SINGLETON; }
+    List_t<EmptyTypeList> &body () { return Static_t<List_t<EmptyTypeList> >::SINGLETON; }
 
     // type cast operator for HeadType?
 
@@ -231,6 +292,30 @@ struct List_t<TypeList_t<HeadType_> >
         return m_head;
     }
 
+    // returns the type of the leading List_t ending at the INDEXth element.
+    // i.e. elements [0,INDEX), where INDEX is excluded.
+    template <Uint32 INDEX>
+    struct LeadingListType_t
+    {
+        typedef List_t<typename TypeList::template LeadingTypeList_t<INDEX>::T> T;
+    };
+
+    // returns the leading List_t ending at the INDEXth element.
+    template <Uint32 INDEX>
+    typename LeadingListType_t<INDEX>::T const &leading_list () const
+    {
+        Lvd::Meta::Assert<(INDEX <= LENGTH)>();
+        // slightly yucky, but the elements are laid out in memory in a way that makes this totally valid.
+        return *reinterpret_cast<typename LeadingListType_t<INDEX>::T const *>(this);
+    }
+    template <Uint32 INDEX>
+    typename LeadingListType_t<INDEX>::T const &leading_list ()
+    {
+        Lvd::Meta::Assert<(INDEX <= LENGTH)>();
+        // slightly yucky, but the elements are laid out in memory in a way that makes this totally valid.
+        return *reinterpret_cast<typename LeadingListType_t<INDEX>::T *>(this);
+    }
+
     // returns the type of the trailing List_t starting at the INDEXth element
     template <Uint32 INDEX>
     struct TrailingListType_t
@@ -242,13 +327,13 @@ struct List_t<TypeList_t<HeadType_> >
     template <Uint32 INDEX>
     typename TrailingListType_t<INDEX>::T const &trailing_list () const
     {
-        Lvd::Meta::Assert<(INDEX < LENGTH)>();
+        Lvd::Meta::Assert<(INDEX <= LENGTH)>();
         return ListHelper_t<TypeList,INDEX>::trailing_list(*this);
     };
     template <Uint32 INDEX>
     typename TrailingListType_t<INDEX>::T &trailing_list ()
     {
-        Lvd::Meta::Assert<(INDEX < LENGTH)>();
+        Lvd::Meta::Assert<(INDEX <= LENGTH)>();
         return ListHelper_t<TypeList,INDEX>::trailing_list(*this);
     };
 
@@ -280,6 +365,31 @@ std::ostream &operator << (std::ostream &out, List_t<TypeList> const &l)
 
 
 
+template <typename TypeList, Uint32 INDEX>
+struct ListElement_t
+{
+    enum { CANT_ACCESS_PAST_THE_END = Lvd::Meta::Assert<(INDEX < TypeList::LENGTH)>::v };
+    typedef List_t<TypeList> List;
+    typedef typename TypeList::template El_t<INDEX>::T ValueType;
+    static ValueType const &el (List const &list)
+    {
+        return ListElement_t<typename TypeList::BodyTypeList,INDEX-1>::el(list.body());
+    }
+    static ValueType &el (List &list)
+    {
+        return ListElement_t<typename TypeList::BodyTypeList,INDEX-1>::el(list.body());
+    }
+};
+
+template <typename TypeList>
+struct ListElement_t<TypeList,0>
+{
+    enum { CANT_ACCESS_PAST_THE_END = Lvd::Meta::Assert<(0 < TypeList::LENGTH)>::v };
+    typedef List_t<TypeList> List;
+    typedef typename TypeList::template El_t<0>::T ValueType;
+    static ValueType const &el (List const &list) { return list.head(); }
+    static ValueType &el (List &list) { return list.head(); }
+};
 
 // for use in the el() and trailing_list() methods in List_t
 template <typename TypeList, Uint32 INDEX>
@@ -287,25 +397,23 @@ struct ListHelper_t
 {
     enum { _ = Lvd::Meta::Assert<(INDEX > 0)>::v };
     typedef List_t<TypeList> List;
-    typedef typename TypeList::template El_t<INDEX>::T ValueType;
+    typedef List_t<typename TypeList::template LeadingTypeList_t<INDEX>::T> LeadingListType;
     typedef List_t<typename TypeList::template TrailingTypeList_t<INDEX>::T> TrailingListType;
-    static ValueType const &el (List const &list)
-		{ return ListHelper_t<typename TypeList::BodyTypeList,INDEX-1>::el(list.body()); }
-    static ValueType &el (List &list) { return ListHelper_t<typename TypeList::BodyTypeList,INDEX-1>::el(list.body()); }
     static TrailingListType const &trailing_list (List const &list)
-		{ return ListHelper_t<typename TypeList::BodyTypeList,INDEX-1>::trailing_list(list.body()); }
+    {
+        return ListHelper_t<typename TypeList::BodyTypeList,INDEX-1>::trailing_list(list.body());
+    }
     static TrailingListType &trailing_list (List &list)
-		{ return ListHelper_t<typename TypeList::BodyTypeList,INDEX-1>::trailing_list(list.body()); }
+    {
+        return ListHelper_t<typename TypeList::BodyTypeList,INDEX-1>::trailing_list(list.body());
+    }
 };
 
 template <typename TypeList>
 struct ListHelper_t<TypeList,0>
 {
     typedef List_t<TypeList> List;
-    typedef typename List::HeadType ValueType;
     typedef List TrailingListType;
-    static ValueType const &el (List const &list) { return list.head(); }
-    static ValueType &el (List &list) { return list.head(); }
     static TrailingListType const &trailing_list (List const &list) { return list; }
     static TrailingListType &trailing_list (List &list) { return list; }
 };
@@ -317,32 +425,33 @@ struct ListHelper_t<TypeList,0>
 
 
 
+
 // tack an element onto the beginning of a list (where the list is empty)
 template <typename HeadType>
-List_t<TypeList_t<HeadType> > operator >>= (HeadType const &head, List_t<EmptyTypeList> const &) 
-{ 
-    return List_t<TypeList_t<HeadType> >(head); 
+inline List_t<TypeList_t<HeadType> > operator >>= (HeadType const &head, List_t<EmptyTypeList> const &)
+{
+    return List_t<TypeList_t<HeadType> >(head);
 }
 
 // tack an element onto the beginning of a list (catch-all case)
 template <typename HeadType, typename BodyTypeList>
-List_t<TypeList_t<HeadType,BodyTypeList> > operator >>= (HeadType const &head, List_t<BodyTypeList> const &body) 
-{ 
-    return List_t<TypeList_t<HeadType,BodyTypeList> >(head, body); 
+inline List_t<TypeList_t<HeadType,BodyTypeList> > operator >>= (HeadType const &head, List_t<BodyTypeList> const &body)
+{
+    return List_t<TypeList_t<HeadType,BodyTypeList> >(head, body);
 }
 
 
 
 // concatenate two lists (where both are empty)
-List_t<EmptyTypeList> operator |= (List_t<EmptyTypeList> const &, List_t<EmptyTypeList> const &)
+inline List_t<EmptyTypeList> operator |= (List_t<EmptyTypeList> const &, List_t<EmptyTypeList> const &)
 {
     return List_t<EmptyTypeList>();
 }
 
 // concatenate two lists (where the second is empty)
 template <typename LeadingHeadType, typename LeadingBodyTypeList>
-List_t<TypeList_t<LeadingHeadType,LeadingBodyTypeList> > operator |= (
-    List_t<TypeList_t<LeadingHeadType,LeadingBodyTypeList> > const &leading_list, 
+inline List_t<TypeList_t<LeadingHeadType,LeadingBodyTypeList> > operator |= (
+    List_t<TypeList_t<LeadingHeadType,LeadingBodyTypeList> > const &leading_list,
     List_t<EmptyTypeList> const &)
 {
     return leading_list;
@@ -350,8 +459,8 @@ List_t<TypeList_t<LeadingHeadType,LeadingBodyTypeList> > operator |= (
 
 // concatenate two lists (where the first is empty)
 template <typename TrailingHeadType, typename TrailingBodyTypeList>
-List_t<TypeList_t<TrailingHeadType,TrailingBodyTypeList> > operator |= (
-    List_t<EmptyTypeList> const &, 
+inline List_t<TypeList_t<TrailingHeadType,TrailingBodyTypeList> > operator |= (
+    List_t<EmptyTypeList> const &,
     List_t<TypeList_t<TrailingHeadType,TrailingBodyTypeList> > const &trailing_type_list)
 {
     return trailing_type_list;
@@ -359,23 +468,23 @@ List_t<TypeList_t<TrailingHeadType,TrailingBodyTypeList> > operator |= (
 
 // concatenate two lists (where the first has only one element)
 template <typename LeadingHeadType, typename TrailingHeadType, typename TrailingBodyTypeList>
-List_t<TypeList_t<LeadingHeadType,TypeList_t<TrailingHeadType,TrailingBodyTypeList> > > operator |= (
+inline List_t<TypeList_t<LeadingHeadType,TypeList_t<TrailingHeadType,TrailingBodyTypeList> > > operator |= (
     List_t<TypeList_t<LeadingHeadType> > const &leading_list,
     List_t<TypeList_t<TrailingHeadType,TrailingBodyTypeList> > const &trailing_list)
 {
     return List_t<TypeList_t<LeadingHeadType,TypeList_t<TrailingHeadType,TrailingBodyTypeList> > >(
-        leading_list.head(), 
+        leading_list.head(),
         trailing_list);
 }
 
 // concatenate two lists (catch-all case)
 template <typename LeadingTypeList, typename TrailingTypeList>
-List_t<typename ConcatenationOfTypeLists_t<LeadingTypeList,TrailingTypeList>::T> operator |= (
+inline List_t<typename ConcatenationOfTypeLists_t<LeadingTypeList,TrailingTypeList>::T> operator |= (
     List_t<LeadingTypeList> const &leading_list,
     List_t<TrailingTypeList> const &trailing_list)
 {
     return List_t<typename ConcatenationOfTypeLists_t<LeadingTypeList,TrailingTypeList>::T>(
-        leading_list.head(), 
+        leading_list.head(),
         (leading_list.body() |= trailing_list));
 }
 
@@ -384,29 +493,29 @@ List_t<typename ConcatenationOfTypeLists_t<LeadingTypeList,TrailingTypeList>::T>
 
 // tack an element onto the end of a list
 template <typename TailType>
-List_t<TypeList_t<TailType> > operator <<= (List_t<EmptyTypeList> const &, TailType const &tail) 
-{ 
-    return List_t<TypeList_t<TailType> >(tail); 
+List_t<TypeList_t<TailType> > operator <<= (List_t<EmptyTypeList> const &, TailType const &tail)
+{
+    return List_t<TypeList_t<TailType> >(tail);
 }
 
 // tack an element onto the end of a list
 template <typename LeadingHeadType, typename TailType>
 List_t<TypeList_t<LeadingHeadType,TypeList_t<TailType> > > operator <<= (List_t<LeadingHeadType> const &leading_list,
-                                                                         TailType const &tail) 
-{ 
-    return List_t<TypeList_t<LeadingTypeList,TypeList_t<TailType> > >(leading_list.head(), 
-		(leading_list.body() <<= tail)); 
+                                                                         TailType const &tail)
+{
+    return List_t<TypeList_t<LeadingTypeList,TypeList_t<TailType> > >(leading_list.head(),
+		(leading_list.body() <<= tail));
 }
 
 // tack an element onto the end of a list
 template <typename LeadingTypeList, typename TailType>
 List_t<typename ConcatenationOfTypeLists_t<LeadingTypeList,TypeList_t<TailType> >::T> operator <<= (
-    List_t<LeadingTypeList> const &leading_list, 
-    TailType const &tail) 
-{ 
+    List_t<LeadingTypeList> const &leading_list,
+    TailType const &tail)
+{
     return List_t<typename ConcatenationOfTypeLists_t<LeadingTypeList,TypeList_t<TailType> >::T>(
-        leading_list.head(), 
-        (leading_list.body() <<= tail)); 
+        leading_list.head(),
+        (leading_list.body() <<= tail));
 }
 */
 

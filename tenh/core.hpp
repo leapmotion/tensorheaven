@@ -49,6 +49,15 @@ struct Static
 template <typename DummyType>
 WithoutInitialization const Static<DummyType>::WITHOUT_INITIALIZATION = WithoutInitialization();
 
+template <typename T>
+struct Static_t
+{
+    static T SINGLETON;
+};
+
+template <typename T>
+T Static_t<T>::SINGLETON;
+
 // convenient notation for the square of something without evaluating the expression twice.
 template <typename T>
 T sqr (T const &t)
