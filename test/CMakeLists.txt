@@ -27,6 +27,7 @@ set(test_SRCS
     lvd/lvd_spawner.cpp
     lvd/lvd_testsystem.cpp
     standard/test_list.cpp
+    standard/test_tensor2diagonal.cpp
     standard/test_typelist.cpp
     standard/test_vector.cpp)
 add_executable(test standard/test.cpp ${test_SRCS})
