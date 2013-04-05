@@ -10,6 +10,7 @@
 
 #include "tenh/core.hpp"
 #include "tenh/expression_templates_utility.hpp"
+#include "tenh/index.hpp"
 
 namespace Tenh {
 
@@ -56,35 +57,27 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     Derived &as_derived () { return *static_cast<Derived *>(this); }
 
     // methods for "bundling" two separate indices into a single 2-tensor index
-    // (m(j,i)*a(j,k)*m(k,l)).bundle(i,l,Q) -- bundle (i,l) into Q
-    template <typename Index1, typename Index2, typename ResultingIndexType>
-    ExpressionTemplate_IndexBundle_t<Derived,TypeList_t<Index1,TypeList_t<Index2> >,ResultingIndexType> bundle (
-        Index1 const &,
-        Index2 const &,
+    // (m(j|i)*a(j|k)*m(k|l)).bundle(i|l,Q) -- bundle i,l into Q
+    template <typename IndexHeadType, typename IndexBodyTypeList, typename ResultingIndexType>
+    ExpressionTemplate_IndexBundle_t<Derived,TypeList_t<IndexHeadType,IndexBodyTypeList>,ResultingIndexType> bundle (
+        TypeList_t<IndexHeadType,IndexBodyTypeList> const &,
         ResultingIndexType const &) const
     {
-        return bundle<TypeList_t<Index1,TypeList_t<Index2> >,ResultingIndexType>();
-    }
-    template <typename BundleIndexTypeList, typename ResultingIndexType>
-    ExpressionTemplate_IndexBundle_t<Derived,BundleIndexTypeList,ResultingIndexType> bundle () const
-    {
-        return ExpressionTemplate_IndexBundle_t<Derived,BundleIndexTypeList,ResultingIndexType>(as_derived());
+        // make sure that the index type list actually contains TypedIndex_t types
+        AssertThatEachTypeIsATypedIndex_t<TypeList_t<IndexHeadType,IndexBodyTypeList> >();
+        return ExpressionTemplate_IndexBundle_t<Derived,TypeList_t<IndexHeadType,IndexBodyTypeList>,ResultingIndexType>(as_derived());
     }
     // methods for "splitting" a tensor index into a separate indices.
-    // a(P,Q).split(P,i,j).split(Q,k,l) -- split the tensor indices P and Q into the pairs (i,j) and (k,l),
-    // so that the expression now has the four free indices (i,j,k,l).
-    template <typename SourceIndexType, typename Index1, typename Index2>
-    ExpressionTemplate_IndexSplit_t<Derived,SourceIndexType,TypeList_t<Index1,TypeList_t<Index2> > > split (
+    // a(P|Q).split(P,i|j).split(Q,k|l) -- split the tensor indices P and Q into the pairs i,j and k,l
+    // so that the expression now has the four free indices i,j,k,l.
+    template <typename SourceIndexType, typename IndexHeadType, typename IndexBodyTypeList>
+    ExpressionTemplate_IndexSplit_t<Derived,SourceIndexType,TypeList_t<IndexHeadType,IndexBodyTypeList> > split (
         SourceIndexType const &,
-        Index1 const &,
-        Index2 const &) const
+        TypeList_t<IndexHeadType,IndexBodyTypeList> const &) const
     {
-        return split<SourceIndexType,TypeList_t<Index1,TypeList_t<Index2> > >();
-    }
-    template <typename SourceIndexType, typename SplitIndexTypeList>
-    ExpressionTemplate_IndexSplit_t<Derived,SourceIndexType,SplitIndexTypeList> split () const
-    {
-        return ExpressionTemplate_IndexSplit_t<Derived,SourceIndexType,SplitIndexTypeList>(as_derived());
+        // make sure that the index type list actually contains TypedIndex_t types
+        AssertThatEachTypeIsATypedIndex_t<TypeList_t<IndexHeadType,IndexBodyTypeList> >();
+        return ExpressionTemplate_IndexSplit_t<Derived,SourceIndexType,TypeList_t<IndexHeadType,IndexBodyTypeList> >(as_derived());
     }
 };
 

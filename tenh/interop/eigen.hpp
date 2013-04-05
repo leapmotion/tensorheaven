@@ -34,7 +34,7 @@ Eigen::Matrix<typename Tensor2Type::Scalar,Tensor2Type::Factor1::DIM,Tensor2Type
     Tensor2_t<typename Tensor2Type::Factor1,typename Tensor2Type::Factor2> temp(Static<>::WITHOUT_INITIALIZATION);
     TypedIndex_t<typename Tensor2Type::Factor1,'i'> i;
     TypedIndex_t<typename Tensor2Type::Factor2,'j'> j;
-    temp(i,j) = t(i,j); // "blow up" t into temp
+    temp(i|j) = t(i|j); // "blow up" t into temp
     return EigenMap_of_Tensor2(temp); // NOTE: this converts into Eigen::Matrix upon return
 }
 

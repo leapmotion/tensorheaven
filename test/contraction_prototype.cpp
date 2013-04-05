@@ -476,9 +476,9 @@ void test_Tensor2Symmetric_t ()
 
     TypedIndex_t<Vector,'i'> i;
     TypedIndex_t<Vector,'j'> j;
-    w(i) = a(i,j)*v(j);
+    w(i) = a(i|j)*v(j);
     std::cout << FORMAT_VALUE(w) << '\n';
-    std::cout << FORMAT_VALUE((v(i)*a(i,j)*v(j))) << '\n';
+    std::cout << FORMAT_VALUE((v(i)*a(i|j)*v(j))) << '\n';
     std::cout << '\n';
     
     std::cout << "zero'ing out the diagonal of a\n";
@@ -549,9 +549,9 @@ void test_Tensor2Antisymmetric_t ()
 
     TypedIndex_t<Vector,'i'> i;
     TypedIndex_t<Vector,'j'> j;
-    w(i) = a(i,j)*v(j);
+    w(i) = a(i|j)*v(j);
     std::cout << FORMAT_VALUE(w) << '\n';
-    std::cout << FORMAT_VALUE((v(i)*a(i,j)*v(j))) << '\n';
+    std::cout << FORMAT_VALUE((v(i)*a(i|j)*v(j))) << '\n';
     std::cout << '\n';
 
 //     std::cout << "checking Tensor2Antisymmetric_t::contiguous_index_to_rowcol_index()\n";
@@ -603,10 +603,10 @@ void test_symmetric_and_antisymmetric_2_tensors ()
             TypedIndex_t<Vector,'i'> i;
             TypedIndex_t<Vector,'j'> j;
             TypedIndex_t<Vector,'k'> k;
-            std::cout << "full contraction of symmetric with antisymmetric (should be exactly zero): " << FORMAT_VALUE(s(i,j)*a(i,j)) << '\n';
-            c(i,k) = s(i,j)*a(j,k);
+            std::cout << "full contraction of symmetric with antisymmetric (should be exactly zero): " << FORMAT_VALUE(s(i|j)*a(i|j)) << '\n';
+            c(i|k) = s(i|j)*a(j|k);
         }
-        std::cout << "product s(i,j)*a(j,k) = " << c << '\n';
+        std::cout << "product s(i|j)*a(j|k) = " << c << '\n';
 
         for (typename Vector::Index i; i.is_not_at_end(); ++i)
             for (typename Vector::Index k; k.is_not_at_end(); ++k)
@@ -621,8 +621,8 @@ void test_symmetric_and_antisymmetric_2_tensors ()
     {
         TypedIndex_t<Vector,'i'> i;
         TypedIndex_t<Vector,'j'> j;
-        c(i,j) = s(i,j) + a(i,j);
-        std::cout << "sum s(i,j)+a(i,j) = " << c << '\n';
+        c(i|j) = s(i|j) + a(i|j);
+        std::cout << "sum s(i|j)+a(i|j) = " << c << '\n';
     }
     std::cout << '\n';
 }
@@ -679,10 +679,10 @@ void test_scalar_multiplication_and_division ()
     Tensor2 a(Static<>::WITHOUT_INITIALIZATION);
     Tensor2 b(Static<>::WITHOUT_INITIALIZATION);
     TypedIndex_t<Factor2,'j'> j;
-    a(i,j) = u1(i)*v1(j);
-    std::cout << "a(i,j) = u1(i)*v1(j) = " << a << '\n';
-    b(i,j) = 42 * a(i,j);
-    std::cout << "b(i,j) = 42 * a(i,j) = " << b << '\n';
+    a(i|j) = u1(i)*v1(j);
+    std::cout << "a(i|j) = u1(i)*v1(j) = " << a << '\n';
+    b(i|j) = 42 * a(i|j);
+    std::cout << "b(i|j) = 42 * a(i|j) = " << b << '\n';
     std::cout << '\n';
 }
 
@@ -712,7 +712,7 @@ void test_printing_expression_templates ()
             a[i] = sqr(i.value()) + 1;
         TypedIndex_t<Factor1,'i'> i;
         TypedIndex_t<Factor2,'j'> j;
-        std::cout << FORMAT_VALUE(a(i,j)) << '\n';
+        std::cout << FORMAT_VALUE(a(i|j)) << '\n';
         std::cout << '\n';
     }
     else if (FREE_INDEX_COUNT == 3)
@@ -734,7 +734,7 @@ void test_printing_expression_templates ()
         TypedIndex_t<Factor2,'j'> j;
         TypedIndex_t<Factor3,'k'> k;
         // Tensor3_t isn't implemented yet, so use a decomposable tensor
-        std::cout << FORMAT_VALUE(a(i,j)*v(k)) << '\n';
+        std::cout << FORMAT_VALUE(a(i|j)*v(k)) << '\n';
         std::cout << '\n';
     }
     else
@@ -756,14 +756,6 @@ void test_IndexBundle ()
         t[k] = k.value();
     std::cout << FORMAT_VALUE(t) << '\n';
 
-    {
-        std::cout << "*** using TypedIndex_t \"with operator ,\"\n";
-        TypedIndex_t<Vector,'I'> I;
-        TypedIndex_t<Vector,'J'> J;
-        Vector v(3);
-        std::cout << FORMAT_VALUE((v(I)*t(I,J)*v(J))) << '\n';
-        std::cout << '\n';
-    }
     {
         std::cout << "*** using TypedIndex_t with operator |\n";
         TypedIndex_t<Vector,'I'> I;
@@ -789,7 +781,7 @@ void test_IndexBundle ()
     {
         Tensor2 const &t2 = t;
         typedef ExpressionTemplate_IndexedObject_t<Tensor2,BundleIndexTypeList,EmptyTypeList,FORCE_CONST> EI2;
-        EI2 ei(t2(i,j));
+        EI2 ei(t2(i|j));
     }
     for (typename Tensor2Symmetric::Index r; r.is_not_at_end(); ++r)
         std::cout << FORMAT_VALUE((Tensor2Symmetric::template bundle_index_map<BundleIndexTypeList,Q>(r))) << '\n';
@@ -797,7 +789,7 @@ void test_IndexBundle ()
 
     typedef CompoundIndex_t<BundleIndexTypeList> (*BundleIndexMap) (Q const &);
     typedef ExpressionTemplate_IndexBundle_t<EI,BundleIndexTypeList,Q> EB;
-    EB eb(t(i,j));
+    EB eb(t(i|j));
     for (typename EB::CompoundIndex c; c.is_not_at_end(); ++c)
         std::cout << FORMAT_VALUE(c) << " --> " << FORMAT_VALUE(eb[c]) << '\n';
     std::cout << '\n';
@@ -807,33 +799,33 @@ void test_IndexBundle ()
     std::cout << FORMAT_VALUE(s) << '\n';
     std::cout << '\n';
 
-    std::cout << FORMAT_VALUE((t(i,j).template bundle<BundleIndexTypeList,Q>())) << '\n';
+    std::cout << FORMAT_VALUE((t(i|j).bundle(i|j,q))) << '\n';
     std::cout << '\n';
 
-    s(q) = ((t(i,j) + t(j,i))/2).template bundle<BundleIndexTypeList,Q>();
-    std::cout << "(t(i,j) + t(j,i))/2 = " << FORMAT_VALUE(s) << '\n';
+    s(q) = ((t(i|j) + t(j|i))/2).bundle(i|j,q);
+    std::cout << "(t(i|j) + t(j|i))/2 = " << FORMAT_VALUE(s) << '\n';
     std::cout << '\n';
 
-    std::cout << (0.5f*(t(i,j) + t(j,i))).bundle(i,j,q) << '\n';
+    std::cout << (0.5f*(t(i|j) + t(j|i))).bundle(i|j,q) << '\n';
     std::cout << '\n';
-    std::cout << (0.5f*(t(i,j) - t(j,i))).bundle(i,j,p) << '\n';
+    std::cout << (0.5f*(t(i|j) - t(j|i))).bundle(i|j,p) << '\n';
     std::cout << '\n';
 
     Tensor2Antisymmetric a(Static<>::WITHOUT_INITIALIZATION);
-    s(q) = ((t(i,j) + t(j,i))/2).bundle(i,j,q);
-    a(p) = ((t(i,j) - t(j,i))/2).bundle(i,j,p);
+    s(q) = ((t(i|j) + t(j|i))/2).bundle(i|j,q);
+    a(p) = ((t(i|j) - t(j|i))/2).bundle(i|j,p);
     std::cout << FORMAT_VALUE(t) << '\n';
     std::cout << "symmetric part of t: " << FORMAT_VALUE(s) << '\n';
     std::cout << "antisymmetric part of t: " << FORMAT_VALUE(a) << '\n';
     Tensor2 x(Static<>::WITHOUT_INITIALIZATION);
-    x(i,j) = s(i,j) + a(i,j);
+    x(i|j) = s(i|j) + a(i|j);
     std::cout << "recombined: " << FORMAT_VALUE(x) << '\n';
 
-    x(i,j).template bundle<typename TypeTuple_t<I,J>::T,Q>();
+    x(i|j).bundle(i|j,q);
 
     typedef TypedIndex_t<Tensor2,'g'> G;
     G g;
-    std::cout << FORMAT_VALUE(x(i,j).bundle(i,j,g)) << '\n';
+    std::cout << FORMAT_VALUE(x(i|j).bundle(i|j,g)) << '\n';
     std::cout << '\n';
 }
 
@@ -918,11 +910,11 @@ void test_IndexSplit ()
         TypedIndex_t<Vector,'j'> j;
         TypedIndex_t<Vector,'k'> k;
         TypedIndex_t<Vector,'l'> l;
-        s(p,q).split(p,i,j);
-        std::cout << FORMAT_VALUE(s(p,q).split(p,i,j)) << '\n';
-        std::cout << FORMAT_VALUE(s(p,q).split(p,i,j) + s(p,q).split(p,j,i)) << '\n';        
-        std::cout << "Ricci curvature-like thing: " << FORMAT_VALUE(s(p,q).split(p,i,j).split(q,i,k)) << '\n';        
-        std::cout << "Scalar curvature-like thing: " << FORMAT_VALUE(s(p,q).split(p,i,j).split(q,i,j)) << '\n';        
+        s(p|q).split(p,i|j);
+        std::cout << FORMAT_VALUE(s(p|q).split(p,i|j)) << '\n';
+        std::cout << FORMAT_VALUE(s(p|q).split(p,i|j) + s(p|q).split(p,j|i)) << '\n';        
+        std::cout << "Ricci curvature-like thing: " << FORMAT_VALUE(s(p|q).split(p,i|j).split(q,i|k)) << '\n';        
+        std::cout << "Scalar curvature-like thing: " << FORMAT_VALUE(s(p|q).split(p,i|j).split(q,i|j)) << '\n';        
         std::cout << '\n';
     }
 
@@ -1342,15 +1334,15 @@ int main (int argc, char **argv)
                 u[k] = k.value();
                 v[k] = 13+k.value();
             }
-            u(i,j);
-            u(i,j) + v(i,j);
-            EA e(u(i,j), v(i,j));
+            u(i|j);
+            u(i|j) + v(i|j);
+            EA e(u(i|j), v(i|j));
             for (EA::CompoundIndex k; k.is_not_at_end(); ++k)
                 std::cout << e[k] << ", ";
             std::cout << '\n';
 
             std::cout << "operator + with same index order\n";
-            EA e2(u(i,j) + v(i,j));
+            EA e2(u(i|j) + v(i|j));
             for (EA::CompoundIndex k; k.is_not_at_end(); ++k)
                 std::cout << e2[k] << ", ";
             std::cout << '\n';
@@ -1379,7 +1371,7 @@ int main (int argc, char **argv)
             std::cout << FORMAT_VALUE(u) << '\n';
             std::cout << FORMAT_VALUE(v) << '\n';
 
-            EB e(u(i,j), u(j,i));
+            EB e(u(i|j), u(j|i));
             for (EB::CompoundIndex k; k.is_not_at_end(); ++k)
                 std::cout << e[k] << ", ";
             std::cout << '\n';
@@ -1390,13 +1382,13 @@ int main (int argc, char **argv)
 //             EC e_bad(u(i,i), u(i,i));
 
             std::cout << "operator + with same index order\n";
-            EA e2(u(i,j) + v(i,j));
+            EA e2(u(i|j) + v(i|j));
             for (EA::CompoundIndex k; k.is_not_at_end(); ++k)
                 std::cout << e2[k] << ", ";
             std::cout << '\n';
 
             std::cout << "operator + with opposite index order\n";
-            EB e3(u(i,j) + v(j,i));
+            EB e3(u(i|j) + v(j|i));
             for (EB::CompoundIndex k; k.is_not_at_end(); ++k)
                 std::cout << e3[k] << ", ";
 
@@ -1432,7 +1424,7 @@ int main (int argc, char **argv)
             typedef ExpressionTemplate_Multiplication_t<EIJ,EJK> EM;
             typedef ExpressionTemplate_Multiplication_t<EM,EKL> EMM;
             std::cout << "expression template contraction u(i,j)*v(j,k):\n";
-            EM e(u(i,j), v(j,k));
+            EM e(u(i|j), v(j|k));
             for (EM::CompoundIndex c; c.is_not_at_end(); ++c)
                 std::cout << e[c] << ", ";
             std::cout << '\n';
@@ -1451,7 +1443,7 @@ int main (int argc, char **argv)
             std::cout << '\n';
 
             std::cout << "expression template contraction u(i,j)*v(j,k)*w(k,l):\n";
-            EMM e2(e, w(k,l));
+            EMM e2(e, w(k|l));
             for (EMM::CompoundIndex c; c.is_not_at_end(); ++c)
                 std::cout << e2[c] << ", ";
             std::cout << '\n';
@@ -1470,7 +1462,7 @@ int main (int argc, char **argv)
             }
             std::cout << '\n';
             std::cout << "operator *:\n";
-            EMM e3(u(i,j)*v(j,k)*w(k,l));
+            EMM e3(u(i|j)*v(j|k)*w(k|l));
             for (EMM::CompoundIndex c; c.is_not_at_end(); ++c)
                 std::cout << e3[c] << ", ";
             std::cout << '\n';
@@ -1509,31 +1501,31 @@ int main (int argc, char **argv)
             TypedIndex_t<Float3,'j'> j;
 
             std::cout << "trace (and testing operator Scalar () type conversion):\n";
-            std::cout << FORMAT_VALUE(m(i,i)) << '\n';
-            std::cout << FORMAT_VALUE(n(j,j)) << '\n';
+            std::cout << FORMAT_VALUE(m(i|i)) << '\n';
+            std::cout << FORMAT_VALUE(n(j|j)) << '\n';
             std::cout << '\n';
 
             std::cout << "addition of traces:\n";
-            std::cout << FORMAT_VALUE(m(i,i) + n(j,j)) << '\n';
+            std::cout << FORMAT_VALUE(m(i|i) + n(j|j)) << '\n';
             std::cout << '\n';
 
-            std::cout << "direct assignment m(i,j) = n(i,j):\n";
-            m(i,j) = n(i,j);
+            std::cout << "direct assignment m(i|j) = n(i|j):\n";
+            m(i|j) = n(i|j);
             std::cout << FORMAT_VALUE(m) << '\n';
             std::cout << '\n';
 
-            std::cout << "transposed assignment m(i,j) = n(j,i):\n";
-            m(i,j) = n(j,i);
+            std::cout << "transposed assignment m(i|j) = n(j|i):\n";
+            m(i|j) = n(j|i);
             std::cout << FORMAT_VALUE(m) << '\n';
             std::cout << '\n';
 
-            std::cout << "symmetrized assignment m(i,j) = n(i,j) + n(j,i):\n";
-            m(i,j) = n(i,j) + n(j,i);
+            std::cout << "symmetrized assignment m(i|j) = n(i|j) + n(j|i):\n";
+            m(i|j) = n(i|j) + n(j|i);
             std::cout << FORMAT_VALUE(m) << '\n';
             std::cout << '\n';
 
-            std::cout << "antisymmetrized assignment m(i,j) = n(i,j) - n(j,i):\n";
-            m(i,j) = n(i,j) - n(j,i);
+            std::cout << "antisymmetrized assignment m(i|j) = n(i|j) - n(j|i):\n";
+            m(i|j) = n(i|j) - n(j|i);
             std::cout << FORMAT_VALUE(m) << '\n';
             std::cout << '\n';
         }
@@ -1547,11 +1539,12 @@ int main (int argc, char **argv)
             std::cout << FORMAT_VALUE(u) << '\n';
             typedef ExpressionTemplate_IndexedObject_t<Float3x3,EmptyTypeList,TypeTuple_t<I>::T,DONT_FORCE_CONST> ET;
             ET::CompoundIndex k;
-            std::cout << "trace(u) = " << u(i,i)[k] << '\n';
+            std::cout << "trace(u) = " << u(i|i)[k] << '\n';
+            std::cout << "trace(u) = " << float(u(i|i)) << '\n';
             std::cout << '\n';
 
             Float3 v(1,2,3);
-            u(i,j) = v(i)*v(j);
+            u(i|j) = v(i)*v(j);
             std::cout << FORMAT_VALUE(v) << '\n';
             std::cout << "v \\otimes v = ";
             for (Float3x3::Index k; k.is_not_at_end(); ++k)
@@ -1574,7 +1567,7 @@ int main (int argc, char **argv)
             u(i) = u(i); // this should be a no-op
             try {
                 // this should throw an exception
-                u(i) = a(i,j)*u(j);
+                u(i) = a(i|j)*u(j);
                 assert(false && "an exception didn't occur when it was supposed to");
             } catch (std::invalid_argument const &e) {
                 std::cout << "correctly caught an exception indicating an aliased template expression\n";
@@ -1657,13 +1650,13 @@ int main (int argc, char **argv)
             TypedIndex_t<Float3,'i'> i;
             TypedIndex_t<Float3,'k'> k;
             TypedIndex_t<Float4,'j'> j;
-            v(j,i) = u(i,j);
+            v(j|i) = u(i|j);
             std::cout << FORMAT_VALUE(v) << '\n';
 
             typedef Tensor2Symmetric_t<Float3> Float3x3Symmetric;
             TypedIndex_t<Float3x3Symmetric,'q'> q;
             Float3x3Symmetric s(Static<>::WITHOUT_INITIALIZATION);
-            s(q) = (u(i,j)*u(k,j)).bundle(i,k,q);
+            s(q) = (u(i|j)*u(k|j)).bundle(i|k,q);
             std::cout << FORMAT_VALUE(s) << '\n';
         }
     }

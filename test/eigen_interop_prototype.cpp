@@ -54,17 +54,17 @@ void test_SVD ()
     TypedIndex_t<V2,'p'> p;
     TypedIndex_t<V2,'q'> q;
     TypedIndex_t<V2,'r'> r;
-    std::cout << FORMAT_VALUE(u(i,j)*u(k,j)) << '\n';
-    std::cout << FORMAT_VALUE(u(i,j)*u(i,k)) << '\n';
-    x(i,q) = u(i,j)*s(j,p)*v(q,p);
+    std::cout << FORMAT_VALUE(u(i|j)*u(k|j)) << '\n';
+    std::cout << FORMAT_VALUE(u(i|j)*u(i|k)) << '\n';
+    x(i|q) = u(i|j)*s(j|p)*v(q|p);
     std::cout << FORMAT_VALUE(x) << '\n';
 
     std::cout << "after clamping singular values to 1:\n";
     s = S(1);
-    x(i,q) = u(i,j)*s(j,p)*v(q,p);
+    x(i|q) = u(i|j)*s(j|p)*v(q|p);
     std::cout << FORMAT_VALUE(s) << '\n';
     std::cout << FORMAT_VALUE(x) << '\n';
-    std::cout << FORMAT_VALUE(x(i,p)*x(j,p)) << '\n';
+    std::cout << FORMAT_VALUE(x(i|p)*x(j|p)) << '\n';
     
     std::cout << '\n';
 }
@@ -94,7 +94,7 @@ void test_diagonalization ()
     TypedIndex_t<V,'j'> j;
     TypedIndex_t<V,'k'> k;
     TypedIndex_t<V,'l'> l;
-    std::cout << FORMAT_VALUE(evec(i,j)*eval(j,k)*evec(l,k)) << '\n';
+    std::cout << FORMAT_VALUE(evec(i|j)*eval(j|k)*evec(l|k)) << '\n';
     
     std::cout << '\n';
 }

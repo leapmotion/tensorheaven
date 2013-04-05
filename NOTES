@@ -24,13 +24,6 @@ current goals:
 - column/row/block extraction/addressing
 - "eval" method on expression templates (which take a list of free indices) which produce an intermediate value
   * something like  (a(i,j)*m(j,k)*a(k,l)).eval(l,i)  (this one makes l the first index, and i the second).
-- single-vector indexing of built-up tensors of type e.g. Tensor2_t<Tensor2Symmetric,Tensor2Symmetric>
-  e.g. in the expression t(i,j,k,l), where t is of type Tensor2_t<Tensor2Symmetric,Tensor2Symmetric>
-  * allowing expressions like t(i,j,k,l) would be problematic because there would need to be an unlimited
-    number of methods, accepting more and more indices -- which would not be a problem with variadic templates.
-  * "inverse" to the "bundle" method for ExpressionTemplate_i -- call it "split".
-    e.g. if A is of type Tensor2_t<Tensor2Symmetric,Vector>, then A(I,j).split(I,k,l), where I is an index
-    of type Tensor2Symmetric and k and l are its factor indices.  Then this expression has free indices (j,k,l).
 - implement natural pairings as 2-tensors (most are the identity tensor, diagonal, etc)
 - this regularizes the implementation and relates to metrics/inner products
   * contractions will "request" the pairing, and if the type exists, the contraction works
@@ -80,7 +73,9 @@ x scalar multiplication/division in expression templates
 x unary negation in expression templates
 x printing expression templates
 x down-casting tensors (extracting symmetries out of "broken apart" indexed tensor expressions);
-  "bundling" indices into symmetric and antisymmetric "total" indices
+  "bundling" indices into a more-specific "total" index type
+x up-casting tensors (breaking symmetries indexed tensor expressions);
+  "splitting" a tensor "total" index into a less-specific multi-index
 x diagonal 2-tensors
 x SVD on 2-tensors, using Eigen
 x eigen-decomposition of symmetric 2-tensors, using Eigen

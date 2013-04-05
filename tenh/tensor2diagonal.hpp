@@ -90,78 +90,9 @@ struct Tensor2Diagonal_t : public Vector_t<typename Factor1_::Scalar,
         return component(c.template el<0>(), c.template el<1>());
     }
 
+    // these are what provide indexed expressions -- via expression templates
     using Parent_Vector_t::operator();
     using Parent_Tensor_i::operator();
-
-    // a 2-tensor can be indexed by the pair of factor indices (Factor1::Index, Factor2::Index)
-    // Dear Bjarne, please forgive me for this template metaprogramming atrocity.  Sincerely, Victor.
-    template <char FACTOR1_SYMBOL, char FACTOR2_SYMBOL>
-    ExpressionTemplate_IndexedObject_t<Derived,
-                                       typename TypeTuple_t<
-                                           TypedIndex_t<Factor1,FACTOR1_SYMBOL>,
-                                           TypedIndex_t<Factor2,FACTOR2_SYMBOL>
-                                           >::T,
-                                       typename SummedIndexTypeList_t<
-                                           typename TypeTuple_t<
-                                               TypedIndex_t<Factor1,FACTOR1_SYMBOL>,
-                                               TypedIndex_t<Factor2,FACTOR2_SYMBOL>
-                                               >::T
-                                           >::T,
-                                       FORCE_CONST
-                                       > operator () (
-        TypedIndex_t<Factor1,FACTOR1_SYMBOL> const &,
-        TypedIndex_t<Factor2,FACTOR2_SYMBOL> const &) const
-    {
-        Lvd::Meta::Assert<(FACTOR1_SYMBOL != '\0')>();
-        Lvd::Meta::Assert<(FACTOR2_SYMBOL != '\0')>();
-        return ExpressionTemplate_IndexedObject_t<Derived,
-                                                  typename TypeTuple_t<
-                                                      TypedIndex_t<Factor1,FACTOR1_SYMBOL>,
-                                                      TypedIndex_t<Factor2,FACTOR2_SYMBOL>
-                                                      >::T,
-                                                  typename SummedIndexTypeList_t<
-                                                      typename TypeTuple_t<
-                                                          TypedIndex_t<Factor1,FACTOR1_SYMBOL>,
-                                                          TypedIndex_t<Factor2,FACTOR2_SYMBOL>
-                                                          >::T
-                                                      >::T,
-                                                  FORCE_CONST
-                                                  >(this->as_derived());
-    }
-    
-    template <char FACTOR1_SYMBOL, char FACTOR2_SYMBOL>
-    ExpressionTemplate_IndexedObject_t<Derived,
-                                       typename TypeTuple_t<
-                                           TypedIndex_t<Factor1,FACTOR1_SYMBOL>,
-                                           TypedIndex_t<Factor2,FACTOR2_SYMBOL>
-                                           >::T,
-                                       typename SummedIndexTypeList_t<
-                                           typename TypeTuple_t<
-                                               TypedIndex_t<Factor1,FACTOR1_SYMBOL>,
-                                               TypedIndex_t<Factor2,FACTOR2_SYMBOL>
-                                               >::T
-                                           >::T,
-                                       DONT_FORCE_CONST
-                                       > operator () (
-        TypedIndex_t<Factor1,FACTOR1_SYMBOL> const &,
-        TypedIndex_t<Factor2,FACTOR2_SYMBOL> const &)
-    {
-        Lvd::Meta::Assert<(FACTOR1_SYMBOL != '\0')>();
-        Lvd::Meta::Assert<(FACTOR2_SYMBOL != '\0')>();
-        return ExpressionTemplate_IndexedObject_t<Derived,
-                                                  typename TypeTuple_t<
-                                                      TypedIndex_t<Factor1,FACTOR1_SYMBOL>,
-                                                      TypedIndex_t<Factor2,FACTOR2_SYMBOL>
-                                                      >::T,
-                                                  typename SummedIndexTypeList_t<
-                                                      typename TypeTuple_t<
-                                                          TypedIndex_t<Factor1,FACTOR1_SYMBOL>,
-                                                          TypedIndex_t<Factor2,FACTOR2_SYMBOL>
-                                                          >::T
-                                                      >::T,
-                                                  DONT_FORCE_CONST
-                                                  >(this->as_derived());
-    }
 
     // access 2-tensor components
     // Index1 could be Factor1::Index or Factor1::CompoundIndex (checked by its use in the other functions)
