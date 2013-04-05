@@ -93,23 +93,11 @@ struct Vector_t
     template <char SYMBOL> // TODO: should the expression template know about Derived instead of Vector_t ?
     ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,FORCE_CONST> operator () (NamedIndex_t<Derived,SYMBOL> const &) const
     {
-        return expr<SYMBOL>();
-    }
-    template <char SYMBOL>
-    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,DONT_FORCE_CONST> operator () (NamedIndex_t<Derived,SYMBOL> const &)
-    {
-        return expr<SYMBOL>();
-    }
-    // the corresponding outer product example here would be
-    // u.expr<'i'>() * v.expr<'j'>()
-    template <char SYMBOL>
-    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,FORCE_CONST> expr () const
-    {
         Lvd::Meta::Assert<(SYMBOL != '\0')>();
         return ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,FORCE_CONST>(as_derived());
     }
     template <char SYMBOL>
-    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,DONT_FORCE_CONST> expr ()
+    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,DONT_FORCE_CONST> operator () (NamedIndex_t<Derived,SYMBOL> const &)
     {
         Lvd::Meta::Assert<(SYMBOL != '\0')>();
         return ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,DONT_FORCE_CONST>(as_derived());

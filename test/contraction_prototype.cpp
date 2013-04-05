@@ -454,8 +454,8 @@ void test_Tensor2Symmetric_t ()
     }
     std::cout << FORMAT_VALUE(a) << '\n';
     std::cout << FORMAT_VALUE(b) << '\n';
-    a.template expr<'i'>();
-    std::cout << FORMAT_VALUE(a.template expr<'i'>()*b.template expr<'i'>()) << '\n';
+//     a.template expr<'i'>();
+//     std::cout << FORMAT_VALUE(a.template expr<'i'>()*b.template expr<'i'>()) << '\n';
     //std::cout << FORMAT_VALUE(a.template expr<'i'>() + b.template expr<'i'>()) << '\n';
 
     float hand_computed_value = 0.0f;
@@ -468,9 +468,9 @@ void test_Tensor2Symmetric_t ()
     Vector w(Static<>::WITHOUT_INITIALIZATION);
     for (typename Vector::Index i; i.is_not_at_end(); ++i)
         v[i] = i.value() + 5;
-    a.template expr<'i','j'>();
-    a.template expr<'i','j'>() * v.template expr<'j'>();
-    w.template expr<'i'>() = a.template expr<'i','j'>() * v.template expr<'j'>();
+//     a.template expr<'i','j'>();
+//     a.template expr<'i','j'>() * v.template expr<'j'>();
+//     w.template expr<'i'>() = a.template expr<'i','j'>() * v.template expr<'j'>();
     std::cout << FORMAT_VALUE(v) << '\n';
     std::cout << FORMAT_VALUE(w) << '\n';
 
@@ -527,8 +527,8 @@ void test_Tensor2Antisymmetric_t ()
     }
     std::cout << FORMAT_VALUE(a) << '\n';
     std::cout << FORMAT_VALUE(b) << '\n';
-    a.template expr<'i'>();
-    std::cout << FORMAT_VALUE(a.template expr<'i'>()*b.template expr<'i'>()) << '\n';
+//     a.template expr<'i'>();
+//     std::cout << FORMAT_VALUE(a.template expr<'i'>()*b.template expr<'i'>()) << '\n';
     //std::cout << FORMAT_VALUE(a.template expr<'i'>() + b.template expr<'i'>()) << '\n';
 
     float hand_computed_value = 0.0f;
@@ -541,9 +541,9 @@ void test_Tensor2Antisymmetric_t ()
     Vector w(Static<>::WITHOUT_INITIALIZATION);
     for (typename Vector::Index i; i.is_not_at_end(); ++i)
         v[i] = i.value() + 5;
-    a.template expr<'i','j'>();
-    a.template expr<'i','j'>() * v.template expr<'j'>();
-    w.template expr<'i'>() = a.template expr<'i','j'>() * v.template expr<'j'>();
+//     a.template expr<'i','j'>();
+//     a.template expr<'i','j'>() * v.template expr<'j'>();
+//     w.template expr<'i'>() = a.template expr<'i','j'>() * v.template expr<'j'>();
     std::cout << FORMAT_VALUE(v) << '\n';
     std::cout << FORMAT_VALUE(w) << '\n';
 
@@ -1161,7 +1161,7 @@ int main (int argc, char **argv)
             v(i);
             std::cout << FORMAT_VALUE(v(i)[EI::CompoundIndex(0)]) << '\n';
 
-            std::cout << FORMAT_VALUE(v.expr<'j'>()[EJ::CompoundIndex(1)]) << '\n';
+            std::cout << FORMAT_VALUE(v(j)[EJ::CompoundIndex(1)]) << '\n';
 
             for (Float3::Index k; k.is_not_at_end(); ++k)
                 std::cout << u[k] + v[k] << ", ";
@@ -1323,10 +1323,8 @@ int main (int argc, char **argv)
                 u[k] = k.value();
                 v[k] = 13+k.value();
             }
-            u.expr<'i','j'>();
             u(i,j);
             u(i,j) + v(i,j);
-            EA e_(u.expr<'i','j'>(), v.expr<'i','j'>());
             EA e(u(i,j), v(i,j));
             for (EA::CompoundIndex k; k.is_not_at_end(); ++k)
                 std::cout << e[k] << ", ";
@@ -1383,9 +1381,6 @@ int main (int argc, char **argv)
             for (EB::CompoundIndex k; k.is_not_at_end(); ++k)
                 std::cout << e3[k] << ", ";
 
-            u.expr<'i','j'>();
-            u.expr<'i','j'>() + v.expr<'i','j'>();
-            u.expr<1,2>() + v.expr<1,2>();
             std::cout << '\n';
             std::cout << '\n';
         }
@@ -1534,7 +1529,6 @@ int main (int argc, char **argv)
             typedef ExpressionTemplate_IndexedObject_t<Float3x3,EmptyTypeList,TypeTuple_t<I>::T,DONT_FORCE_CONST> ET;
             ET::CompoundIndex k;
             std::cout << "trace(u) = " << u(i,i)[k] << '\n';
-            std::cout << "trace(u) = " << u.expr<'i','i'>()[k] << '\n';
             std::cout << '\n';
 
             Float3 v(1,2,3);

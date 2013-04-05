@@ -163,29 +163,13 @@ struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
     ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,FORCE_CONST>
         operator () ( NamedIndex_t<Derived,SYMBOL> const &) const
     {
-        return expr<SYMBOL>();
-    }
-    template <char SYMBOL>
-    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,DONT_FORCE_CONST>
-        operator () ( NamedIndex_t<Derived,SYMBOL> const &)
-    {
-        return expr<SYMBOL>();
-    }
-    // the corresponding outer product example here would be
-    // u.expr<'i'>() * v.expr<'j'>()
-    // this override of the Parent's operator() is necessary so that the expression template
-    // knows that the operand is actually a Tensor2_t.
-    template <char SYMBOL>
-    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,FORCE_CONST>
-        expr () const
-    {
         Lvd::Meta::Assert<(SYMBOL != '\0')>();
         return ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,
                                                   EmptyTypeList,FORCE_CONST>(*this);
     }
     template <char SYMBOL>
-    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,DONT_FORCE_CONST>
-        expr ()
+    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,DONT_FORCE_CONST> operator () (
+        NamedIndex_t<Derived,SYMBOL> const &)
     {
         Lvd::Meta::Assert<(SYMBOL != '\0')>();
         return ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,
@@ -210,43 +194,6 @@ struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
                                        > operator () (
         NamedIndex_t<typename Factor1::Derived,FACTOR1_SYMBOL> const &,
         NamedIndex_t<typename Factor2::Derived,FACTOR2_SYMBOL> const &) const
-    {
-        return expr<FACTOR1_SYMBOL,FACTOR2_SYMBOL>();
-    }
-    template <char FACTOR1_SYMBOL, char FACTOR2_SYMBOL>
-    ExpressionTemplate_IndexedObject_t<Derived,
-                                       typename TypeTuple_t<
-                                           NamedIndex_t<typename Factor1::Derived,FACTOR1_SYMBOL>,
-                                           NamedIndex_t<typename Factor2::Derived,FACTOR2_SYMBOL>
-                                           >::T,
-                                       typename SummedIndexTypeList_t<
-                                           typename TypeTuple_t<
-                                               NamedIndex_t<typename Factor1::Derived,FACTOR1_SYMBOL>,
-                                               NamedIndex_t<typename Factor2::Derived,FACTOR2_SYMBOL>
-                                               >::T
-                                           >::T,
-                                       DONT_FORCE_CONST
-                                       > operator () (
-        NamedIndex_t<typename Factor1::Derived,FACTOR1_SYMBOL> const &,
-        NamedIndex_t<typename Factor2::Derived,FACTOR2_SYMBOL> const &)
-    {
-        return expr<FACTOR1_SYMBOL,FACTOR2_SYMBOL>();
-    }
-    // the 2-index analog of expr<SYMBOL>()
-    template <char FACTOR1_SYMBOL, char FACTOR2_SYMBOL>
-    ExpressionTemplate_IndexedObject_t<Derived,
-                                       typename TypeTuple_t<
-                                           NamedIndex_t<typename Factor1::Derived,FACTOR1_SYMBOL>,
-                                           NamedIndex_t<typename Factor2::Derived,FACTOR2_SYMBOL>
-                                           >::T,
-                                       typename SummedIndexTypeList_t<
-                                           typename TypeTuple_t<
-                                               NamedIndex_t<typename Factor1::Derived,FACTOR1_SYMBOL>,
-                                               NamedIndex_t<typename Factor2::Derived,FACTOR2_SYMBOL>
-                                               >::T
-                                           >::T,
-                                       FORCE_CONST
-                                       > expr () const
     {
         Lvd::Meta::Assert<(FACTOR1_SYMBOL != '\0')>();
         Lvd::Meta::Assert<(FACTOR2_SYMBOL != '\0')>();
@@ -277,7 +224,9 @@ struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
                                                >::T
                                            >::T,
                                        DONT_FORCE_CONST
-                                       > expr ()
+                                       > operator () (
+        NamedIndex_t<typename Factor1::Derived,FACTOR1_SYMBOL> const &,
+        NamedIndex_t<typename Factor2::Derived,FACTOR2_SYMBOL> const &)
     {
         Lvd::Meta::Assert<(FACTOR1_SYMBOL != '\0')>();
         Lvd::Meta::Assert<(FACTOR2_SYMBOL != '\0')>();
