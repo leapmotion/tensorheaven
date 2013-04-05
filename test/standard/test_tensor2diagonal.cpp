@@ -141,12 +141,12 @@ namespace Tensor2Diagonal {
             new Context::Data<Tensor2Diagonal>(t), RESULT_NO_ERROR);
         LVD_ADD_NAMED_TEST_CASE_FUNCTION(tensor2diagonal, "test_write_on_diagonal",
             test_write_on_diagonal<Tensor2Diagonal>, new Context::Data<Tensor2Diagonal>(t), RESULT_NO_ERROR);
-        // if (ROWS > 1 || COLS > 1)
-        // {
-        //     LVD_ADD_NAMED_TEST_CASE_FUNCTION(tensor2diagonal, "test_write_off_diagonal",
-        //         test_write_off_diagonal<Tensor2Diagonal>, new Context::Data<Tensor2Diagonal>(t),
-        //         RESULT_UNCAUGHT_EXCEPTION);        
-        // }        
+        if (ROWS > 1 || COLS > 1)
+        {
+            LVD_ADD_NAMED_TEST_CASE_FUNCTION(tensor2diagonal, "test_write_off_diagonal",
+                test_write_off_diagonal<Tensor2Diagonal>, new Context::Data<Tensor2Diagonal>(t),
+                RESULT_UNCAUGHT_EXCEPTION, STAGE_TEST_BODY);        
+        }        
     }
     
     template <typename Scalar>
