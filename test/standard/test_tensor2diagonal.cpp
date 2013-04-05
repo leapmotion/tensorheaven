@@ -51,7 +51,9 @@ namespace Tensor2Diagonal {
         typedef typename Type::Factor1 V1;
         typedef typename Type::Factor2 V2;
         
-        Type t = context.DataAs<Type>();
+        std::pair<Type,Scalar> p = context.DataAs<std::pair<Type,Scalar> >();
+        Type t = p.first;
+        Scalar s = p.second;
         
         for (typename V1::Index i; i.is_not_at_end(); ++i)
         {
@@ -62,7 +64,7 @@ namespace Tensor2Diagonal {
                 assert_eq(t[ci], t.component(i,j));
                 if(i.value() == j.value())
                 {
-                    assert_eq(t[ci], Scalar(1));
+                    assert_eq(t[ci], s);
                     assert_eq(t.scalar_factor_for_component(ci), Scalar(1));
                     assert(t.component_corresponds_to_memory_location(ci));
                 }
@@ -83,7 +85,8 @@ namespace Tensor2Diagonal {
         typedef typename Type::Factor1 V1;
         typedef typename Type::Factor2 V2;
         
-        Type t = context.DataAs<Type>();
+        std::pair<Type,Scalar> p = context.DataAs<std::pair<Type,Scalar> >();
+        Type t = p.first;
         
         typename V1::Index i;
         typename V2::Index j;
@@ -102,7 +105,8 @@ namespace Tensor2Diagonal {
         typedef typename Type::Factor1 V1;
         typedef typename Type::Factor2 V2;
         
-        Type t = context.DataAs<Type>();
+        std::pair<Type,Scalar> p = context.DataAs<std::pair<Type,Scalar> >();
+        Type t = p.first;
         
         typename V1::Index i;
         typename V2::Index j;
@@ -139,16 +143,19 @@ namespace Tensor2Diagonal {
         LVD_ADD_NAMED_TEST_CASE_FUNCTION(tensor2diagonal, "constructor_fill_with",
             constructor_fill_with<Tensor2Diagonal>, new Context::Data<Scalar>(42), RESULT_NO_ERROR);
         
-        Tensor2Diagonal t(1);
+        Scalar s(1);
+        Tensor2Diagonal t(s);
+        std::pair<Tensor2Diagonal,Scalar> p(t,s);
         
         LVD_ADD_NAMED_TEST_CASE_FUNCTION(tensor2diagonal, "test_read_access", test_read_access<Tensor2Diagonal>,
-            new Context::Data<Tensor2Diagonal>(t), RESULT_NO_ERROR);
+            new Context::Data<std::pair<Tensor2Diagonal,Scalar> >(p), RESULT_NO_ERROR);
         LVD_ADD_NAMED_TEST_CASE_FUNCTION(tensor2diagonal, "test_write_on_diagonal",
-            test_write_on_diagonal<Tensor2Diagonal>, new Context::Data<Tensor2Diagonal>(t), RESULT_NO_ERROR);
+            test_write_on_diagonal<Tensor2Diagonal>, new Context::Data<std::pair<Tensor2Diagonal,Scalar> >(p),
+            RESULT_NO_ERROR);
         // if (ROWS > 1 || COLS > 1)
         // {
         //     LVD_ADD_NAMED_TEST_CASE_FUNCTION(tensor2diagonal, "test_write_off_diagonal",
-        //         test_write_off_diagonal<Tensor2Diagonal>, new Context::Data<Tensor2Diagonal>(t),
+        //         test_write_off_diagonal<Tensor2Diagonal>, new Context::Data<std::pair<Tensor2Diagonal,Scalar> >(p),
         //         RESULT_UNCAUGHT_EXCEPTION, STAGE_TEST_BODY);        
         // }        
     }
