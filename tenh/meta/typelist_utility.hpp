@@ -11,6 +11,38 @@
 
 namespace Tenh {
 
+
+// this requires that each type in FromTypeList has a default constructor.
+// if the constructors for each of the elements in each type list have no
+// side effects, then ostensibly this code will be optimized out.
+template <typename FromHeadType, typename FromBodyTypeList,
+          typename ToHeadType, typename ToBodyTypeList>
+inline void compile_time_check_that_there_is_a_type_conversion (TypeList_t<FromHeadType,FromBodyTypeList> const &from, TypeList_t<ToHeadType,ToBodyTypeList> const &to)
+{
+    FromHeadType from_head;
+    ToHeadType head_conversion_checker(from_head);
+    // tail recursion
+    compile_time_check_that_there_is_a_type_conversion(FromBodyTypeList(), ToBodyTypeList());
+}
+
+template <typename FromHeadType,
+          typename ToHeadType>
+inline void compile_time_check_that_there_is_a_type_conversion (TypeList_t<FromHeadType> const &from, TypeList_t<ToHeadType> const &to)
+{
+    // base case
+    FromHeadType from_head;
+    ToHeadType head_conversion_checker(from_head);
+}
+
+inline void compile_time_check_that_there_is_a_type_conversion (EmptyTypeList const &from, EmptyTypeList const &to)
+{
+    // nothing needs to be done, there are no types to check
+}
+
+
+
+
+
 // returns the last element of a TypeList_t
 template <typename TypeList>
 struct TailOfTypeList_t

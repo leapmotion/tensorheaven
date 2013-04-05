@@ -10,9 +10,15 @@
 #include <string>
 
 #include "tenh/core.hpp"
+#include "tenh/meta/typelist.hpp"
+#include "tenh/meta/typelist_utility.hpp"
 #include "tenh/meta/typestringof.hpp"
 
 namespace Tenh {
+
+// ///////////////////////////////////////////////////////////////////////////
+// Index_t (for accessing particular components of vectors/tensors)
+// ///////////////////////////////////////////////////////////////////////////
 
 // for use in operator [] for actual evaluation of tensor components
 template <typename OwnerVector_>
@@ -70,22 +76,77 @@ std::ostream &operator << (std::ostream &out, Index_t<OwnerVector> const &i)
     return out << i.value();
 }
 
+// ///////////////////////////////////////////////////////////////////////////
+// TypedIndex_t (for creating indexed expressions)
+// ///////////////////////////////////////////////////////////////////////////
+
 // for use in operator () for creation of expression templates (indexed tensor expressions)
 template <typename OwnerVector_, char SYMBOL_>
-struct NamedIndex_t : public Index_t<OwnerVector_>
+struct TypedIndex_t : public Index_t<OwnerVector_>
 {
     typedef Index_t<OwnerVector_> Parent;
     typedef OwnerVector_ OwnerVector;
     static char const SYMBOL = SYMBOL_;
     using Parent::COMPONENT_COUNT;
 
-    NamedIndex_t () { }
-    explicit NamedIndex_t (Uint32 i) : Parent(i) { }
-    NamedIndex_t (Parent const &i) : Parent(i) { }
-    NamedIndex_t (NamedIndex_t const &i) : Parent(i) { }
+    TypedIndex_t () { }
+    explicit TypedIndex_t (Uint32 i) : Parent(i) { }
+    TypedIndex_t (Parent const &i) : Parent(i) { }
+    TypedIndex_t (TypedIndex_t const &i) : Parent(i) { }
 
-    static std::string type_as_string () { return "NamedIndex_t<" + TypeStringOf_t<OwnerVector>::eval() + ",'" + SYMBOL + "'>"; }
+    static std::string type_as_string () { return "TypedIndex_t<" + TypeStringOf_t<OwnerVector>::eval() + ",'" + SYMBOL + "'>"; }
 };
+
+template <typename TypeList>
+struct AssertThatEachTypeIsATypedIndex_t
+{
+private:
+    typedef typename TypeList::HeadType HeadType;
+    typedef typename HeadType::OwnerVector OwnerVector;
+    static char const SYMBOL = HeadType::SYMBOL;
+public:
+    static bool const V = Lvd::Meta::TypesAreEqual<HeadType,TypedIndex_t<OwnerVector,SYMBOL> >::v && 
+                          AssertThatEachTypeIsATypedIndex_t<typename TypeList::BodyTypeList>::V;
+    operator bool () const { return V; }
+};
+
+template <typename HeadType>
+struct AssertThatEachTypeIsATypedIndex_t<TypeList_t<HeadType> >
+{
+private:
+    typedef typename HeadType::OwnerVector OwnerVector;
+    static char const SYMBOL = HeadType::SYMBOL;
+public:
+    static bool const V = Lvd::Meta::TypesAreEqual<HeadType,TypedIndex_t<OwnerVector,SYMBOL> >::v;
+    operator bool () const { return V; }
+};
+
+// vacuously true
+template <>
+struct AssertThatEachTypeIsATypedIndex_t<EmptyTypeList>
+{
+    static bool const V = true;
+    operator bool () const { return V; }
+};
+
+// operator overloads for stringing together type lists of symbolic indices.
+template <typename OwnerVector1, char SYMBOL1, typename OwnerVector2, char SYMBOL2>
+TypeList_t<TypedIndex_t<OwnerVector1,SYMBOL1>,TypeList_t<TypedIndex_t<OwnerVector2,SYMBOL2> > > operator | (
+    TypedIndex_t<OwnerVector1,SYMBOL1> const &,
+    TypedIndex_t<OwnerVector2,SYMBOL2> const &)
+{
+    return TypeList_t<TypedIndex_t<OwnerVector1,SYMBOL1>,TypeList_t<TypedIndex_t<OwnerVector2,SYMBOL2> > >();
+}
+
+template <typename HeadType, typename BodyTypeList, typename OwnerVector, char SYMBOL>
+typename ConcatenationOfTypeLists_t<TypeList_t<HeadType,BodyTypeList>,TypeList_t<TypedIndex_t<OwnerVector,SYMBOL> > >::T operator | (
+    TypeList_t<HeadType,BodyTypeList> const &,
+    TypedIndex_t<OwnerVector,SYMBOL> const &)
+{
+    // make sure the first argument resulted from other operator| calls
+    AssertThatEachTypeIsATypedIndex_t<TypeList_t<HeadType,BodyTypeList> >();
+    return typename ConcatenationOfTypeLists_t<TypeList_t<HeadType,BodyTypeList>,TypeList_t<TypedIndex_t<OwnerVector,SYMBOL> > >::T();
+}
 
 } // end of namespace Tenh
 

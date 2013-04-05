@@ -90,17 +90,17 @@ struct Vector_t
     // IndexType_t<'i'> i;
     // IndexType_t<'j'> j;
     // u(i)*v(j)
-    template <char SYMBOL> // TODO: should the expression template know about Derived instead of Vector_t ?
-    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,FORCE_CONST> operator () (NamedIndex_t<Derived,SYMBOL> const &) const
+    template <char SYMBOL>
+    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<TypedIndex_t<Derived,SYMBOL> >,EmptyTypeList,FORCE_CONST> operator () (TypedIndex_t<Derived,SYMBOL> const &) const
     {
         Lvd::Meta::Assert<(SYMBOL != '\0')>();
-        return ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,FORCE_CONST>(as_derived());
+        return ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<TypedIndex_t<Derived,SYMBOL> >,EmptyTypeList,FORCE_CONST>(as_derived());
     }
     template <char SYMBOL>
-    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,DONT_FORCE_CONST> operator () (NamedIndex_t<Derived,SYMBOL> const &)
+    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<TypedIndex_t<Derived,SYMBOL> >,EmptyTypeList,DONT_FORCE_CONST> operator () (TypedIndex_t<Derived,SYMBOL> const &)
     {
         Lvd::Meta::Assert<(SYMBOL != '\0')>();
-        return ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,DONT_FORCE_CONST>(as_derived());
+        return ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<TypedIndex_t<Derived,SYMBOL> >,EmptyTypeList,DONT_FORCE_CONST>(as_derived());
     }
 
     // if the return value for a particular CompoundIndex is false, then that component is understood to be zero.

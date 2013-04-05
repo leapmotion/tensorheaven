@@ -474,13 +474,13 @@ void test_Tensor2Symmetric_t ()
     std::cout << FORMAT_VALUE(v) << '\n';
     std::cout << FORMAT_VALUE(w) << '\n';
 
-    NamedIndex_t<Vector,'i'> i;
-    NamedIndex_t<Vector,'j'> j;
+    TypedIndex_t<Vector,'i'> i;
+    TypedIndex_t<Vector,'j'> j;
     w(i) = a(i,j)*v(j);
     std::cout << FORMAT_VALUE(w) << '\n';
     std::cout << FORMAT_VALUE((v(i)*a(i,j)*v(j))) << '\n';
     std::cout << '\n';
-
+    
     std::cout << "zero'ing out the diagonal of a\n";
     for (typename Vector::Index i; i.is_not_at_end(); ++i)
         a.set_component(i,i,0);
@@ -547,8 +547,8 @@ void test_Tensor2Antisymmetric_t ()
     std::cout << FORMAT_VALUE(v) << '\n';
     std::cout << FORMAT_VALUE(w) << '\n';
 
-    NamedIndex_t<Vector,'i'> i;
-    NamedIndex_t<Vector,'j'> j;
+    TypedIndex_t<Vector,'i'> i;
+    TypedIndex_t<Vector,'j'> j;
     w(i) = a(i,j)*v(j);
     std::cout << FORMAT_VALUE(w) << '\n';
     std::cout << FORMAT_VALUE((v(i)*a(i,j)*v(j))) << '\n';
@@ -600,9 +600,9 @@ void test_symmetric_and_antisymmetric_2_tensors ()
     Tensor2 c(Static<>::WITHOUT_INITIALIZATION);
     {
         {
-            NamedIndex_t<Vector,'i'> i;
-            NamedIndex_t<Vector,'j'> j;
-            NamedIndex_t<Vector,'k'> k;
+            TypedIndex_t<Vector,'i'> i;
+            TypedIndex_t<Vector,'j'> j;
+            TypedIndex_t<Vector,'k'> k;
             std::cout << "full contraction of symmetric with antisymmetric (should be exactly zero): " << FORMAT_VALUE(s(i,j)*a(i,j)) << '\n';
             c(i,k) = s(i,j)*a(j,k);
         }
@@ -619,8 +619,8 @@ void test_symmetric_and_antisymmetric_2_tensors ()
         std::cout << "hand-computed value = " << c << '\n';
     }
     {
-        NamedIndex_t<Vector,'i'> i;
-        NamedIndex_t<Vector,'j'> j;
+        TypedIndex_t<Vector,'i'> i;
+        TypedIndex_t<Vector,'j'> j;
         c(i,j) = s(i,j) + a(i,j);
         std::cout << "sum s(i,j)+a(i,j) = " << c << '\n';
     }
@@ -647,7 +647,7 @@ void test_scalar_multiplication_and_division ()
     std::cout << FORMAT_VALUE(u1) << '\n';
     std::cout << '\n';
 
-    NamedIndex_t<Factor1,'i'> i;
+    TypedIndex_t<Factor1,'i'> i;
     u2(i) = u1(i) * 3.0f;
     std::cout << "u1(i) * 3.0f = " << u2 << '\n';
     u2(i) = u1(i) * 3; // testing scalar multiplication using integer literal
@@ -678,7 +678,7 @@ void test_scalar_multiplication_and_division ()
 
     Tensor2 a(Static<>::WITHOUT_INITIALIZATION);
     Tensor2 b(Static<>::WITHOUT_INITIALIZATION);
-    NamedIndex_t<Factor2,'j'> j;
+    TypedIndex_t<Factor2,'j'> j;
     a(i,j) = u1(i)*v1(j);
     std::cout << "a(i,j) = u1(i)*v1(j) = " << a << '\n';
     b(i,j) = 42 * a(i,j);
@@ -696,7 +696,7 @@ void test_printing_expression_templates ()
         Vector v(Static<>::WITHOUT_INITIALIZATION);
         for (typename Vector::Index i; i.is_not_at_end(); ++i)
             v[i] = sqr(i.value()) + 1;
-        NamedIndex_t<Vector,'i'> i;
+        TypedIndex_t<Vector,'i'> i;
         std::cout << FORMAT_VALUE(v(i)) << '\n';
         std::cout << '\n';
     }
@@ -710,8 +710,8 @@ void test_printing_expression_templates ()
         Tensor2 a(Static<>::WITHOUT_INITIALIZATION);
         for (typename Tensor2::Index i; i.is_not_at_end(); ++i)
             a[i] = sqr(i.value()) + 1;
-        NamedIndex_t<Factor1,'i'> i;
-        NamedIndex_t<Factor2,'j'> j;
+        TypedIndex_t<Factor1,'i'> i;
+        TypedIndex_t<Factor2,'j'> j;
         std::cout << FORMAT_VALUE(a(i,j)) << '\n';
         std::cout << '\n';
     }
@@ -730,9 +730,9 @@ void test_printing_expression_templates ()
             a[i] = sqr(i.value()) + 1;
         for (typename Factor3::Index i; i.is_not_at_end(); ++i)
             v[i] = i.value() + 2;
-        NamedIndex_t<Factor1,'i'> i;
-        NamedIndex_t<Factor2,'j'> j;
-        NamedIndex_t<Factor3,'k'> k;
+        TypedIndex_t<Factor1,'i'> i;
+        TypedIndex_t<Factor2,'j'> j;
+        TypedIndex_t<Factor3,'k'> k;
         // Tensor3_t isn't implemented yet, so use a decomposable tensor
         std::cout << FORMAT_VALUE(a(i,j)*v(k)) << '\n';
         std::cout << '\n';
@@ -756,10 +756,29 @@ void test_IndexBundle ()
         t[k] = k.value();
     std::cout << FORMAT_VALUE(t) << '\n';
 
-    typedef NamedIndex_t<Vector,'i'> I;
-    typedef NamedIndex_t<Vector,'j'> J;
-    typedef NamedIndex_t<Tensor2Symmetric,'q'> Q;
-    typedef NamedIndex_t<Tensor2Antisymmetric,'p'> P;
+    {
+        std::cout << "*** using TypedIndex_t \"with operator ,\"\n";
+        TypedIndex_t<Vector,'I'> I;
+        TypedIndex_t<Vector,'J'> J;
+        Vector v(3);
+        std::cout << FORMAT_VALUE((v(I)*t(I,J)*v(J))) << '\n';
+        std::cout << '\n';
+    }
+    {
+        std::cout << "*** using TypedIndex_t with operator |\n";
+        TypedIndex_t<Vector,'I'> I;
+        TypedIndex_t<Vector,'J'> J;
+        Vector v(3);
+        std::cout << FORMAT_VALUE((v(I)*t(I|J)*v(J))) << '\n';
+        std::cout << FORMAT_VALUE(t(I|J)) << '\n';
+        std::cout << '\n';
+    }
+
+
+    typedef TypedIndex_t<Vector,'i'> I;
+    typedef TypedIndex_t<Vector,'j'> J;
+    typedef TypedIndex_t<Tensor2Symmetric,'q'> Q;
+    typedef TypedIndex_t<Tensor2Antisymmetric,'p'> P;
     typedef TypeList_t<I,TypeList_t<J> > BundleIndexTypeList;
     typedef ExpressionTemplate_IndexedObject_t<Tensor2,BundleIndexTypeList,EmptyTypeList,DONT_FORCE_CONST> EI;
     I i;
@@ -812,7 +831,7 @@ void test_IndexBundle ()
 
     x(i,j).template bundle<typename TypeTuple_t<I,J>::T,Q>();
 
-    typedef NamedIndex_t<Tensor2,'g'> G;
+    typedef TypedIndex_t<Tensor2,'g'> G;
     G g;
     std::cout << FORMAT_VALUE(x(i,j).bundle(i,j,g)) << '\n';
     std::cout << '\n';
@@ -847,9 +866,9 @@ void test_IndexSplit ()
         for (typename A::Index k; k.is_not_at_end(); ++k)
             a[k] = k.value() + 1;
         std::cout << FORMAT_VALUE(a) << '\n';
-        NamedIndex_t<A,'p'> p;
-        NamedIndex_t<Vector,'i'> i;
-        NamedIndex_t<Vector,'j'> j;
+        TypedIndex_t<A,'p'> p;
+        TypedIndex_t<Vector,'i'> i;
+        TypedIndex_t<Vector,'j'> j;
 //         std::cout << FORMAT_VALUE(a(p).split(p,i,j)) << '\n';
         for (typename Vector::Index m; m.is_not_at_end(); ++m)
         {
@@ -893,12 +912,12 @@ void test_IndexSplit ()
             s[k] = k.value() + 1;
         std::cout << FORMAT_VALUE(s) << '\n';
 
-        NamedIndex_t<Tensor2Antisymmetric,'p'> p;
-        NamedIndex_t<Tensor2Antisymmetric,'q'> q;
-        NamedIndex_t<Vector,'i'> i;
-        NamedIndex_t<Vector,'j'> j;
-        NamedIndex_t<Vector,'k'> k;
-        NamedIndex_t<Vector,'l'> l;
+        TypedIndex_t<Tensor2Antisymmetric,'p'> p;
+        TypedIndex_t<Tensor2Antisymmetric,'q'> q;
+        TypedIndex_t<Vector,'i'> i;
+        TypedIndex_t<Vector,'j'> j;
+        TypedIndex_t<Vector,'k'> k;
+        TypedIndex_t<Vector,'l'> l;
         s(p,q).split(p,i,j);
         std::cout << FORMAT_VALUE(s(p,q).split(p,i,j)) << '\n';
         std::cout << FORMAT_VALUE(s(p,q).split(p,i,j) + s(p,q).split(p,j,i)) << '\n';        
@@ -913,10 +932,10 @@ void test_IndexSplit ()
 //     std::cout << FORMAT_VALUE(t) << '\n';
 //     std::cout << '\n';
 /*
-    typedef NamedIndex_t<Vector,'i'> I;
-    typedef NamedIndex_t<Vector,'j'> J;
-    typedef NamedIndex_t<Tensor2Symmetric,'q'> Q;
-    typedef NamedIndex_t<Tensor2Antisymmetric,'p'> P;
+    typedef TypedIndex_t<Vector,'i'> I;
+    typedef TypedIndex_t<Vector,'j'> J;
+    typedef TypedIndex_t<Tensor2Symmetric,'q'> Q;
+    typedef TypedIndex_t<Tensor2Antisymmetric,'p'> P;
     typedef TypeList_t<I,TypeList_t<J> > BundleIndexTypeList;
     typedef ExpressionTemplate_IndexedObject_t<Tensor2,BundleIndexTypeList,EmptyTypeList,DONT_FORCE_CONST> EI;
     I i;
@@ -969,7 +988,7 @@ void test_IndexSplit ()
 
     x(i,j).template bundle<typename TypeTuple_t<I,J>::T,Q>();
 
-    typedef NamedIndex_t<Tensor2,'g'> G;
+    typedef TypedIndex_t<Tensor2,'g'> G;
     G g;
     std::cout << FORMAT_VALUE(x(i,j).bundle(i,j,g)) << '\n';
     std::cout << '\n';
@@ -1148,8 +1167,8 @@ int main (int argc, char **argv)
         Float3 u(-0.1, 2.0, 8);
         Float3 v(4.1, 5.2, 6.3);
         Float3 w(1.2, -2.0, 3.8);
-        typedef NamedIndex_t<Float3,'i'> I;
-        typedef NamedIndex_t<Float3,'j'> J;
+        typedef TypedIndex_t<Float3,'i'> I;
+        typedef TypedIndex_t<Float3,'j'> J;
         I i;
         J j;
         {
@@ -1276,7 +1295,7 @@ int main (int argc, char **argv)
 
         {
             std::cout << "addition of 2-tensors:\n";
-            typedef NamedIndex_t<Float3x4,'i'> I;
+            typedef TypedIndex_t<Float3x4,'i'> I;
             I i;
             typedef ExpressionTemplate_IndexedObject_t<Float3x4,TypeList_t<I>,EmptyTypeList,DONT_FORCE_CONST> EE;
             typedef ExpressionTemplate_Addition_t<EE,EE,'+'> EA;
@@ -1310,8 +1329,8 @@ int main (int argc, char **argv)
 
         {
             std::cout << "expression template for 2-tensor:\n";
-            typedef NamedIndex_t<Float3,'i'> I;
-            typedef NamedIndex_t<Float4,'j'> J;
+            typedef TypedIndex_t<Float3,'i'> I;
+            typedef TypedIndex_t<Float4,'j'> J;
             I i;
             J j;
             typedef ExpressionTemplate_IndexedObject_t<Float3x4,TypeTuple_t<I,J>::T,EmptyTypeList,DONT_FORCE_CONST> EIJ;
@@ -1340,8 +1359,8 @@ int main (int argc, char **argv)
 
         {
             std::cout << "symmetrizing a 2-tensor:\n";
-            typedef NamedIndex_t<Float3,'i'> I;
-            typedef NamedIndex_t<Float3,'j'> J;
+            typedef TypedIndex_t<Float3,'i'> I;
+            typedef TypedIndex_t<Float3,'j'> J;
             I i;
             J j;
             typedef ExpressionTemplate_IndexedObject_t<Float3x3,TypeTuple_t<I,J>::T,EmptyTypeList,DONT_FORCE_CONST> EIJ;
@@ -1399,10 +1418,10 @@ int main (int argc, char **argv)
             std::cout << FORMAT_VALUE(u) << '\n';
             std::cout << FORMAT_VALUE(v) << '\n';
             std::cout << FORMAT_VALUE(w) << '\n';
-            typedef NamedIndex_t<Float3,'i'> I;
-            typedef NamedIndex_t<Float4,'j'> J;
-            typedef NamedIndex_t<Float5,'k'> K;
-            typedef NamedIndex_t<Float2,'l'> L;
+            typedef TypedIndex_t<Float3,'i'> I;
+            typedef TypedIndex_t<Float4,'j'> J;
+            typedef TypedIndex_t<Float5,'k'> K;
+            typedef TypedIndex_t<Float2,'l'> L;
             I i;
             J j;
             K k;
@@ -1462,7 +1481,7 @@ int main (int argc, char **argv)
             std::cout << "assignment via expression templates:\n";
             Float3 u(4);
             Float3 v(5,6,7);
-            NamedIndex_t<Float3,'i'> i;
+            TypedIndex_t<Float3,'i'> i;
             u(i) = v(i);
             std::cout << FORMAT_VALUE(u) << '\n';
             std::cout << '\n';
@@ -1487,7 +1506,7 @@ int main (int argc, char **argv)
             std::cout << FORMAT_VALUE(n) << '\n';
             std::cout << '\n';
 
-            NamedIndex_t<Float3,'j'> j;
+            TypedIndex_t<Float3,'j'> j;
 
             std::cout << "trace (and testing operator Scalar () type conversion):\n";
             std::cout << FORMAT_VALUE(m(i,i)) << '\n';
@@ -1521,8 +1540,8 @@ int main (int argc, char **argv)
 
         {
             Float3x3 u(3);
-            typedef NamedIndex_t<Float3,'i'> I;
-            typedef NamedIndex_t<Float3,'j'> J;
+            typedef TypedIndex_t<Float3,'i'> I;
+            typedef TypedIndex_t<Float3,'j'> J;
             I i;
             J j;
             std::cout << FORMAT_VALUE(u) << '\n';
@@ -1546,8 +1565,8 @@ int main (int argc, char **argv)
             Float3 u(1,2,3);
             Float3 v(4,5,6);
             Float3x3 a(10);
-            typedef NamedIndex_t<Float3,'i'> I;
-            typedef NamedIndex_t<Float3,'j'> J;
+            typedef TypedIndex_t<Float3,'i'> I;
+            typedef TypedIndex_t<Float3,'j'> J;
             I i;
             J j;
             std::cout << FORMAT_VALUE(u(i).uses_tensor(u)) << '\n';
@@ -1635,14 +1654,14 @@ int main (int argc, char **argv)
 
             typedef Tensor2_t<Float4,Float3> Float4x3;
             Float4x3 v(Static<>::WITHOUT_INITIALIZATION);
-            NamedIndex_t<Float3,'i'> i;
-            NamedIndex_t<Float3,'k'> k;
-            NamedIndex_t<Float4,'j'> j;
+            TypedIndex_t<Float3,'i'> i;
+            TypedIndex_t<Float3,'k'> k;
+            TypedIndex_t<Float4,'j'> j;
             v(j,i) = u(i,j);
             std::cout << FORMAT_VALUE(v) << '\n';
 
             typedef Tensor2Symmetric_t<Float3> Float3x3Symmetric;
-            NamedIndex_t<Float3x3Symmetric,'q'> q;
+            TypedIndex_t<Float3x3Symmetric,'q'> q;
             Float3x3Symmetric s(Static<>::WITHOUT_INITIALIZATION);
             s(q) = (u(i,j)*u(k,j)).bundle(i,k,q);
             std::cout << FORMAT_VALUE(s) << '\n';

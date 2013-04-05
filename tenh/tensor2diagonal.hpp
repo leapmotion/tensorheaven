@@ -10,6 +10,7 @@
 
 #include "tenh/core.hpp"
 #include "tenh/expression_templates.hpp"
+#include "tenh/tensor.hpp"
 #include "tenh/meta/typetuple.hpp"
 #include "tenh/vector.hpp"
 
@@ -21,7 +22,11 @@ struct Tensor2Diagonal_t : public Vector_t<typename Factor1_::Scalar,
                                            ((Factor1_::DIM < Factor2_::DIM) ? Factor1_::DIM : Factor2_::DIM),
                                            typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
                                                                   Tensor2Diagonal_t<Factor1_,Factor2_,Derived_>,
-                                                                  Derived_>::T>
+                                                                  Derived_>::T>,
+                           public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
+                                                                  Tensor2Diagonal_t<Factor1_,Factor2_,Derived_>,
+                                                                  Derived_>::T,
+                                           TypeList_t<Factor1_,TypeList_t<Factor2_> > >
 {
     enum { FACTOR_SCALAR_TYPES_ARE_EQUAL = 
         Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename Factor1_::Scalar,typename Factor2_::Scalar>::v>::v };
@@ -30,17 +35,21 @@ struct Tensor2Diagonal_t : public Vector_t<typename Factor1_::Scalar,
                      (Factor1_::DIM < Factor2_::DIM ? Factor1_::DIM : Factor2_::DIM),
                      typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
                                             Tensor2Diagonal_t<Factor1_,Factor2_,Derived_>,
-                                            Derived_>::T> Parent;
-    typedef typename Parent::Scalar Scalar;
-    using Parent::DIM;
-    typedef typename Parent::Derived Derived;
-    typedef typename Parent::Index Index;
+                                            Derived_>::T> Parent_Vector_t;
+    typedef Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
+                                                                     Tensor2Diagonal_t<Factor1_,Factor2_,Derived_>,
+                                                                     Derived_>::T,
+                     TypeList_t<Factor1_,TypeList_t<Factor2_> > > Parent_Tensor_i;
+    typedef typename Parent_Vector_t::Scalar Scalar;
+    using Parent_Vector_t::DIM;
+    typedef typename Parent_Vector_t::Derived Derived;
+    typedef typename Parent_Vector_t::Index Index;
     typedef Factor1_ Factor1;
     typedef Factor2_ Factor2;
     typedef CompoundIndex_t<typename TypeTuple_t<typename Factor1::Index,typename Factor2::Index>::T> CompoundIndex;
 
-    Tensor2Diagonal_t (WithoutInitialization const &w) : Parent(w) { }
-    Tensor2Diagonal_t (Scalar fill_with) : Parent(fill_with) { }
+    Tensor2Diagonal_t (WithoutInitialization const &w) : Parent_Vector_t(w) { }
+    Tensor2Diagonal_t (Scalar fill_with) : Parent_Vector_t(fill_with) { }
 
     template <typename BundleIndexTypeList, typename BundledIndex>
     static CompoundIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)
@@ -64,25 +73,8 @@ struct Tensor2Diagonal_t : public Vector_t<typename Factor1_::Scalar,
         contiguous_index_to_rowcol_index(b.value(), row, col);
         return CompoundIndex_t<BundleIndexTypeList>(Index1(row), Index2(col));
     }
-//     template <typename SourceIndexType, typename SplitIndexTypeList>
-//     static SourceIndexType split_index_map (CompoundIndex_t<SplitIndexTypeList> const &s)
-//     {
-//         // this is just to check that there is a valid conversion from the requested CompoundIndex_t type.
-//         // it doesn't actually produce any side-effects, and should be optimized out.
-//         {
-//             Lvd::Meta::Assert<SplitIndexTypeList::LENGTH == 2>();
-//             typename Factor1::Index i1(s.template el<0>());
-//             typename Factor2::Index i2(s.template el<1>());
-//             // check that SourceIndexType has a conversion to Index
-//             SourceIndexType t;
-//             Index i(t);
-//         }
-//         Uint32 row = s.template el<0>().value();
-//         Uint32 col = s.template el<1>().value();
-//         return SourceIndexType(rowcol_index_to_contiguous_index(row, col));
-//     }
 
-    using Parent::operator[];
+    using Parent_Vector_t::operator[];
 
     // using two indices in a Tensor2Diagonal_t is breaking apart the Index type and using it
     // as a general tensor -- this is where the fancy indexing scheme happens.
@@ -98,63 +90,39 @@ struct Tensor2Diagonal_t : public Vector_t<typename Factor1_::Scalar,
         return component(c.template el<0>(), c.template el<1>());
     }
 
-    // the argument is technically unnecessary, as its value is not used.  however,
-    // this allows the template system to deduce the SYMBOL of the IndexType_t, so
-    // it doesn't need to be specified explicitly.
-    // in this, an outer product would be
-    // IndexType_t<'i'> i;
-    // IndexType_t<'j'> j;
-    // u(i)*v(j)
-    // this override of the Parent's operator() is necessary so that the expression template
-    // knows that the operand is actually a Tensor2_t.
-    template <char SYMBOL>
-    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,FORCE_CONST>
-        operator () (NamedIndex_t<Derived,SYMBOL> const &) const
-    {
-        Lvd::Meta::Assert<(SYMBOL != '\0')>();
-        return ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,
-                                                  EmptyTypeList,FORCE_CONST>(this->as_derived());
-    }
-    
-    template <char SYMBOL>
-    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,DONT_FORCE_CONST> operator () (
-        NamedIndex_t<Derived,SYMBOL> const &)
-    {
-        Lvd::Meta::Assert<(SYMBOL != '\0')>();
-        return ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,
-                                                  EmptyTypeList,DONT_FORCE_CONST>(this->as_derived());
-    }
+    using Parent_Vector_t::operator();
+    using Parent_Tensor_i::operator();
 
     // a 2-tensor can be indexed by the pair of factor indices (Factor1::Index, Factor2::Index)
     // Dear Bjarne, please forgive me for this template metaprogramming atrocity.  Sincerely, Victor.
     template <char FACTOR1_SYMBOL, char FACTOR2_SYMBOL>
     ExpressionTemplate_IndexedObject_t<Derived,
                                        typename TypeTuple_t<
-                                           NamedIndex_t<Factor1,FACTOR1_SYMBOL>,
-                                           NamedIndex_t<Factor2,FACTOR2_SYMBOL>
+                                           TypedIndex_t<Factor1,FACTOR1_SYMBOL>,
+                                           TypedIndex_t<Factor2,FACTOR2_SYMBOL>
                                            >::T,
                                        typename SummedIndexTypeList_t<
                                            typename TypeTuple_t<
-                                               NamedIndex_t<Factor1,FACTOR1_SYMBOL>,
-                                               NamedIndex_t<Factor2,FACTOR2_SYMBOL>
+                                               TypedIndex_t<Factor1,FACTOR1_SYMBOL>,
+                                               TypedIndex_t<Factor2,FACTOR2_SYMBOL>
                                                >::T
                                            >::T,
                                        FORCE_CONST
                                        > operator () (
-        NamedIndex_t<Factor1,FACTOR1_SYMBOL> const &,
-        NamedIndex_t<Factor2,FACTOR2_SYMBOL> const &) const
+        TypedIndex_t<Factor1,FACTOR1_SYMBOL> const &,
+        TypedIndex_t<Factor2,FACTOR2_SYMBOL> const &) const
     {
         Lvd::Meta::Assert<(FACTOR1_SYMBOL != '\0')>();
         Lvd::Meta::Assert<(FACTOR2_SYMBOL != '\0')>();
         return ExpressionTemplate_IndexedObject_t<Derived,
                                                   typename TypeTuple_t<
-                                                      NamedIndex_t<Factor1,FACTOR1_SYMBOL>,
-                                                      NamedIndex_t<Factor2,FACTOR2_SYMBOL>
+                                                      TypedIndex_t<Factor1,FACTOR1_SYMBOL>,
+                                                      TypedIndex_t<Factor2,FACTOR2_SYMBOL>
                                                       >::T,
                                                   typename SummedIndexTypeList_t<
                                                       typename TypeTuple_t<
-                                                          NamedIndex_t<Factor1,FACTOR1_SYMBOL>,
-                                                          NamedIndex_t<Factor2,FACTOR2_SYMBOL>
+                                                          TypedIndex_t<Factor1,FACTOR1_SYMBOL>,
+                                                          TypedIndex_t<Factor2,FACTOR2_SYMBOL>
                                                           >::T
                                                       >::T,
                                                   FORCE_CONST
@@ -164,31 +132,31 @@ struct Tensor2Diagonal_t : public Vector_t<typename Factor1_::Scalar,
     template <char FACTOR1_SYMBOL, char FACTOR2_SYMBOL>
     ExpressionTemplate_IndexedObject_t<Derived,
                                        typename TypeTuple_t<
-                                           NamedIndex_t<Factor1,FACTOR1_SYMBOL>,
-                                           NamedIndex_t<Factor2,FACTOR2_SYMBOL>
+                                           TypedIndex_t<Factor1,FACTOR1_SYMBOL>,
+                                           TypedIndex_t<Factor2,FACTOR2_SYMBOL>
                                            >::T,
                                        typename SummedIndexTypeList_t<
                                            typename TypeTuple_t<
-                                               NamedIndex_t<Factor1,FACTOR1_SYMBOL>,
-                                               NamedIndex_t<Factor2,FACTOR2_SYMBOL>
+                                               TypedIndex_t<Factor1,FACTOR1_SYMBOL>,
+                                               TypedIndex_t<Factor2,FACTOR2_SYMBOL>
                                                >::T
                                            >::T,
                                        DONT_FORCE_CONST
                                        > operator () (
-        NamedIndex_t<Factor1,FACTOR1_SYMBOL> const &,
-        NamedIndex_t<Factor2,FACTOR2_SYMBOL> const &)
+        TypedIndex_t<Factor1,FACTOR1_SYMBOL> const &,
+        TypedIndex_t<Factor2,FACTOR2_SYMBOL> const &)
     {
         Lvd::Meta::Assert<(FACTOR1_SYMBOL != '\0')>();
         Lvd::Meta::Assert<(FACTOR2_SYMBOL != '\0')>();
         return ExpressionTemplate_IndexedObject_t<Derived,
                                                   typename TypeTuple_t<
-                                                      NamedIndex_t<Factor1,FACTOR1_SYMBOL>,
-                                                      NamedIndex_t<Factor2,FACTOR2_SYMBOL>
+                                                      TypedIndex_t<Factor1,FACTOR1_SYMBOL>,
+                                                      TypedIndex_t<Factor2,FACTOR2_SYMBOL>
                                                       >::T,
                                                   typename SummedIndexTypeList_t<
                                                       typename TypeTuple_t<
-                                                          NamedIndex_t<Factor1,FACTOR1_SYMBOL>,
-                                                          NamedIndex_t<Factor2,FACTOR2_SYMBOL>
+                                                          TypedIndex_t<Factor1,FACTOR1_SYMBOL>,
+                                                          TypedIndex_t<Factor2,FACTOR2_SYMBOL>
                                                           >::T
                                                       >::T,
                                                   DONT_FORCE_CONST
@@ -238,11 +206,10 @@ struct Tensor2Diagonal_t : public Vector_t<typename Factor1_::Scalar,
         operator[](vector_index_of(c)) = s / (Factor1::scalar_factor_for_component(i1) 
                                               * Factor2::scalar_factor_for_component(i2));
     }
-    
-    using Parent::component_corresponds_to_memory_location;
-    using Parent::scalar_factor_for_component;
-    using Parent::vector_index_of;
-
+    using Parent_Vector_t::component_corresponds_to_memory_location;
+    using Parent_Vector_t::scalar_factor_for_component;
+    using Parent_Vector_t::vector_index_of;
+    // the diagonal is not stored in memory -- all components are zero.
     static bool component_corresponds_to_memory_location (CompoundIndex const &c)
     {
         // only diagonal elements correspond to memory locations

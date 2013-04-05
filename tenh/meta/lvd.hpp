@@ -15,14 +15,14 @@ namespace Meta {
 // ///////////////////////////////////////////////////////////////////////////
 
 template <bool condition_> struct Assert;
-template <> struct Assert<true> { static bool const v = true; operator bool () { return v; } };
+template <> struct Assert<true> { static bool const v = true; operator bool () const { return v; } };
 
 template <typename T_> struct Type { typedef T_ T; };
 
-template <typename T_, T_ value_> struct Value { typedef T_ T; static T_ const v = value_; operator T_ () { return value_; } };
+template <typename T_, T_ value_> struct Value { typedef T_ T; static T_ const v = value_; operator T_ () const { return value_; } };
 
-template <typename T0_, typename T1_> struct TypesAreEqual { static bool const v = false; operator bool () { return v; } };
-template <typename T_> struct TypesAreEqual<T_,T_> { static bool const v = true; operator bool () { return v; } };
+template <typename T0_, typename T1_> struct TypesAreEqual { static bool const v = false; operator bool () const { return v; } };
+template <typename T_> struct TypesAreEqual<T_,T_> { static bool const v = true; operator bool () const { return v; } };
 
 template <bool condition_, typename Then_, typename Else_> struct If;
 template <typename Then_, typename Else_> struct If<true, Then_, Else_> { typedef Then_ T; };

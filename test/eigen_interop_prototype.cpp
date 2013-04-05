@@ -48,12 +48,12 @@ void test_SVD ()
     std::cout << FORMAT_VALUE(v) << '\n';
     
     Tensor2 x(Static<>::WITHOUT_INITIALIZATION);
-    NamedIndex_t<V1,'i'> i;
-    NamedIndex_t<V1,'j'> j;
-    NamedIndex_t<V1,'k'> k;
-    NamedIndex_t<V2,'p'> p;
-    NamedIndex_t<V2,'q'> q;
-    NamedIndex_t<V2,'r'> r;
+    TypedIndex_t<V1,'i'> i;
+    TypedIndex_t<V1,'j'> j;
+    TypedIndex_t<V1,'k'> k;
+    TypedIndex_t<V2,'p'> p;
+    TypedIndex_t<V2,'q'> q;
+    TypedIndex_t<V2,'r'> r;
     std::cout << FORMAT_VALUE(u(i,j)*u(k,j)) << '\n';
     std::cout << FORMAT_VALUE(u(i,j)*u(i,k)) << '\n';
     x(i,q) = u(i,j)*s(j,p)*v(q,p);
@@ -90,10 +90,10 @@ void test_diagonalization ()
     std::cout << FORMAT_VALUE(evec) << '\n';
     std::cout << FORMAT_VALUE(eval) << '\n';
     
-    NamedIndex_t<V,'i'> i;
-    NamedIndex_t<V,'j'> j;
-    NamedIndex_t<V,'k'> k;
-    NamedIndex_t<V,'l'> l;
+    TypedIndex_t<V,'i'> i;
+    TypedIndex_t<V,'j'> j;
+    TypedIndex_t<V,'k'> k;
+    TypedIndex_t<V,'l'> l;
     std::cout << FORMAT_VALUE(evec(i,j)*eval(j,k)*evec(l,k)) << '\n';
     
     std::cout << '\n';
