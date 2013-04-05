@@ -229,16 +229,6 @@ private:
     Operand const &m_operand;
 };
 
-// template <typename SourceIndexType, typename SplitIndexTypeList>
-// struct SplitIndexMap_t
-// {
-//     typedef SourceIndexType (*T) (CompoundIndex_t<SplitIndexTypeList> const &);
-//     static T const V;
-// };
-//
-// template <typename SourceIndexType, typename SplitIndexTypeList>
-// typename SplitIndexMap_t<SourceIndexType,SplitIndexTypeList>::T const SplitIndexMap_t<SourceIndexType,SplitIndexTypeList>::V = SourceIndexType::OwnerVector::Derived::template split_index_map<SourceIndexType,SplitIndexTypeList>;
-
 // not an expression template, but just something that handles the split indices
 template <typename Operand, typename SourceIndexType, typename SplitIndexTypeList>
 struct IndexSplitter_t
@@ -255,37 +245,28 @@ struct IndexSplitter_t
     static Uint32 const SOURCE_INDEX_TYPE_INDEX = FirstMatchingIn_t<typename Operand::FreeIndexTypeList,SourceIndexType>::INDEX;
     typedef typename ConcatenationOfTypeLists_t<
         typename Operand::FreeIndexTypeList::template LeadingTypeList_t<SOURCE_INDEX_TYPE_INDEX>::T,
-        TypeList_t<CompoundIndex_t<SplitIndexTypeList>,
-                   typename Operand::FreeIndexTypeList::template TrailingTypeList_t<SOURCE_INDEX_TYPE_INDEX+1>::T>
+        typename ConcatenationOfTypeLists_t<
+            SplitIndexTypeList,
+            typename Operand::FreeIndexTypeList::template TrailingTypeList_t<SOURCE_INDEX_TYPE_INDEX+1>::T
+            >::T
         >::T IndexTypeList;
-//     // SplitIndexTypeList comes first in IndexTypeList
-//     typedef typename SetSubtraction_t<typename ConcatenationOfTypeLists_t<SplitIndexTypeList,typename Operand::FreeIndexTypeList>::T,
-//                                       TypeList_t<SourceIndexType>
-//                                       >::T IndexTypeList;
     typedef typename ConcatenationOfTypeLists_t<typename Operand::UsedIndexTypeList,SplitIndexTypeList>::T UsedIndexTypeList;
     typedef CompoundIndex_t<IndexTypeList> CompoundIndex;
-//     typedef typename SplitIndexMap_t<SourceIndexType,SplitIndexTypeList>::T SplitIndexMap;
 
     IndexSplitter_t (Operand const &operand) : m_operand(operand) { }
 
     Scalar operator [] (CompoundIndex const &c) const
     {
-//         // replace the first SplitIndexTypeList::LENGTH elements of c with the separate indices that it bundles.
-//         // |= is concatenation of CompoundIndex_t instances
-// //         CompoundIndex_t<TypeList_t<SourceIndexType,typename CompoundIndex::IndexTypeList::TrailingTypeList_t<SplitIndexTypeList::LENGTH>::T> >
-//         typename Operand::CompoundIndex
-//             x((SplitIndexMap_t<SourceIndexType,SplitIndexTypeList>::V)(c.template leading_list<SplitIndexTypeList::LENGTH>())
-//               >>= c.template trailing_list<SplitIndexTypeList::LENGTH>());
-//         std::cerr << FORMAT_VALUE(c) << ", " << FORMAT_VALUE(x) << '\n';
-// //         return m_operand[(SplitIndexMap_t<SourceIndexType,SplitIndexTypeList>::V)(c.template leading_list<SplitIndexTypeList::LENGTH>())
-// //                          >>= c.template trailing_list<SplitIndexTypeList::LENGTH>()];
-//         return m_operand[x];
-        // replace the first SplitIndexTypeList::LENGTH elements of c with a CompoundIndex containing those elements,
-        // and tack on the front of the index list as a CompoundIndex (so the passed-in value is a CompoundIndex whose
-        // first element is a CompoundIndex).  NOTE: >>= is "prepend left thing to right thing as element", |= is concatenate
-        return m_operand[c.template leading_list<SOURCE_INDEX_TYPE_INDEX>() |=
-                         (c.template range<SOURCE_INDEX_TYPE_INDEX,SOURCE_INDEX_TYPE_INDEX+SplitIndexTypeList::LENGTH>() >>=
-                          c.template trailing_list<SOURCE_INDEX_TYPE_INDEX+SplitIndexTypeList::LENGTH>())];
+        typedef typename SourceIndexType::OwnerVector::Derived SourceIndexOwnerTensor;
+        typename SourceIndexOwnerTensor::CompoundIndex s(c.template range<SOURCE_INDEX_TYPE_INDEX,SOURCE_INDEX_TYPE_INDEX+SplitIndexTypeList::LENGTH>());
+        if (!SourceIndexOwnerTensor::component_corresponds_to_memory_location(s))
+            return Scalar(0);
+        
+        SourceIndexType i(SourceIndexOwnerTensor::vector_index_of(s));
+        // this replaces the SplitIndexTypeList portion with SourceIndexType
+        typename Operand::CompoundIndex c_rebundled(c.template leading_list<SOURCE_INDEX_TYPE_INDEX>() |=
+                                                    (i >>= c.template trailing_list<SOURCE_INDEX_TYPE_INDEX+SplitIndexTypeList::LENGTH>()));
+        return SourceIndexOwnerTensor::scalar_factor_for_component(s) * m_operand[c_rebundled];
     }
 
     template <typename OtherTensor>

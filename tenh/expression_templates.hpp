@@ -124,7 +124,8 @@ std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scala
         if (next.is_not_at_end())
             out << '\n';
     }
-    out << "](" << FreeIndex1::SYMBOL << ',' << FreeIndex2::SYMBOL << ")\n";
+    out << "]\n"; // TODO: figure out how to print the index (which could be a CompoundIndex_t)
+//     out << "](" << FreeIndex1::SYMBOL << ',' << FreeIndex2::SYMBOL << ")\n";
     return out;
 }
 

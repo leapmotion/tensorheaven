@@ -900,7 +900,10 @@ void test_IndexSplit ()
         NamedIndex_t<Vector,'k'> k;
         NamedIndex_t<Vector,'l'> l;
         s(p,q).split(p,i,j);
-//         std::cout << FORMAT_VALUE(s(p,q).split(p,i,j)) << '\n';
+        std::cout << FORMAT_VALUE(s(p,q).split(p,i,j)) << '\n';
+        std::cout << FORMAT_VALUE(s(p,q).split(p,i,j) + s(p,q).split(p,j,i)) << '\n';        
+        std::cout << "Ricci curvature-like thing: " << FORMAT_VALUE(s(p,q).split(p,i,j).split(q,i,k)) << '\n';        
+        std::cout << "Scalar curvature-like thing: " << FORMAT_VALUE(s(p,q).split(p,i,j).split(q,i,j)) << '\n';        
         std::cout << '\n';
     }
 

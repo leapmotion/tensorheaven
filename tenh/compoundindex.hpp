@@ -51,8 +51,8 @@ struct CompoundIndex_t : List_t<IndexTypeList_>
         Parent(leading_compound_index)
     { }
     // this includes the copy constructor
-    template <typename OtherBodyIndexTypeList>
-    CompoundIndex_t (CompoundIndex_t<TypeList_t<HeadIndexType,OtherBodyIndexTypeList> > const &leading_compound_index)
+    template <typename OtherHeadIndexType, typename OtherBodyIndexTypeList>
+    CompoundIndex_t (CompoundIndex_t<TypeList_t<OtherHeadIndexType,OtherBodyIndexTypeList> > const &leading_compound_index)
         :
         Parent(leading_compound_index)
     { }
@@ -176,12 +176,12 @@ struct CompoundIndex_t<TypeList_t<HeadIndexType> > : public List_t<TypeList_t<He
 
     CompoundIndex_t (CompoundIndex_t<EmptyTypeList> const &) { } // default construction
     // this is the copy constructor
-    CompoundIndex_t (CompoundIndex_t const &leading_compound_index)
+    CompoundIndex_t (CompoundIndex_t const &c)
         :
-        Parent(leading_compound_index)
+        Parent(c)
     { }
-    template <typename OtherBodyIndexTypeList>
-    CompoundIndex_t (CompoundIndex_t<TypeList_t<HeadIndexType,OtherBodyIndexTypeList> > const &leading_compound_index)
+    template <typename OtherHeadIndexType, typename OtherBodyIndexTypeList>
+    CompoundIndex_t (CompoundIndex_t<TypeList_t<OtherHeadIndexType,OtherBodyIndexTypeList> > const &leading_compound_index)
         :
         Parent(leading_compound_index)
     { }

@@ -59,5 +59,15 @@ int main (int argc, char **argv)
 
     std::cout << FORMAT_VALUE(sizeof(EmptyList)) << '\n';
 
+    {
+        typedef TypeList_t<int,TypeList_t<int> > T1;
+        typedef List_t<T1> L1;
+        typedef TypeList_t<float,TypeList_t<double> > T2;
+        typedef List_t<T2> L2;
+        L2 l2(3.4f, List_t<TypeList_t<double> >(100.1));
+        L1 l1(l2);
+        std::cout << FORMAT_VALUE(l2) << '\n';
+        std::cout << FORMAT_VALUE(l1) << '\n';
+    }
     return 0;
 }

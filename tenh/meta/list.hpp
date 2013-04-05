@@ -37,8 +37,8 @@ struct List_t
     // construction from single-element leading lists -- default constructor for body
     List_t (List_t<TypeList_t<HeadType> > const &leading_list) : m_head(leading_list.head()) { }
     // construction from leading lists having more than one element
-    template <typename BodyTypeList>
-    List_t (List_t<TypeList_t<HeadType,BodyTypeList> > const &leading_list)
+    template <typename OtherHeadType, typename OtherBodyTypeList>
+    List_t (List_t<TypeList_t<OtherHeadType,OtherBodyTypeList> > const &leading_list)
         :
         m_head(leading_list.head()),
         m_body(leading_list.body())
@@ -301,8 +301,8 @@ struct List_t<TypeList_t<HeadType_> >
     // list types, doing default construction for all remaining elements, if any.
     List_t (List_t<EmptyTypeList> const &) { } // default construction
     List_t (List_t const &list) : m_head(list.m_head) { }
-    template <typename BodyTypeList>
-    List_t (List_t<TypeList_t<HeadType, BodyTypeList> > const &leading_list)
+    template <typename OtherHeadType, typename OtherBodyTypeList>
+    List_t (List_t<TypeList_t<OtherHeadType, OtherBodyTypeList> > const &leading_list)
         :
         m_head(leading_list.head())
     { }
