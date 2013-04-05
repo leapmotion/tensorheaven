@@ -63,10 +63,14 @@ namespace Tensor2Diagonal {
                 if(i.value() == j.value())
                 {
                     assert_eq(t[ci], Scalar(1));
+                    assert_eq(t.scalar_factor_for_component(ci), Scalar(1));
+                    assert(t.component_corresponds_to_memory_location(ci));
                 }
                 else
                 {
                     assert_eq(t[ci], Scalar(0));
+                        assert_eq(t.scalar_factor_for_component(ci), Scalar(0));
+                    assert(!t.component_corresponds_to_memory_location(ci));
                 }
             }
         }
@@ -141,12 +145,12 @@ namespace Tensor2Diagonal {
             new Context::Data<Tensor2Diagonal>(t), RESULT_NO_ERROR);
         LVD_ADD_NAMED_TEST_CASE_FUNCTION(tensor2diagonal, "test_write_on_diagonal",
             test_write_on_diagonal<Tensor2Diagonal>, new Context::Data<Tensor2Diagonal>(t), RESULT_NO_ERROR);
-        if (ROWS > 1 || COLS > 1)
-        {
-            LVD_ADD_NAMED_TEST_CASE_FUNCTION(tensor2diagonal, "test_write_off_diagonal",
-                test_write_off_diagonal<Tensor2Diagonal>, new Context::Data<Tensor2Diagonal>(t),
-                RESULT_UNCAUGHT_EXCEPTION, STAGE_TEST_BODY);        
-        }        
+        // if (ROWS > 1 || COLS > 1)
+        // {
+        //     LVD_ADD_NAMED_TEST_CASE_FUNCTION(tensor2diagonal, "test_write_off_diagonal",
+        //         test_write_off_diagonal<Tensor2Diagonal>, new Context::Data<Tensor2Diagonal>(t),
+        //         RESULT_UNCAUGHT_EXCEPTION, STAGE_TEST_BODY);        
+        // }        
     }
     
     template <typename Scalar>
