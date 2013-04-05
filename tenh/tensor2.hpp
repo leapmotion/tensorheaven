@@ -35,7 +35,8 @@ struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
                                                           Tensor2_t<Factor1_,Factor2_,Derived_>,
                                                           Derived_>::T>
 {
-    enum { FACTOR_SCALAR_TYPES_ARE_EQUAL = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename Factor1_::Scalar,typename Factor2_::Scalar>::v>::v };
+    enum { FACTOR_SCALAR_TYPES_ARE_EQUAL 
+        = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename Factor1_::Scalar,typename Factor2_::Scalar>::v>::v };
 
     typedef Vector_t<typename Factor1_::Scalar,
                      Factor1_::DIM*Factor2_::DIM,
@@ -140,9 +141,13 @@ struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
         typename Factor1::Index(c.template el<0>());
         typename Factor2::Index(c.template el<1>());
         if (c.is_at_end())
+        {
             throw std::invalid_argument("index out of range");
+        }
         else
+        {
             return this->component_access_without_range_check(c.value());
+        }
     }
 
     // the argument is technically unnecessary, as its value is not used.  however,
@@ -155,14 +160,14 @@ struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
     // this override of the Parent's operator() is necessary so that the expression template
     // knows that the operand is actually a Tensor2_t.
     template <char SYMBOL>
-    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,FORCE_CONST> operator () (
-        NamedIndex_t<Derived,SYMBOL> const &) const
+    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,FORCE_CONST>
+        operator () ( NamedIndex_t<Derived,SYMBOL> const &) const
     {
         return expr<SYMBOL>();
     }
     template <char SYMBOL>
-    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,DONT_FORCE_CONST> operator () (
-        NamedIndex_t<Derived,SYMBOL> const &)
+    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,DONT_FORCE_CONST>
+        operator () ( NamedIndex_t<Derived,SYMBOL> const &)
     {
         return expr<SYMBOL>();
     }
@@ -171,16 +176,20 @@ struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
     // this override of the Parent's operator() is necessary so that the expression template
     // knows that the operand is actually a Tensor2_t.
     template <char SYMBOL>
-    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,FORCE_CONST> expr () const
+    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,FORCE_CONST>
+        expr () const
     {
         Lvd::Meta::Assert<(SYMBOL != '\0')>();
-        return ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,FORCE_CONST>(*this);
+        return ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,
+                                                  EmptyTypeList,FORCE_CONST>(*this);
     }
     template <char SYMBOL>
-    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,DONT_FORCE_CONST> expr ()
+    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,DONT_FORCE_CONST>
+        expr ()
     {
         Lvd::Meta::Assert<(SYMBOL != '\0')>();
-        return ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,EmptyTypeList,DONT_FORCE_CONST>(*this);
+        return ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<NamedIndex_t<Derived,SYMBOL> >,
+                                                  EmptyTypeList,DONT_FORCE_CONST>(*this);
     }
 
     // a 2-tensor can be indexed by the pair of factor indices (Factor1::Index, Factor2::Index)
@@ -294,14 +303,22 @@ struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
     Scalar component (Index1 const &i1, Index2 const &i2) const
     {
         if (i1.is_at_end() || i2.is_at_end())
+        {
             throw std::invalid_argument("index/indices out of range");
+        }
 
-        if (!Factor1::component_corresponds_to_memory_location(i1) || !Factor2::component_corresponds_to_memory_location(i2))
+        if (!Factor1::component_corresponds_to_memory_location(i1) 
+            || !Factor2::component_corresponds_to_memory_location(i2))
+        {
             return Scalar(0);
+        }
         else
+        {
             return Factor1::scalar_factor_for_component(i1) *
                    Factor2::scalar_factor_for_component(i2) *
-                   operator[](vector_index_of(CompoundIndex(Factor1::vector_index_of(i1), Factor2::vector_index_of(i2))));
+                   operator[](vector_index_of(CompoundIndex(Factor1::vector_index_of(i1), 
+                                                            Factor2::vector_index_of(i2))));
+        }
     }
     // write 2-tensor components -- will throw if a component doesn't correspond to a memory location
     // Index1 could be Factor1::Index or Factor1::CompoundIndex (checked by its use in the other functions)
@@ -310,14 +327,20 @@ struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
     void set_component (Index1 const &i1, Index2 const &i2, Scalar s)
     {
         if (i1.is_at_end() || i2.is_at_end())
+        {
             throw std::invalid_argument("index/indices out of range");
+        }
 
-        if (!Factor1::component_corresponds_to_memory_location(i1) || !Factor2::component_corresponds_to_memory_location(i2))
+        if (!Factor1::component_corresponds_to_memory_location(i1) 
+            || !Factor2::component_corresponds_to_memory_location(i2))
+        {
             throw std::invalid_argument("this tensor component is not writable");
+        }
 
         CompoundIndex c(Factor1::vector_index_of(i1), Factor2::vector_index_of(i2));
         // write to the component, but divide through by the total scale factor for the component.
-        operator[](vector_index_of(c)) = s / (Factor1::scalar_factor_for_component(i1) * Factor2::scalar_factor_for_component(i2));
+        operator[](vector_index_of(c)) = s / (Factor1::scalar_factor_for_component(i1) 
+                                              * Factor2::scalar_factor_for_component(i2));
     }
     using Parent::component_corresponds_to_memory_location;
     using Parent::scalar_factor_for_component;
@@ -336,9 +359,14 @@ struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
 //             return Derived::type_as_string();
         // for now, just return this type string
         if (Lvd::Meta::TypesAreEqual<Derived_,NullType>::v)
+        {
             return "Tensor2_t<" + TypeStringOf_t<Factor1>::eval() + ',' + TypeStringOf_t<Factor2>::eval() + '>';
+        }
         else
-            return "Tensor2_t<" + TypeStringOf_t<Factor1>::eval() + ',' + TypeStringOf_t<Factor2>::eval() + ',' + TypeStringOf_t<Derived>::eval() + '>';
+        {
+            return "Tensor2_t<" + TypeStringOf_t<Factor1>::eval() + ',' + TypeStringOf_t<Factor2>::eval() + ','
+                   + TypeStringOf_t<Derived>::eval() + '>';
+        }
     }
 
 private:
@@ -361,7 +389,9 @@ std::ostream &operator << (std::ostream &out, Tensor2_t<Factor1,Factor2,Derived>
     typedef Tensor2_t<Factor1,Factor2,Derived> Tensor2;
 
     if (Tensor2::DIM == 0)
+    {
         return out << "[]";
+    }
 
     typename Tensor2::CompoundIndex c;
     out << '\n';
