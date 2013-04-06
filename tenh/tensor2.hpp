@@ -10,7 +10,7 @@
 
 #include "tenh/core.hpp"
 #include "tenh/expression_templates.hpp"
-#include "tenh/tensor.hpp"
+#include "tenh/interface/tensor.hpp"
 #include "tenh/meta/typetuple.hpp"
 #include "tenh/vector.hpp"
 
@@ -88,49 +88,7 @@ struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
         return CompoundIndex_t<BundleIndexTypeList>(Index1(row), Index2(col));
     }
 
-    // type conversion operator for canonical coercion to the Factor1 or Factor2 factor type when the
-    // tensor is Factor1 \otimes OneDimVectorSpace  or  OneDimVectorSpace \otimes Factor2.
-//     template <typename Factor>
-//     operator Factor const & () const
-//     {
-//         Lvd::Meta::Assert<(Lvd::Meta::TypesAreEqual<Factor,Factor1>::v && Factor2::DIM == 1) || (Lvd::Meta::TypesAreEqual<Factor,Factor2>::v && Factor1::DIM == 1)>();
-//         return *reinterpret_cast<Factor const *>(&Parent_Vector_t::m[0]);
-//     }
-//     operator Factor1 const & () const
-//     {
-//         Lvd::Meta::Assert<(Factor2::DIM == 1)>();
-//         return *reinterpret_cast<Factor1 const *>(&Parent_Vector_t::m[0]); // super C-like, but should be no problem because there is no virtual inheritance
-//     }
-    Factor1 const &as_factor1 () const
-    {
-        Lvd::Meta::Assert<(Factor2::DIM == 1)>();
-        return *reinterpret_cast<Factor1 *>(&Parent_Vector_t::m[0]); // super C-like, but should be no problem because there is no virtual inheritance
-    }
-    // this could be implemented as "operator Factor1 & ()" but it would be bad to make implicit casts that can be used to change the value of this.
-    Factor1 &as_factor1 ()
-    {
-        Lvd::Meta::Assert<(Factor2::DIM == 1)>();
-        return *reinterpret_cast<Factor1 *>(&Parent_Vector_t::m[0]); // super C-like, but should be no problem because there is no virtual inheritance
-    }
-    // type conversion operator for canonical coercion to the Factor2 factor type when the
-    // tensor is a tensor product of a 1-dimensional vector space with Factor2.
-//     operator Factor2 const & () const
-//     {
-//         Lvd::Meta::Assert<(Factor1::DIM == 1)>();
-//         return *reinterpret_cast<Factor2 const *>(&Parent_Vector_t::m[0]); // super C-like, but should be no problem because there is no virtual inheritance
-//     }
-    Factor2 const &as_factor2 () const
-    {
-        Lvd::Meta::Assert<(Factor1::DIM == 1)>();
-        return *reinterpret_cast<Factor2 *>(&Parent_Vector_t::m[0]); // super C-like, but should be no problem because there is no virtual inheritance
-    }
-    // this could be implemented as "operator Factor2 & ()" but it would be bad to make implicit casts that can be used to change the value of this.
-    Factor2 &as_factor2 ()
-    {
-        Lvd::Meta::Assert<(Factor1::DIM == 1)>();
-        return *reinterpret_cast<Factor2 *>(&Parent_Vector_t::m[0]); // super C-like, but should be no problem because there is no virtual inheritance
-    }
-
+    // for access to particular components
     using Parent_Vector_t::operator[];
 
     // Index1 could be Factor1::Index or Factor1::CompoundIndex (checked by its use in the other functions)

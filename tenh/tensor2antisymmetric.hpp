@@ -11,8 +11,8 @@
 
 #include "tenh/core.hpp"
 #include "tenh/expression_templates.hpp"
+#include "tenh/interface/tensor.hpp"
 #include "tenh/naturalpairing.hpp"
-#include "tenh/tensor.hpp"
 #include "tenh/meta/typetuple.hpp"
 #include "tenh/vector.hpp"
 

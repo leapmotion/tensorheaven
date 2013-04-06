@@ -1,17 +1,14 @@
 // ///////////////////////////////////////////////////////////////////////////
-// tenh/tensor.hpp by Victor Dods, created 2013/03/13
+// tenh/interface/tensor.hpp by Victor Dods, created 2013/04/05
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#ifndef TENH_TENSOR_HPP_
-#define TENH_TENSOR_HPP_
-
-#include <ostream>
+#ifndef TENH_INTERFACE_TENSOR_HPP_
+#define TENH_INTERFACE_TENSOR_HPP_
 
 #include "tenh/core.hpp"
 #include "tenh/expression_templates.hpp"
 #include "tenh/index.hpp"
-#include "tenh/meta/typelist_utility.hpp"
 
 namespace Tenh {
 
@@ -40,6 +37,9 @@ struct Tensor_i
     typedef FactorTypeList_ FactorTypeList;
     typedef typename IndexTypeList_t<FactorTypeList>::T IndexTypeList;
     typedef CompoundIndex_t<IndexTypeList> CompoundIndex;
+    // this is not the "fully expanded" degree, but the number of [what you could think of
+    // as "parenthesized"] factors that formed this tensor product type.
+    static Uint32 const DEGREE = FactorTypeList::LENGTH;
 
     // TODO: could put canonical as_factorX conversions here
 
@@ -97,4 +97,4 @@ private:
 
 } // end of namespace Tenh
 
-#endif // TENH_TENSOR_HPP_
+#endif // TENH_INTERFACE_TENSOR_HPP_

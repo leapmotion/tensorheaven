@@ -1025,20 +1025,6 @@ int main (int argc, char **argv)
         m = 8;
         std::cout << "assignment via float coercion (m should equal [8]): " << FORMAT_VALUE(m) << "\n\n";
 
-        typedef Tensor2_t<Float3,Float1> Float3x1;
-        Float3x1 a(5);
-        std::cout << "type coercion from Tensor2_t<Float3,Float1> to Float3:\n";
-        bar(a.as_factor1());
-        a.as_factor1() = Float3(20);
-        std::cout << "assignment via float coercion (a should equal [20  20  20]^T): " << FORMAT_VALUE(a) << "\n\n";
-
-        typedef Tensor2_t<Float1,Float4> Float1x4;
-        Float1x4 b(6);
-        std::cout << "type coercion from Tensor2_t<Float1,Float4> to Float4:\n";
-        bor(b.as_factor2());
-        b.as_factor2() = Float4(42);
-        std::cout << "assignment via float coercion (b should equal [42  42  42  42]): " << FORMAT_VALUE(b) << "\n\n";
-
         // uncommenting the following should produce a compile error (no type conversion to Float3)
 //         Float3 x(b);
     }
