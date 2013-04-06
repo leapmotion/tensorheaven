@@ -46,7 +46,10 @@ struct Tensor2Diagonal_t : public Vector_t<typename Factor1_::Scalar,
     typedef typename Parent_Vector_t::Index Index;
     typedef Factor1_ Factor1;
     typedef Factor2_ Factor2;
-    typedef CompoundIndex_t<typename TypeTuple_t<typename Factor1::Index,typename Factor2::Index>::T> CompoundIndex;
+    typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
+    typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
+    typedef typename Parent_Tensor_i::CompoundIndex CompoundIndex;
+    using Parent_Tensor_i::DEGREE;
 
     Tensor2Diagonal_t (WithoutInitialization const &w) : Parent_Vector_t(w) { }
     Tensor2Diagonal_t (Scalar fill_with) : Parent_Vector_t(fill_with) { }

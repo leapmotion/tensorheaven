@@ -6,8 +6,6 @@
 #ifndef TENH_TENSOR2_HPP_
 #define TENH_TENSOR2_HPP_
 
-#include <ostream>
-
 #include "tenh/core.hpp"
 #include "tenh/expression_templates.hpp"
 #include "tenh/interface/tensor.hpp"
@@ -31,7 +29,7 @@ to be zero.
 // general 2-tensor with no symmetries -- most general type of 2-tensor
 template <typename Factor1_, typename Factor2_, typename Derived_ = NullType>
 struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
-                                   Factor1_::DIM*Factor2_::DIM,
+                                   Factor1_::DIM*Factor2_::DIM, // TODO: replace with DimensionOfTensorProduct_t<TypeList_t<...> >::V
                                    typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
                                                           Tensor2_t<Factor1_,Factor2_,Derived_>,
                                                           Derived_>::T>,
@@ -44,7 +42,7 @@ struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
         = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename Factor1_::Scalar,typename Factor2_::Scalar>::v>::v };
 
     typedef Vector_t<typename Factor1_::Scalar,
-                     Factor1_::DIM*Factor2_::DIM,
+                     Factor1_::DIM*Factor2_::DIM, // TODO: replace with DimensionOfTensorProduct_t<TypeList_t<...> >::V
                      typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
                                             Tensor2_t<Factor1_,Factor2_,Derived_>,
                                             Derived_>::T> Parent_Vector_t;
@@ -58,9 +56,10 @@ struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
     typedef typename Parent_Vector_t::Index Index;
     typedef Factor1_ Factor1;
     typedef Factor2_ Factor2;
-    typedef typename TypeTuple_t<Factor1,Factor2>::T FactorTypeList;
-    typedef typename TypeTuple_t<typename Factor1::Index,typename Factor2::Index>::T FactorIndexTypeList;
-    typedef CompoundIndex_t<FactorIndexTypeList> CompoundIndex;
+    typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
+    typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
+    typedef typename Parent_Tensor_i::CompoundIndex CompoundIndex;
+    using Parent_Tensor_i::DEGREE;
 
     Tensor2_t (WithoutInitialization const &w) : Parent_Vector_t(w) { }
     Tensor2_t (Scalar fill_with) : Parent_Vector_t(fill_with) { }
@@ -210,31 +209,6 @@ private:
         col = i % Factor2::DIM;
     }
 };
-
-template <typename Factor1, typename Factor2, typename Derived>
-std::ostream &operator << (std::ostream &out, Tensor2_t<Factor1,Factor2,Derived> const &t)
-{
-    typedef Tensor2_t<Factor1,Factor2,Derived> Tensor2;
-
-    if (Tensor2::DIM == 0)
-    {
-        return out << "[]";
-    }
-
-    typename Tensor2::CompoundIndex c;
-    out << '\n';
-    for (typename Factor1::Index i; i.is_not_at_end(); ++i)
-    {
-        out << '[';
-        for (typename Factor2::Index j; j.is_not_at_end(); ++j)
-        {
-            out << t[c] << '\t';
-            ++c;
-        }
-        out << "]\n";
-    }
-    return out;
-}
 
 } // end of namespace Tenh
 

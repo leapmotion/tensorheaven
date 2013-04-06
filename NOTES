@@ -50,11 +50,7 @@ future goals:
   so having a formal mechanism to work with explicit bases may clarify and simplify some calculations
 
 random TODOs:
-- simplify usage of indices.  Use "Index_t<'i'> i", just to carry the letter, then have that create the stronger type
-  NamedIndex_t<Derived,'i'> in the expression template when you call operator() with the index.  maybe use TypedIndex_t
-  instead of NamedIndex_t.
 - implement [anti]symmetric contiguous_index_to_rowcol_index as a lookup table for speed.
-- create Tensor2_i compile-time interface that handles 2-index indexing, printing and so forth
 - allow use of same indices across different terms (distinguishing multiplication and addition)
 - see if it's possible to do strong range check guarantees for indices (Index_t) -- this would probably
   require a "for each" construct which would best be accomplished with lambda expressions
@@ -73,7 +69,7 @@ x scalar multiplication/division in expression templates
 x unary negation in expression templates
 x printing expression templates
 x down-casting tensors (extracting symmetries out of "broken apart" indexed tensor expressions);
-  "bundling" indices into a more-specific "total" index type
+  "bundling" multi-indices into a more-specific "total" index type
 x up-casting tensors (breaking symmetries indexed tensor expressions);
   "splitting" a tensor "total" index into a less-specific multi-index
 x diagonal 2-tensors

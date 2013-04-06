@@ -48,7 +48,10 @@ struct Tensor2Antisymmetric_t : public Vector_t<typename Factor1_::Scalar,
     typedef Factor1_ Factor;
     typedef Factor1_ Factor1;
     typedef Factor2_ Factor2;
-    typedef CompoundIndex_t<typename TypeTuple_t<typename Factor::Index,typename Factor::Index>::T> CompoundIndex;
+    typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
+    typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
+    typedef typename Parent_Tensor_i::CompoundIndex CompoundIndex;
+    using Parent_Tensor_i::DEGREE;
     static Uint32 const STRICTLY_LOWER_TRIANGULAR_COMPONENT_COUNT = ((Factor::DIM-1)*Factor::DIM)/2;
 
     Tensor2Antisymmetric_t (WithoutInitialization const &w) : Parent_Vector_t(w) { }
