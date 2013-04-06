@@ -30,7 +30,7 @@ struct ExpressionTemplate_IndexSplit_t;
 // requires also particular methods:
 //   operator Scalar () const // conversion to scalar -- always declared, but should
 //                            // only compile if the conversion is well-defined (e.g. no free indices)
-//   Scalar operator [] (CompoundIndex const &) const // accessor using CompoundIndex_t<FreeIndexTypeList>
+//   Scalar operator [] (MultiIndex const &) const // accessor using MultiIndex_t<FreeIndexTypeList>
 //   template <typename OtherTensor> bool uses_tensor (OtherTensor const &) const // used in checking for aliasing
 template <typename Derived_, typename Scalar_, typename FreeIndexTypeList_, typename UsedIndexTypeList_>
 struct ExpressionTemplate_i // _i is for "compile-time interface"
@@ -40,14 +40,14 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     typedef Scalar_ Scalar;
     typedef FreeIndexTypeList_ FreeIndexTypeList;
     typedef UsedIndexTypeList_ UsedIndexTypeList;
-    typedef CompoundIndex_t<FreeIndexTypeList> CompoundIndex;
+    typedef MultiIndex_t<FreeIndexTypeList> MultiIndex;
     static bool const IS_EXPRESSION_TEMPLATE = true;
 
     // TODO: some consistency checks on the various types
 
     // compile-time interface methods
     operator Scalar () const { return as_derived().operator Scalar(); }
-    Scalar operator [] (CompoundIndex const &c) const { return as_derived().operator[](c); }
+    Scalar operator [] (MultiIndex const &m) const { return as_derived().operator[](m); }
     template <typename OtherTensor> bool uses_tensor (OtherTensor const &t) const { return as_derived().template uses_tensor<OtherTensor>(t); }
 
     // for accessing this as the Derived type
@@ -97,7 +97,7 @@ std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scala
 template <typename Derived, typename Scalar, typename FreeIndex1, typename FreeIndex2, typename UsedIndexTypeList>
 std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scalar,TypeList_t<FreeIndex1,TypeList_t<FreeIndex2> >,UsedIndexTypeList> const &e)
 {
-    typename Derived::CompoundIndex c;
+    typename Derived::MultiIndex m;
     out << "\n[";
     for (FreeIndex1 i; i.is_not_at_end(); ++i)
     {
@@ -106,8 +106,8 @@ std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scala
         out << '[';
         for (FreeIndex2 j; j.is_not_at_end(); ++j)
         {
-            out << e[c] << '\t';
-            ++c;
+            out << e[m] << '\t';
+            ++m;
         }
         out << ']';
         FreeIndex1 next(i);
@@ -115,7 +115,7 @@ std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scala
         if (next.is_not_at_end())
             out << '\n';
     }
-    out << "]\n"; // TODO: figure out how to print the index (which could be a CompoundIndex_t)
+    out << "]\n"; // TODO: figure out how to print the index (which could be a MultiIndex_t)
 //     out << "](" << FreeIndex1::SYMBOL << ',' << FreeIndex2::SYMBOL << ")\n";
     return out;
 }
@@ -124,7 +124,7 @@ std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scala
 template <typename Derived, typename Scalar, typename FreeIndex1, typename FreeIndex2, typename FreeIndex3, typename UsedIndexTypeList>
 std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scalar,TypeList_t<FreeIndex1,TypeList_t<FreeIndex2,TypeList_t<FreeIndex3> > >,UsedIndexTypeList> const &e)
 {
-    typename Derived::CompoundIndex c;
+    typename Derived::MultiIndex m;
     out << "\n[";
     for (FreeIndex1 i; i.is_not_at_end(); ++i)
     {
@@ -138,8 +138,8 @@ std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scala
             out << '[';
             for (FreeIndex3 k; k.is_not_at_end(); ++k)
             {
-                out << e[c] << '\t';
-                ++c;
+                out << e[m] << '\t';
+                ++m;
             }
             out << ']';
             FreeIndex2 next(j);

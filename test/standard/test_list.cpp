@@ -7,7 +7,7 @@
 
 #include <utility> // for std::pair
 
-#include "tenh/meta/list.hpp"
+#include "tenh/list.hpp"
 
 // this is included last because it redefines the `assert` macro,
 // which would be bad for the above includes.

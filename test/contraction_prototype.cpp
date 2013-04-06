@@ -5,7 +5,7 @@
 #include <sstream>
 
 #include "tenh/core.hpp" // everything should include this
-#include "tenh/compoundindex.hpp"
+#include "tenh/multiindex.hpp"
 #include "tenh/expression_templates.hpp"
 #include "tenh/meta/typelist.hpp"
 #include "tenh/meta/typelist_utility.hpp"
@@ -459,7 +459,7 @@ void test_Tensor2Symmetric_t ()
     //std::cout << FORMAT_VALUE(a.template expr<'i'>() + b.template expr<'i'>()) << '\n';
 
     float hand_computed_value = 0.0f;
-    for (typename Tensor2Symmetric::CompoundIndex i; i.is_not_at_end(); ++i)
+    for (typename Tensor2Symmetric::MultiIndex i; i.is_not_at_end(); ++i)
         hand_computed_value += a[i]*b[i];
     std::cout << FORMAT_VALUE(hand_computed_value) << '\n';
     std::cout << '\n';
@@ -532,7 +532,7 @@ void test_Tensor2Antisymmetric_t ()
     //std::cout << FORMAT_VALUE(a.template expr<'i'>() + b.template expr<'i'>()) << '\n';
 
     float hand_computed_value = 0.0f;
-    for (typename Tensor2Antisymmetric::CompoundIndex i; i.is_not_at_end(); ++i)
+    for (typename Tensor2Antisymmetric::MultiIndex i; i.is_not_at_end(); ++i)
         hand_computed_value += a[i]*b[i];
     std::cout << FORMAT_VALUE(hand_computed_value) << '\n';
     std::cout << '\n';
@@ -611,10 +611,10 @@ void test_symmetric_and_antisymmetric_2_tensors ()
         for (typename Vector::Index i; i.is_not_at_end(); ++i)
             for (typename Vector::Index k; k.is_not_at_end(); ++k)
             {
-                c[typename Tensor2::CompoundIndex(i,k)] = 0;
+                c[typename Tensor2::MultiIndex(i,k)] = 0;
                 for (typename Vector::Index j; j.is_not_at_end(); ++j)
-                    c[typename Tensor2::CompoundIndex(i,k)] += s[typename Tensor2Symmetric::CompoundIndex(i,j)] *
-                                                               a[typename Tensor2Antisymmetric::CompoundIndex(j,k)];
+                    c[typename Tensor2::MultiIndex(i,k)] += s[typename Tensor2Symmetric::MultiIndex(i,j)] *
+                                                               a[typename Tensor2Antisymmetric::MultiIndex(j,k)];
             }
         std::cout << "hand-computed value = " << c << '\n';
     }
@@ -787,10 +787,10 @@ void test_IndexBundle ()
         std::cout << FORMAT_VALUE((Tensor2Symmetric::template bundle_index_map<BundleIndexTypeList,Q>(r))) << '\n';
     std::cout << '\n';
 
-    typedef CompoundIndex_t<BundleIndexTypeList> (*BundleIndexMap) (Q const &);
+    typedef MultiIndex_t<BundleIndexTypeList> (*BundleIndexMap) (Q const &);
     typedef ExpressionTemplate_IndexBundle_t<EI,BundleIndexTypeList,Q> EB;
     EB eb(t(i|j));
-    for (typename EB::CompoundIndex c; c.is_not_at_end(); ++c)
+    for (typename EB::MultiIndex c; c.is_not_at_end(); ++c)
         std::cout << FORMAT_VALUE(c) << " --> " << FORMAT_VALUE(eb[c]) << '\n';
     std::cout << '\n';
 
@@ -886,7 +886,7 @@ void test_IndexSplit ()
             {
                 for (typename Vector::Index j; j.is_not_at_end(); ++j)
                 {
-                    std::cout << t.component(typename A::CompoundIndex(i,j),k) << ", ";
+                    std::cout << t.component(typename A::MultiIndex(i,j),k) << ", ";
                 }
                 std::cout << '\n';
             }
@@ -944,10 +944,10 @@ void test_IndexSplit ()
         std::cout << FORMAT_VALUE((Tensor2Symmetric::template bundle_index_map<BundleIndexTypeList,Q>(r))) << '\n';
     std::cout << '\n';
 
-    typedef CompoundIndex_t<BundleIndexTypeList> (*BundleIndexMap) (Q const &);
+    typedef MultiIndex_t<BundleIndexTypeList> (*BundleIndexMap) (Q const &);
     typedef ExpressionTemplate_IndexBundle_t<EI,BundleIndexTypeList,Q> EB;
     EB eb(t(i,j));
-    for (typename EB::CompoundIndex c; c.is_not_at_end(); ++c)
+    for (typename EB::MultiIndex c; c.is_not_at_end(); ++c)
         std::cout << FORMAT_VALUE(c) << " --> " << FORMAT_VALUE(eb[c]) << '\n';
     std::cout << '\n';
 
@@ -1156,9 +1156,9 @@ int main (int argc, char **argv)
             std::cout << i << '\n';
             std::cout << Float3::Index(0) << '\n';
             v(i);
-            std::cout << FORMAT_VALUE(v(i)[EI::CompoundIndex(0)]) << '\n';
+            std::cout << FORMAT_VALUE(v(i)[EI::MultiIndex(0)]) << '\n';
 
-            std::cout << FORMAT_VALUE(v(j)[EJ::CompoundIndex(1)]) << '\n';
+            std::cout << FORMAT_VALUE(v(j)[EJ::MultiIndex(1)]) << '\n';
 
             for (Float3::Index k; k.is_not_at_end(); ++k)
                 std::cout << u[k] + v[k] << ", ";
@@ -1172,7 +1172,7 @@ int main (int argc, char **argv)
             typedef ExpressionTemplate_Addition_t<EE,EE,'+'> EA;
             EA e(u(i), v(i));
             std::cout << "expression template value:\n";
-            for (EA::CompoundIndex k; k.is_not_at_end(); ++k)
+            for (EA::MultiIndex k; k.is_not_at_end(); ++k)
                 std::cout << e[k] << ", ";
             std::cout << '\n';
             std::cout << "hand-calculated value:\n";
@@ -1182,7 +1182,7 @@ int main (int argc, char **argv)
 
             std::cout << "operator +\n";
             EA e2(u(i) + v(i));
-            for (EA::CompoundIndex k; k.is_not_at_end(); ++k)
+            for (EA::MultiIndex k; k.is_not_at_end(); ++k)
                 std::cout << e2[k] << ", ";
             std::cout << '\n';
             std::cout << '\n';
@@ -1195,9 +1195,9 @@ int main (int argc, char **argv)
             EM e(u(i), v(i));
             Float3::Index k;
             std::cout << FORMAT_VALUE(k.COMPONENT_COUNT) << '\n';
-            std::cout << FORMAT_VALUE(TypeStringOf_t<EE::CompoundIndex>::eval()) << '\n';
+            std::cout << FORMAT_VALUE(TypeStringOf_t<EE::MultiIndex>::eval()) << '\n';
             std::cout << "expression template value:\n";
-            std::cout << FORMAT_VALUE(e[EM::CompoundIndex()]) << '\n';
+            std::cout << FORMAT_VALUE(e[EM::MultiIndex()]) << '\n';
             std::cout << "hand-calculated value:\n";
             float dot = 0;
             for (Float3::Index k; k.is_not_at_end(); ++k)
@@ -1213,13 +1213,13 @@ int main (int argc, char **argv)
             typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<J>,EmptyTypeList,DONT_FORCE_CONST> EJ;
             typedef ExpressionTemplate_Multiplication_t<EI,EJ> EM;
             EM e(u(i), v(j));
-            std::cout << FORMAT_VALUE(TypeStringOf_t<EM::CompoundIndex>::eval()) << '\n';
+            std::cout << FORMAT_VALUE(TypeStringOf_t<EM::MultiIndex>::eval()) << '\n';
             std::cout << FORMAT_VALUE(TypeStringOf_t<EM::FreeIndexTypeList>::eval()) << '\n';
             std::cout << FORMAT_VALUE(TypeStringOf_t<EM::SummedIndexTypeList>::eval()) << '\n';
             std::cout << FORMAT_VALUE(u) << '\n';
             std::cout << FORMAT_VALUE(v) << '\n';
             std::cout << "expression template value:\n";
-            for (EM::CompoundIndex k; k.is_not_at_end(); ++k)
+            for (EM::MultiIndex k; k.is_not_at_end(); ++k)
                 std::cout << e[k] << ", ";
             std::cout << '\n';
             std::cout << "hand-calculated value:\n";
@@ -1229,7 +1229,7 @@ int main (int argc, char **argv)
             std::cout << '\n';
             std::cout << "operator *\n";
             EM e2(u(i) * v(j));
-            for (EM::CompoundIndex k; k.is_not_at_end(); ++k)
+            for (EM::MultiIndex k; k.is_not_at_end(); ++k)
                 std::cout << e2[k] << ", ";
             std::cout << '\n';
             std::cout << '\n';
@@ -1242,11 +1242,11 @@ int main (int argc, char **argv)
             typedef ExpressionTemplate_Multiplication_t<EI,EJ> EM;
             typedef ExpressionTemplate_Multiplication_t<EM,EJ> EMJ;
             EMJ e(EM(u(i), v(j)), w(j));
-            std::cout << FORMAT_VALUE(TypeStringOf_t<EMJ::CompoundIndex>::eval()) << '\n';
+            std::cout << FORMAT_VALUE(TypeStringOf_t<EMJ::MultiIndex>::eval()) << '\n';
             std::cout << FORMAT_VALUE(TypeStringOf_t<EMJ::FreeIndexTypeList>::eval()) << '\n';
             std::cout << FORMAT_VALUE(TypeStringOf_t<EMJ::SummedIndexTypeList>::eval()) << '\n';
             std::cout << "expression template value:\n";
-            for (EMJ::CompoundIndex k; k.is_not_at_end(); ++k)
+            for (EMJ::MultiIndex k; k.is_not_at_end(); ++k)
                 std::cout << e[k] << ", ";
             std::cout << '\n';
             std::cout << "hand-calculated value:\n";
@@ -1260,7 +1260,7 @@ int main (int argc, char **argv)
             std::cout << '\n';
             std::cout << "operator *\n";
             EMJ e2(u(i) * v(j) * w(j));
-            for (EMJ::CompoundIndex k; k.is_not_at_end(); ++k)
+            for (EMJ::MultiIndex k; k.is_not_at_end(); ++k)
                 std::cout << e2[k] << ", ";
             std::cout << '\n';
             std::cout << '\n';
@@ -1290,7 +1290,7 @@ int main (int argc, char **argv)
             std::cout << FORMAT_VALUE(u(i)[I(11)]) << '\n';
             EA e(u(i), v(i));
             std::cout << "expression template value:\n";
-            for (EA::CompoundIndex k; k.is_not_at_end(); ++k)
+            for (EA::MultiIndex k; k.is_not_at_end(); ++k)
                 std::cout << e[k] << ", ";
             std::cout << '\n';
             std::cout << "hand-calculated value:\n";
@@ -1299,7 +1299,7 @@ int main (int argc, char **argv)
             std::cout << '\n';
             std::cout << "operator +\n";
             EA e2(u(i) + v(i));
-            for (EA::CompoundIndex k; k.is_not_at_end(); ++k)
+            for (EA::MultiIndex k; k.is_not_at_end(); ++k)
                 std::cout << e2[k] << ", ";
             std::cout << '\n';
             std::cout << '\n';
@@ -1323,13 +1323,13 @@ int main (int argc, char **argv)
             u(i|j);
             u(i|j) + v(i|j);
             EA e(u(i|j), v(i|j));
-            for (EA::CompoundIndex k; k.is_not_at_end(); ++k)
+            for (EA::MultiIndex k; k.is_not_at_end(); ++k)
                 std::cout << e[k] << ", ";
             std::cout << '\n';
 
             std::cout << "operator + with same index order\n";
             EA e2(u(i|j) + v(i|j));
-            for (EA::CompoundIndex k; k.is_not_at_end(); ++k)
+            for (EA::MultiIndex k; k.is_not_at_end(); ++k)
                 std::cout << e2[k] << ", ";
             std::cout << '\n';
             std::cout << '\n';
@@ -1358,7 +1358,7 @@ int main (int argc, char **argv)
             std::cout << FORMAT_VALUE(v) << '\n';
 
             EB e(u(i|j), u(j|i));
-            for (EB::CompoundIndex k; k.is_not_at_end(); ++k)
+            for (EB::MultiIndex k; k.is_not_at_end(); ++k)
                 std::cout << e[k] << ", ";
             std::cout << '\n';
 
@@ -1369,13 +1369,13 @@ int main (int argc, char **argv)
 
             std::cout << "operator + with same index order\n";
             EA e2(u(i|j) + v(i|j));
-            for (EA::CompoundIndex k; k.is_not_at_end(); ++k)
+            for (EA::MultiIndex k; k.is_not_at_end(); ++k)
                 std::cout << e2[k] << ", ";
             std::cout << '\n';
 
             std::cout << "operator + with opposite index order\n";
             EB e3(u(i|j) + v(j|i));
-            for (EB::CompoundIndex k; k.is_not_at_end(); ++k)
+            for (EB::MultiIndex k; k.is_not_at_end(); ++k)
                 std::cout << e3[k] << ", ";
 
             std::cout << '\n';
@@ -1411,7 +1411,7 @@ int main (int argc, char **argv)
             typedef ExpressionTemplate_Multiplication_t<EM,EKL> EMM;
             std::cout << "expression template contraction u(i,j)*v(j,k):\n";
             EM e(u(i|j), v(j|k));
-            for (EM::CompoundIndex c; c.is_not_at_end(); ++c)
+            for (EM::MultiIndex c; c.is_not_at_end(); ++c)
                 std::cout << e[c] << ", ";
             std::cout << '\n';
 
@@ -1422,7 +1422,7 @@ int main (int argc, char **argv)
                 {
                     float accum = 0;
                     for (Float4::Index c; c.is_not_at_end(); ++c)
-                        accum += u[Float3x4::CompoundIndex(a,c)] * v[Float4x5::CompoundIndex(c,b)];
+                        accum += u[Float3x4::MultiIndex(a,c)] * v[Float4x5::MultiIndex(c,b)];
                     std::cout << accum << ", ";
                 }
             }
@@ -1430,7 +1430,7 @@ int main (int argc, char **argv)
 
             std::cout << "expression template contraction u(i,j)*v(j,k)*w(k,l):\n";
             EMM e2(e, w(k|l));
-            for (EMM::CompoundIndex c; c.is_not_at_end(); ++c)
+            for (EMM::MultiIndex c; c.is_not_at_end(); ++c)
                 std::cout << e2[c] << ", ";
             std::cout << '\n';
 
@@ -1442,14 +1442,14 @@ int main (int argc, char **argv)
                     float accum = 0;
                     for (Uint32 c = 0; c < 4; ++c)
                         for (Uint32 d = 0; d < 5; ++d)
-                            accum += u[Float3x4::CompoundIndex(a,c)] * v[Float4x5::CompoundIndex(c,d)] * w[Float5x2::CompoundIndex(d,b)];
+                            accum += u[Float3x4::MultiIndex(a,c)] * v[Float4x5::MultiIndex(c,d)] * w[Float5x2::MultiIndex(d,b)];
                     std::cout << accum << ", ";
                 }
             }
             std::cout << '\n';
             std::cout << "operator *:\n";
             EMM e3(u(i|j)*v(j|k)*w(k|l));
-            for (EMM::CompoundIndex c; c.is_not_at_end(); ++c)
+            for (EMM::MultiIndex c; c.is_not_at_end(); ++c)
                 std::cout << e3[c] << ", ";
             std::cout << '\n';
             std::cout << '\n';
@@ -1524,7 +1524,7 @@ int main (int argc, char **argv)
             J j;
             std::cout << FORMAT_VALUE(u) << '\n';
             typedef ExpressionTemplate_IndexedObject_t<Float3x3,EmptyTypeList,TypeTuple_t<I>::T,DONT_FORCE_CONST> ET;
-            ET::CompoundIndex k;
+            ET::MultiIndex k;
             std::cout << "trace(u) = " << u(i|i)[k] << '\n';
             std::cout << "trace(u) = " << float(u(i|i)) << '\n';
             std::cout << '\n';

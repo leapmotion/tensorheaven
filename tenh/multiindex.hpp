@@ -1,73 +1,73 @@
 // ///////////////////////////////////////////////////////////////////////////
-// tenh/compoundindex.hpp by Victor Dods, created 2013/03/12
+// tenh/multiindex.hpp by Victor Dods, created 2013/03/12
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#ifndef TENH_COMPOUNDINDEX_HPP_
-#define TENH_COMPOUNDINDEX_HPP_
+#ifndef TENH_MULTIINDEX_HPP_
+#define TENH_MULTIINDEX_HPP_
 
 #include "tenh/core.hpp"
-#include "tenh/meta/list.hpp"
+#include "tenh/list.hpp"
 #include "tenh/meta/typelist_utility.hpp"
 
 namespace Tenh {
 
 // IndexTypeList should be a TypeList_t containing Index types (e.g. Vector_t::Index)
 template <typename IndexTypeList_>
-struct CompoundIndex_t : List_t<IndexTypeList_>
+struct MultiIndex_t : List_t<IndexTypeList_>
 {
     typedef List_t<IndexTypeList_> Parent;
     typedef IndexTypeList_ IndexTypeList;
     typedef typename IndexTypeList::HeadType HeadIndexType;
     typedef typename IndexTypeList::BodyTypeList BodyIndexTypeList;
-    typedef CompoundIndex_t<BodyIndexTypeList> BodyCompoundIndex;
-    static Uint32 const COMPONENT_COUNT = HeadIndexType::COMPONENT_COUNT * BodyCompoundIndex::COMPONENT_COUNT;
+    typedef MultiIndex_t<BodyIndexTypeList> BodyMultiIndex;
+    static Uint32 const COMPONENT_COUNT = HeadIndexType::COMPONENT_COUNT * BodyMultiIndex::COMPONENT_COUNT;
 
-    CompoundIndex_t () { } // default constructor initializes to "first" component
-    CompoundIndex_t (HeadIndexType const &head, BodyCompoundIndex const &body) : Parent(head, body) { }
+    MultiIndex_t () { } // default constructor initializes to "first" component
+    MultiIndex_t (HeadIndexType const &head, BodyMultiIndex const &body) : Parent(head, body) { }
     // tuple-like initializers
-    CompoundIndex_t (Uint32 i0, Uint32 i1) // TODO: replace with IndexTypeList::HeadType i0, IndexTypeList::BodyTypeList::HeadType i1 ?
+    MultiIndex_t (Uint32 i0, Uint32 i1) // TODO: replace with IndexTypeList::HeadType i0, IndexTypeList::BodyTypeList::HeadType i1 ?
         :
-        Parent(HeadIndexType(i0), BodyCompoundIndex(i1))
+        Parent(HeadIndexType(i0), BodyMultiIndex(i1))
     {
         Lvd::Meta::Assert<Parent::LENGTH == 2>();
     }
-    CompoundIndex_t (Uint32 i0, Uint32 i1, Uint32 i2)
+    MultiIndex_t (Uint32 i0, Uint32 i1, Uint32 i2)
         :
-        Parent(HeadIndexType(i0), BodyCompoundIndex(i1, i2))
+        Parent(HeadIndexType(i0), BodyMultiIndex(i1, i2))
     {
         Lvd::Meta::Assert<Parent::LENGTH == 3>();
     }
-    CompoundIndex_t (Uint32 i0, Uint32 i1, Uint32 i2, Uint32 i3)
+    MultiIndex_t (Uint32 i0, Uint32 i1, Uint32 i2, Uint32 i3)
         :
-        Parent(HeadIndexType(i0), BodyCompoundIndex(i1, i2, i3))
+        Parent(HeadIndexType(i0), BodyMultiIndex(i1, i2, i3))
     {
         Lvd::Meta::Assert<Parent::LENGTH == 4>();
     }
 
-    CompoundIndex_t (CompoundIndex_t<EmptyTypeList> const &) { } // default construction
-    CompoundIndex_t (CompoundIndex_t<TypeList_t<HeadIndexType> > const &leading_compound_index)
+    MultiIndex_t (MultiIndex_t<EmptyTypeList> const &) { } // default construction
+    MultiIndex_t (MultiIndex_t<TypeList_t<HeadIndexType> > const &leading_multi_index)
         :
-        Parent(leading_compound_index)
+        Parent(leading_multi_index)
     { }
     // this includes the copy constructor
     template <typename OtherHeadIndexType, typename OtherBodyIndexTypeList>
-    CompoundIndex_t (CompoundIndex_t<TypeList_t<OtherHeadIndexType,OtherBodyIndexTypeList> > const &leading_compound_index)
+    MultiIndex_t (MultiIndex_t<TypeList_t<OtherHeadIndexType,OtherBodyIndexTypeList> > const &leading_multi_index)
         :
-        Parent(leading_compound_index)
+        Parent(leading_multi_index)
     { }
 
-    bool operator == (CompoundIndex_t const &c) const { return this->head() == c.head() && body() == c.body(); }
-    bool operator != (CompoundIndex_t const &c) const { return this->head() != c.head() || body() != c.body(); }
-    bool operator < (CompoundIndex_t const &c) const { return this->head() < c.head() && body() < c.body(); }
+    bool operator == (MultiIndex_t const &m) const { return this->head() == m.head() && body() == m.body(); }
+    bool operator != (MultiIndex_t const &m) const { return this->head() != m.head() || body() != m.body(); }
+    bool operator < (MultiIndex_t const &m) const { return this->head() < m.head() && body() < m.body(); }
 
     bool is_at_end () const { return this->head().is_at_end(); } // because the head is the last one incremented
     bool is_not_at_end () const { return this->head().is_not_at_end(); } // because the head is the last one incremented
-    Uint32 value () const { return BodyCompoundIndex::COMPONENT_COUNT*this->head().value() + this->body().value(); }
+    Uint32 value () const { return BodyMultiIndex::COMPONENT_COUNT*this->head().value() + this->body().value(); }
     // TODO: think about adding a redundant single index that just increments and can be returned directly in value()
     void operator ++ ()
     {
-        BodyCompoundIndex &b = body();
+        BodyMultiIndex &b = body();
         ++b; // increment the body index
         if (b.is_at_end()) // if it hit the end, reset it and increment the head
         {
@@ -78,24 +78,24 @@ struct CompoundIndex_t : List_t<IndexTypeList_>
     void reset () { this->head().reset(); body().reset(); }
 
     // slighty hacky way to use List_t's existing functionality -- NOTE: this only
-    // works because CompoundIndex_t<IndexTypeList> inherits non-virtually from
+    // works because MultiIndex_t<IndexTypeList> inherits non-virtually from
     // List_t<IndexTypeList> and has no members.
-    BodyCompoundIndex const &body () const { return *static_cast<BodyCompoundIndex const *>(&Parent::body()); }
-    BodyCompoundIndex &body () { return *static_cast<BodyCompoundIndex *>(&Parent::body()); }
+    BodyMultiIndex const &body () const { return *static_cast<BodyMultiIndex const *>(&Parent::body()); }
+    BodyMultiIndex &body () { return *static_cast<BodyMultiIndex *>(&Parent::body()); }
 
-    // TODO: rename to LeadingCompoundIndex_t
+    // TODO: rename to RangeMultiIndex_t
 
     // slighty hacky way to use List_t's existing functionality -- NOTE: this only
-    // works because CompoundIndex_t<IndexTypeList> inherits non-virtually from
+    // works because MultiIndex_t<IndexTypeList> inherits non-virtually from
     // List_t<IndexTypeList> and has no members.
-    // returns the type of the CompoundIndex_t having the specified range
+    // returns the type of the MultiIndex_t having the specified range
     template <Uint32 START_INDEX, Uint32 END_INDEX>
     struct RangeType_t
     {
-        typedef CompoundIndex_t<typename IndexTypeList::template Range_t<START_INDEX,END_INDEX>::T> T;
+        typedef MultiIndex_t<typename IndexTypeList::template Range_t<START_INDEX,END_INDEX>::T> T;
     };
 
-    // returns the CompoundIndex_t which is the given range of elements
+    // returns the MultiIndex_t which is the given range of elements
     template <Uint32 START_INDEX, Uint32 END_INDEX>
     typename RangeType_t<START_INDEX,END_INDEX>::T const &range () const
     {
@@ -108,18 +108,18 @@ struct CompoundIndex_t : List_t<IndexTypeList_>
     }
 
     // slighty hacky way to use List_t's existing functionality -- NOTE: this only
-    // works because CompoundIndex_t<IndexTypeList> inherits non-virtually from
+    // works because MultiIndex_t<IndexTypeList> inherits non-virtually from
     // List_t<IndexTypeList> and has no members.
-    // returns the type of the leading CompoundIndex_t ending at the INDEXth element
+    // returns the type of the leading MultiIndex_t ending at the INDEXth element
     template <Uint32 INDEX>
     struct LeadingListType_t
     {
 //         typedef List_t<typename TypeList::template LeadingTypeList_t<INDEX>::T> T;
-        typedef CompoundIndex_t<typename IndexTypeList::template LeadingTypeList_t<INDEX>::T> T;
+        typedef MultiIndex_t<typename IndexTypeList::template LeadingTypeList_t<INDEX>::T> T;
     };
 
-    // TODO: rename to leading_compound_index
-    // returns the leading CompoundIndex_t ending at the INDEXth element.
+    // TODO: rename to leading_multi_index
+    // returns the leading MultiIndex_t ending at the INDEXth element.
     template <Uint32 INDEX>
     typename LeadingListType_t<INDEX>::T const &leading_list () const
     {
@@ -131,20 +131,20 @@ struct CompoundIndex_t : List_t<IndexTypeList_>
         return *static_cast<typename LeadingListType_t<INDEX>::T *>(&(this->Parent::template leading_list<INDEX>()));
     }
 
-    // TODO: rename to TrailingCompoundIndex_t
+    // TODO: rename to TrailingMultiIndex_t
 
     // slighty hacky way to use List_t's existing functionality -- NOTE: this only
-    // works because CompoundIndex_t<IndexTypeList> inherits non-virtually from
+    // works because MultiIndex_t<IndexTypeList> inherits non-virtually from
     // List_t<IndexTypeList> and has no members.
     // returns the type of the trailing List_t starting at the INDEXth element
     template <Uint32 INDEX>
     struct TrailingListType_t
     {
-        typedef CompoundIndex_t<typename IndexTypeList::template TrailingTypeList_t<INDEX>::T> T;
+        typedef MultiIndex_t<typename IndexTypeList::template TrailingTypeList_t<INDEX>::T> T;
     };
 
-    // TODO: rename to trailing_compound_index
-    // returns the trailing CompoundIndex_t starting at the INDEXth element
+    // TODO: rename to trailing_multi_index
+    // returns the trailing MultiIndex_t starting at the INDEXth element
     template <Uint32 INDEX>
     typename TrailingListType_t<INDEX>::T const &trailing_list () const
     {
@@ -156,39 +156,39 @@ struct CompoundIndex_t : List_t<IndexTypeList_>
         return *static_cast<typename TrailingListType_t<INDEX>::T *>(&(this->Parent::template trailing_list<INDEX>()));
     };
 
-    static std::string type_as_string () { return "CompoundIndex_t<" + TypeStringOf_t<IndexTypeList>::eval() + '>'; }
+    static std::string type_as_string () { return "MultiIndex_t<" + TypeStringOf_t<IndexTypeList>::eval() + '>'; }
 };
 
 // template specializations for the IndexTypeList list corner cases
 template <typename HeadIndexType>
-struct CompoundIndex_t<TypeList_t<HeadIndexType> > : public List_t<TypeList_t<HeadIndexType> >
+struct MultiIndex_t<TypeList_t<HeadIndexType> > : public List_t<TypeList_t<HeadIndexType> >
 {
     typedef List_t<TypeList_t<HeadIndexType> > Parent;
     typedef TypeList_t<HeadIndexType> IndexTypeList;
     typedef typename IndexTypeList::BodyTypeList BodyIndexTypeList;
-    typedef CompoundIndex_t<BodyIndexTypeList> BodyCompoundIndex;
+    typedef MultiIndex_t<BodyIndexTypeList> BodyMultiIndex;
     static Uint32 const COMPONENT_COUNT = HeadIndexType::COMPONENT_COUNT;
 
-    CompoundIndex_t () { } // default constructor initializes to "first" component
+    MultiIndex_t () { } // default constructor initializes to "first" component
     // explicit because it has a range-check (in the HeadIndexType constructor)
-    explicit CompoundIndex_t (Uint32 i) : Parent(HeadIndexType(i)) { }
-    CompoundIndex_t (HeadIndexType const &head) : Parent(head) { }
+    explicit MultiIndex_t (Uint32 i) : Parent(HeadIndexType(i)) { }
+    MultiIndex_t (HeadIndexType const &head) : Parent(head) { }
 
-    CompoundIndex_t (CompoundIndex_t<EmptyTypeList> const &) { } // default construction
+    MultiIndex_t (MultiIndex_t<EmptyTypeList> const &) { } // default construction
     // this is the copy constructor
-    CompoundIndex_t (CompoundIndex_t const &c)
+    MultiIndex_t (MultiIndex_t const &m)
         :
-        Parent(c)
+        Parent(m)
     { }
     template <typename OtherHeadIndexType, typename OtherBodyIndexTypeList>
-    CompoundIndex_t (CompoundIndex_t<TypeList_t<OtherHeadIndexType,OtherBodyIndexTypeList> > const &leading_compound_index)
+    MultiIndex_t (MultiIndex_t<TypeList_t<OtherHeadIndexType,OtherBodyIndexTypeList> > const &leading_multi_index)
         :
-        Parent(leading_compound_index)
+        Parent(leading_multi_index)
     { }
 
-    bool operator == (CompoundIndex_t const &c) const { return this->head() == c.head(); }
-    bool operator != (CompoundIndex_t const &c) const { return this->head() != c.head(); }
-    bool operator < (CompoundIndex_t const &c) const { return this->head() < c.head(); }
+    bool operator == (MultiIndex_t const &m) const { return this->head() == m.head(); }
+    bool operator != (MultiIndex_t const &m) const { return this->head() != m.head(); }
+    bool operator < (MultiIndex_t const &m) const { return this->head() < m.head(); }
 
     bool is_at_end () const { return this->head().is_at_end(); }
     bool is_not_at_end () const { return this->head().is_not_at_end(); }
@@ -197,29 +197,29 @@ struct CompoundIndex_t<TypeList_t<HeadIndexType> > : public List_t<TypeList_t<He
     void reset () { this->head().reset(); }
 
     // slighty hacky way to use List_t's existing functionality -- NOTE: this only
-    // works because CompoundIndex_t<IndexTypeList> inherits non-virtually from
+    // works because MultiIndex_t<IndexTypeList> inherits non-virtually from
     // List_t<IndexTypeList> and has no members.
-    BodyCompoundIndex const &body () const { return *static_cast<BodyCompoundIndex const *>(&Parent::body()); }
-    BodyCompoundIndex &body () { return *static_cast<BodyCompoundIndex *>(&Parent::body()); }
+    BodyMultiIndex const &body () const { return *static_cast<BodyMultiIndex const *>(&Parent::body()); }
+    BodyMultiIndex &body () { return *static_cast<BodyMultiIndex *>(&Parent::body()); }
 
-    // type conversion operator -- because this CompoundIndex_t only has one component,
+    // type conversion operator -- because this MultiIndex_t only has one component,
     // it can be canonically identified as its component type.
     operator HeadIndexType const & () const { return this->head(); }
     operator HeadIndexType & () { return this->head(); }
 
-    // TODO: rename to LeadingCompoundIndex_t
+    // TODO: rename to LeadingMultiIndex_t
 
     // slighty hacky way to use List_t's existing functionality -- NOTE: this only
-    // works because CompoundIndex_t<IndexTypeList> inherits non-virtually from
+    // works because MultiIndex_t<IndexTypeList> inherits non-virtually from
     // List_t<IndexTypeList> and has no members.
-    // returns the type of the CompoundIndex_t having the specified range
+    // returns the type of the MultiIndex_t having the specified range
     template <Uint32 START_INDEX, Uint32 END_INDEX>
     struct RangeType_t
     {
-        typedef CompoundIndex_t<typename IndexTypeList::template Range_t<START_INDEX,END_INDEX>::T> T;
+        typedef MultiIndex_t<typename IndexTypeList::template Range_t<START_INDEX,END_INDEX>::T> T;
     };
 
-    // returns the CompoundIndex_t which is the given range of elements
+    // returns the MultiIndex_t which is the given range of elements
     template <Uint32 START_INDEX, Uint32 END_INDEX>
     typename RangeType_t<START_INDEX,END_INDEX>::T const &range () const
     {
@@ -232,18 +232,18 @@ struct CompoundIndex_t<TypeList_t<HeadIndexType> > : public List_t<TypeList_t<He
     }
 
     // slighty hacky way to use List_t's existing functionality -- NOTE: this only
-    // works because CompoundIndex_t<IndexTypeList> inherits non-virtually from
+    // works because MultiIndex_t<IndexTypeList> inherits non-virtually from
     // List_t<IndexTypeList> and has no members.
-    // returns the type of the leading CompoundIndex_t ending at the INDEXth element
+    // returns the type of the leading MultiIndex_t ending at the INDEXth element
     template <Uint32 INDEX>
     struct LeadingListType_t
     {
 //         typedef List_t<typename TypeList::template LeadingTypeList_t<INDEX>::T> T;
-        typedef CompoundIndex_t<typename IndexTypeList::template LeadingTypeList_t<INDEX>::T> T;
+        typedef MultiIndex_t<typename IndexTypeList::template LeadingTypeList_t<INDEX>::T> T;
     };
 
-    // TODO: rename to leading_compound_index
-    // returns the leading CompoundIndex_t ending at the INDEXth element.
+    // TODO: rename to leading_multi_index
+    // returns the leading MultiIndex_t ending at the INDEXth element.
     template <Uint32 INDEX>
     typename LeadingListType_t<INDEX>::T const &leading_list () const
     {
@@ -256,16 +256,16 @@ struct CompoundIndex_t<TypeList_t<HeadIndexType> > : public List_t<TypeList_t<He
     }
 
     // slighty hacky way to use List_t's existing functionality -- NOTE: this only
-    // works because CompoundIndex_t<IndexTypeList> inherits non-virtually from
+    // works because MultiIndex_t<IndexTypeList> inherits non-virtually from
     // List_t<IndexTypeList> and has no members.
     // returns the type of the trailing List_t starting at the INDEXth element
     template <Uint32 INDEX>
     struct TrailingListType_t
     {
-        typedef CompoundIndex_t<typename IndexTypeList::template TrailingTypeList_t<INDEX>::T> T;
+        typedef MultiIndex_t<typename IndexTypeList::template TrailingTypeList_t<INDEX>::T> T;
     };
 
-    // returns the trailing CompoundIndex_t starting at the INDEXth element
+    // returns the trailing MultiIndex_t starting at the INDEXth element
     template <Uint32 INDEX>
     typename TrailingListType_t<INDEX>::T const &trailing_list () const
     {
@@ -277,26 +277,26 @@ struct CompoundIndex_t<TypeList_t<HeadIndexType> > : public List_t<TypeList_t<He
         return *static_cast<typename TrailingListType_t<INDEX>::T *>(&(this->Parent::template trailing_list<INDEX>()));
     };
 
-    static std::string type_as_string () { return "CompoundIndex_t<" + TypeStringOf_t<IndexTypeList>::eval() + '>'; }
+    static std::string type_as_string () { return "MultiIndex_t<" + TypeStringOf_t<IndexTypeList>::eval() + '>'; }
 };
 
 // TODO: check if this is actually made, and if not, prohibit making them
 template <>
-struct CompoundIndex_t<EmptyTypeList> : public List_t<EmptyTypeList>
+struct MultiIndex_t<EmptyTypeList> : public List_t<EmptyTypeList>
 {
 //    enum { _ = Lvd::Meta::Assert<false>::v }; // don't make one of these
 
     typedef List_t<EmptyTypeList> Parent;
     typedef EmptyTypeList IndexTypeList;
     typedef EmptyTypeList BodyIndexTypeList;
-    typedef CompoundIndex_t<BodyIndexTypeList> BodyCompoundIndex;
+    typedef MultiIndex_t<BodyIndexTypeList> BodyMultiIndex;
     static Uint32 const COMPONENT_COUNT = 0;
 
-    CompoundIndex_t () { }
+    MultiIndex_t () { }
 
-    bool operator == (CompoundIndex_t const &c) const { return true; }  // there is only one of these, so it must be equal
-    bool operator != (CompoundIndex_t const &c) const { return false; } // there is only one of these, so it must not be unequal
-    bool operator < (CompoundIndex_t const &c) const { return false; }  // there is only one of these, so it can't be less than
+    bool operator == (MultiIndex_t const &m) const { return true; }  // there is only one of these, so it must be equal
+    bool operator != (MultiIndex_t const &m) const { return false; } // there is only one of these, so it must not be unequal
+    bool operator < (MultiIndex_t const &m) const { return false; }  // there is only one of these, so it can't be less than
 
     bool is_at_end () const { return true; }
     bool is_not_at_end () const { return false; }
@@ -304,12 +304,12 @@ struct CompoundIndex_t<EmptyTypeList> : public List_t<EmptyTypeList>
     void reset () { } // no-op
 
     // slighty hacky way to use List_t's existing functionality -- NOTE: this only
-    // works because CompoundIndex_t<IndexTypeList> inherits non-virtually from
+    // works because MultiIndex_t<IndexTypeList> inherits non-virtually from
     // List_t<IndexTypeList> and has no members.
-    BodyCompoundIndex const &body () const { return *static_cast<BodyCompoundIndex const *>(&Parent::body()); }
-    BodyCompoundIndex &body () { return *static_cast<BodyCompoundIndex *>(&Parent::body()); }
+    BodyMultiIndex const &body () const { return *static_cast<BodyMultiIndex const *>(&Parent::body()); }
+    BodyMultiIndex &body () { return *static_cast<BodyMultiIndex *>(&Parent::body()); }
 
-    static std::string type_as_string () { return "CompoundIndex_t<" + TypeStringOf_t<IndexTypeList>::eval() + '>'; }
+    static std::string type_as_string () { return "MultiIndex_t<" + TypeStringOf_t<IndexTypeList>::eval() + '>'; }
 };
 
 
@@ -320,62 +320,62 @@ struct CompoundIndex_t<EmptyTypeList> : public List_t<EmptyTypeList>
 
 // tack an element onto the beginning of a list (where the list is empty)
 template <typename HeadType>
-inline CompoundIndex_t<TypeList_t<HeadType> > operator >>= (HeadType const &head, CompoundIndex_t<EmptyTypeList> const &)
+inline MultiIndex_t<TypeList_t<HeadType> > operator >>= (HeadType const &head, MultiIndex_t<EmptyTypeList> const &)
 {
-    return CompoundIndex_t<TypeList_t<HeadType> >(head);
+    return MultiIndex_t<TypeList_t<HeadType> >(head);
 }
 
 // tack an element onto the beginning of a list (catch-all case)
 template <typename HeadType, typename BodyTypeList>
-inline CompoundIndex_t<TypeList_t<HeadType,BodyTypeList> > operator >>= (HeadType const &head, CompoundIndex_t<BodyTypeList> const &body)
+inline MultiIndex_t<TypeList_t<HeadType,BodyTypeList> > operator >>= (HeadType const &head, MultiIndex_t<BodyTypeList> const &body)
 {
-    return CompoundIndex_t<TypeList_t<HeadType,BodyTypeList> >(head, body);
+    return MultiIndex_t<TypeList_t<HeadType,BodyTypeList> >(head, body);
 }
 
 
 
 // concatenate two lists (where both are empty)
-inline CompoundIndex_t<EmptyTypeList> operator |= (CompoundIndex_t<EmptyTypeList> const &, CompoundIndex_t<EmptyTypeList> const &)
+inline MultiIndex_t<EmptyTypeList> operator |= (MultiIndex_t<EmptyTypeList> const &, MultiIndex_t<EmptyTypeList> const &)
 {
-    return CompoundIndex_t<EmptyTypeList>();
+    return MultiIndex_t<EmptyTypeList>();
 }
 
 // concatenate two lists (where the second is empty)
 template <typename LeadingHeadType, typename LeadingBodyTypeList>
-inline CompoundIndex_t<TypeList_t<LeadingHeadType,LeadingBodyTypeList> > operator |= (
-    CompoundIndex_t<TypeList_t<LeadingHeadType,LeadingBodyTypeList> > const &leading_list,
-    CompoundIndex_t<EmptyTypeList> const &)
+inline MultiIndex_t<TypeList_t<LeadingHeadType,LeadingBodyTypeList> > operator |= (
+    MultiIndex_t<TypeList_t<LeadingHeadType,LeadingBodyTypeList> > const &leading_list,
+    MultiIndex_t<EmptyTypeList> const &)
 {
     return leading_list;
 }
 
 // concatenate two lists (where the first is empty)
 template <typename TrailingHeadType, typename TrailingBodyTypeList>
-inline CompoundIndex_t<TypeList_t<TrailingHeadType,TrailingBodyTypeList> > operator |= (
-    CompoundIndex_t<EmptyTypeList> const &,
-    CompoundIndex_t<TypeList_t<TrailingHeadType,TrailingBodyTypeList> > const &trailing_type_list)
+inline MultiIndex_t<TypeList_t<TrailingHeadType,TrailingBodyTypeList> > operator |= (
+    MultiIndex_t<EmptyTypeList> const &,
+    MultiIndex_t<TypeList_t<TrailingHeadType,TrailingBodyTypeList> > const &trailing_type_list)
 {
     return trailing_type_list;
 }
 
 // concatenate two lists (where the first has only one element)
 template <typename LeadingHeadType, typename TrailingHeadType, typename TrailingBodyTypeList>
-inline CompoundIndex_t<TypeList_t<LeadingHeadType,TypeList_t<TrailingHeadType,TrailingBodyTypeList> > > operator |= (
-    CompoundIndex_t<TypeList_t<LeadingHeadType> > const &leading_list,
-    CompoundIndex_t<TypeList_t<TrailingHeadType,TrailingBodyTypeList> > const &trailing_list)
+inline MultiIndex_t<TypeList_t<LeadingHeadType,TypeList_t<TrailingHeadType,TrailingBodyTypeList> > > operator |= (
+    MultiIndex_t<TypeList_t<LeadingHeadType> > const &leading_list,
+    MultiIndex_t<TypeList_t<TrailingHeadType,TrailingBodyTypeList> > const &trailing_list)
 {
-    return CompoundIndex_t<TypeList_t<LeadingHeadType,TypeList_t<TrailingHeadType,TrailingBodyTypeList> > >(
+    return MultiIndex_t<TypeList_t<LeadingHeadType,TypeList_t<TrailingHeadType,TrailingBodyTypeList> > >(
         leading_list.head(),
         trailing_list);
 }
 
 // concatenate two lists (catch-all case)
 template <typename LeadingTypeList, typename TrailingTypeList>
-inline CompoundIndex_t<typename ConcatenationOfTypeLists_t<LeadingTypeList,TrailingTypeList>::T> operator |= (
-    CompoundIndex_t<LeadingTypeList> const &leading_list,
-    CompoundIndex_t<TrailingTypeList> const &trailing_list)
+inline MultiIndex_t<typename ConcatenationOfTypeLists_t<LeadingTypeList,TrailingTypeList>::T> operator |= (
+    MultiIndex_t<LeadingTypeList> const &leading_list,
+    MultiIndex_t<TrailingTypeList> const &trailing_list)
 {
-    return CompoundIndex_t<typename ConcatenationOfTypeLists_t<LeadingTypeList,TrailingTypeList>::T>(
+    return MultiIndex_t<typename ConcatenationOfTypeLists_t<LeadingTypeList,TrailingTypeList>::T>(
         leading_list.head(),
         (leading_list.body() |= trailing_list));
 }
@@ -391,28 +391,28 @@ inline CompoundIndex_t<typename ConcatenationOfTypeLists_t<LeadingTypeList,Trail
 // DomainIndexTypeList must be a TypeList_t of unique types
 // CodomainIndexTypeList must be a TypeList_t consisting of a subset of DomainIndexTypeList
 template <typename DomainIndexTypeList, typename CodomainIndexTypeList>
-struct CompoundIndexMap_t
+struct MultiIndexMap_t
 {
     enum { _ = Lvd::Meta::Assert<!ContainsDuplicates_t<DomainIndexTypeList>::V>::v };
 
-    typedef CompoundIndex_t<DomainIndexTypeList> DomainIndex;
-    typedef CompoundIndex_t<CodomainIndexTypeList> CodomainIndex;
+    typedef MultiIndex_t<DomainIndexTypeList> DomainIndex;
+    typedef MultiIndex_t<CodomainIndexTypeList> CodomainIndex;
     typedef CodomainIndex (*EvalMapType) (DomainIndex const &);
     static CodomainIndex eval (DomainIndex const &i)
     {
         return CodomainIndex(i.template el<DomainIndexTypeList::template IndexOf_t<typename CodomainIndexTypeList::HeadType>::V>(),
-                             CompoundIndexMap_t<DomainIndexTypeList,typename CodomainIndexTypeList::BodyTypeList>::eval(i));
+                             MultiIndexMap_t<DomainIndexTypeList,typename CodomainIndexTypeList::BodyTypeList>::eval(i));
     }
 };
 
 template <typename DomainIndexTypeList, typename CodomainIndexType>
-struct CompoundIndexMap_t<DomainIndexTypeList,TypeList_t<CodomainIndexType> >
+struct MultiIndexMap_t<DomainIndexTypeList,TypeList_t<CodomainIndexType> >
 {
     enum { _ = Lvd::Meta::Assert<!ContainsDuplicates_t<DomainIndexTypeList>::V>::v };
 
     typedef TypeList_t<CodomainIndexType> CodomainIndexTypeList;
-    typedef CompoundIndex_t<DomainIndexTypeList> DomainIndex;
-    typedef CompoundIndex_t<CodomainIndexTypeList> CodomainIndex;
+    typedef MultiIndex_t<DomainIndexTypeList> DomainIndex;
+    typedef MultiIndex_t<CodomainIndexTypeList> CodomainIndex;
     typedef CodomainIndex (*EvalMapType) (DomainIndex const &);
     static CodomainIndex eval (DomainIndex const &i)
     {
@@ -420,19 +420,6 @@ struct CompoundIndexMap_t<DomainIndexTypeList,TypeList_t<CodomainIndexType> >
     }
 };
 
-// template <typename DomainIndexTypeList>
-// struct CompoundIndexMap_t<DomainIndexTypeList,EmptyTypeList>
-// {
-//     typedef EmptyTypeList CodomainIndexTypeList;
-//     typedef CompoundIndex_t<DomainIndexTypeList> DomainIndex;
-//     typedef CompoundIndex_t<CodomainIndexTypeList> CodomainIndex;
-//     typedef CodomainIndex (*EvalMapType) (DomainIndex const &);
-//     static CodomainIndex eval (DomainIndex const &i)
-//     {
-//         return CodomainIndex();
-//     }
-// };
-
 } // end of namespace Tenh
 
-#endif // TENH_COMPOUNDINDEX_HPP_
+#endif // TENH_MULTIINDEX_HPP_

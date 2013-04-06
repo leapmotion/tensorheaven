@@ -1,7 +1,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "tenh/compoundindex.hpp"
+#include "tenh/multiindex.hpp"
 #include "tenh/meta/typetuple.hpp"
 
 using namespace Tenh;
@@ -37,9 +37,9 @@ int main (int argc, char **argv)
     typedef Index_t<4> I4;
     typedef Index_t<5> I5;
     typedef Index_t<6> I6;
-    typedef CompoundIndex_t<TypeTuple_t<I3>::T> X;
-    typedef CompoundIndex_t<TypeTuple_t<I3,I4>::T> Y;
-    typedef CompoundIndex_t<TypeTuple_t<I3,I4,I5>::T> Z;
+    typedef MultiIndex_t<TypeTuple_t<I3>::T> X;
+    typedef MultiIndex_t<TypeTuple_t<I3,I4>::T> Y;
+    typedef MultiIndex_t<TypeTuple_t<I3,I4,I5>::T> Z;
 
     {
         X x(2);
@@ -101,10 +101,10 @@ int main (int argc, char **argv)
 
         typedef TypeTuple_t<I3,I4,I5,I6>::T UniqueTypeList;
         typedef TypeTuple_t<I3,I4,I3,I3,I5>::T TargetTypeList;
-        CompoundIndex_t<UniqueTypeList> u;
+        MultiIndex_t<UniqueTypeList> u;
         for (Uint32 i = 0; i < 202; ++i)
             ++u;
-        std::cout << u << " -> " << CompoundIndexMap_t<UniqueTypeList,TargetTypeList>::eval(u) << '\n';
+        std::cout << u << " -> " << MultiIndexMap_t<UniqueTypeList,TargetTypeList>::eval(u) << '\n';
     }
 
     return 0;

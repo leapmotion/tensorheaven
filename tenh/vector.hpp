@@ -9,7 +9,7 @@
 #include <ostream>
 #include <string>
 
-#include "tenh/compoundindex.hpp"
+#include "tenh/multiindex.hpp"
 #include "tenh/core.hpp"
 #include "tenh/expression_templates.hpp"
 #include "tenh/index.hpp"
@@ -30,14 +30,14 @@ struct Vector_t
     typedef typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,Vector_t,Derived_>::T Derived;
     // here is the "basic" (non-named) Index of this vector type, and it is aware of Derived
     typedef Index_t<Derived> Index;
-    // the CompoundIndex_t encapsulation of Index
-    typedef CompoundIndex_t<typename TypeTuple_t<Index>::T> CompoundIndex;
+    // the MultiIndex_t encapsulation of Index
+    typedef MultiIndex_t<typename TypeTuple_t<Index>::T> MultiIndex;
 
     explicit Vector_t (WithoutInitialization const &) { }
-    explicit Vector_t (Scalar fill_with) { for (Uint32 i = 0; i < DIM; ++i) m[i] = fill_with; }
-    Vector_t (Scalar x0, Scalar x1) { Lvd::Meta::Assert<(DIM == 2)>(); m[0] = x0; m[1] = x1; }
-    Vector_t (Scalar x0, Scalar x1, Scalar x2) { Lvd::Meta::Assert<(DIM == 3)>(); m[0] = x0; m[1] = x1; m[2] = x2; }
-    Vector_t (Scalar x0, Scalar x1, Scalar x2, Scalar x3) { Lvd::Meta::Assert<(DIM == 4)>(); m[0] = x0; m[1] = x1; m[2] = x2; m[3] = x3; }
+    explicit Vector_t (Scalar fill_with) { for (Uint32 i = 0; i < DIM; ++i) m_component[i] = fill_with; }
+    Vector_t (Scalar x0, Scalar x1) { Lvd::Meta::Assert<(DIM == 2)>(); m_component[0] = x0; m_component[1] = x1; }
+    Vector_t (Scalar x0, Scalar x1, Scalar x2) { Lvd::Meta::Assert<(DIM == 3)>(); m_component[0] = x0; m_component[1] = x1; m_component[2] = x2; }
+    Vector_t (Scalar x0, Scalar x1, Scalar x2, Scalar x3) { Lvd::Meta::Assert<(DIM == 4)>(); m_component[0] = x0; m_component[1] = x1; m_component[2] = x2; m_component[3] = x3; }
 
     // accessor as Derived type
     Derived const &as_derived () const { return *static_cast<Derived const *>(this); }
@@ -45,14 +45,14 @@ struct Vector_t
 
     // TODO: only allow when Basis = Unit (or generic) once strongly-typed vectors are implemented
     // type conversion operator for canonical coercion to Scalar type when the vector is 1-dimensional
-    operator Scalar const & () const { Lvd::Meta::Assert<(DIM == 1)>(); return m[0]; }
+    operator Scalar const & () const { Lvd::Meta::Assert<(DIM == 1)>(); return m_component[0]; }
     // this could be implemented as "operator Scalar & ()" but it would be bad to make implicit casts that can be used to change the value of this.
-    Scalar &as_scalar () { Lvd::Meta::Assert<(DIM == 1)>(); return m[0]; } // can use this to assign from Scalar
+    Scalar &as_scalar () { Lvd::Meta::Assert<(DIM == 1)>(); return m_component[0]; } // can use this to assign from Scalar
 
     // this SHOULD be inconvenient and ugly to call.  it should be used ONLY when you know for certain that 0 <= i < DIM
-    Scalar const &component_access_without_range_check (Uint32 i) const { return m[i]; }
+    Scalar const &component_access_without_range_check (Uint32 i) const { return m_component[i]; }
     // this SHOULD be inconvenient and ugly to call.  it should be used ONLY when you know for certain that 0 <= i < DIM
-    Scalar &component_access_without_range_check (Uint32 i) { return m[i]; }
+    Scalar &component_access_without_range_check (Uint32 i) { return m_component[i]; }
 
     // NOTE: operator [] will be used to return values, while
     // operator () will be used to create expression templates
@@ -63,24 +63,24 @@ struct Vector_t
         if (i.is_at_end())
             throw std::invalid_argument("index out of range");
         else
-            return m[i.value()];
+            return m_component[i.value()];
     }
     Scalar &operator [] (Index const &i)
     {
         if (i.is_at_end())
             throw std::invalid_argument("index out of range");
         else
-            return m[i.value()];
+            return m_component[i.value()];
     }
     template <typename Index_>
-    Scalar const &operator [] (CompoundIndex_t<TypeList_t<Index_> > const &c) const
+    Scalar const &operator [] (MultiIndex_t<TypeList_t<Index_> > const &m) const
     {
-        return operator[](c.template el<0>());
+        return operator[](m.template el<0>());
     }
     template <typename Index_>
-    Scalar &operator [] (CompoundIndex_t<TypeList_t<Index_> > const &c)
+    Scalar &operator [] (MultiIndex_t<TypeList_t<Index_> > const &m)
     {
-        return operator[](c.template el<0>());
+        return operator[](m.template el<0>());
     }
 
     // the argument is technically unnecessary, as its value is not used.  however,
@@ -103,18 +103,18 @@ struct Vector_t
         return ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<TypedIndex_t<Derived,SYMBOL> >,EmptyTypeList,DONT_FORCE_CONST>(as_derived());
     }
 
-    // if the return value for a particular CompoundIndex is false, then that component is understood to be zero.
+    // if the return value for a particular MultiIndex is false, then that component is understood to be zero.
     // TODO: make this a part of a Vector_i compile-time interface?
     static bool component_corresponds_to_memory_location (Index const &i) { return true; }
-    static bool component_corresponds_to_memory_location (CompoundIndex const &c) { return true; }
-    static Scalar scalar_factor_for_component (Index const &c) { return Scalar(1); }
-    static Scalar scalar_factor_for_component (CompoundIndex const &c) { return Scalar(1); }
+    static bool component_corresponds_to_memory_location (MultiIndex const &m) { return true; }
+    static Scalar scalar_factor_for_component (Index const &m) { return Scalar(1); }
+    static Scalar scalar_factor_for_component (MultiIndex const &m) { return Scalar(1); }
     static Index vector_index_of (Index const &i) { return i; }
-    static Index vector_index_of (CompoundIndex const &c) { return c.head(); }
+    static Index vector_index_of (MultiIndex const &m) { return m.head(); }
 
-    Uint32 data_size_in_bytes () const { return sizeof(m); }
-    Scalar const *data_pointer () const { return &m[0]; }
-    Scalar *data_pointer () { return &m[0]; }
+    Uint32 data_size_in_bytes () const { return sizeof(m_component); }
+    Scalar const *data_pointer () const { return &m_component[0]; }
+    Scalar *data_pointer () { return &m_component[0]; }
 
     static std::string type_as_string ()
     {
@@ -132,7 +132,7 @@ struct Vector_t
 
 protected:
 
-    Scalar m[DIM];
+    Scalar m_component[DIM];
 };
 
 template <typename Scalar, Uint32 DIM>

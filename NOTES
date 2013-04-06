@@ -23,7 +23,7 @@ current goals:
   * There should be a generic basis type -- StandardBasis (?) -- where the inner product is the identity
 - column/row/block extraction/addressing
 - "eval" method on expression templates (which take a list of free indices) which produce an intermediate value
-  * something like  (a(i,j)*m(j,k)*a(k,l)).eval(l,i)  (this one makes l the first index, and i the second).
+  * something like  (a(i|j)*m(j|k)*a(k|l)).eval(l|i)  (this one makes l the first index, and i the second).
 - implement natural pairings as 2-tensors (most are the identity tensor, diagonal, etc)
 - this regularizes the implementation and relates to metrics/inner products
   * contractions will "request" the pairing, and if the type exists, the contraction works
@@ -37,7 +37,7 @@ future goals:
 - a rigorous test suite, using Lvd test code -- it can handle everything up through seg faults -- and negative compile
   tests implemented at the build level, so that particular intentional compile errors can be verified to work.
 - standard in-line linear algebra notation
-  * for example, if A is a matrix and v is a vector, "A*v" should be equivalent to "A(i,j)*v(j)", but obviously
+  * for example, if A is a matrix and v is a vector, "A*v" should be equivalent to "A(i|j)*v(j)", but obviously
     without the need to use an indexed expression.
 - optimize evaluation algorithm (ordering operations to do the minimal amount of computation)
 - vectorizing as many operations as possible (in cooperation with loop-unrolling?)
@@ -55,6 +55,7 @@ random TODOs:
 - see if it's possible to do strong range check guarantees for indices (Index_t) -- this would probably
   require a "for each" construct which would best be accomplished with lambda expressions
 - the compiler flags don't appear to be doing anything in clang, and possibly gcc.
+- apparently "using typename Parent::WhateverType;" works -- change all the dumb typedef inheritance to use this.
 
 implemented features/items:
 x operator overloads for expression templates

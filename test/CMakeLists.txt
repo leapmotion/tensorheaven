@@ -14,7 +14,7 @@ set(COMPILER_RELEASE_FLAGS "-O3 -g -DNDEBUG -Wall -Werror")
 # temp tests
 add_executable(contraction_prototype contraction_prototype.cpp)
 add_executable(eigen_interop_prototype eigen_interop_prototype.cpp)
-add_executable(compoundindex compoundindex.cpp)
+add_executable(multiindex multiindex.cpp)
 add_executable(list list.cpp)
 add_executable(strongly_typed_vector_prototype strongly_typed_vector_prototype.cpp)
 add_executable(tuple tuple.cpp)

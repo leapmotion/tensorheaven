@@ -7,7 +7,7 @@
 #define TENH_META_TUPLE_HPP_
 
 #include "tenh/core.hpp"
-#include "tenh/meta/list.hpp"
+#include "tenh/list.hpp"
 #include "tenh/meta/typetuple.hpp"
 
 namespace Tenh {

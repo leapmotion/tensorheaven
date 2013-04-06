@@ -3,7 +3,7 @@
 #include <string>
 
 #include "tenh/core.hpp" // everything should include this
-#include "tenh/compoundindex.hpp"
+#include "tenh/multiindex.hpp"
 #include "tenh/expression_templates.hpp"
 #include "tenh/interop/eigen_selfadjointeigendecomp.hpp"
 #include "tenh/interop/eigen_svd.hpp"

@@ -40,17 +40,17 @@ struct AllFactorTypeScalarsAreEqual_t<EmptyTypeList>
     static bool const V = true;
 };
 
-template <typename FactorTypeList>
-struct DimensionOfTensorProduct_t
-{
-    static Uint32 const V = FactorTypeList::HeadType::DIM * DimensionOfTensorProduct_t<typename FactorTypeList::BodyTypeList>::V;
-};
-
-template <>
-struct DimensionOfTensorProduct_t<EmptyTypeList>
-{
-    static Uint32 const V = 1;
-};
+// template <typename FactorTypeList>
+// struct DimensionOfTensorProduct_t
+// {
+//     static Uint32 const V = FactorTypeList::HeadType::DIM * DimensionOfTensorProduct_t<typename FactorTypeList::BodyTypeList>::V;
+// };
+// 
+// template <>
+// struct DimensionOfTensorProduct_t<EmptyTypeList>
+// {
+//     static Uint32 const V = 1;
+// };
 
 template <typename FactorTypeList>
 struct FactorIndexTypeList_t
@@ -85,18 +85,16 @@ struct Tensor_i
     typedef Derived_ Derived;
     typedef FactorTypeList_ FactorTypeList;
     typedef typename FactorIndexTypeList_t<FactorTypeList>::T FactorIndexTypeList;
-    typedef CompoundIndex_t<FactorIndexTypeList> CompoundIndex;
+    typedef MultiIndex_t<FactorIndexTypeList> MultiIndex;
+    typedef typename FactorTypeList::HeadType::Scalar Scalar;
     // this is not the "fully expanded" degree, but the number of [what you could think of
     // as "parenthesized"] factors that formed this tensor product type.
     static Uint32 const DEGREE = FactorTypeList::LENGTH;
-    typedef typename FactorTypeList::HeadType::Scalar Scalar;
-    // dimension as a vector space
-    static Uint32 const DIM = DimensionOfTensorProduct_t<FactorTypeList>::V;
 
     // TODO: could put canonical as_factorX conversions here
     
-    Scalar operator [] (CompoundIndex const &c) const { return this->as_derived_().operator[](c); }
-    Scalar operator [] (CompoundIndex const &c) { return this->as_derived_().operator[](c); }
+    Scalar operator [] (MultiIndex const &m) const { return this->as_derived_().operator[](m); }
+    Scalar operator [] (MultiIndex const &m) { return this->as_derived_().operator[](m); }
 
     // the two separate head/body template arguments are necessary to disambiguate this method
     // from one that takes a single index (i.e. the index-by-vector-index one).
@@ -158,9 +156,9 @@ std::ostream &operator << (std::ostream &out, Tensor_i<Derived,TypeList_t<Factor
     typedef Tensor_i<Derived,TypeList_t<Factor1> > Tensor;
 
     out << '[';
-    for (typename Tensor::CompoundIndex c; c.is_not_at_end(); ++c)
+    for (typename Tensor::MultiIndex m; m.is_not_at_end(); ++m)
     {
-        out << t[c] << '\t';
+        out << t[m] << '\t';
     }
     out << ']';
     return out;
@@ -171,8 +169,8 @@ template <typename Derived, typename Factor1, typename Factor2>
 std::ostream &operator << (std::ostream &out, Tensor_i<Derived,TypeList_t<Factor1,TypeList_t<Factor2> > > const &t)
 {
     typedef Tensor_i<Derived,TypeList_t<Factor1,TypeList_t<Factor2> > > Tensor;
-    typename Tensor::CompoundIndex c;
-    if (c.is_at_end())
+    typename Tensor::MultiIndex m;
+    if (m.is_at_end())
         return out << "\n[[]]\n";
     
     out << "\n[";
@@ -183,8 +181,8 @@ std::ostream &operator << (std::ostream &out, Tensor_i<Derived,TypeList_t<Factor
         out << '[';
         for (typename Factor2::Index j; j.is_not_at_end(); ++j)
         {
-            out << t[c] << '\t';
-            ++c;
+            out << t[m] << '\t';
+            ++m;
         }
         out << ']';
         typename Factor1::Index next(i);
@@ -200,8 +198,8 @@ template <typename Derived, typename Factor1, typename Factor2, typename Factor3
 std::ostream &operator << (std::ostream &out, Tensor_i<Derived,TypeList_t<Factor1,TypeList_t<Factor2,TypeList_t<Factor3> > > > const &t)
 {
     typedef Tensor_i<Derived,TypeList_t<Factor1,TypeList_t<Factor2,TypeList_t<Factor3> > > > Tensor;
-    typename Tensor::CompoundIndex c;
-    if (c.is_at_end())
+    typename Tensor::MultiIndex m;
+    if (m.is_at_end())
         return out << "\n[[[]]]\n";
     
     out << "\n[";
@@ -217,8 +215,8 @@ std::ostream &operator << (std::ostream &out, Tensor_i<Derived,TypeList_t<Factor
             out << '[';
             for (typename Factor3::Index k; k.is_not_at_end(); ++k)
             {
-                out << t[c] << '\t';
-                ++c;
+                out << t[m] << '\t';
+                ++m;
             }
             out << ']';
             typename Factor2::Index next(j);

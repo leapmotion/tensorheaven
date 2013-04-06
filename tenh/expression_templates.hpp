@@ -43,7 +43,7 @@ struct ExpressionTemplate_IndexedObject_t
     typedef typename Parent::Scalar Scalar;
     typedef typename Parent::FreeIndexTypeList FreeIndexTypeList;
     typedef typename Parent::UsedIndexTypeList UsedIndexTypeList;
-    typedef typename Parent::CompoundIndex CompoundIndex;
+    typedef typename Parent::MultiIndex MultiIndex;
     using Parent::IS_EXPRESSION_TEMPLATE;
     typedef SummedIndexTypeList_ SummedIndexTypeList;
 
@@ -52,11 +52,11 @@ struct ExpressionTemplate_IndexedObject_t
     operator Scalar () const
     {
         Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<FreeIndexTypeList,EmptyTypeList>::v>();
-        return operator[](CompoundIndex());
+        return operator[](MultiIndex());
     }
 
     // read-only, because it doesn't make sense to assign to an expression which is a summation.
-    Scalar operator [] (CompoundIndex const &c) const
+    Scalar operator [] (MultiIndex const &c) const
     {
         return UnarySummation_t<Object,IndexTypeList,SummedIndexTypeList>::eval(m_object, c);
     }
@@ -91,7 +91,7 @@ struct ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,EmptyTypeList,DON
     typedef typename Parent::Scalar Scalar;
     typedef typename Parent::FreeIndexTypeList FreeIndexTypeList;
     typedef typename Parent::UsedIndexTypeList UsedIndexTypeList;
-    typedef typename Parent::CompoundIndex CompoundIndex;
+    typedef typename Parent::MultiIndex MultiIndex;
     using Parent::IS_EXPRESSION_TEMPLATE;
 
     ExpressionTemplate_IndexedObject_t (Object &object) : m_object(object) { }
@@ -99,14 +99,14 @@ struct ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,EmptyTypeList,DON
     operator Scalar () const
     {
         Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<FreeIndexTypeList,EmptyTypeList>::v>();
-        return operator[](CompoundIndex());
+        return operator[](MultiIndex());
     }
 
     // read-only, because it doesn't necessarily make sense to assign to an expression
     // template -- the expression may be a product or some such, where each component
     // is not an L-value.
     Scalar const &operator [] (typename Object::Index const &i) const { return m_object[i]; }
-    Scalar operator [] (CompoundIndex const &c) const { return m_object[c]; }
+    Scalar operator [] (MultiIndex const &c) const { return m_object[c]; }
 
     // for some dumb reason, the compiler needed a non-templatized assignment operator for the exact matching type
     void operator = (ExpressionTemplate_IndexedObject_t const &right_operand)
@@ -135,12 +135,12 @@ struct ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,EmptyTypeList,DON
         if (right_operand.uses_tensor(m_object))
             throw std::invalid_argument("invalid aliased tensor assignment (source and destination memory overlap) -- use an intermediate value");
 
-        typedef CompoundIndexMap_t<FreeIndexTypeList,typename RightOperand::FreeIndexTypeList> RightOperandIndexMap;
+        typedef MultiIndexMap_t<FreeIndexTypeList,typename RightOperand::FreeIndexTypeList> RightOperandIndexMap;
         typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
 
         // component-wise assignment via the free index type.
-        for (CompoundIndex c; c.is_not_at_end(); ++c)
-            m_object[c] = right_operand[right_operand_index_map(c)];
+        for (MultiIndex m; m.is_not_at_end(); ++m)
+            m_object[m] = right_operand[right_operand_index_map(m)];
     }
 
     template <typename OtherTensor>
@@ -177,14 +177,14 @@ struct ExpressionTemplate_Addition_t
     typedef typename Parent::Scalar Scalar;
     typedef typename Parent::FreeIndexTypeList FreeIndexTypeList;
     typedef typename Parent::UsedIndexTypeList UsedIndexTypeList;
-    typedef typename Parent::CompoundIndex CompoundIndex;
+    typedef typename Parent::MultiIndex MultiIndex;
     using Parent::IS_EXPRESSION_TEMPLATE;
 
     // TODO: check that the summed indices from each operand have no indices in common
     // though technically this is unnecessary, because the summed indices are "private"
     // to each contraction, so this is really for the human's benefit, not getting
     // confused by multiple repeated indices that have nothing to do with each other.
-    // NOTE: technically this check is already done inside CompoundIndex_t, but it would
+    // NOTE: technically this check is already done inside MultiIndex_t, but it would
     // be good to do the check here so that an error will be more obvious.
     enum
     {
@@ -212,10 +212,10 @@ struct ExpressionTemplate_Addition_t
             return m_left_operand.operator Scalar() - m_right_operand.operator Scalar();
     }
 
-    Scalar operator [] (CompoundIndex const &c) const
+    Scalar operator [] (MultiIndex const &c) const
     {
-        typedef CompoundIndexMap_t<FreeIndexTypeList,typename LeftOperand::FreeIndexTypeList> LeftOperandIndexMap;
-        typedef CompoundIndexMap_t<FreeIndexTypeList,typename RightOperand::FreeIndexTypeList> RightOperandIndexMap;
+        typedef MultiIndexMap_t<FreeIndexTypeList,typename LeftOperand::FreeIndexTypeList> LeftOperandIndexMap;
+        typedef MultiIndexMap_t<FreeIndexTypeList,typename RightOperand::FreeIndexTypeList> RightOperandIndexMap;
         typename LeftOperandIndexMap::EvalMapType left_operand_index_map = LeftOperandIndexMap::eval;
         typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
         if (OPERATOR == '+')
@@ -259,7 +259,7 @@ struct ExpressionTemplate_ScalarMultiplication_t
     typedef typename Parent::Scalar Scalar;
     typedef typename Parent::FreeIndexTypeList FreeIndexTypeList;
     typedef typename Parent::UsedIndexTypeList UsedIndexTypeList;
-    typedef typename Parent::CompoundIndex CompoundIndex;
+    typedef typename Parent::MultiIndex MultiIndex;
     using Parent::IS_EXPRESSION_TEMPLATE;
 
     enum
@@ -280,10 +280,10 @@ struct ExpressionTemplate_ScalarMultiplication_t
     operator Scalar () const
     {
         Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<FreeIndexTypeList,EmptyTypeList>::v>();
-        return operator[](CompoundIndex());
+        return operator[](MultiIndex());
     }
 
-    Scalar operator [] (CompoundIndex const &c) const
+    Scalar operator [] (MultiIndex const &c) const
     {
         if (OPERATOR == '*')
             return m_operand[c] * m_scalar_operand;
@@ -330,7 +330,7 @@ struct ExpressionTemplate_Multiplication_t
     typedef typename Parent::Scalar Scalar;
     typedef typename Parent::FreeIndexTypeList FreeIndexTypeList;
     typedef typename Parent::UsedIndexTypeList UsedIndexTypeList;
-    typedef typename Parent::CompoundIndex CompoundIndex;
+    typedef typename Parent::MultiIndex MultiIndex;
     using Parent::IS_EXPRESSION_TEMPLATE;
 
     typedef typename SummedIndexTypeListOfMultiplication_t<LeftOperand,RightOperand>::T SummedIndexTypeList;
@@ -358,10 +358,10 @@ struct ExpressionTemplate_Multiplication_t
     operator Scalar () const
     {
         Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<FreeIndexTypeList,EmptyTypeList>::v>();
-        return operator[](CompoundIndex());
+        return operator[](MultiIndex());
     }
 
-    Scalar operator [] (CompoundIndex const &c) const
+    Scalar operator [] (MultiIndex const &c) const
     {
         return BinarySummation_t<LeftOperand,RightOperand,FreeIndexTypeList,SummedIndexTypeList>::eval(m_left_operand, m_right_operand, c);
     }
@@ -379,7 +379,7 @@ private:
 };
 
 // ////////////////////////////////////////////////////////////////////////////
-// bundling multiple indices into a single compound index (tensor downcasting)
+// bundling multiple separate indices into a single vector index (downcasting)
 // ////////////////////////////////////////////////////////////////////////////
 
 template <typename Operand, typename BundleIndexTypeList, typename ResultingIndexType>
@@ -400,7 +400,7 @@ struct ExpressionTemplate_IndexBundle_t
     typedef typename Parent::Scalar Scalar;
     typedef typename Parent::FreeIndexTypeList FreeIndexTypeList;
     typedef typename Parent::UsedIndexTypeList UsedIndexTypeList;
-    typedef typename Parent::CompoundIndex CompoundIndex;
+    typedef typename Parent::MultiIndex MultiIndex;
     using Parent::IS_EXPRESSION_TEMPLATE;
     typedef typename Parent::SummedIndexTypeList SummedIndexTypeList;
 
@@ -411,11 +411,11 @@ struct ExpressionTemplate_IndexBundle_t
     operator Scalar () const
     {
         Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<FreeIndexTypeList,EmptyTypeList>::v>();
-        return operator[](CompoundIndex());
+        return operator[](MultiIndex());
     }
 
     // read-only, because it doesn't make sense to assign to an index-bundled expression (which is possibly also a summation).
-    Scalar operator [] (CompoundIndex const &c) const
+    Scalar operator [] (MultiIndex const &c) const
     {
         return UnarySummation_t<IndexBundle,typename IndexBundle::IndexTypeList,SummedIndexTypeList>::eval(m_index_bundle, c);
     }
@@ -429,7 +429,7 @@ private:
 };
 
 // ////////////////////////////////////////////////////////////////////////////
-// splitting a single compound index into multiple indices (tensor upcasting)
+// splitting a single vector index into a multiple separate indices (upcasting)
 // ////////////////////////////////////////////////////////////////////////////
 
 template <typename Operand, typename SourceIndexType, typename SplitIndexTypeList>
@@ -450,7 +450,7 @@ struct ExpressionTemplate_IndexSplit_t
     typedef typename Parent::Scalar Scalar;
     typedef typename Parent::FreeIndexTypeList FreeIndexTypeList;
     typedef typename Parent::UsedIndexTypeList UsedIndexTypeList;
-    typedef typename Parent::CompoundIndex CompoundIndex;
+    typedef typename Parent::MultiIndex MultiIndex;
     using Parent::IS_EXPRESSION_TEMPLATE;
     typedef typename Parent::SummedIndexTypeList SummedIndexTypeList;
 
@@ -461,11 +461,11 @@ struct ExpressionTemplate_IndexSplit_t
     operator Scalar () const
     {
         Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<FreeIndexTypeList,EmptyTypeList>::v>();
-        return operator[](CompoundIndex());
+        return operator[](MultiIndex());
     }
 
     // read-only, because it doesn't make sense to assign to an index-bundled expression (which is possibly also a summation).
-    Scalar operator [] (CompoundIndex const &c) const
+    Scalar operator [] (MultiIndex const &c) const
     {
         return UnarySummation_t<IndexSplitter,typename IndexSplitter::IndexTypeList,SummedIndexTypeList>::eval(m_index_splitter, c);
     }

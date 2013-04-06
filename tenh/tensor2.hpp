@@ -58,18 +58,18 @@ struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
     typedef Factor2_ Factor2;
     typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
     typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
-    typedef typename Parent_Tensor_i::CompoundIndex CompoundIndex;
+    typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
     using Parent_Tensor_i::DEGREE;
 
     Tensor2_t (WithoutInitialization const &w) : Parent_Vector_t(w) { }
     Tensor2_t (Scalar fill_with) : Parent_Vector_t(fill_with) { }
 
     template <typename BundleIndexTypeList, typename BundledIndex>
-    static CompoundIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)
+    static MultiIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)
     {
         typedef typename BundleIndexTypeList::template El_t<0>::T Index1;
         typedef typename BundleIndexTypeList::template El_t<1>::T Index2;
-        // this is just to check that there is a valid conversion to the requested CompoundIndex type.
+        // this is just to check that there is a valid conversion to the requested MultiIndex type.
         // it doesn't actually produce any side-effects, and should be optimized out.
         {
             Lvd::Meta::Assert<BundleIndexTypeList::LENGTH == 2>();
@@ -84,38 +84,38 @@ struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
         Uint32 row;
         Uint32 col;
         contiguous_index_to_rowcol_index(b.value(), row, col);
-        return CompoundIndex_t<BundleIndexTypeList>(Index1(row), Index2(col));
+        return MultiIndex_t<BundleIndexTypeList>(Index1(row), Index2(col));
     }
 
     // for access to particular components
     using Parent_Vector_t::operator[];
 
-    // Index1 could be Factor1::Index or Factor1::CompoundIndex (checked by its use in the other functions)
-    // Index2 could be Factor2::Index or Factor2::CompoundIndex (checked by its use in the other functions)
+    // Index1 could be Factor1::Index or Factor1::MultiIndex (checked by its use in the other functions)
+    // Index2 could be Factor2::Index or Factor2::MultiIndex (checked by its use in the other functions)
     template <typename Index1, typename Index2>
-    Scalar operator [] (CompoundIndex_t<TypeList_t<Index1,TypeList_t<Index2> > > const &c) const
+    Scalar operator [] (MultiIndex_t<TypeList_t<Index1,TypeList_t<Index2> > > const &m) const
     {
 //         // NOTE: this construction is unnecessary to the code, but IS necessary to the compile-time type checking
 //         // the compiler should optimize it out anyway.
-//         typename Factor1::Index(c.template el<0>());
-//         typename Factor2::Index(c.template el<1>());
-        return component(c.template el<0>(), c.template el<1>());
+//         typename Factor1::Index(m.template el<0>());
+//         typename Factor2::Index(m.template el<1>());
+        return component(m.template el<0>(), m.template el<1>());
     }
     template <typename Index1, typename Index2>
-    Scalar &operator [] (CompoundIndex_t<TypeList_t<Index1,TypeList_t<Index2> > > const &c)
+    Scalar &operator [] (MultiIndex_t<TypeList_t<Index1,TypeList_t<Index2> > > const &m)
     {
         // NOTE: this construction is unnecessary to the code, but IS necessary to the compile-time type checking
         // the compiler should optimize it out anyway.
-        CompoundIndex x(c);
-//         typename Factor1::Index(c.template el<0>());
-//         typename Factor2::Index(c.template el<1>());
-        if (c.is_at_end())
+        MultiIndex x(m);
+//         typename Factor1::Index(m.template el<0>());
+//         typename Factor2::Index(m.template el<1>());
+        if (m.is_at_end())
         {
             throw std::invalid_argument("index out of range");
         }
         else
         {
-            return this->component_access_without_range_check(c.value());
+            return this->component_access_without_range_check(m.value());
         }
     }
 
@@ -124,8 +124,8 @@ struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
     using Parent_Tensor_i::operator();
     
     // access 2-tensor components
-    // Index1 could be Factor1::Index or Factor1::CompoundIndex (checked by its use in the other functions)
-    // Index2 could be Factor2::Index or Factor2::CompoundIndex (checked by its use in the other functions)
+    // Index1 could be Factor1::Index or Factor1::MultiIndex (checked by its use in the other functions)
+    // Index2 could be Factor2::Index or Factor2::MultiIndex (checked by its use in the other functions)
     template <typename Index1, typename Index2>
     Scalar component (Index1 const &i1, Index2 const &i2) const
     {
@@ -143,13 +143,13 @@ struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
         {
             return Factor1::scalar_factor_for_component(i1) *
                    Factor2::scalar_factor_for_component(i2) *
-                   operator[](vector_index_of(CompoundIndex(Factor1::vector_index_of(i1), 
-                                                            Factor2::vector_index_of(i2))));
+                   operator[](vector_index_of(MultiIndex(Factor1::vector_index_of(i1), 
+                                                         Factor2::vector_index_of(i2))));
         }
     }
     // write 2-tensor components -- will throw if a component doesn't correspond to a memory location
-    // Index1 could be Factor1::Index or Factor1::CompoundIndex (checked by its use in the other functions)
-    // Index2 could be Factor2::Index or Factor2::CompoundIndex (checked by its use in the other functions)
+    // Index1 could be Factor1::Index or Factor1::MultiIndex (checked by its use in the other functions)
+    // Index2 could be Factor2::Index or Factor2::MultiIndex (checked by its use in the other functions)
     template <typename Index1, typename Index2>
     void set_component (Index1 const &i1, Index2 const &i2, Scalar s)
     {
@@ -164,18 +164,18 @@ struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
             throw std::invalid_argument("this tensor component is not writable");
         }
 
-        CompoundIndex c(Factor1::vector_index_of(i1), Factor2::vector_index_of(i2));
+        MultiIndex m(Factor1::vector_index_of(i1), Factor2::vector_index_of(i2));
         // write to the component, but divide through by the total scale factor for the component.
-        operator[](vector_index_of(c)) = s / (Factor1::scalar_factor_for_component(i1) 
+        operator[](vector_index_of(m)) = s / (Factor1::scalar_factor_for_component(i1) 
                                               * Factor2::scalar_factor_for_component(i2));
     }
     using Parent_Vector_t::component_corresponds_to_memory_location;
     using Parent_Vector_t::scalar_factor_for_component;
     using Parent_Vector_t::vector_index_of;
     // all components are stored in memory (in the array m), and have scalar factor 1
-    static bool component_corresponds_to_memory_location (CompoundIndex const &c) { return true; }
-    static Scalar scalar_factor_for_component (CompoundIndex const &c) { return Scalar(1); }
-    static Index vector_index_of (CompoundIndex const &c) { return Index::range_unchecked(c.value()); }
+    static bool component_corresponds_to_memory_location (MultiIndex const &m) { return true; }
+    static Scalar scalar_factor_for_component (MultiIndex const &m) { return Scalar(1); }
+    static Index vector_index_of (MultiIndex const &m) { return Index::range_unchecked(m.value()); }
 
     static std::string type_as_string ()
     {
@@ -198,7 +198,7 @@ struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
 
 private:
 
-    // functions between the indexing schemes -- compound index is (row,col) with row > col and vector index is contiguous.
+    // functions between the indexing schemes -- multi-index is (row,col) with row > col and vector index is contiguous.
     static Uint32 rowcol_index_to_contiguous_index (Uint32 row, Uint32 col)
     {
         return Factor2::DIM*row + col;

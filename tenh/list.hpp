@@ -1,10 +1,10 @@
 // ///////////////////////////////////////////////////////////////////////////
-// tenh/meta/list.hpp by Victor Dods, created 2013/02/16
+// tenh/list.hpp by Victor Dods, created 2013/02/16
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#ifndef TENH_META_LIST_HPP_
-#define TENH_META_LIST_HPP_
+#ifndef TENH_LIST_HPP_
+#define TENH_LIST_HPP_
 
 #include <ostream>
 #include <string>
@@ -590,4 +590,4 @@ List_t<typename ConcatenationOfTypeLists_t<LeadingTypeList,TypeList_t<TailType> 
 
 } // end of namespace Tenh
 
-#endif // TENH_META_LIST_HPP_
+#endif // TENH_LIST_HPP_
