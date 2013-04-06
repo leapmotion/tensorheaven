@@ -158,12 +158,6 @@ struct Tensor2Symmetric_t : public Vector_t<typename Factor1_::Scalar,
 
     static std::string type_as_string ()
     {
-        // TODO: return Derived's type_as_string value?
-//         if (Lvd::Meta::TypesAreEqual<Derived_,NullType>::v)
-//             return "Tensor2Symmetric_t<" + TypeStringOf_t<Factor>::eval() + '>';
-//         else
-//             return Derived::type_as_string();
-        // for now, just return this type string
         if (Lvd::Meta::TypesAreEqual<Derived_,NullType>::v)
             return "Tensor2Symmetric_t<" + TypeStringOf_t<Factor>::eval() + '>';
         else
@@ -208,29 +202,6 @@ private:
         }
     }
 };
-
-template <typename Factor>
-std::ostream &operator << (std::ostream &out, Tensor2Symmetric_t<Factor> const &t)
-{
-    typedef Tensor2Symmetric_t<Factor> Tensor2Symmetric;
-
-    if (Tensor2Symmetric::DIM == 0)
-        return out << "[]";
-
-    typename Tensor2Symmetric::MultiIndex m;
-    out << '\n';
-    for (typename Factor::Index i; i.is_not_at_end(); ++i)
-    {
-        out << '[';
-        for (typename Factor::Index j; j.is_not_at_end(); ++j)
-        {
-            out << t[m] << '\t';
-            ++m;
-        }
-        out << "]\n";
-    }
-    return out;
-}
 
 // template specialization for the natural pairing in this particular coordinatization of Tensor2Symmetric_t
 template <typename Factor>

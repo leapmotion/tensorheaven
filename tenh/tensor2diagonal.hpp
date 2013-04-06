@@ -168,12 +168,6 @@ struct Tensor2Diagonal_t : public Vector_t<typename Factor1_::Scalar,
 
     static std::string type_as_string ()
     {
-        // TODO: return Derived's type_as_string value?
-//         if (Lvd::Meta::TypesAreEqual<Derived_,NullType>::v)
-//             return "Tensor2Diagonal_t<" + TypeStringOf_t<Factor1>::eval() + ',' + TypeStringOf_t<Factor2>::eval() + '>';
-//         else
-//             return Derived::type_as_string();
-        // for now, just return this type string
         if (Lvd::Meta::TypesAreEqual<Derived_,NullType>::v)
             return "Tensor2Diagonal_t<" + TypeStringOf_t<Factor1>::eval() + ',' + TypeStringOf_t<Factor2>::eval() + '>';
         else
@@ -197,29 +191,6 @@ private:
         col = row;
     }
 };
-
-template <typename Factor1, typename Factor2>
-std::ostream &operator << (std::ostream &out, Tensor2Diagonal_t<Factor1,Factor2> const &t)
-{
-    typedef Tensor2Diagonal_t<Factor1,Factor2> Tensor2Diagonal;
-
-    if (Tensor2Diagonal::DIM == 0)
-        return out << "[]";
-
-    typename Tensor2Diagonal::MultiIndex m;
-    out << '\n';
-    for (typename Factor1::Index i; i.is_not_at_end(); ++i)
-    {
-        out << '[';
-        for (typename Factor2::Index j; j.is_not_at_end(); ++j)
-        {
-            out << t[m] << '\t';
-            ++m;
-        }
-        out << "]\n";
-    }
-    return out;
-}
 
 } // end of namespace Tenh
 

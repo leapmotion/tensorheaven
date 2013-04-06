@@ -174,12 +174,6 @@ struct Tensor2Antisymmetric_t : public Vector_t<typename Factor1_::Scalar,
 
     static std::string type_as_string ()
     {
-        // TODO: return Derived's type_as_string value?
-//         if (Lvd::Meta::TypesAreEqual<Derived_,NullType>::v)
-//             return "Tensor2Antisymmetric_t<" + TypeStringOf_t<Factor>::eval() + '>';
-//         else
-//             return Derived::type_as_string();
-        // for now, just return this type string
         if (Lvd::Meta::TypesAreEqual<Derived_,NullType>::v)
             return "Tensor2Antisymmetric_t<" + TypeStringOf_t<Factor>::eval() + '>';
         else
@@ -213,29 +207,6 @@ private:
         col = i - row*(row-1)/2;
     }
 };
-
-template <typename Factor>
-std::ostream &operator << (std::ostream &out, Tensor2Antisymmetric_t<Factor> const &t)
-{
-    typedef Tensor2Antisymmetric_t<Factor> Tensor2Antisymmetric;
-
-    if (Tensor2Antisymmetric::DIM == 0)
-        return out << "[]";
-
-    typename Tensor2Antisymmetric::MultiIndex m;
-    out << '\n';
-    for (typename Factor::Index i; i.is_not_at_end(); ++i)
-    {
-        out << '[';
-        for (typename Factor::Index j; j.is_not_at_end(); ++j)
-        {
-            out << t[m] << '\t';
-            ++m;
-        }
-        out << "]\n";
-    }
-    return out;
-}
 
 // template specialization for the natural pairing in this particular coordinatization of Tensor2Antisymmetric_t
 template <typename Factor>

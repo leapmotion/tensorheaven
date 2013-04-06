@@ -139,6 +139,11 @@ struct Tensor_i
             DONT_FORCE_CONST>(this->as_derived_());
     }
     
+    static std::string type_as_string ()
+    {
+        return "Tensor_i<" + TypeStringOf_t<Derived>::eval() + ',' + TypeStringOf_t<FactorTypeList>::eval() + '>';
+    }
+
 private:
 
     // accessor as Derived type

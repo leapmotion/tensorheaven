@@ -22,6 +22,9 @@ current goals:
   * There should be a generic vector space type -- EuclideanSpace (?)
   * There should be a generic basis type -- StandardBasis (?) -- where the inner product is the identity
 - column/row/block extraction/addressing
+  * something like a(i|c(2)), where i is a TypedIndex_t<Vector,'i'> and c is an Index_t<Vector>
+  * will need to somehow distinguish the type of i|c(2) from something like i|j, because a(i|c(2)) is an
+    expression template with a particular fixed index plugged in.
 - "eval" method on expression templates (which take a list of free indices) which produce an intermediate value
   * something like  (a(i|j)*m(j|k)*a(k|l)).eval(l|i)  (this one makes l the first index, and i the second).
 - implement natural pairings as 2-tensors (most are the identity tensor, diagonal, etc)

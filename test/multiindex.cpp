@@ -7,10 +7,12 @@
 using namespace Tenh;
 
 template <Uint32 DIM>
-struct Index_t
+struct DummyIndex_t
 {
-    Index_t () : m(0) { }
-    Index_t (Uint32 i) : m(i) { }
+    DummyIndex_t () : m(0) { }
+    DummyIndex_t (Uint32 i) : m(i) { }
+
+    static Uint32 const COMPONENT_COUNT = DIM;
 
     bool is_at_end () const { return m >= DIM; }
     bool is_not_at_end () const { return m < DIM; }
@@ -18,7 +20,7 @@ struct Index_t
     void operator ++ () { ++m; }
     void reset () { m = 0; }
 
-    static std::string type_as_string () { return "Index_t<" + AS_STRING(DIM) + ">"; }
+    static std::string type_as_string () { return "DummyIndex_t<" + AS_STRING(DIM) + ">"; }
 
 private:
 
@@ -26,17 +28,17 @@ private:
 };
 
 template <Uint32 DIM>
-std::ostream &operator << (std::ostream &out, Index_t<DIM> const &i)
+std::ostream &operator << (std::ostream &out, DummyIndex_t<DIM> const &i)
 {
     return out << i.value();
 }
 
 int main (int argc, char **argv)
 {
-    typedef Index_t<3> I3;
-    typedef Index_t<4> I4;
-    typedef Index_t<5> I5;
-    typedef Index_t<6> I6;
+    typedef DummyIndex_t<3> I3;
+    typedef DummyIndex_t<4> I4;
+    typedef DummyIndex_t<5> I5;
+    typedef DummyIndex_t<6> I6;
     typedef MultiIndex_t<TypeTuple_t<I3>::T> X;
     typedef MultiIndex_t<TypeTuple_t<I3,I4>::T> Y;
     typedef MultiIndex_t<TypeTuple_t<I3,I4,I5>::T> Z;

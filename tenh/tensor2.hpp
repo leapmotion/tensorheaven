@@ -179,12 +179,6 @@ struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
 
     static std::string type_as_string ()
     {
-        // TODO: return Derived's type_as_string value?
-//         if (Lvd::Meta::TypesAreEqual<Derived_,NullType>::v)
-//             return "Tensor2_t<" + TypeStringOf_t<Factor1>::eval() + ',' + TypeStringOf_t<Factor2>::eval() + '>';
-//         else
-//             return Derived::type_as_string();
-        // for now, just return this type string
         if (Lvd::Meta::TypesAreEqual<Derived_,NullType>::v)
         {
             return "Tensor2_t<" + TypeStringOf_t<Factor1>::eval() + ',' + TypeStringOf_t<Factor2>::eval() + '>';
