@@ -59,6 +59,7 @@ random TODOs:
   require a "for each" construct which would best be accomplished with lambda expressions
 - the compiler flags don't appear to be doing anything in clang, and possibly gcc.
 - apparently "using typename Parent::WhateverType;" works -- change all the dumb typedef inheritance to use this.
+- rename source files to use capitalized names (e.g. NaturalPairing.hpp) (?)
 
 implemented features/items:
 x operator overloads for expression templates

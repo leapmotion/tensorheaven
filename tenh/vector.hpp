@@ -9,148 +9,57 @@
 #include <ostream>
 #include <string>
 
-#include "tenh/multiindex.hpp"
+#include "tenh/array.hpp"
 #include "tenh/core.hpp"
-#include "tenh/expression_templates.hpp"
-#include "tenh/index.hpp"
-#include "tenh/meta/typestringof.hpp"
-#include "tenh/meta/typetuple.hpp"
+#include "tenh/interface/vector.hpp"
 
 namespace Tenh {
 
 // NOTE: Scalar_ MUST be a POD data type.
 template <typename Scalar_, Uint32 DIM_, typename Derived_ = NullType> // don't worry about type ID for now
-struct Vector_t
+struct Vector_t : public Vector_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
+                                                         Vector_t<Scalar_,DIM_,Derived_>,
+                                                         Derived_>::T,
+                                  Scalar_,
+                                  DIM_>,
+                  public Array_t<Scalar_,DIM_>
 {
-    enum { DIMENSION_MUST_BE_POSITIVE = Lvd::Meta::Assert<(DIM_ > 0)>::v };
+    typedef Vector_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
+                                            Vector_t<Scalar_,DIM_,Derived_>,
+                                            Derived_>::T,
+                     Scalar_,
+                     DIM_> Parent_Vector_i;
+    typedef Array_t<Scalar_,DIM_> Parent_Array_t;
+    typedef typename Parent_Vector_i::Derived Derived;
+    typedef typename Parent_Vector_i::Scalar Scalar;
+    using Parent_Vector_i::DIM;
+    typedef typename Parent_Vector_i::Index Index;
+    typedef typename Parent_Vector_i::MultiIndex MultiIndex;
 
-    typedef Scalar_ Scalar;
-    static Uint32 const DIM = DIM_;
-    // if Derived_ was the default NullType, then just use Vector_t as Derived.
-    typedef typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,Vector_t,Derived_>::T Derived;
-    // here is the "basic" (non-named) Index of this vector type, and it is aware of Derived
-    typedef Index_t<Derived> Index;
-    // the MultiIndex_t encapsulation of Index
-    typedef MultiIndex_t<typename TypeTuple_t<Index>::T> MultiIndex;
+    explicit Vector_t (WithoutInitialization const &w) : Parent_Array_t(w) { }
+    explicit Vector_t (Scalar fill_with) : Parent_Array_t(fill_with) { }
+    Vector_t (Scalar x0, Scalar x1) : Parent_Array_t(x0, x1) { }
+    Vector_t (Scalar x0, Scalar x1, Scalar x2) : Parent_Array_t(x0, x1, x2) { }
+    Vector_t (Scalar x0, Scalar x1, Scalar x2, Scalar x3) : Parent_Array_t(x0, x1, x2, x3) { }
 
-    explicit Vector_t (WithoutInitialization const &) { }
-    explicit Vector_t (Scalar fill_with) { for (Uint32 i = 0; i < DIM; ++i) m_component[i] = fill_with; }
-    Vector_t (Scalar x0, Scalar x1) { Lvd::Meta::Assert<(DIM == 2)>(); m_component[0] = x0; m_component[1] = x1; }
-    Vector_t (Scalar x0, Scalar x1, Scalar x2) { Lvd::Meta::Assert<(DIM == 3)>(); m_component[0] = x0; m_component[1] = x1; m_component[2] = x2; }
-    Vector_t (Scalar x0, Scalar x1, Scalar x2, Scalar x3) { Lvd::Meta::Assert<(DIM == 4)>(); m_component[0] = x0; m_component[1] = x1; m_component[2] = x2; m_component[3] = x3; }
-
-    // accessor as Derived type
-    Derived const &as_derived () const { return *static_cast<Derived const *>(this); }
-    Derived &as_derived () { return *static_cast<Derived *>(this); }
-
-    // TODO: only allow when Basis = Unit (or generic) once strongly-typed vectors are implemented
-    // type conversion operator for canonical coercion to Scalar type when the vector is 1-dimensional
-    operator Scalar const & () const { Lvd::Meta::Assert<(DIM == 1)>(); return m_component[0]; }
-    // this could be implemented as "operator Scalar & ()" but it would be bad to make implicit casts that can be used to change the value of this.
-    Scalar &as_scalar () { Lvd::Meta::Assert<(DIM == 1)>(); return m_component[0]; } // can use this to assign from Scalar
-
-    // this SHOULD be inconvenient and ugly to call.  it should be used ONLY when you know for certain that 0 <= i < DIM
-    Scalar const &component_access_without_range_check (Uint32 i) const { return m_component[i]; }
-    // this SHOULD be inconvenient and ugly to call.  it should be used ONLY when you know for certain that 0 <= i < DIM
-    Scalar &component_access_without_range_check (Uint32 i) { return m_component[i]; }
-
-    // NOTE: operator [] will be used to return values, while
-    // operator () will be used to create expression templates
-    // for the purposes of indexed contractions.
-    // TODO: make Index type encode the guarantee that it's value will always be valid
-    Scalar const &operator [] (Index const &i) const
-    {
-        if (i.is_at_end())
-            throw std::invalid_argument("index out of range");
-        else
-            return m_component[i.value()];
-    }
-    Scalar &operator [] (Index const &i)
-    {
-        if (i.is_at_end())
-            throw std::invalid_argument("index out of range");
-        else
-            return m_component[i.value()];
-    }
-    template <typename Index_>
-    Scalar const &operator [] (MultiIndex_t<TypeList_t<Index_> > const &m) const
-    {
-        return operator[](m.template el<0>());
-    }
-    template <typename Index_>
-    Scalar &operator [] (MultiIndex_t<TypeList_t<Index_> > const &m)
-    {
-        return operator[](m.template el<0>());
-    }
-
-    // the argument is technically unnecessary, as its value is not used.  however,
-    // this allows the template system to deduce the SYMBOL of the IndexType_t, so
-    // it doesn't need to be specified explicitly.
-    // in this, an outer product would be
-    // IndexType_t<'i'> i;
-    // IndexType_t<'j'> j;
-    // u(i)*v(j)
-    template <char SYMBOL>
-    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<TypedIndex_t<Derived,SYMBOL> >,EmptyTypeList,FORCE_CONST> operator () (TypedIndex_t<Derived,SYMBOL> const &) const
-    {
-        Lvd::Meta::Assert<(SYMBOL != '\0')>();
-        return ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<TypedIndex_t<Derived,SYMBOL> >,EmptyTypeList,FORCE_CONST>(as_derived());
-    }
-    template <char SYMBOL>
-    ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<TypedIndex_t<Derived,SYMBOL> >,EmptyTypeList,DONT_FORCE_CONST> operator () (TypedIndex_t<Derived,SYMBOL> const &)
-    {
-        Lvd::Meta::Assert<(SYMBOL != '\0')>();
-        return ExpressionTemplate_IndexedObject_t<Derived,TypeList_t<TypedIndex_t<Derived,SYMBOL> >,EmptyTypeList,DONT_FORCE_CONST>(as_derived());
-    }
-
-    // if the return value for a particular MultiIndex is false, then that component is understood to be zero.
-    // TODO: make this a part of a Vector_i compile-time interface?
-    static bool component_corresponds_to_memory_location (Index const &i) { return true; }
-    static bool component_corresponds_to_memory_location (MultiIndex const &m) { return true; }
-    static Scalar scalar_factor_for_component (Index const &m) { return Scalar(1); }
-    static Scalar scalar_factor_for_component (MultiIndex const &m) { return Scalar(1); }
-    static Index vector_index_of (Index const &i) { return i; }
-    static Index vector_index_of (MultiIndex const &m) { return m.head(); }
-
-    Uint32 data_size_in_bytes () const { return sizeof(m_component); }
-    Scalar const *data_pointer () const { return &m_component[0]; }
-    Scalar *data_pointer () { return &m_component[0]; }
+    using Parent_Vector_i::as_derived;
+    using Parent_Vector_i::operator[];
+    using Parent_Array_t::component_access_without_range_check;
+    using Parent_Array_t::data_size_in_bytes;
+    using Parent_Array_t::data_pointer;
 
     static std::string type_as_string ()
     {
-        // TODO: return Derived's type_as_string value?
-//         if (Lvd::Meta::TypesAreEqual<Derived_,NullType>::v)
-//             return "Vector_t<" + TypeStringOf_t<Scalar>::eval() + ',' + AS_STRING(DIM) + '>';
-//         else
-//             return Derived::type_as_string();
-        // for now, just return this type string
         if (Lvd::Meta::TypesAreEqual<Derived_,NullType>::v)
             return "Vector_t<" + TypeStringOf_t<Scalar>::eval() + ',' + AS_STRING(DIM) + '>';
         else
             return "Vector_t<" + TypeStringOf_t<Scalar>::eval() + ',' + AS_STRING(DIM) + ',' + TypeStringOf_t<Derived>::eval() + '>';
     }
+    
+private:
 
-protected:
-
-    Scalar m_component[DIM];
+    using Parent_Array_t::operator[]; // this should not be publicly accessible
 };
-
-template <typename Scalar, Uint32 DIM>
-std::ostream &operator << (std::ostream &out, Vector_t<Scalar,DIM> const &v)
-{
-    typedef Vector_t<Scalar,DIM> Vector;
-    typedef typename Vector::Index Index;
-
-    if (DIM == 0)
-        return out << "()";
-
-    Index i; // initialized to the beginning automatically
-    out << '(' << v[i];
-    ++i;
-    for ( ; i.is_not_at_end(); ++i)
-        out << ", " << v[i];
-    return out << ')';
-}
 
 } // end of namespace Tenh
 

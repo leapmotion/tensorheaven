@@ -10,6 +10,13 @@
 
 namespace Tenh {
 
+// TODO: somehow make this use the Tensor_i interface, so that arbitrary
+// 2-tensors can be used for natural pairings (and by extension, inner products).
+// this particular implementation detail will realistically require that
+// particular operations are optimized (e.g. if the 2-tensor is diagonal, then
+// contracting it on both sides with a vector doesn't require the full matrix
+// multiply, just a weighted dot product).
+
 // template specializations of this is what allows you to specify custom natural pairings (dot products) for particular
 // vector and tensor types.  For example, the space of 3x3 symmetric matrices
 //    [a  b  c]

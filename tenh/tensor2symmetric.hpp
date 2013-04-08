@@ -20,43 +20,47 @@ namespace Tenh {
 
 // symmetric 2-tensor (it is equal to its transpose)
 template <typename Factor1_, typename Factor2_ = Factor1_, typename Derived_ = NullType>
-struct Tensor2Symmetric_t : public Vector_t<typename Factor1_::Scalar,
+struct Tensor2Symmetric_t : /*public Vector_t<typename Factor1_::Scalar,
                                             ((Factor1_::DIM+1)*Factor1_::DIM)/2,
                                             typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
                                                                    Tensor2Symmetric_t<Factor1_,Factor2_,Derived_>,
-                                                                   Derived_>::T>,
+                                                                   Derived_>::T>,*/
                             public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
                                                                    Tensor2Symmetric_t<Factor1_,Factor2_,Derived_>,
                                                                    Derived_>::T,
-                                            TypeList_t<Factor1_,TypeList_t<Factor2_> > >
+                                            TypeList_t<Factor1_,TypeList_t<Factor2_> >,
+                                            ((Factor1_::DIM+1)*Factor1_::DIM)/2>,
+                            public Array_t<typename Factor1_::Scalar,((Factor1_::DIM+1)*Factor1_::DIM)/2>
 {
     enum { FACTOR1_AND_FACTOR2_MUST_BE_IDENTICAL = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<Factor1_,Factor2_>::v>::v };
 
-    typedef Vector_t<typename Factor1_::Scalar,
-                     ((Factor1_::DIM+1)*Factor1_::DIM)/2,
-                     typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
-                                            Tensor2Symmetric_t<Factor1_,Factor2_,Derived_>,
-                                            Derived_>::T> Parent_Vector_t;
+//     typedef Vector_t<typename Factor1_::Scalar,
+//                      ((Factor1_::DIM+1)*Factor1_::DIM)/2,
+//                      typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
+//                                             Tensor2Symmetric_t<Factor1_,Factor2_,Derived_>,
+//                                             Derived_>::T> Parent_Vector_t;
     typedef Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
                                                                      Tensor2Symmetric_t<Factor1_,Factor2_,Derived_>,
                                                                      Derived_>::T,
-                     TypeList_t<Factor1_,TypeList_t<Factor2_> > > Parent_Tensor_i;
-    typedef typename Parent_Vector_t::Scalar Scalar;
-    using Parent_Vector_t::DIM;
-    typedef typename Parent_Vector_t::Derived Derived;
-    typedef typename Parent_Vector_t::Index Index;
+                     TypeList_t<Factor1_,TypeList_t<Factor2_> >,
+                     ((Factor1_::DIM+1)*Factor1_::DIM)/2> Parent_Tensor_i;
+    typedef Array_t<typename Factor1_::Scalar,((Factor1_::DIM+1)*Factor1_::DIM)/2> Parent_Array_t;
+    typedef typename Parent_Tensor_i::Scalar Scalar;
+    using Parent_Tensor_i::DIM;
+    typedef typename Parent_Tensor_i::Derived Derived;
+    typedef typename Parent_Tensor_i::Index Index;
+    typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
+    typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
+    typedef typename Parent_Tensor_i::MultiIndex MultiIndex; // TODO: rename to TensorMultiIndex (?)
+    using Parent_Tensor_i::DEGREE;
     typedef Factor1_ Factor;
     typedef Factor1_ Factor1;
     typedef Factor2_ Factor2;
-    typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
-    typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
-    typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
-    using Parent_Tensor_i::DEGREE;
     static Uint32 const DIAGONAL_COMPONENT_COUNT = Factor::DIM;
     static Uint32 const STRICTLY_LOWER_TRIANGULAR_COMPONENT_COUNT = ((Factor::DIM-1)*Factor::DIM)/2;
 
-    Tensor2Symmetric_t (WithoutInitialization const &w) : Parent_Vector_t(w) { }
-    Tensor2Symmetric_t (Scalar fill_with) : Parent_Vector_t(fill_with) { }
+    Tensor2Symmetric_t (WithoutInitialization const &w) : Parent_Array_t(w) { }
+    Tensor2Symmetric_t (Scalar fill_with) : Parent_Array_t(fill_with) { }
 
     template <typename BundleIndexTypeList, typename BundledIndex>
     static MultiIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)
@@ -85,12 +89,12 @@ struct Tensor2Symmetric_t : public Vector_t<typename Factor1_::Scalar,
     // have a type coercion to either one unless they are 1-dimensional, in which case
     // it can be a type coercion to the Scalar type.
 
-    // TODO: because the diagonal is indexed contiguously last, there is an easy type coercion to Tensor2Diagonal_t
+    // TODO: because the diagonal is indexed contiguously last, there is an easy type coercion (projection) to Tensor2Diagonal_t
+    // TODO: because the strict lower triangle is indexed contiguously first, there is an easy type coercion (projection) to lower triangular
 
-    // dumb, but the compiler wouldn't inherit implicitly, and won't parse a "using" statement
-    Scalar const &operator [] (Index const &i) const { return Parent_Vector_t::operator[](i); }
-    // dumb, but the compiler wouldn't inherit implicitly, and won't parse a "using" statement
-    Scalar &operator [] (Index const &i) { return Parent_Vector_t::operator[](i); }
+    using Parent_Array_t::component_access_without_range_check;
+    // for access to particular components -- have to NOT do "using Parent_Tensor_i::operator[]" because of ambiguous overload
+    using Parent_Tensor_i::Parent_Vector_i::operator[];
 
     // using two indices in a Tensor2Symmetric_t is breaking apart the Index type and using it
     // as a general tensor -- this is where the fancy indexing scheme happens.
@@ -107,7 +111,6 @@ struct Tensor2Symmetric_t : public Vector_t<typename Factor1_::Scalar,
     }
 
     // these are what provide indexed expressions -- via expression templates
-    using Parent_Vector_t::operator();
     using Parent_Tensor_i::operator();
 
     // access 2-tensor components
@@ -125,7 +128,7 @@ struct Tensor2Symmetric_t : public Vector_t<typename Factor1_::Scalar,
         MultiIndex m(Factor1::vector_index_of(i1), Factor2::vector_index_of(i2));
         return Factor1::scalar_factor_for_component(i1) *
                Factor2::scalar_factor_for_component(i2) *
-               operator[](vector_index_of(m));
+               Parent_Tensor_i::Parent_Vector_i::operator[](vector_index_of(m));
     }
     // write 2-tensor components -- will throw if a component doesn't correspond to a memory location
     // Index1 could be Factor1::Index or Factor1::MultiIndex (checked by its use in the other functions)
@@ -141,11 +144,11 @@ struct Tensor2Symmetric_t : public Vector_t<typename Factor1_::Scalar,
 
         MultiIndex m(Factor1::vector_index_of(i1), Factor2::vector_index_of(i2));
         // write to the component, but divide through by the total scale factor for the component.
-        operator[](vector_index_of(m)) = s / (Factor1::scalar_factor_for_component(i1) * Factor2::scalar_factor_for_component(i2));
+        Parent_Tensor_i::Parent_Vector_i::operator[](vector_index_of(m)) = s / (Factor1::scalar_factor_for_component(i1) * Factor2::scalar_factor_for_component(i2));
     }
-    using Parent_Vector_t::component_corresponds_to_memory_location;
-    using Parent_Vector_t::scalar_factor_for_component;
-    using Parent_Vector_t::vector_index_of;
+    using Parent_Tensor_i::component_corresponds_to_memory_location;
+    using Parent_Tensor_i::scalar_factor_for_component;
+    using Parent_Tensor_i::vector_index_of;
     // all components correspond exactly to a memory location
     static bool component_corresponds_to_memory_location (MultiIndex const &m) { return true; }
     // all components have a scale factor of 1
@@ -201,22 +204,24 @@ private:
             col = i - row*(row-1)/2;
         }
     }
+    
+    using Parent_Array_t::operator[]; // this shouldn't be publicly accessible
 };
 
 // template specialization for the natural pairing in this particular coordinatization of Tensor2Symmetric_t
-template <typename Factor>
-struct NaturalPairing_t<Tensor2Symmetric_t<Factor> >
+template <typename Factor1, typename Factor2, typename Derived>
+struct NaturalPairing_t<Tensor2Symmetric_t<Factor1,Factor2,Derived> >
 {
-    typedef Tensor2Symmetric_t<Factor> Tensor2Symmetric;
+    typedef Tensor2Symmetric_t<Factor1,Factor2,Derived> Tensor2Symmetric;
     typedef typename Tensor2Symmetric::Scalar Scalar;
     typedef typename Tensor2Symmetric::Index Index;
 
     static Scalar component (Index const &i)
     {
-        if (i.value() < Tensor2Symmetric::DIAGONAL_COMPONENT_COUNT)
-            return Scalar(1); // the diagonal components occur only once (in the component matrix)
+        if (i.value() < Tensor2Symmetric::STRICTLY_LOWER_TRIANGULAR_COMPONENT_COUNT)
+            return Scalar(2); // the off-diagonal components occur twice (in the component matrix)
         else
-            return Scalar(2); // but the off-diagonal components occur twice (in the component matrix)
+            return Scalar(1); // but the diagonal components occur only once (in the component matrix)
     }
 };
 

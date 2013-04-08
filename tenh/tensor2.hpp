@@ -26,43 +26,49 @@ to be zero.
 
 */
 
+template <typename FactorTypeList>
+struct DimensionOfTensorProduct_t
+{
+    static Uint32 const V = FactorTypeList::HeadType::DIM * DimensionOfTensorProduct_t<typename FactorTypeList::BodyTypeList>::V;
+};
+
+template <>
+struct DimensionOfTensorProduct_t<EmptyTypeList>
+{
+    static Uint32 const V = 1;
+};
+
 // general 2-tensor with no symmetries -- most general type of 2-tensor
 template <typename Factor1_, typename Factor2_, typename Derived_ = NullType>
-struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
-                                   Factor1_::DIM*Factor2_::DIM, // TODO: replace with DimensionOfTensorProduct_t<TypeList_t<...> >::V
-                                   typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
-                                                          Tensor2_t<Factor1_,Factor2_,Derived_>,
-                                                          Derived_>::T>,
-                   public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
+struct Tensor2_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
                                                           Tensor2_t<Factor1_,Factor2_,Derived_>,
                                                           Derived_>::T,
-                                   TypeList_t<Factor1_,TypeList_t<Factor2_> > >
+                                   TypeList_t<Factor1_,TypeList_t<Factor2_> >,
+                                   DimensionOfTensorProduct_t<TypeList_t<Factor1_,TypeList_t<Factor2_> > >::V>,
+                   public Array_t<typename Factor1_::Scalar,DimensionOfTensorProduct_t<TypeList_t<Factor1_,TypeList_t<Factor2_> > >::V>
 {
     enum { FACTOR_SCALAR_TYPES_ARE_EQUAL 
         = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename Factor1_::Scalar,typename Factor2_::Scalar>::v>::v };
 
-    typedef Vector_t<typename Factor1_::Scalar,
-                     Factor1_::DIM*Factor2_::DIM, // TODO: replace with DimensionOfTensorProduct_t<TypeList_t<...> >::V
-                     typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
-                                            Tensor2_t<Factor1_,Factor2_,Derived_>,
-                                            Derived_>::T> Parent_Vector_t;
     typedef Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
                                                                      Tensor2_t<Factor1_,Factor2_,Derived_>,
                                                                      Derived_>::T,
-                                            TypeList_t<Factor1_,TypeList_t<Factor2_> > > Parent_Tensor_i;
-    typedef typename Parent_Vector_t::Scalar Scalar;
-    using Parent_Vector_t::DIM;
-    typedef typename Parent_Vector_t::Derived Derived;
-    typedef typename Parent_Vector_t::Index Index;
-    typedef Factor1_ Factor1;
-    typedef Factor2_ Factor2;
+                                            TypeList_t<Factor1_,TypeList_t<Factor2_> >,
+                                            DimensionOfTensorProduct_t<TypeList_t<Factor1_,TypeList_t<Factor2_> > >::V> Parent_Tensor_i;
+    typedef Array_t<typename Factor1_::Scalar,DimensionOfTensorProduct_t<TypeList_t<Factor1_,TypeList_t<Factor2_> > >::V> Parent_Array_t;
+    typedef typename Parent_Tensor_i::Scalar Scalar;
+    using Parent_Tensor_i::DIM;
+    typedef typename Parent_Tensor_i::Derived Derived;
+    typedef typename Parent_Tensor_i::Index Index;
     typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
     typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
     typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
     using Parent_Tensor_i::DEGREE;
+    typedef Factor1_ Factor1;
+    typedef Factor2_ Factor2;
 
-    Tensor2_t (WithoutInitialization const &w) : Parent_Vector_t(w) { }
-    Tensor2_t (Scalar fill_with) : Parent_Vector_t(fill_with) { }
+    Tensor2_t (WithoutInitialization const &w) : Parent_Array_t(w) { }
+    Tensor2_t (Scalar fill_with) : Parent_Array_t(fill_with) { }
 
     template <typename BundleIndexTypeList, typename BundledIndex>
     static MultiIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)
@@ -87,8 +93,9 @@ struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
         return MultiIndex_t<BundleIndexTypeList>(Index1(row), Index2(col));
     }
 
-    // for access to particular components
-    using Parent_Vector_t::operator[];
+    using Parent_Array_t::component_access_without_range_check;
+    // for access to particular components -- have to NOT do "using Parent_Tensor_i::operator[]" because of ambiguous overload
+    using Parent_Tensor_i::Parent_Vector_i::operator[];
 
     // Index1 could be Factor1::Index or Factor1::MultiIndex (checked by its use in the other functions)
     // Index2 could be Factor2::Index or Factor2::MultiIndex (checked by its use in the other functions)
@@ -120,7 +127,6 @@ struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
     }
 
     // these are what provide indexed expressions -- via expression templates
-    using Parent_Vector_t::operator();
     using Parent_Tensor_i::operator();
     
     // access 2-tensor components
@@ -143,9 +149,9 @@ struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
         {
             return Factor1::scalar_factor_for_component(i1) *
                    Factor2::scalar_factor_for_component(i2) *
-                   operator[](vector_index_of(MultiIndex(Factor1::vector_index_of(i1), 
-                                                         Factor2::vector_index_of(i2))));
-        }
+                   this->component_access_without_range_check(
+                        vector_index_of(MultiIndex(Factor1::vector_index_of(i1), 
+                                                   Factor2::vector_index_of(i2))).value());
     }
     // write 2-tensor components -- will throw if a component doesn't correspond to a memory location
     // Index1 could be Factor1::Index or Factor1::MultiIndex (checked by its use in the other functions)
@@ -166,16 +172,19 @@ struct Tensor2_t : public Vector_t<typename Factor1_::Scalar,
 
         MultiIndex m(Factor1::vector_index_of(i1), Factor2::vector_index_of(i2));
         // write to the component, but divide through by the total scale factor for the component.
-        operator[](vector_index_of(m)) = s / (Factor1::scalar_factor_for_component(i1) 
-                                              * Factor2::scalar_factor_for_component(i2));
+        this->component_access_without_range_check(vector_index_of(m).value()) 
+            = s / (Factor1::scalar_factor_for_component(i1) * Factor2::scalar_factor_for_component(i2));
     }
-    using Parent_Vector_t::component_corresponds_to_memory_location;
-    using Parent_Vector_t::scalar_factor_for_component;
-    using Parent_Vector_t::vector_index_of;
+    using Parent_Tensor_i::component_corresponds_to_memory_location;
+    using Parent_Tensor_i::scalar_factor_for_component;
+    using Parent_Tensor_i::vector_index_of;
     // all components are stored in memory (in the array m), and have scalar factor 1
     static bool component_corresponds_to_memory_location (MultiIndex const &m) { return true; }
     static Scalar scalar_factor_for_component (MultiIndex const &m) { return Scalar(1); }
     static Index vector_index_of (MultiIndex const &m) { return Index::range_unchecked(m.value()); }
+
+    using Parent_Array_t::data_size_in_bytes;
+    using Parent_Array_t::data_pointer;
 
     static std::string type_as_string ()
     {
@@ -202,6 +211,8 @@ private:
         row = i / Factor2::DIM;
         col = i % Factor2::DIM;
     }
+    
+    using Parent_Array_t::operator[]; // this should not be publicly accessible
 };
 
 } // end of namespace Tenh

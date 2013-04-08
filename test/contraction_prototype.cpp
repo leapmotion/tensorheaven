@@ -457,10 +457,18 @@ void test_Tensor2Symmetric_t ()
 //     a.template expr<'i'>();
 //     std::cout << FORMAT_VALUE(a.template expr<'i'>()*b.template expr<'i'>()) << '\n';
     //std::cout << FORMAT_VALUE(a.template expr<'i'>() + b.template expr<'i'>()) << '\n';
+    TypedIndex_t<Tensor2Symmetric,'q'> q;
+    TypedIndex_t<Vector,'i'> i;
+    TypedIndex_t<Vector,'j'> j;
+    std::cout << FORMAT_VALUE(a(q)*b(q)) << '\n';
+    std::cout << FORMAT_VALUE(a(i|j)*b(i|j)) << '\n';
 
     float hand_computed_value = 0.0f;
     for (typename Tensor2Symmetric::MultiIndex i; i.is_not_at_end(); ++i)
+    {
+        std::cout << '.';
         hand_computed_value += a[i]*b[i];
+    }
     std::cout << FORMAT_VALUE(hand_computed_value) << '\n';
     std::cout << '\n';
 
@@ -472,10 +480,8 @@ void test_Tensor2Symmetric_t ()
 //     a.template expr<'i','j'>() * v.template expr<'j'>();
 //     w.template expr<'i'>() = a.template expr<'i','j'>() * v.template expr<'j'>();
     std::cout << FORMAT_VALUE(v) << '\n';
-    std::cout << FORMAT_VALUE(w) << '\n';
+//    std::cout << FORMAT_VALUE(w) << '\n';
 
-    TypedIndex_t<Vector,'i'> i;
-    TypedIndex_t<Vector,'j'> j;
     w(i) = a(i|j)*v(j);
     std::cout << FORMAT_VALUE(w) << '\n';
     std::cout << FORMAT_VALUE((v(i)*a(i|j)*v(j))) << '\n';
