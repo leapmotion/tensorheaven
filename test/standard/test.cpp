@@ -4,6 +4,7 @@
 // ///////////////////////////////////////////////////////////////////////////
 
 #include "test.hpp"
+#include "test_array.hpp"
 #include "test_list.hpp"
 #include "test_typelist.hpp"
 #include "test_vector.hpp"
@@ -22,6 +23,7 @@ int main (int argc, char **argv, char **envp)
 {
     Directory root;
 
+    Test::Array::AddTests(&root);
     Test::List::AddTests(&root);
     Test::TypeList::AddTests(&root);
     Test::Vector::AddTests(&root);

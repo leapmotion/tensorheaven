@@ -5,9 +5,7 @@
 
 #include "test_vector.hpp"
 
-// #include <iomanip>
 #include <sstream>
-#include <vector>
 #include <complex>
 
 #include "tenh/vector.hpp"

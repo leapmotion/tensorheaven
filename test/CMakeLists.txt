@@ -26,6 +26,7 @@ set(test_SRCS
     lvd/lvd_commandlineparser.cpp
     lvd/lvd_spawner.cpp
     lvd/lvd_testsystem.cpp
+    standard/test_array.cpp
     standard/test_list.cpp
     standard/test_tensor2.cpp
     standard/test_tensor2diagonal.cpp
