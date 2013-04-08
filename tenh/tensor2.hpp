@@ -152,6 +152,7 @@ struct Tensor2_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqu
                    this->component_access_without_range_check(
                         vector_index_of(MultiIndex(Factor1::vector_index_of(i1), 
                                                    Factor2::vector_index_of(i2))).value());
+        }
     }
     // write 2-tensor components -- will throw if a component doesn't correspond to a memory location
     // Index1 could be Factor1::Index or Factor1::MultiIndex (checked by its use in the other functions)

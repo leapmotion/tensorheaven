@@ -8,10 +8,10 @@
 #include <utility> // for std::pair
 #include <complex>
 
+#include "tenh/meta/typelist.hpp"
+#include "tenh/multiindex.hpp"
 #include "tenh/tensor2diagonal.hpp"
 #include "tenh/vector.hpp"
-#include "tenh/compoundindex.hpp"
-#include "tenh/meta/typelist.hpp"
 
 // this is included last because it redefines the `assert` macro,
 // which would be bad for the above includes.
@@ -59,7 +59,7 @@ namespace Tensor2Diagonal {
         {
             for (typename V2::Index j; j.is_not_at_end(); ++j)
             {
-                Tenh::CompoundIndex_t<Tenh::TypeList_t<typename V1::Index,
+                Tenh::MultiIndex_t<Tenh::TypeList_t<typename V1::Index,
                     Tenh::TypeList_t<typename V2::Index> > > ci(i,j);
                 assert_eq(t[ci], t.component(i,j));
                 if(i.value() == j.value())

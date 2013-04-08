@@ -158,7 +158,7 @@ struct Tensor2Diagonal_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::Typ
     }
     
     // this should return iff component_corresponds_to_memory_location(c) returns true.
-    static Index vector_index_of (CompoundIndex const &c)
+    static Index vector_index_of (MultiIndex const &m)
     {
         return Index::range_unchecked(rowcol_index_to_contiguous_index(m.template el<0>().value(),
                                                                        m.template el<1>().value()));
