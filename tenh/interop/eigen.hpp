@@ -17,14 +17,16 @@ template <typename Factor1, typename Factor2>
 Eigen::Map<Eigen::Matrix<typename Factor1::Scalar,Factor1::DIM,Factor2::DIM,Eigen::RowMajor> const>
     EigenMap_of_Tensor2 (Tensor2_t<Factor1,Factor2> const &t)
 {
-    return Eigen::Map<Eigen::Matrix<typename Factor1::Scalar,Factor1::DIM,Factor2::DIM,Eigen::RowMajor> const>(t.data_pointer());
+    return Eigen::Map<Eigen::Matrix<typename Factor1::Scalar,Factor1::DIM,Factor2::DIM,Eigen::RowMajor> const>
+		(t.data_pointer());
 }
 
 template <typename Factor1, typename Factor2>
 Eigen::Map<Eigen::Matrix<typename Factor1::Scalar,Factor1::DIM,Factor2::DIM,Eigen::RowMajor> >
     EigenMap_of_Tensor2 (Tensor2_t<Factor1,Factor2> &t)
 {
-    return Eigen::Map<Eigen::Matrix<typename Factor1::Scalar,Factor1::DIM,Factor2::DIM,Eigen::RowMajor> >(t.data_pointer());
+    return Eigen::Map<Eigen::Matrix<typename Factor1::Scalar,Factor1::DIM,Factor2::DIM,Eigen::RowMajor> >
+		(t.data_pointer());
 }
 
 template <typename Tensor2Type>
