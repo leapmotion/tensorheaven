@@ -61,6 +61,18 @@ random TODOs:
 - apparently "using typename Parent::WhateverType;" works -- change all the dumb typedef inheritance to use this.
 - rename source files to use capitalized names (e.g. NaturalPairing.hpp) (?)
 
+features necessary for version 0.5:
+- euclidean embedding (using short-turm zero-dimensional hack (?))
+- eval (for 2-tensors)
+- basis specification (e.g. in diagonalization/SVD, and the orthonormal matrix could/should be called "basis vectors")
+- stub-out: noalias (?) for situations like a(i) = a(i) + b(i), but also to avoid the runtime check of aliasing, so the human
+  can specify no-alias in a situation like a(i) = b(i) + c(i).
+- additional eigen interop:
+  * 2-tensor inverse
+  * LDLT
+  * non-self-adjoint eigensolve
+  * LU
+
 implemented features/items:
 x operator overloads for expression templates
 x trace-type expression templates (where a tensor is contracted with itself, a case which is distinct from * style expression templates)
@@ -100,4 +112,34 @@ handling more general symmetries
 - "split" would be used to "use" the inclusions, going to more general types
 - "bundle" would be used to "reassert" the symmetries, if you know that the expression has that symmetry.
   would this work for simple tensors?  there would be a nontrivial calculation to assign to a simple tensor.
+
+categorical/conceptual design ideas
+- use _c for "category" or "conceptual"
+- Field_c<Id>
+  * Field_c<Real_c>
+  * Field_c<Complex_c>
+  * Field_c<F2_c>
+  * etc (quaternions could be used, as a skew-field, and maybe SkewField_c<Id> could be a thing
+  this should be able to check the validity of a Scalar type (e.g. float, double, int, bool)
+  for a field (so Real_c could use float or double, but not int, whereas F2_c could use int but
+  not float or double).
+  * Module_c, Ring_c (?)
+- VectorSpace_c<Field,DIM,Id>
+  * Id is just a "name" for the particular type (so that vector spaces can be distinguished
+    by more than just their field and dimension), e.g. struct Device3Space { }; or
+    struct Screen2Space { };
+- TensorProduct_c<VS1,VS2,...,VSN>
+  * can only take tensor product of VectorSpace_c types.
+- VectorSpaceAndBasis_c<VectorSpace,BasisId>
+  * is really just a way to specify a vector space with a choice of basis
+- TensorProductAndBases_c<TensorProduct,BasisIdTypeList>
+  * a choice of tensor product and basis for each factor
+- Vector_i<Scalar,VectorSpaceAndBasis>
+  * is the compile-time interface for a type that will be an instance of a vector
+- Tensor_i<Scalar,TensorProductAndBasis>
+  * is the compile-time interface for a type that will be an instance of a tensor
+- Vector_t<Scalar,DIM,VectorSpaceAndBasis = VectorSpaceAndBasis_c<EuclideanInnerProductSpace,StandardBasis> >
+  * actual implementation of a strongly typed vector (whose default values make it weakly typed)
+- Tensor_t<Scalar,TensorProductAndBases>
+  * actual implementation of a strongly typed tensor (no default values, as that wouldn't make sense)
 
