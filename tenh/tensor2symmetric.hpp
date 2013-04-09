@@ -10,7 +10,6 @@
 #include <ostream>
 
 #include "tenh/core.hpp"
-#include "tenh/expression_templates.hpp"
 #include "tenh/interface/tensor.hpp"
 #include "tenh/naturalpairing.hpp"
 #include "tenh/meta/typetuple.hpp"

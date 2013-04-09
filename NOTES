@@ -25,10 +25,8 @@ current goals:
   * something like a(i|c(2)), where i is a TypedIndex_t<Vector,'i'> and c is an Index_t<Vector>
   * will need to somehow distinguish the type of i|c(2) from something like i|j, because a(i|c(2)) is an
     expression template with a particular fixed index plugged in.
-- "eval" method on expression templates (which take a list of free indices) which produce an intermediate value
-  * something like  (a(i|j)*m(j|k)*a(k|l)).eval(l|i)  (this one makes l the first index, and i the second).
-- implement natural pairings as 2-tensors (most are the identity tensor, diagonal, etc)
-- this regularizes the implementation and relates to metrics/inner products
+- implement inner products and so forth using Tensor_i.
+  this regularizes the implementation and relates to metrics/inner products
   * contractions will "request" the pairing, and if the type exists, the contraction works
     this would allow more flexibility in contractions (e.g. contracting a vector space V with itself via an inner product).
 - isometric embedding for various types (e.g. Tensor2Symmetric_t, Tensor2Antisymmetric_t, so that SVD and other
@@ -63,7 +61,7 @@ random TODOs:
 
 features necessary for version 0.5:
 - euclidean embedding (using short-turm zero-dimensional hack (?))
-- eval (for 2-tensors)
+x eval (for 2-tensors)
 - basis specification (e.g. in diagonalization/SVD, and the orthonormal matrix could/should be called "basis vectors")
 - stub-out: noalias (?) for situations like a(i) = a(i) + b(i), but also to avoid the runtime check of aliasing, so the human
   can specify no-alias in a situation like a(i) = b(i) + c(i).
@@ -94,6 +92,7 @@ x SVD on 2-tensors, using Eigen
 x eigen-decomposition of symmetric 2-tensors, using Eigen
 x Eigen interop for using Tensor2_t as Eigen::Map (no memory copy necessary)
 x functions for converting Tensor2Antisymmetric_t and Tensor2Symmetric_t to Eigen::Matrix types
+x eval method for expression templates (to avoid aliasing problem when assigning)
 
 ---------------------------
 

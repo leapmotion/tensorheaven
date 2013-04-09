@@ -22,6 +22,9 @@ struct ExpressionTemplate_IndexBundle_t;
 template <typename Operand, typename SourceIndexType, typename SplitIndexTypeList>
 struct ExpressionTemplate_IndexSplit_t;
 
+template <typename Operand, typename FreeIndexTypeList_>
+struct ExpressionTemplate_Eval_t;
+
 // this is essentially a compile-time interface, requiring:
 // - a Derived type (should be the type of the thing that ultimately inherits this)
 // - a Scalar type (should be the scalar type of the expression template's tensor operand)
@@ -54,7 +57,7 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     Derived const &as_derived () const { return *static_cast<Derived const *>(this); }
     Derived &as_derived () { return *static_cast<Derived *>(this); }
 
-    // methods for "bundling" two separate indices into a single 2-tensor index
+    // method for "bundling" two separate indices into a single 2-tensor index
     // (m(j|i)*a(j|k)*m(k|l)).bundle(i|l,Q) -- bundle i,l into Q
     template <typename IndexHeadType, typename IndexBodyTypeList, typename ResultingIndexType>
     ExpressionTemplate_IndexBundle_t<Derived,TypeList_t<IndexHeadType,IndexBodyTypeList>,ResultingIndexType> bundle (
@@ -65,7 +68,7 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
         AssertThatEachTypeIsATypedIndex_t<TypeList_t<IndexHeadType,IndexBodyTypeList> >();
         return ExpressionTemplate_IndexBundle_t<Derived,TypeList_t<IndexHeadType,IndexBodyTypeList>,ResultingIndexType>(as_derived());
     }
-    // methods for "splitting" a tensor index into a separate indices.
+    // method for "splitting" a tensor index into a separate indices.
     // a(P|Q).split(P,i|j).split(Q,k|l) -- split the tensor indices P and Q into the pairs i,j and k,l
     // so that the expression now has the four free indices i,j,k,l.
     template <typename SourceIndexType, typename IndexHeadType, typename IndexBodyTypeList>
@@ -76,6 +79,11 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
         // make sure that the index type list actually contains TypedIndex_t types
         AssertThatEachTypeIsATypedIndex_t<TypeList_t<IndexHeadType,IndexBodyTypeList> >();
         return ExpressionTemplate_IndexSplit_t<Derived,SourceIndexType,TypeList_t<IndexHeadType,IndexBodyTypeList> >(as_derived());
+    }
+    // method for doing an intermediate evaluation of an expression template to avoid aliasing
+    ExpressionTemplate_Eval_t<Derived,FreeIndexTypeList> eval () const
+    {
+        return ExpressionTemplate_Eval_t<Derived,FreeIndexTypeList>(as_derived());
     }
 };
 

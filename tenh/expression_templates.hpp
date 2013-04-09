@@ -56,9 +56,9 @@ struct ExpressionTemplate_IndexedObject_t
     }
 
     // read-only, because it doesn't make sense to assign to an expression which is a summation.
-    Scalar operator [] (MultiIndex const &c) const
+    Scalar operator [] (MultiIndex const &m) const
     {
-        return UnarySummation_t<Object,IndexTypeList,SummedIndexTypeList>::eval(m_object, c);
+        return UnarySummation_t<Object,IndexTypeList,SummedIndexTypeList>::eval(m_object, m);
     }
 
     template <typename OtherTensor>
@@ -106,7 +106,7 @@ struct ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,EmptyTypeList,DON
     // template -- the expression may be a product or some such, where each component
     // is not an L-value.
     Scalar const &operator [] (typename Object::Index const &i) const { return m_object[i]; }
-    Scalar operator [] (MultiIndex const &c) const { return m_object[c]; }
+    Scalar operator [] (MultiIndex const &m) const { return m_object[m]; }
 
     // for some dumb reason, the compiler needed a non-templatized assignment operator for the exact matching type
     void operator = (ExpressionTemplate_IndexedObject_t const &right_operand)
@@ -212,16 +212,16 @@ struct ExpressionTemplate_Addition_t
             return m_left_operand.operator Scalar() - m_right_operand.operator Scalar();
     }
 
-    Scalar operator [] (MultiIndex const &c) const
+    Scalar operator [] (MultiIndex const &m) const
     {
         typedef MultiIndexMap_t<FreeIndexTypeList,typename LeftOperand::FreeIndexTypeList> LeftOperandIndexMap;
         typedef MultiIndexMap_t<FreeIndexTypeList,typename RightOperand::FreeIndexTypeList> RightOperandIndexMap;
         typename LeftOperandIndexMap::EvalMapType left_operand_index_map = LeftOperandIndexMap::eval;
         typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
         if (OPERATOR == '+')
-            return m_left_operand[left_operand_index_map(c)] + m_right_operand[right_operand_index_map(c)];
+            return m_left_operand[left_operand_index_map(m)] + m_right_operand[right_operand_index_map(m)];
         else // OPERATOR == '-'
-            return m_left_operand[left_operand_index_map(c)] - m_right_operand[right_operand_index_map(c)];
+            return m_left_operand[left_operand_index_map(m)] - m_right_operand[right_operand_index_map(m)];
     }
 
     template <typename OtherTensor>
@@ -283,12 +283,12 @@ struct ExpressionTemplate_ScalarMultiplication_t
         return operator[](MultiIndex());
     }
 
-    Scalar operator [] (MultiIndex const &c) const
+    Scalar operator [] (MultiIndex const &m) const
     {
         if (OPERATOR == '*')
-            return m_operand[c] * m_scalar_operand;
+            return m_operand[m] * m_scalar_operand;
         else
-            return m_operand[c] / m_scalar_operand;
+            return m_operand[m] / m_scalar_operand;
     }
 
     template <typename OtherTensor>
@@ -361,9 +361,9 @@ struct ExpressionTemplate_Multiplication_t
         return operator[](MultiIndex());
     }
 
-    Scalar operator [] (MultiIndex const &c) const
+    Scalar operator [] (MultiIndex const &m) const
     {
-        return BinarySummation_t<LeftOperand,RightOperand,FreeIndexTypeList,SummedIndexTypeList>::eval(m_left_operand, m_right_operand, c);
+        return BinarySummation_t<LeftOperand,RightOperand,FreeIndexTypeList,SummedIndexTypeList>::eval(m_left_operand, m_right_operand, m);
     }
 
     template <typename OtherTensor>
@@ -415,9 +415,9 @@ struct ExpressionTemplate_IndexBundle_t
     }
 
     // read-only, because it doesn't make sense to assign to an index-bundled expression (which is possibly also a summation).
-    Scalar operator [] (MultiIndex const &c) const
+    Scalar operator [] (MultiIndex const &m) const
     {
-        return UnarySummation_t<IndexBundle,typename IndexBundle::IndexTypeList,SummedIndexTypeList>::eval(m_index_bundle, c);
+        return UnarySummation_t<IndexBundle,typename IndexBundle::IndexTypeList,SummedIndexTypeList>::eval(m_index_bundle, m);
     }
 
     template <typename OtherTensor>
@@ -465,9 +465,9 @@ struct ExpressionTemplate_IndexSplit_t
     }
 
     // read-only, because it doesn't make sense to assign to an index-bundled expression (which is possibly also a summation).
-    Scalar operator [] (MultiIndex const &c) const
+    Scalar operator [] (MultiIndex const &m) const
     {
-        return UnarySummation_t<IndexSplitter,typename IndexSplitter::IndexTypeList,SummedIndexTypeList>::eval(m_index_splitter, c);
+        return UnarySummation_t<IndexSplitter,typename IndexSplitter::IndexTypeList,SummedIndexTypeList>::eval(m_index_splitter, m);
     }
 
     template <typename OtherTensor>

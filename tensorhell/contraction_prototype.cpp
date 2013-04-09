@@ -7,6 +7,7 @@
 #include "tenh/core.hpp" // everything should include this
 #include "tenh/multiindex.hpp"
 #include "tenh/expression_templates.hpp"
+#include "tenh/expressiontemplate_eval.hpp"
 #include "tenh/meta/typelist.hpp"
 #include "tenh/meta/typelist_utility.hpp"
 #include "tenh/meta/typetuple.hpp"
@@ -1650,6 +1651,35 @@ int main (int argc, char **argv)
             Float3x3Symmetric s(Static<>::WITHOUT_INITIALIZATION);
             s(q) = (u(i|j)*u(k|j)).bundle(i|k,q);
             std::cout << FORMAT_VALUE(s) << '\n';
+        }
+        
+        // testing ExpressionTemplate_Eval_t (TODO: general k-tensor case)
+        {
+            std::cout << "testing ExpressionTemplate_Eval_t for 1-tensors (vectors)\n";
+            Float3 a(Static<>::WITHOUT_INITIALIZATION);
+            for (Float3::Index k; k.is_not_at_end(); ++k)
+                a[k] = k.value() + 1;
+            std::cout << FORMAT_VALUE(a) << '\n';
+            TypedIndex_t<Float3,'i'> i;
+            std::cout << FORMAT_VALUE(2*a(i)) << '\n';
+            a(i) = (2*a(i)).eval();
+            std::cout << "after assignment a(i) = (2*a(i)).eval(), " << FORMAT_VALUE(a) << '\n';
+            std::cout << '\n';
+        }
+        {
+            std::cout << "testing ExpressionTemplate_Eval_t for 2-tensors\n";
+            typedef Tensor2_t<Float3,Float3> Float3x3;
+            Float3x3 a(Static<>::WITHOUT_INITIALIZATION);
+            for (Float3x3::Index k; k.is_not_at_end(); ++k)
+                a[k] = k.value() + 1;
+            std::cout << FORMAT_VALUE(a) << '\n';
+            TypedIndex_t<Float3,'i'> i;
+            TypedIndex_t<Float3,'j'> j;
+            TypedIndex_t<Float3,'k'> k;
+            std::cout << FORMAT_VALUE(2*a(i|j)*a(j|k)) << '\n';
+            a(i|k) = (2*a(i|j)*a(j|k)).eval();
+            std::cout << "after assignment a(i|k) = (2*a(i|j)*a(j|k)).eval(), " << FORMAT_VALUE(a) << '\n';
+            std::cout << '\n';
         }
     }
 
