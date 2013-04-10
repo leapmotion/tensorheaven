@@ -35,11 +35,11 @@ void test_SVD ()
     typedef Tensor2_t<V1,V1> U;
     typedef Tensor2Diagonal_t<V1,V2> S;
     typedef Tensor2_t<V2,V2> V;
-    
+
     Tensor2 t(Static<>::WITHOUT_INITIALIZATION);
     for (typename Tensor2::Index i; i.is_not_at_end(); ++i)
         t[i] = i.value() + 1;
-  
+
     U u(Static<>::WITHOUT_INITIALIZATION);
     S s(Static<>::WITHOUT_INITIALIZATION);
     V v(Static<>::WITHOUT_INITIALIZATION);
@@ -47,7 +47,7 @@ void test_SVD ()
     std::cout << FORMAT_VALUE(u) << '\n';
     std::cout << FORMAT_VALUE(s) << '\n';
     std::cout << FORMAT_VALUE(v) << '\n';
-    
+
     Tensor2 x(Static<>::WITHOUT_INITIALIZATION);
     TypedIndex_t<V1,'i'> i;
     TypedIndex_t<V1,'j'> j;
@@ -66,7 +66,7 @@ void test_SVD ()
     std::cout << FORMAT_VALUE(s) << '\n';
     std::cout << FORMAT_VALUE(x) << '\n';
     std::cout << FORMAT_VALUE(x(i|p)*x(j|p)) << '\n';
-    
+
     std::cout << '\n';
 }
 
@@ -80,23 +80,23 @@ void test_diagonalization ()
     typedef Tensor2_t<V,V> T;
     typedef Tensor2Diagonal_t<V,V> D;
     typedef Tensor2Symmetric_t<V> S;
-    
+
     S s(Static<>::WITHOUT_INITIALIZATION);
     for (typename S::Index i; i.is_not_at_end(); ++i)
         s[i] = i.value() + 1;
-    
+
     D eval(Static<>::WITHOUT_INITIALIZATION);
     T evec(Static<>::WITHOUT_INITIALIZATION);
     diagonalize_Tensor2Symmetric(s, eval, evec);
     std::cout << FORMAT_VALUE(evec) << '\n';
     std::cout << FORMAT_VALUE(eval) << '\n';
-    
+
     TypedIndex_t<V,'i'> i;
     TypedIndex_t<V,'j'> j;
     TypedIndex_t<V,'k'> k;
     TypedIndex_t<V,'l'> l;
     std::cout << FORMAT_VALUE(evec(i|j)*eval(j|k)*evec(l|k)) << '\n';
-    
+
     std::cout << '\n';
 }
 
@@ -105,21 +105,21 @@ void test_LDLT ()
 {
     std::cout << "test_LDLT<" << DIM << ">\n";
     std::cout << "*******************************************************\n";
-    
+
     typedef Vector_t<float,DIM> V;
     typedef Tensor2_t<V,V> T;
     typedef Tensor2Diagonal_t<V,V> D;
     typedef Tensor2Symmetric_t<V> S;
-    
+
     S s(Static<>::WITHOUT_INITIALIZATION);
     for (typename S::Index i; i.is_not_at_end(); ++i)
         s[i] = i.value() + 1;
-    
+
     D d(Static<>::WITHOUT_INITIALIZATION);
     T l(Static<>::WITHOUT_INITIALIZATION);
-    
+
     LDLT_Tensor2Symmetric(s, d, l);
-    
+
     std::cout << FORMAT_VALUE(s) << '\n';
     std::cout << FORMAT_VALUE(d) << '\n';
     std::cout << FORMAT_VALUE(l) << '\n';
@@ -140,10 +140,10 @@ int main (int argc, char **argv)
     test_diagonalization<1>();
     test_diagonalization<3>();
     test_diagonalization<10>();
-    
+
     test_LDLT<2>();
     test_LDLT<3>();
     test_LDLT<8>();
-    
+
     return 0;
 }

@@ -19,7 +19,7 @@ int main (int argc, char **argv)
     cout << TypeStringOf_t<Tuple_t<int,char,float,bool,double,unsigned char,string> >::eval() << '\n';
     cout << TypeStringOf_t<Tuple_t<int,char,float,bool,double,unsigned char,string,short int> >::eval() << '\n';
     cout << '\n';
-    
+
     cout << Tuple_t<>() << '\n';
     cout << Tuple_t<int>(42) << '\n';
     cout << Tuple_t<int,char>(42,'a') << '\n';

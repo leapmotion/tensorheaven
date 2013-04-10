@@ -46,7 +46,7 @@ struct Tensor2_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqu
                                    DimensionOfTensorProduct_t<TypeList_t<Factor1_,TypeList_t<Factor2_> > >::V>,
                    public Array_t<typename Factor1_::Scalar,DimensionOfTensorProduct_t<TypeList_t<Factor1_,TypeList_t<Factor2_> > >::V>
 {
-    enum { FACTOR_SCALAR_TYPES_ARE_EQUAL 
+    enum { FACTOR_SCALAR_TYPES_ARE_EQUAL
         = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename Factor1_::Scalar,typename Factor2_::Scalar>::v>::v };
 
     typedef Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
@@ -127,7 +127,7 @@ struct Tensor2_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqu
 
     // these are what provide indexed expressions -- via expression templates
     using Parent_Tensor_i::operator();
-    
+
     // access 2-tensor components
     // Index1 could be Factor1::Index or Factor1::MultiIndex (checked by its use in the other functions)
     // Index2 could be Factor2::Index or Factor2::MultiIndex (checked by its use in the other functions)
@@ -139,8 +139,7 @@ struct Tensor2_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqu
             throw std::invalid_argument("index/indices out of range");
         }
 
-        if (!Factor1::component_corresponds_to_memory_location(i1) 
-            || !Factor2::component_corresponds_to_memory_location(i2))
+        if (Factor1::component_is_immutable_zero(i1) || Factor2::component_is_immutable_zero(i2))
         {
             return Scalar(0);
         }
@@ -149,7 +148,7 @@ struct Tensor2_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqu
             return Factor1::scalar_factor_for_component(i1) *
                    Factor2::scalar_factor_for_component(i2) *
                    this->component_access_without_range_check(
-                        vector_index_of(MultiIndex(Factor1::vector_index_of(i1), 
+                        vector_index_of(MultiIndex(Factor1::vector_index_of(i1),
                                                    Factor2::vector_index_of(i2))).value());
         }
     }
@@ -164,22 +163,21 @@ struct Tensor2_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqu
             throw std::invalid_argument("index/indices out of range");
         }
 
-        if (!Factor1::component_corresponds_to_memory_location(i1) 
-            || !Factor2::component_corresponds_to_memory_location(i2))
+        if (Factor1::component_is_immutable_zero(i1) || Factor2::component_is_immutable_zero(i2))
         {
             throw std::invalid_argument("this tensor component is not writable");
         }
 
         MultiIndex m(Factor1::vector_index_of(i1), Factor2::vector_index_of(i2));
         // write to the component, but divide through by the total scale factor for the component.
-        this->component_access_without_range_check(vector_index_of(m).value()) 
+        this->component_access_without_range_check(vector_index_of(m).value())
             = s / (Factor1::scalar_factor_for_component(i1) * Factor2::scalar_factor_for_component(i2));
     }
-    using Parent_Tensor_i::component_corresponds_to_memory_location;
+    using Parent_Tensor_i::component_is_immutable_zero;
     using Parent_Tensor_i::scalar_factor_for_component;
     using Parent_Tensor_i::vector_index_of;
     // all components are stored in memory (in the array m), and have scalar factor 1
-    static bool component_corresponds_to_memory_location (MultiIndex const &m) { return true; }
+    static bool component_is_immutable_zero (MultiIndex const &m) { return false; }
     static Scalar scalar_factor_for_component (MultiIndex const &m) { return Scalar(1); }
     static Index vector_index_of (MultiIndex const &m) { return Index::range_unchecked(m.value()); }
 
@@ -211,9 +209,85 @@ private:
         row = i / Factor2::DIM;
         col = i % Factor2::DIM;
     }
-    
+
     using Parent_Array_t::operator[]; // this should not be publicly accessible
 };
+
+/*
+template <typename Scalar_, Uint32 DIM_, typename Derived_ = NullType> // don't worry about type ID for now
+struct Vector_t;
+*/
+/*
+template <typename Factor1Scalar, Uint32 Factor1DIM, typename Factor1Derived,
+          typename Factor2Scalar, Uint32 Factor2DIM, typename Factor2Derived,
+          typename Tensor2Derived>
+struct EuclideanEmbedding_t : public typename EuclideanEmbedding_Parent_Tensor_i<Tensor2_t<Vector_t<Factor1Scalar,Factor1DIM,Factor1Derived>,
+                                                                                           Vector_t<Factor2Scalar,Factor2DIM,Factor2Derived>,
+                                                                                           Tensor2Derived> >::T
+{
+    typedef typename EuclideanEmbedding_Parent_Tensor_i<Tensor2_t<Vector_t<Factor1Scalar,Factor1DIM,Factor1Derived>,
+                                                                  Vector_t<Factor2Scalar,Factor2DIM,Factor2Derived>,
+                                                                  Tensor2Derived> >::T Parent_Tensor_i;
+    typedef typename Parent_Tensor_i::Derived Derived;
+    typedef typename Parent_Tensor_i::Scalar Scalar;
+    using Parent_Tensor_i::DIM;
+    typedef typename Parent_Tensor_i::Index Index;
+    typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
+    typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
+    typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
+    using Parent_Tensor_i::DEGREE;
+
+    Scalar operator [] (MultiIndex const &m) const { return m.template el<0>() == m.template el<1>() ? Scalar(1) : Scalar(0); }
+
+    // this SHOULD be inconvenient and ugly to call.  it should be used ONLY when you know for certain that 0 <= i < DIM
+    Scalar component_access_without_range_check (Uint32 i) const
+    {
+        Uint32 row = i / Vector::DIM;
+        Uint32 col = i % Vector::DIM;
+        return row == col ? Scalar(1) : Scalar(0);
+    }
+
+    // NOTE: these may be unnecessary/undesired, because this type does not represent a vector space
+//     using Parent_Tensor_i::component_is_immutable_zero;
+//     using Parent_Tensor_i::scalar_factor_for_component;
+//     using Parent_Tensor_i::vector_index_of;
+};
+*/
+/*
+template <typename Factor1, typename Factor2, typename Tensor2Derived>
+struct EuclideanEmbedding_t : public typename EuclideanEmbedding_Parent_Tensor_i<Tensor2_t<Factor1,Factor2,Tensor2Derived> >::T
+{
+    typedef typename EuclideanEmbedding_Parent_Tensor_i<Tensor2_t<Factor1,Factor2,Tensor2Derived> >::T Parent_Tensor_i;
+    typedef typename Parent_Tensor_i::Derived Derived;
+    typedef typename Parent_Tensor_i::Scalar Scalar;
+    using Parent_Tensor_i::DIM;
+    typedef typename Parent_Tensor_i::Index Index;
+    typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
+    typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
+    typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
+    using Parent_Tensor_i::DEGREE;
+
+    Scalar operator [] (MultiIndex const &m) const
+    {
+        // MultiIndex is a 2-index whose index components are Factor1::Index and Factor2::Index
+        return m.template el<0>() == m.template el<1>() ? Scalar(1) : Scalar(0);
+
+    }
+
+    // this SHOULD be inconvenient and ugly to call.  it should be used ONLY when you know for certain that 0 <= i < DIM
+    Scalar component_access_without_range_check (Uint32 i) const
+    {
+        Uint32 row = i / Vector::DIM;
+        Uint32 col = i % Vector::DIM;
+        return row == col ? Scalar(1) : Scalar(0);
+    }
+
+    // NOTE: these may be unnecessary/undesired, because this type does not represent a vector space
+//     using Parent_Tensor_i::component_is_immutable_zero;
+//     using Parent_Tensor_i::scalar_factor_for_component;
+//     using Parent_Tensor_i::vector_index_of;
+};
+*/
 
 } // end of namespace Tenh
 

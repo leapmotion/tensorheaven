@@ -45,7 +45,7 @@ template <typename Component>
 void check_filled_values (Context const &context)
 {
     typedef Tenh::Array_t<Component,4> Array;
-    
+
     Array a(0,2,4,6);
     for (Uint32 i = 0; i < 4; ++i)
     {
@@ -67,7 +67,7 @@ void add_particular_tests_for_scalar (Directory *parent)
     add_particular_tests<Component,1>(parent);
     add_particular_tests<Component,2>(parent);
     add_particular_tests<Component,100>(parent);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent, FORMAT("check_filled_values<" << Tenh::TypeStringOf_t<Component>::eval() << ">"), check_filled_values<Component>, RESULT_NO_ERROR);    
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent, FORMAT("check_filled_values<" << Tenh::TypeStringOf_t<Component>::eval() << ">"), check_filled_values<Component>, RESULT_NO_ERROR);
 }
 
 void AddTests (Directory *parent)

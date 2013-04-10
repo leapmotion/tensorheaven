@@ -83,9 +83,9 @@ struct Tensor_i : public Vector_i<Derived_,typename FactorTypeList_::HeadType::S
     // this is not the "fully expanded" degree, but the number of [what you could think of
     // as "parenthesized"] factors that formed this tensor product type.
     static Uint32 const DEGREE = FactorTypeList::LENGTH;
-    
+
     // TODO: could put canonical as_factorX conversions here
-    
+
     using Parent_Vector_i::as_derived;
     using Parent_Vector_i::operator[];
     Scalar operator [] (MultiIndex const &m) const { return this->as_derived().operator[](m); }
@@ -139,9 +139,9 @@ struct Tensor_i : public Vector_i<Derived_,typename FactorTypeList_::HeadType::S
             CHECK_FOR_ALIASING>(this->as_derived());
     }
 
-    using Parent_Vector_i::component_corresponds_to_memory_location;    
-    using Parent_Vector_i::scalar_factor_for_component;    
-    using Parent_Vector_i::vector_index_of;    
+    using Parent_Vector_i::component_is_immutable_zero;
+    using Parent_Vector_i::scalar_factor_for_component;
+    using Parent_Vector_i::vector_index_of;
 
     static std::string type_as_string ()
     {
@@ -175,7 +175,7 @@ std::ostream &operator << (std::ostream &out, Tensor_i<Derived,TypeList_t<Factor
     typename Tensor::MultiIndex m;
     if (m.is_at_end())
         return out << "\n[[]]\n";
-    
+
     out << "\n[";
     for (typename Factor1::Index i; i.is_not_at_end(); ++i)
     {
@@ -204,7 +204,7 @@ std::ostream &operator << (std::ostream &out, Tensor_i<Derived,TypeList_t<Factor
     typename Tensor::MultiIndex m;
     if (m.is_at_end())
         return out << "\n[[[]]]\n";
-    
+
     out << "\n[";
     for (typename Factor1::Index i; i.is_not_at_end(); ++i)
     {

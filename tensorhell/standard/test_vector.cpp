@@ -46,7 +46,7 @@ template <typename Scalar>
 void check_filled_values (Context const &context)
 {
     typedef Tenh::Vector_t<Scalar,4> Vector;
-    
+
     Vector v(0,2,4,6);
     for (typename Vector::Index i; i.is_not_at_end(); ++i)
     {
@@ -69,7 +69,7 @@ void add_particular_tests_for_scalar (Directory *parent)
     add_particular_tests<Scalar,2>(parent);
     add_particular_tests<Scalar,100>(parent);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent, FORMAT("check_filled_values<" << Tenh::TypeStringOf_t<Scalar>::eval() << ">"), check_filled_values<Scalar>, RESULT_NO_ERROR);
-    
+
 }
 
 void AddTests (Directory *parent)

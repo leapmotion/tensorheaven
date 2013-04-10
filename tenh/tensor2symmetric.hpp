@@ -19,12 +19,7 @@ namespace Tenh {
 
 // symmetric 2-tensor (it is equal to its transpose)
 template <typename Factor1_, typename Factor2_ = Factor1_, typename Derived_ = NullType>
-struct Tensor2Symmetric_t : /*public Vector_t<typename Factor1_::Scalar,
-                                            ((Factor1_::DIM+1)*Factor1_::DIM)/2,
-                                            typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
-                                                                   Tensor2Symmetric_t<Factor1_,Factor2_,Derived_>,
-                                                                   Derived_>::T>,*/
-                            public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
+struct Tensor2Symmetric_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
                                                                    Tensor2Symmetric_t<Factor1_,Factor2_,Derived_>,
                                                                    Derived_>::T,
                                             TypeList_t<Factor1_,TypeList_t<Factor2_> >,
@@ -33,11 +28,6 @@ struct Tensor2Symmetric_t : /*public Vector_t<typename Factor1_::Scalar,
 {
     enum { FACTOR1_AND_FACTOR2_MUST_BE_IDENTICAL = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<Factor1_,Factor2_>::v>::v };
 
-//     typedef Vector_t<typename Factor1_::Scalar,
-//                      ((Factor1_::DIM+1)*Factor1_::DIM)/2,
-//                      typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
-//                                             Tensor2Symmetric_t<Factor1_,Factor2_,Derived_>,
-//                                             Derived_>::T> Parent_Vector_t;
     typedef Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
                                                                      Tensor2Symmetric_t<Factor1_,Factor2_,Derived_>,
                                                                      Derived_>::T,
@@ -121,7 +111,7 @@ struct Tensor2Symmetric_t : /*public Vector_t<typename Factor1_::Scalar,
         if (i1.is_at_end() || i2.is_at_end())
             throw std::invalid_argument("index/indices out of range");
 
-        if (!Factor1::component_corresponds_to_memory_location(i1) || !Factor2::component_corresponds_to_memory_location(i2))
+        if (Factor1::component_is_immutable_zero(i1) || Factor2::component_is_immutable_zero(i2))
             return Scalar(0);
 
         MultiIndex m(Factor1::vector_index_of(i1), Factor2::vector_index_of(i2));
@@ -138,21 +128,21 @@ struct Tensor2Symmetric_t : /*public Vector_t<typename Factor1_::Scalar,
         if (i1.is_at_end() || i2.is_at_end())
             throw std::invalid_argument("index/indices out of range");
 
-        if (!Factor1::component_corresponds_to_memory_location(i1) || !Factor2::component_corresponds_to_memory_location(i2))
+        if (Factor1::component_is_immutable_zero(i1) || Factor2::component_is_immutable_zero(i2))
             throw std::invalid_argument("this tensor component is not writable");
 
         MultiIndex m(Factor1::vector_index_of(i1), Factor2::vector_index_of(i2));
         // write to the component, but divide through by the total scale factor for the component.
         Parent_Tensor_i::Parent_Vector_i::operator[](vector_index_of(m)) = s / (Factor1::scalar_factor_for_component(i1) * Factor2::scalar_factor_for_component(i2));
     }
-    using Parent_Tensor_i::component_corresponds_to_memory_location;
+    using Parent_Tensor_i::component_is_immutable_zero;
     using Parent_Tensor_i::scalar_factor_for_component;
     using Parent_Tensor_i::vector_index_of;
     // all components correspond exactly to a memory location
-    static bool component_corresponds_to_memory_location (MultiIndex const &m) { return true; }
+    static bool component_is_immutable_zero (MultiIndex const &m) { return false; }
     // all components have a scale factor of 1
     static Scalar scalar_factor_for_component (MultiIndex const &m) { return Scalar(1); }
-    // this should return iff component_corresponds_to_memory_location(m) returns true.
+    // this should return iff !component_is_immutable_zero(m) and otherwise throw
     static Index vector_index_of (MultiIndex const &m)
     {
         return Index::range_unchecked(rowcol_index_to_contiguous_index(m.template el<0>().value(), m.template el<1>().value()));
@@ -203,7 +193,7 @@ private:
             col = i - row*(row-1)/2;
         }
     }
-    
+
     using Parent_Array_t::operator[]; // this shouldn't be publicly accessible
 };
 
@@ -223,7 +213,57 @@ struct NaturalPairing_t<Tensor2Symmetric_t<Factor1,Factor2,Derived> >
             return Scalar(1); // but the diagonal components occur only once (in the component matrix)
     }
 };
+/*
+// NOTE: while this is a tensor, it isn't a tensor space, and so it technically shouldn't be used as a factor
+// type in a tensor product.  this is essentially a constant value -- it has only const accessors and can't be written to.
+// this euclidean embedding is just the square root of the inner product.
+template <typename Factor1, typename Factor2, typename Derived_>
+struct EuclideanEmbedding_t<Tensor2Symmetric_t<Factor1,Factor2,Derived_> >
+    :
+    public Tensor_i<EuclideanEmbedding_t<Tensor2Symmetric_t<Factor1,Factor2,Derived_> >,
+                    TypeList_t<Tensor2Symmetric_t<Factor1,Factor2,Derived_> ,TypeList_t<Tensor2Symmetric_t<Factor1,Factor2,Derived_> > >,
+                    Tensor2Symmetric_t<Factor1,Factor2,Derived_>::DIM*Tensor2Symmetric_t<Factor1,Factor2,Derived_>::DIM>
+{
+    typedef Tensor_i<EuclideanEmbedding_t<Tensor2Symmetric_t<Factor1,Factor2,Derived_> >,
+                     TypeList_t<Tensor2Symmetric_t<Factor1,Factor2,Derived_> ,TypeList_t<Tensor2Symmetric_t<Factor1,Factor2,Derived_> > >,
+                     Tensor2Symmetric_t<Factor1,Factor2,Derived_>::DIM*Tensor2Symmetric_t<Factor1,Factor2,Derived_>::DIM> Parent_Tensor_i;
+    typedef typename Parent_Tensor_i::Derived Derived;
+    typedef typename Parent_Tensor_i::Scalar Scalar;
+    using Parent_Tensor_i::DIM;
+    typedef typename Parent_Tensor_i::Index Index;
+    typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
+    typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
+    typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
+    using Parent_Tensor_i::DEGREE;
+    typedef Tensor2Symmetric_t<Factor1,Factor2,Derived_> Tensor2Symmetric; // this is the vector type that's being embedded
 
+    Scalar operator [] (MultiIndex const &m) const
+    {
+        if (m.template el<0>() != m.template el<1>())
+            return Scalar(0);
+
+        Uint32 row = m.template el<0>().value();
+        if (row < Tensor2Symmetric::STRICTLY_LOWER_TRIANGULAR_COMPONENT_COUNT)
+            return Scalar(M_SQRT2); // the off-diagonal components occur twice (in the component matrix)
+        else
+            return Scalar(1); // but the diagonal components occur only once (in the component matrix)
+    }
+
+    // this SHOULD be inconvenient and ugly to call.  it should be used ONLY when you know for certain that 0 <= i < DIM
+    Scalar component_access_without_range_check (Uint32 i) const
+    {
+        Uint32 row = i / Tensor2Symmetric::DIM;
+        Uint32 col = i % Tensor2Symmetric::DIM;
+        if (row != col)
+            return Scalar(0);
+
+        if (row < Tensor2Symmetric::STRICTLY_LOWER_TRIANGULAR_COMPONENT_COUNT)
+            return Scalar(M_SQRT2); // the off-diagonal components occur twice (in the component matrix)
+        else
+            return Scalar(1); // but the diagonal components occur only once (in the component matrix)
+    }
+};
+*/
 } // end of namespace Tenh
 
 #endif // TENH_TENSOR2SYMMETRIC_HPP_

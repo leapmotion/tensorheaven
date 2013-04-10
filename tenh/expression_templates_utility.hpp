@@ -259,9 +259,9 @@ struct IndexSplitter_t
     {
         typedef typename SourceIndexType::OwnerVector::Derived SourceIndexOwnerTensor;
         typename SourceIndexOwnerTensor::MultiIndex s(m.template range<SOURCE_INDEX_TYPE_INDEX,SOURCE_INDEX_TYPE_INDEX+SplitIndexTypeList::LENGTH>());
-        if (!SourceIndexOwnerTensor::component_corresponds_to_memory_location(s))
+        if (SourceIndexOwnerTensor::component_is_immutable_zero(s))
             return Scalar(0);
-        
+
         SourceIndexType i(SourceIndexOwnerTensor::vector_index_of(s));
         // this replaces the SplitIndexTypeList portion with SourceIndexType
         typename Operand::MultiIndex c_rebundled(m.template leading_list<SOURCE_INDEX_TYPE_INDEX>() |=

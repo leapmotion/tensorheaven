@@ -24,7 +24,7 @@ struct Tensor2Diagonal_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::Typ
                                            ((Factor1_::DIM < Factor2_::DIM) ? Factor1_::DIM : Factor2_::DIM)>,
                            public Array_t<typename Factor1_::Scalar,((Factor1_::DIM < Factor2_::DIM) ? Factor1_::DIM : Factor2_::DIM)>
 {
-    enum { FACTOR_SCALAR_TYPES_ARE_EQUAL = 
+    enum { FACTOR_SCALAR_TYPES_ARE_EQUAL =
         Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename Factor1_::Scalar,typename Factor2_::Scalar>::v>::v };
 
     typedef Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
@@ -103,19 +103,18 @@ struct Tensor2Diagonal_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::Typ
         if (i1.is_at_end() || i2.is_at_end())
             throw std::invalid_argument("index/indices out of range");
 
-        if (!Factor1::component_corresponds_to_memory_location(i1)
-            || !Factor2::component_corresponds_to_memory_location(i2))
+        if (Factor1::component_is_immutable_zero(i1) || Factor2::component_is_immutable_zero(i2))
             return Scalar(0);
 
         MultiIndex m(Factor1::vector_index_of(i1), Factor2::vector_index_of(i2));
-        if (!component_corresponds_to_memory_location(m))
+        if (component_is_immutable_zero(m))
             return Scalar(0);
 
         return Factor1::scalar_factor_for_component(i1) *
                Factor2::scalar_factor_for_component(i2) *
                Parent_Tensor_i::Parent_Vector_i::operator[](vector_index_of(m));
     }
-    
+
     // write 2-tensor components -- will throw if a component doesn't correspond to a memory location
     // Index1 could be Factor1::Index or Factor1::MultiIndex (checked by its use in the other functions)
     // Index2 could be Factor2::Index or Factor2::MultiIndex (checked by its use in the other functions)
@@ -125,28 +124,27 @@ struct Tensor2Diagonal_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::Typ
         if (i1.is_at_end() || i2.is_at_end())
             throw std::invalid_argument("index/indices out of range");
 
-        if (!Factor1::component_corresponds_to_memory_location(i1)
-            || !Factor2::component_corresponds_to_memory_location(i2))
+        if (Factor1::component_is_immutable_zero(i1) || Factor2::component_is_immutable_zero(i2))
             throw std::invalid_argument("this tensor component is not writable");
 
         MultiIndex m(Factor1::vector_index_of(i1), Factor2::vector_index_of(i2));
-        if (!component_corresponds_to_memory_location(m))
+        if (component_is_immutable_zero(m))
             throw std::invalid_argument("this tensor component is not writable");
 
         // write to the component, but divide through by the total scale factor for the component.
         Parent_Tensor_i::Parent_Vector_i::operator[](vector_index_of(m))
             = s / (Factor1::scalar_factor_for_component(i1) * Factor2::scalar_factor_for_component(i2));
     }
-    using Parent_Tensor_i::component_corresponds_to_memory_location;
+    using Parent_Tensor_i::component_is_immutable_zero;
     using Parent_Tensor_i::scalar_factor_for_component;
     using Parent_Tensor_i::vector_index_of;
     // the diagonal is not stored in memory -- all components are zero.
-    static bool component_corresponds_to_memory_location (MultiIndex const &m)
+    static bool component_is_immutable_zero (MultiIndex const &m)
     {
         // only diagonal elements correspond to memory locations
-        return m.template el<0>().value() == m.template el<1>().value(); 
+        return m.template el<0>().value() != m.template el<1>().value();
     }
-    
+
     // the diagonal components have a scale factor of 1, all others have 0
     static Scalar scalar_factor_for_component (MultiIndex const &m)
     {
@@ -155,8 +153,8 @@ struct Tensor2Diagonal_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::Typ
         else // off diagonal
             return Scalar(0); // not actually used, but is here for completeness
     }
-    
-    // this should return iff component_corresponds_to_memory_location(c) returns true.
+
+    // this should return iff !component_is_immutable_zero(c) and otherwise throw.
     static Index vector_index_of (MultiIndex const &m)
     {
         return Index::range_unchecked(rowcol_index_to_contiguous_index(m.template el<0>().value(),
@@ -187,7 +185,7 @@ private:
         row = i*(Factor2::DIM+1);
         col = row;
     }
-    
+
     using Parent_Array_t::operator[]; // this shouldn't be publicly accessible
 };
 

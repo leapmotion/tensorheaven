@@ -5,6 +5,7 @@
 #include <sstream>
 
 #include "tenh/core.hpp" // everything should include this
+#include "tenh/euclideanembedding.hpp"
 #include "tenh/multiindex.hpp"
 #include "tenh/expression_templates.hpp"
 #include "tenh/expressiontemplate_eval.hpp"
@@ -487,7 +488,7 @@ void test_Tensor2Symmetric_t ()
     std::cout << FORMAT_VALUE(w) << '\n';
     std::cout << FORMAT_VALUE((v(i)*a(i|j)*v(j))) << '\n';
     std::cout << '\n';
-    
+
     std::cout << "zero'ing out the diagonal of a\n";
     for (typename Vector::Index i; i.is_not_at_end(); ++i)
         a.set_component(i,i,0);
@@ -919,9 +920,9 @@ void test_IndexSplit ()
         TypedIndex_t<Vector,'l'> l;
         s(p|q).split(p,i|j);
         std::cout << FORMAT_VALUE(s(p|q).split(p,i|j)) << '\n';
-        std::cout << FORMAT_VALUE(s(p|q).split(p,i|j) + s(p|q).split(p,j|i)) << '\n';        
-        std::cout << "Ricci curvature-like thing: " << FORMAT_VALUE(s(p|q).split(p,i|j).split(q,i|k)) << '\n';        
-        std::cout << "Scalar curvature-like thing: " << FORMAT_VALUE(s(p|q).split(p,i|j).split(q,i|j)) << '\n';        
+        std::cout << FORMAT_VALUE(s(p|q).split(p,i|j) + s(p|q).split(p,j|i)) << '\n';
+        std::cout << "Ricci curvature-like thing: " << FORMAT_VALUE(s(p|q).split(p,i|j).split(q,i|k)) << '\n';
+        std::cout << "Scalar curvature-like thing: " << FORMAT_VALUE(s(p|q).split(p,i|j).split(q,i|j)) << '\n';
         std::cout << '\n';
     }
 
@@ -1007,6 +1008,49 @@ void test_Tensor2Diagonal_t ()
     for (typename Tensor2Diagonal::Index i; i.is_not_at_end(); ++i)
         t[i] = i.value()+1;
     std::cout << FORMAT_VALUE(t) << '\n';
+}
+
+template <Uint32 DIM>
+void test_EuclideanEmbedding_t ()
+{
+    std::cout << "test_EuclideanEmbedding_t<" << DIM << ">\n";
+
+    typedef Vector_t<float,DIM> V;
+
+    {
+        typedef EuclideanEmbedding_t<V> EE;
+        EE e;
+        std::cout << FORMAT_VALUE(e) << '\n';
+        V v(Static<>::WITHOUT_INITIALIZATION);
+        for (typename V::Index i; i.is_not_at_end(); ++i)
+            v[i] = i.value() + 1;
+        std::cout << FORMAT_VALUE(v) << '\n';
+        TypedIndex_t<V,'i'> i;
+        TypedIndex_t<V,'j'> j;
+        std::cout << FORMAT_VALUE(v(i)*e(i|j)) << '\n';
+        std::cout << FORMAT_VALUE(e(i|j)*v(j)) << '\n';
+        std::cout << FORMAT_VALUE(v(i)*e(i|j)*v(j)) << '\n';
+        std::cout << FORMAT_VALUE(e(i|i)) << '\n';
+    }
+
+    {
+        typedef Tensor2_t<V,V> T;
+        typedef EuclideanEmbedding_t<T> EE;
+        EE e;
+        std::cout << FORMAT_VALUE(e) << '\n';
+        T v(Static<>::WITHOUT_INITIALIZATION);
+        for (typename T::Index i; i.is_not_at_end(); ++i)
+            v[i] = i.value() + 1;
+        std::cout << FORMAT_VALUE(v) << '\n';
+        TypedIndex_t<T,'i'> i;
+        TypedIndex_t<T,'j'> j;
+        std::cout << FORMAT_VALUE(v(i)*e(i|j)) << '\n';
+        std::cout << FORMAT_VALUE(e(i|j)*v(j)) << '\n';
+        std::cout << FORMAT_VALUE(v(i)*e(i|j)*v(j)) << '\n';
+        std::cout << FORMAT_VALUE(e(i|i)) << '\n';
+    }
+
+    std::cout << '\n';
 }
 
 int main (int argc, char **argv)
@@ -1652,7 +1696,13 @@ int main (int argc, char **argv)
             s(q) = (u(i|j)*u(k|j)).bundle(i|k,q);
             std::cout << FORMAT_VALUE(s) << '\n';
         }
-        
+
+        // testing EuclideanEmbedding_t
+        test_EuclideanEmbedding_t<1>();
+        test_EuclideanEmbedding_t<2>();
+        test_EuclideanEmbedding_t<3>();
+        test_EuclideanEmbedding_t<4>();
+
         // testing ExpressionTemplate_Eval_t (TODO: general k-tensor case)
         {
             std::cout << "testing ExpressionTemplate_Eval_t for 1-tensors (vectors)\n";

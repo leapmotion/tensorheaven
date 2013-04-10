@@ -4,8 +4,10 @@ NOTES
 - all library code is in tenh/
   * ideally there will be few/no cpp files
 - only the root directory (the directory containing tenh/) should be included, in the same manner as Eigen.
-- all test code is in tensorhell/ -- these are mostly informal ad-hoc tests and prototype code, but there are some simple unit tests in tensorhell/standard
-- the "actual" tensor lib prototype code is in tensorhell/contraction_prototype.cpp
+- all test code is in tensorhell/ -- there are currectly ad-hoc tests/prototype code (e.g. eigen_interop_prototype.cpp
+  and contraction_prototype.cpp), but the "real" tests are in the standard/ subdirectory.  the CMakeLists.txt file
+  in the tensorhell/ subdirectory will build all of these.  the executable name for the "real" tests is "test".
+- the "actual" tensor lib prototype code is in test/contraction_prototype.cpp
 - some prototype code for strongly-typed vectors (which distinguish prime/dual spaces and "named" spaces)
   is in tensorhell/strongly_typed_vector_prototype.cpp
 
@@ -56,6 +58,12 @@ random TODOs:
 - see if it's possible to do strong range check guarantees for indices (Index_t) -- this would probably
   require a "for each" construct which would best be accomplished with lambda expressions
 - rename source files to use capitalized names (e.g. NaturalPairing.hpp) (?)
+- it would probably be a good idea to make separate Vector_i and VectorSpace_i interfaces, and Tensor_i and TensorSpace_i
+  interfaces -- VectorSpace_i and TensorSpace_i essentially just encode mathematical information and have no "implementation",
+  whereas Vector_i and Tensor_i represent actual elements of a vector or tensor space.  then Vector_i and Tensor_i
+  would take template parameters which are of types VectorSpace_i and TensorSpace_i respectively.
+  this seems necessary in order to implement vector and tensor "constants", which don't represent a vector space,
+  but actually a single element in a vector space.
 
 features necessary for version 0.5:
 - euclidean embedding (using short-turm zero-dimensional hack (?))

@@ -55,7 +55,7 @@ struct Vector_t : public Vector_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqua
         else
             return "Vector_t<" + TypeStringOf_t<Scalar>::eval() + ',' + AS_STRING(DIM) + ',' + TypeStringOf_t<Derived>::eval() + '>';
     }
-    
+
 private:
 
     using Parent_Array_t::operator[]; // this should not be publicly accessible

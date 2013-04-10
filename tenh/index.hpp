@@ -105,7 +105,7 @@ private:
     typedef typename HeadType::OwnerVector OwnerVector;
     static char const SYMBOL = HeadType::SYMBOL;
 public:
-    static bool const V = Lvd::Meta::TypesAreEqual<HeadType,TypedIndex_t<OwnerVector,SYMBOL> >::v && 
+    static bool const V = Lvd::Meta::TypesAreEqual<HeadType,TypedIndex_t<OwnerVector,SYMBOL> >::v &&
                           AssertThatEachTypeIsATypedIndex_t<typename TypeList::BodyTypeList>::V;
     operator bool () const { return V; }
 };

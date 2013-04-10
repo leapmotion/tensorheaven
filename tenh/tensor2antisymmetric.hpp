@@ -6,7 +6,7 @@
 #ifndef TENH_TENSOR2ANTISYMMETRIC_HPP_
 #define TENH_TENSOR2ANTISYMMETRIC_HPP_
 
-#include <cmath> // TEMP until rowcol/contiguous index map is implemented as a lookup table
+#include <cmath>
 #include <ostream>
 
 #include "tenh/core.hpp"
@@ -111,11 +111,11 @@ struct Tensor2Antisymmetric_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta
         if (i1.is_at_end() || i2.is_at_end())
             throw std::invalid_argument("index/indices out of range");
 
-        if (!Factor1::component_corresponds_to_memory_location(i1) || !Factor2::component_corresponds_to_memory_location(i2))
+        if (Factor1::component_is_immutable_zero(i1) || Factor2::component_is_immutable_zero(i2))
             return Scalar(0);
 
         MultiIndex m(Factor1::vector_index_of(i1), Factor2::vector_index_of(i2));
-        if (!component_corresponds_to_memory_location(m))
+        if (component_is_immutable_zero(m))
             return Scalar(0);
 
         return Factor1::scalar_factor_for_component(i1) *
@@ -132,23 +132,23 @@ struct Tensor2Antisymmetric_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta
         if (i1.is_at_end() || i2.is_at_end())
             throw std::invalid_argument("index/indices out of range");
 
-        if (!Factor1::component_corresponds_to_memory_location(i1) || !Factor2::component_corresponds_to_memory_location(i2))
+        if (Factor1::component_is_immutable_zero(i1) || Factor2::component_is_immutable_zero(i2))
             throw std::invalid_argument("this tensor component is not writable");
 
         MultiIndex m(Factor1::vector_index_of(i1), Factor2::vector_index_of(i2));
-        if (!component_corresponds_to_memory_location(m))
+        if (component_is_immutable_zero(m))
             throw std::invalid_argument("this tensor component is not writable");
 
         // write to the component, but divide through by the total scale factor for the component.
         Parent_Tensor_i::Parent_Vector_i::operator[](vector_index_of(m)) = s / (Factor1::scalar_factor_for_component(i1) * Factor2::scalar_factor_for_component(i2) * scalar_factor_for_component(m));
     }
-    using Parent_Tensor_i::component_corresponds_to_memory_location;
+    using Parent_Tensor_i::component_is_immutable_zero;
     using Parent_Tensor_i::scalar_factor_for_component;
     using Parent_Tensor_i::vector_index_of;
     // the diagonal is not stored in memory -- all components are zero.
-    static bool component_corresponds_to_memory_location (MultiIndex const &m)
+    static bool component_is_immutable_zero (MultiIndex const &m)
     {
-        return m.template el<0>() != m.template el<1>(); // off diagonal elements correspond to memory locations
+        return m.template el<0>() == m.template el<1>(); // off diagonal elements correspond to memory locations
     }
     // the diagonal is zero, the upper triangular components have a scalar factor of -1, and 1 otherwise.
     static Scalar scalar_factor_for_component (MultiIndex const &m)
@@ -160,7 +160,7 @@ struct Tensor2Antisymmetric_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta
         else // lower triangular component
             return Scalar(1);
     }
-    // this should return iff component_corresponds_to_memory_location(m) returns true.
+    // this should return iff !component_is_immutable_zero(m) and otherwise throw
     static Index vector_index_of (MultiIndex const &m)
     {
         return Index::range_unchecked(rowcol_index_to_contiguous_index(m.template el<0>().value(), m.template el<1>().value()));
@@ -200,15 +200,15 @@ private:
         row = Uint32(std::floor(0.5f + std::sqrt(0.25f + 2.0f*i)));
         col = i - row*(row-1)/2;
     }
-    
+
     using Parent_Array_t::operator[]; // this shouldn't be publicly accessible
 };
 
 // template specialization for the natural pairing in this particular coordinatization of Tensor2Antisymmetric_t
-template <typename Factor>
-struct NaturalPairing_t<Tensor2Antisymmetric_t<Factor> >
+template <typename Factor1, typename Factor2, typename Derived>
+struct NaturalPairing_t<Tensor2Antisymmetric_t<Factor1,Factor2,Derived> >
 {
-    typedef Tensor2Antisymmetric_t<Factor> Tensor2Antisymmetric;
+    typedef Tensor2Antisymmetric_t<Factor1,Factor2,Derived> Tensor2Antisymmetric;
     typedef typename Tensor2Antisymmetric::Scalar Scalar;
     typedef typename Tensor2Antisymmetric::Index Index;
 
@@ -218,6 +218,91 @@ struct NaturalPairing_t<Tensor2Antisymmetric_t<Factor> >
     }
 };
 
+/*
+// NOTE: while this is a tensor, it isn't a tensor space, and so it technically shouldn't be used as a factor
+// type in a tensor product.  this is essentially a constant value -- it has only const accessors and can't be written to.
+// because the (inner product) is essentially scalar multiplication by 2, it follows that multiplication by sqrt(2)
+// gives the isometric embedding
+template <typename Scalar_, Uint32 DIM_, typename VectorDerived_, typename Tensor2AntisymmetricDerived_>
+struct EuclideanEmbedding_t<Tensor2Antisymmetric_t<Vector_t<Scalar_,DIM_,VectorDerived_>,
+                                                   Vector_t<Scalar_,DIM_,VectorDerived_>,
+                                                   Tensor2AntisymmetricDerived_> >
+    :
+    public Tensor_i<EuclideanEmbedding_t<Tensor2Antisymmetric_t<Vector_t<Scalar_,DIM_,VectorDerived_>,
+                                                                Vector_t<Scalar_,DIM_,VectorDerived_>,
+                                                                Tensor2AntisymmetricDerived_> >,
+                    TypeList_t<Tensor2Antisymmetric_t<Vector_t<Scalar_,DIM_,VectorDerived_>,
+                                                      Vector_t<Scalar_,DIM_,VectorDerived_>,
+                                                      Tensor2AntisymmetricDerived_>,
+                               TypeList_t<Tensor2Antisymmetric_t<Vector_t<Scalar_,DIM_,VectorDerived_>,
+                                                                 Vector_t<Scalar_,DIM_,VectorDerived_>,
+                                                                 Tensor2AntisymmetricDerived_> > >,
+                    >,
+                    Tensor2Antisymmetric_t<Factor1,Factor2,Derived_>::DIM*Tensor2Antisymmetric_t<Factor1,Factor2,Derived_>::DIM>
+{
+    typedef Tensor_i<EuclideanEmbedding_t<Tensor2Antisymmetric_t<Factor1,Factor2,Derived_> >,
+                     TypeList_t<Tensor2Antisymmetric_t<Factor1,Factor2,Derived_>,TypeList_t<Tensor2Antisymmetric_t<Factor1,Factor2,Derived_> > >,
+                     Tensor2Antisymmetric_t<Factor1,Factor2,Derived_>::DIM*Tensor2Antisymmetric_t<Factor1,Factor2,Derived_>::DIM> Parent_Tensor_i;
+    typedef typename Parent_Tensor_i::Derived Derived;
+    typedef typename Parent_Tensor_i::Scalar Scalar;
+    using Parent_Tensor_i::DIM;
+    typedef typename Parent_Tensor_i::Index Index;
+    typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
+    typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
+    typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
+    using Parent_Tensor_i::DEGREE;
+    typedef Tensor2Antisymmetric_t<Factor1,Factor2,Derived_> Tensor2Antisymmetric; // this is the vector type that's being embedded
+
+    Scalar operator [] (MultiIndex const &m) const
+    {
+        //return m.template el<0>() == m.template el<1>() ? Scalar(M_SQRT2) : Scalar(0);
+    }
+
+    // this SHOULD be inconvenient and ugly to call.  it should be used ONLY when you know for certain that 0 <= i < DIM
+    Scalar component_access_without_range_check (Uint32 i) const
+    {
+        Uint32 row = i / Tensor2Antisymmetric::DIM;
+        Uint32 col = i % Tensor2Antisymmetric::DIM;
+        return row == col ? Scalar(M_SQRT2) : Scalar(0);
+    }
+};
+
+
+
+template <typename Factor1, typename Factor2, typename Derived_>
+struct EuclideanEmbedding_t<Tensor2Antisymmetric_t<Factor1,Factor2,Derived_> >
+    :
+    public Tensor_i<EuclideanEmbedding_t<Tensor2Antisymmetric_t<Factor1,Factor2,Derived_> >,
+                    TypeList_t<Tensor2Antisymmetric_t<Factor1,Factor2,Derived_>,TypeList_t<Tensor2Antisymmetric_t<Factor1,Factor2,Derived_> > >,
+                    Tensor2Antisymmetric_t<Factor1,Factor2,Derived_>::DIM*Tensor2Antisymmetric_t<Factor1,Factor2,Derived_>::DIM>
+{
+    typedef Tensor_i<EuclideanEmbedding_t<Tensor2Antisymmetric_t<Factor1,Factor2,Derived_> >,
+                     TypeList_t<Tensor2Antisymmetric_t<Factor1,Factor2,Derived_>,TypeList_t<Tensor2Antisymmetric_t<Factor1,Factor2,Derived_> > >,
+                     Tensor2Antisymmetric_t<Factor1,Factor2,Derived_>::DIM*Tensor2Antisymmetric_t<Factor1,Factor2,Derived_>::DIM> Parent_Tensor_i;
+    typedef typename Parent_Tensor_i::Derived Derived;
+    typedef typename Parent_Tensor_i::Scalar Scalar;
+    using Parent_Tensor_i::DIM;
+    typedef typename Parent_Tensor_i::Index Index;
+    typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
+    typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
+    typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
+    using Parent_Tensor_i::DEGREE;
+    typedef Tensor2Antisymmetric_t<Factor1,Factor2,Derived_> Tensor2Antisymmetric; // this is the vector type that's being embedded
+
+    Scalar operator [] (MultiIndex const &m) const
+    {
+        //return m.template el<0>() == m.template el<1>() ? Scalar(M_SQRT2) : Scalar(0);
+    }
+
+    // this SHOULD be inconvenient and ugly to call.  it should be used ONLY when you know for certain that 0 <= i < DIM
+    Scalar component_access_without_range_check (Uint32 i) const
+    {
+        Uint32 row = i / Tensor2Antisymmetric::DIM;
+        Uint32 col = i % Tensor2Antisymmetric::DIM;
+        return row == col ? Scalar(M_SQRT2) : Scalar(0);
+    }
+};
+*/
 } // end of namespace Tenh
 
 #endif // TENH_TENSOR2ANTISYMMETRIC_HPP_
