@@ -55,15 +55,13 @@ random TODOs:
 - allow use of same indices across different terms (distinguishing multiplication and addition)
 - see if it's possible to do strong range check guarantees for indices (Index_t) -- this would probably
   require a "for each" construct which would best be accomplished with lambda expressions
-- the compiler flags don't appear to be doing anything in clang, and possibly gcc.
-- apparently "using typename Parent::WhateverType;" works -- change all the dumb typedef inheritance to use this.
 - rename source files to use capitalized names (e.g. NaturalPairing.hpp) (?)
 
 features necessary for version 0.5:
 - euclidean embedding (using short-turm zero-dimensional hack (?))
 x eval (for 2-tensors)
 - basis specification (e.g. in diagonalization/SVD, and the orthonormal matrix could/should be called "basis vectors")
-- stub-out: noalias (?) for situations like a(i) = a(i) + b(i), but also to avoid the runtime check of aliasing, so the human
+x stub-out: noalias (?) for situations like a(i) = a(i) + b(i), but also to avoid the runtime check of aliasing, so the human
   can specify no-alias in a situation like a(i) = b(i) + c(i).
 - additional eigen interop:
   * 2-tensor inverse
@@ -93,6 +91,7 @@ x eigen-decomposition of symmetric 2-tensors, using Eigen
 x Eigen interop for using Tensor2_t as Eigen::Map (no memory copy necessary)
 x functions for converting Tensor2Antisymmetric_t and Tensor2Symmetric_t to Eigen::Matrix types
 x eval method for expression templates (to avoid aliasing problem when assigning)
+x no_alias method for avoiding the run-time check against aliased expression template assignments
 
 ---------------------------
 

@@ -8,8 +8,9 @@ find_path(EIGEN_INCLUDE_DIR "eigen" PATHS $ENV{EIGEN_INCLUDE_DIR} NO_DEFAULT_PAT
 include_directories(${tensorheaven_test_SOURCE_DIR} ${EIGEN_INCLUDE_DIR})
 
 # TODO: build options for other compilers
-set(COMPILER_DEBUG_FLAGS "-g -Wall -Werror")
-set(COMPILER_RELEASE_FLAGS "-O3 -g -DNDEBUG -Wall -Werror")
+set(CMAKE_CXX_FLAGS "-Wall -Werror")
+set(CMAKE_CXX_FLAGS_DEBUG "-g")
+set(CMAKE_CXX_FLAGS_RELEASE "-g -O3")
 
 # temp tests
 add_executable(contraction_prototype contraction_prototype.cpp)
