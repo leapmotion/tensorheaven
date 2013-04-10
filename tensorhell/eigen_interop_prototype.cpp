@@ -5,6 +5,7 @@
 #include "tenh/core.hpp" // everything should include this
 #include "tenh/multiindex.hpp"
 #include "tenh/expression_templates.hpp"
+#include "tenh/interop/eigen_ldlt.hpp"
 #include "tenh/interop/eigen_selfadjointeigendecomp.hpp"
 #include "tenh/interop/eigen_svd.hpp"
 #include "tenh/meta/typelist.hpp"
@@ -99,6 +100,36 @@ void test_diagonalization ()
     std::cout << '\n';
 }
 
+template <Uint32 DIM>
+void test_LDLT ()
+{
+    std::cout << "test_LDLT<" << DIM << ">\n";
+    std::cout << "*******************************************************\n";
+    
+    typedef Vector_t<float,DIM> V;
+    typedef Tensor2_t<V,V> T;
+    typedef Tensor2Diagonal_t<V,V> D;
+    typedef Tensor2Symmetric_t<V> S;
+    
+    S s(Static<>::WITHOUT_INITIALIZATION);
+    for (typename S::Index i; i.is_not_at_end(); ++i)
+        s[i] = i.value() + 1;
+    
+    D d(Static<>::WITHOUT_INITIALIZATION);
+    T l(Static<>::WITHOUT_INITIALIZATION);
+    
+    LDLT_Tensor2Symmetric(s, d, l);
+    
+    std::cout << FORMAT_VALUE(s) << '\n';
+    std::cout << FORMAT_VALUE(d) << '\n';
+    std::cout << FORMAT_VALUE(l) << '\n';
+    TypedIndex_t<V,'h'> h;
+    TypedIndex_t<V,'i'> i;
+    TypedIndex_t<V,'j'> j;
+    TypedIndex_t<V,'k'> k;
+    std::cout << FORMAT_VALUE(l(h|i)*d(i|j)*l(k|j)) << '\n';
+}
+
 int main (int argc, char **argv)
 {
     test_SVD<1,1>();
@@ -109,6 +140,10 @@ int main (int argc, char **argv)
     test_diagonalization<1>();
     test_diagonalization<3>();
     test_diagonalization<10>();
-
+    
+    test_LDLT<2>();
+    test_LDLT<3>();
+    test_LDLT<8>();
+    
     return 0;
 }

@@ -17,15 +17,43 @@
 
 namespace Tenh {
 
+
+// Warning: This code currently doesn't take the permutation matrix into account, so is perhaps not useful.
 template <typename Factor>
 void LDLT_Tensor2Symmetric (Tensor2Symmetric_t<Factor> const &s,
-                            Tensor2Diagonal_t<Factor,Factor> &d,
-                            Tensor2_t<Factor,Factor> &l)
+                            Tensor2Diagonal_t<Factor,Factor> &diagonal,
+                            Tensor2_t<Factor,Factor> &lower_triangular)
 {
     typedef Eigen::Matrix<typename Factor::Scalar,Factor::DIM,Factor::DIM,Eigen::RowMajor> EigenMatrix;
-    Eigen::LDLT<EigenMatrix> LDLTMatrix(EigenMatrix_of(s).ldlt());                // do the diagonalization
-    memcpy(d.data_pointer(), &LDLTMatrix.MatrixL()(0,0), d.data_size_in_bytes()); // copy the eigenvectors
-    memcpy(l.data_pointer(), &LDLTMatrix.VectorD()(0,0), l.data_size_in_bytes()); // copy the eigenvalues
+    typedef typename Eigen::internal::plain_col_type<EigenMatrix, typename Factor::Scalar>::type RealVector;
+
+    Eigen::LDLT<EigenMatrix> LDLTMatrix(EigenMatrix_of(s).ldlt());                                     // do the decomposition
+    EigenMatrix eigen_lower(LDLTMatrix.matrixL());
+    memcpy(lower_triangular.data_pointer(), &eigen_lower(0,0), lower_triangular.data_size_in_bytes()); // copy the lower triangular matrix
+    RealVector eigen_diagonal(LDLTMatrix.vectorD());
+    memcpy(diagonal.data_pointer(), &eigen_diagonal(0,0), diagonal.data_size_in_bytes());              // copy the diagonal matrix    
+}
+
+template <typename Factor>
+void LDLT_Tensor2Symmetric (Tensor2Symmetric_t<Factor> const &s,
+                            Tensor2_t<Factor,Factor> &lower_triangular)
+{
+    typedef Eigen::Matrix<typename Factor::Scalar,Factor::DIM,Factor::DIM,Eigen::RowMajor> EigenMatrix;
+    Eigen::LDLT<EigenMatrix> LDLTMatrix(EigenMatrix_of(s).ldlt());                                     // do the decomposition
+    EigenMatrix eigen_lower(LDLTMatrix.matrixL());
+    memcpy(lower_triangular.data_pointer(), &eigen_lower(0,0), lower_triangular.data_size_in_bytes()); // copy the lower triangular matrix
+}
+
+template <typename Factor>
+void LDLT_Tensor2Symmetric (Tensor2Symmetric_t<Factor> const &s,
+                            Tensor2Diagonal_t<Factor,Factor> &diagonal)
+{
+    typedef Eigen::Matrix<typename Factor::Scalar,Factor::DIM,Factor::DIM,Eigen::RowMajor> EigenMatrix;
+    typedef typename Eigen::internal::plain_col_type<EigenMatrix, typename Factor::Scalar>::type RealVector;
+    Eigen::LDLT<EigenMatrix> LDLTMatrix(EigenMatrix_of(s).ldlt());                                     // do the decomposition
+    RealVector eigen_diagonal(LDLTMatrix.vectorD());
+    memcpy(diagonal.data_pointer(), &eigen_diagonal(0,0), diagonal.data_size_in_bytes());              // copy the diagonal diagonal matrix
+
 }
 
 } // end of namespace Tenh
