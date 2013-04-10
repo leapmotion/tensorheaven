@@ -31,7 +31,7 @@ void LDLT_Tensor2Symmetric (Tensor2Symmetric_t<Factor> const &s,
     EigenMatrix eigen_lower(LDLTMatrix.matrixL());
     memcpy(lower_triangular.data_pointer(), &eigen_lower(0,0), lower_triangular.data_size_in_bytes()); // copy the lower triangular matrix
     RealVector eigen_diagonal(LDLTMatrix.vectorD());
-    memcpy(diagonal.data_pointer(), &eigen_diagonal(0,0), diagonal.data_size_in_bytes());              // copy the diagonal matrix    
+    memcpy(diagonal.data_pointer(), &eigen_diagonal(0,0), diagonal.data_size_in_bytes());              // copy the diagonal matrix
 }
 
 template <typename Factor>

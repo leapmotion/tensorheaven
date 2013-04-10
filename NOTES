@@ -4,10 +4,10 @@ NOTES
 - all library code is in tenh/
   * ideally there will be few/no cpp files
 - only the root directory (the directory containing tenh/) should be included, in the same manner as Eigen.
-- all test code is in test/ -- these are just informal ad-hoc tests and prototype code, nothing that will be kept around
-- the "actual" tensor lib prototype code is in test/contraction_prototype.cpp
+- all test code is in tensorhell/ -- these are mostly informal ad-hoc tests and prototype code, but there are some simple unit tests in tensorhell/standard
+- the "actual" tensor lib prototype code is in tensorhell/contraction_prototype.cpp
 - some prototype code for strongly-typed vectors (which distinguish prime/dual spaces and "named" spaces)
-  is in test/strongly_typed_vector_prototype.cpp
+  is in tensorhell/strongly_typed_vector_prototype.cpp
 
 current goals:
 - more frontends for Eigen functionality -- LDLT, QR, linear solve, etc
