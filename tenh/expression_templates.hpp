@@ -22,20 +22,26 @@ namespace Tenh {
 static bool const FORCE_CONST = true;
 static bool const DONT_FORCE_CONST = false;
 
+static bool const CHECK_FOR_ALIASING = true;
+static bool const DONT_CHECK_FOR_ALIASING = false;
+
 // this is the "const" version of an indexed tensor expression (it has summed indices, so it doesn't make sense to assign to it)
-template <typename Object, typename IndexTypeList, typename SummedIndexTypeList_, bool FORCE_CONST_, typename Derived_ = NullType>
+template <typename Object, typename IndexTypeList, typename SummedIndexTypeList_, 
+          bool FORCE_CONST_, bool CHECK_FOR_ALIASING_, typename Derived_ = NullType>
 struct ExpressionTemplate_IndexedObject_t
     :
     public ExpressionTemplate_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
-                                                       ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,SummedIndexTypeList_,FORCE_CONST_,Derived_>,
+                                                       ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,SummedIndexTypeList_,
+                                                                                          FORCE_CONST_,CHECK_FOR_ALIASING_,Derived_>,
                                                        Derived_>::T,
                                 typename Object::Scalar,
                                 typename FreeIndexTypeList_t<IndexTypeList>::T,
                                 SummedIndexTypeList_>
 {
     typedef ExpressionTemplate_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
-                                                       ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,SummedIndexTypeList_,FORCE_CONST_,Derived_>,
-                                                       Derived_>::T,
+                                                        ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,SummedIndexTypeList_,
+                                                                                           FORCE_CONST_,CHECK_FOR_ALIASING_,Derived_>,
+                                                        Derived_>::T,
                                  typename Object::Scalar,
                                  typename FreeIndexTypeList_t<IndexTypeList>::T,
                                  SummedIndexTypeList_> Parent;
@@ -75,15 +81,15 @@ private:
 };
 
 // this is the "non-const" version of an indexed tensor expression (it has no summed indices, so it makes sense to assign to it)
-template <typename Object, typename IndexTypeList, typename Derived_>
-struct ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,EmptyTypeList,DONT_FORCE_CONST,Derived_>
+template <typename Object, typename IndexTypeList, bool CHECK_FOR_ALIASING_, typename Derived_>
+struct ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING_,Derived_>
     :
-    public ExpressionTemplate_i<ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,EmptyTypeList,DONT_FORCE_CONST,Derived_>,
+    public ExpressionTemplate_i<ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING_,Derived_>,
                                 typename Object::Scalar,
                                 typename FreeIndexTypeList_t<IndexTypeList>::T,
                                 EmptyTypeList>
 {
-    typedef ExpressionTemplate_i<ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,EmptyTypeList,DONT_FORCE_CONST,Derived_>,
+    typedef ExpressionTemplate_i<ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING_,Derived_>,
                                  typename Object::Scalar,
                                  typename FreeIndexTypeList_t<IndexTypeList>::T,
                                  EmptyTypeList> Parent;
@@ -95,6 +101,16 @@ struct ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,EmptyTypeList,DON
     using Parent::IS_EXPRESSION_TEMPLATE;
 
     ExpressionTemplate_IndexedObject_t (Object &object) : m_object(object) { }
+
+    // call this on the left-hand side (LHS) of an indexed assignment to avoid the run-time
+    // aliasing check.  this should only be done when the human can guarantee that there is
+    // no memory aliasing in the assignment (where the same memory location is being referenced
+    // on both the LHS and RHS of the assignment, therefore causing the non-atomically 
+    // evaluated result to be implementation-dependent and incorrect).
+    ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,EmptyTypeList,DONT_FORCE_CONST,DONT_CHECK_FOR_ALIASING,Derived_> no_alias ()
+    {
+        return ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,EmptyTypeList,DONT_FORCE_CONST,DONT_CHECK_FOR_ALIASING,Derived_>(m_object);
+    }
 
     operator Scalar () const
     {
@@ -132,8 +148,9 @@ struct ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,EmptyTypeList,DON
         };
 
         // check for aliasing (where source and destination memory overlap)
-        if (right_operand.uses_tensor(m_object))
-            throw std::invalid_argument("invalid aliased tensor assignment (source and destination memory overlap) -- use an intermediate value");
+        if (CHECK_FOR_ALIASING_ && right_operand.uses_tensor(m_object))
+            throw std::invalid_argument("aliased tensor assignment (source and destination memory overlap) -- "
+                                        "see evaluse eval() on RHS or noalias() on LHS of assignment");
 
         typedef MultiIndexMap_t<FreeIndexTypeList,typename RightOperand::FreeIndexTypeList> RightOperandIndexMap;
         typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
@@ -389,12 +406,14 @@ struct ExpressionTemplate_IndexBundle_t
                                               typename IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType>::IndexTypeList,
                                               typename SummedIndexTypeList_t<typename IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType>::IndexTypeList>::T,
                                               FORCE_CONST,
+                                              CHECK_FOR_ALIASING, // irrelevant value
                                               ExpressionTemplate_IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType> >
 {
     typedef ExpressionTemplate_IndexedObject_t<IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType>,
                                                typename IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType>::IndexTypeList,
                                                typename SummedIndexTypeList_t<typename IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType>::IndexTypeList>::T,
                                                FORCE_CONST,
+                                               CHECK_FOR_ALIASING, // irrelevant value
                                                ExpressionTemplate_IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType> > Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
@@ -439,12 +458,14 @@ struct ExpressionTemplate_IndexSplit_t
                                               typename IndexSplitter_t<Operand,SourceIndexType,SplitIndexTypeList>::IndexTypeList,
                                               typename SummedIndexTypeList_t<typename IndexSplitter_t<Operand,SourceIndexType,SplitIndexTypeList>::IndexTypeList>::T,
                                               FORCE_CONST,
+                                              CHECK_FOR_ALIASING, // irrelevant value
                                               ExpressionTemplate_IndexSplit_t<Operand,SourceIndexType,SplitIndexTypeList> >
 {
     typedef ExpressionTemplate_IndexedObject_t<IndexSplitter_t<Operand,SourceIndexType,SplitIndexTypeList>,
                                                typename IndexSplitter_t<Operand,SourceIndexType,SplitIndexTypeList>::IndexTypeList,
                                                typename SummedIndexTypeList_t<typename IndexSplitter_t<Operand,SourceIndexType,SplitIndexTypeList>::IndexTypeList>::T,
                                                FORCE_CONST,
+                                               CHECK_FOR_ALIASING, // irrelevant value
                                                ExpressionTemplate_IndexSplit_t<Operand,SourceIndexType,SplitIndexTypeList> > Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;

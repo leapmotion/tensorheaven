@@ -99,7 +99,8 @@ struct Tensor_i : public Vector_i<Derived_,typename FactorTypeList_::HeadType::S
         Derived,
         TypeList_t<IndexTypeListHeadType,IndexTypeListBodyTypeList>,
         typename SummedIndexTypeList_t<TypeList_t<IndexTypeListHeadType,IndexTypeListBodyTypeList> >::T,
-        FORCE_CONST> operator () (TypeList_t<IndexTypeListHeadType,IndexTypeListBodyTypeList> const &) const
+        FORCE_CONST,
+        CHECK_FOR_ALIASING> operator () (TypeList_t<IndexTypeListHeadType,IndexTypeListBodyTypeList> const &) const
     {
         typedef TypeList_t<IndexTypeListHeadType,IndexTypeListBodyTypeList> ArgumentIndexTypeList;
         // ensure the length matches FactorIndexTypeList
@@ -112,14 +113,16 @@ struct Tensor_i : public Vector_i<Derived_,typename FactorTypeList_::HeadType::S
             Derived,
             TypeList_t<IndexTypeListHeadType,IndexTypeListBodyTypeList>,
             typename SummedIndexTypeList_t<TypeList_t<IndexTypeListHeadType,IndexTypeListBodyTypeList> >::T,
-            FORCE_CONST>(this->as_derived());
+            FORCE_CONST,
+            CHECK_FOR_ALIASING>(this->as_derived());
     }
     template <typename IndexTypeListHeadType, typename IndexTypeListBodyTypeList>
     ExpressionTemplate_IndexedObject_t<
         Derived,
         TypeList_t<IndexTypeListHeadType,IndexTypeListBodyTypeList>,
         typename SummedIndexTypeList_t<TypeList_t<IndexTypeListHeadType,IndexTypeListBodyTypeList> >::T,
-        DONT_FORCE_CONST> operator () (TypeList_t<IndexTypeListHeadType,IndexTypeListBodyTypeList> const &)
+        DONT_FORCE_CONST,
+        CHECK_FOR_ALIASING> operator () (TypeList_t<IndexTypeListHeadType,IndexTypeListBodyTypeList> const &)
     {
         typedef TypeList_t<IndexTypeListHeadType,IndexTypeListBodyTypeList> ArgumentIndexTypeList;
         // ensure the length matches FactorIndexTypeList
@@ -132,7 +135,8 @@ struct Tensor_i : public Vector_i<Derived_,typename FactorTypeList_::HeadType::S
             Derived,
             TypeList_t<IndexTypeListHeadType,IndexTypeListBodyTypeList>,
             typename SummedIndexTypeList_t<TypeList_t<IndexTypeListHeadType,IndexTypeListBodyTypeList> >::T,
-            DONT_FORCE_CONST>(this->as_derived());
+            DONT_FORCE_CONST,
+            CHECK_FOR_ALIASING>(this->as_derived());
     }
 
     using Parent_Vector_i::component_corresponds_to_memory_location;    

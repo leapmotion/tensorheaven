@@ -779,7 +779,7 @@ void test_IndexBundle ()
     typedef TypedIndex_t<Tensor2Symmetric,'q'> Q;
     typedef TypedIndex_t<Tensor2Antisymmetric,'p'> P;
     typedef TypeList_t<I,TypeList_t<J> > BundleIndexTypeList;
-    typedef ExpressionTemplate_IndexedObject_t<Tensor2,BundleIndexTypeList,EmptyTypeList,DONT_FORCE_CONST> EI;
+    typedef ExpressionTemplate_IndexedObject_t<Tensor2,BundleIndexTypeList,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EI;
     I i;
     J j;
     typedef TypeList_t<I,TypeList_t<J> > BundleIndexTypeList;
@@ -787,7 +787,7 @@ void test_IndexBundle ()
     P p;
     {
         Tensor2 const &t2 = t;
-        typedef ExpressionTemplate_IndexedObject_t<Tensor2,BundleIndexTypeList,EmptyTypeList,FORCE_CONST> EI2;
+        typedef ExpressionTemplate_IndexedObject_t<Tensor2,BundleIndexTypeList,EmptyTypeList,FORCE_CONST,CHECK_FOR_ALIASING> EI2;
         EI2 ei(t2(i|j));
     }
     for (typename Tensor2Symmetric::Index r; r.is_not_at_end(); ++r)
@@ -936,7 +936,7 @@ void test_IndexSplit ()
     typedef TypedIndex_t<Tensor2Symmetric,'q'> Q;
     typedef TypedIndex_t<Tensor2Antisymmetric,'p'> P;
     typedef TypeList_t<I,TypeList_t<J> > BundleIndexTypeList;
-    typedef ExpressionTemplate_IndexedObject_t<Tensor2,BundleIndexTypeList,EmptyTypeList,DONT_FORCE_CONST> EI;
+    typedef ExpressionTemplate_IndexedObject_t<Tensor2,BundleIndexTypeList,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EI;
     I i;
     J j;
     typedef TypeList_t<I,TypeList_t<J> > BundleIndexTypeList;
@@ -944,7 +944,7 @@ void test_IndexSplit ()
     P p;
     {
         Tensor2 const &t2 = t;
-        typedef ExpressionTemplate_IndexedObject_t<Tensor2,BundleIndexTypeList,EmptyTypeList,FORCE_CONST> EI2;
+        typedef ExpressionTemplate_IndexedObject_t<Tensor2,BundleIndexTypeList,EmptyTypeList,FORCE_CONST,CHECK_FOR_ALIASING> EI2;
         EI2 ei(t2(i,j));
     }
     for (typename Tensor2Symmetric::Index r; r.is_not_at_end(); ++r)
@@ -1157,8 +1157,8 @@ int main (int argc, char **argv)
         I i;
         J j;
         {
-            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<I>,EmptyTypeList,DONT_FORCE_CONST> EI;
-            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<J>,EmptyTypeList,DONT_FORCE_CONST> EJ;
+            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<I>,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EI;
+            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<J>,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EJ;
 
             std::cout << i << '\n';
             std::cout << Float3::Index(0) << '\n';
@@ -1175,7 +1175,7 @@ int main (int argc, char **argv)
 
         {
             std::cout << "addition:\n";
-            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<I>,EmptyTypeList,DONT_FORCE_CONST> EE;
+            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<I>,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EE;
             typedef ExpressionTemplate_Addition_t<EE,EE,'+'> EA;
             EA e(u(i), v(i));
             std::cout << "expression template value:\n";
@@ -1197,7 +1197,7 @@ int main (int argc, char **argv)
 
         {
             std::cout << "inner product:\n";
-            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<I>,EmptyTypeList,DONT_FORCE_CONST> EE;
+            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<I>,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EE;
             typedef ExpressionTemplate_Multiplication_t<EE,EE> EM;
             EM e(u(i), v(i));
             Float3::Index k;
@@ -1216,8 +1216,8 @@ int main (int argc, char **argv)
 
         {
             std::cout << "outer product:\n";
-            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<I>,EmptyTypeList,DONT_FORCE_CONST> EI;
-            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<J>,EmptyTypeList,DONT_FORCE_CONST> EJ;
+            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<I>,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EI;
+            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<J>,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EJ;
             typedef ExpressionTemplate_Multiplication_t<EI,EJ> EM;
             EM e(u(i), v(j));
             std::cout << FORMAT_VALUE(TypeStringOf_t<EM::MultiIndex>::eval()) << '\n';
@@ -1244,8 +1244,8 @@ int main (int argc, char **argv)
 
         {
             std::cout << "contraction with simple tensor:\n";
-            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<I>,EmptyTypeList,DONT_FORCE_CONST> EI;
-            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<J>,EmptyTypeList,DONT_FORCE_CONST> EJ;
+            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<I>,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EI;
+            typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<J>,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EJ;
             typedef ExpressionTemplate_Multiplication_t<EI,EJ> EM;
             typedef ExpressionTemplate_Multiplication_t<EM,EJ> EMJ;
             EMJ e(EM(u(i), v(j)), w(j));
@@ -1282,7 +1282,7 @@ int main (int argc, char **argv)
             std::cout << "addition of 2-tensors:\n";
             typedef TypedIndex_t<Float3x4,'i'> I;
             I i;
-            typedef ExpressionTemplate_IndexedObject_t<Float3x4,TypeList_t<I>,EmptyTypeList,DONT_FORCE_CONST> EE;
+            typedef ExpressionTemplate_IndexedObject_t<Float3x4,TypeList_t<I>,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EE;
             typedef ExpressionTemplate_Addition_t<EE,EE,'+'> EA;
             Float3x4 u(Static<>::WITHOUT_INITIALIZATION);
             Float3x4 v(Static<>::WITHOUT_INITIALIZATION);
@@ -1318,7 +1318,7 @@ int main (int argc, char **argv)
             typedef TypedIndex_t<Float4,'j'> J;
             I i;
             J j;
-            typedef ExpressionTemplate_IndexedObject_t<Float3x4,TypeTuple_t<I,J>::T,EmptyTypeList,DONT_FORCE_CONST> EIJ;
+            typedef ExpressionTemplate_IndexedObject_t<Float3x4,TypeTuple_t<I,J>::T,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EIJ;
             typedef ExpressionTemplate_Addition_t<EIJ,EIJ,'+'> EA;
             Float3x4 u(Static<>::WITHOUT_INITIALIZATION);
             Float3x4 v(Static<>::WITHOUT_INITIALIZATION);
@@ -1348,8 +1348,8 @@ int main (int argc, char **argv)
             typedef TypedIndex_t<Float3,'j'> J;
             I i;
             J j;
-            typedef ExpressionTemplate_IndexedObject_t<Float3x3,TypeTuple_t<I,J>::T,EmptyTypeList,DONT_FORCE_CONST> EIJ;
-            typedef ExpressionTemplate_IndexedObject_t<Float3x3,TypeTuple_t<J,I>::T,EmptyTypeList,DONT_FORCE_CONST> EJI;
+            typedef ExpressionTemplate_IndexedObject_t<Float3x3,TypeTuple_t<I,J>::T,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EIJ;
+            typedef ExpressionTemplate_IndexedObject_t<Float3x3,TypeTuple_t<J,I>::T,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EJI;
             typedef ExpressionTemplate_Addition_t<EIJ,EIJ,'+'> EA;
             typedef ExpressionTemplate_Addition_t<EIJ,EJI,'+'> EB;
             Float3x3 u(Static<>::WITHOUT_INITIALIZATION);
@@ -1370,7 +1370,7 @@ int main (int argc, char **argv)
             std::cout << '\n';
 
             // uncommenting this should cause an error regarding prohibiting repeated indices in sums
-//             typedef ExpressionTemplate_IndexedObject_t<Float3x3,TypeTuple_t<I,I>::T,EmptyTypeList,DONT_FORCE_CONST> EII;
+//             typedef ExpressionTemplate_IndexedObject_t<Float3x3,TypeTuple_t<I,I>::T,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EII;
 //             typedef ExpressionTemplate_Addition_t<EII,EII,'+'> EC;
 //             EC e_bad(u(i,i), u(i,i));
 
@@ -1411,9 +1411,9 @@ int main (int argc, char **argv)
             J j;
             K k;
             L l;
-            typedef ExpressionTemplate_IndexedObject_t<Float3x4,TypeTuple_t<I,J>::T,EmptyTypeList,DONT_FORCE_CONST> EIJ;
-            typedef ExpressionTemplate_IndexedObject_t<Float4x5,TypeTuple_t<J,K>::T,EmptyTypeList,DONT_FORCE_CONST> EJK;
-            typedef ExpressionTemplate_IndexedObject_t<Float5x2,TypeTuple_t<K,L>::T,EmptyTypeList,DONT_FORCE_CONST> EKL;
+            typedef ExpressionTemplate_IndexedObject_t<Float3x4,TypeTuple_t<I,J>::T,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EIJ;
+            typedef ExpressionTemplate_IndexedObject_t<Float4x5,TypeTuple_t<J,K>::T,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EJK;
+            typedef ExpressionTemplate_IndexedObject_t<Float5x2,TypeTuple_t<K,L>::T,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EKL;
             typedef ExpressionTemplate_Multiplication_t<EIJ,EJK> EM;
             typedef ExpressionTemplate_Multiplication_t<EM,EKL> EMM;
             std::cout << "expression template contraction u(i,j)*v(j,k):\n";
@@ -1530,7 +1530,7 @@ int main (int argc, char **argv)
             I i;
             J j;
             std::cout << FORMAT_VALUE(u) << '\n';
-            typedef ExpressionTemplate_IndexedObject_t<Float3x3,EmptyTypeList,TypeTuple_t<I>::T,DONT_FORCE_CONST> ET;
+            typedef ExpressionTemplate_IndexedObject_t<Float3x3,EmptyTypeList,TypeTuple_t<I>::T,DONT_FORCE_CONST,CHECK_FOR_ALIASING> ET;
             ET::MultiIndex k;
             std::cout << "trace(u) = " << u(i|i)[k] << '\n';
             std::cout << "trace(u) = " << float(u(i|i)) << '\n';
@@ -1680,6 +1680,52 @@ int main (int argc, char **argv)
             a(i|k) = (2*a(i|j)*a(j|k)).eval();
             std::cout << "after assignment a(i|k) = (2*a(i|j)*a(j|k)).eval(), " << FORMAT_VALUE(a) << '\n';
             std::cout << '\n';
+        }
+        
+        // testing aliasing
+        {
+            std::cout << "testing aliased and no_alias expressions\n";
+            typedef Tensor2_t<Float3,Float3> Float3x3;
+            Float3x3 a(Static<>::WITHOUT_INITIALIZATION);
+            Float3x3 b(Static<>::WITHOUT_INITIALIZATION);
+            for (Float3x3::Index k; k.is_not_at_end(); ++k)
+                a[k] = k.value() + 1;
+                
+            TypedIndex_t<Float3,'i'> i;
+            TypedIndex_t<Float3,'j'> j;
+            
+            // this should not throw because it is not an aliased expression
+            try
+            {
+                a(i|j) = 2*b(i|j);
+                std::cout << "correctly did not thow an exception\n";
+            }
+            catch (std::invalid_argument &e)
+            {
+                assert(false && "this should not happen");
+            }
+            
+            // this should throw because it is an aliased expression (as far as the program can tell)
+            try
+            {
+                a(i|j) = 2*a(i|j);
+                assert(false && "this should not happen");
+            }
+            catch (std::invalid_argument &e)
+            {
+                std::cout << "correctly caught exception\n";
+            }
+            
+            // this should not throw because it is a human-guaranteed-non-aliased expression
+            try
+            {
+                a(i|j).no_alias() = 2*a(i|j);
+                std::cout << "correctly did not thow an exception\n";
+            }
+            catch (std::invalid_argument &e)
+            {
+                assert(false && "this should not happen");
+            }
         }
     }
 

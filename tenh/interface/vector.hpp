@@ -90,25 +90,29 @@ struct Vector_i
     ExpressionTemplate_IndexedObject_t<Derived,
                                        TypeList_t<TypedIndex_t<Derived,SYMBOL> >,
                                        EmptyTypeList,
-                                       FORCE_CONST> operator () (TypedIndex_t<Derived,SYMBOL> const &) const
+                                       FORCE_CONST,
+                                       CHECK_FOR_ALIASING> operator () (TypedIndex_t<Derived,SYMBOL> const &) const
     {
         Lvd::Meta::Assert<(SYMBOL != '\0')>();
         return ExpressionTemplate_IndexedObject_t<Derived,
                                                   TypeList_t<TypedIndex_t<Derived,SYMBOL> >,
                                                   EmptyTypeList,
-                                                  FORCE_CONST>(as_derived());
+                                                  FORCE_CONST,
+                                                  CHECK_FOR_ALIASING>(as_derived());
     }
     template <char SYMBOL>
     ExpressionTemplate_IndexedObject_t<Derived,
                                        TypeList_t<TypedIndex_t<Derived,SYMBOL> >,
                                        EmptyTypeList,
-                                       DONT_FORCE_CONST> operator () (TypedIndex_t<Derived,SYMBOL> const &)
+                                       DONT_FORCE_CONST,
+                                       CHECK_FOR_ALIASING> operator () (TypedIndex_t<Derived,SYMBOL> const &)
     {
         Lvd::Meta::Assert<(SYMBOL != '\0')>();
         return ExpressionTemplate_IndexedObject_t<Derived,
                                                   TypeList_t<TypedIndex_t<Derived,SYMBOL> >,
                                                   EmptyTypeList,
-                                                  DONT_FORCE_CONST>(as_derived());
+                                                  DONT_FORCE_CONST,
+                                                  CHECK_FOR_ALIASING>(as_derived());
     }
 
     // NOTE: these are sort of part of the Tensor_i interface, but need Vector_i's cooperation.
