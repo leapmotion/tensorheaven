@@ -10,9 +10,11 @@ include_directories(${tensorheaven_test_SOURCE_DIR} ${EIGEN_INCLUDE_DIR})
 # TODO: build options for other compilers
 set(CMAKE_CXX_FLAGS "-Wall -Werror")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
-set(CMAKE_CXX_FLAGS_RELEASE "-g -O3")
+set(CMAKE_CXX_FLAGS_RELEASE "-g -O2")
+set(CMAKE_CXX_FLAGS_ASMEXAM "-g0 -O2 -save-temps")
 
 # temp tests
+add_executable(asm_exam asm_exam.cpp)
 add_executable(contraction_prototype contraction_prototype.cpp)
 add_executable(eigen_interop_prototype eigen_interop_prototype.cpp)
 add_executable(multiindex multiindex.cpp)
