@@ -36,19 +36,19 @@ void test_SVD ()
     typedef Tensor2Diagonal_t<V1,V2> S;
     typedef Tensor2_t<V2,V2> V;
 
-    Tensor2 t(Static<>::WITHOUT_INITIALIZATION);
+    Tensor2 t(Static<WithoutInitialization>::SINGLETON);
     for (typename Tensor2::Index i; i.is_not_at_end(); ++i)
         t[i] = i.value() + 1;
 
-    U u(Static<>::WITHOUT_INITIALIZATION);
-    S s(Static<>::WITHOUT_INITIALIZATION);
-    V v(Static<>::WITHOUT_INITIALIZATION);
+    U u(Static<WithoutInitialization>::SINGLETON);
+    S s(Static<WithoutInitialization>::SINGLETON);
+    V v(Static<WithoutInitialization>::SINGLETON);
     SVD_of_Tensor2(t, u, s, v);
     std::cout << FORMAT_VALUE(u) << '\n';
     std::cout << FORMAT_VALUE(s) << '\n';
     std::cout << FORMAT_VALUE(v) << '\n';
 
-    Tensor2 x(Static<>::WITHOUT_INITIALIZATION);
+    Tensor2 x(Static<WithoutInitialization>::SINGLETON);
     TypedIndex_t<V1,'i'> i;
     TypedIndex_t<V1,'j'> j;
     TypedIndex_t<V1,'k'> k;
@@ -81,12 +81,12 @@ void test_diagonalization ()
     typedef Tensor2Diagonal_t<V,V> D;
     typedef Tensor2Symmetric_t<V> S;
 
-    S s(Static<>::WITHOUT_INITIALIZATION);
+    S s(Static<WithoutInitialization>::SINGLETON);
     for (typename S::Index i; i.is_not_at_end(); ++i)
         s[i] = i.value() + 1;
 
-    D eval(Static<>::WITHOUT_INITIALIZATION);
-    T evec(Static<>::WITHOUT_INITIALIZATION);
+    D eval(Static<WithoutInitialization>::SINGLETON);
+    T evec(Static<WithoutInitialization>::SINGLETON);
     diagonalize_Tensor2Symmetric(s, eval, evec);
     std::cout << FORMAT_VALUE(evec) << '\n';
     std::cout << FORMAT_VALUE(eval) << '\n';
@@ -111,12 +111,12 @@ void test_LDLT ()
     typedef Tensor2Diagonal_t<V,V> D;
     typedef Tensor2Symmetric_t<V> S;
 
-    S s(Static<>::WITHOUT_INITIALIZATION);
+    S s(Static<WithoutInitialization>::SINGLETON);
     for (typename S::Index i; i.is_not_at_end(); ++i)
         s[i] = i.value() + 1;
 
-    D d(Static<>::WITHOUT_INITIALIZATION);
-    T l(Static<>::WITHOUT_INITIALIZATION);
+    D d(Static<WithoutInitialization>::SINGLETON);
+    T l(Static<WithoutInitialization>::SINGLETON);
 
     LDLT_Tensor2Symmetric(s, d, l);
 

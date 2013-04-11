@@ -33,7 +33,7 @@ template <typename Tensor2Type>
 Eigen::Matrix<typename Tensor2Type::Scalar,Tensor2Type::Factor1::DIM,Tensor2Type::Factor2::DIM,Eigen::RowMajor>
     EigenMatrix_of (Tensor2Type const &t)
 {
-    Tensor2_t<typename Tensor2Type::Factor1,typename Tensor2Type::Factor2> temp(Static<>::WITHOUT_INITIALIZATION);
+    Tensor2_t<typename Tensor2Type::Factor1,typename Tensor2Type::Factor2> temp(Static<WithoutInitialization>::SINGLETON);
     TypedIndex_t<typename Tensor2Type::Factor1,'i'> i;
     TypedIndex_t<typename Tensor2Type::Factor2,'j'> j;
     temp(i|j) = t(i|j); // "blow up" t into temp

@@ -26,7 +26,7 @@ void constructor_without_initialization (Context const &context)
 {
     typedef Tenh::Vector_t<Scalar,DIM> Vector;
 
-    Vector v(Tenh::Static<>::WITHOUT_INITIALIZATION);
+    Vector v(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
 }
 
 template <typename Scalar, Uint32 DIM>

@@ -44,7 +44,7 @@ struct Index_t
     // for when you know that 0 <= i < COMPONENT_COUNT -- bypass the range check
     static Index_t range_unchecked (Uint32 i)
     {
-        Index_t retval(Static_t<WithoutInitialization>::SINGLETON);
+        Index_t retval(Static<WithoutInitialization>::SINGLETON);
         retval.m = i;
         return retval;
     }

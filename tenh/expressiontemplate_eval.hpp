@@ -56,7 +56,7 @@ struct ExpressionTemplate_Eval_t<Operand,TypeList_t<Index1> >
         :
         m_operand(operand),
         m_eval_is_cached(false),
-        m_cached_tensor(Static<>::WITHOUT_INITIALIZATION)
+        m_cached_tensor(Static<WithoutInitialization>::SINGLETON)
     { }
 
 //     operator Scalar () const // TODO: only use this in the no-free-index one
@@ -119,7 +119,7 @@ struct ExpressionTemplate_Eval_t<Operand,TypeList_t<Index1,TypeList_t<Index2> > 
         :
         m_operand(operand),
         m_eval_is_cached(false),
-        m_cached_tensor(Static<>::WITHOUT_INITIALIZATION)
+        m_cached_tensor(Static<WithoutInitialization>::SINGLETON)
     { }
 
 //     operator Scalar () const // TODO: only use this in the no-free-index one

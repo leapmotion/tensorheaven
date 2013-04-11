@@ -64,6 +64,8 @@ random TODOs:
   would take template parameters which are of types VectorSpace_i and TensorSpace_i respectively.
   this seems necessary in order to implement vector and tensor "constants", which don't represent a vector space,
   but actually a single element in a vector space.
+- move "private" utility functions/metafunctions into the "Tenh::NonPublic" namespace so that they're not in the
+  "Tenh" namespace, for at least a little bit of non-public interface hiding.
 
 features necessary for version 0.5:
 - euclidean embedding (using short-turm zero-dimensional hack (?))

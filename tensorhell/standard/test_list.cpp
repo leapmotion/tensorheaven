@@ -91,12 +91,12 @@ void add_leading_and_trailing_list_length_0_test (Directory *parent)
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent,
                                      FORMAT(Tenh::TypeStringOf_t<List>::eval() << "::leading_list<" << 0 << '>'),
                                      test_leading_list<TypeList,0>,
-                                     new Context::Data<pair<List,Tenh::EmptyList> >(pair<List,Tenh::EmptyList>(l, Tenh::Static_t<Tenh::EmptyList>::SINGLETON)),
+                                     new Context::Data<pair<List,Tenh::EmptyList> >(pair<List,Tenh::EmptyList>(l, Tenh::Static<Tenh::EmptyList>::SINGLETON)),
                                      RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent,
                                      FORMAT(Tenh::TypeStringOf_t<List>::eval() << "::trailing_list<" << 0 << '>'),
                                      test_trailing_list<TypeList,0>,
-                                     new Context::Data<pair<List,Tenh::EmptyList> >(pair<List,Tenh::EmptyList>(l, Tenh::Static_t<Tenh::EmptyList>::SINGLETON)),
+                                     new Context::Data<pair<List,Tenh::EmptyList> >(pair<List,Tenh::EmptyList>(l, Tenh::Static<Tenh::EmptyList>::SINGLETON)),
                                      RESULT_NO_ERROR);
 }
 
@@ -108,7 +108,7 @@ void add_leading_and_trailing_list_length_1_test (Directory *parent)
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent,
                                      FORMAT(Tenh::TypeStringOf_t<List>::eval() << "::leading_list<" << 0 << '>'),
                                      test_leading_list<TypeList,0>,
-                                     new Context::Data<pair<List,Tenh::EmptyList> >(pair<List,Tenh::EmptyList>(l, Tenh::Static_t<Tenh::EmptyList>::SINGLETON)),
+                                     new Context::Data<pair<List,Tenh::EmptyList> >(pair<List,Tenh::EmptyList>(l, Tenh::Static<Tenh::EmptyList>::SINGLETON)),
                                      RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent,
                                      FORMAT(Tenh::TypeStringOf_t<List>::eval() << "::trailing_list<" << 0 << '>'),
@@ -123,7 +123,7 @@ void add_leading_and_trailing_list_length_1_test (Directory *parent)
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent,
                                      FORMAT(Tenh::TypeStringOf_t<List>::eval() << "::trailing_list<" << 1 << '>'),
                                      test_trailing_list<TypeList,1>,
-                                     new Context::Data<pair<List,Tenh::EmptyList> >(pair<List,Tenh::EmptyList>(l, Tenh::Static_t<Tenh::EmptyList>::SINGLETON)),
+                                     new Context::Data<pair<List,Tenh::EmptyList> >(pair<List,Tenh::EmptyList>(l, Tenh::Static<Tenh::EmptyList>::SINGLETON)),
                                      RESULT_NO_ERROR);
 }
 

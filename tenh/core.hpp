@@ -6,6 +6,8 @@
 #ifndef TENH_CORE_HPP_
 #define TENH_CORE_HPP_
 
+#include <cmath>
+
 #include "tenh/meta/lvd.hpp"
 
 #define FORMAT_VALUE(expr) #expr << " = " << (expr) // TODO: move this out into test code
@@ -26,37 +28,24 @@ public:
     static std::string type_as_string () { return "NullType"; }
 };
 
-// for use when you want to return a const reference to a zero
-template <typename Scalar>
-struct StaticScalar
-{
-    static Scalar const ZERO;
-};
-
-template <typename Scalar>
-Scalar const StaticScalar<Scalar>::ZERO(0);
-
 // for making the construction of something without initialization explicit and ugly
 struct WithoutInitialization { };
 
-// this class is just to contain a preexisting instance of WithoutInitialization that you can use without constructing a new one.
-template <typename DummyType = NullType> // the template argument is just so there's no need for a cpp file definition of the static member
+// for use when you want to return a const reference to various constants.
+// the default implementation is to provide a default-constructed static
+// const SINGLETON of the given value.
+//
+// you can template-specialize this to provide particular customizations,
+// for example, Static<float> and Static<double> provide static constant
+// scalar values ZERO, ONE, and so forth.
+template <typename T>
 struct Static
 {
-    static WithoutInitialization const WITHOUT_INITIALIZATION;
-};
-
-template <typename DummyType>
-WithoutInitialization const Static<DummyType>::WITHOUT_INITIALIZATION = WithoutInitialization();
-
-template <typename T>
-struct Static_t
-{
-    static T SINGLETON;
+    static T const SINGLETON;
 };
 
 template <typename T>
-T Static_t<T>::SINGLETON;
+T const Static<T>::SINGLETON = T();
 
 // convenient notation for the square of something without evaluating the expression twice.
 template <typename T>

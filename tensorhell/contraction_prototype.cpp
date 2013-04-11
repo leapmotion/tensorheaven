@@ -447,8 +447,8 @@ void test_Tensor2Symmetric_t ()
     typedef Tensor2Symmetric_t<Vector> Tensor2Symmetric;
     std::cout << FORMAT_VALUE(Tensor2Symmetric::DIM) << '\n';
 
-    Tensor2Symmetric a(Static<>::WITHOUT_INITIALIZATION);
-    Tensor2Symmetric b(Static<>::WITHOUT_INITIALIZATION);
+    Tensor2Symmetric a(Static<WithoutInitialization>::SINGLETON);
+    Tensor2Symmetric b(Static<WithoutInitialization>::SINGLETON);
     for (typename Tensor2Symmetric::Index i; i.is_not_at_end(); ++i)
     {
         a[i] = i.value() + 1;
@@ -474,8 +474,8 @@ void test_Tensor2Symmetric_t ()
     std::cout << FORMAT_VALUE(hand_computed_value) << '\n';
     std::cout << '\n';
 
-    Vector v(Static<>::WITHOUT_INITIALIZATION);
-    Vector w(Static<>::WITHOUT_INITIALIZATION);
+    Vector v(Static<WithoutInitialization>::SINGLETON);
+    Vector w(Static<WithoutInitialization>::SINGLETON);
     for (typename Vector::Index i; i.is_not_at_end(); ++i)
         v[i] = i.value() + 5;
 //     a.template expr<'i','j'>();
@@ -526,8 +526,8 @@ void test_Tensor2Antisymmetric_t ()
     typedef Tensor2Antisymmetric_t<Vector> Tensor2Antisymmetric;
     std::cout << FORMAT_VALUE(Tensor2Antisymmetric::DIM) << '\n';
 
-    Tensor2Antisymmetric a(Static<>::WITHOUT_INITIALIZATION);
-    Tensor2Antisymmetric b(Static<>::WITHOUT_INITIALIZATION);
+    Tensor2Antisymmetric a(Static<WithoutInitialization>::SINGLETON);
+    Tensor2Antisymmetric b(Static<WithoutInitialization>::SINGLETON);
     for (typename Tensor2Antisymmetric::Index i; i.is_not_at_end(); ++i)
     {
         a[i] = i.value() + 1;
@@ -545,8 +545,8 @@ void test_Tensor2Antisymmetric_t ()
     std::cout << FORMAT_VALUE(hand_computed_value) << '\n';
     std::cout << '\n';
 
-    Vector v(Static<>::WITHOUT_INITIALIZATION);
-    Vector w(Static<>::WITHOUT_INITIALIZATION);
+    Vector v(Static<WithoutInitialization>::SINGLETON);
+    Vector w(Static<WithoutInitialization>::SINGLETON);
     for (typename Vector::Index i; i.is_not_at_end(); ++i)
         v[i] = i.value() + 5;
 //     a.template expr<'i','j'>();
@@ -596,8 +596,8 @@ void test_symmetric_and_antisymmetric_2_tensors ()
     std::cout << FORMAT_VALUE(TypeStringOf_t<Tensor2Symmetric>::eval()) << '\n';
     std::cout << FORMAT_VALUE(TypeStringOf_t<Tensor2Antisymmetric>::eval()) << '\n';
 
-    Tensor2Symmetric s(Static<>::WITHOUT_INITIALIZATION);
-    Tensor2Antisymmetric a(Static<>::WITHOUT_INITIALIZATION);
+    Tensor2Symmetric s(Static<WithoutInitialization>::SINGLETON);
+    Tensor2Antisymmetric a(Static<WithoutInitialization>::SINGLETON);
     for (typename Tensor2Symmetric::Index i; i.is_not_at_end(); ++i)
         s[i] = i.value() + 1;
     for (typename Tensor2Antisymmetric::Index i; i.is_not_at_end(); ++i)
@@ -605,7 +605,7 @@ void test_symmetric_and_antisymmetric_2_tensors ()
     std::cout << FORMAT_VALUE(s) << '\n';
     std::cout << FORMAT_VALUE(a) << '\n';
 
-    Tensor2 c(Static<>::WITHOUT_INITIALIZATION);
+    Tensor2 c(Static<WithoutInitialization>::SINGLETON);
     {
         {
             TypedIndex_t<Vector,'i'> i;
@@ -648,8 +648,8 @@ void test_scalar_multiplication_and_division ()
     std::cout << FORMAT_VALUE(TypeStringOf_t<Tensor2>::eval()) << '\n';
     std::cout << '\n';
 
-    Factor1 u1(Static<>::WITHOUT_INITIALIZATION);
-    Factor1 u2(Static<>::WITHOUT_INITIALIZATION);
+    Factor1 u1(Static<WithoutInitialization>::SINGLETON);
+    Factor1 u2(Static<WithoutInitialization>::SINGLETON);
     for (typename Factor1::Index i; i.is_not_at_end(); ++i)
         u1[i] = 3*i.value() + 8;
     std::cout << FORMAT_VALUE(u1) << '\n';
@@ -678,14 +678,14 @@ void test_scalar_multiplication_and_division ()
     std::cout << "-u1(i) = " << u2 << '\n';
     std::cout << '\n';
 
-    Factor2 v1(Static<>::WITHOUT_INITIALIZATION);
-    Factor2 v2(Static<>::WITHOUT_INITIALIZATION);
+    Factor2 v1(Static<WithoutInitialization>::SINGLETON);
+    Factor2 v2(Static<WithoutInitialization>::SINGLETON);
     for (typename Factor2::Index i; i.is_not_at_end(); ++i)
         v1[i] = sqr(i.value());
     std::cout << FORMAT_VALUE(v1) << '\n';
 
-    Tensor2 a(Static<>::WITHOUT_INITIALIZATION);
-    Tensor2 b(Static<>::WITHOUT_INITIALIZATION);
+    Tensor2 a(Static<WithoutInitialization>::SINGLETON);
+    Tensor2 b(Static<WithoutInitialization>::SINGLETON);
     TypedIndex_t<Factor2,'j'> j;
     a(i|j) = u1(i)*v1(j);
     std::cout << "a(i|j) = u1(i)*v1(j) = " << a << '\n';
@@ -701,7 +701,7 @@ void test_printing_expression_templates ()
     {
         std::cout << "test_printing_expression_templates<...>() degree 1 expression template, COMPONENT_COUNT1 = " << COMPONENT_COUNT1 << '\n';
         typedef Vector_t<float,COMPONENT_COUNT1> Vector;
-        Vector v(Static<>::WITHOUT_INITIALIZATION);
+        Vector v(Static<WithoutInitialization>::SINGLETON);
         for (typename Vector::Index i; i.is_not_at_end(); ++i)
             v[i] = sqr(i.value()) + 1;
         TypedIndex_t<Vector,'i'> i;
@@ -715,7 +715,7 @@ void test_printing_expression_templates ()
         typedef Vector_t<float,COMPONENT_COUNT1> Factor1;
         typedef Vector_t<float,COMPONENT_COUNT2> Factor2;
         typedef Tensor2_t<Factor1,Factor2> Tensor2;
-        Tensor2 a(Static<>::WITHOUT_INITIALIZATION);
+        Tensor2 a(Static<WithoutInitialization>::SINGLETON);
         for (typename Tensor2::Index i; i.is_not_at_end(); ++i)
             a[i] = sqr(i.value()) + 1;
         TypedIndex_t<Factor1,'i'> i;
@@ -732,8 +732,8 @@ void test_printing_expression_templates ()
         typedef Vector_t<float,COMPONENT_COUNT2> Factor2;
         typedef Vector_t<float,COMPONENT_COUNT3> Factor3;
         typedef Tensor2_t<Factor1,Factor2> Tensor2;
-        Tensor2 a(Static<>::WITHOUT_INITIALIZATION);
-        Factor3 v(Static<>::WITHOUT_INITIALIZATION);
+        Tensor2 a(Static<WithoutInitialization>::SINGLETON);
+        Factor3 v(Static<WithoutInitialization>::SINGLETON);
         for (typename Tensor2::Index i; i.is_not_at_end(); ++i)
             a[i] = sqr(i.value()) + 1;
         for (typename Factor3::Index i; i.is_not_at_end(); ++i)
@@ -759,7 +759,7 @@ void test_IndexBundle ()
     typedef Tensor2Symmetric_t<Vector> Tensor2Symmetric;
     typedef Tensor2Antisymmetric_t<Vector> Tensor2Antisymmetric;
 
-    Tensor2 t(Static<>::WITHOUT_INITIALIZATION);
+    Tensor2 t(Static<WithoutInitialization>::SINGLETON);
     for (typename Tensor2::Index k; k.is_not_at_end(); ++k)
         t[k] = k.value();
     std::cout << FORMAT_VALUE(t) << '\n';
@@ -802,7 +802,7 @@ void test_IndexBundle ()
         std::cout << FORMAT_VALUE(c) << " --> " << FORMAT_VALUE(eb[c]) << '\n';
     std::cout << '\n';
 
-    Tensor2Symmetric s(Static<>::WITHOUT_INITIALIZATION);
+    Tensor2Symmetric s(Static<WithoutInitialization>::SINGLETON);
     s(q) = eb;
     std::cout << FORMAT_VALUE(s) << '\n';
     std::cout << '\n';
@@ -819,13 +819,13 @@ void test_IndexBundle ()
     std::cout << (0.5f*(t(i|j) - t(j|i))).bundle(i|j,p) << '\n';
     std::cout << '\n';
 
-    Tensor2Antisymmetric a(Static<>::WITHOUT_INITIALIZATION);
+    Tensor2Antisymmetric a(Static<WithoutInitialization>::SINGLETON);
     s(q) = ((t(i|j) + t(j|i))/2).bundle(i|j,q);
     a(p) = ((t(i|j) - t(j|i))/2).bundle(i|j,p);
     std::cout << FORMAT_VALUE(t) << '\n';
     std::cout << "symmetric part of t: " << FORMAT_VALUE(s) << '\n';
     std::cout << "antisymmetric part of t: " << FORMAT_VALUE(a) << '\n';
-    Tensor2 x(Static<>::WITHOUT_INITIALIZATION);
+    Tensor2 x(Static<WithoutInitialization>::SINGLETON);
     x(i|j) = s(i|j) + a(i|j);
     std::cout << "recombined: " << FORMAT_VALUE(x) << '\n';
 
@@ -846,7 +846,7 @@ void test_IndexSplit ()
 
 //     {
 //         typedef Tensor2_t<Vector,Vector> T;
-//         T t(Static_t<WithoutInitialization>::SINGLETON);
+//         T t(Static<WithoutInitialization>::SINGLETON);
 //         for (typename T::Index i; i.is_not_at_end(); ++i)
 //             t[i] = i.value() + 1;
 //         std::cout << FORMAT_VALUE(t) << '\n';
@@ -862,7 +862,7 @@ void test_IndexSplit ()
 //     }
     {
         typedef Tensor2Antisymmetric_t<Vector> A;
-        A a(Static_t<WithoutInitialization>::SINGLETON);
+        A a(Static<WithoutInitialization>::SINGLETON);
         for (typename A::Index k; k.is_not_at_end(); ++k)
             a[k] = k.value() + 1;
         std::cout << FORMAT_VALUE(a) << '\n';
@@ -884,7 +884,7 @@ void test_IndexSplit ()
     {
         typedef Tensor2Antisymmetric_t<Vector> A;
         typedef Tensor2_t<A,Vector> T;
-        T t(Static_t<WithoutInitialization>::SINGLETON);
+        T t(Static<WithoutInitialization>::SINGLETON);
         for (typename T::Index i; i.is_not_at_end(); ++i)
             t[i] = i.value() + 1;
         std::cout << FORMAT_VALUE(t) << '\n';
@@ -907,7 +907,7 @@ void test_IndexSplit ()
         typedef Tensor2Antisymmetric_t<Vector> Tensor2Antisymmetric;
         typedef Tensor2Symmetric_t<Tensor2Antisymmetric> Tensor2Symmetric;
 
-        Tensor2Symmetric s(Static<>::WITHOUT_INITIALIZATION);
+        Tensor2Symmetric s(Static<WithoutInitialization>::SINGLETON);
         for (typename Tensor2Symmetric::Index k; k.is_not_at_end(); ++k)
             s[k] = k.value() + 1;
         std::cout << FORMAT_VALUE(s) << '\n';
@@ -927,7 +927,7 @@ void test_IndexSplit ()
     }
 
 //     typedef Tensor2_t<Tensor2_t<Vector,Vector>,Tensor2Antisymmetric> T;
-//     T t(Static<>::WITHOUT_INITIALIZATION);
+//     T t(Static<WithoutInitialization>::SINGLETON);
 //     t(i,j,q) = s(p,q).split(p,i,j);
 //     std::cout << FORMAT_VALUE(t) << '\n';
 //     std::cout << '\n';
@@ -959,7 +959,7 @@ void test_IndexSplit ()
         std::cout << FORMAT_VALUE(c) << " --> " << FORMAT_VALUE(eb[c]) << '\n';
     std::cout << '\n';
 
-    Tensor2Symmetric s(Static<>::WITHOUT_INITIALIZATION);
+    Tensor2Symmetric s(Static<WithoutInitialization>::SINGLETON);
     s(q) = eb;
     std::cout << FORMAT_VALUE(s) << '\n';
     std::cout << '\n';
@@ -976,13 +976,13 @@ void test_IndexSplit ()
     std::cout << (0.5f*(t(i,j) - t(j,i))).bundle(i,j,p) << '\n';
     std::cout << '\n';
 
-    Tensor2Antisymmetric a(Static<>::WITHOUT_INITIALIZATION);
+    Tensor2Antisymmetric a(Static<WithoutInitialization>::SINGLETON);
     s(q) = ((t(i,j) + t(j,i))/2).bundle(i,j,q);
     a(p) = ((t(i,j) - t(j,i))/2).bundle(i,j,p);
     std::cout << FORMAT_VALUE(t) << '\n';
     std::cout << "symmetric part of t: " << FORMAT_VALUE(s) << '\n';
     std::cout << "antisymmetric part of t: " << FORMAT_VALUE(a) << '\n';
-    Tensor2 x(Static<>::WITHOUT_INITIALIZATION);
+    Tensor2 x(Static<WithoutInitialization>::SINGLETON);
     x(i,j) = s(i,j) + a(i,j);
     std::cout << "recombined: " << FORMAT_VALUE(x) << '\n';
 
@@ -1004,12 +1004,12 @@ void test_Tensor2Diagonal_t ()
     typedef Vector_t<float,COLS> V2;
     typedef Tensor2Diagonal_t<V1,V2> Tensor2Diagonal;
 
-    Tensor2Diagonal t(Static<>::WITHOUT_INITIALIZATION);
+    Tensor2Diagonal t(Static<WithoutInitialization>::SINGLETON);
     for (typename Tensor2Diagonal::Index i; i.is_not_at_end(); ++i)
         t[i] = i.value()+1;
     std::cout << FORMAT_VALUE(t) << '\n';
 }
-
+/*
 template <Uint32 DIM>
 void test_EuclideanEmbedding_t ()
 {
@@ -1021,7 +1021,7 @@ void test_EuclideanEmbedding_t ()
         typedef EuclideanEmbedding_t<V> EE;
         EE e;
         std::cout << FORMAT_VALUE(e) << '\n';
-        V v(Static<>::WITHOUT_INITIALIZATION);
+        V v(Static<WithoutInitialization>::SINGLETON);
         for (typename V::Index i; i.is_not_at_end(); ++i)
             v[i] = i.value() + 1;
         std::cout << FORMAT_VALUE(v) << '\n';
@@ -1038,7 +1038,7 @@ void test_EuclideanEmbedding_t ()
         typedef EuclideanEmbedding_t<T> EE;
         EE e;
         std::cout << FORMAT_VALUE(e) << '\n';
-        T v(Static<>::WITHOUT_INITIALIZATION);
+        T v(Static<WithoutInitialization>::SINGLETON);
         for (typename T::Index i; i.is_not_at_end(); ++i)
             v[i] = i.value() + 1;
         std::cout << FORMAT_VALUE(v) << '\n';
@@ -1052,7 +1052,7 @@ void test_EuclideanEmbedding_t ()
 
     std::cout << '\n';
 }
-
+*/
 int main (int argc, char **argv)
 {
     // 1-dimensional vector to scalar coercion
@@ -1170,7 +1170,7 @@ int main (int argc, char **argv)
 //                 accumulator += X[Float3x4::DeprecatedIndex(r,c)] * Y[Float3x4::DeprecatedIndex(r,c)];
 //         std::cout << "actual answer = " << accumulator << ")\n\n";
 //
-//         Float3x3 W(Static<>::WITHOUT_INITIALIZATION);
+//         Float3x3 W(Static<WithoutInitialization>::SINGLETON);
 //         for (Uint32 i = 0; i < 3; ++i)
 //             for (Uint32 j = 0; j < 3; ++j)
 //                 for (Uint32 k = 0; k < 4; ++k)
@@ -1328,8 +1328,8 @@ int main (int argc, char **argv)
             I i;
             typedef ExpressionTemplate_IndexedObject_t<Float3x4,TypeList_t<I>,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EE;
             typedef ExpressionTemplate_Addition_t<EE,EE,'+'> EA;
-            Float3x4 u(Static<>::WITHOUT_INITIALIZATION);
-            Float3x4 v(Static<>::WITHOUT_INITIALIZATION);
+            Float3x4 u(Static<WithoutInitialization>::SINGLETON);
+            Float3x4 v(Static<WithoutInitialization>::SINGLETON);
             for (Float3x4::Index k; k.is_not_at_end(); ++k)
             {
                 u[k] = k.value();
@@ -1364,8 +1364,8 @@ int main (int argc, char **argv)
             J j;
             typedef ExpressionTemplate_IndexedObject_t<Float3x4,TypeTuple_t<I,J>::T,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EIJ;
             typedef ExpressionTemplate_Addition_t<EIJ,EIJ,'+'> EA;
-            Float3x4 u(Static<>::WITHOUT_INITIALIZATION);
-            Float3x4 v(Static<>::WITHOUT_INITIALIZATION);
+            Float3x4 u(Static<WithoutInitialization>::SINGLETON);
+            Float3x4 v(Static<WithoutInitialization>::SINGLETON);
             for (Float3x4::Index k; k.is_not_at_end(); ++k)
             {
                 u[k] = k.value();
@@ -1396,8 +1396,8 @@ int main (int argc, char **argv)
             typedef ExpressionTemplate_IndexedObject_t<Float3x3,TypeTuple_t<J,I>::T,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EJI;
             typedef ExpressionTemplate_Addition_t<EIJ,EIJ,'+'> EA;
             typedef ExpressionTemplate_Addition_t<EIJ,EJI,'+'> EB;
-            Float3x3 u(Static<>::WITHOUT_INITIALIZATION);
-            Float3x3 v(Static<>::WITHOUT_INITIALIZATION);
+            Float3x3 u(Static<WithoutInitialization>::SINGLETON);
+            Float3x3 v(Static<WithoutInitialization>::SINGLETON);
             // dummy values that aren't symmetric
             for (Float3x3::Index k; k.is_not_at_end(); ++k)
             {
@@ -1435,9 +1435,9 @@ int main (int argc, char **argv)
 
         {
             std::cout << "2-tensor contraction (matrix multiplication)\n";
-            Float3x4 u(Static<>::WITHOUT_INITIALIZATION);
-            Float4x5 v(Static<>::WITHOUT_INITIALIZATION);
-            Float5x2 w(Static<>::WITHOUT_INITIALIZATION);
+            Float3x4 u(Static<WithoutInitialization>::SINGLETON);
+            Float4x5 v(Static<WithoutInitialization>::SINGLETON);
+            Float5x2 w(Static<WithoutInitialization>::SINGLETON);
             for (Float3x4::Index k; k.is_not_at_end(); ++k)
                 u[k] = sqr(k.value());
             for (Float4x5::Index k; k.is_not_at_end(); ++k)
@@ -1523,13 +1523,13 @@ int main (int argc, char **argv)
             std::cout << "v(i) - v(i) = " << FORMAT_VALUE(u) << '\n';
             std::cout << '\n';
 
-            Float3x3 m(Static<>::WITHOUT_INITIALIZATION);
+            Float3x3 m(Static<WithoutInitialization>::SINGLETON);
             for (Float3x3::Index k; k.is_not_at_end(); ++k)
                 m[k] = k.value();
             std::cout << FORMAT_VALUE(m) << '\n';
             std::cout << '\n';
 
-            Float3x3 n(Static<>::WITHOUT_INITIALIZATION);
+            Float3x3 n(Static<WithoutInitialization>::SINGLETON);
             for (Float3x3::Index k; k.is_not_at_end(); ++k)
                 n[k] = 3*k.value() + 2;
             std::cout << FORMAT_VALUE(n) << '\n';
@@ -1677,13 +1677,13 @@ int main (int argc, char **argv)
         {
             std::cout << "********************************\n\n";
             typedef Tensor2_t<Float3,Float4> Float3x4;
-            Float3x4 u(Static<>::WITHOUT_INITIALIZATION);
+            Float3x4 u(Static<WithoutInitialization>::SINGLETON);
             for (Float3x4::Index i; i.is_not_at_end(); ++i)
                 u[i] = i.value() + 1;
             std::cout << FORMAT_VALUE(u) << '\n';
 
             typedef Tensor2_t<Float4,Float3> Float4x3;
-            Float4x3 v(Static<>::WITHOUT_INITIALIZATION);
+            Float4x3 v(Static<WithoutInitialization>::SINGLETON);
             TypedIndex_t<Float3,'i'> i;
             TypedIndex_t<Float3,'k'> k;
             TypedIndex_t<Float4,'j'> j;
@@ -1692,21 +1692,21 @@ int main (int argc, char **argv)
 
             typedef Tensor2Symmetric_t<Float3> Float3x3Symmetric;
             TypedIndex_t<Float3x3Symmetric,'q'> q;
-            Float3x3Symmetric s(Static<>::WITHOUT_INITIALIZATION);
+            Float3x3Symmetric s(Static<WithoutInitialization>::SINGLETON);
             s(q) = (u(i|j)*u(k|j)).bundle(i|k,q);
             std::cout << FORMAT_VALUE(s) << '\n';
         }
 
         // testing EuclideanEmbedding_t
-        test_EuclideanEmbedding_t<1>();
-        test_EuclideanEmbedding_t<2>();
-        test_EuclideanEmbedding_t<3>();
-        test_EuclideanEmbedding_t<4>();
+//         test_EuclideanEmbedding_t<1>();
+//         test_EuclideanEmbedding_t<2>();
+//         test_EuclideanEmbedding_t<3>();
+//         test_EuclideanEmbedding_t<4>();
 
         // testing ExpressionTemplate_Eval_t (TODO: general k-tensor case)
         {
             std::cout << "testing ExpressionTemplate_Eval_t for 1-tensors (vectors)\n";
-            Float3 a(Static<>::WITHOUT_INITIALIZATION);
+            Float3 a(Static<WithoutInitialization>::SINGLETON);
             for (Float3::Index k; k.is_not_at_end(); ++k)
                 a[k] = k.value() + 1;
             std::cout << FORMAT_VALUE(a) << '\n';
@@ -1719,7 +1719,7 @@ int main (int argc, char **argv)
         {
             std::cout << "testing ExpressionTemplate_Eval_t for 2-tensors\n";
             typedef Tensor2_t<Float3,Float3> Float3x3;
-            Float3x3 a(Static<>::WITHOUT_INITIALIZATION);
+            Float3x3 a(Static<WithoutInitialization>::SINGLETON);
             for (Float3x3::Index k; k.is_not_at_end(); ++k)
                 a[k] = k.value() + 1;
             std::cout << FORMAT_VALUE(a) << '\n';
@@ -1731,19 +1731,19 @@ int main (int argc, char **argv)
             std::cout << "after assignment a(i|k) = (2*a(i|j)*a(j|k)).eval(), " << FORMAT_VALUE(a) << '\n';
             std::cout << '\n';
         }
-        
+
         // testing aliasing
         {
             std::cout << "testing aliased and no_alias expressions\n";
             typedef Tensor2_t<Float3,Float3> Float3x3;
-            Float3x3 a(Static<>::WITHOUT_INITIALIZATION);
-            Float3x3 b(Static<>::WITHOUT_INITIALIZATION);
+            Float3x3 a(Static<WithoutInitialization>::SINGLETON);
+            Float3x3 b(Static<WithoutInitialization>::SINGLETON);
             for (Float3x3::Index k; k.is_not_at_end(); ++k)
                 a[k] = k.value() + 1;
-                
+
             TypedIndex_t<Float3,'i'> i;
             TypedIndex_t<Float3,'j'> j;
-            
+
             // this should not throw because it is not an aliased expression
             try
             {
@@ -1754,7 +1754,7 @@ int main (int argc, char **argv)
             {
                 assert(false && "this should not happen");
             }
-            
+
             // this should throw because it is an aliased expression (as far as the program can tell)
             try
             {
@@ -1765,7 +1765,7 @@ int main (int argc, char **argv)
             {
                 std::cout << "correctly caught exception\n";
             }
-            
+
             // this should not throw because it is a human-guaranteed-non-aliased expression
             try
             {

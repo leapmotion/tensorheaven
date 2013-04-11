@@ -50,7 +50,7 @@ int main (int argc, char **argv)
     }
 
     {
-        std::cout << FORMAT_VALUE((true >>= 42 >>= Static_t<EmptyList>::SINGLETON) |= ('a' >>= std::string("blahblah") >>= Static_t<EmptyList>::SINGLETON)) << '\n';
+        std::cout << FORMAT_VALUE((true >>= 42 >>= Static<EmptyList>::SINGLETON) |= ('a' >>= std::string("blahblah") >>= Static<EmptyList>::SINGLETON)) << '\n';
         std::cout << FORMAT_VALUE(true >>= EmptyList()) << '\n';
         std::cout << FORMAT_VALUE(EmptyList() |= EmptyList()) << '\n';
         std::cout << FORMAT_VALUE(('a' >>= EmptyList()) |= EmptyList()) << '\n';

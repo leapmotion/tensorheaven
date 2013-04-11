@@ -27,7 +27,7 @@ namespace Tensor2Diagonal {
     template <typename Type>
     void constructor_without_initialization (Context const &context)
     {
-        Type d(Tenh::Static<>::WITHOUT_INITIALIZATION);
+        Type d(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
     }
 
     template <typename Type>

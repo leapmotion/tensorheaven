@@ -180,8 +180,9 @@ struct List_t<EmptyTypeList>
     static Uint32 length () { return LENGTH; }
 
     // there is no head, so there is no accessors for it.
-    List_t<EmptyTypeList> const &body () const { return Static_t<List_t<EmptyTypeList> >::SINGLETON; }
-    List_t<EmptyTypeList> &body () { return Static_t<List_t<EmptyTypeList> >::SINGLETON; }
+    List_t<EmptyTypeList> const &body () const { return Static<List_t<EmptyTypeList> >::SINGLETON; }
+    // the const_cast doesn't matter because an empty list has no state to modify.
+    List_t<EmptyTypeList> &body () { return *const_cast<List_t<EmptyTypeList> *>(&Static<List_t<EmptyTypeList> >::SINGLETON); }
 
     template <Uint32 INDEX>
     struct Type_t
@@ -279,7 +280,7 @@ struct List_t<EmptyTypeList>
     static std::string type_as_string () { return "List_t<" + TypeStringOf_t<TypeList>::eval() + '>'; }
 };
 
-// you can use this to access the static const singleton as Static_t<EmptyList>::SINGLETON
+// you can use this to access the static const singleton as Static<EmptyList>::SINGLETON
 typedef List_t<EmptyTypeList> EmptyList;
 
 
@@ -314,8 +315,9 @@ struct List_t<TypeList_t<HeadType_> >
 
     HeadType const &head () const { return m_head; }
     HeadType &head () { return m_head; }
-    List_t<EmptyTypeList> const &body () const { return Static_t<List_t<EmptyTypeList> >::SINGLETON; }
-    List_t<EmptyTypeList> &body () { return Static_t<List_t<EmptyTypeList> >::SINGLETON; }
+    List_t<EmptyTypeList> const &body () const { return Static<List_t<EmptyTypeList> >::SINGLETON; }
+    // the const_cast doesn't matter because an empty list has no state to modify.
+    List_t<EmptyTypeList> &body () { return *const_cast<List_t<EmptyTypeList> *>(&Static<List_t<EmptyTypeList> >::SINGLETON); }
 
     // type cast operator for HeadType?
 

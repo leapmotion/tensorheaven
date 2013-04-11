@@ -25,7 +25,7 @@ void constructor_without_initialization (Context const &context)
 {
     typedef Tenh::Array_t<Component,DIM> Array;
 
-    Array v(Tenh::Static<>::WITHOUT_INITIALIZATION);
+    Array v(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
 }
 
 template <typename Component, Uint32 DIM>
