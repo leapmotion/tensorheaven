@@ -27,11 +27,11 @@ namespace Tenh {
 //    (a1,b1,c1,d1,e1,f1)*(a2,b2,c2,d2,e2,f2) = a1*a2 + 2*b1*b2 + 2*c1*c2 + d1*d2 + 2*e1*e2 + f1*f2.
 
 // NOTE: technically this is the inner product, not the natural pairing (we don't have dual spaces yet)
-template <typename OwnerVector>
+template <typename Vector>
 struct NaturalPairing_t
 {
-    typedef typename OwnerVector::Scalar Scalar;
-    typedef typename OwnerVector::Index Index;
+    typedef typename Vector::Scalar Scalar;
+    typedef typename Vector::Index Index;
 
     // default natural pairing uses the identity matrix as its Gram matrix
     static Scalar component (Index const &i) { return Scalar(1); }

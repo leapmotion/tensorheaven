@@ -28,15 +28,15 @@ struct FreeIndexTypeList_t
 };
 
 template <typename HeadType>
-typename HeadType::OwnerVector::Scalar summation_component_factor (MultiIndex_t<TypeList_t<HeadType> > const &s)
+typename HeadType::Owner::Scalar summation_component_factor (MultiIndex_t<TypeList_t<HeadType> > const &s)
 {
-    return NaturalPairing_t<typename HeadType::OwnerVector>::component(s.head());
+    return NaturalPairing_t<typename HeadType::Owner>::component(s.head());
 }
 
 template <typename HeadType, typename BodyTypeList>
-typename HeadType::OwnerVector::Scalar summation_component_factor (MultiIndex_t<TypeList_t<HeadType,BodyTypeList> > const &s)
+typename HeadType::Owner::Scalar summation_component_factor (MultiIndex_t<TypeList_t<HeadType,BodyTypeList> > const &s)
 {
-    return NaturalPairing_t<typename HeadType::OwnerVector>::component(s.head()) * summation_component_factor(s.body());
+    return NaturalPairing_t<typename HeadType::Owner>::component(s.head()) * summation_component_factor(s.body());
 }
 
 // TODO: think about how UnarySummation_t and BinarySummation_t could be combined (if it makes sense to do it)
@@ -192,7 +192,7 @@ struct BundleIndexMap_t
 };
 
 template <typename BundleIndexTypeList, typename ResultingIndexType>
-typename BundleIndexMap_t<BundleIndexTypeList,ResultingIndexType>::T const BundleIndexMap_t<BundleIndexTypeList,ResultingIndexType>::V = ResultingIndexType::OwnerVector::Derived::template bundle_index_map<BundleIndexTypeList,ResultingIndexType>;
+typename BundleIndexMap_t<BundleIndexTypeList,ResultingIndexType>::T const BundleIndexMap_t<BundleIndexTypeList,ResultingIndexType>::V = ResultingIndexType::Owner::Derived::template bundle_index_map<BundleIndexTypeList,ResultingIndexType>;
 
 // not an expression template, but just something that handles the bundled indices
 template <typename Operand, typename BundleIndexTypeList, typename ResultingIndexType>
@@ -257,7 +257,7 @@ struct IndexSplitter_t
 
     Scalar operator [] (MultiIndex const &m) const
     {
-        typedef typename SourceIndexType::OwnerVector::Derived SourceIndexOwnerTensor;
+        typedef typename SourceIndexType::Owner::Derived SourceIndexOwnerTensor;
         typename SourceIndexOwnerTensor::MultiIndex s(m.template range<SOURCE_INDEX_TYPE_INDEX,SOURCE_INDEX_TYPE_INDEX+SplitIndexTypeList::LENGTH>());
         if (SourceIndexOwnerTensor::component_is_immutable_zero(s))
             return Scalar(0);

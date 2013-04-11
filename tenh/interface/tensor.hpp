@@ -88,8 +88,8 @@ struct Tensor_i : public Vector_i<Derived_,typename FactorTypeList_::HeadType::S
 
     using Parent_Vector_i::as_derived;
     using Parent_Vector_i::operator[];
-    Scalar operator [] (MultiIndex const &m) const { return this->as_derived().operator[](m); }
-    Scalar operator [] (MultiIndex const &m) { return this->as_derived().operator[](m); }
+    Scalar operator [] (MultiIndex const &m) const { return as_derived().Derived::operator[](m); }
+    Scalar operator [] (MultiIndex const &m) { return as_derived().Derived::operator[](m); }
 
     using Parent_Vector_i::operator();
     // the two separate head/body template arguments are necessary to disambiguate this method

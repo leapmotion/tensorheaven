@@ -24,7 +24,11 @@ struct Tensor2Symmetric_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::Ty
                                                                    Derived_>::T,
                                             TypeList_t<Factor1_,TypeList_t<Factor2_> >,
                                             ((Factor1_::DIM+1)*Factor1_::DIM)/2>,
-                            public Array_t<typename Factor1_::Scalar,((Factor1_::DIM+1)*Factor1_::DIM)/2>
+                            private Array_t<typename Factor1_::Scalar,
+                                            ((Factor1_::DIM+1)*Factor1_::DIM)/2,
+                                            typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
+                                                                   Tensor2Symmetric_t<Factor1_,Factor2_,Derived_>,
+                                                                   Derived_>::T>
 {
     enum { FACTOR1_AND_FACTOR2_MUST_BE_IDENTICAL = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<Factor1_,Factor2_>::v>::v };
 
@@ -33,9 +37,13 @@ struct Tensor2Symmetric_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::Ty
                                                                      Derived_>::T,
                      TypeList_t<Factor1_,TypeList_t<Factor2_> >,
                      ((Factor1_::DIM+1)*Factor1_::DIM)/2> Parent_Tensor_i;
-    typedef Array_t<typename Factor1_::Scalar,((Factor1_::DIM+1)*Factor1_::DIM)/2> Parent_Array_t;
+    typedef Array_t<typename Factor1_::Scalar,
+                    ((Factor1_::DIM+1)*Factor1_::DIM)/2,
+                    typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
+                                            Tensor2Symmetric_t<Factor1_,Factor2_,Derived_>,
+                                            Derived_>::T> Parent_Array_t;
     typedef typename Parent_Tensor_i::Scalar Scalar;
-    using Parent_Tensor_i::DIM;
+    static Uint32 const DIM = Parent_Tensor_i::DIM;
     typedef typename Parent_Tensor_i::Derived Derived;
     typedef typename Parent_Tensor_i::Index Index;
     typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
@@ -81,9 +89,9 @@ struct Tensor2Symmetric_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::Ty
     // TODO: because the diagonal is indexed contiguously last, there is an easy type coercion (projection) to Tensor2Diagonal_t
     // TODO: because the strict lower triangle is indexed contiguously first, there is an easy type coercion (projection) to lower triangular
 
-    using Parent_Array_t::component_access_without_range_check;
-    // for access to particular components -- have to NOT do "using Parent_Tensor_i::operator[]" because of ambiguous overload
-    using Parent_Tensor_i::Parent_Vector_i::operator[];
+    using Parent_Array_t::operator[];
+    using Parent_Array_t::data_size_in_bytes;
+    using Parent_Array_t::data_pointer;
 
     // using two indices in a Tensor2Symmetric_t is breaking apart the Index type and using it
     // as a general tensor -- this is where the fancy indexing scheme happens.
@@ -108,8 +116,7 @@ struct Tensor2Symmetric_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::Ty
     template <typename Index1, typename Index2>
     Scalar component (Index1 const &i1, Index2 const &i2) const
     {
-        if (i1.is_at_end() || i2.is_at_end())
-            throw std::invalid_argument("index/indices out of range");
+        assert(i1.is_not_at_end() && i2.is_not_at_end() && "you used Index_t(x, DONT_RANGE_CHECK) inappropriately");
 
         if (Factor1::component_is_immutable_zero(i1) || Factor2::component_is_immutable_zero(i2))
             return Scalar(0);
@@ -117,7 +124,7 @@ struct Tensor2Symmetric_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::Ty
         MultiIndex m(Factor1::vector_index_of(i1), Factor2::vector_index_of(i2));
         return Factor1::scalar_factor_for_component(i1) *
                Factor2::scalar_factor_for_component(i2) *
-               Parent_Tensor_i::Parent_Vector_i::operator[](vector_index_of(m));
+               operator[](vector_index_of(m));
     }
     // write 2-tensor components -- will throw if a component doesn't correspond to a memory location
     // Index1 could be Factor1::Index or Factor1::MultiIndex (checked by its use in the other functions)
@@ -125,15 +132,15 @@ struct Tensor2Symmetric_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::Ty
     template <typename Index1, typename Index2>
     void set_component (Index1 const &i1, Index2 const &i2, Scalar s)
     {
-        if (i1.is_at_end() || i2.is_at_end())
-            throw std::invalid_argument("index/indices out of range");
+        assert(i1.is_not_at_end() && i2.is_not_at_end() && "you used Index_t(x, DONT_RANGE_CHECK) inappropriately");
 
         if (Factor1::component_is_immutable_zero(i1) || Factor2::component_is_immutable_zero(i2))
             throw std::invalid_argument("this tensor component is not writable");
 
         MultiIndex m(Factor1::vector_index_of(i1), Factor2::vector_index_of(i2));
         // write to the component, but divide through by the total scale factor for the component.
-        Parent_Tensor_i::Parent_Vector_i::operator[](vector_index_of(m)) = s / (Factor1::scalar_factor_for_component(i1) * Factor2::scalar_factor_for_component(i2));
+        operator[](vector_index_of(m))
+            = s / (Factor1::scalar_factor_for_component(i1) * Factor2::scalar_factor_for_component(i2));
     }
     using Parent_Tensor_i::component_is_immutable_zero;
     using Parent_Tensor_i::scalar_factor_for_component;
@@ -145,7 +152,7 @@ struct Tensor2Symmetric_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::Ty
     // this should return iff !component_is_immutable_zero(m) and otherwise throw
     static Index vector_index_of (MultiIndex const &m)
     {
-        return Index::range_unchecked(rowcol_index_to_contiguous_index(m.template el<0>().value(), m.template el<1>().value()));
+        return Index(rowcol_index_to_contiguous_index(m.template el<0>().value(), m.template el<1>().value()), DONT_CHECK_RANGE);
     }
 
     static std::string type_as_string ()
@@ -193,8 +200,6 @@ private:
             col = i - row*(row-1)/2;
         }
     }
-
-    using Parent_Array_t::operator[]; // this shouldn't be publicly accessible
 };
 
 // template specialization for the natural pairing in this particular coordinatization of Tensor2Symmetric_t

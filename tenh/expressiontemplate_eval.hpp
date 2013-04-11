@@ -81,7 +81,7 @@ struct ExpressionTemplate_Eval_t<Operand,TypeList_t<Index1> >
 
 private:
 
-    typedef typename FreeIndexTypeList::HeadType::OwnerVector::Derived Factor1;
+    typedef typename FreeIndexTypeList::HeadType::Owner::Derived Factor1;
     typedef Factor1 Tensor;
 
     Operand const &m_operand;
@@ -144,8 +144,8 @@ struct ExpressionTemplate_Eval_t<Operand,TypeList_t<Index1,TypeList_t<Index2> > 
 
 private:
 
-    typedef typename FreeIndexTypeList::HeadType::OwnerVector::Derived Factor1;
-    typedef typename FreeIndexTypeList::BodyTypeList::HeadType::OwnerVector::Derived Factor2;
+    typedef typename FreeIndexTypeList::HeadType::Owner::Derived Factor1;
+    typedef typename FreeIndexTypeList::BodyTypeList::HeadType::Owner::Derived Factor2;
     typedef Tensor2_t<Factor1,Factor2> Tensor;
 
     Operand const &m_operand;

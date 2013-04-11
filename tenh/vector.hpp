@@ -22,17 +22,22 @@ struct Vector_t : public Vector_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqua
                                                          Derived_>::T,
                                   Scalar_,
                                   DIM_>,
-                  public Array_t<Scalar_,DIM_>
+                  private Array_t<Scalar_,DIM_,typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
+                                                                      Vector_t<Scalar_,DIM_,Derived_>,
+                                                                      Derived_>::T>
+                  // Array_t is privately inherited because it is an implementation detail
 {
     typedef Vector_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
                                             Vector_t<Scalar_,DIM_,Derived_>,
                                             Derived_>::T,
                      Scalar_,
                      DIM_> Parent_Vector_i;
-    typedef Array_t<Scalar_,DIM_> Parent_Array_t;
+    typedef Array_t<Scalar_,DIM_,typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
+                                                        Vector_t<Scalar_,DIM_,Derived_>,
+                                                        Derived_>::T> Parent_Array_t;
     typedef typename Parent_Vector_i::Derived Derived;
     typedef typename Parent_Vector_i::Scalar Scalar;
-    using Parent_Vector_i::DIM;
+    static Uint32 const DIM = Parent_Vector_i::DIM;
     typedef typename Parent_Vector_i::Index Index;
     typedef typename Parent_Vector_i::MultiIndex MultiIndex;
 
@@ -43,8 +48,7 @@ struct Vector_t : public Vector_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqua
     Vector_t (Scalar x0, Scalar x1, Scalar x2, Scalar x3) : Parent_Array_t(x0, x1, x2, x3) { }
 
     using Parent_Vector_i::as_derived;
-    using Parent_Vector_i::operator[];
-    using Parent_Array_t::component_access_without_range_check;
+    using Parent_Array_t::operator[];
     using Parent_Array_t::data_size_in_bytes;
     using Parent_Array_t::data_pointer;
 
@@ -55,10 +59,6 @@ struct Vector_t : public Vector_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqua
         else
             return "Vector_t<" + TypeStringOf_t<Scalar>::eval() + ',' + AS_STRING(DIM) + ',' + TypeStringOf_t<Derived>::eval() + '>';
     }
-
-private:
-
-    using Parent_Array_t::operator[]; // this should not be publicly accessible
 };
 
 } // end of namespace Tenh

@@ -66,6 +66,10 @@ random TODOs:
   but actually a single element in a vector space.
 - move "private" utility functions/metafunctions into the "Tenh::NonPublic" namespace so that they're not in the
   "Tenh" namespace, for at least a little bit of non-public interface hiding.
+- make a DerivedType_t metafunction which handles the Derived_ = NullType default value for derived types
+- implement compile-time assert messages as follows:
+  struct WhateverYouWantTheMessageToBe { /* intentionally empty */ };
+  struct Assert<false,Message> { static bool const V = Message::VALUE_INTENTIONALLY_MISSING_TO_CAUSE_COMPILE_ERROR; };
 
 features necessary for version 0.5:
 - euclidean embedding (using short-turm zero-dimensional hack (?))

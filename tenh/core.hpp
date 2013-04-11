@@ -6,7 +6,7 @@
 #ifndef TENH_CORE_HPP_
 #define TENH_CORE_HPP_
 
-#include <cmath>
+#include <cassert>
 
 #include "tenh/meta/lvd.hpp"
 
@@ -53,6 +53,15 @@ T sqr (T const &t)
 {
     return t*t;
 }
+
+// these are used in constructors for determining if a range check should be done.
+// the default check parameter value should be CHECK_RANGE, which is more expensive,
+// but if you know what you're doing, you can pass in DONT_CHECK_RANGE to avoid the
+// range check and gain efficiency (e.g. if you know for a fact that the value is
+// within the correct range).  this is a compromise between completely correct program
+// behavior and program efficiency.
+static bool const CHECK_RANGE = true;
+static bool const DONT_CHECK_RANGE = false;
 
 } // end of namespace Tenh
 

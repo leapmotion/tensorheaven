@@ -26,7 +26,7 @@ static bool const CHECK_FOR_ALIASING = true;
 static bool const DONT_CHECK_FOR_ALIASING = false;
 
 // this is the "const" version of an indexed tensor expression (it has summed indices, so it doesn't make sense to assign to it)
-template <typename Object, typename IndexTypeList, typename SummedIndexTypeList_, 
+template <typename Object, typename IndexTypeList, typename SummedIndexTypeList_,
           bool FORCE_CONST_, bool CHECK_FOR_ALIASING_, typename Derived_ = NullType>
 struct ExpressionTemplate_IndexedObject_t
     :
@@ -105,7 +105,7 @@ struct ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,EmptyTypeList,DON
     // call this on the left-hand side (LHS) of an indexed assignment to avoid the run-time
     // aliasing check.  this should only be done when the human can guarantee that there is
     // no memory aliasing in the assignment (where the same memory location is being referenced
-    // on both the LHS and RHS of the assignment, therefore causing the non-atomically 
+    // on both the LHS and RHS of the assignment, therefore causing the non-atomically
     // evaluated result to be implementation-dependent and incorrect).
     ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,EmptyTypeList,DONT_FORCE_CONST,DONT_CHECK_FOR_ALIASING,Derived_> no_alias ()
     {

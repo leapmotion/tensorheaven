@@ -22,7 +22,12 @@ struct Tensor2Diagonal_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::Typ
                                                                   Derived_>::T,
                                            TypeList_t<Factor1_,TypeList_t<Factor2_> >,
                                            ((Factor1_::DIM < Factor2_::DIM) ? Factor1_::DIM : Factor2_::DIM)>,
-                           public Array_t<typename Factor1_::Scalar,((Factor1_::DIM < Factor2_::DIM) ? Factor1_::DIM : Factor2_::DIM)>
+                           private Array_t<typename Factor1_::Scalar,
+                                           ((Factor1_::DIM < Factor2_::DIM) ? Factor1_::DIM : Factor2_::DIM),
+                                           typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
+                                                                  Tensor2Diagonal_t<Factor1_,Factor2_,Derived_>,
+                                                                  Derived_>::T>
+                           // privately inherited because the use of Array_t is an implementation detail
 {
     enum { FACTOR_SCALAR_TYPES_ARE_EQUAL =
         Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename Factor1_::Scalar,typename Factor2_::Scalar>::v>::v };
@@ -32,9 +37,13 @@ struct Tensor2Diagonal_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::Typ
                                                                      Derived_>::T,
                      TypeList_t<Factor1_,TypeList_t<Factor2_> >,
                      ((Factor1_::DIM < Factor2_::DIM) ? Factor1_::DIM : Factor2_::DIM)> Parent_Tensor_i;
-    typedef Array_t<typename Factor1_::Scalar,((Factor1_::DIM < Factor2_::DIM) ? Factor1_::DIM : Factor2_::DIM)> Parent_Array_t;
+    typedef Array_t<typename Factor1_::Scalar,
+                    ((Factor1_::DIM < Factor2_::DIM) ? Factor1_::DIM : Factor2_::DIM),
+                    typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
+                                            Tensor2Diagonal_t<Factor1_,Factor2_,Derived_>,
+                                            Derived_>::T> Parent_Array_t;
     typedef typename Parent_Tensor_i::Scalar Scalar;
-    using Parent_Tensor_i::DIM;
+    static Uint32 const DIM = Parent_Tensor_i::DIM;
     typedef typename Parent_Tensor_i::Derived Derived;
     typedef typename Parent_Tensor_i::Index Index;
     typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
@@ -73,9 +82,9 @@ struct Tensor2Diagonal_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::Typ
         return MultiIndex_t<BundleIndexTypeList>(Index1(row), Index2(col));
     }
 
-    using Parent_Array_t::component_access_without_range_check;
-    // for access to particular components -- have to NOT do "using Parent_Tensor_i::operator[]" because of ambiguous overload
-    using Parent_Tensor_i::Parent_Vector_i::operator[];
+    using Parent_Array_t::operator[];
+    using Parent_Array_t::data_size_in_bytes;
+    using Parent_Array_t::data_pointer;
 
     // using two indices in a Tensor2Diagonal_t is breaking apart the Index type and using it
     // as a general tensor -- this is where the fancy indexing scheme happens.
@@ -100,8 +109,7 @@ struct Tensor2Diagonal_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::Typ
     template <typename Index1, typename Index2>
     Scalar component (Index1 const &i1, Index2 const &i2) const
     {
-        if (i1.is_at_end() || i2.is_at_end())
-            throw std::invalid_argument("index/indices out of range");
+        assert(i1.is_not_at_end() && i2.is_not_at_end() && "you used Index_t(x, DONT_CHECK_RANGE) inappropriately");
 
         if (Factor1::component_is_immutable_zero(i1) || Factor2::component_is_immutable_zero(i2))
             return Scalar(0);
@@ -112,7 +120,7 @@ struct Tensor2Diagonal_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::Typ
 
         return Factor1::scalar_factor_for_component(i1) *
                Factor2::scalar_factor_for_component(i2) *
-               Parent_Tensor_i::Parent_Vector_i::operator[](vector_index_of(m));
+               operator[](vector_index_of(m));
     }
 
     // write 2-tensor components -- will throw if a component doesn't correspond to a memory location
@@ -121,8 +129,7 @@ struct Tensor2Diagonal_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::Typ
     template <typename Index1, typename Index2>
     void set_component (Index1 const &i1, Index2 const &i2, Scalar s)
     {
-        if (i1.is_at_end() || i2.is_at_end())
-            throw std::invalid_argument("index/indices out of range");
+        assert(i1.is_not_at_end() && i2.is_not_at_end() && "you used Index_t(x, DONT_CHECK_RANGE) inappropriately");
 
         if (Factor1::component_is_immutable_zero(i1) || Factor2::component_is_immutable_zero(i2))
             throw std::invalid_argument("this tensor component is not writable");
@@ -132,7 +139,7 @@ struct Tensor2Diagonal_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::Typ
             throw std::invalid_argument("this tensor component is not writable");
 
         // write to the component, but divide through by the total scale factor for the component.
-        Parent_Tensor_i::Parent_Vector_i::operator[](vector_index_of(m))
+        operator[](vector_index_of(m))
             = s / (Factor1::scalar_factor_for_component(i1) * Factor2::scalar_factor_for_component(i2));
     }
     using Parent_Tensor_i::component_is_immutable_zero;
@@ -157,8 +164,9 @@ struct Tensor2Diagonal_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::Typ
     // this should return iff !component_is_immutable_zero(c) and otherwise throw.
     static Index vector_index_of (MultiIndex const &m)
     {
-        return Index::range_unchecked(rowcol_index_to_contiguous_index(m.template el<0>().value(),
-                                                                       m.template el<1>().value()));
+        return Index(rowcol_index_to_contiguous_index(m.template el<0>().value(),
+                                                      m.template el<1>().value()),
+                     DONT_CHECK_RANGE);
     }
 
     static std::string type_as_string ()
@@ -185,8 +193,6 @@ private:
         row = i*(Factor2::DIM+1);
         col = row;
     }
-
-    using Parent_Array_t::operator[]; // this shouldn't be publicly accessible
 };
 
 } // end of namespace Tenh

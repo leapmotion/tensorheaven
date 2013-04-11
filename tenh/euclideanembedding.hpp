@@ -21,8 +21,10 @@ struct EuclideanEmbedding_Parent_Tensor_i
     typedef Tensor_i<EuclideanEmbedding_t<Vector>,
                      TypeList_t<Vector,TypeList_t<Vector> >,
                      Vector::DIM*Vector::DIM> T;  // does "dimension" really apply to this?
+                                                  // -- yes, in as much as it gives the dimension
+                                                  // of the vector index.
 };
-
+/*
 // NOTE: while this is a tensor, it isn't a tensor space, and so it technically shouldn't be used as a factor
 // type in a tensor product.  this is essentially a constant value -- it has only const accessors and can't be written to.
 template <typename Vector>
@@ -53,7 +55,7 @@ struct EuclideanEmbedding_t : public EuclideanEmbedding_Parent_Tensor_i<Vector>:
 //     using Parent_Tensor_i::scalar_factor_for_component;
 //     using Parent_Tensor_i::vector_index_of;
 };
-
+*/
 } // end of namespace Tenh
 
 #endif // TENH_EUCLIDEANEMBEDDING_HPP_

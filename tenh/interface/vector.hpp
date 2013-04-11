@@ -37,47 +37,29 @@ struct Vector_i
     operator Scalar const & () const
     {
         Lvd::Meta::Assert<(DIM == 1)>();
-        return component_access_without_range_check(0);
+        return as_derived().Derived::operator[](Index(0, DONT_CHECK_RANGE));
     }
     // this could be implemented as "operator Scalar & ()" but it would be bad to make implicit casts that can be used to change the value of this.
     Scalar &as_scalar ()
     {
         Lvd::Meta::Assert<(DIM == 1)>();
-        return component_access_without_range_check(0);
+        return as_derived().Derived::operator[](Index(0, DONT_CHECK_RANGE));
     }
 
     // accessor as Derived type
     Derived const &as_derived () const { return *static_cast<Derived const *>(this); }
     Derived &as_derived () { return *static_cast<Derived *>(this); }
 
-    // NOTE: operator [] will be used to return values, while
-    // operator () will be used to create expression templates
-    // for the purposes of indexed contractions.
-    // TODO: make Index type encode the guarantee that it's value will always be valid
-    Scalar const &operator [] (Index const &i) const
-    {
-        if (i.is_at_end())
-            throw std::invalid_argument("index out of range");
-        else
-            return component_access_without_range_check(i.value());
-    }
-    Scalar &operator [] (Index const &i)
-    {
-        if (i.is_at_end())
-            throw std::invalid_argument("index out of range");
-        else
-            return component_access_without_range_check(i.value());
-    }
+    // NOTE: operator [] will be used to return values, while operator () will be
+    // used to create expression templates for the purposes of indexed contractions.
+
+    Scalar const &operator [] (Index const &i) const { return as_derived().Derived::operator[](i); }
+    Scalar &operator [] (Index const &i) { return as_derived().Derived::operator[](i); }
+
     template <typename Index_>
-    Scalar const &operator [] (MultiIndex_t<TypeList_t<Index_> > const &m) const
-    {
-        return operator[](m.template el<0>());
-    }
+    Scalar const &operator [] (MultiIndex_t<TypeList_t<Index_> > const &m) const { return as_derived().Derived::operator[](m.head()); }
     template <typename Index_>
-    Scalar &operator [] (MultiIndex_t<TypeList_t<Index_> > const &m)
-    {
-        return operator[](m.template el<0>());
-    }
+    Scalar &operator [] (MultiIndex_t<TypeList_t<Index_> > const &m) { return as_derived().Derived::operator[](m.head()); }
 
     // the argument is technically unnecessary, as its value is not used.  however,
     // this allows the template system to deduce the SYMBOL of the TypedIndex_t, so
@@ -128,17 +110,6 @@ struct Vector_i
     {
         return "Vector_i<" + TypeStringOf_t<Derived>::eval() + ',' + TypeStringOf_t<Scalar>::eval() + ',' + AS_STRING(DIM) + '>';
     }
-
-private:
-
-    // this SHOULD be inconvenient and ugly to call.  it should be used ONLY when you know for certain that 0 <= i < DIM
-    Scalar const &component_access_without_range_check (Uint32 i) const { return this->as_derived().component_access_without_range_check(i); }
-    // this SHOULD be inconvenient and ugly to call.  it should be used ONLY when you know for certain that 0 <= i < DIM
-    Scalar &component_access_without_range_check (Uint32 i) { return this->as_derived().component_access_without_range_check(i); }
-
-    // accessor as Derived type -- TODO: somehow integrate with other as_derived methods (?)
-//     Derived const &as_derived_ () const { return *static_cast<Derived const *>(this); }
-//     Derived &as_derived_ () { return *static_cast<Derived *>(this); }
 };
 
 template <typename Derived, typename Scalar, Uint32 DIM>

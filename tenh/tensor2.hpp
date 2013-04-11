@@ -44,7 +44,12 @@ struct Tensor2_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqu
                                                           Derived_>::T,
                                    TypeList_t<Factor1_,TypeList_t<Factor2_> >,
                                    DimensionOfTensorProduct_t<TypeList_t<Factor1_,TypeList_t<Factor2_> > >::V>,
-                   public Array_t<typename Factor1_::Scalar,DimensionOfTensorProduct_t<TypeList_t<Factor1_,TypeList_t<Factor2_> > >::V>
+                   private Array_t<typename Factor1_::Scalar,
+                                   DimensionOfTensorProduct_t<TypeList_t<Factor1_,TypeList_t<Factor2_> > >::V,
+                                   typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
+                                                          Tensor2_t<Factor1_,Factor2_,Derived_>,
+                                                          Derived_>::T>
+                   // privately inherited because the use of Array_t is an implementation detail
 {
     enum { FACTOR_SCALAR_TYPES_ARE_EQUAL
         = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename Factor1_::Scalar,typename Factor2_::Scalar>::v>::v };
@@ -54,9 +59,13 @@ struct Tensor2_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqu
                                                                      Derived_>::T,
                                             TypeList_t<Factor1_,TypeList_t<Factor2_> >,
                                             DimensionOfTensorProduct_t<TypeList_t<Factor1_,TypeList_t<Factor2_> > >::V> Parent_Tensor_i;
-    typedef Array_t<typename Factor1_::Scalar,DimensionOfTensorProduct_t<TypeList_t<Factor1_,TypeList_t<Factor2_> > >::V> Parent_Array_t;
+    typedef Array_t<typename Factor1_::Scalar,
+                    DimensionOfTensorProduct_t<TypeList_t<Factor1_,TypeList_t<Factor2_> > >::V,
+                    typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
+                                            Tensor2_t<Factor1_,Factor2_,Derived_>,
+                                            Derived_>::T> Parent_Array_t;
     typedef typename Parent_Tensor_i::Scalar Scalar;
-    using Parent_Tensor_i::DIM;
+    static Uint32 const DIM = Parent_Tensor_i::DIM;
     typedef typename Parent_Tensor_i::Derived Derived;
     typedef typename Parent_Tensor_i::Index Index;
     typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
@@ -92,9 +101,9 @@ struct Tensor2_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqu
         return MultiIndex_t<BundleIndexTypeList>(Index1(row), Index2(col));
     }
 
-    using Parent_Array_t::component_access_without_range_check;
-    // for access to particular components -- have to NOT do "using Parent_Tensor_i::operator[]" because of ambiguous overload
-    using Parent_Tensor_i::Parent_Vector_i::operator[];
+    using Parent_Array_t::operator[];
+    using Parent_Array_t::data_size_in_bytes;
+    using Parent_Array_t::data_pointer;
 
     // Index1 could be Factor1::Index or Factor1::MultiIndex (checked by its use in the other functions)
     // Index2 could be Factor2::Index or Factor2::MultiIndex (checked by its use in the other functions)
@@ -110,19 +119,11 @@ struct Tensor2_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqu
     template <typename Index1, typename Index2>
     Scalar &operator [] (MultiIndex_t<TypeList_t<Index1,TypeList_t<Index2> > > const &m)
     {
+        assert(m.is_not_at_end() && "you used Index_t(x, DONT_RANGE_CHECK) inappropriately");
         // NOTE: this construction is unnecessary to the code, but IS necessary to the compile-time type checking
         // the compiler should optimize it out anyway.
         MultiIndex x(m);
-//         typename Factor1::Index(m.template el<0>());
-//         typename Factor2::Index(m.template el<1>());
-        if (m.is_at_end())
-        {
-            throw std::invalid_argument("index out of range");
-        }
-        else
-        {
-            return this->component_access_without_range_check(m.value());
-        }
+        return operator[](Index(m.value(), DONT_CHECK_RANGE));
     }
 
     // these are what provide indexed expressions -- via expression templates
@@ -134,10 +135,7 @@ struct Tensor2_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqu
     template <typename Index1, typename Index2>
     Scalar component (Index1 const &i1, Index2 const &i2) const
     {
-        if (i1.is_at_end() || i2.is_at_end())
-        {
-            throw std::invalid_argument("index/indices out of range");
-        }
+        assert(i1.is_not_at_end() && i2.is_not_at_end() && "you used Index_t(x, DONT_RANGE_CHECK) inappropriately");
 
         if (Factor1::component_is_immutable_zero(i1) || Factor2::component_is_immutable_zero(i2))
         {
@@ -147,9 +145,7 @@ struct Tensor2_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqu
         {
             return Factor1::scalar_factor_for_component(i1) *
                    Factor2::scalar_factor_for_component(i2) *
-                   this->component_access_without_range_check(
-                        vector_index_of(MultiIndex(Factor1::vector_index_of(i1),
-                                                   Factor2::vector_index_of(i2))).value());
+                   operator[](vector_index_of(MultiIndex(Factor1::vector_index_of(i1), Factor2::vector_index_of(i2))));
         }
     }
     // write 2-tensor components -- will throw if a component doesn't correspond to a memory location
@@ -158,10 +154,7 @@ struct Tensor2_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqu
     template <typename Index1, typename Index2>
     void set_component (Index1 const &i1, Index2 const &i2, Scalar s)
     {
-        if (i1.is_at_end() || i2.is_at_end())
-        {
-            throw std::invalid_argument("index/indices out of range");
-        }
+        assert(i1.is_not_at_end() && i2.is_not_at_end() && "you used Index_t(x, DONT_RANGE_CHECK) inappropriately");
 
         if (Factor1::component_is_immutable_zero(i1) || Factor2::component_is_immutable_zero(i2))
         {
@@ -170,8 +163,7 @@ struct Tensor2_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqu
 
         MultiIndex m(Factor1::vector_index_of(i1), Factor2::vector_index_of(i2));
         // write to the component, but divide through by the total scale factor for the component.
-        this->component_access_without_range_check(vector_index_of(m).value())
-            = s / (Factor1::scalar_factor_for_component(i1) * Factor2::scalar_factor_for_component(i2));
+        operator[](vector_index_of(m)) = s / (Factor1::scalar_factor_for_component(i1) * Factor2::scalar_factor_for_component(i2));
     }
     using Parent_Tensor_i::component_is_immutable_zero;
     using Parent_Tensor_i::scalar_factor_for_component;
@@ -179,10 +171,7 @@ struct Tensor2_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqu
     // all components are stored in memory (in the array m), and have scalar factor 1
     static bool component_is_immutable_zero (MultiIndex const &m) { return false; }
     static Scalar scalar_factor_for_component (MultiIndex const &m) { return Scalar(1); }
-    static Index vector_index_of (MultiIndex const &m) { return Index::range_unchecked(m.value()); }
-
-    using Parent_Array_t::data_size_in_bytes;
-    using Parent_Array_t::data_pointer;
+    static Index vector_index_of (MultiIndex const &m) { return Index(m.value(), DONT_CHECK_RANGE); }
 
     static std::string type_as_string ()
     {
@@ -209,8 +198,6 @@ private:
         row = i / Factor2::DIM;
         col = i % Factor2::DIM;
     }
-
-    using Parent_Array_t::operator[]; // this should not be publicly accessible
 };
 
 /*
@@ -253,9 +240,12 @@ struct EuclideanEmbedding_t : public typename EuclideanEmbedding_Parent_Tensor_i
 //     using Parent_Tensor_i::vector_index_of;
 };
 */
+
+// NOTE: while this is a tensor, it isn't a tensor space, and so it technically shouldn't be used as a factor
+// type in a tensor product.  this is essentially a constant value -- it has only const accessors and can't be written to.
 /*
 template <typename Factor1, typename Factor2, typename Tensor2Derived>
-struct EuclideanEmbedding_t : public typename EuclideanEmbedding_Parent_Tensor_i<Tensor2_t<Factor1,Factor2,Tensor2Derived> >::T
+struct EuclideanEmbedding_t : public EuclideanEmbedding_Parent_Tensor_i<Tensor2_t<Factor1,Factor2,Tensor2Derived> >::T
 {
     typedef typename EuclideanEmbedding_Parent_Tensor_i<Tensor2_t<Factor1,Factor2,Tensor2Derived> >::T Parent_Tensor_i;
     typedef typename Parent_Tensor_i::Derived Derived;
@@ -269,9 +259,17 @@ struct EuclideanEmbedding_t : public typename EuclideanEmbedding_Parent_Tensor_i
 
     Scalar operator [] (MultiIndex const &m) const
     {
-        // MultiIndex is a 2-index whose index components are Factor1::Index and Factor2::Index
-        return m.template el<0>() == m.template el<1>() ? Scalar(1) : Scalar(0);
+        if (m.is_at_end())
+            throw std::invalid_argument("index out of range");
 
+        if (m_euclidean_embedding_factor1.component_is_immutable_zero(m.template el<0>()) ||
+            m_euclidean_embedding_factor2.component_is_immutable_zero(m.template el<1>()))
+        {
+            return Scalar(0);
+        }
+
+
+        return m_euclidean_embedding_factor1.component_access_without_range_check(m.template el<0>().value());
     }
 
     // this SHOULD be inconvenient and ugly to call.  it should be used ONLY when you know for certain that 0 <= i < DIM
@@ -286,6 +284,12 @@ struct EuclideanEmbedding_t : public typename EuclideanEmbedding_Parent_Tensor_i
 //     using Parent_Tensor_i::component_is_immutable_zero;
 //     using Parent_Tensor_i::scalar_factor_for_component;
 //     using Parent_Tensor_i::vector_index_of;
+
+private:
+
+    // NOTE: this is sort of temporary
+    EuclideanEmbedding_t<Factor1> m_euclidean_embedding_factor1;
+    EuclideanEmbedding_t<Factor2> m_euclidean_embedding_factor2;
 };
 */
 
