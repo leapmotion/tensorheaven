@@ -30,19 +30,19 @@ struct MultiIndex_t : List_t<IndexTypeList_>
         :
         Parent(HeadIndexType(i0), BodyMultiIndex(i1))
     {
-        Lvd::Meta::Assert<Parent::LENGTH == 2>();
+        STATIC_ASSERT((Parent::LENGTH == 2),LENGTH_DOES_NOT_MATCH_ARGUMENT_COUNT);
     }
     MultiIndex_t (Uint32 i0, Uint32 i1, Uint32 i2)
         :
         Parent(HeadIndexType(i0), BodyMultiIndex(i1, i2))
     {
-        Lvd::Meta::Assert<Parent::LENGTH == 3>();
+        STATIC_ASSERT((Parent::LENGTH == 3),LENGTH_DOES_NOT_MATCH_ARGUMENT_COUNT);
     }
     MultiIndex_t (Uint32 i0, Uint32 i1, Uint32 i2, Uint32 i3)
         :
         Parent(HeadIndexType(i0), BodyMultiIndex(i1, i2, i3))
     {
-        Lvd::Meta::Assert<Parent::LENGTH == 4>();
+        STATIC_ASSERT((Parent::LENGTH == 4),LENGTH_DOES_NOT_MATCH_ARGUMENT_COUNT);
     }
 
     MultiIndex_t (MultiIndex_t<EmptyTypeList> const &) { } // default construction
@@ -393,7 +393,7 @@ inline MultiIndex_t<typename ConcatenationOfTypeLists_t<LeadingTypeList,Trailing
 template <typename DomainIndexTypeList, typename CodomainIndexTypeList>
 struct MultiIndexMap_t
 {
-    enum { _ = Lvd::Meta::Assert<!ContainsDuplicates_t<DomainIndexTypeList>::V>::v };
+    enum { _ = STATIC_ASSERT_AS_RVALUE((!ContainsDuplicates_t<DomainIndexTypeList>::V), DOMAIN_INDICES_MUST_NOT_CONTAIN_DUPLICATES) };
 
     typedef MultiIndex_t<DomainIndexTypeList> DomainIndex;
     typedef MultiIndex_t<CodomainIndexTypeList> CodomainIndex;
@@ -408,7 +408,7 @@ struct MultiIndexMap_t
 template <typename DomainIndexTypeList, typename CodomainIndexType>
 struct MultiIndexMap_t<DomainIndexTypeList,TypeList_t<CodomainIndexType> >
 {
-    enum { _ = Lvd::Meta::Assert<!ContainsDuplicates_t<DomainIndexTypeList>::V>::v };
+    enum { _ = STATIC_ASSERT_AS_RVALUE((!ContainsDuplicates_t<DomainIndexTypeList>::V), DOMAIN_INDICES_MUST_NOT_CONTAIN_DUPLICATES) };
 
     typedef TypeList_t<CodomainIndexType> CodomainIndexTypeList;
     typedef MultiIndex_t<DomainIndexTypeList> DomainIndex;

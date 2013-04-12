@@ -36,9 +36,9 @@ struct ExpressionTemplate_Eval_t<Operand,TypeList_t<Index1> >
 {
     enum
     {
-        OPERAND_IS_EXPRESSION_TEMPLATE    = Lvd::Meta::Assert<Operand::IS_EXPRESSION_TEMPLATE>::v,
-        OPERAND_HAS_THE_SAME_FREE_INDICES = Lvd::Meta::Assert<AreEqualAsSets_t<typename Operand::FreeIndexTypeList,TypeList_t<Index1> >::V>::v,
-        FREE_INDICES_HAS_NO_DUPLICATES    = Lvd::Meta::Assert<(Operand::FreeIndexTypeList::LENGTH == TypeList_t<Index1>::LENGTH)>::v
+        OPERAND_IS_EXPRESSION_TEMPLATE    = STATIC_ASSERT_AS_RVALUE(Operand::IS_EXPRESSION_TEMPLATE, OPERAND_IS_EXPRESSION_TEMPLATE),
+        OPERAND_HAS_THE_SAME_FREE_INDICES = STATIC_ASSERT_AS_RVALUE((AreEqualAsSets_t<typename Operand::FreeIndexTypeList,TypeList_t<Index1> >::V), OPERAND_HAS_THE_SAME_FREE_INDICES),
+        FREE_INDICES_HAVE_NO_DUPLICATES    = STATIC_ASSERT_AS_RVALUE((Operand::FreeIndexTypeList::LENGTH == TypeList_t<Index1>::LENGTH), FREE_INDICES_HAVE_NO_DUPLICATES)
     };
 
     typedef ExpressionTemplate_i<ExpressionTemplate_Eval_t<Operand,TypeList_t<Index1> >,
@@ -61,7 +61,7 @@ struct ExpressionTemplate_Eval_t<Operand,TypeList_t<Index1> >
 
 //     operator Scalar () const // TODO: only use this in the no-free-index one
 //     {
-//         Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<FreeIndexTypeList,EmptyTypeList>::v>();
+//         STATIC_ASSERT_TYPELIST_IS_EMPTY(FreeIndexTypeList);
 //         return operator[](MultiIndex());
 //     }
 
@@ -99,9 +99,9 @@ struct ExpressionTemplate_Eval_t<Operand,TypeList_t<Index1,TypeList_t<Index2> > 
 {
     enum
     {
-        OPERAND_IS_EXPRESSION_TEMPLATE    = Lvd::Meta::Assert<Operand::IS_EXPRESSION_TEMPLATE>::v,
-        OPERAND_HAS_THE_SAME_FREE_INDICES = Lvd::Meta::Assert<AreEqualAsSets_t<typename Operand::FreeIndexTypeList,TypeList_t<Index1,TypeList_t<Index2> > >::V>::v,
-        FREE_INDICES_HAS_NO_DUPLICATES    = Lvd::Meta::Assert<(Operand::FreeIndexTypeList::LENGTH == TypeList_t<Index1,TypeList_t<Index2> >::LENGTH)>::v
+        OPERAND_IS_EXPRESSION_TEMPLATE    = STATIC_ASSERT_AS_RVALUE(Operand::IS_EXPRESSION_TEMPLATE, OPERAND_IS_EXPRESSION_TEMPLATE),
+        OPERAND_HAS_THE_SAME_FREE_INDICES = STATIC_ASSERT_AS_RVALUE((AreEqualAsSets_t<typename Operand::FreeIndexTypeList,TypeList_t<Index1,TypeList_t<Index2> > >::V), OPERAND_HAS_THE_SAME_FREE_INDICES),
+        FREE_INDICES_HAVE_NO_DUPLICATES    = STATIC_ASSERT_AS_RVALUE((Operand::FreeIndexTypeList::LENGTH == TypeList_t<Index1,TypeList_t<Index2> >::LENGTH), FREE_INDICES_HAVE_NO_DUPLICATES)
     };
 
     typedef ExpressionTemplate_i<ExpressionTemplate_Eval_t<Operand,TypeList_t<Index1,TypeList_t<Index2> > >,
@@ -124,7 +124,7 @@ struct ExpressionTemplate_Eval_t<Operand,TypeList_t<Index1,TypeList_t<Index2> > 
 
 //     operator Scalar () const // TODO: only use this in the no-free-index one
 //     {
-//         Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<FreeIndexTypeList,EmptyTypeList>::v>();
+//         STATIC_ASSERT_TYPELIST_IS_EMPTY(FreeIndexTypeList);
 //         return operator[](MultiIndex());
 //     }
 

@@ -30,7 +30,7 @@ struct Tensor2Diagonal_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::Typ
                            // privately inherited because the use of Array_t is an implementation detail
 {
     enum { FACTOR_SCALAR_TYPES_ARE_EQUAL =
-        Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename Factor1_::Scalar,typename Factor2_::Scalar>::v>::v };
+        STATIC_ASSERT_AS_RVALUE((Lvd::Meta::TypesAreEqual<typename Factor1_::Scalar,typename Factor2_::Scalar>::v), FACTOR_SCALAR_TYPES_ARE_EQUAL) };
 
     typedef Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
                                                                      Tensor2Diagonal_t<Factor1_,Factor2_,Derived_>,
@@ -67,7 +67,7 @@ struct Tensor2Diagonal_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::Typ
         // this is just to check that there is a valid conversion to the requested MultiIndex_t type.
         // it doesn't actually produce any side-effects, and should be optimized out.
         {
-            Lvd::Meta::Assert<BundleIndexTypeList::LENGTH == 2>();
+            STATIC_ASSERT((BundleIndexTypeList::LENGTH == 2), CAN_ONLY_BUNDLE_TWO_INDICES);
             Index1 i1;
             Index2 i2;
             typename Factor1::Index f1(i1);

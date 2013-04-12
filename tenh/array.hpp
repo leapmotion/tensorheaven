@@ -29,9 +29,9 @@ struct Array_t
 
     explicit Array_t (WithoutInitialization const &) { }
     explicit Array_t (Component const &fill_with) { for (Uint32 i = 0; i < DIM; ++i) m_component[i] = fill_with; }
-    Array_t (Component const &x0, Component const &x1) { Lvd::Meta::Assert<(DIM == 2)>(); m_component[0] = x0; m_component[1] = x1; }
-    Array_t (Component const &x0, Component const &x1, Component const &x2) { Lvd::Meta::Assert<(DIM == 3)>(); m_component[0] = x0; m_component[1] = x1; m_component[2] = x2; }
-    Array_t (Component const &x0, Component const &x1, Component const &x2, Component const &x3) { Lvd::Meta::Assert<(DIM == 4)>(); m_component[0] = x0; m_component[1] = x1; m_component[2] = x2; m_component[3] = x3; }
+    Array_t (Component const &x0, Component const &x1) { STATIC_ASSERT((DIM == 2),DIMENSION_DOES_NOT_MATCH_ARGUMENT_COUNT); m_component[0] = x0; m_component[1] = x1; }
+    Array_t (Component const &x0, Component const &x1, Component const &x2) { STATIC_ASSERT((DIM == 3),DIMENSION_DOES_NOT_MATCH_ARGUMENT_COUNT); m_component[0] = x0; m_component[1] = x1; m_component[2] = x2; }
+    Array_t (Component const &x0, Component const &x1, Component const &x2, Component const &x3) { STATIC_ASSERT((DIM == 4),DIMENSION_DOES_NOT_MATCH_ARGUMENT_COUNT); m_component[0] = x0; m_component[1] = x1; m_component[2] = x2; m_component[3] = x3; }
 
     Component const &operator [] (Index const &i) const
     {

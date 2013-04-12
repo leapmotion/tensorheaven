@@ -47,7 +47,7 @@ inline void compile_time_check_that_there_is_a_type_conversion (EmptyTypeList co
 template <typename TypeList>
 struct TailOfTypeList_t
 {
-    enum { _ = Lvd::Meta::Assert<(TypeList::LENGTH > 0)>::v }; // must be nonempty list
+    enum { _ = STATIC_ASSERT_AS_RVALUE((TypeList::LENGTH > 0), LENGTH_MUST_BE_POSITIVE) }; // must be nonempty list
 
     typedef typename TailOfTypeList_t<typename TypeList::BodyTypeList>::T T;
 };
@@ -64,7 +64,7 @@ struct TailOfTypeList_t<TypeList_t<HeadType> >
 template <typename TypeList>
 struct AllButTailOfTypeList_t
 {
-    enum { _ = Lvd::Meta::Assert<(TypeList::LENGTH > 0)>::v }; // must be nonempty list
+    enum { _ = STATIC_ASSERT_AS_RVALUE((TypeList::LENGTH > 0), LENGTH_MUST_BE_POSITIVE) }; // must be nonempty list
 
     typedef TypeList_t<typename TypeList::HeadType,typename AllButTailOfTypeList_t<typename TypeList::BodyTypeList>::T> T;
 };
@@ -162,7 +162,7 @@ struct Occurrence_t<EmptyTypeList,Type>
 template <typename TypeList, typename Type>
 struct FirstMatchingIn_t
 {
-    enum { TYPE_MUST_APPEAR_IN_TYPELIST = Lvd::Meta::Assert<(Occurrence_t<TypeList,Type>::COUNT > 0)>::v };
+    enum { TYPE_MUST_APPEAR_IN_TYPELIST = STATIC_ASSERT_AS_RVALUE((Occurrence_t<TypeList,Type>::COUNT > 0), TYPE_MUST_APPEAR_IN_TYPELIST) };
     static Uint32 const INDEX = Lvd::Meta::TypesAreEqual<typename TypeList::HeadType,Type>::v ?
                                 0 :
                                 1+FirstMatchingIn_t<typename TypeList::BodyTypeList,Type>::INDEX;
@@ -171,7 +171,7 @@ struct FirstMatchingIn_t
 template <typename HeadType, typename Type>
 struct FirstMatchingIn_t<TypeList_t<HeadType>,Type>
 {
-//     enum { TYPE_MUST_APPEAR_IN_TYPELIST = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<HeadType,Type>::v>::v };
+//     enum { TYPE_MUST_APPEAR_IN_TYPELIST =STATIC_ASSERT_AS_RVALUE((Lvd::Meta::TypesAreEqual<HeadType,Type>::v), TYPE_MUST_APPEAR_IN_TYPELIST) };
     static Uint32 const INDEX = 0;
 };
 

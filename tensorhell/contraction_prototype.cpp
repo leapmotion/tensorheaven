@@ -262,7 +262,7 @@ using namespace Tenh;
 template <typename F1_, typename F2_, typename F3_>
 struct Tensor3_t : Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM*F3_::DIM>
 {
-    enum { _ = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename F1_::Scalar,typename F2_::Scalar>::v>::v };
+    enum { _ = STATIC_ASSERT_AS_RVALUE((Lvd::Meta::TypesAreEqual<typename F1_::Scalar,typename F2_::Scalar>::v), FACTOR_SCALAR_TYPES_ARE_EQUAL) };
 
     typedef Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM*F3_::DIM> Parent;
     typedef typename Parent::Scalar Scalar;
@@ -292,7 +292,7 @@ struct Tensor3_t : Vector_t<typename F1_::Scalar,F1_::DIM*F2_::DIM*F3_::DIM>
 template <typename F1_, typename F2_>
 struct Tensor2Simple_t
 {
-    enum { _ = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename F1_::Scalar,typename F2_::Scalar>::v>::v };
+    enum { _ = STATIC_ASSERT_AS_RVALUE((Lvd::Meta::TypesAreEqual<typename F1_::Scalar,typename F2_::Scalar>::v), FACTOR_SCALAR_TYPES_ARE_EQUAL) };
 
     typedef F1_ F1;
     typedef F2_ F2;
@@ -348,8 +348,8 @@ std::ostream &operator << (std::ostream &out, Tensor2Simple_t<F1,F2> const &s)
 template <typename F1_, typename F2_, typename F3_>
 struct Tensor3Simple_t
 {
-    enum { _ = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename F1_::Scalar,typename F2_::Scalar>::v>::v &&
-               Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename F1_::Scalar,typename F3_::Scalar>::v>::v };
+    enum { _ = STATIC_ASSERT_AS_RVALUE((Lvd::Meta::TypesAreEqual<typename F1_::Scalar,typename F2_::Scalar>::v), FACTOR_SCALAR_TYPES_ARE_EQUAL) &&
+               STATIC_ASSERT_AS_RVALUE((Lvd::Meta::TypesAreEqual<typename F1_::Scalar,typename F3_::Scalar>::v), FACTOR_SCALAR_TYPES_ARE_EQUAL) };
 
     typedef F1_ F1;
     typedef F2_ F2;
@@ -790,6 +790,8 @@ void test_IndexBundle ()
         Tensor2 const &t2 = t;
         typedef ExpressionTemplate_IndexedObject_t<Tensor2,BundleIndexTypeList,EmptyTypeList,FORCE_CONST,CHECK_FOR_ALIASING> EI2;
         EI2 ei(t2(i|j));
+        
+        std::cout << FORMAT_VALUE(ei) << '\n';
     }
     for (typename Tensor2Symmetric::Index r; r.is_not_at_end(); ++r)
         std::cout << FORMAT_VALUE((Tensor2Symmetric::template bundle_index_map<BundleIndexTypeList,Q>(r))) << '\n';

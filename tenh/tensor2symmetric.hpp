@@ -30,7 +30,7 @@ struct Tensor2Symmetric_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::Ty
                                                                    Tensor2Symmetric_t<Factor1_,Factor2_,Derived_>,
                                                                    Derived_>::T>
 {
-    enum { FACTOR1_AND_FACTOR2_MUST_BE_IDENTICAL = Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<Factor1_,Factor2_>::v>::v };
+    enum { FACTOR1_AND_FACTOR2_MUST_BE_IDENTICAL = STATIC_ASSERT_AS_RVALUE((Lvd::Meta::TypesAreEqual<Factor1_,Factor2_>::v), FACTOR1_AND_FACTOR2_MUST_BE_IDENTICAL) };
 
     typedef Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
                                                                      Tensor2Symmetric_t<Factor1_,Factor2_,Derived_>,
@@ -67,7 +67,7 @@ struct Tensor2Symmetric_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::Ty
         // this is just to check that there is a valid conversion to the requested MultiIndex_t type.
         // it doesn't actually produce any side-effects, and should be optimized out.
         {
-            Lvd::Meta::Assert<BundleIndexTypeList::LENGTH == 2>();
+            STATIC_ASSERT((BundleIndexTypeList::LENGTH == 2), CAN_ONLY_BUNDLE_TWO_INDICES);
             Index1 i1;
             Index2 i2;
             typename Factor1::Index f1(i1);

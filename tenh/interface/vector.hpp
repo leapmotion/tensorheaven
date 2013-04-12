@@ -22,7 +22,7 @@ namespace Tenh {
 template <typename Derived_, typename Scalar_, Uint32 DIM_> // don't worry about type ID for now
 struct Vector_i
 {
-    enum { DIMENSION_MUST_BE_POSITIVE = Lvd::Meta::Assert<(DIM_ > 0)>::v }; // TODO: zero-dimensional vector spaces (?)
+    enum { DIMENSION_MUST_BE_POSITIVE = STATIC_ASSERT_AS_RVALUE((DIM_ > 0), DIMENSION_MUST_BE_POSITIVE) }; // TODO: zero-dimensional vector spaces (?)
 
     typedef Derived_ Derived;
     typedef Scalar_ Scalar;
@@ -36,13 +36,13 @@ struct Vector_i
     // type conversion operator for canonical coercion to Scalar type when the vector is 1-dimensional
     operator Scalar const & () const
     {
-        Lvd::Meta::Assert<(DIM == 1)>();
+        STATIC_ASSERT((DIM == 1), ONLY_ONE_DIMENSIONAL_VECTORS_CAN_BE_CONVERTED_TO_SCALARS);
         return as_derived().Derived::operator[](Index(0, DONT_CHECK_RANGE));
     }
     // this could be implemented as "operator Scalar & ()" but it would be bad to make implicit casts that can be used to change the value of this.
     Scalar &as_scalar ()
     {
-        Lvd::Meta::Assert<(DIM == 1)>();
+        STATIC_ASSERT((DIM == 1), ONLY_ONE_DIMENSIONAL_VECTORS_CAN_BE_CONVERTED_TO_SCALARS);
         return as_derived().Derived::operator[](Index(0, DONT_CHECK_RANGE));
     }
 
@@ -75,7 +75,7 @@ struct Vector_i
                                        FORCE_CONST,
                                        CHECK_FOR_ALIASING> operator () (TypedIndex_t<Derived,SYMBOL> const &) const
     {
-        Lvd::Meta::Assert<(SYMBOL != '\0')>();
+        STATIC_ASSERT((SYMBOL != '\0'), TYPEDINDEX_SYMBOL_MUST_NOT_BE_NULL);
         return ExpressionTemplate_IndexedObject_t<Derived,
                                                   TypeList_t<TypedIndex_t<Derived,SYMBOL> >,
                                                   EmptyTypeList,
@@ -89,7 +89,7 @@ struct Vector_i
                                        DONT_FORCE_CONST,
                                        CHECK_FOR_ALIASING> operator () (TypedIndex_t<Derived,SYMBOL> const &)
     {
-        Lvd::Meta::Assert<(SYMBOL != '\0')>();
+        STATIC_ASSERT((SYMBOL != '\0'), TYPEDINDEX_SYMBOL_MUST_NOT_BE_NULL);
         return ExpressionTemplate_IndexedObject_t<Derived,
                                                   TypeList_t<TypedIndex_t<Derived,SYMBOL> >,
                                                   EmptyTypeList,

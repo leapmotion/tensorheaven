@@ -87,10 +87,10 @@ struct UnarySummation_t<Tensor,TensorIndexTypeList,EmptyTypeList>
 template <typename LeftOperand, typename RightOperand, typename FreeIndexTypeList, typename SummedIndexTypeList>
 struct BinarySummation_t
 {
-    enum { _ = Lvd::Meta::Assert<LeftOperand::IS_EXPRESSION_TEMPLATE>::v &&
-               Lvd::Meta::Assert<RightOperand::IS_EXPRESSION_TEMPLATE>::v &&
-               Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v>::v &&
-               Lvd::Meta::Assert<(SummedIndexTypeList::LENGTH > 0)>::v };
+    enum { _ = STATIC_ASSERT_AS_RVALUE(LeftOperand::IS_EXPRESSION_TEMPLATE, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE) &&
+               STATIC_ASSERT_AS_RVALUE(RightOperand::IS_EXPRESSION_TEMPLATE, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE) &&
+               STATIC_ASSERT_AS_RVALUE((Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v), OPERAND_SCALAR_TYPES_ARE_EQUAL) &&
+               STATIC_ASSERT_AS_RVALUE((SummedIndexTypeList::LENGTH > 0), LENGTH_MUST_BE_POSITIVE) };
 
     typedef typename LeftOperand::Scalar Scalar;
     typedef MultiIndex_t<FreeIndexTypeList> MultiIndex;
@@ -126,9 +126,9 @@ struct BinarySummation_t
 template <typename LeftOperand, typename RightOperand, typename FreeIndexTypeList>
 struct BinarySummation_t<LeftOperand,RightOperand,FreeIndexTypeList,EmptyTypeList>
 {
-    enum { _ = Lvd::Meta::Assert<LeftOperand::IS_EXPRESSION_TEMPLATE>::v &&
-               Lvd::Meta::Assert<RightOperand::IS_EXPRESSION_TEMPLATE>::v &&
-               Lvd::Meta::Assert<Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v>::v };
+    enum { _ = STATIC_ASSERT_AS_RVALUE(LeftOperand::IS_EXPRESSION_TEMPLATE, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE) &&
+               STATIC_ASSERT_AS_RVALUE(RightOperand::IS_EXPRESSION_TEMPLATE, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE) &&
+               STATIC_ASSERT_AS_RVALUE((Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v), OPERAND_SCALAR_TYPES_ARE_EQUAL) };
 
     typedef typename LeftOperand::Scalar Scalar;
     typedef MultiIndex_t<FreeIndexTypeList> MultiIndex;
@@ -200,9 +200,9 @@ struct IndexBundle_t
 {
     enum
     {
-        BUNDLE_INDICES_MUST_BE_FREE           = Lvd::Meta::Assert<IsASubsetOf_t<BundleIndexTypeList,typename Operand::FreeIndexTypeList>::V>::v,
-        BUNDLE_AND_RESULTING_MUST_BE_DISTINCT = Lvd::Meta::Assert<!HasNontrivialIntersectionAsSets_t<BundleIndexTypeList,TypeList_t<ResultingIndexType> >::V>::v,
-        OPERAND_IS_EXPRESSION_TEMPLATE        = Lvd::Meta::Assert<Operand::IS_EXPRESSION_TEMPLATE>::v
+        BUNDLE_INDICES_MUST_BE_FREE           = STATIC_ASSERT_AS_RVALUE((IsASubsetOf_t<BundleIndexTypeList,typename Operand::FreeIndexTypeList>::V), BUNDLE_INDICES_MUST_BE_FREE),
+        BUNDLE_AND_RESULTING_MUST_BE_DISTINCT = STATIC_ASSERT_AS_RVALUE((!HasNontrivialIntersectionAsSets_t<BundleIndexTypeList,TypeList_t<ResultingIndexType> >::V), BUNDLE_AND_RESULTING_MUST_BE_DISTINCT),
+        OPERAND_IS_EXPRESSION_TEMPLATE        = STATIC_ASSERT_AS_RVALUE(Operand::IS_EXPRESSION_TEMPLATE, OPERAND_IS_EXPRESSION_TEMPLATE)
     };
 
     typedef typename Operand::Scalar Scalar;
@@ -235,9 +235,9 @@ struct IndexSplitter_t
 {
     enum
     {
-        SOURCE_INDEX_MUST_BE_FREE         = Lvd::Meta::Assert<Operand::FreeIndexTypeList::template Contains_t<SourceIndexType>::V>::v,
-        SOURCE_AND_SPLIT_MUST_BE_DISTINCT = Lvd::Meta::Assert<!HasNontrivialIntersectionAsSets_t<TypeList_t<SourceIndexType>,SplitIndexTypeList>::V>::v,
-        OPERAND_IS_EXPRESSION_TEMPLATE    = Lvd::Meta::Assert<Operand::IS_EXPRESSION_TEMPLATE>::v
+        SOURCE_INDEX_MUST_BE_FREE         = STATIC_ASSERT_AS_RVALUE((Operand::FreeIndexTypeList::template Contains_t<SourceIndexType>::V), SOURCE_INDEX_MUST_BE_FREE),
+        SOURCE_AND_SPLIT_MUST_BE_DISTINCT = STATIC_ASSERT_AS_RVALUE((!HasNontrivialIntersectionAsSets_t<TypeList_t<SourceIndexType>,SplitIndexTypeList>::V), SOURCE_AND_SPLIT_MUST_BE_DISTINCT),
+        OPERAND_IS_EXPRESSION_TEMPLATE    = STATIC_ASSERT_AS_RVALUE(Operand::IS_EXPRESSION_TEMPLATE, OPERAND_IS_EXPRESSION_TEMPLATE)
     };
 
     typedef typename Operand::Scalar Scalar;

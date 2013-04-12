@@ -65,13 +65,13 @@ struct List_t
     template <Uint32 INDEX>
     typename Type_t<INDEX>::T const &el () const
     {
-        Lvd::Meta::Assert<(INDEX < LENGTH)>();
+        STATIC_ASSERT((INDEX < LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END);
         return ListElement_t<TypeList,INDEX>::el(*this);
     }
     template <Uint32 INDEX>
     typename Type_t<INDEX>::T &el ()
     {
-        Lvd::Meta::Assert<(INDEX < LENGTH)>();
+        STATIC_ASSERT((INDEX < LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END);
         return ListElement_t<TypeList,INDEX>::el(*this);
     }
 
@@ -86,14 +86,14 @@ struct List_t
     template <Uint32 START_INDEX, Uint32 END_INDEX>
     typename RangeType_t<START_INDEX,END_INDEX>::T const &range () const
     {
-        Lvd::Meta::Assert<(END_INDEX <= LENGTH)>();
+        STATIC_ASSERT((END_INDEX <= LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END);
         // slightly yucky, but the elements are laid out in memory in a way that makes this totally valid.
         return *reinterpret_cast<typename RangeType_t<START_INDEX,END_INDEX>::T const *>(&(trailing_list<START_INDEX>()));
     }
     template <Uint32 START_INDEX, Uint32 END_INDEX>
     typename RangeType_t<START_INDEX,END_INDEX>::T &range ()
     {
-        Lvd::Meta::Assert<(END_INDEX <= LENGTH)>();
+        STATIC_ASSERT((END_INDEX <= LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END);
         // slightly yucky, but the elements are laid out in memory in a way that makes this totally valid.
         return *reinterpret_cast<typename RangeType_t<START_INDEX,END_INDEX>::T *>(&(trailing_list<START_INDEX>()));
     }
@@ -110,14 +110,14 @@ struct List_t
     template <Uint32 INDEX>
     typename LeadingListType_t<INDEX>::T const &leading_list () const
     {
-        Lvd::Meta::Assert<(INDEX <= LENGTH)>();
+        STATIC_ASSERT((INDEX <= LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END);
         // slightly yucky, but the elements are laid out in memory in a way that makes this totally valid.
         return *reinterpret_cast<typename LeadingListType_t<INDEX>::T const *>(this);
     }
     template <Uint32 INDEX>
     typename LeadingListType_t<INDEX>::T &leading_list ()
     {
-        Lvd::Meta::Assert<(INDEX <= LENGTH)>();
+        STATIC_ASSERT((INDEX <= LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END);
         // slightly yucky, but the elements are laid out in memory in a way that makes this totally valid.
         return *reinterpret_cast<typename LeadingListType_t<INDEX>::T *>(this);
     }
@@ -133,13 +133,13 @@ struct List_t
     template <Uint32 INDEX>
     typename TrailingListType_t<INDEX>::T const &trailing_list () const
     {
-        Lvd::Meta::Assert<(INDEX <= LENGTH)>();
+        STATIC_ASSERT((INDEX <= LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END);
         return ListHelper_t<TypeList,INDEX>::trailing_list(*this);
     };
     template <Uint32 INDEX>
     typename TrailingListType_t<INDEX>::T &trailing_list ()
     {
-        Lvd::Meta::Assert<(INDEX <= LENGTH)>();
+        STATIC_ASSERT((INDEX <= LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END);
         return ListHelper_t<TypeList,INDEX>::trailing_list(*this);
     };
 
@@ -193,13 +193,13 @@ struct List_t<EmptyTypeList>
     template <Uint32 INDEX>
     typename Type_t<INDEX>::T const &el () const
     {
-        Lvd::Meta::Assert<(INDEX < LENGTH)>();
+        STATIC_ASSERT((INDEX < LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END);
         return ListElement_t<TypeList,INDEX>::value(*this);
     }
     template <Uint32 INDEX>
     typename Type_t<INDEX>::T &el ()
     {
-        Lvd::Meta::Assert<(INDEX < LENGTH)>();
+        STATIC_ASSERT((INDEX < LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END);
         return ListElement_t<TypeList,INDEX>::value(*this);
     }
 
@@ -214,14 +214,14 @@ struct List_t<EmptyTypeList>
     template <Uint32 START_INDEX, Uint32 END_INDEX>
     typename RangeType_t<START_INDEX,END_INDEX>::T const &range () const
     {
-        Lvd::Meta::Assert<(END_INDEX <= LENGTH)>();
+        STATIC_ASSERT((END_INDEX <= LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END);
         // slightly yucky, but the elements are laid out in memory in a way that makes this totally valid.
         return *reinterpret_cast<typename RangeType_t<START_INDEX,END_INDEX>::T const *>(&(trailing_list<START_INDEX>()));
     }
     template <Uint32 START_INDEX, Uint32 END_INDEX>
     typename RangeType_t<START_INDEX,END_INDEX>::T &range ()
     {
-        Lvd::Meta::Assert<(END_INDEX <= LENGTH)>();
+        STATIC_ASSERT((END_INDEX <= LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END);
         // slightly yucky, but the elements are laid out in memory in a way that makes this totally valid.
         return *reinterpret_cast<typename RangeType_t<START_INDEX,END_INDEX>::T *>(&(trailing_list<START_INDEX>()));
     }
@@ -238,14 +238,14 @@ struct List_t<EmptyTypeList>
     template <Uint32 INDEX>
     typename LeadingListType_t<INDEX>::T const &leading_list () const
     {
-        Lvd::Meta::Assert<(INDEX <= LENGTH)>();
+        STATIC_ASSERT((INDEX <= LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END);
         // slightly yucky, but the elements are laid out in memory in a way that makes this totally valid.
         return *reinterpret_cast<typename LeadingListType_t<INDEX>::T const *>(this);
     }
     template <Uint32 INDEX>
     typename LeadingListType_t<INDEX>::T &leading_list ()
     {
-        Lvd::Meta::Assert<(INDEX <= LENGTH)>();
+        STATIC_ASSERT((INDEX <= LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END);
         // slightly yucky, but the elements are laid out in memory in a way that makes this totally valid.
         return *reinterpret_cast<typename LeadingListType_t<INDEX>::T *>(this);
     }
@@ -261,13 +261,13 @@ struct List_t<EmptyTypeList>
     template <Uint32 INDEX>
     typename TrailingListType_t<INDEX>::T const &trailing_list () const
     {
-        Lvd::Meta::Assert<(INDEX <= LENGTH)>();
+        STATIC_ASSERT((INDEX <= LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END);
         return ListHelper_t<TypeList,INDEX>::trailing_list(*this);
     };
     template <Uint32 INDEX>
     typename TrailingListType_t<INDEX>::T &trailing_list ()
     {
-        Lvd::Meta::Assert<(INDEX <= LENGTH)>();
+        STATIC_ASSERT((INDEX <= LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END);
         return ListHelper_t<TypeList,INDEX>::trailing_list(*this);
     };
 
@@ -330,13 +330,13 @@ struct List_t<TypeList_t<HeadType_> >
     template <Uint32 INDEX>
     HeadType const &el () const
     {
-        Lvd::Meta::Assert<(INDEX < LENGTH)>();
+        STATIC_ASSERT((INDEX < LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END);
         return m_head;
     }
     template <Uint32 INDEX>
     HeadType &el ()
     {
-        Lvd::Meta::Assert<(INDEX < LENGTH)>();
+        STATIC_ASSERT((INDEX < LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END);
         return m_head;
     }
 
@@ -351,14 +351,14 @@ struct List_t<TypeList_t<HeadType_> >
     template <Uint32 START_INDEX, Uint32 END_INDEX>
     typename RangeType_t<START_INDEX,END_INDEX>::T const &range () const
     {
-        Lvd::Meta::Assert<(END_INDEX <= LENGTH)>();
+        STATIC_ASSERT((END_INDEX <= LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END);
         // slightly yucky, but the elements are laid out in memory in a way that makes this totally valid.
         return *reinterpret_cast<typename RangeType_t<START_INDEX,END_INDEX>::T const *>(&(trailing_list<START_INDEX>()));
     }
     template <Uint32 START_INDEX, Uint32 END_INDEX>
     typename RangeType_t<START_INDEX,END_INDEX>::T &range ()
     {
-        Lvd::Meta::Assert<(END_INDEX <= LENGTH)>();
+        STATIC_ASSERT((END_INDEX <= LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END);
         // slightly yucky, but the elements are laid out in memory in a way that makes this totally valid.
         return *reinterpret_cast<typename RangeType_t<START_INDEX,END_INDEX>::T *>(&(trailing_list<START_INDEX>()));
     }
@@ -375,14 +375,14 @@ struct List_t<TypeList_t<HeadType_> >
     template <Uint32 INDEX>
     typename LeadingListType_t<INDEX>::T const &leading_list () const
     {
-        Lvd::Meta::Assert<(INDEX <= LENGTH)>();
+        STATIC_ASSERT((INDEX <= LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END);
         // slightly yucky, but the elements are laid out in memory in a way that makes this totally valid.
         return *reinterpret_cast<typename LeadingListType_t<INDEX>::T const *>(this);
     }
     template <Uint32 INDEX>
     typename LeadingListType_t<INDEX>::T &leading_list ()
     {
-        Lvd::Meta::Assert<(INDEX <= LENGTH)>();
+        STATIC_ASSERT((INDEX <= LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END);
         // slightly yucky, but the elements are laid out in memory in a way that makes this totally valid.
         return *reinterpret_cast<typename LeadingListType_t<INDEX>::T *>(this);
     }
@@ -398,13 +398,13 @@ struct List_t<TypeList_t<HeadType_> >
     template <Uint32 INDEX>
     typename TrailingListType_t<INDEX>::T const &trailing_list () const
     {
-        Lvd::Meta::Assert<(INDEX <= LENGTH)>();
+        STATIC_ASSERT((INDEX <= LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END);
         return ListHelper_t<TypeList,INDEX>::trailing_list(*this);
     };
     template <Uint32 INDEX>
     typename TrailingListType_t<INDEX>::T &trailing_list ()
     {
-        Lvd::Meta::Assert<(INDEX <= LENGTH)>();
+        STATIC_ASSERT((INDEX <= LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END);
         return ListHelper_t<TypeList,INDEX>::trailing_list(*this);
     };
 
@@ -439,7 +439,7 @@ std::ostream &operator << (std::ostream &out, List_t<TypeList> const &l)
 template <typename TypeList, Uint32 INDEX>
 struct ListElement_t
 {
-    enum { CANT_ACCESS_PAST_THE_END = Lvd::Meta::Assert<(INDEX < TypeList::LENGTH)>::v };
+    enum { CANT_ACCESS_PAST_THE_END = STATIC_ASSERT_AS_RVALUE((INDEX < TypeList::LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END) };
     typedef List_t<TypeList> List;
     typedef typename TypeList::template El_t<INDEX>::T ValueType;
     static ValueType const &el (List const &list)
@@ -455,7 +455,7 @@ struct ListElement_t
 template <typename TypeList>
 struct ListElement_t<TypeList,0>
 {
-    enum { CANT_ACCESS_PAST_THE_END = Lvd::Meta::Assert<(0 < TypeList::LENGTH)>::v };
+    enum { CANT_ACCESS_PAST_THE_END = STATIC_ASSERT_AS_RVALUE((0 < TypeList::LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END) };
     typedef List_t<TypeList> List;
     typedef typename TypeList::template El_t<0>::T ValueType;
     static ValueType const &el (List const &list) { return list.head(); }
@@ -466,7 +466,7 @@ struct ListElement_t<TypeList,0>
 template <typename TypeList, Uint32 INDEX>
 struct ListHelper_t
 {
-    enum { _ = Lvd::Meta::Assert<(INDEX > 0)>::v };
+    enum { _ = STATIC_ASSERT_AS_RVALUE((INDEX > 0), ATTEMPTED_ACCESS_PAST_LIST_END) };
     typedef List_t<TypeList> List;
     typedef List_t<typename TypeList::template LeadingTypeList_t<INDEX>::T> LeadingListType;
     typedef List_t<typename TypeList::template TrailingTypeList_t<INDEX>::T> TrailingListType;

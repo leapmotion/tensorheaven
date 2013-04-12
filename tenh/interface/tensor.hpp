@@ -67,8 +67,8 @@ struct Tensor_i : public Vector_i<Derived_,typename FactorTypeList_::HeadType::S
 {
     enum
     {
-        ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL = Lvd::Meta::Assert<AllFactorTypeScalarsAreEqual_t<FactorTypeList_>::V>::v,
-        FACTOR_TYPE_LIST_IS_NONEMPTY      = Lvd::Meta::Assert<(FactorTypeList_::LENGTH > 0)>::v
+        ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL = STATIC_ASSERT_AS_RVALUE((AllFactorTypeScalarsAreEqual_t<FactorTypeList_>::V), ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
+        FACTOR_TYPE_LIST_IS_NONEMPTY      = STATIC_ASSERT_AS_RVALUE((FactorTypeList_::LENGTH > 0), FACTOR_TYPE_LIST_IS_NONEMPTY)
     };
 
     typedef Vector_i<Derived_,typename FactorTypeList_::HeadType::Scalar,DIM_> Parent_Vector_i;
@@ -104,7 +104,7 @@ struct Tensor_i : public Vector_i<Derived_,typename FactorTypeList_::HeadType::S
     {
         typedef TypeList_t<IndexTypeListHeadType,IndexTypeListBodyTypeList> ArgumentIndexTypeList;
         // ensure the length matches FactorIndexTypeList
-        Lvd::Meta::Assert<ArgumentIndexTypeList::LENGTH == FactorIndexTypeList::LENGTH>();
+        STATIC_ASSERT((ArgumentIndexTypeList::LENGTH == FactorIndexTypeList::LENGTH), ARGUMENT_LENGTH_MUST_EQUAL_FACTOR_LENGTH);
         // make sure that each type in the index list is actually a TypedIndex_t
         AssertThatEachTypeIsATypedIndex_t<ArgumentIndexTypeList>();
         // make sure there are type conversions for all types in the index lists
@@ -126,7 +126,7 @@ struct Tensor_i : public Vector_i<Derived_,typename FactorTypeList_::HeadType::S
     {
         typedef TypeList_t<IndexTypeListHeadType,IndexTypeListBodyTypeList> ArgumentIndexTypeList;
         // ensure the length matches FactorIndexTypeList
-        Lvd::Meta::Assert<ArgumentIndexTypeList::LENGTH == FactorIndexTypeList::LENGTH>();
+        STATIC_ASSERT((ArgumentIndexTypeList::LENGTH == FactorIndexTypeList::LENGTH), ARGUMENT_LENGTH_MUST_EQUAL_FACTOR_LENGTH);
         // make sure that each type in the index list is actually a TypedIndex_t
         AssertThatEachTypeIsATypedIndex_t<ArgumentIndexTypeList>();
         // make sure there are type conversions for all types in the index lists

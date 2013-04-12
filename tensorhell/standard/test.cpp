@@ -23,9 +23,6 @@ using namespace TestSystem;
 
 int main (int argc, char **argv, char **envp)
 {
-    
-    STATIC_ASSERT(false, TEST_MESSAGE);
-    
     Directory root;
 
     Test::Array::AddTests(&root);

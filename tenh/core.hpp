@@ -9,6 +9,7 @@
 #include <cassert>
 
 #include "tenh/meta/lvd.hpp"
+#include "tenh/meta/static_assert.hpp"
 
 #define FORMAT_VALUE(expr) #expr << " = " << (expr) // TODO: move this out into test code
 
