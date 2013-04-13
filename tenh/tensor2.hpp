@@ -7,6 +7,7 @@
 #define TENH_TENSOR2_HPP_
 
 #include "tenh/core.hpp"
+#include "tenh/euclideanembedding.hpp"
 #include "tenh/interface/tensor.hpp"
 #include "tenh/meta/typetuple.hpp"
 #include "tenh/vector.hpp"
@@ -98,7 +99,7 @@ struct Tensor2_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqu
         Uint32 row;
         Uint32 col;
         contiguous_index_to_rowcol_index(b.value(), row, col);
-        return MultiIndex_t<BundleIndexTypeList>(Index1(row), Index2(col));
+        return MultiIndex_t<BundleIndexTypeList>(Index1(row, DONT_CHECK_RANGE), Index2(col, DONT_CHECK_RANGE));
     }
 
     using Parent_Array_t::operator[];
@@ -200,21 +201,12 @@ private:
     }
 };
 
-/*
-template <typename Scalar_, Uint32 DIM_, typename Derived_ = NullType> // don't worry about type ID for now
-struct Vector_t;
-*/
-/*
-template <typename Factor1Scalar, Uint32 Factor1DIM, typename Factor1Derived,
-          typename Factor2Scalar, Uint32 Factor2DIM, typename Factor2Derived,
-          typename Tensor2Derived>
-struct EuclideanEmbedding_t : public typename EuclideanEmbedding_Parent_Tensor_i<Tensor2_t<Vector_t<Factor1Scalar,Factor1DIM,Factor1Derived>,
-                                                                                           Vector_t<Factor2Scalar,Factor2DIM,Factor2Derived>,
-                                                                                           Tensor2Derived> >::T
+template <typename TensorFactor1_, typename TensorFactor2_, typename TensorDerived>
+struct EuclideanEmbedding_t<Tensor2_t<TensorFactor1_,TensorFactor2_,TensorDerived> >
+    :
+    public EuclideanEmbedding_Parent_Tensor_i<Tensor2_t<TensorFactor1_,TensorFactor2_,TensorDerived> >::T
 {
-    typedef typename EuclideanEmbedding_Parent_Tensor_i<Tensor2_t<Vector_t<Factor1Scalar,Factor1DIM,Factor1Derived>,
-                                                                  Vector_t<Factor2Scalar,Factor2DIM,Factor2Derived>,
-                                                                  Tensor2Derived> >::T Parent_Tensor_i;
+    typedef typename EuclideanEmbedding_Parent_Tensor_i<Tensor2_t<TensorFactor1_,TensorFactor2_,TensorDerived> >::T Parent_Tensor_i;
     typedef typename Parent_Tensor_i::Derived Derived;
     typedef typename Parent_Tensor_i::Scalar Scalar;
     using Parent_Tensor_i::DIM;
@@ -223,75 +215,32 @@ struct EuclideanEmbedding_t : public typename EuclideanEmbedding_Parent_Tensor_i
     typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
     typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
     using Parent_Tensor_i::DEGREE;
-
-    Scalar operator [] (MultiIndex const &m) const { return m.template el<0>() == m.template el<1>() ? Scalar(1) : Scalar(0); }
-
-    // this SHOULD be inconvenient and ugly to call.  it should be used ONLY when you know for certain that 0 <= i < DIM
-    Scalar component_access_without_range_check (Uint32 i) const
-    {
-        Uint32 row = i / Vector::DIM;
-        Uint32 col = i % Vector::DIM;
-        return row == col ? Scalar(1) : Scalar(0);
-    }
-
-    // NOTE: these may be unnecessary/undesired, because this type does not represent a vector space
-//     using Parent_Tensor_i::component_is_immutable_zero;
-//     using Parent_Tensor_i::scalar_factor_for_component;
-//     using Parent_Tensor_i::vector_index_of;
-};
-*/
-
-// NOTE: while this is a tensor, it isn't a tensor space, and so it technically shouldn't be used as a factor
-// type in a tensor product.  this is essentially a constant value -- it has only const accessors and can't be written to.
-/*
-template <typename Factor1, typename Factor2, typename Tensor2Derived>
-struct EuclideanEmbedding_t : public EuclideanEmbedding_Parent_Tensor_i<Tensor2_t<Factor1,Factor2,Tensor2Derived> >::T
-{
-    typedef typename EuclideanEmbedding_Parent_Tensor_i<Tensor2_t<Factor1,Factor2,Tensor2Derived> >::T Parent_Tensor_i;
-    typedef typename Parent_Tensor_i::Derived Derived;
-    typedef typename Parent_Tensor_i::Scalar Scalar;
-    using Parent_Tensor_i::DIM;
-    typedef typename Parent_Tensor_i::Index Index;
-    typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
-    typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
-    typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
-    using Parent_Tensor_i::DEGREE;
+    typedef TensorFactor1_ TensorFactor1;
+    typedef TensorFactor2_ TensorFactor2;
+    typedef Tensor2_t<TensorFactor1,TensorFactor2,TensorDerived> Tensor2;
 
     Scalar operator [] (MultiIndex const &m) const
     {
-        if (m.is_at_end())
-            throw std::invalid_argument("index out of range");
-
-        if (m_euclidean_embedding_factor1.component_is_immutable_zero(m.template el<0>()) ||
-            m_euclidean_embedding_factor2.component_is_immutable_zero(m.template el<1>()))
-        {
-            return Scalar(0);
-        }
-
-
-        return m_euclidean_embedding_factor1.component_access_without_range_check(m.template el<0>().value());
-    }
-
-    // this SHOULD be inconvenient and ugly to call.  it should be used ONLY when you know for certain that 0 <= i < DIM
-    Scalar component_access_without_range_check (Uint32 i) const
-    {
-        Uint32 row = i / Vector::DIM;
-        Uint32 col = i % Vector::DIM;
-        return row == col ? Scalar(1) : Scalar(0);
+        EuclideanEmbedding_t<TensorFactor1> e1;
+        EuclideanEmbedding_t<TensorFactor2> e2;
+        TypedIndex_t<TensorFactor1,'i'> i;
+        TypedIndex_t<TensorFactor1,'j'> j;
+        TypedIndex_t<TensorFactor2,'k'> k;
+        TypedIndex_t<TensorFactor2,'l'> l;
+        TypedIndex_t<Tensor2,'p'> p;
+        TypedIndex_t<Tensor2,'q'> q;
+        return ((e1(i|j)*e2(k|l)).bundle(j|l,q).bundle(i|k,p))[m];
     }
 
     // NOTE: these may be unnecessary/undesired, because this type does not represent a vector space
 //     using Parent_Tensor_i::component_is_immutable_zero;
 //     using Parent_Tensor_i::scalar_factor_for_component;
 //     using Parent_Tensor_i::vector_index_of;
-
-private:
-
-    // NOTE: this is sort of temporary
-    EuclideanEmbedding_t<Factor1> m_euclidean_embedding_factor1;
-    EuclideanEmbedding_t<Factor2> m_euclidean_embedding_factor2;
+    static std::string type_as_string ()
+    {
+        return "EuclideanEmbedding_t<" + TypeStringOf_t<Tensor2>::eval() + '>';
+    }
 };
-*/
 
 } // end of namespace Tenh
 

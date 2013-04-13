@@ -1011,7 +1011,7 @@ void test_Tensor2Diagonal_t ()
         t[i] = i.value()+1;
     std::cout << FORMAT_VALUE(t) << '\n';
 }
-/*
+
 template <Uint32 DIM>
 void test_EuclideanEmbedding_t ()
 {
@@ -1020,6 +1020,7 @@ void test_EuclideanEmbedding_t ()
     typedef Vector_t<float,DIM> V;
 
     {
+        std::cout << "\ton Vector_t\n";
         typedef EuclideanEmbedding_t<V> EE;
         EE e;
         std::cout << FORMAT_VALUE(e) << '\n';
@@ -1033,12 +1034,23 @@ void test_EuclideanEmbedding_t ()
         std::cout << FORMAT_VALUE(e(i|j)*v(j)) << '\n';
         std::cout << FORMAT_VALUE(v(i)*e(i|j)*v(j)) << '\n';
         std::cout << FORMAT_VALUE(e(i|i)) << '\n';
+        V w(Static<WithoutInitialization>::SINGLETON);
+        w(i) = e(i|j)*v(j);
+        std::cout << "after w(i) = e(i|j)*v(j), " << FORMAT_VALUE(w) << '\n';
+        std::cout << "squared norm of v = " << v(i)*v(i) << '\n';
+        float hand_calculated = float(0);
+        for (typename V::Index k; k.is_not_at_end(); ++k)
+            hand_calculated += sqr(w[k]);
+        std::cout << "hand calculated squared norm of v = " << hand_calculated << '\n';
+        std::cout << '\n';
     }
 
     {
+        std::cout << "\ton Tensor2_t\n";
         typedef Tensor2_t<V,V> T;
         typedef EuclideanEmbedding_t<T> EE;
         EE e;
+        typename EE::MultiIndex m;
         std::cout << FORMAT_VALUE(e) << '\n';
         T v(Static<WithoutInitialization>::SINGLETON);
         for (typename T::Index i; i.is_not_at_end(); ++i)
@@ -1050,11 +1062,104 @@ void test_EuclideanEmbedding_t ()
         std::cout << FORMAT_VALUE(e(i|j)*v(j)) << '\n';
         std::cout << FORMAT_VALUE(v(i)*e(i|j)*v(j)) << '\n';
         std::cout << FORMAT_VALUE(e(i|i)) << '\n';
+        T w(Static<WithoutInitialization>::SINGLETON);
+        w(i) = e(i|j)*v(j);
+        std::cout << "after w(i) = e(i|j)*v(j), " << FORMAT_VALUE(w) << '\n';
+        std::cout << "squared norm of v = " << v(i)*v(i) << '\n';
+        float hand_calculated = float(0);
+        for (typename T::Index k; k.is_not_at_end(); ++k)
+            hand_calculated += sqr(w[k]);
+        std::cout << "hand calculated squared norm of v = " << hand_calculated << '\n';
+        std::cout << '\n';
+    }
+
+    {
+        std::cout << "\ton Tensor2Antisymmetric_t\n";
+        typedef Tensor2Antisymmetric_t<V,V> T;
+        typedef EuclideanEmbedding_t<T> EE;
+        EE e;
+        typename EE::MultiIndex m;
+        std::cout << FORMAT_VALUE(e) << '\n';
+        T v(Static<WithoutInitialization>::SINGLETON);
+        for (typename T::Index i; i.is_not_at_end(); ++i)
+            v[i] = i.value() + 1;
+        std::cout << FORMAT_VALUE(v) << '\n';
+        TypedIndex_t<T,'i'> i;
+        TypedIndex_t<T,'j'> j;
+        std::cout << FORMAT_VALUE(v(i)*e(i|j)) << '\n';
+        std::cout << FORMAT_VALUE(e(i|j)*v(j)) << '\n';
+        std::cout << FORMAT_VALUE(v(i)*e(i|j)*v(j)) << '\n';
+        std::cout << FORMAT_VALUE(e(i|i)) << '\n';
+        T w(Static<WithoutInitialization>::SINGLETON);
+        w(i) = e(i|j)*v(j);
+        std::cout << "after w(i) = e(i|j)*v(j), " << FORMAT_VALUE(w) << '\n';
+        std::cout << "squared norm of v = " << v(i)*v(i) << '\n';
+        float hand_calculated = float(0);
+        for (typename T::Index k; k.is_not_at_end(); ++k)
+            hand_calculated += sqr(w[k]);
+        std::cout << "hand calculated squared norm of v = " << hand_calculated << '\n';
+        std::cout << '\n';
+    }
+
+    {
+        std::cout << "\ton Tensor2Diagonal\n";
+        typedef Tensor2Diagonal_t<V,V> T;
+        typedef EuclideanEmbedding_t<T> EE;
+        EE e;
+        typename EE::MultiIndex m;
+        std::cout << FORMAT_VALUE(e) << '\n';
+        T v(Static<WithoutInitialization>::SINGLETON);
+        for (typename T::Index i; i.is_not_at_end(); ++i)
+            v[i] = i.value() + 1;
+        std::cout << FORMAT_VALUE(v) << '\n';
+        TypedIndex_t<T,'i'> i;
+        TypedIndex_t<T,'j'> j;
+        std::cout << FORMAT_VALUE(v(i)*e(i|j)) << '\n';
+        std::cout << FORMAT_VALUE(e(i|j)*v(j)) << '\n';
+        std::cout << FORMAT_VALUE(v(i)*e(i|j)*v(j)) << '\n';
+        std::cout << FORMAT_VALUE(e(i|i)) << '\n';
+        T w(Static<WithoutInitialization>::SINGLETON);
+        w(i) = e(i|j)*v(j);
+        std::cout << "after w(i) = e(i|j)*v(j), " << FORMAT_VALUE(w) << '\n';
+        std::cout << "squared norm of v = " << v(i)*v(i) << '\n';
+        float hand_calculated = float(0);
+        for (typename T::Index k; k.is_not_at_end(); ++k)
+            hand_calculated += sqr(w[k]);
+        std::cout << "hand calculated squared norm of v = " << hand_calculated << '\n';
+        std::cout << '\n';
+    }
+
+    {
+        std::cout << "\ton Tensor2Symmetric_t\n";
+        typedef Tensor2Symmetric_t<V,V> T;
+        typedef EuclideanEmbedding_t<T> EE;
+        EE e;
+        typename EE::MultiIndex m;
+        std::cout << FORMAT_VALUE(e) << '\n';
+        T v(Static<WithoutInitialization>::SINGLETON);
+        for (typename T::Index i; i.is_not_at_end(); ++i)
+            v[i] = i.value() + 1;
+        std::cout << FORMAT_VALUE(v) << '\n';
+        TypedIndex_t<T,'i'> i;
+        TypedIndex_t<T,'j'> j;
+        std::cout << FORMAT_VALUE(v(i)*e(i|j)) << '\n';
+        std::cout << FORMAT_VALUE(e(i|j)*v(j)) << '\n';
+        std::cout << FORMAT_VALUE(v(i)*e(i|j)*v(j)) << '\n';
+        std::cout << FORMAT_VALUE(e(i|i)) << '\n';
+        T w(Static<WithoutInitialization>::SINGLETON);
+        w(i) = e(i|j)*v(j);
+        std::cout << "after w(i) = e(i|j)*v(j), " << FORMAT_VALUE(w) << '\n';
+        std::cout << "squared norm of v = " << v(i)*v(i) << '\n';
+        float hand_calculated = float(0);
+        for (typename T::Index k; k.is_not_at_end(); ++k)
+            hand_calculated += sqr(w[k]);
+        std::cout << "hand calculated squared norm of v = " << hand_calculated << '\n';
+        std::cout << '\n';
     }
 
     std::cout << '\n';
 }
-*/
+
 int main (int argc, char **argv)
 {
     // 1-dimensional vector to scalar coercion
@@ -1700,10 +1805,10 @@ int main (int argc, char **argv)
         }
 
         // testing EuclideanEmbedding_t
-//         test_EuclideanEmbedding_t<1>();
-//         test_EuclideanEmbedding_t<2>();
-//         test_EuclideanEmbedding_t<3>();
-//         test_EuclideanEmbedding_t<4>();
+//         test_EuclideanEmbedding_t<1>(); // TODO: allow 0-dimensional vectors
+        test_EuclideanEmbedding_t<2>();
+        test_EuclideanEmbedding_t<3>();
+        test_EuclideanEmbedding_t<4>();
 
         // testing ExpressionTemplate_Eval_t (TODO: general k-tensor case)
         {

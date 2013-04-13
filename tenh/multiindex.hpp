@@ -17,6 +17,7 @@ template <typename IndexTypeList_>
 struct MultiIndex_t : List_t<IndexTypeList_>
 {
     typedef List_t<IndexTypeList_> Parent;
+    using Parent::LENGTH;
     typedef IndexTypeList_ IndexTypeList;
     typedef typename IndexTypeList::HeadType HeadIndexType;
     typedef typename IndexTypeList::BodyTypeList BodyIndexTypeList;
@@ -26,21 +27,21 @@ struct MultiIndex_t : List_t<IndexTypeList_>
     MultiIndex_t () { } // default constructor initializes to "first" component
     MultiIndex_t (HeadIndexType const &head, BodyMultiIndex const &body) : Parent(head, body) { }
     // tuple-like initializers
-    MultiIndex_t (Uint32 i0, Uint32 i1) // TODO: replace with IndexTypeList::HeadType i0, IndexTypeList::BodyTypeList::HeadType i1 ?
+    MultiIndex_t (Uint32 i0, Uint32 i1, bool check_range = CHECK_RANGE) // TODO: replace with IndexTypeList::HeadType i0, IndexTypeList::BodyTypeList::HeadType i1 ?
         :
-        Parent(HeadIndexType(i0), BodyMultiIndex(i1))
+        Parent(HeadIndexType(i0, check_range), BodyMultiIndex(i1, check_range))
     {
         STATIC_ASSERT((Parent::LENGTH == 2),LENGTH_DOES_NOT_MATCH_ARGUMENT_COUNT);
     }
-    MultiIndex_t (Uint32 i0, Uint32 i1, Uint32 i2)
+    MultiIndex_t (Uint32 i0, Uint32 i1, Uint32 i2, bool check_range = CHECK_RANGE)
         :
-        Parent(HeadIndexType(i0), BodyMultiIndex(i1, i2))
+        Parent(HeadIndexType(i0, check_range), BodyMultiIndex(i1, i2, check_range))
     {
         STATIC_ASSERT((Parent::LENGTH == 3),LENGTH_DOES_NOT_MATCH_ARGUMENT_COUNT);
     }
-    MultiIndex_t (Uint32 i0, Uint32 i1, Uint32 i2, Uint32 i3)
+    MultiIndex_t (Uint32 i0, Uint32 i1, Uint32 i2, Uint32 i3, bool check_range = CHECK_RANGE)
         :
-        Parent(HeadIndexType(i0), BodyMultiIndex(i1, i2, i3))
+        Parent(HeadIndexType(i0, check_range), BodyMultiIndex(i1, i2, i3, check_range))
     {
         STATIC_ASSERT((Parent::LENGTH == 4),LENGTH_DOES_NOT_MATCH_ARGUMENT_COUNT);
     }
@@ -164,6 +165,7 @@ template <typename HeadIndexType>
 struct MultiIndex_t<TypeList_t<HeadIndexType> > : public List_t<TypeList_t<HeadIndexType> >
 {
     typedef List_t<TypeList_t<HeadIndexType> > Parent;
+    using Parent::LENGTH;
     typedef TypeList_t<HeadIndexType> IndexTypeList;
     typedef typename IndexTypeList::BodyTypeList BodyIndexTypeList;
     typedef MultiIndex_t<BodyIndexTypeList> BodyMultiIndex;
@@ -171,7 +173,7 @@ struct MultiIndex_t<TypeList_t<HeadIndexType> > : public List_t<TypeList_t<HeadI
 
     MultiIndex_t () { } // default constructor initializes to "first" component
     // explicit because it has a range-check (in the HeadIndexType constructor)
-    explicit MultiIndex_t (Uint32 i) : Parent(HeadIndexType(i)) { }
+    explicit MultiIndex_t (Uint32 i, bool check_range = CHECK_RANGE) : Parent(HeadIndexType(i, check_range)) { }
     MultiIndex_t (HeadIndexType const &head) : Parent(head) { }
 
     MultiIndex_t (MultiIndex_t<EmptyTypeList> const &) { } // default construction
@@ -287,6 +289,7 @@ struct MultiIndex_t<EmptyTypeList> : public List_t<EmptyTypeList>
 //    enum { _ = Lvd::Meta::Assert<false>::v }; // don't make one of these
 
     typedef List_t<EmptyTypeList> Parent;
+    using Parent::LENGTH;
     typedef EmptyTypeList IndexTypeList;
     typedef EmptyTypeList BodyIndexTypeList;
     typedef MultiIndex_t<BodyIndexTypeList> BodyMultiIndex;

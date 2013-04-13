@@ -10,8 +10,10 @@
 #include <ostream>
 
 #include "tenh/core.hpp"
+#include "tenh/euclideanembedding.hpp"
 #include "tenh/interface/tensor.hpp"
 #include "tenh/naturalpairing.hpp"
+#include "tenh/static_scalar_constants.hpp"
 #include "tenh/meta/typetuple.hpp"
 #include "tenh/vector.hpp"
 
@@ -79,7 +81,7 @@ struct Tensor2Antisymmetric_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta
         Uint32 row;
         Uint32 col;
         contiguous_index_to_rowcol_index(b.value(), row, col);
-        return MultiIndex_t<BundleIndexTypeList>(Index1(row), Index2(col));
+        return MultiIndex_t<BundleIndexTypeList>(Index1(row, DONT_CHECK_RANGE), Index2(col, DONT_CHECK_RANGE));
     }
     // these are what provide indexed expressions -- via expression templates
 
@@ -224,31 +226,12 @@ struct NaturalPairing_t<Tensor2Antisymmetric_t<Factor1,Factor2,Derived> >
     }
 };
 
-/*
-// NOTE: while this is a tensor, it isn't a tensor space, and so it technically shouldn't be used as a factor
-// type in a tensor product.  this is essentially a constant value -- it has only const accessors and can't be written to.
-// because the (inner product) is essentially scalar multiplication by 2, it follows that multiplication by sqrt(2)
-// gives the isometric embedding
-template <typename Scalar_, Uint32 DIM_, typename VectorDerived_, typename Tensor2AntisymmetricDerived_>
-struct EuclideanEmbedding_t<Tensor2Antisymmetric_t<Vector_t<Scalar_,DIM_,VectorDerived_>,
-                                                   Vector_t<Scalar_,DIM_,VectorDerived_>,
-                                                   Tensor2AntisymmetricDerived_> >
+template <typename TensorFactor1_, typename TensorFactor2_, typename TensorDerived>
+struct EuclideanEmbedding_t<Tensor2Antisymmetric_t<TensorFactor1_,TensorFactor2_,TensorDerived> >
     :
-    public Tensor_i<EuclideanEmbedding_t<Tensor2Antisymmetric_t<Vector_t<Scalar_,DIM_,VectorDerived_>,
-                                                                Vector_t<Scalar_,DIM_,VectorDerived_>,
-                                                                Tensor2AntisymmetricDerived_> >,
-                    TypeList_t<Tensor2Antisymmetric_t<Vector_t<Scalar_,DIM_,VectorDerived_>,
-                                                      Vector_t<Scalar_,DIM_,VectorDerived_>,
-                                                      Tensor2AntisymmetricDerived_>,
-                               TypeList_t<Tensor2Antisymmetric_t<Vector_t<Scalar_,DIM_,VectorDerived_>,
-                                                                 Vector_t<Scalar_,DIM_,VectorDerived_>,
-                                                                 Tensor2AntisymmetricDerived_> > >,
-                    >,
-                    Tensor2Antisymmetric_t<Factor1,Factor2,Derived_>::DIM*Tensor2Antisymmetric_t<Factor1,Factor2,Derived_>::DIM>
+    public EuclideanEmbedding_Parent_Tensor_i<Tensor2Antisymmetric_t<TensorFactor1_,TensorFactor2_,TensorDerived> >::T
 {
-    typedef Tensor_i<EuclideanEmbedding_t<Tensor2Antisymmetric_t<Factor1,Factor2,Derived_> >,
-                     TypeList_t<Tensor2Antisymmetric_t<Factor1,Factor2,Derived_>,TypeList_t<Tensor2Antisymmetric_t<Factor1,Factor2,Derived_> > >,
-                     Tensor2Antisymmetric_t<Factor1,Factor2,Derived_>::DIM*Tensor2Antisymmetric_t<Factor1,Factor2,Derived_>::DIM> Parent_Tensor_i;
+    typedef typename EuclideanEmbedding_Parent_Tensor_i<Tensor2Antisymmetric_t<TensorFactor1_,TensorFactor2_,TensorDerived> >::T Parent_Tensor_i;
     typedef typename Parent_Tensor_i::Derived Derived;
     typedef typename Parent_Tensor_i::Scalar Scalar;
     using Parent_Tensor_i::DIM;
@@ -257,58 +240,35 @@ struct EuclideanEmbedding_t<Tensor2Antisymmetric_t<Vector_t<Scalar_,DIM_,VectorD
     typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
     typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
     using Parent_Tensor_i::DEGREE;
-    typedef Tensor2Antisymmetric_t<Factor1,Factor2,Derived_> Tensor2Antisymmetric; // this is the vector type that's being embedded
+    typedef TensorFactor1_ TensorFactor1;
+    typedef TensorFactor2_ TensorFactor2;
+    typedef Tensor2Antisymmetric_t<TensorFactor1,TensorFactor2,TensorDerived> Tensor2Antisymmetric;
 
     Scalar operator [] (MultiIndex const &m) const
     {
-        //return m.template el<0>() == m.template el<1>() ? Scalar(M_SQRT2) : Scalar(0);
+        EuclideanEmbedding_t<TensorFactor1> e1;
+        EuclideanEmbedding_t<TensorFactor2> e2;
+        TypedIndex_t<TensorFactor1,'i'> i;
+        TypedIndex_t<TensorFactor1,'j'> j;
+        TypedIndex_t<TensorFactor2,'k'> k;
+        TypedIndex_t<TensorFactor2,'l'> l;
+        TypedIndex_t<Tensor2Antisymmetric,'p'> p;
+        TypedIndex_t<Tensor2Antisymmetric,'q'> q;
+        // TODO: the NaturalPairing_t is providing a factor of 2, hence why we're providing
+        // a factor of 1/sqrt(2) -- figure out how to use the default NaturalPairing_t instead
+        return (Scalar(1)/Static<Scalar>::SQRT_TWO*(e1(i|j)*e2(k|l)).bundle(j|l,q).bundle(i|k,p))[m];
     }
 
-    // this SHOULD be inconvenient and ugly to call.  it should be used ONLY when you know for certain that 0 <= i < DIM
-    Scalar component_access_without_range_check (Uint32 i) const
+    // NOTE: these may be unnecessary/undesired, because this type does not represent a vector space
+//     using Parent_Tensor_i::component_is_immutable_zero;
+//     using Parent_Tensor_i::scalar_factor_for_component;
+//     using Parent_Tensor_i::vector_index_of;
+    static std::string type_as_string ()
     {
-        Uint32 row = i / Tensor2Antisymmetric::DIM;
-        Uint32 col = i % Tensor2Antisymmetric::DIM;
-        return row == col ? Scalar(M_SQRT2) : Scalar(0);
+        return "EuclideanEmbedding_t<" + TypeStringOf_t<Tensor2Antisymmetric>::eval() + '>';
     }
 };
 
-
-
-template <typename Factor1, typename Factor2, typename Derived_>
-struct EuclideanEmbedding_t<Tensor2Antisymmetric_t<Factor1,Factor2,Derived_> >
-    :
-    public Tensor_i<EuclideanEmbedding_t<Tensor2Antisymmetric_t<Factor1,Factor2,Derived_> >,
-                    TypeList_t<Tensor2Antisymmetric_t<Factor1,Factor2,Derived_>,TypeList_t<Tensor2Antisymmetric_t<Factor1,Factor2,Derived_> > >,
-                    Tensor2Antisymmetric_t<Factor1,Factor2,Derived_>::DIM*Tensor2Antisymmetric_t<Factor1,Factor2,Derived_>::DIM>
-{
-    typedef Tensor_i<EuclideanEmbedding_t<Tensor2Antisymmetric_t<Factor1,Factor2,Derived_> >,
-                     TypeList_t<Tensor2Antisymmetric_t<Factor1,Factor2,Derived_>,TypeList_t<Tensor2Antisymmetric_t<Factor1,Factor2,Derived_> > >,
-                     Tensor2Antisymmetric_t<Factor1,Factor2,Derived_>::DIM*Tensor2Antisymmetric_t<Factor1,Factor2,Derived_>::DIM> Parent_Tensor_i;
-    typedef typename Parent_Tensor_i::Derived Derived;
-    typedef typename Parent_Tensor_i::Scalar Scalar;
-    using Parent_Tensor_i::DIM;
-    typedef typename Parent_Tensor_i::Index Index;
-    typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
-    typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
-    typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
-    using Parent_Tensor_i::DEGREE;
-    typedef Tensor2Antisymmetric_t<Factor1,Factor2,Derived_> Tensor2Antisymmetric; // this is the vector type that's being embedded
-
-    Scalar operator [] (MultiIndex const &m) const
-    {
-        //return m.template el<0>() == m.template el<1>() ? Scalar(M_SQRT2) : Scalar(0);
-    }
-
-    // this SHOULD be inconvenient and ugly to call.  it should be used ONLY when you know for certain that 0 <= i < DIM
-    Scalar component_access_without_range_check (Uint32 i) const
-    {
-        Uint32 row = i / Tensor2Antisymmetric::DIM;
-        Uint32 col = i % Tensor2Antisymmetric::DIM;
-        return row == col ? Scalar(M_SQRT2) : Scalar(0);
-    }
-};
-*/
 } // end of namespace Tenh
 
 #endif // TENH_TENSOR2ANTISYMMETRIC_HPP_

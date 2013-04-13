@@ -10,6 +10,7 @@
 #include <ostream>
 
 #include "tenh/core.hpp"
+#include "tenh/euclideanembedding.hpp"
 #include "tenh/interface/tensor.hpp"
 #include "tenh/naturalpairing.hpp"
 #include "tenh/meta/typetuple.hpp"
@@ -79,7 +80,7 @@ struct Tensor2Symmetric_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::Ty
         Uint32 row;
         Uint32 col;
         contiguous_index_to_rowcol_index(b.value(), row, col);
-        return MultiIndex_t<BundleIndexTypeList>(Index1(row), Index2(col));
+        return MultiIndex_t<BundleIndexTypeList>(Index1(row, DONT_CHECK_RANGE), Index2(col, DONT_CHECK_RANGE));
     }
 
     // TODO: because Factor1 and Factor2 are identical, it doesn't make sense to
@@ -218,20 +219,13 @@ struct NaturalPairing_t<Tensor2Symmetric_t<Factor1,Factor2,Derived> >
             return Scalar(1); // but the diagonal components occur only once (in the component matrix)
     }
 };
-/*
-// NOTE: while this is a tensor, it isn't a tensor space, and so it technically shouldn't be used as a factor
-// type in a tensor product.  this is essentially a constant value -- it has only const accessors and can't be written to.
-// this euclidean embedding is just the square root of the inner product.
-template <typename Factor1, typename Factor2, typename Derived_>
-struct EuclideanEmbedding_t<Tensor2Symmetric_t<Factor1,Factor2,Derived_> >
+
+template <typename TensorFactor1_, typename TensorFactor2_, typename TensorDerived>
+struct EuclideanEmbedding_t<Tensor2Symmetric_t<TensorFactor1_,TensorFactor2_,TensorDerived> >
     :
-    public Tensor_i<EuclideanEmbedding_t<Tensor2Symmetric_t<Factor1,Factor2,Derived_> >,
-                    TypeList_t<Tensor2Symmetric_t<Factor1,Factor2,Derived_> ,TypeList_t<Tensor2Symmetric_t<Factor1,Factor2,Derived_> > >,
-                    Tensor2Symmetric_t<Factor1,Factor2,Derived_>::DIM*Tensor2Symmetric_t<Factor1,Factor2,Derived_>::DIM>
+    public EuclideanEmbedding_Parent_Tensor_i<Tensor2Symmetric_t<TensorFactor1_,TensorFactor2_,TensorDerived> >::T
 {
-    typedef Tensor_i<EuclideanEmbedding_t<Tensor2Symmetric_t<Factor1,Factor2,Derived_> >,
-                     TypeList_t<Tensor2Symmetric_t<Factor1,Factor2,Derived_> ,TypeList_t<Tensor2Symmetric_t<Factor1,Factor2,Derived_> > >,
-                     Tensor2Symmetric_t<Factor1,Factor2,Derived_>::DIM*Tensor2Symmetric_t<Factor1,Factor2,Derived_>::DIM> Parent_Tensor_i;
+    typedef typename EuclideanEmbedding_Parent_Tensor_i<Tensor2Symmetric_t<TensorFactor1_,TensorFactor2_,TensorDerived> >::T Parent_Tensor_i;
     typedef typename Parent_Tensor_i::Derived Derived;
     typedef typename Parent_Tensor_i::Scalar Scalar;
     using Parent_Tensor_i::DIM;
@@ -240,35 +234,39 @@ struct EuclideanEmbedding_t<Tensor2Symmetric_t<Factor1,Factor2,Derived_> >
     typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
     typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
     using Parent_Tensor_i::DEGREE;
-    typedef Tensor2Symmetric_t<Factor1,Factor2,Derived_> Tensor2Symmetric; // this is the vector type that's being embedded
+    typedef TensorFactor1_ TensorFactor1;
+    typedef TensorFactor2_ TensorFactor2;
+    typedef Tensor2Symmetric_t<TensorFactor1,TensorFactor2,TensorDerived> Tensor2Symmetric;
 
     Scalar operator [] (MultiIndex const &m) const
     {
-        if (m.template el<0>() != m.template el<1>())
-            return Scalar(0);
-
+        EuclideanEmbedding_t<TensorFactor1> e1;
+        EuclideanEmbedding_t<TensorFactor2> e2;
+        TypedIndex_t<TensorFactor1,'i'> i;
+        TypedIndex_t<TensorFactor1,'j'> j;
+        TypedIndex_t<TensorFactor2,'k'> k;
+        TypedIndex_t<TensorFactor2,'l'> l;
+        TypedIndex_t<Tensor2Symmetric,'p'> p;
+        TypedIndex_t<Tensor2Symmetric,'q'> q;
+        // TODO: the NaturalPairing_t is providing a factor of 2, hence why we're providing
+        // a factor of 1/sqrt(2) -- figure out how to use the default NaturalPairing_t instead        
         Uint32 row = m.template el<0>().value();
         if (row < Tensor2Symmetric::STRICTLY_LOWER_TRIANGULAR_COMPONENT_COUNT)
-            return Scalar(M_SQRT2); // the off-diagonal components occur twice (in the component matrix)
+            return (Scalar(1)/Static<Scalar>::SQRT_TWO*(e1(i|j)*e2(k|l)).bundle(j|l,q).bundle(i|k,p))[m];
         else
-            return Scalar(1); // but the diagonal components occur only once (in the component matrix)
+            return ((e1(i|j)*e2(k|l)).bundle(j|l,q).bundle(i|k,p))[m];
     }
 
-    // this SHOULD be inconvenient and ugly to call.  it should be used ONLY when you know for certain that 0 <= i < DIM
-    Scalar component_access_without_range_check (Uint32 i) const
+    // NOTE: these may be unnecessary/undesired, because this type does not represent a vector space
+//     using Parent_Tensor_i::component_is_immutable_zero;
+//     using Parent_Tensor_i::scalar_factor_for_component;
+//     using Parent_Tensor_i::vector_index_of;
+    static std::string type_as_string ()
     {
-        Uint32 row = i / Tensor2Symmetric::DIM;
-        Uint32 col = i % Tensor2Symmetric::DIM;
-        if (row != col)
-            return Scalar(0);
-
-        if (row < Tensor2Symmetric::STRICTLY_LOWER_TRIANGULAR_COMPONENT_COUNT)
-            return Scalar(M_SQRT2); // the off-diagonal components occur twice (in the component matrix)
-        else
-            return Scalar(1); // but the diagonal components occur only once (in the component matrix)
+        return "EuclideanEmbedding_t<" + TypeStringOf_t<Tensor2Symmetric>::eval() + '>';
     }
 };
-*/
+
 } // end of namespace Tenh
 
 #endif // TENH_TENSOR2SYMMETRIC_HPP_

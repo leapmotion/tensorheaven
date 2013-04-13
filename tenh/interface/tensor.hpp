@@ -67,6 +67,7 @@ struct Tensor_i : public Vector_i<Derived_,typename FactorTypeList_::HeadType::S
 {
     enum
     {
+        DERIVED_MUST_NOT_BE_NULL_TYPE     = Lvd::Meta::Assert<!Lvd::Meta::TypesAreEqual<Derived_,NullType>::v>::v,
         ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL = STATIC_ASSERT_AS_RVALUE((AllFactorTypeScalarsAreEqual_t<FactorTypeList_>::V), ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
         FACTOR_TYPE_LIST_IS_NONEMPTY      = STATIC_ASSERT_AS_RVALUE((FactorTypeList_::LENGTH > 0), FACTOR_TYPE_LIST_IS_NONEMPTY)
     };

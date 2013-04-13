@@ -22,7 +22,11 @@ namespace Tenh {
 template <typename Derived_, typename Scalar_, Uint32 DIM_> // don't worry about type ID for now
 struct Vector_i
 {
-    enum { DIMENSION_MUST_BE_POSITIVE = STATIC_ASSERT_AS_RVALUE((DIM_ > 0), DIMENSION_MUST_BE_POSITIVE) }; // TODO: zero-dimensional vector spaces (?)
+    enum
+    {
+        DERIVED_MUST_NOT_BE_NULL_TYPE = Lvd::Meta::Assert<!Lvd::Meta::TypesAreEqual<Derived_,NullType>::v>::v,
+        DIMENSION_MUST_BE_POSITIVE = STATIC_ASSERT_AS_RVALUE((DIM_ > 0), DIMENSION_MUST_BE_POSITIVE) // TODO: zero-dimensional vector spaces (?)
+    }; 
 
     typedef Derived_ Derived;
     typedef Scalar_ Scalar;

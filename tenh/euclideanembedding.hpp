@@ -24,9 +24,11 @@ struct EuclideanEmbedding_Parent_Tensor_i
                                                   // -- yes, in as much as it gives the dimension
                                                   // of the vector index.
 };
-/*
+
 // NOTE: while this is a tensor, it isn't a tensor space, and so it technically shouldn't be used as a factor
 // type in a tensor product.  this is essentially a constant value -- it has only const accessors and can't be written to.
+// TODO: once bases IDs are implemented, change this to not provide a default implementation,
+// but only a specialization for Vector_t<Scalar,DIM,StandardEuclideanBasis>
 template <typename Vector>
 struct EuclideanEmbedding_t : public EuclideanEmbedding_Parent_Tensor_i<Vector>::T
 {
@@ -40,22 +42,27 @@ struct EuclideanEmbedding_t : public EuclideanEmbedding_Parent_Tensor_i<Vector>:
     typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
     using Parent_Tensor_i::DEGREE;
 
-    Scalar operator [] (MultiIndex const &m) const { return m.template el<0>() == m.template el<1>() ? Scalar(1) : Scalar(0); }
-
-    // this SHOULD be inconvenient and ugly to call.  it should be used ONLY when you know for certain that 0 <= i < DIM
-    Scalar component_access_without_range_check (Uint32 i) const
+    // 1 on the diagonal, 0 otherwise
+    Scalar operator [] (Index const &i) const
     {
-        Uint32 row = i / Vector::DIM;
-        Uint32 col = i % Vector::DIM;
-        return row == col ? Scalar(1) : Scalar(0);
+        return (i.value() % Vector::DIM == i.value() / Vector::DIM) ? Scalar(1) : Scalar(0);
+    }
+    Scalar operator [] (MultiIndex const &m) const
+    {
+        return m.template el<0>() == m.template el<1>() ? Scalar(1) : Scalar(0);
     }
 
     // NOTE: these may be unnecessary/undesired, because this type does not represent a vector space
 //     using Parent_Tensor_i::component_is_immutable_zero;
 //     using Parent_Tensor_i::scalar_factor_for_component;
 //     using Parent_Tensor_i::vector_index_of;
+
+    static std::string type_as_string ()
+    {
+        return "EuclideanEmbedding_t<" + TypeStringOf_t<Vector>::eval() + '>';
+    }
 };
-*/
+
 } // end of namespace Tenh
 
 #endif // TENH_EUCLIDEANEMBEDDING_HPP_

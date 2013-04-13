@@ -10,7 +10,7 @@ template <Uint32 DIM>
 struct DummyIndex_t
 {
     DummyIndex_t () : m(0) { }
-    DummyIndex_t (Uint32 i) : m(i) { }
+    explicit DummyIndex_t (Uint32 i, bool check_range = CHECK_RANGE) : m(i) { }
 
     static Uint32 const COMPONENT_COUNT = DIM;
 

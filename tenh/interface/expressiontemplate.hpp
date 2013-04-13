@@ -38,6 +38,8 @@ struct ExpressionTemplate_Eval_t;
 template <typename Derived_, typename Scalar_, typename FreeIndexTypeList_, typename UsedIndexTypeList_>
 struct ExpressionTemplate_i // _i is for "compile-time interface"
 {
+    enum { DERIVED_MUST_NOT_BE_NULL_TYPE = Lvd::Meta::Assert<!Lvd::Meta::TypesAreEqual<Derived_,NullType>::v>::v };
+
     typedef Derived_ Derived;
     // these typedefs make the Derived-specified typedefs available at the baseclass level,
     typedef Scalar_ Scalar;

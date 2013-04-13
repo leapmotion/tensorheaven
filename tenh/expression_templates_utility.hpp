@@ -65,7 +65,7 @@ struct UnarySummation_t
         Scalar retval(0);
         // get the map which produces the MultiIndex for each tensor from the TotalIndex t
         typedef MultiIndexMap_t<TotalIndexTypeList,TensorIndexTypeList> TensorIndexMap;
-        typename TensorIndexMap::EvalMapType tensor_index_map = TensorIndexMap::eval;
+        static typename TensorIndexMap::EvalMapType const tensor_index_map = TensorIndexMap::eval;
         // t = (f,s), which is a concatenation of the free access indices and the summed access indices.
         // s is a reference to the second part, which is what is iterated over in the summation.
         for (SummedIndex &s = t.template trailing_list<FreeIndexTypeList::LENGTH>(); s.is_not_at_end(); ++s)
@@ -110,8 +110,8 @@ struct BinarySummation_t
         // get the map which produces the MultiIndex for each operand from the TotalIndex t
         typedef MultiIndexMap_t<TotalIndexTypeList,typename LeftOperand::FreeIndexTypeList> LeftOperandIndexMap;
         typedef MultiIndexMap_t<TotalIndexTypeList,typename RightOperand::FreeIndexTypeList> RightOperandIndexMap;
-        typename LeftOperandIndexMap::EvalMapType left_operand_index_map = LeftOperandIndexMap::eval;
-        typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
+        static typename LeftOperandIndexMap::EvalMapType const left_operand_index_map = LeftOperandIndexMap::eval;
+        static typename RightOperandIndexMap::EvalMapType const right_operand_index_map = RightOperandIndexMap::eval;
         // t = (f,s), which is a concatenation of the free access indices and the summed access indices.
         // s is a reference to the second part, which is what is iterated over in the summation.
         for (SummedIndex &s = t.template trailing_list<FreeIndexTypeList::LENGTH>(); s.is_not_at_end(); ++s)
@@ -138,8 +138,8 @@ struct BinarySummation_t<LeftOperand,RightOperand,FreeIndexTypeList,EmptyTypeLis
         // get the map which produces the MultiIndex for each operand from the free indices m
         typedef MultiIndexMap_t<FreeIndexTypeList,typename LeftOperand::FreeIndexTypeList> LeftOperandIndexMap;
         typedef MultiIndexMap_t<FreeIndexTypeList,typename RightOperand::FreeIndexTypeList> RightOperandIndexMap;
-        typename LeftOperandIndexMap::EvalMapType left_operand_index_map = LeftOperandIndexMap::eval;
-        typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
+        static typename LeftOperandIndexMap::EvalMapType const left_operand_index_map = LeftOperandIndexMap::eval;
+        static typename RightOperandIndexMap::EvalMapType const right_operand_index_map = RightOperandIndexMap::eval;
         return left_operand[left_operand_index_map(m)] * right_operand[right_operand_index_map(m)];
     }
 };
@@ -206,8 +206,15 @@ struct IndexBundle_t
     };
 
     typedef typename Operand::Scalar Scalar;
-    // ResultingIndexType comes first in IndexTypeList
-    typedef typename SetSubtraction_t<TypeList_t<ResultingIndexType,typename Operand::FreeIndexTypeList>,BundleIndexTypeList>::T IndexTypeList;
+    // ResultingIndexType comes last in IndexTypeList
+    typedef typename SetSubtraction_t<
+        typename ConcatenationOfTypeLists_t<typename Operand::FreeIndexTypeList,TypeList_t<ResultingIndexType> >::T,
+        BundleIndexTypeList>::T IndexTypeList;
+    // this seems like it should be the same as Operand::FreeIndexTypeList, but it has
+    // the indices in BundleIndexTypeList coming last.
+    typedef typename ConcatenationOfTypeLists_t<
+        typename SetSubtraction_t<typename Operand::FreeIndexTypeList,BundleIndexTypeList>::T,
+        BundleIndexTypeList>::T UnpackedIndexTypeList;
     typedef typename ConcatenationOfTypeLists_t<typename Operand::UsedIndexTypeList,BundleIndexTypeList>::T UsedIndexTypeList;
     typedef MultiIndex_t<IndexTypeList> MultiIndex;
     typedef typename BundleIndexMap_t<BundleIndexTypeList,ResultingIndexType>::T BundleIndexMap;
@@ -217,8 +224,14 @@ struct IndexBundle_t
     Scalar operator [] (MultiIndex const &m) const
     {
         // replace the head of m with the separate indices that it bundles.
+        // use MultiIndexMap_t to place the indices in the correct order.
+        typedef MultiIndexMap_t<UnpackedIndexTypeList,typename Operand::FreeIndexTypeList> OperandIndexMap;
+        static typename OperandIndexMap::EvalMapType const operand_index_map = OperandIndexMap::eval;
+        typedef BundleIndexMap_t<BundleIndexTypeList,ResultingIndexType> BundleIndexMap;
+        static typename BundleIndexMap::T const bundle_index_map = BundleIndexMap::V;
         // |= is concatenation of MultiIndex_t instances
-        return m_operand[(BundleIndexMap_t<BundleIndexTypeList,ResultingIndexType>::V)(m.head()) |= m.body()];
+        return m_operand[operand_index_map(m.template leading_list<MultiIndex::LENGTH-1>() |= 
+                                           bundle_index_map(m.template el<MultiIndex::LENGTH-1>()))];
     }
 
     template <typename OtherTensor>

@@ -9,6 +9,7 @@
 #include <ostream>
 
 #include "tenh/core.hpp"
+#include "tenh/euclideanembedding.hpp"
 #include "tenh/interface/tensor.hpp"
 #include "tenh/meta/typetuple.hpp"
 #include "tenh/vector.hpp"
@@ -79,7 +80,7 @@ struct Tensor2Diagonal_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::Typ
         Uint32 row;
         Uint32 col;
         contiguous_index_to_rowcol_index(b.value(), row, col);
-        return MultiIndex_t<BundleIndexTypeList>(Index1(row), Index2(col));
+        return MultiIndex_t<BundleIndexTypeList>(Index1(row, DONT_CHECK_RANGE), Index2(col, DONT_CHECK_RANGE));
     }
 
     using Parent_Array_t::operator[];
@@ -192,6 +193,47 @@ private:
     {
         row = i*(Factor2::DIM+1);
         col = row;
+    }
+};
+
+template <typename TensorFactor1_, typename TensorFactor2_, typename TensorDerived>
+struct EuclideanEmbedding_t<Tensor2Diagonal_t<TensorFactor1_,TensorFactor2_,TensorDerived> >
+    :
+    public EuclideanEmbedding_Parent_Tensor_i<Tensor2Diagonal_t<TensorFactor1_,TensorFactor2_,TensorDerived> >::T
+{
+    typedef typename EuclideanEmbedding_Parent_Tensor_i<Tensor2Diagonal_t<TensorFactor1_,TensorFactor2_,TensorDerived> >::T Parent_Tensor_i;
+    typedef typename Parent_Tensor_i::Derived Derived;
+    typedef typename Parent_Tensor_i::Scalar Scalar;
+    using Parent_Tensor_i::DIM;
+    typedef typename Parent_Tensor_i::Index Index;
+    typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
+    typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
+    typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
+    using Parent_Tensor_i::DEGREE;
+    typedef TensorFactor1_ TensorFactor1;
+    typedef TensorFactor2_ TensorFactor2;
+    typedef Tensor2Diagonal_t<TensorFactor1,TensorFactor2,TensorDerived> Tensor2Diagonal;
+
+    Scalar operator [] (MultiIndex const &m) const
+    {
+        EuclideanEmbedding_t<TensorFactor1> e1;
+        EuclideanEmbedding_t<TensorFactor2> e2;
+        TypedIndex_t<TensorFactor1,'i'> i;
+        TypedIndex_t<TensorFactor1,'j'> j;
+        TypedIndex_t<TensorFactor2,'k'> k;
+        TypedIndex_t<TensorFactor2,'l'> l;
+        TypedIndex_t<Tensor2Diagonal,'p'> p;
+        TypedIndex_t<Tensor2Diagonal,'q'> q;
+        return ((e1(i|j)*e2(k|l)).bundle(j|l,q).bundle(i|k,p))[m];
+    }
+
+    // NOTE: these may be unnecessary/undesired, because this type does not represent a vector space
+//     using Parent_Tensor_i::component_is_immutable_zero;
+//     using Parent_Tensor_i::scalar_factor_for_component;
+//     using Parent_Tensor_i::vector_index_of;
+    static std::string type_as_string ()
+    {
+        return "EuclideanEmbedding_t<" + TypeStringOf_t<Tensor2Diagonal>::eval() + '>';
     }
 };
 

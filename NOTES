@@ -70,6 +70,8 @@ random TODOs:
 - implement compile-time assert messages as follows:
   struct WhateverYouWantTheMessageToBe { /* intentionally empty */ };
   struct Assert<false,Message> { static bool const V = Message::VALUE_INTENTIONALLY_MISSING_TO_CAUSE_COMPILE_ERROR; };
+- make a nonpublic directory and put all NonPublic code in there (and actually put appropriate stuff in NonPublic namespace)
+- allow 0-dimensional vector spaces (otherwise certain induced types (e.g. antisymmetric 2-tensors) will cause static asserts)
 
 features necessary for version 0.5:
 - euclidean embedding (using short-turm zero-dimensional hack (?))
@@ -117,6 +119,7 @@ different multi-indexing schemes
 - "streaming multi-index" : s/i/j/k/l/m/T or s^i^j^k^l^m^T -- need intermediate "streaming" type
                             left to right, breaking types until there is a match, implementation is probably
                             recursive and relatively easy.  "breaking tensor type boxes apart recursively"
+- "barred multi-index"    : s(i|j|k|l|m|T)
 
 handling more general symmetries
 - each "linear" symmetry is an inclusion of a linear subspace into a more general type
