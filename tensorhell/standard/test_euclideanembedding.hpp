@@ -1,10 +1,10 @@
 // ///////////////////////////////////////////////////////////////////////////
-// test_tensor2diagonal.hpp by Ted Nitz, created 2013/04/04
+// test_euclideanembedding.hpp by Victor Dods, created 2013/04/13
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#if !defined(TEST_TENSOR2DIAGONAL_HPP_)
-#define TEST_TENSOR2DIAGONAL_HPP_
+#if !defined(TEST_EUCLIDEANEMBEDDING_HPP_)
+#define TEST_EUCLIDEANEMBEDDING_HPP_
 
 #include "test.hpp"
 
@@ -17,11 +17,11 @@ struct Directory;
 } // end of namespace Lvd
 
 namespace Test {
-namespace Tensor2Diagonal {
+namespace EuclideanEmbedding {
 
 void AddTests (Lvd::TestSystem::Directory *parent);
 
-} // end of namespace Tensor2Diagonal
+} // end of namespace EuclideanEmbedding
 } // end of namespace Test
 
-#endif // !defined(TEST_TENSOR2DIAGONAL_HPP_)
+#endif // !defined(TEST_EUCLIDEANEMBEDDING_HPP_)
