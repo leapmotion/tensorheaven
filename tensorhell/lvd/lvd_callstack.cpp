@@ -7,7 +7,8 @@
 #include <csignal>
 #include <cstdlib>
 #include <cstring>
-#include <errno.h>
+#include <stdexcept>
+#include <cerrno>
 #include <execinfo.h>
 #include <sstream>
 #include <string>
@@ -30,9 +31,9 @@ struct Addr2line
     {
         assert(executable_filename != NULL && *executable_filename != '\0');
         if (pipe(m_child_to_parent_pipe) != 0)
-            throw string("child-to-parent pipe creation failed");
+            throw runtime_error(string("child-to-parent pipe creation failed: ") + strerror(errno));
         if (pipe(m_parent_to_child_pipe) != 0)
-            throw string("parent-to-child pipe creation failed");
+            throw runtime_error(string("parent-to-child pipe creation failed: ") + strerror(errno));
         if ((m_child_pid = fork()) == 0)
         {
             // connect up the pipes
@@ -82,7 +83,7 @@ struct Addr2line
         ostringstream out;
         out << address << endl;
         if (write(m_parent_to_child_pipe[PIPE_WRITE], out.str().c_str(), out.str().length()) == -1)
-            throw string("address write failed");
+            throw runtime_error(string("address write failed: ") + strerror(errno));
 
         // read the response from the child process
         enum { RESPONSE_BUFFER_SIZE = 0x400 };

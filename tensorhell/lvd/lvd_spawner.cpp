@@ -9,6 +9,7 @@
 #include <stdexcept>
 #include <sys/types.h>
 #include <unistd.h>
+#include <cerrno>
 
 #include "lvd_spawner.hpp"
 
@@ -48,9 +49,13 @@ Pid SpawnChild (int argc, char **argv, char **envp, string const &child_indicato
     try
     {
         if (pipe(child_to_parent_pipe) != 0)
-            throw runtime_error("child-to-parent pipe creation failed");
+        {
+            throw runtime_error(string("child-to-parent pipe creation failed: ") + strerror(errno));
+        }
         if (pipe(parent_to_child_pipe) != 0)
-            throw runtime_error("parent-to-child pipe creation failed");
+        {
+            throw runtime_error(string("parent-to-child pipe creation failed: ") + strerror(errno));
+        }
     }
     catch (exception &e)
     {
@@ -65,9 +70,9 @@ Pid SpawnChild (int argc, char **argv, char **envp, string const &child_indicato
         {
             // connect up the pipes.
             if (dup2(parent_to_child_pipe[PIPE_READ], STDIN) < 0)
-                throw runtime_error("parent-to-child pipe connection for STDIN failed");
+                throw runtime_error(string("parent-to-child pipe connection for STDIN failed: ") + strerror(errno));
             if (dup2(child_to_parent_pipe[PIPE_WRITE], STDOUT) < 0)
-                throw runtime_error("child-to-parent pipe connection for STDOUT failed");
+                throw runtime_error(string("child-to-parent pipe connection for STDOUT failed") + strerror(errno));
         }
         catch (exception &e)
         {
@@ -97,9 +102,9 @@ Pid SpawnChild (int argc, char **argv, char **envp, string const &child_indicato
         {
             // connect up the pipes.
             if (dup2(child_to_parent_pipe[PIPE_READ], STDIN) < 0)
-                throw runtime_error("child-to-parent pipe connection for STDIN failed");
+                throw runtime_error(string("child-to-parent pipe connection for STDIN failed") + strerror(errno));
             if (dup2(parent_to_child_pipe[PIPE_WRITE], STDOUT) < 0)
-                throw runtime_error("parent-to-child pipe connection for STDOUT failed");
+                throw runtime_error(string("parent-to-child pipe connection for STDOUT failed") + strerror(errno));
         }
         catch (exception &e)
         {
