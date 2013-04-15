@@ -25,17 +25,22 @@ struct StaticScalar
     static Scalar const ONE;
     static Scalar const NEGATIVE_ONE;
     static Scalar const SQRT_TWO;
-    static Scalar const EPSILON;
+
+    // used for comparing floating point values, accounting for roundoff error
+    static Scalar epsilon ()
+    {
+        Lvd::Meta::Assert<(Lvd::Meta::TypesAreEqual<Scalar,float>::v || Lvd::Meta::TypesAreEqual<Scalar,double>::v)>();
+        if (Lvd::Meta::TypesAreEqual<Scalar,float>())
+            return 1e-06;
+        else // double
+            return 1e-14;
+    }
 };
 
 template <typename Scalar> Scalar const StaticScalar<Scalar>::ZERO(0);
 template <typename Scalar> Scalar const StaticScalar<Scalar>::ONE(1);
 template <typename Scalar> Scalar const StaticScalar<Scalar>::NEGATIVE_ONE(-1);
 template <typename Scalar> Scalar const StaticScalar<Scalar>::SQRT_TWO(M_SQRT2);
-
-// used for comparing floating point values, accounting for roundoff error
-template <> float const StaticScalar<float>::EPSILON(1e-06);
-template <> double const StaticScalar<double>::EPSILON(1e-14);
 
 } // end of namespace NonPublic
 

@@ -62,7 +62,7 @@ void verify_on_vector_type (Context const &context)
 //                       << FORMAT_VALUE(w_i_dot_w_j) << ", " << FORMAT_VALUE(v_i_dot_v_j) << ", "
 //                       << FORMAT_VALUE(abs(w_i_dot_w_j - v_i_dot_v_j)) << '\n';
             
-            assert_lt(abs(w_i_dot_w_j - v_i_dot_v_j), Tenh::Static<Scalar>::EPSILON * V::DIM);
+            assert_lt(abs(w_i_dot_w_j - v_i_dot_v_j), Tenh::Static<Scalar>::epsilon() * V::DIM);
         }
     }
 }
@@ -150,7 +150,7 @@ void verify_on_tensor_type (Context const &context)
 //                       << FORMAT_VALUE(w_i_dot_w_j) << ", " << FORMAT_VALUE(v_i_dot_v_j) << ", "
 //                       << FORMAT_VALUE(abs(w_i_dot_w_j - v_i_dot_v_j)) << '\n';
             
-            assert_lt(abs(w_i_dot_w_j - v_i_dot_v_j), Tenh::Static<Scalar>::EPSILON * S::DIM);
+            assert_lt(abs(w_i_dot_w_j - v_i_dot_v_j), Tenh::Static<Scalar>::epsilon() * S::DIM);
         }
     }
 }
