@@ -42,7 +42,7 @@ void test_Tensor2Antisymmetric_t (Context const &context)
         b[i] = sqrt(i.value()) + 5;
     }
 
-    float hand_computed_value = 0.0f;
+    Scalar hand_computed_value = static_cast<Scalar>(0);
     for (typename Tensor2Antisymmetric::MultiIndex i; i.is_not_at_end(); ++i)
     {
         hand_computed_value += a[i]*b[i];
@@ -50,12 +50,12 @@ void test_Tensor2Antisymmetric_t (Context const &context)
     
     Tenh::TypedIndex_t<Tensor2Antisymmetric,'i'> i;
     
-    assert_eq(hand_computed_value, a(i)*b(i));
+    assert_lt(abs(hand_computed_value - a(i)*b(i)), Tenh::Static<Scalar>::epsilon()*DIM);
     
     Tenh::TypedIndex_t<Vector,'j'> j;
     Tenh::TypedIndex_t<Vector,'k'> k;
     
-    assert_eq(hand_computed_value, a(j|k)*b(j|k));
+    assert_lt(abs(hand_computed_value - a(j|k)*b(j|k)), Tenh::Static<Scalar>::epsilon()*DIM);
 }
 
 template <typename Scalar, Uint32 DIM>
@@ -84,6 +84,10 @@ void AddTests (Directory *parent)
 {
     Directory *expression_templates = new Directory("ExpressionTemplates", parent);
     add_particular_tests_for_scalar<float>(expression_templates);
+    add_particular_tests_for_scalar<double>(expression_templates);
+    // add_particular_tests_for_scalar<complex<float> >(expression_templates);
+    // add_particular_tests_for_scalar<complex<double> >(expression_templates);
+
 
 
 }
