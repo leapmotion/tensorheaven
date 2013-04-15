@@ -214,9 +214,13 @@ struct NaturalPairing_t<Tensor2Symmetric_t<Factor1,Factor2,Derived> >
     static Scalar component (Index const &i)
     {
         if (i.value() < Tensor2Symmetric::STRICTLY_LOWER_TRIANGULAR_COMPONENT_COUNT)
+        {
             return Scalar(2); // the off-diagonal components occur twice (in the component matrix)
+        }
         else
+        {
             return Scalar(1); // but the diagonal components occur only once (in the component matrix)
+        }
     }
 };
 
@@ -248,13 +252,18 @@ struct EuclideanEmbedding_t<Tensor2Symmetric_t<TensorFactor1_,TensorFactor2_,Ten
         TypedIndex_t<TensorFactor2,'l'> l;
         TypedIndex_t<Tensor2Symmetric,'p'> p;
         TypedIndex_t<Tensor2Symmetric,'q'> q;
-        // TODO: the NaturalPairing_t is providing a factor of 2, hence why we're providing
-        // a factor of 1/sqrt(2) -- figure out how to use the default NaturalPairing_t instead        
+        // the NaturalPairing_t is providing a factor of 2, hence why we're providing
+        // a factor of 1/sqrt(2) -- figure out how to use the default NaturalPairing_t instead
+        // TODO: the tensor type should change basis to StandardEuclidean or some such
         Uint32 row = m.template el<0>().value();
         if (row < Tensor2Symmetric::STRICTLY_LOWER_TRIANGULAR_COMPONENT_COUNT)
+        {
             return (Scalar(1)/Static<Scalar>::SQRT_TWO*(e1(i|j)*e2(k|l)).bundle(j|l,q).bundle(i|k,p))[m];
+        }
         else
+        {
             return ((e1(i|j)*e2(k|l)).bundle(j|l,q).bundle(i|k,p))[m];
+        }
     }
 
     // NOTE: these may be unnecessary/undesired, because this type does not represent a vector space
