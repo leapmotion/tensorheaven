@@ -7,10 +7,13 @@
 #include <csignal>
 #include <cstdlib>
 #include <cstring>
+#include <errno.h>
 #include <execinfo.h>
 #include <sstream>
 #include <string>
 #include <unistd.h>
+
+#include <iostream> // TEMP HIPPO
 
 #include "lvd_callstack.hpp"
 
@@ -36,6 +39,13 @@ struct Addr2line
             dup2(m_parent_to_child_pipe[PIPE_READ], STDIN);
             dup2(m_child_to_parent_pipe[PIPE_WRITE], STDOUT);
             // create the commandline
+// #if defined(__MACH__) // Mac builds
+//             char *argv[4];
+//             argv[0] = const_cast<char *>("atos");
+//             argv[1] = const_cast<char *>("-o");
+//             argv[2] = const_cast<char *>(executable_filename);
+//             argv[3] = NULL;
+// #else // Linux builds
             char *argv[7];
             argv[0] = const_cast<char *>("addr2line");
             argv[1] = const_cast<char *>("--exe");
@@ -44,11 +54,14 @@ struct Addr2line
             argv[4] = const_cast<char *>("--functions");
             argv[5] = const_cast<char *>("--inlines");
             argv[6] = NULL;
+// #endif
             // execute the child process
             execvp(argv[0], argv);
             // this should only happen if execv() fails
+            std::cerr << "execvp failed" << std::endl;
             exit(-1);
         }
+        // TODO: have the parent actually check that the child execvp succeeded
     }
     ~Addr2line ()
     {
@@ -61,6 +74,10 @@ struct Addr2line
 
     string StringifyAddress (void const *address, PathFormat path_format)
     {
+#if defined(__MACH__)
+        return "TEMP DUMMY STRINGIFIED ADDRESS";
+#endif
+            
         // send the address to the child process
         ostringstream out;
         out << address << endl;
@@ -71,6 +88,17 @@ struct Addr2line
         enum { RESPONSE_BUFFER_SIZE = 0x400 };
         char buffer[RESPONSE_BUFFER_SIZE];
         size_t bytes_actually_read = read(m_child_to_parent_pipe[PIPE_READ], buffer, RESPONSE_BUFFER_SIZE);
+        if (bytes_actually_read == size_t(-1))
+        {
+            // this indicates error, the error condition is in errno
+            std::cerr << "errno = " << errno << std::endl;
+//             switch (errno)
+//             {
+//                 case EAGAIN: // non-blocking I/O call didn't return any input
+//                 case EBADF:  // bad file descriptor
+//                 case EFAULT:
+//             }
+        }
         assert(bytes_actually_read > 0);
         assert(bytes_actually_read <= RESPONSE_BUFFER_SIZE);
         string response(buffer, bytes_actually_read);

@@ -87,6 +87,10 @@ void add_tests_for_verify_on_vector_type_1 (Directory *parent)
     add_test_for_verify_on_vector_type<V>(parent);
     add_test_for_verify_on_vector_type<A>(parent);
     add_test_for_verify_on_vector_type<S>(parent);
+//     add_test_for_verify_on_vector_type<Tenh::Tensor2Antisymmetric_t<A> >(parent); // TODO: allow zero-dimensional vector spaces
+    add_test_for_verify_on_vector_type<Tenh::Tensor2Antisymmetric_t<S> >(parent);
+    add_test_for_verify_on_vector_type<Tenh::Tensor2Symmetric_t<A> >(parent);
+    add_test_for_verify_on_vector_type<Tenh::Tensor2Symmetric_t<S> >(parent);
 }
 
 // tensor types whose factors don't have to be identical
@@ -170,6 +174,10 @@ void add_tests_for_verify_on_tensor_type_1 (Directory *parent)
     
     add_test_for_verify_on_tensor_type<A>(parent);
     add_test_for_verify_on_tensor_type<S>(parent);
+//     add_test_for_verify_on_tensor_type<Tenh::Tensor2Antisymmetric_t<A> >(parent); // TODO: allow zero-dimensional vector spaces
+    add_test_for_verify_on_tensor_type<Tenh::Tensor2Antisymmetric_t<S> >(parent);
+    add_test_for_verify_on_tensor_type<Tenh::Tensor2Symmetric_t<A> >(parent);
+    add_test_for_verify_on_tensor_type<Tenh::Tensor2Symmetric_t<S> >(parent);
 }
 
 // tensor types whose factors don't have to be identical
@@ -204,36 +212,22 @@ void AddTests (Directory *parent)
         
         
         add_tests_for_verify_on_vector_type_2<float,1,float,1>(d);
-        add_tests_for_verify_on_vector_type_2<float,1,float,2>(d);
         add_tests_for_verify_on_vector_type_2<float,1,float,3>(d);
         add_tests_for_verify_on_vector_type_2<float,1,float,4>(d);
-        add_tests_for_verify_on_vector_type_2<float,2,float,1>(d);
-        add_tests_for_verify_on_vector_type_2<float,2,float,2>(d);
-        add_tests_for_verify_on_vector_type_2<float,2,float,3>(d);
-        add_tests_for_verify_on_vector_type_2<float,2,float,4>(d);
         add_tests_for_verify_on_vector_type_2<float,3,float,1>(d);
-        add_tests_for_verify_on_vector_type_2<float,3,float,2>(d);
         add_tests_for_verify_on_vector_type_2<float,3,float,3>(d);
         add_tests_for_verify_on_vector_type_2<float,3,float,4>(d);
         add_tests_for_verify_on_vector_type_2<float,4,float,1>(d);
-        add_tests_for_verify_on_vector_type_2<float,4,float,2>(d);
         add_tests_for_verify_on_vector_type_2<float,4,float,3>(d);
         add_tests_for_verify_on_vector_type_2<float,4,float,4>(d);
         
         add_tests_for_verify_on_vector_type_2<double,1,double,1>(d);
-        add_tests_for_verify_on_vector_type_2<double,1,double,2>(d);
         add_tests_for_verify_on_vector_type_2<double,1,double,3>(d);
         add_tests_for_verify_on_vector_type_2<double,1,double,4>(d);
-        add_tests_for_verify_on_vector_type_2<double,2,double,1>(d);
-        add_tests_for_verify_on_vector_type_2<double,2,double,2>(d);
-        add_tests_for_verify_on_vector_type_2<double,2,double,3>(d);
-        add_tests_for_verify_on_vector_type_2<double,2,double,4>(d);
         add_tests_for_verify_on_vector_type_2<double,3,double,1>(d);
-        add_tests_for_verify_on_vector_type_2<double,3,double,2>(d);
         add_tests_for_verify_on_vector_type_2<double,3,double,3>(d);
         add_tests_for_verify_on_vector_type_2<double,3,double,4>(d);
         add_tests_for_verify_on_vector_type_2<double,4,double,1>(d);
-        add_tests_for_verify_on_vector_type_2<double,4,double,2>(d);
         add_tests_for_verify_on_vector_type_2<double,4,double,3>(d);
         add_tests_for_verify_on_vector_type_2<double,4,double,4>(d);
     }
@@ -253,36 +247,22 @@ void AddTests (Directory *parent)
         
         
         add_tests_for_verify_on_tensor_type_2<float,1,float,1>(d);
-        add_tests_for_verify_on_tensor_type_2<float,1,float,2>(d);
         add_tests_for_verify_on_tensor_type_2<float,1,float,3>(d);
         add_tests_for_verify_on_tensor_type_2<float,1,float,4>(d);
-        add_tests_for_verify_on_tensor_type_2<float,2,float,1>(d);
-        add_tests_for_verify_on_tensor_type_2<float,2,float,2>(d);
-        add_tests_for_verify_on_tensor_type_2<float,2,float,3>(d);
-        add_tests_for_verify_on_tensor_type_2<float,2,float,4>(d);
         add_tests_for_verify_on_tensor_type_2<float,3,float,1>(d);
-        add_tests_for_verify_on_tensor_type_2<float,3,float,2>(d);
         add_tests_for_verify_on_tensor_type_2<float,3,float,3>(d);
         add_tests_for_verify_on_tensor_type_2<float,3,float,4>(d);
         add_tests_for_verify_on_tensor_type_2<float,4,float,1>(d);
-        add_tests_for_verify_on_tensor_type_2<float,4,float,2>(d);
         add_tests_for_verify_on_tensor_type_2<float,4,float,3>(d);
         add_tests_for_verify_on_tensor_type_2<float,4,float,4>(d);
         
         add_tests_for_verify_on_tensor_type_2<double,1,double,1>(d);
-        add_tests_for_verify_on_tensor_type_2<double,1,double,2>(d);
         add_tests_for_verify_on_tensor_type_2<double,1,double,3>(d);
         add_tests_for_verify_on_tensor_type_2<double,1,double,4>(d);
-        add_tests_for_verify_on_tensor_type_2<double,2,double,1>(d);
-        add_tests_for_verify_on_tensor_type_2<double,2,double,2>(d);
-        add_tests_for_verify_on_tensor_type_2<double,2,double,3>(d);
-        add_tests_for_verify_on_tensor_type_2<double,2,double,4>(d);
         add_tests_for_verify_on_tensor_type_2<double,3,double,1>(d);
-        add_tests_for_verify_on_tensor_type_2<double,3,double,2>(d);
         add_tests_for_verify_on_tensor_type_2<double,3,double,3>(d);
         add_tests_for_verify_on_tensor_type_2<double,3,double,4>(d);
         add_tests_for_verify_on_tensor_type_2<double,4,double,1>(d);
-        add_tests_for_verify_on_tensor_type_2<double,4,double,2>(d);
         add_tests_for_verify_on_tensor_type_2<double,4,double,3>(d);
         add_tests_for_verify_on_tensor_type_2<double,4,double,4>(d);
     }

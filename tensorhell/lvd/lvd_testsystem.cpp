@@ -237,7 +237,7 @@ void EmitStatusMessage (Result result, Stage stage, int signum, string const &me
 {
     PRINT_DEBUG_MESSAGE("*** RUNNER DEBUG MESSAGE *** : emitting status: result = " << ResultString(result)
                                                                    << ", stage = " << StageString(stage)
-                                                                   << ", signum = " << SignalString(signum) << '\n');
+                                                                   << ", signal = " << SignalString(signum) << '\n');
     cout << result << '\n' << stage << '\n' << signum << '\n';
     if (result != RESULT_NO_ERROR)
     {
@@ -262,6 +262,8 @@ void EmitStatusMessage (Result result, Stage stage, int signum, string const &me
 
 void SignalHandler (int signum)
 {
+    PRINT_DEBUG_MESSAGE("*** RUNNER DEBUG MESSAGE *** : caught signal " << SignalString(signum) << '\n');
+                                                                   
     ostringstream out;
 
     // if there was a premade message (e.g. from FailAssert), use that
@@ -580,7 +582,7 @@ unsigned int Directory::SpawnScheduled (char *argv0, char **envp, string const &
         int actual_signum = temp;
         PRINT_DEBUG_MESSAGE("*** SPAWNER DEBUG MESSAGE *** : child process output result = " << ResultString(actual_result)
                                                                             << ", stage = " << StageString(actual_stage)
-                                                                            << ", signum = " << SignalString(actual_signum) << '\n');
+                                                                            << ", signal = " << SignalString(actual_signum) << '\n');
         string message;
         // there's only a message to read if we didn't get RESULT_NO_ERROR
         if (actual_result != RESULT_NO_ERROR)
