@@ -6,6 +6,11 @@
 #ifndef TENH_TENSOR2SYMMETRIC_HPP_
 #define TENH_TENSOR2SYMMETRIC_HPP_
 
+#ifdef __clang_version__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wtautological-compare"
+#endif // __clang_version__
+
 #include <cmath> // TEMP until rowcol/contiguous index map is implemented as a lookup table
 #include <ostream>
 
@@ -277,5 +282,9 @@ struct EuclideanEmbedding_t<Tensor2Symmetric_t<TensorFactor1_,TensorFactor2_,Ten
 };
 
 } // end of namespace Tenh
+
+#ifdef __clang_version__
+#pragma GCC diagnostic pop
+#endif // __clang_version__
 
 #endif // TENH_TENSOR2SYMMETRIC_HPP_

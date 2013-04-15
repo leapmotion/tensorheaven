@@ -8,7 +8,7 @@ find_path(EIGEN_INCLUDE_DIR "eigen" PATHS $ENV{EIGEN_INCLUDE_DIR} NO_DEFAULT_PAT
 include_directories(${tensorheaven_test_SOURCE_DIR} ${EIGEN_INCLUDE_DIR})
 
 # TODO: build options for other compilers
-set(CMAKE_CXX_FLAGS "-Wall") # took out -Werror for now because of dumb -Wtautological-compare in clang not recognizing it's in a template
+set(CMAKE_CXX_FLAGS "-Wall -Werror") # -Werror can give problems under clang due to -Wtautological-compare see pragma in tensor2symmetric.hpp to disable it as needed.
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-g -O2")
 set(CMAKE_CXX_FLAGS_ASMEXAM "-g0 -O2 -save-temps")
