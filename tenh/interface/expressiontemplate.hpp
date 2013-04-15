@@ -95,28 +95,55 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
 template <typename Derived, typename Scalar, typename FreeIndex1, typename UsedIndexTypeList>
 std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scalar,TypeList_t<FreeIndex1>,UsedIndexTypeList> const &e)
 {
-    FreeIndex1 i; // initialized to the beginning automatically
-    out << '(' << e[i];
-    ++i;
-    for ( ; i.is_not_at_end(); ++i)
-        out << ", " << e[i];
-    return out << ")(" << FreeIndex1::SYMBOL << ')';
+    // determine the max size that a component takes up
+    Uint32 max_component_width = 0;
+    for (FreeIndex1 i; i.is_not_at_end(); ++i)
+    {
+        std::ostringstream sout;
+        sout << e[i];
+        if (sout.str().length() > max_component_width)
+            max_component_width = sout.str().length();
+    }
+
+    out << "[ ";
+    for (FreeIndex1 i; i.is_not_at_end(); ++i)
+    {
+        out.setf(std::ios_base::right);
+        out.width(max_component_width);
+        out << e[i] << ' ';
+    }
+    return out << "](" << FreeIndex1::SYMBOL << ')';
 }
 
 // specialization for 2 indices
 template <typename Derived, typename Scalar, typename FreeIndex1, typename FreeIndex2, typename UsedIndexTypeList>
 std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scalar,TypeList_t<FreeIndex1,TypeList_t<FreeIndex2> >,UsedIndexTypeList> const &e)
 {
+    // determine the max size that a component takes up
+    Uint32 max_component_width = 0;
+    for (typename Derived::MultiIndex m; m.is_not_at_end(); ++m)
+    {
+        std::ostringstream sout;
+        sout << e[m];
+        if (sout.str().length() > max_component_width)
+            max_component_width = sout.str().length();
+    }
+
     typename Derived::MultiIndex m;
+    if (m.is_at_end())
+        return out << "\n[[ ]]\n";
+
     out << "\n[";
     for (FreeIndex1 i; i.is_not_at_end(); ++i)
     {
         if (i.value() != 0)
             out << ' ';
-        out << '[';
+        out << "[ ";
         for (FreeIndex2 j; j.is_not_at_end(); ++j)
         {
-            out << e[m] << '\t';
+            out.setf(std::ios_base::right);
+            out.width(max_component_width);
+            out << e[m] << ' ';
             ++m;
         }
         out << ']';
@@ -125,16 +152,27 @@ std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scala
         if (next.is_not_at_end())
             out << '\n';
     }
-    out << "]\n"; // TODO: figure out how to print the index (which could be a MultiIndex_t)
-//     out << "](" << FreeIndex1::SYMBOL << ',' << FreeIndex2::SYMBOL << ")\n";
-    return out;
+    return out << "](" << FreeIndex1::SYMBOL << ',' << FreeIndex2::SYMBOL << ")\n";
 }
 
 // specialization for 3 indices
 template <typename Derived, typename Scalar, typename FreeIndex1, typename FreeIndex2, typename FreeIndex3, typename UsedIndexTypeList>
 std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scalar,TypeList_t<FreeIndex1,TypeList_t<FreeIndex2,TypeList_t<FreeIndex3> > >,UsedIndexTypeList> const &e)
 {
+    // determine the max size that a component takes up
+    Uint32 max_component_width = 0;
+    for (typename Derived::MultiIndex m; m.is_not_at_end(); ++m)
+    {
+        std::ostringstream sout;
+        sout << e[m];
+        if (sout.str().length() > max_component_width)
+            max_component_width = sout.str().length();
+    }
+    
     typename Derived::MultiIndex m;
+    if (m.is_at_end())
+        return out << "\n[[[ ]]]\n";
+
     out << "\n[";
     for (FreeIndex1 i; i.is_not_at_end(); ++i)
     {
@@ -145,10 +183,12 @@ std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scala
         {
             if (j.value() != 0)
                 out << "  ";
-            out << '[';
+            out << "[ ";
             for (FreeIndex3 k; k.is_not_at_end(); ++k)
             {
-                out << e[m] << '\t';
+                out.setf(std::ios_base::right);
+                out.width(max_component_width);
+                out << e[m] << ' ';
                 ++m;
             }
             out << ']';
@@ -163,8 +203,7 @@ std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scala
         if (next.is_not_at_end())
             out << "\n\n";
     }
-    out << "](" << FreeIndex1::SYMBOL << ',' << FreeIndex2::SYMBOL << ',' << FreeIndex3::SYMBOL << ")\n";
-    return out;
+    return out << "](" << FreeIndex1::SYMBOL << ',' << FreeIndex2::SYMBOL << ',' << FreeIndex3::SYMBOL << ")\n";
 }
 
 } // end of namespace Tenh

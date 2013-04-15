@@ -72,9 +72,10 @@ random TODOs:
   struct Assert<false,Message> { static bool const V = Message::VALUE_INTENTIONALLY_MISSING_TO_CAUSE_COMPILE_ERROR; };
 - make a nonpublic directory and put all NonPublic code in there (and actually put appropriate stuff in NonPublic namespace)
 - allow 0-dimensional vector spaces (otherwise certain induced types (e.g. antisymmetric 2-tensors) will cause static asserts)
+- use -Wno-tautological-compare for clang builds
 
 features necessary for version 0.5:
-- euclidean embedding (using short-turm zero-dimensional hack (?))
+- euclidean embedding (using short-term zero-dimensional hack (?))
 x eval (for 2-tensors)
 - basis specification (e.g. in diagonalization/SVD, and the orthonormal matrix could/should be called "basis vectors")
 x stub-out: noalias (?) for situations like a(i) = a(i) + b(i), but also to avoid the runtime check of aliasing, so the human

@@ -159,13 +159,24 @@ std::ostream &operator << (std::ostream &out, Tensor_i<Derived,TypeList_t<Factor
 {
     typedef Tensor_i<Derived,TypeList_t<Factor1>,DIM> Tensor;
 
-    out << '[';
+    // determine the max size that a component takes up
+    Uint32 max_component_width = 0;
     for (typename Tensor::MultiIndex m; m.is_not_at_end(); ++m)
     {
-        out << t[m] << '\t';
+        std::ostringstream sout;
+        sout << t[m];
+        if (sout.str().length() > max_component_width)
+            max_component_width = sout.str().length();
     }
-    out << ']';
-    return out;
+
+    out << "[ ";
+    for (typename Tensor::MultiIndex m; m.is_not_at_end(); ++m)
+    {
+        out.setf(std::ios_base::right);
+        out.width(max_component_width);
+        out << t[m] << ' ';
+    }
+    return out << ']';
 }
 
 // specialization for 2-tensors
@@ -173,19 +184,32 @@ template <typename Derived, typename Factor1, typename Factor2, Uint32 DIM>
 std::ostream &operator << (std::ostream &out, Tensor_i<Derived,TypeList_t<Factor1,TypeList_t<Factor2> >,DIM> const &t)
 {
     typedef Tensor_i<Derived,TypeList_t<Factor1,TypeList_t<Factor2> >,DIM> Tensor;
+    
+    // determine the max size that a component takes up
+    Uint32 max_component_width = 0;
+    for (typename Tensor::MultiIndex m; m.is_not_at_end(); ++m)
+    {
+        std::ostringstream sout;
+        sout << t[m];
+        if (sout.str().length() > max_component_width)
+            max_component_width = sout.str().length();
+    }
+
     typename Tensor::MultiIndex m;
     if (m.is_at_end())
-        return out << "\n[[]]\n";
+        return out << "\n[[ ]]\n";
 
     out << "\n[";
     for (typename Factor1::Index i; i.is_not_at_end(); ++i)
     {
         if (i.value() != 0)
             out << ' ';
-        out << '[';
+        out << "[ ";
         for (typename Factor2::Index j; j.is_not_at_end(); ++j)
         {
-            out << t[m] << '\t';
+            out.setf(std::ios_base::right);
+            out.width(max_component_width);
+            out << t[m] << ' ';
             ++m;
         }
         out << ']';
@@ -202,9 +226,20 @@ template <typename Derived, typename Factor1, typename Factor2, typename Factor3
 std::ostream &operator << (std::ostream &out, Tensor_i<Derived,TypeList_t<Factor1,TypeList_t<Factor2,TypeList_t<Factor3> > >,DIM> const &t)
 {
     typedef Tensor_i<Derived,TypeList_t<Factor1,TypeList_t<Factor2,TypeList_t<Factor3> > >,DIM> Tensor;
+
+    // determine the max size that a component takes up
+    Uint32 max_component_width = 0;
+    for (typename Tensor::MultiIndex m; m.is_not_at_end(); ++m)
+    {
+        std::ostringstream sout;
+        sout << t[m];
+        if (sout.str().length() > max_component_width)
+            max_component_width = sout.str().length();
+    }
+    
     typename Tensor::MultiIndex m;
     if (m.is_at_end())
-        return out << "\n[[[]]]\n";
+        return out << "\n[[[ ]]]\n";
 
     out << "\n[";
     for (typename Factor1::Index i; i.is_not_at_end(); ++i)
@@ -216,10 +251,12 @@ std::ostream &operator << (std::ostream &out, Tensor_i<Derived,TypeList_t<Factor
         {
             if (j.value() != 0)
                 out << "  ";
-            out << '[';
+            out << "[ ";
             for (typename Factor3::Index k; k.is_not_at_end(); ++k)
             {
-                out << t[m] << '\t';
+                out.setf(std::ios_base::right);
+                out.width(max_component_width);
+                out << t[m] << ' ';
                 ++m;
             }
             out << ']';
