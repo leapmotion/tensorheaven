@@ -9,15 +9,14 @@ include_directories(${tensorheaven_test_SOURCE_DIR} ${EIGEN_INCLUDE_DIR})
 
 # TODO: build options for other compilers
 set(CMAKE_CXX_FLAGS "-Wall -Werror") # -Werror can give problems under clang due to -Wtautological-compare see pragma in tensor2symmetric.hpp to disable it as needed.
-set(CMAKE_CXX_FLAGS_DEBUG "-g")
-set(CMAKE_CXX_FLAGS_RELEASE "-g -O2")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O3")
+set(CMAKE_CXX_FLAGS_RELEASE "-g -O3 -DNDEBUG")
 set(CMAKE_CXX_FLAGS_ASMEXAM "-g0 -O3 -save-temps -DNDEBUG")
 
 # temp tests
 add_executable(asm_exam asm_exam.cpp)
 add_executable(contraction_prototype contraction_prototype.cpp)
 add_executable(eigen_interop_prototype eigen_interop_prototype.cpp)
-add_executable(multiindex multiindex.cpp)
 add_executable(list list.cpp)
 add_executable(strongly_typed_vector_prototype strongly_typed_vector_prototype.cpp)
 add_executable(tuple tuple.cpp)
