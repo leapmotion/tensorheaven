@@ -15,6 +15,7 @@
 #include "tenh/multiindex.hpp"
 #include "tenh/tensor2.hpp"
 #include "tenh/tensor2antisymmetric.hpp"
+#include "tenh/tensor2symmetric.hpp"
 #include "tenh/vector.hpp"
 
 // this is included last because it redefines the `assert` macro,
@@ -28,47 +29,54 @@ using namespace TestSystem;
 namespace Test {
 namespace ExpressionTemplates {
 
-template <typename Scalar, Uint32 DIM>
-void test_Tensor2Antisymmetric_t (Context const &context)
+template <typename Tensor>
+void test_Tensor2_t (Context const &context)
 {
-    typedef Tenh::Vector_t<Scalar,DIM> Vector;
-    typedef Tenh::Tensor2Antisymmetric_t<Vector> Tensor2Antisymmetric;
-
-    Tensor2Antisymmetric a(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
-    Tensor2Antisymmetric b(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
-    for (typename Tensor2Antisymmetric::Index i; i.is_not_at_end(); ++i)
+    typedef typename Tensor::Factor1 Factor1;
+    typedef typename Tensor::Factor2 Factor2;
+    typedef typename Tensor::Scalar Scalar;
+    
+    Tensor a(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Tensor b(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    for (typename Tensor::Index i; i.is_not_at_end(); ++i)
     {
-        a[i] = i.value() + 1;
-        b[i] = sqrt(i.value()) + 5;
+        a[i] = sqrt(i.value()) + 1;
+        b[i] = i.value() + 5;
     }
 
-    Scalar hand_computed_value = static_cast<Scalar>(0);
-    for (typename Tensor2Antisymmetric::MultiIndex i; i.is_not_at_end(); ++i)
-    {
-        hand_computed_value += a[i]*b[i];
-    }
+    Tenh::TypedIndex_t<Tensor,'i'> i;
+    Tenh::TypedIndex_t<Factor1,'j'> j;
+    Tenh::TypedIndex_t<Factor2,'k'> k;
     
-    Tenh::TypedIndex_t<Tensor2Antisymmetric,'i'> i;
-    
-    assert_lt(abs(hand_computed_value - a(i)*b(i)), Tenh::Static<Scalar>::epsilon()*DIM);
-    
-    Tenh::TypedIndex_t<Vector,'j'> j;
-    Tenh::TypedIndex_t<Vector,'k'> k;
-    
-    assert_lt(abs(hand_computed_value - a(j|k)*b(j|k)), Tenh::Static<Scalar>::epsilon()*DIM);
+    assert_lt(abs(a(i)*b(i) - a(j|k)*b(j|k)), Tenh::Static<Scalar>::epsilon()*Tensor::DIM);
 }
 
 template <typename Scalar, Uint32 DIM>
 void add_particular_tests (Directory *parent)
 {
     typedef Tenh::Vector_t<Scalar,DIM> V;
+    typedef Tenh::Tensor2_t<V, V> Tensor2;
     typedef Tenh::Tensor2Antisymmetric_t<V, V> Tensor2Antisymmetric;
+    typedef Tenh::Tensor2Symmetric_t<V, V> Tensor2Symmetric;
+
+    Directory *tensor2
+        = new Directory(Tenh::TypeStringOf_t<Tensor2>::eval(), parent);
 
     Directory *tensor2antisymmetric
         = new Directory(Tenh::TypeStringOf_t<Tensor2Antisymmetric>::eval(), parent);
 
+    Directory *tensor2symmetric
+        = new Directory(Tenh::TypeStringOf_t<Tensor2Symmetric>::eval(), parent);
+
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(tensor2, "test",
+        test_Tensor2_t<Tensor2>, RESULT_NO_ERROR);
+
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(tensor2antisymmetric, "test",
-        test_Tensor2Antisymmetric_t<Scalar, DIM>, RESULT_NO_ERROR);
+        test_Tensor2_t<Tensor2Antisymmetric>, RESULT_NO_ERROR);
+
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(tensor2symmetric, "test",
+        test_Tensor2_t<Tensor2Symmetric>, RESULT_NO_ERROR);
+
 
 }
 
@@ -76,8 +84,14 @@ template <typename Scalar>
 void add_particular_tests_for_scalar (Directory *parent)
 {
     add_particular_tests<Scalar,2>(parent);
-    add_particular_tests<Scalar,8>(parent);
-    add_particular_tests<Scalar,100>(parent);
+    add_particular_tests<Scalar,3>(parent);
+    add_particular_tests<Scalar,4>(parent);
+    add_particular_tests<Scalar,5>(parent);
+    // add_particular_tests<Scalar,6>(parent);
+    // add_particular_tests<Scalar,7>(parent);
+    // add_particular_tests<Scalar,8>(parent);
+    // add_particular_tests<Scalar,9>(parent);
+    // add_particular_tests<Scalar,100>(parent);
 }
 
 void AddTests (Directory *parent)
