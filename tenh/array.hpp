@@ -20,9 +20,7 @@ namespace Tenh {
 template <typename Component_, Uint32 DIM_, typename Derived_ = NullType>
 struct Array_t
 {
-    typedef typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
-                                   Array_t<Component_,DIM_,Derived_>,
-                                   Derived_>::T Derived;
+    typedef typename DerivedType_t<Derived_,Array_t<Component_,DIM_,Derived_> >::T Derived;
     typedef Component_ Component;
     static Uint32 const DIM = DIM_;
     typedef Index_t<Derived> Index;

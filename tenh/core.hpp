@@ -64,6 +64,18 @@ T sqr (T const &t)
 static bool const CHECK_RANGE = true;
 static bool const DONT_CHECK_RANGE = false;
 
+// used in the curiously recurring template pattern, where the derived type is passed
+// to parent classes as a template parameter, so that the baseclass can access the
+// derived type's methods.  will "return" (as a typedef for T) Derived if Derived
+// is not NullType, otherwise DefaultType.
+template <typename Derived, typename DefaultType>
+struct DerivedType_t
+{
+    typedef typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived,NullType>::v,
+                                   DefaultType,
+                                   Derived>::T T;
+};
+
 } // end of namespace Tenh
 
 #endif // TENH_CORE_HPP_

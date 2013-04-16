@@ -17,24 +17,14 @@ namespace Tenh {
 
 // NOTE: Scalar_ MUST be a POD data type.
 template <typename Scalar_, Uint32 DIM_, typename Derived_ = NullType> // don't worry about type ID for now
-struct Vector_t : public Vector_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
-                                                         Vector_t<Scalar_,DIM_,Derived_>,
-                                                         Derived_>::T,
-                                  Scalar_,
-                                  DIM_>,
-                  private Array_t<Scalar_,DIM_,typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
-                                                                      Vector_t<Scalar_,DIM_,Derived_>,
-                                                                      Derived_>::T>
-                  // Array_t is privately inherited because it is an implementation detail
+struct Vector_t
+    :
+    public Vector_i<typename DerivedType_t<Derived_,Vector_t<Scalar_,DIM_,Derived_> >::T,Scalar_,DIM_>,
+    private Array_t<Scalar_,DIM_,typename DerivedType_t<Derived_,Vector_t<Scalar_,DIM_,Derived_> >::T>
+    // Array_t is privately inherited because it is an implementation detail
 {
-    typedef Vector_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
-                                            Vector_t<Scalar_,DIM_,Derived_>,
-                                            Derived_>::T,
-                     Scalar_,
-                     DIM_> Parent_Vector_i;
-    typedef Array_t<Scalar_,DIM_,typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
-                                                        Vector_t<Scalar_,DIM_,Derived_>,
-                                                        Derived_>::T> Parent_Array_t;
+    typedef Vector_i<typename DerivedType_t<Derived_,Vector_t<Scalar_,DIM_,Derived_> >::T,Scalar_,DIM_> Parent_Vector_i;
+    typedef Array_t<Scalar_,DIM_,typename DerivedType_t<Derived_,Vector_t<Scalar_,DIM_,Derived_> >::T> Parent_Array_t;
     typedef typename Parent_Vector_i::Derived Derived;
     typedef typename Parent_Vector_i::Scalar Scalar;
     static Uint32 const DIM = Parent_Vector_i::DIM;

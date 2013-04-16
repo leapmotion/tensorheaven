@@ -30,18 +30,16 @@ template <typename Object, typename IndexTypeList, typename SummedIndexTypeList_
           bool FORCE_CONST_, bool CHECK_FOR_ALIASING_, typename Derived_ = NullType>
 struct ExpressionTemplate_IndexedObject_t
     :
-    public ExpressionTemplate_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
+    public ExpressionTemplate_i<typename DerivedType_t<Derived_,
                                                        ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,SummedIndexTypeList_,
-                                                                                          FORCE_CONST_,CHECK_FOR_ALIASING_,Derived_>,
-                                                       Derived_>::T,
+                                                                                          FORCE_CONST_,CHECK_FOR_ALIASING_,Derived_> >::T,
                                 typename Object::Scalar,
                                 typename FreeIndexTypeList_t<IndexTypeList>::T,
                                 SummedIndexTypeList_>
 {
-    typedef ExpressionTemplate_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
+    typedef ExpressionTemplate_i<typename DerivedType_t<Derived_,
                                                         ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,SummedIndexTypeList_,
-                                                                                           FORCE_CONST_,CHECK_FOR_ALIASING_,Derived_>,
-                                                        Derived_>::T,
+                                                                                           FORCE_CONST_,CHECK_FOR_ALIASING_,Derived_> >::T,
                                  typename Object::Scalar,
                                  typename FreeIndexTypeList_t<IndexTypeList>::T,
                                  SummedIndexTypeList_> Parent;

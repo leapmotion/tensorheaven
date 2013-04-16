@@ -66,10 +66,6 @@ random TODOs:
   but actually a single element in a vector space.
 - move "private" utility functions/metafunctions into the "Tenh::NonPublic" namespace so that they're not in the
   "Tenh" namespace, for at least a little bit of non-public interface hiding.
-- make a DerivedType_t metafunction which handles the Derived_ = NullType default value for derived types
-- implement compile-time assert messages as follows:
-  struct WhateverYouWantTheMessageToBe { /* intentionally empty */ };
-  struct Assert<false,Message> { static bool const V = Message::VALUE_INTENTIONALLY_MISSING_TO_CAUSE_COMPILE_ERROR; };
 - make a nonpublic directory and put all NonPublic code in there (and actually put appropriate stuff in NonPublic namespace)
 - allow 0-dimensional vector spaces (otherwise certain induced types (e.g. antisymmetric 2-tensors) will cause static asserts)
 - use -Wno-tautological-compare for clang builds

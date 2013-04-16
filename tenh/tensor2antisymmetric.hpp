@@ -21,30 +21,24 @@ namespace Tenh {
 
 // antisymmetric 2-tensor (its transpose is equal to its negative)
 template <typename Factor1_, typename Factor2_ = Factor1_, typename Derived_ = NullType>
-struct Tensor2Antisymmetric_t : public Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
-                                                                       Tensor2Antisymmetric_t<Factor1_,Factor2_,Derived_>,
-                                                                       Derived_>::T,
-                                                TypeList_t<Factor1_,TypeList_t<Factor2_> >,
-                                                ((Factor1_::DIM-1)*Factor1_::DIM)/2>,
-                                private Array_t<typename Factor1_::Scalar,
-                                                ((Factor1_::DIM-1)*Factor1_::DIM)/2,
-                                                typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
-                                                                       Tensor2Antisymmetric_t<Factor1_,Factor2_,Derived_>,
-                                                                       Derived_>::T>
-                                // privately inherited because the use of Array_t is an implementation detail
+struct Tensor2Antisymmetric_t
+    :
+    public Tensor_i<typename DerivedType_t<Derived_,Tensor2Antisymmetric_t<Factor1_,Factor2_,Derived_> >::T,
+                    TypeList_t<Factor1_,TypeList_t<Factor2_> >,
+                    ((Factor1_::DIM-1)*Factor1_::DIM)/2>,
+    private Array_t<typename Factor1_::Scalar,
+                    ((Factor1_::DIM-1)*Factor1_::DIM)/2,
+                    typename DerivedType_t<Derived_,Tensor2Antisymmetric_t<Factor1_,Factor2_,Derived_> >::T>
+    // privately inherited because the use of Array_t is an implementation detail
 {
     enum { FACTOR1_AND_FACTOR2_MUST_BE_IDENTICAL = STATIC_ASSERT_AS_RVALUE((Lvd::Meta::TypesAreEqual<Factor1_,Factor2_>::v), FACTOR1_AND_FACTOR2_MUST_BE_IDENTICAL) };
 
-    typedef Tensor_i<typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
-                                                                     Tensor2Antisymmetric_t<Factor1_,Factor2_,Derived_>,
-                                                                     Derived_>::T,
+    typedef Tensor_i<typename DerivedType_t<Derived_,Tensor2Antisymmetric_t<Factor1_,Factor2_,Derived_> >::T,
                      TypeList_t<Factor1_,TypeList_t<Factor2_> >,
                      ((Factor1_::DIM-1)*Factor1_::DIM)/2> Parent_Tensor_i;
     typedef Array_t<typename Factor1_::Scalar,
                     ((Factor1_::DIM-1)*Factor1_::DIM)/2,
-                    typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived_,NullType>::v,
-                                            Tensor2Antisymmetric_t<Factor1_,Factor2_,Derived_>,
-                                            Derived_>::T> Parent_Array_t;
+                    typename DerivedType_t<Derived_,Tensor2Antisymmetric_t<Factor1_,Factor2_,Derived_> >::T> Parent_Array_t;
     typedef typename Parent_Tensor_i::Scalar Scalar;
     static Uint32 const DIM = Parent_Tensor_i::DIM;
     typedef typename Parent_Tensor_i::Derived Derived;
