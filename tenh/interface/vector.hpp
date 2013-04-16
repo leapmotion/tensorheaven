@@ -24,8 +24,8 @@ struct Vector_i
 {
     enum
     {
-        DERIVED_MUST_NOT_BE_NULL_TYPE = Lvd::Meta::Assert<!Lvd::Meta::TypesAreEqual<Derived_,NullType>::v>::v,
-        DIMENSION_MUST_BE_POSITIVE = STATIC_ASSERT_AS_RVALUE((DIM_ > 0), DIMENSION_MUST_BE_POSITIVE) // TODO: zero-dimensional vector spaces (?)
+        STATIC_ASSERT_IN_ENUM((!Lvd::Meta::TypesAreEqual<Derived_,NullType>::v), DERIVED_MUST_NOT_BE_NULL_TYPE),
+        STATIC_ASSERT_IN_ENUM((DIM_ > 0), DIMENSION_MUST_BE_POSITIVE) // TODO: zero-dimensional vector spaces (?)
     }; 
 
     typedef Derived_ Derived;
@@ -34,7 +34,7 @@ struct Vector_i
     // here is the "basic" (non-named) Index of this vector type, and it is aware of Derived
     typedef Index_t<Derived> Index;
     // the MultiIndex_t encapsulation of Index
-    typedef MultiIndex_t<TypeList_t<Index> > MultiIndex; // TODO: rename to VectorMultiIndex (?)
+    typedef MultiIndex_t<TypeList_t<Index> > MultiIndex;
 
     // TODO: only allow when Basis = Unit (or generic) once strongly-typed vectors are implemented
     // type conversion operator for canonical coercion to Scalar type when the vector is 1-dimensional

@@ -29,8 +29,7 @@ struct Tensor2Diagonal_t
                     typename DerivedType_t<Derived_,Tensor2Diagonal_t<Factor1_,Factor2_,Derived_> >::T>
     // privately inherited because the use of Array_t is an implementation detail
 {
-    enum { FACTOR_SCALAR_TYPES_ARE_EQUAL =
-        STATIC_ASSERT_AS_RVALUE((Lvd::Meta::TypesAreEqual<typename Factor1_::Scalar,typename Factor2_::Scalar>::v), FACTOR_SCALAR_TYPES_ARE_EQUAL) };
+    enum { STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename Factor1_::Scalar,typename Factor2_::Scalar>::v), FACTOR_SCALAR_TYPES_ARE_EQUAL) };
 
     typedef Tensor_i<typename DerivedType_t<Derived_,Tensor2Diagonal_t<Factor1_,Factor2_,Derived_> >::T,
                      TypeList_t<Factor1_,TypeList_t<Factor2_> >,

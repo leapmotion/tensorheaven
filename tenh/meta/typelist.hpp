@@ -83,7 +83,7 @@ struct TypeList_t
     template <Uint32 INDEX>
     struct El_t
     {
-        enum { _ = STATIC_ASSERT_AS_RVALUE((INDEX < LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END) }; // if this assert failed, you tried to access an element past the end of the list
+        enum { STATIC_ASSERT_IN_ENUM((INDEX < LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END) };
 
         static Uint32 const I = (INDEX == 0) ? 0 : INDEX-1;
         typedef typename Lvd::Meta::If<(INDEX == 0), HeadType, typename BodyTypeList::template El_t<I>::T >::T T;
@@ -114,7 +114,7 @@ struct TypeList_t
     struct Range_t
     {
     private:
-        enum { START_INDEX_MUST_NOT_EXCEED_END_INDEX = STATIC_ASSERT_AS_RVALUE((START_INDEX <= END_INDEX), START_INDEX_MUST_NOT_EXCEED_END_INDEX) };
+        enum { STATIC_ASSERT_IN_ENUM((START_INDEX <= END_INDEX), START_INDEX_MUST_NOT_EXCEED_END_INDEX) };
         typedef typename TypeList_t::template TrailingTypeList_t<START_INDEX>::T LeadingRange;
     public:
         typedef typename LeadingRange::template LeadingTypeList_t<END_INDEX-START_INDEX>::T T;

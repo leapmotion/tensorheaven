@@ -138,11 +138,11 @@ struct ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,EmptyTypeList,DON
     {
         enum
         {
-            RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE        = STATIC_ASSERT_AS_RVALUE(RightOperand::IS_EXPRESSION_TEMPLATE, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
-            OPERAND_SCALAR_TYPES_ARE_EQUAL              = STATIC_ASSERT_AS_RVALUE((Lvd::Meta::TypesAreEqual<Scalar,typename RightOperand::Scalar>::v), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-            OPERANDS_HAVE_SAME_FREE_INDICES             = STATIC_ASSERT_AS_RVALUE((AreEqualAsSets_t<FreeIndexTypeList,typename RightOperand::FreeIndexTypeList>::V),OPERANDS_HAVE_SAME_FREE_INDICES),
-            LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES  = STATIC_ASSERT_AS_RVALUE((!ContainsDuplicates_t<FreeIndexTypeList>::V), LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
-            RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES = STATIC_ASSERT_AS_RVALUE((!ContainsDuplicates_t<typename RightOperand::FreeIndexTypeList>::V), RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES)
+            STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
+            STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<Scalar,typename RightOperand::Scalar>::v), OPERAND_SCALAR_TYPES_ARE_EQUAL),
+            STATIC_ASSERT_IN_ENUM((AreEqualAsSets_t<FreeIndexTypeList,typename RightOperand::FreeIndexTypeList>::V),OPERANDS_HAVE_SAME_FREE_INDICES),
+            STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_t<FreeIndexTypeList>::V), LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
+            STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_t<typename RightOperand::FreeIndexTypeList>::V), RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES)
         };
 
         // check for aliasing (where source and destination memory overlap)
@@ -203,13 +203,13 @@ struct ExpressionTemplate_Addition_t
     // be good to do the check here so that an error will be more obvious.
     enum
     {
-        LEFT_OPERAND_IS_EXPRESSION_TEMPLATE         = STATIC_ASSERT_AS_RVALUE(LeftOperand::IS_EXPRESSION_TEMPLATE, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
-        RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE        = STATIC_ASSERT_AS_RVALUE(RightOperand::IS_EXPRESSION_TEMPLATE, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
-        OPERAND_SCALAR_TYPES_ARE_EQUAL              = STATIC_ASSERT_AS_RVALUE((Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-        OPERANDS_HAVE_SAME_FREE_INDICES             = STATIC_ASSERT_AS_RVALUE((AreEqualAsSets_t<typename LeftOperand::FreeIndexTypeList,typename RightOperand::FreeIndexTypeList>::V), OPERANDS_HAVE_SAME_FREE_INDICES),
-        LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES  = STATIC_ASSERT_AS_RVALUE(!ContainsDuplicates_t<typename LeftOperand::FreeIndexTypeList>::V, LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
-        RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES = STATIC_ASSERT_AS_RVALUE(!ContainsDuplicates_t<typename RightOperand::FreeIndexTypeList>::V, RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
-        OPERATOR_IS_PLUS_OR_MINUS                   = STATIC_ASSERT_AS_RVALUE((OPERATOR == '+' || OPERATOR == '-'), OPERATOR_IS_PLUS_OR_MINUS)
+        STATIC_ASSERT_IN_ENUM(LeftOperand::IS_EXPRESSION_TEMPLATE, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
+        STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
+        STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v), OPERAND_SCALAR_TYPES_ARE_EQUAL),
+        STATIC_ASSERT_IN_ENUM((AreEqualAsSets_t<typename LeftOperand::FreeIndexTypeList,typename RightOperand::FreeIndexTypeList>::V), OPERANDS_HAVE_SAME_FREE_INDICES),
+        STATIC_ASSERT_IN_ENUM(!ContainsDuplicates_t<typename LeftOperand::FreeIndexTypeList>::V, LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
+        STATIC_ASSERT_IN_ENUM(!ContainsDuplicates_t<typename RightOperand::FreeIndexTypeList>::V, RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
+        STATIC_ASSERT_IN_ENUM((OPERATOR == '+' || OPERATOR == '-'), OPERATOR_IS_PLUS_OR_MINUS)
     };
 
     ExpressionTemplate_Addition_t (LeftOperand const &left_operand, RightOperand const &right_operand)
@@ -279,9 +279,9 @@ struct ExpressionTemplate_ScalarMultiplication_t
 
     enum
     {
-        OPERAND_IS_EXPRESSION_TEMPLATE = STATIC_ASSERT_AS_RVALUE(Operand::IS_EXPRESSION_TEMPLATE, OPERAND_IS_EXPRESSION_TEMPLATE),
-        OPERAND_SCALAR_MATCHES_SCALAR  = STATIC_ASSERT_AS_RVALUE((Lvd::Meta::TypesAreEqual<typename Operand::Scalar,Scalar_>::v), OPERAND_SCALAR_MATCHES_SCALAR),
-        OPERATOR_IS_VALID              = STATIC_ASSERT_AS_RVALUE((OPERATOR == '*' || OPERATOR == '/'), OPERATOR_IS_VALID)
+        STATIC_ASSERT_IN_ENUM(Operand::IS_EXPRESSION_TEMPLATE, OPERAND_IS_EXPRESSION_TEMPLATE),
+        STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename Operand::Scalar,Scalar_>::v), OPERAND_SCALAR_MATCHES_SCALAR),
+        STATIC_ASSERT_IN_ENUM((OPERATOR == '*' || OPERATOR == '/'), OPERATOR_IS_VALID)
     };
 
     ExpressionTemplate_ScalarMultiplication_t (Operand const &operand, Scalar scalar_operand)
@@ -356,10 +356,10 @@ struct ExpressionTemplate_Multiplication_t
     // confused by multiple repeated indices that have nothing to do with each other.
     enum
     {
-        LEFT_OPERAND_IS_EXPRESSION_TEMPLATE  = STATIC_ASSERT_AS_RVALUE(LeftOperand::IS_EXPRESSION_TEMPLATE, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
-        RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE = STATIC_ASSERT_AS_RVALUE(RightOperand::IS_EXPRESSION_TEMPLATE, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
-        OPERAND_SCALAR_TYPES_ARE_EQUAL       = STATIC_ASSERT_AS_RVALUE((Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-        FREE_INDICES_DONT_COLLIDE_WITH_USED  = STATIC_ASSERT_AS_RVALUE((!HasNontrivialIntersectionAsSets_t<FreeIndexTypeList,UsedIndexTypeList>::V), FREE_INDICES_DONT_COLLIDE_WITH_USED)
+        STATIC_ASSERT_IN_ENUM(LeftOperand::IS_EXPRESSION_TEMPLATE, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
+        STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
+        STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v), OPERAND_SCALAR_TYPES_ARE_EQUAL),
+        STATIC_ASSERT_IN_ENUM((!HasNontrivialIntersectionAsSets_t<FreeIndexTypeList,UsedIndexTypeList>::V), FREE_INDICES_DONT_COLLIDE_WITH_USED)
     };
     // TODO: ensure there are no indices that occur 3+ times (?)
 

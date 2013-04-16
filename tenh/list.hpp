@@ -439,7 +439,7 @@ std::ostream &operator << (std::ostream &out, List_t<TypeList> const &l)
 template <typename TypeList, Uint32 INDEX>
 struct ListElement_t
 {
-    enum { CANT_ACCESS_PAST_THE_END = STATIC_ASSERT_AS_RVALUE((INDEX < TypeList::LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END) };
+    enum { STATIC_ASSERT_IN_ENUM((INDEX < TypeList::LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END) };
     typedef List_t<TypeList> List;
     typedef typename TypeList::template El_t<INDEX>::T ValueType;
     static ValueType const &el (List const &list)
@@ -455,7 +455,7 @@ struct ListElement_t
 template <typename TypeList>
 struct ListElement_t<TypeList,0>
 {
-    enum { CANT_ACCESS_PAST_THE_END = STATIC_ASSERT_AS_RVALUE((0 < TypeList::LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END) };
+    enum { STATIC_ASSERT_IN_ENUM((0 < TypeList::LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END) };
     typedef List_t<TypeList> List;
     typedef typename TypeList::template El_t<0>::T ValueType;
     static ValueType const &el (List const &list) { return list.head(); }
@@ -466,7 +466,7 @@ struct ListElement_t<TypeList,0>
 template <typename TypeList, Uint32 INDEX>
 struct ListHelper_t
 {
-    enum { _ = STATIC_ASSERT_AS_RVALUE((INDEX > 0), ATTEMPTED_ACCESS_PAST_LIST_END) };
+    enum { STATIC_ASSERT_IN_ENUM((INDEX > 0), ATTEMPTED_ACCESS_PAST_LIST_END) };
     typedef List_t<TypeList> List;
     typedef List_t<typename TypeList::template LeadingTypeList_t<INDEX>::T> LeadingListType;
     typedef List_t<typename TypeList::template TrailingTypeList_t<INDEX>::T> TrailingListType;

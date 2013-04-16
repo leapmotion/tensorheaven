@@ -9,14 +9,14 @@
 #include "tenh/meta/lvd.hpp"
 
 namespace Tenh {
+
 struct EmptyTypeList;
+
 }
 
 #define STATIC_ASSERT(CONDITION,MESSAGE) do { if(Tenh::StaticAssert<bool(CONDITION)>::MESSAGE) {} } while (false)
-
 #define STATIC_ASSERT_AS_RVALUE(CONDITION,MESSAGE) Tenh::StaticAssert<bool(CONDITION)>::MESSAGE
-
-
+#define STATIC_ASSERT_IN_ENUM(CONDITION,MESSAGE) MESSAGE = Tenh::StaticAssert<bool(CONDITION)>::MESSAGE
 #define STATIC_ASSERT_TYPELIST_IS_EMPTY(TYPELIST) STATIC_ASSERT((Lvd::Meta::TypesAreEqual<TYPELIST,Tenh::EmptyTypeList>::v), TYPELIST_MUST_BE_EMPTY)
 
 namespace Tenh {
@@ -35,6 +35,7 @@ struct StaticAssert<true>
         BUNDLE_AND_RESULTING_MUST_BE_DISTINCT,
         BUNDLE_INDICES_MUST_BE_FREE,
         CAN_ONLY_BUNDLE_TWO_INDICES,
+        DERIVED_MUST_NOT_BE_NULL_TYPE,
         DOMAIN_INDICES_MUST_NOT_CONTAIN_DUPLICATES,
         DIMENSION_DOES_NOT_MATCH_ARGUMENT_COUNT,
         DIMENSION_MUST_BE_POSITIVE,

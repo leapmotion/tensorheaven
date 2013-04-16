@@ -36,9 +36,9 @@ struct ExpressionTemplate_Eval_t<Operand,TypeList_t<Index1> >
 {
     enum
     {
-        OPERAND_IS_EXPRESSION_TEMPLATE    = STATIC_ASSERT_AS_RVALUE(Operand::IS_EXPRESSION_TEMPLATE, OPERAND_IS_EXPRESSION_TEMPLATE),
-        OPERAND_HAS_THE_SAME_FREE_INDICES = STATIC_ASSERT_AS_RVALUE((AreEqualAsSets_t<typename Operand::FreeIndexTypeList,TypeList_t<Index1> >::V), OPERAND_HAS_THE_SAME_FREE_INDICES),
-        FREE_INDICES_HAVE_NO_DUPLICATES    = STATIC_ASSERT_AS_RVALUE((Operand::FreeIndexTypeList::LENGTH == TypeList_t<Index1>::LENGTH), FREE_INDICES_HAVE_NO_DUPLICATES)
+        STATIC_ASSERT_IN_ENUM(Operand::IS_EXPRESSION_TEMPLATE, OPERAND_IS_EXPRESSION_TEMPLATE),
+        STATIC_ASSERT_IN_ENUM((AreEqualAsSets_t<typename Operand::FreeIndexTypeList,TypeList_t<Index1> >::V), OPERAND_HAS_THE_SAME_FREE_INDICES),
+        STATIC_ASSERT_IN_ENUM((Operand::FreeIndexTypeList::LENGTH == TypeList_t<Index1>::LENGTH), FREE_INDICES_HAVE_NO_DUPLICATES)
     };
 
     typedef ExpressionTemplate_i<ExpressionTemplate_Eval_t<Operand,TypeList_t<Index1> >,
@@ -99,9 +99,9 @@ struct ExpressionTemplate_Eval_t<Operand,TypeList_t<Index1,TypeList_t<Index2> > 
 {
     enum
     {
-        OPERAND_IS_EXPRESSION_TEMPLATE    = STATIC_ASSERT_AS_RVALUE(Operand::IS_EXPRESSION_TEMPLATE, OPERAND_IS_EXPRESSION_TEMPLATE),
-        OPERAND_HAS_THE_SAME_FREE_INDICES = STATIC_ASSERT_AS_RVALUE((AreEqualAsSets_t<typename Operand::FreeIndexTypeList,TypeList_t<Index1,TypeList_t<Index2> > >::V), OPERAND_HAS_THE_SAME_FREE_INDICES),
-        FREE_INDICES_HAVE_NO_DUPLICATES    = STATIC_ASSERT_AS_RVALUE((Operand::FreeIndexTypeList::LENGTH == TypeList_t<Index1,TypeList_t<Index2> >::LENGTH), FREE_INDICES_HAVE_NO_DUPLICATES)
+        STATIC_ASSERT_IN_ENUM(Operand::IS_EXPRESSION_TEMPLATE, OPERAND_IS_EXPRESSION_TEMPLATE),
+        STATIC_ASSERT_IN_ENUM((AreEqualAsSets_t<typename Operand::FreeIndexTypeList,TypeList_t<Index1,TypeList_t<Index2> > >::V), OPERAND_HAS_THE_SAME_FREE_INDICES),
+        STATIC_ASSERT_IN_ENUM((Operand::FreeIndexTypeList::LENGTH == TypeList_t<Index1,TypeList_t<Index2> >::LENGTH), FREE_INDICES_HAVE_NO_DUPLICATES)
     };
 
     typedef ExpressionTemplate_i<ExpressionTemplate_Eval_t<Operand,TypeList_t<Index1,TypeList_t<Index2> > >,

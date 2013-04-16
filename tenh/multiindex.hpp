@@ -396,7 +396,7 @@ inline MultiIndex_t<typename ConcatenationOfTypeLists_t<LeadingTypeList,Trailing
 template <typename DomainIndexTypeList, typename CodomainIndexTypeList>
 struct MultiIndexMap_t
 {
-    enum { _ = STATIC_ASSERT_AS_RVALUE((!ContainsDuplicates_t<DomainIndexTypeList>::V), DOMAIN_INDICES_MUST_NOT_CONTAIN_DUPLICATES) };
+    enum { STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_t<DomainIndexTypeList>::V), DOMAIN_INDICES_MUST_NOT_CONTAIN_DUPLICATES) };
 
     typedef MultiIndex_t<DomainIndexTypeList> DomainIndex;
     typedef MultiIndex_t<CodomainIndexTypeList> CodomainIndex;
@@ -411,7 +411,7 @@ struct MultiIndexMap_t
 template <typename DomainIndexTypeList, typename CodomainIndexType>
 struct MultiIndexMap_t<DomainIndexTypeList,TypeList_t<CodomainIndexType> >
 {
-    enum { _ = STATIC_ASSERT_AS_RVALUE((!ContainsDuplicates_t<DomainIndexTypeList>::V), DOMAIN_INDICES_MUST_NOT_CONTAIN_DUPLICATES) };
+    enum { STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_t<DomainIndexTypeList>::V), DOMAIN_INDICES_MUST_NOT_CONTAIN_DUPLICATES) };
 
     typedef TypeList_t<CodomainIndexType> CodomainIndexTypeList;
     typedef MultiIndex_t<DomainIndexTypeList> DomainIndex;

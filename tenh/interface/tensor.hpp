@@ -67,9 +67,9 @@ struct Tensor_i : public Vector_i<Derived_,typename FactorTypeList_::HeadType::S
 {
     enum
     {
-        DERIVED_MUST_NOT_BE_NULL_TYPE     = Lvd::Meta::Assert<!Lvd::Meta::TypesAreEqual<Derived_,NullType>::v>::v,
-        ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL = STATIC_ASSERT_AS_RVALUE((AllFactorTypeScalarsAreEqual_t<FactorTypeList_>::V), ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
-        FACTOR_TYPE_LIST_IS_NONEMPTY      = STATIC_ASSERT_AS_RVALUE((FactorTypeList_::LENGTH > 0), FACTOR_TYPE_LIST_IS_NONEMPTY)
+        STATIC_ASSERT_IN_ENUM((!Lvd::Meta::TypesAreEqual<Derived_,NullType>::v), DERIVED_MUST_NOT_BE_NULL_TYPE),
+        STATIC_ASSERT_IN_ENUM((AllFactorTypeScalarsAreEqual_t<FactorTypeList_>::V), ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
+        STATIC_ASSERT_IN_ENUM((FactorTypeList_::LENGTH > 0), FACTOR_TYPE_LIST_IS_NONEMPTY)
     };
 
     typedef Vector_i<Derived_,typename FactorTypeList_::HeadType::Scalar,DIM_> Parent_Vector_i;
@@ -80,7 +80,7 @@ struct Tensor_i : public Vector_i<Derived_,typename FactorTypeList_::HeadType::S
 
     typedef FactorTypeList_ FactorTypeList;
     typedef typename FactorIndexTypeList_t<FactorTypeList>::T FactorIndexTypeList;
-    typedef MultiIndex_t<FactorIndexTypeList> MultiIndex; // TODO: rename to TensorMultiIndex (?)
+    typedef MultiIndex_t<FactorIndexTypeList> MultiIndex;
     // this is not the "fully expanded" degree, but the number of [what you could think of
     // as "parenthesized"] factors that formed this tensor product type.
     static Uint32 const DEGREE = FactorTypeList::LENGTH;

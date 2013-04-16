@@ -34,7 +34,7 @@ struct Tensor2Symmetric_t
                     ((Factor1_::DIM+1)*Factor1_::DIM)/2,
                     typename DerivedType_t<Derived_,Tensor2Symmetric_t<Factor1_,Factor2_,Derived_> >::T>
 {
-    enum { FACTOR1_AND_FACTOR2_MUST_BE_IDENTICAL = STATIC_ASSERT_AS_RVALUE((Lvd::Meta::TypesAreEqual<Factor1_,Factor2_>::v), FACTOR1_AND_FACTOR2_MUST_BE_IDENTICAL) };
+    enum { STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<Factor1_,Factor2_>::v), FACTOR1_AND_FACTOR2_MUST_BE_IDENTICAL) };
 
     typedef Tensor_i<typename DerivedType_t<Derived_,Tensor2Symmetric_t<Factor1_,Factor2_,Derived_> >::T,
                      TypeList_t<Factor1_,TypeList_t<Factor2_> >,
@@ -48,7 +48,7 @@ struct Tensor2Symmetric_t
     typedef typename Parent_Tensor_i::Index Index;
     typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
     typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
-    typedef typename Parent_Tensor_i::MultiIndex MultiIndex; // TODO: rename to TensorMultiIndex (?)
+    typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
     using Parent_Tensor_i::DEGREE;
     typedef Factor1_ Factor;
     typedef Factor1_ Factor1;
