@@ -11,8 +11,8 @@
 
 #include "tenh/core.hpp"
 #include "tenh/euclideanembedding.hpp"
+#include "tenh/innerproduct.hpp"
 #include "tenh/interface/tensor.hpp"
-#include "tenh/naturalpairing.hpp"
 #include "tenh/static_scalar_constants.hpp"
 #include "tenh/meta/typetuple.hpp"
 #include "tenh/vector.hpp"
@@ -210,11 +210,13 @@ private:
         row = Uint32(std::floor(0.5f + std::sqrt(0.25f + 2.0f*i)));
         col = i - row*(row-1)/2;
     }
+    
+    friend struct InnerProduct_t<Tensor2Antisymmetric_t>;
 };
 
-// template specialization for the natural pairing in this particular coordinatization of Tensor2Antisymmetric_t
+// template specialization for the inner product in this particular coordinatization of Tensor2Antisymmetric_t
 template <typename Factor1, typename Factor2, typename Derived>
-struct NaturalPairing_t<Tensor2Antisymmetric_t<Factor1,Factor2,Derived> >
+struct InnerProduct_t<Tensor2Antisymmetric_t<Factor1,Factor2,Derived> >
 {
     typedef Tensor2Antisymmetric_t<Factor1,Factor2,Derived> Tensor2Antisymmetric;
     typedef typename Tensor2Antisymmetric::Scalar Scalar;
@@ -222,7 +224,12 @@ struct NaturalPairing_t<Tensor2Antisymmetric_t<Factor1,Factor2,Derived> >
 
     static Scalar component (Index const &i)
     {
-        return Scalar(2); // the off-diagonal components occur twice (in the component matrix)
+        Uint32 row;
+        Uint32 col;
+        Tensor2Antisymmetric::contiguous_index_to_rowcol_index(i.value(), row, col);
+        return Scalar(2) * 
+               InnerProduct_t<Factor1>::component(typename Factor1::Index(row, DONT_CHECK_RANGE)) *
+               InnerProduct_t<Factor2>::component(typename Factor2::Index(col, DONT_CHECK_RANGE));
     }
 };
 
@@ -254,8 +261,8 @@ struct EuclideanEmbedding_t<Tensor2Antisymmetric_t<TensorFactor1_,TensorFactor2_
         TypedIndex_t<TensorFactor2,'l'> l;
         TypedIndex_t<Tensor2Antisymmetric,'p'> p;
         TypedIndex_t<Tensor2Antisymmetric,'q'> q;
-        // TODO: the NaturalPairing_t is providing a factor of 2, hence why we're providing
-        // a factor of 1/sqrt(2) -- figure out how to use the default NaturalPairing_t instead
+        // TODO: the InnerProduct_t is providing a factor of 2, hence why we're providing
+        // a factor of 1/sqrt(2) -- figure out how to use the default InnerProduct_t instead
         return (Scalar(1)/Static<Scalar>::SQRT_TWO*(e1(i|j)*e2(k|l)).bundle(j|l,q).bundle(i|k,p))[m];
     }
 

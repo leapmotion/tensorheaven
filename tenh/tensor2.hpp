@@ -8,6 +8,7 @@
 
 #include "tenh/core.hpp"
 #include "tenh/euclideanembedding.hpp"
+#include "tenh/innerproduct.hpp"
 #include "tenh/interface/tensor.hpp"
 #include "tenh/meta/typetuple.hpp"
 #include "tenh/vector.hpp"
@@ -198,6 +199,26 @@ private:
     {
         row = i / Factor2::DIM;
         col = i % Factor2::DIM;
+    }
+    
+    friend struct InnerProduct_t<Tensor2_t>;
+};
+
+// template specialization for the inner product in this particular coordinatization of Tensor2_t
+template <typename Factor1, typename Factor2, typename Derived>
+struct InnerProduct_t<Tensor2_t<Factor1,Factor2,Derived> >
+{
+    typedef Tensor2_t<Factor1,Factor2,Derived> Tensor2;
+    typedef typename Tensor2::Scalar Scalar;
+    typedef typename Tensor2::Index Index;
+
+    static Scalar component (Index const &i)
+    {
+        Uint32 row;
+        Uint32 col;
+        Tensor2::contiguous_index_to_rowcol_index(i.value(), row, col);
+        return InnerProduct_t<Factor1>::component(typename Factor1::Index(row, DONT_CHECK_RANGE)) *
+               InnerProduct_t<Factor2>::component(typename Factor2::Index(col, DONT_CHECK_RANGE));
     }
 };
 

@@ -25,11 +25,24 @@ float bar (S const &s, V const &v)
     return v(i)*s(i|j)*v(j);
 }
 
+void euclideanly_embed (V const &v, V &retval)
+{
+    TypedIndex_t<V,'i'> i;
+//     TypedIndex_t<V,'j'> j;
+//     EuclideanEmbedding_t<V> e;
+//     retval(i).no_alias() = e(i|j)*v(j);
+    retval(i).no_alias() = v(i);
+}
+
 int main (int argc, char **argv)
 {
     V v(argc);
-    S s(argc);
-    float d = bar(s, v);
-    cout << FORMAT_VALUE(d) << '\n';
-    return int(d);
+//     S s(argc);
+//     float d = bar(s, v);
+//     cout << FORMAT_VALUE(d) << '\n';
+//     return int(d);
+    V w(Static<WithoutInitialization>::SINGLETON);
+    euclideanly_embed(v, w);
+    cout << FORMAT_VALUE(w) << '\n';
+    return int(v[V::Index(argc % V::Index::COMPONENT_COUNT, DONT_CHECK_RANGE)]);
 }

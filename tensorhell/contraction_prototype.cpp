@@ -1156,7 +1156,7 @@ void test_EuclideanEmbedding_t ()
         std::cout << "hand calculated squared norm of v = " << hand_calculated << '\n';
         std::cout << '\n';
     }
-
+    
     std::cout << '\n';
 }
 
@@ -1884,6 +1884,17 @@ int main (int argc, char **argv)
                 assert(false && "this should not happen");
             }
         }
+        
+        {
+            std::cout << "\ton Tensor2Symmetric_t<Tensor2Symmetric_t<V> >\n";
+            typedef Vector_t<float,2> V;
+            typedef Tensor2Symmetric_t<V> S;
+            typedef Tensor2Symmetric_t<S> T;
+            EuclideanEmbedding_t<T> e;
+            std::cout << FORMAT_VALUE(e) << '\n';
+        }
+
+
     }
 
     return 0;

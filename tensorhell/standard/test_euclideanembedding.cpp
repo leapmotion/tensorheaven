@@ -137,7 +137,7 @@ void verify_on_tensor_type (Context const &context)
             S w_j(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
             w_j(p) = e(p|q)*v_j(q);
             
-            // have to compute the dot product by hand because NaturalPairing_t
+            // have to compute the dot product by hand because InnerProduct_t
             // may not be the standard inner product.
             Scalar w_i_dot_w_j(0);
             for (typename S::Index k; k.is_not_at_end(); ++k)
