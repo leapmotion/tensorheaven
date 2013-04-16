@@ -14,8 +14,23 @@ typedef pid_t Pid;
 typedef int (*ChildMainFunction)(int, char **, char **);
 typedef int (*ParentMainFunction)(int, char **, char **, std::string const &);
 
-int SpawnerMain (int argc, char **argv, char **envp, ParentMainFunction ParentMain, ChildMainFunction ChildMain, std::string const &child_indicator_token = "_child_");
-Pid SpawnChild (int argc, char **argv, char **envp, std::string const &child_indicator_token);
+int SpawnerMain (int argc,
+                 char **argv,
+                 char **envp,
+                 ParentMainFunction ParentMain,
+                 ChildMainFunction ChildMain,
+                 std::string const &child_indicator_token = "_child_");
+
+// the parent process is responsible for close()ing the file descriptors returned in
+// child_to_parent_pipe__read_fd and parent_to_child_pipe__write_fd.  Otherwise
+// repeated calls to SpawnChild will use up all the file descriptors and cause
+// calls to pipe(), etc. to fail.
+Pid SpawnChild (int argc,
+                char **argv,
+                char **envp,
+                int &child_to_parent_pipe__read_fd,
+                int &parent_to_child_pipe__write_fd,
+                std::string const &child_indicator_token);
 
 } // end of namespace Lvd
 

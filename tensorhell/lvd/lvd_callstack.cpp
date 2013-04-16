@@ -75,9 +75,9 @@ struct Addr2line
 
     string StringifyAddress (void const *address, PathFormat path_format)
     {
-#if defined(__MACH__)
-        return "TEMP DUMMY STRINGIFIED ADDRESS";
-#endif
+// #if defined(__MACH__)
+//         return "TEMP DUMMY STRINGIFIED ADDRESS";
+// #endif
             
         // send the address to the child process
         ostringstream out;

@@ -563,13 +563,11 @@ unsigned int Directory::SpawnScheduled (char *argv0, char **envp, string const &
         argv[5] = const_cast<char *>(g_print_debug_messages ? "-d" : NULL);
         argv[6] = NULL;
 
-// NOTE: this might be necessary for Linux, but it messes up Mac OS X
-// NOTE update: this is apparently also unnecessary for Linux.
-//         // sync the input stream (which effectively dumps the unread bytes)
-//         cin.sync();
         // set the child process running on the current test
         PRINT_DEBUG_MESSAGE("*** SPAWNER DEBUG MESSAGE *** : spawning child process\n");
-        SpawnChild(argc, argv, envp, child_indicator_token);
+        int child_to_parent_pipe__read_fd;
+        int parent_to_child_pipe__write_fd;
+        Pid child_pid = SpawnChild(argc, argv, envp, child_to_parent_pipe__read_fd, parent_to_child_pipe__write_fd, child_indicator_token);
 
         // the child has printed to its stdout (which goes to our stdin)
         // the result, stage, signum, message length, and message.
@@ -600,6 +598,10 @@ unsigned int Directory::SpawnScheduled (char *argv0, char **envp, string const &
         }
 
         // at this point, we're done with the child.
+        waitpid(child_pid, NULL, 0);
+        // close the pipe fds returned from SpawnChild
+        close(child_to_parent_pipe__read_fd);
+        close(parent_to_child_pipe__write_fd);
 
         // record if it was a failure
         if (actual_result != test_case.m_expected_result)
