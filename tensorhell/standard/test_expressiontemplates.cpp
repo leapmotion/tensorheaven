@@ -8,7 +8,6 @@
 
 #include <utility> // for std::pair
 #include <complex>
-#include <iostream>
 
 #include "tenh/expression_templates.hpp"
 #include "tenh/expression_templates_utility.hpp"
@@ -42,8 +41,6 @@ void test_Tensor2_t (Context const &context)
     Tensor b(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
     randomize(a);
     randomize(b);
-    std::cerr << FORMAT_VALUE(a) << '\n' << FORMAT_VALUE(b) << '\n';
-    
     
     Tenh::TypedIndex_t<Tensor,'i'> i;
     Tenh::TypedIndex_t<Factor1,'j'> j;
