@@ -3,9 +3,10 @@ cmake_minimum_required(VERSION 2.8)
 project(tensorheaven_test)
 
 find_path(EIGEN_INCLUDE_DIR "eigen" PATHS $ENV{EIGEN_INCLUDE_DIR} NO_DEFAULT_PATH)
+find_path(BOOST_INCLUDE_DIR "boost" PATHS $ENV{BOOST_INCLUDE_DIR} NO_DEFAULT_PATH)
 
 # the root directory of the project (the one containing the tenh/ dir) is the only necessary include dir
-include_directories(${tensorheaven_test_SOURCE_DIR} ${EIGEN_INCLUDE_DIR})
+include_directories(${tensorheaven_test_SOURCE_DIR} ${EIGEN_INCLUDE_DIR} ${BOOST_INCLUDE_DIR})
 
 # TODO: build options for other compilers
 set(CMAKE_CXX_FLAGS "-Wall -Werror") # -Werror can give problems under clang due to -Wtautological-compare see pragma in tensor2symmetric.hpp to disable it as needed.

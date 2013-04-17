@@ -4,9 +4,11 @@
 // ///////////////////////////////////////////////////////////////////////////
 
 #include "test_expressiontemplates.hpp"
+#include "randomize.hpp"
 
 #include <utility> // for std::pair
 #include <complex>
+#include <iostream>
 
 #include "tenh/expression_templates.hpp"
 #include "tenh/expression_templates_utility.hpp"
@@ -38,12 +40,11 @@ void test_Tensor2_t (Context const &context)
     
     Tensor a(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
     Tensor b(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
-    for (typename Tensor::Index i; i.is_not_at_end(); ++i)
-    {
-        a[i] = sqrt(i.value()) + 1;
-        b[i] = i.value() + 5;
-    }
-
+    randomize(a);
+    randomize(b);
+    std::cerr << FORMAT_VALUE(a) << '\n' << FORMAT_VALUE(b) << '\n';
+    
+    
     Tenh::TypedIndex_t<Tensor,'i'> i;
     Tenh::TypedIndex_t<Factor1,'j'> j;
     Tenh::TypedIndex_t<Factor2,'k'> k;
