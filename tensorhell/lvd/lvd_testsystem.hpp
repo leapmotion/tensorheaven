@@ -18,6 +18,11 @@
 #include <ostream>
 #include <sstream>
 #include <string>
+#include <limits>
+#include <algorithm>
+#include <cmath>
+
+#include "tenh/static_scalar_constants.hpp"
 
 #define LVD_ADD_TEST_CASE_FUNCTION(directory, TestFunction, ...) \
     (directory)->AddTestCaseFunction(#TestFunction, TestFunction, __VA_ARGS__)
@@ -239,6 +244,13 @@ private:
     friend int Runner (int argc, char **argv, char **envp);
 }; // end of struct Directory
 
+template <typename T>
+bool about_equal(T lhs, T rhs)
+{
+    T bound = std::max(std::abs(lhs),std::abs(rhs))*Tenh::Static<T>::epsilon();
+    return std::abs(lhs - rhs) <= bound;
+}
+
 // ///////////////////////////////////////////////////////////////////////////
 // here's where we redefine the `assert` macro; we also define assert_eq
 // ///////////////////////////////////////////////////////////////////////////
@@ -254,6 +266,7 @@ private:
 // messages may be generated -- by ostream'ing the values.  if there is no
 // ostream << operator defined for the types, use assert_XX_ instead.
 #define assert_eq(left, right)  Lvd::TestSystem::AssertComparison(left == right, left, right, #left, "==", #right)
+#define assert_about_eq(left, right)  Lvd::TestSystem::AssertComparison(about_equal(left, right), left, right, #left, " about equal ", #right)
 #define assert_neq(left, right) Lvd::TestSystem::AssertComparison(left != right, left, right, #left, "!=", #right)
 #define assert_lt(left, right)  Lvd::TestSystem::AssertComparison(left < right,  left, right, #left, "<", #right)
 #define assert_leq(left, right) Lvd::TestSystem::AssertComparison(left <= right, left, right, #left, "<=", #right)
@@ -262,6 +275,7 @@ private:
 
 // same as above, but no ostream << streaming occurs.
 #define assert_eq_(left, right)  Lvd::TestSystem::Assert(left == right, #left "==" #right)
+#define assert_about_eq_(left, right)  Lvd::TestSystem::AssertComparison(about_equal(left, right), #left, " about equal ", #right)
 #define assert_neq_(left, right) Lvd::TestSystem::Assert(left != right, #left "!=" #right)
 #define assert_lt_(left, right)  Lvd::TestSystem::Assert(left < right,  #left "<" #right)
 #define assert_leq_(left, right) Lvd::TestSystem::Assert(left <= right, #left "<=" #right)
