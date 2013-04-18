@@ -34,14 +34,17 @@ Eigen::Matrix<typename Tensor2Type::Scalar,Tensor2Type::Factor1::DIM,Tensor2Type
     euclideanly_embedded_EigenMatrix_of (Tensor2Type const &t)
 {
     Tensor2_t<typename Tensor2Type::WithStandardEuclideanBasis::Factor1,
-              typename Tensor2Type::WithStandardEuclideanBasis::Factor2> temp(Static<WithoutInitialization>::SINGLETON);
-    TypedIndex_t<typename Tensor2Type::WithStandardEuclideanBasis,'p'> p;
-    TypedIndex_t<Tensor2Type,'q'> q;
-    EuclideanEmbedding_t<Tensor2Type> e;
-    TypedIndex_t<typename Tensor2Type::WithStandardEuclideanBasis::Factor1,'i'> i;
-    TypedIndex_t<typename Tensor2Type::WithStandardEuclideanBasis::Factor2,'j'> j;
-    temp(i|j).no_alias() = (e(p|q)*t(q)).split(p,i|j); // Euclideanly embed and "blow up" into temp
-    return EigenMap_of_Tensor2(temp); // NOTE: this converts into Eigen::Matrix upon return
+              typename Tensor2Type::WithStandardEuclideanBasis::Factor2> euclideanly_embedded_t(Static<WithoutInitialization>::SINGLETON);
+    TypedIndex_t<typename Tensor2Type::Factor1::WithStandardEuclideanBasis,'i'> i;
+    TypedIndex_t<typename Tensor2Type::Factor1,'j'> j;
+    TypedIndex_t<typename Tensor2Type::Factor2,'k'> k;
+    TypedIndex_t<typename Tensor2Type::Factor2::WithStandardEuclideanBasis,'l'> l;
+    EuclideanEmbedding_t<typename Tensor2Type::Factor1> e1;
+    EuclideanEmbedding_t<typename Tensor2Type::Factor2> e2;
+    euclideanly_embedded_t(i|l).no_alias() = e1(i|j)*t(j|k)*e2(l|k);
+    // NOTE: this converts into Eigen::Matrix upon return, so it's not actually returning
+    // a reference to a temporary, as it would seem.
+    return EigenMap_of_Tensor2(euclideanly_embedded_t);
 }
 
 } // end of namespace Tenh

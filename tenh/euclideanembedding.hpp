@@ -36,6 +36,28 @@ struct EuclideanEmbedding_Parent_Tensor_i
                                                               // of the vector index.
 };
 
+// same stuff but for inverse of Euclidean embedding map
+template <typename Vector>
+struct EuclideanEmbeddingInverse_t;
+
+template <typename Vector>
+struct BasisOfEuclideanEmbeddingInverse_t
+{
+    static std::string type_as_string () { return "BasisOfEuclideanEmbeddingInverse<" + TypeStringOf_t<Vector>::eval() + '>'; }
+};
+
+// convenience meta-function to save a lot of really annoying and redundant typing
+template <typename Vector>
+struct EuclideanEmbeddingInverse_Parent_Tensor_i
+{
+    typedef Tensor_i<EuclideanEmbeddingInverse_t<Vector>,
+                     TypeList_t<Vector,TypeList_t<typename Vector::WithStandardEuclideanBasis> >, // TEMP KLUDGE
+                     Vector::DIM*Vector::DIM,
+                     BasisOfEuclideanEmbeddingInverse_t<Vector> > T; // does "dimension" really apply to this?
+                                                                     // -- yes, in as much as it gives the dimension
+                                                                     // of the vector index.
+};
+
 } // end of namespace Tenh
 
 #endif // TENH_EUCLIDEANEMBEDDING_HPP_

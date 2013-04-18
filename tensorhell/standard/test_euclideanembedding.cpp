@@ -37,6 +37,10 @@ void verify_on_vector_type (Context const &context)
     Tenh::TypedIndex_t<V,'q'> q;
     Tenh::EuclideanEmbedding_t<V> e;
     
+    // TODO: if InnerProduct_t is ever implemented like EuclideanEmbedding_t (as an implementation of
+    // Tensor_i), then this nested for-loop could be replaced by showing that E^T E = InnerProduct,
+    // where E is EuclideanEmbedding_t.
+    
     for (typename V::Index i; i.is_not_at_end(); ++i)
     {
         V v_i(0);

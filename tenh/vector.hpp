@@ -47,11 +47,15 @@ struct Vector_t
 
     static std::string type_as_string ()
     {
-        if (Lvd::Meta::TypesAreEqual<Derived_,NullType>::v)
-            return "Vector_t<" + TypeStringOf_t<Scalar>::eval() + ',' + AS_STRING(DIM) + ',' + TypeStringOf_t<Basis>::eval() + '>';
-        else
-            return "Vector_t<" + TypeStringOf_t<Scalar>::eval() + ',' + AS_STRING(DIM) + ',' 
-                               + TypeStringOf_t<Basis>::eval() + ',' + TypeStringOf_t<Derived>::eval() + '>';
+        std::string basis_string;
+        if (!Lvd::Meta::TypesAreEqual<Basis,StandardEuclideanBasis>())
+            basis_string = ',' + TypeStringOf_t<Basis>::eval();
+    
+        std::string derived_string;
+        if (!Lvd::Meta::TypesAreEqual<Derived_,NullType>())
+            derived_string = ',' + TypeStringOf_t<Derived>::eval();
+    
+        return "Vector_t<" + TypeStringOf_t<Scalar>::eval() + ',' + AS_STRING(DIM) + basis_string + derived_string + '>';
     }
 };
 
@@ -94,6 +98,44 @@ struct EuclideanEmbedding_t<Vector_t<Scalar_,DIM_,StandardEuclideanBasis,Derived
     static std::string type_as_string ()
     {
         return "EuclideanEmbedding_t<" + TypeStringOf_t<Vector>::eval() + '>';
+    }
+};
+
+template <typename Scalar_, Uint32 DIM_, typename Derived_>
+struct EuclideanEmbeddingInverse_t<Vector_t<Scalar_,DIM_,StandardEuclideanBasis,Derived_> >
+    :
+    public EuclideanEmbeddingInverse_Parent_Tensor_i<Vector_t<Scalar_,DIM_,StandardEuclideanBasis,Derived_> >::T
+{
+    typedef typename EuclideanEmbeddingInverse_Parent_Tensor_i<Vector_t<Scalar_,DIM_,StandardEuclideanBasis,Derived_> >::T Parent_Tensor_i;
+    typedef typename Parent_Tensor_i::Derived Derived;
+    typedef typename Parent_Tensor_i::Scalar Scalar;
+    using Parent_Tensor_i::DIM;
+    typedef typename Parent_Tensor_i::Basis Basis;
+    typedef typename Parent_Tensor_i::Index Index;
+    typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
+    typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
+    typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
+    using Parent_Tensor_i::DEGREE;
+    typedef Vector_t<Scalar_,DIM_,StandardEuclideanBasis,Derived_> Vector;
+    
+    // 1 on the diagonal, 0 otherwise
+    Scalar operator [] (Index const &i) const
+    {
+        return (i.value() % Vector::DIM == i.value() / Vector::DIM) ? Scalar(1) : Scalar(0);
+    }
+    Scalar operator [] (MultiIndex const &m) const
+    {
+        return m.template el<0>() == m.template el<1>() ? Scalar(1) : Scalar(0);
+    }
+
+    // NOTE: these may be unnecessary/undesired, because this type does not represent a vector space
+//     using Parent_Tensor_i::component_is_immutable_zero;
+//     using Parent_Tensor_i::scalar_factor_for_component;
+//     using Parent_Tensor_i::vector_index_of;
+
+    static std::string type_as_string ()
+    {
+        return "EuclideanEmbeddingInverse_t<" + TypeStringOf_t<Vector>::eval() + '>';
     }
 };
 

@@ -68,6 +68,7 @@ struct Tensor2Symmetric_t
     typedef Factor2_ Factor2;
     static Uint32 const DIAGONAL_COMPONENT_COUNT = Factor::DIM;
     static Uint32 const STRICTLY_LOWER_TRIANGULAR_COMPONENT_COUNT = ((Factor::DIM-1)*Factor::DIM)/2;
+    static bool const IS_TENSOR2SYMMETRIC_T = true;
 
     Tensor2Symmetric_t (WithoutInitialization const &w) : Parent_Array_t(w) { }
     Tensor2Symmetric_t (Scalar fill_with) : Parent_Array_t(fill_with) { }
@@ -166,11 +167,15 @@ struct Tensor2Symmetric_t
 
     static std::string type_as_string ()
     {
-        if (Lvd::Meta::TypesAreEqual<Derived_,NullType>::v)
-            return "Tensor2Symmetric_t<" + TypeStringOf_t<Factor>::eval() + ',' + TypeStringOf_t<Basis>::eval() + '>';
-        else
-            return "Tensor2Symmetric_t<" + TypeStringOf_t<Factor>::eval() + ',' + TypeStringOf_t<Basis>::eval() + ',' 
-                                         + TypeStringOf_t<Derived>::eval() + '>';
+        std::string basis_string;
+        if (!Lvd::Meta::TypesAreEqual<Basis,BasisOfTensor2Symmetric_t<Factor1,Factor2> >())
+            basis_string = ',' + TypeStringOf_t<Basis>::eval();
+    
+        std::string derived_string;
+        if (!Lvd::Meta::TypesAreEqual<Derived_,NullType>())
+            derived_string = ',' + TypeStringOf_t<Derived>::eval();
+    
+        return "Tensor2Symmetric_t<" + TypeStringOf_t<Factor>::eval() + basis_string + derived_string + '>';
     }
 
 private:
@@ -277,7 +282,6 @@ struct EuclideanEmbedding_t<Tensor2Symmetric_t<TensorFactor1_,
         TypedIndex_t<Tensor2Symmetric,'q'> q;
         // the InnerProduct_t is providing a factor of 2, hence why we're providing
         // a factor of 1/sqrt(2) -- figure out how to use the default InnerProduct_t instead
-        // TODO: the tensor type should change basis to StandardEuclidean or some such
         Uint32 row = m.template el<0>().value();
         if (row < Tensor2Symmetric::STRICTLY_LOWER_TRIANGULAR_COMPONENT_COUNT)
         {
@@ -296,6 +300,69 @@ struct EuclideanEmbedding_t<Tensor2Symmetric_t<TensorFactor1_,
     static std::string type_as_string ()
     {
         return "EuclideanEmbedding_t<" + TypeStringOf_t<Tensor2Symmetric>::eval() + '>';
+    }
+};
+
+template <typename TensorFactor1_, typename TensorFactor2_, typename TensorDerived>
+struct EuclideanEmbeddingInverse_t<Tensor2Symmetric_t<TensorFactor1_,
+                                                      TensorFactor2_,
+                                                      BasisOfTensor2Symmetric_t<TensorFactor1_,TensorFactor2_>,
+                                                      TensorDerived> >
+    :
+    public EuclideanEmbeddingInverse_Parent_Tensor_i<Tensor2Symmetric_t<TensorFactor1_,
+                                                                        TensorFactor2_,
+                                                                        BasisOfTensor2Symmetric_t<TensorFactor1_,TensorFactor2_>,
+                                                                        TensorDerived> >::T
+{
+    typedef typename EuclideanEmbeddingInverse_Parent_Tensor_i<Tensor2Symmetric_t<TensorFactor1_,
+                                                                                  TensorFactor2_,
+                                                                                  BasisOfTensor2Symmetric_t<TensorFactor1_,TensorFactor2_>,
+                                                                                  TensorDerived> >::T Parent_Tensor_i;
+    typedef typename Parent_Tensor_i::Derived Derived;
+    typedef typename Parent_Tensor_i::Scalar Scalar;
+    using Parent_Tensor_i::DIM;
+    typedef typename Parent_Tensor_i::Basis Basis;
+    typedef typename Parent_Tensor_i::Index Index;
+    typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
+    typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
+    typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
+    using Parent_Tensor_i::DEGREE;
+    typedef TensorFactor1_ TensorFactor1;
+    typedef TensorFactor2_ TensorFactor2;
+    typedef Tensor2Symmetric_t<TensorFactor1,
+                               TensorFactor2,
+                               BasisOfTensor2Symmetric_t<TensorFactor1,TensorFactor2>,
+                               TensorDerived> Tensor2Symmetric;
+
+    Scalar operator [] (MultiIndex const &m) const
+    {
+        EuclideanEmbeddingInverse_t<TensorFactor1> e1_inv;
+        EuclideanEmbeddingInverse_t<TensorFactor2> e2_inv;
+        TypedIndex_t<TensorFactor1,'i'> i;
+        TypedIndex_t<typename TensorFactor1::WithStandardEuclideanBasis,'j'> j;
+        TypedIndex_t<TensorFactor2,'k'> k;
+        TypedIndex_t<typename TensorFactor2::WithStandardEuclideanBasis,'l'> l;
+        TypedIndex_t<Tensor2Symmetric,'p'> p;
+        TypedIndex_t<typename Tensor2Symmetric::WithStandardEuclideanBasis,'q'> q;
+        // TODO: figure out the real scalar factor
+        Uint32 row = m.template el<0>().value();
+        if (row < Tensor2Symmetric::STRICTLY_LOWER_TRIANGULAR_COMPONENT_COUNT)
+        {
+            return (Static<Scalar>::SQRT_TWO*(e1_inv(i|j)*e2_inv(k|l)).bundle(i|k,p).bundle(j|l,q))[m];
+        }
+        else
+        {
+            return ((e1_inv(i|j)*e2_inv(k|l)).bundle(i|k,p).bundle(j|l,q))[m];
+        }
+    }
+
+    // NOTE: these may be unnecessary/undesired, because this type does not represent a vector space
+//     using Parent_Tensor_i::component_is_immutable_zero;
+//     using Parent_Tensor_i::scalar_factor_for_component;
+//     using Parent_Tensor_i::vector_index_of;
+    static std::string type_as_string ()
+    {
+        return "EuclideanEmbeddingInverse_t<" + TypeStringOf_t<Tensor2Symmetric>::eval() + '>';
     }
 };
 

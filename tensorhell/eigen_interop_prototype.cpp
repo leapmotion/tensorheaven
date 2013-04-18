@@ -77,8 +77,8 @@ void test_diagonalization ()
     std::cout << "*******************************************************\n";
 
     typedef Vector_t<float,DIM> V;
-    typedef Tensor2_t<V,V> T;
-    typedef Tensor2Diagonal_t<V,V> D;
+    typedef Tensor2_t<typename V::WithStandardEuclideanBasis,V> T;
+    typedef Tensor2Diagonal_t<typename V::WithStandardEuclideanBasis,typename V::WithStandardEuclideanBasis> D;
     typedef Tensor2Symmetric_t<V> S;
 
     S s(Static<WithoutInitialization>::SINGLETON);

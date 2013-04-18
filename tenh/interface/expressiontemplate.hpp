@@ -46,7 +46,7 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     typedef FreeIndexTypeList_ FreeIndexTypeList;
     typedef UsedIndexTypeList_ UsedIndexTypeList;
     typedef MultiIndex_t<FreeIndexTypeList> MultiIndex;
-    static bool const IS_EXPRESSION_TEMPLATE = true;
+    static bool const IS_EXPRESSION_TEMPLATE_I = true;
 
     // TODO: some consistency checks on the various types
 

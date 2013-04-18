@@ -31,6 +31,7 @@ set(test_SRCS
     lvd/lvd_testsystem.cpp
     standard/test_array.cpp
     standard/test_euclideanembedding.cpp
+    standard/test_euclideanembeddinginverse.cpp
     standard/test_expressiontemplates.cpp
     standard/test_list.cpp
     standard/test_tensor2.cpp

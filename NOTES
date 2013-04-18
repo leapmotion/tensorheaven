@@ -70,6 +70,9 @@ random TODOs:
 - allow 0-dimensional vector spaces (otherwise certain induced types (e.g. antisymmetric 2-tensors) will cause static asserts)
 - use -Wno-tautological-compare for clang builds
 - is it possible to specify the default value for Derived directly?
+- make various tensor types check the IS_XYZ values for their template parameters
+- see if some sort of static_cast can be used to detect if a type inherts a class, and use this to replace
+  IS_EXPRESSION_TEMPLATE, IS_TENSOR2_T, etc.  Or failing that, use some template metafunction for this.
 
 features necessary for version 0.5:
 x euclidean embedding (using short-term zero-dimensional hack (?))

@@ -10,6 +10,11 @@
 
 namespace Tenh {
 
+struct StandardEuclideanBasis
+{
+    static std::string type_as_string () { return "StandardEuclideanBasis"; }
+};
+
 // TODO: somehow make this use the Tensor_i interface, so that arbitrary
 // 2-tensors can be used for inner products.
 // this particular implementation detail will realistically require that
@@ -29,11 +34,6 @@ namespace Tenh {
 template <typename Vector, typename Basis>
 struct InnerProduct_t;
 
-struct StandardEuclideanBasis
-{
-    static std::string type_as_string () { return "StandardEuclideanBasis"; }
-};
-
 // template specialization for the standard inner product on a Euclidean space.
 // this can be used on any vector type, including tensor types.
 template <typename Vector>
@@ -47,7 +47,26 @@ struct InnerProduct_t<Vector,StandardEuclideanBasis>
     // default inner product is the standard Euclidean one -- having identity Gram matrix
     static Scalar component (Index const &i) { return Scalar(1); }
 };
+/*
+// same thing, but for inverse of inner product
 
+template <typename Vector, typename Basis>
+struct InnerProductInverse_t;
+
+// template specialization for the inverse of the standard inner product on a Euclidean space.
+// this can be used on any vector type, including tensor types.
+template <typename Vector>
+struct InnerProductInverse_t<Vector,StandardEuclideanBasis>
+{
+    enum { STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename Vector::Basis,StandardEuclideanBasis>::v), BASIS_IS_STANDARD_EUCLIDEAN) };
+
+    typedef typename Vector::Scalar Scalar;
+    typedef typename Vector::Index Index;
+
+    // default inner product is the standard Euclidean one -- having identity Gram matrix
+    static Scalar component (Index const &i) { return Scalar(1); }
+};
+*/
 } // end of namespace Tenh
 
 #endif // TENH_INNERPRODUCT_HPP_

@@ -86,6 +86,7 @@ struct Tensor2_t
     using Parent_Tensor_i::DEGREE;
     typedef Factor1_ Factor1;
     typedef Factor2_ Factor2;
+    static bool const IS_TENSOR2_T = true;
 
     Tensor2_t (WithoutInitialization const &w) : Parent_Array_t(w) { }
     Tensor2_t (Scalar fill_with) : Parent_Array_t(fill_with) { }
@@ -183,16 +184,15 @@ struct Tensor2_t
 
     static std::string type_as_string ()
     {
-        if (Lvd::Meta::TypesAreEqual<Derived_,NullType>::v)
-        {
-            return "Tensor2_t<" + TypeStringOf_t<Factor1>::eval() + ',' + TypeStringOf_t<Factor2>::eval() + ','
-                                + TypeStringOf_t<Basis>::eval() + '>';
-        }
-        else
-        {
-            return "Tensor2_t<" + TypeStringOf_t<Factor1>::eval() + ',' + TypeStringOf_t<Factor2>::eval() + ','
-                                + TypeStringOf_t<Basis>::eval() + ',' + TypeStringOf_t<Derived>::eval() + '>';
-        }
+        std::string basis_string;
+        if (!Lvd::Meta::TypesAreEqual<Basis,BasisOfTensor2_t<Factor1,Factor2> >())
+            basis_string = ',' + TypeStringOf_t<Basis>::eval();
+    
+        std::string derived_string;
+        if (!Lvd::Meta::TypesAreEqual<Derived_,NullType>())
+            derived_string = ',' + TypeStringOf_t<Derived>::eval();
+    
+        return "Tensor2_t<" + TypeStringOf_t<Factor1>::eval() + ',' + TypeStringOf_t<Factor2>::eval() + basis_string + derived_string + '>';
     }
 
 private:
@@ -229,6 +229,23 @@ struct InnerProduct_t<Tensor2_t<Factor1,Factor2,BasisOfTensor2_t<Factor1,Factor2
                InnerProduct_t<Factor2,typename Factor2::Basis>::component(typename Factor2::Index(col, DONT_CHECK_RANGE));
     }
 };
+
+// template <typename Factor1, typename Factor2, typename Derived>
+// struct InnerProductInverse_t<Tensor2_t<Factor1,Factor2,BasisOfTensor2_t<Factor1,Factor2>,Derived>,BasisOfTensor2_t<Factor1,Factor2> >
+// {
+//     typedef Tensor2_t<Factor1,Factor2,BasisOfTensor2_t<Factor1,Factor2>,Derived> Tensor2;
+//     typedef typename Tensor2::Scalar Scalar;
+//     typedef typename Tensor2::Index Index;
+// 
+//     static Scalar component (Index const &i)
+//     {
+//         Uint32 row;
+//         Uint32 col;
+//         Tensor2::contiguous_index_to_rowcol_index(i.value(), row, col);
+//         return InnerProductInverse_t<Factor1,typename Factor1::Basis>::component(typename Factor1::Index(row, DONT_CHECK_RANGE)) *
+//                InnerProductInverse_t<Factor2,typename Factor2::Basis>::component(typename Factor2::Index(col, DONT_CHECK_RANGE));
+//     }
+// };
 
 template <typename TensorFactor1_, typename TensorFactor2_, typename TensorDerived>
 struct EuclideanEmbedding_t<Tensor2_t<TensorFactor1_,
@@ -281,6 +298,60 @@ struct EuclideanEmbedding_t<Tensor2_t<TensorFactor1_,
     static std::string type_as_string ()
     {
         return "EuclideanEmbedding_t<" + TypeStringOf_t<Tensor2>::eval() + '>';
+    }
+};
+
+template <typename TensorFactor1_, typename TensorFactor2_, typename TensorDerived>
+struct EuclideanEmbeddingInverse_t<Tensor2_t<TensorFactor1_,
+                                             TensorFactor2_,
+                                             BasisOfTensor2_t<TensorFactor1_,TensorFactor2_>,
+                                             TensorDerived> >
+    :
+    public EuclideanEmbeddingInverse_Parent_Tensor_i<Tensor2_t<TensorFactor1_,
+                                                               TensorFactor2_,
+                                                               BasisOfTensor2_t<TensorFactor1_,TensorFactor2_>,
+                                                               TensorDerived> >::T
+{
+    typedef typename EuclideanEmbeddingInverse_Parent_Tensor_i<Tensor2_t<TensorFactor1_,
+                                                                         TensorFactor2_,
+                                                                         BasisOfTensor2_t<TensorFactor1_,TensorFactor2_>,
+                                                                         TensorDerived> >::T Parent_Tensor_i;
+    typedef typename Parent_Tensor_i::Derived Derived;
+    typedef typename Parent_Tensor_i::Scalar Scalar;
+    using Parent_Tensor_i::DIM;
+    typedef typename Parent_Tensor_i::Basis Basis;
+    typedef typename Parent_Tensor_i::Index Index;
+    typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
+    typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
+    typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
+    using Parent_Tensor_i::DEGREE;
+    typedef TensorFactor1_ TensorFactor1;
+    typedef TensorFactor2_ TensorFactor2;
+    typedef Tensor2_t<TensorFactor1,
+                      TensorFactor2,
+                      BasisOfTensor2_t<TensorFactor1,TensorFactor2>,
+                      TensorDerived> Tensor2;
+
+    Scalar operator [] (MultiIndex const &m) const
+    {
+        EuclideanEmbeddingInverse_t<TensorFactor1> e1_inv;
+        EuclideanEmbeddingInverse_t<TensorFactor2> e2_inv;
+        TypedIndex_t<TensorFactor1,'i'> i;
+        TypedIndex_t<typename TensorFactor1::WithStandardEuclideanBasis,'j'> j;
+        TypedIndex_t<TensorFactor2,'k'> k;
+        TypedIndex_t<typename TensorFactor2::WithStandardEuclideanBasis,'l'> l;
+        TypedIndex_t<Tensor2,'p'> p;
+        TypedIndex_t<typename Tensor2::WithStandardEuclideanBasis,'q'> q;
+        return ((e1_inv(i|j)*e2_inv(k|l)).bundle(i|k,p).bundle(j|l,q))[m];
+    }
+
+    // NOTE: these may be unnecessary/undesired, because this type does not represent a vector space
+//     using Parent_Tensor_i::component_is_immutable_zero;
+//     using Parent_Tensor_i::scalar_factor_for_component;
+//     using Parent_Tensor_i::vector_index_of;
+    static std::string type_as_string ()
+    {
+        return "EuclideanEmbeddingInverse_t<" + TypeStringOf_t<Tensor2>::eval() + '>';
     }
 };
 

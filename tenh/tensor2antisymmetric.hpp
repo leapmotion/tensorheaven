@@ -64,6 +64,7 @@ struct Tensor2Antisymmetric_t
     typedef Factor1_ Factor1;
     typedef Factor2_ Factor2;
     static Uint32 const STRICTLY_LOWER_TRIANGULAR_COMPONENT_COUNT = ((Factor::DIM-1)*Factor::DIM)/2;
+    static bool const IS_TENSOR2ANTISYMMETRIC_T = true;
 
     Tensor2Antisymmetric_t (WithoutInitialization const &w) : Parent_Array_t(w) { }
     Tensor2Antisymmetric_t (Scalar fill_with) : Parent_Array_t(fill_with) { }
@@ -181,11 +182,15 @@ struct Tensor2Antisymmetric_t
 
     static std::string type_as_string ()
     {
-        if (Lvd::Meta::TypesAreEqual<Derived_,NullType>::v)
-            return "Tensor2Antisymmetric_t<" + TypeStringOf_t<Factor>::eval() + ',' + TypeStringOf_t<Basis>::eval() + '>';
-        else
-            return "Tensor2Antisymmetric_t<" + TypeStringOf_t<Factor>::eval() + ',' + TypeStringOf_t<Basis>::eval() + ',' 
-                                             + TypeStringOf_t<Derived>::eval() + '>';
+        std::string basis_string;
+        if (!Lvd::Meta::TypesAreEqual<Basis,BasisOfTensor2Antisymmetric_t<Factor1,Factor2> >())
+            basis_string = ',' + TypeStringOf_t<Basis>::eval();
+    
+        std::string derived_string;
+        if (!Lvd::Meta::TypesAreEqual<Derived_,NullType>())
+            derived_string = ',' + TypeStringOf_t<Derived>::eval();
+    
+        return "Tensor2Antisymmetric_t<" + TypeStringOf_t<Factor>::eval() + basis_string + derived_string + '>';
     }
 
 private:
@@ -291,6 +296,61 @@ struct EuclideanEmbedding_t<Tensor2Antisymmetric_t<TensorFactor1_,
     static std::string type_as_string ()
     {
         return "EuclideanEmbedding_t<" + TypeStringOf_t<Tensor2Antisymmetric>::eval() + '>';
+    }
+};
+
+template <typename TensorFactor1_, typename TensorFactor2_, typename TensorDerived>
+struct EuclideanEmbeddingInverse_t<Tensor2Antisymmetric_t<TensorFactor1_,
+                                                          TensorFactor2_,
+                                                          BasisOfTensor2Antisymmetric_t<TensorFactor1_,TensorFactor2_>,
+                                                          TensorDerived> >
+    :
+    public EuclideanEmbeddingInverse_Parent_Tensor_i<Tensor2Antisymmetric_t<TensorFactor1_,
+                                                                            TensorFactor2_,
+                                                                            BasisOfTensor2Antisymmetric_t<TensorFactor1_,TensorFactor2_>,
+                                                                            TensorDerived> >::T
+{
+    typedef typename EuclideanEmbeddingInverse_Parent_Tensor_i<Tensor2Antisymmetric_t<TensorFactor1_,
+                                                                                      TensorFactor2_,
+                                                                                      BasisOfTensor2Antisymmetric_t<TensorFactor1_,TensorFactor2_>,
+                                                                                      TensorDerived> >::T Parent_Tensor_i;
+    typedef typename Parent_Tensor_i::Derived Derived;
+    typedef typename Parent_Tensor_i::Scalar Scalar;
+    using Parent_Tensor_i::DIM;
+    typedef typename Parent_Tensor_i::Basis Basis;
+    typedef typename Parent_Tensor_i::Index Index;
+    typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
+    typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
+    typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
+    using Parent_Tensor_i::DEGREE;
+    typedef TensorFactor1_ TensorFactor1;
+    typedef TensorFactor2_ TensorFactor2;
+    typedef Tensor2Antisymmetric_t<TensorFactor1,
+                                   TensorFactor2,
+                                   BasisOfTensor2Antisymmetric_t<TensorFactor1,TensorFactor2>,
+                                   TensorDerived> Tensor2Antisymmetric;
+
+    Scalar operator [] (MultiIndex const &m) const
+    {
+        EuclideanEmbeddingInverse_t<TensorFactor1> e1_inv;
+        EuclideanEmbeddingInverse_t<TensorFactor2> e2_inv;
+        TypedIndex_t<TensorFactor1,'i'> i;
+        TypedIndex_t<typename TensorFactor1::WithStandardEuclideanBasis,'j'> j;
+        TypedIndex_t<TensorFactor2,'k'> k;
+        TypedIndex_t<typename TensorFactor2::WithStandardEuclideanBasis,'l'> l;
+        TypedIndex_t<Tensor2Antisymmetric,'p'> p;
+        TypedIndex_t<typename Tensor2Antisymmetric::WithStandardEuclideanBasis,'q'> q;
+        // TODO: figure out real scalar factor
+        return (Static<Scalar>::SQRT_TWO*(e1_inv(i|j)*e2_inv(k|l)).bundle(i|k,p).bundle(j|l,q))[m];
+    }
+
+    // NOTE: these may be unnecessary/undesired, because this type does not represent a vector space
+//     using Parent_Tensor_i::component_is_immutable_zero;
+//     using Parent_Tensor_i::scalar_factor_for_component;
+//     using Parent_Tensor_i::vector_index_of;
+    static std::string type_as_string ()
+    {
+        return "EuclideanEmbeddingInverse_t<" + TypeStringOf_t<Tensor2Antisymmetric>::eval() + '>';
     }
 };
 

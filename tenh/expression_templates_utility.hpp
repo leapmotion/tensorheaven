@@ -89,8 +89,8 @@ struct BinarySummation_t
 {
     enum
     {
-        STATIC_ASSERT_IN_ENUM(LeftOperand::IS_EXPRESSION_TEMPLATE, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
-        STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
+        STATIC_ASSERT_IN_ENUM(LeftOperand::IS_EXPRESSION_TEMPLATE_I, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
+        STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE_I, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v), OPERAND_SCALAR_TYPES_ARE_EQUAL),
         STATIC_ASSERT_IN_ENUM((SummedIndexTypeList::LENGTH > 0), LENGTH_MUST_BE_POSITIVE)
     };
@@ -131,8 +131,8 @@ struct BinarySummation_t<LeftOperand,RightOperand,FreeIndexTypeList,EmptyTypeLis
 {
     enum
     {
-        STATIC_ASSERT_IN_ENUM(LeftOperand::IS_EXPRESSION_TEMPLATE, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
-        STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
+        STATIC_ASSERT_IN_ENUM(LeftOperand::IS_EXPRESSION_TEMPLATE_I, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
+        STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE_I, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v), OPERAND_SCALAR_TYPES_ARE_EQUAL)
     };
 
@@ -208,7 +208,7 @@ struct IndexBundle_t
     {
         STATIC_ASSERT_IN_ENUM((IsASubsetOf_t<BundleIndexTypeList,typename Operand::FreeIndexTypeList>::V), BUNDLE_INDICES_MUST_BE_FREE),
         STATIC_ASSERT_IN_ENUM((!HasNontrivialIntersectionAsSets_t<BundleIndexTypeList,TypeList_t<ResultingIndexType> >::V), BUNDLE_AND_RESULTING_MUST_BE_DISTINCT),
-        STATIC_ASSERT_IN_ENUM(Operand::IS_EXPRESSION_TEMPLATE, OPERAND_IS_EXPRESSION_TEMPLATE)
+        STATIC_ASSERT_IN_ENUM(Operand::IS_EXPRESSION_TEMPLATE_I, OPERAND_IS_EXPRESSION_TEMPLATE)
     };
 
     typedef typename Operand::Scalar Scalar;
@@ -256,7 +256,7 @@ struct IndexSplitter_t
     {
         STATIC_ASSERT_IN_ENUM((Operand::FreeIndexTypeList::template Contains_t<SourceIndexType>::V), SOURCE_INDEX_MUST_BE_FREE),
         STATIC_ASSERT_IN_ENUM((!HasNontrivialIntersectionAsSets_t<TypeList_t<SourceIndexType>,SplitIndexTypeList>::V), SOURCE_AND_SPLIT_MUST_BE_DISTINCT),
-        STATIC_ASSERT_IN_ENUM(Operand::IS_EXPRESSION_TEMPLATE, OPERAND_IS_EXPRESSION_TEMPLATE)
+        STATIC_ASSERT_IN_ENUM(Operand::IS_EXPRESSION_TEMPLATE_I, OPERAND_IS_EXPRESSION_TEMPLATE)
     };
 
     typedef typename Operand::Scalar Scalar;

@@ -36,7 +36,7 @@ struct ExpressionTemplate_Eval_t<Operand,TypeList_t<Index1> >
 {
     enum
     {
-        STATIC_ASSERT_IN_ENUM(Operand::IS_EXPRESSION_TEMPLATE, OPERAND_IS_EXPRESSION_TEMPLATE),
+        STATIC_ASSERT_IN_ENUM(Operand::IS_EXPRESSION_TEMPLATE_I, OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM((AreEqualAsSets_t<typename Operand::FreeIndexTypeList,TypeList_t<Index1> >::V), OPERAND_HAS_THE_SAME_FREE_INDICES),
         STATIC_ASSERT_IN_ENUM((Operand::FreeIndexTypeList::LENGTH == TypeList_t<Index1>::LENGTH), FREE_INDICES_HAVE_NO_DUPLICATES)
     };
@@ -50,7 +50,7 @@ struct ExpressionTemplate_Eval_t<Operand,TypeList_t<Index1> >
     typedef typename Parent::FreeIndexTypeList FreeIndexTypeList;
     typedef typename Parent::UsedIndexTypeList UsedIndexTypeList;
     typedef typename Parent::MultiIndex MultiIndex;
-    using Parent::IS_EXPRESSION_TEMPLATE;
+    using Parent::IS_EXPRESSION_TEMPLATE_I;
 
     ExpressionTemplate_Eval_t (Operand const &operand)
         :
@@ -99,7 +99,7 @@ struct ExpressionTemplate_Eval_t<Operand,TypeList_t<Index1,TypeList_t<Index2> > 
 {
     enum
     {
-        STATIC_ASSERT_IN_ENUM(Operand::IS_EXPRESSION_TEMPLATE, OPERAND_IS_EXPRESSION_TEMPLATE),
+        STATIC_ASSERT_IN_ENUM(Operand::IS_EXPRESSION_TEMPLATE_I, OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM((AreEqualAsSets_t<typename Operand::FreeIndexTypeList,TypeList_t<Index1,TypeList_t<Index2> > >::V), OPERAND_HAS_THE_SAME_FREE_INDICES),
         STATIC_ASSERT_IN_ENUM((Operand::FreeIndexTypeList::LENGTH == TypeList_t<Index1,TypeList_t<Index2> >::LENGTH), FREE_INDICES_HAVE_NO_DUPLICATES)
     };
@@ -113,7 +113,7 @@ struct ExpressionTemplate_Eval_t<Operand,TypeList_t<Index1,TypeList_t<Index2> > 
     typedef typename Parent::FreeIndexTypeList FreeIndexTypeList;
     typedef typename Parent::UsedIndexTypeList UsedIndexTypeList;
     typedef typename Parent::MultiIndex MultiIndex;
-    using Parent::IS_EXPRESSION_TEMPLATE;
+    using Parent::IS_EXPRESSION_TEMPLATE_I;
 
     ExpressionTemplate_Eval_t (Operand const &operand)
         :

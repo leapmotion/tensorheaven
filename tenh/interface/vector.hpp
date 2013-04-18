@@ -36,6 +36,7 @@ struct Vector_i
     typedef Index_t<Derived> Index;
     // the MultiIndex_t encapsulation of Index
     typedef MultiIndex_t<TypeList_t<Index> > MultiIndex;
+    static bool const IS_VECTOR_I = true;
 
     // TODO: only allow when Basis = Unit (or generic) once strongly-typed vectors are implemented
     // type conversion operator for canonical coercion to Scalar type when the vector is 1-dimensional

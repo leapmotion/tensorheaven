@@ -48,7 +48,7 @@ struct ExpressionTemplate_IndexedObject_t
     typedef typename Parent::FreeIndexTypeList FreeIndexTypeList;
     typedef typename Parent::UsedIndexTypeList UsedIndexTypeList;
     typedef typename Parent::MultiIndex MultiIndex;
-    using Parent::IS_EXPRESSION_TEMPLATE;
+    using Parent::IS_EXPRESSION_TEMPLATE_I;
     typedef SummedIndexTypeList_ SummedIndexTypeList;
 
     ExpressionTemplate_IndexedObject_t (Object const &object) : m_object(object) { }
@@ -96,7 +96,7 @@ struct ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,EmptyTypeList,DON
     typedef typename Parent::FreeIndexTypeList FreeIndexTypeList;
     typedef typename Parent::UsedIndexTypeList UsedIndexTypeList;
     typedef typename Parent::MultiIndex MultiIndex;
-    using Parent::IS_EXPRESSION_TEMPLATE;
+    using Parent::IS_EXPRESSION_TEMPLATE_I;
 
     ExpressionTemplate_IndexedObject_t (Object &object) : m_object(object) { }
 
@@ -138,7 +138,7 @@ struct ExpressionTemplate_IndexedObject_t<Object,IndexTypeList,EmptyTypeList,DON
     {
         enum
         {
-            STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
+            STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE_I, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
             STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<Scalar,typename RightOperand::Scalar>::v), OPERAND_SCALAR_TYPES_ARE_EQUAL),
             STATIC_ASSERT_IN_ENUM((AreEqualAsSets_t<FreeIndexTypeList,typename RightOperand::FreeIndexTypeList>::V),OPERANDS_HAVE_SAME_FREE_INDICES),
             STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_t<FreeIndexTypeList>::V), LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
@@ -193,7 +193,7 @@ struct ExpressionTemplate_Addition_t
     typedef typename Parent::FreeIndexTypeList FreeIndexTypeList;
     typedef typename Parent::UsedIndexTypeList UsedIndexTypeList;
     typedef typename Parent::MultiIndex MultiIndex;
-    using Parent::IS_EXPRESSION_TEMPLATE;
+    using Parent::IS_EXPRESSION_TEMPLATE_I;
 
     // TODO: check that the summed indices from each operand have no indices in common
     // though technically this is unnecessary, because the summed indices are "private"
@@ -203,8 +203,8 @@ struct ExpressionTemplate_Addition_t
     // be good to do the check here so that an error will be more obvious.
     enum
     {
-        STATIC_ASSERT_IN_ENUM(LeftOperand::IS_EXPRESSION_TEMPLATE, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
-        STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
+        STATIC_ASSERT_IN_ENUM(LeftOperand::IS_EXPRESSION_TEMPLATE_I, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
+        STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE_I, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v), OPERAND_SCALAR_TYPES_ARE_EQUAL),
         STATIC_ASSERT_IN_ENUM((AreEqualAsSets_t<typename LeftOperand::FreeIndexTypeList,typename RightOperand::FreeIndexTypeList>::V), OPERANDS_HAVE_SAME_FREE_INDICES),
         STATIC_ASSERT_IN_ENUM(!ContainsDuplicates_t<typename LeftOperand::FreeIndexTypeList>::V, LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
@@ -275,11 +275,11 @@ struct ExpressionTemplate_ScalarMultiplication_t
     typedef typename Parent::FreeIndexTypeList FreeIndexTypeList;
     typedef typename Parent::UsedIndexTypeList UsedIndexTypeList;
     typedef typename Parent::MultiIndex MultiIndex;
-    using Parent::IS_EXPRESSION_TEMPLATE;
+    using Parent::IS_EXPRESSION_TEMPLATE_I;
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM(Operand::IS_EXPRESSION_TEMPLATE, OPERAND_IS_EXPRESSION_TEMPLATE),
+        STATIC_ASSERT_IN_ENUM(Operand::IS_EXPRESSION_TEMPLATE_I, OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename Operand::Scalar,Scalar_>::v), OPERAND_SCALAR_MATCHES_SCALAR),
         STATIC_ASSERT_IN_ENUM((OPERATOR == '*' || OPERATOR == '/'), OPERATOR_IS_VALID)
     };
@@ -346,7 +346,7 @@ struct ExpressionTemplate_Multiplication_t
     typedef typename Parent::FreeIndexTypeList FreeIndexTypeList;
     typedef typename Parent::UsedIndexTypeList UsedIndexTypeList;
     typedef typename Parent::MultiIndex MultiIndex;
-    using Parent::IS_EXPRESSION_TEMPLATE;
+    using Parent::IS_EXPRESSION_TEMPLATE_I;
 
     typedef typename SummedIndexTypeListOfMultiplication_t<LeftOperand,RightOperand>::T SummedIndexTypeList;
 
@@ -356,8 +356,8 @@ struct ExpressionTemplate_Multiplication_t
     // confused by multiple repeated indices that have nothing to do with each other.
     enum
     {
-        STATIC_ASSERT_IN_ENUM(LeftOperand::IS_EXPRESSION_TEMPLATE, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
-        STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
+        STATIC_ASSERT_IN_ENUM(LeftOperand::IS_EXPRESSION_TEMPLATE_I, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
+        STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE_I, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v), OPERAND_SCALAR_TYPES_ARE_EQUAL),
         STATIC_ASSERT_IN_ENUM((!HasNontrivialIntersectionAsSets_t<FreeIndexTypeList,UsedIndexTypeList>::V), FREE_INDICES_DONT_COLLIDE_WITH_USED)
     };
@@ -418,7 +418,7 @@ struct ExpressionTemplate_IndexBundle_t
     typedef typename Parent::FreeIndexTypeList FreeIndexTypeList;
     typedef typename Parent::UsedIndexTypeList UsedIndexTypeList;
     typedef typename Parent::MultiIndex MultiIndex;
-    using Parent::IS_EXPRESSION_TEMPLATE;
+    using Parent::IS_EXPRESSION_TEMPLATE_I;
     typedef typename Parent::SummedIndexTypeList SummedIndexTypeList;
 
     typedef IndexBundle_t<Operand,BundleIndexTypeList,ResultingIndexType> IndexBundle;
@@ -470,7 +470,7 @@ struct ExpressionTemplate_IndexSplit_t
     typedef typename Parent::FreeIndexTypeList FreeIndexTypeList;
     typedef typename Parent::UsedIndexTypeList UsedIndexTypeList;
     typedef typename Parent::MultiIndex MultiIndex;
-    using Parent::IS_EXPRESSION_TEMPLATE;
+    using Parent::IS_EXPRESSION_TEMPLATE_I;
     typedef typename Parent::SummedIndexTypeList SummedIndexTypeList;
 
     typedef IndexSplitter_t<Operand,SourceIndexType,SplitIndexTypeList> IndexSplitter;

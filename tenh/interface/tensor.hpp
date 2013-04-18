@@ -85,6 +85,7 @@ struct Tensor_i : public Vector_i<Derived_,typename FactorTypeList_::HeadType::S
     // this is not the "fully expanded" degree, but the number of [what you could think of
     // as "parenthesized"] factors that formed this tensor product type.
     static Uint32 const DEGREE = FactorTypeList::LENGTH;
+    static bool const IS_TENSOR_I = true;
 
     // TODO: could put canonical as_factorX conversions here
 
