@@ -13,6 +13,7 @@
 #include <boost/random/uniform_int_distribution.hpp>
 
 #include "tenh/core.hpp"
+#include "tenh/interface/vector.hpp"
 #include "tenh/tensor2.hpp"
 #include "tenh/tensor2antisymmetric.hpp"
 #include "tenh/tensor2diagonal.hpp"
@@ -52,35 +53,27 @@ void randomize(double & d, double mean = 0, double sigma = 10)
     d = dist(gen);
 }
 
-template <typename T> // This might not work
-void randomize(std::complex<T> & z, T mean = 0, T sigma = 10)
+template <typename T>
+void randomize(std::complex<T> & z, std::complex<T> mean = 0, std::complex<T> sigma = 10)
 {
-    randomize(z.real(), mean, sigma);
-    randomize(z.imag(), mean, sigma);
+    randomize(z.real(), mean.real(), abs(sigma));
+    randomize(z.imag(), mean.imag(), abs(sigma));
 }
 
-template <typename Scalar, Uint32 DIM>
-void randomize(Vector_t<Scalar, DIM> & v, Scalar mean = 0, Scalar sigma = 10)
+template <typename Derived, typename Scalar, Uint32 DIM, typename Basis>
+void randomize(Vector_i<Derived, Scalar, DIM, Basis> & v, Scalar mean = 0, Scalar sigma = 10)
 {
-    for(typename Vector_t<Scalar, DIM>::Index i; i.is_not_at_end(); ++i)
+    for(typename Vector_i<Derived, Scalar, DIM, Basis>::Index i; i.is_not_at_end(); ++i)
     {
-        randomize(v[i], mean, sigma);
+        randomize((v[i]), mean, sigma);
     }
 }
 
-template <typename Factor1, typename Factor2>
-void randomize(Tensor2_t<Factor1, Factor2> & t)
-{
-    for (typename Tensor2_t<Factor1, Factor2>::Index i; i.is_not_at_end(); ++i)
-    {
-        randomize(t[i]);
-    }
-}
 
 template <typename Factor1, typename Factor2>
 void randomize(Tensor2_t<Factor1, Factor2> & t, Uint32 maximum_rank)
 {
-    // maximum_rank = std::min(maximum_rank, std::min(Factor1::DIM, Factor2::DIM));
+    maximum_rank = std::min(maximum_rank, std::min(Factor1::DIM, Factor2::DIM));
     typedef typename Factor1::Scalar Scalar;
     
     t = Tensor2_t<Factor1, Factor2>(0);
@@ -101,23 +94,12 @@ void randomize(Tensor2_t<Factor1, Factor2> & t, Uint32 maximum_rank)
 }
 
 template<typename Factor>
-void randomize(Tensor2Antisymmetric_t<Factor> & s)
-{
-    Tensor2_t<Factor, Factor> t(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
-    randomize(t);
-    TypedIndex_t<Factor,'i'> i;
-    TypedIndex_t<Factor,'j'> j;
-    TypedIndex_t<Tensor2Antisymmetric_t<Factor>, 'q'> q;
-    s(q) = ((t(i|j) - t(j|i))/2).bundle(i|j,q);
-}
-
-template<typename Factor>
 void randomize(Tensor2Antisymmetric_t<Factor> & s, Uint32 maximum_rank)
 {
-    // maximum_rank = std::min(maximum_rank, std::min(Factor1::DIM, Factor2::DIM));
+    maximum_rank = std::min(maximum_rank, Factor::DIM);
     typedef typename Factor::Scalar Scalar;
     
-    Uint32 looping = maximum_rank / 2;
+    Uint32 number_of_iterations = maximum_rank / 2;
     s = Tensor2Antisymmetric_t<Factor>(0);
     
     Factor v(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
@@ -127,7 +109,7 @@ void randomize(Tensor2Antisymmetric_t<Factor> & s, Uint32 maximum_rank)
     TypedIndex_t<Factor,'j'> k;
     TypedIndex_t<Tensor2Antisymmetric_t<Factor>,'p'> p;
     
-    for (int i = 0; i < looping; ++i)
+    for (int i = 0; i < number_of_iterations; ++i)
     {
         randomize(v, static_cast<Scalar>(0), static_cast<Scalar>(sqrt(10)));
         randomize(w, static_cast<Scalar>(0), static_cast<Scalar>(sqrt(10)));
@@ -138,20 +120,9 @@ void randomize(Tensor2Antisymmetric_t<Factor> & s, Uint32 maximum_rank)
 }
 
 template<typename Factor>
-void randomize(Tensor2Symmetric_t<Factor> & s)
-{
-    Tensor2_t<Factor, Factor> t(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
-    randomize(t);
-    TypedIndex_t<Factor,'i'> i;
-    TypedIndex_t<Factor,'j'> j;
-    TypedIndex_t<Tensor2Symmetric_t<Factor>, 'q'> q;
-    s(q) = ((t(i|j) + t(j|i))/2).bundle(i|j,q);
-}
-
-template<typename Factor>
 void randomize(Tensor2Symmetric_t<Factor> & s, Uint32 maximum_rank)
 {
-    // maximum_rank = std::min(maximum_rank, std::min(Factor1::DIM, Factor2::DIM));
+    maximum_rank = std::min(maximum_rank, Factor::DIM);
     typedef typename Factor::Scalar Scalar;
     
     s = Tensor2Symmetric_t<Factor>(0);
