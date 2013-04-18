@@ -85,23 +85,24 @@ void add_particular_tests_for_scalar (Directory *parent)
     add_particular_tests<Scalar,3>(parent);
     add_particular_tests<Scalar,4>(parent);
     add_particular_tests<Scalar,5>(parent);
-    // add_particular_tests<Scalar,6>(parent);
-    // add_particular_tests<Scalar,7>(parent);
-    // add_particular_tests<Scalar,8>(parent);
-    // add_particular_tests<Scalar,9>(parent);
-    // add_particular_tests<Scalar,100>(parent);
+    add_particular_tests<Scalar,6>(parent);
+    add_particular_tests<Scalar,7>(parent);
+    add_particular_tests<Scalar,8>(parent);
+    add_particular_tests<Scalar,9>(parent);
+    add_particular_tests<Scalar,10>(parent);
 }
 
 void AddTests (Directory *parent)
 {
     Directory *expression_templates = new Directory("ExpressionTemplates", parent);
+    
     add_particular_tests_for_scalar<float>(expression_templates);
     add_particular_tests_for_scalar<double>(expression_templates);
-    // add_particular_tests_for_scalar<complex<float> >(expression_templates);
-    // add_particular_tests_for_scalar<complex<double> >(expression_templates);
-
-
-
+    add_particular_tests_for_scalar<complex<float> >(expression_templates);
+    add_particular_tests_for_scalar<complex<double> >(expression_templates);
+    add_particular_tests_for_scalar<char>(expression_templates);
+    add_particular_tests_for_scalar<int>(expression_templates);
+    add_particular_tests_for_scalar<long>(expression_templates);
 }
 
 } // end of namespace ExpressionTemplates
