@@ -10,7 +10,7 @@ include_directories(${tensorheaven_test_SOURCE_DIR} ${EIGEN_INCLUDE_DIR} ${BOOST
 
 # TODO: build options for other compilers
 set(CMAKE_CXX_FLAGS "-Wall -Werror") # -Werror can give problems under clang due to -Wtautological-compare see pragma in tensor2symmetric.hpp to disable it as needed.
-set(CMAKE_CXX_FLAGS_DEBUG "-g -O3")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O3") # this uses -O3 so that the tests run reasonably quickly, even though the inlining may interfere with step-debugging.
 set(CMAKE_CXX_FLAGS_RELEASE "-g -O3 -DNDEBUG")
 set(CMAKE_CXX_FLAGS_ASMEXAM "-g0 -O3 -save-temps -DNDEBUG")
 

@@ -882,26 +882,31 @@ void test_EuclideanEmbedding_t ()
     {
         std::cout << "\ton Tensor2_t\n";
         typedef Tensor2_t<V,V> T;
+        typedef typename T::WithStandardEuclideanBasis T_WithStandardEuclideanBasis;
         typedef EuclideanEmbedding_t<T> EE;
         EE e;
         typename EE::MultiIndex m;
         std::cout << FORMAT_VALUE(e) << '\n';
+        
+        T_WithStandardEuclideanBasis u(Static<WithoutInitialization>::SINGLETON);
         T v(Static<WithoutInitialization>::SINGLETON);
+        for (typename T_WithStandardEuclideanBasis::Index i; i.is_not_at_end(); ++i)
+            u[i] = sqr(i.value()) + 1;
         for (typename T::Index i; i.is_not_at_end(); ++i)
             v[i] = i.value() + 1;
         std::cout << FORMAT_VALUE(v) << '\n';
-        TypedIndex_t<T,'i'> i;
+        TypedIndex_t<T_WithStandardEuclideanBasis,'i'> i;
         TypedIndex_t<T,'j'> j;
-        std::cout << FORMAT_VALUE(v(i)*e(i|j)) << '\n';
+        std::cout << FORMAT_VALUE(u(i)*e(i|j)) << '\n';
         std::cout << FORMAT_VALUE(e(i|j)*v(j)) << '\n';
-        std::cout << FORMAT_VALUE(v(i)*e(i|j)*v(j)) << '\n';
-        std::cout << FORMAT_VALUE(e(i|i)) << '\n';
-        T w(Static<WithoutInitialization>::SINGLETON);
+        std::cout << FORMAT_VALUE(u(i)*e(i|j)*v(j)) << '\n';
+        //std::cout << FORMAT_VALUE(e(i|i)) << '\n';
+        T_WithStandardEuclideanBasis w(Static<WithoutInitialization>::SINGLETON);
         w(i) = e(i|j)*v(j);
         std::cout << "after w(i) = e(i|j)*v(j), " << FORMAT_VALUE(w) << '\n';
-        std::cout << "squared norm of v = " << v(i)*v(i) << '\n';
+        std::cout << "squared norm of v = " << v(j)*v(j) << '\n';
         float hand_calculated = float(0);
-        for (typename T::Index k; k.is_not_at_end(); ++k)
+        for (typename T_WithStandardEuclideanBasis::Index k; k.is_not_at_end(); ++k)
             hand_calculated += sqr(w[k]);
         std::cout << "hand calculated squared norm of v = " << hand_calculated << '\n';
         std::cout << '\n';
@@ -910,26 +915,30 @@ void test_EuclideanEmbedding_t ()
     {
         std::cout << "\ton Tensor2Antisymmetric_t\n";
         typedef Tensor2Antisymmetric_t<V,V> T;
+        typedef typename T::WithStandardEuclideanBasis T_WithStandardEuclideanBasis;
         typedef EuclideanEmbedding_t<T> EE;
         EE e;
         typename EE::MultiIndex m;
         std::cout << FORMAT_VALUE(e) << '\n';
+        T_WithStandardEuclideanBasis u(Static<WithoutInitialization>::SINGLETON);
         T v(Static<WithoutInitialization>::SINGLETON);
+        for (typename T_WithStandardEuclideanBasis::Index i; i.is_not_at_end(); ++i)
+            u[i] = sqr(i.value()) + 1;
         for (typename T::Index i; i.is_not_at_end(); ++i)
             v[i] = i.value() + 1;
         std::cout << FORMAT_VALUE(v) << '\n';
-        TypedIndex_t<T,'i'> i;
+        TypedIndex_t<T_WithStandardEuclideanBasis,'i'> i;
         TypedIndex_t<T,'j'> j;
-        std::cout << FORMAT_VALUE(v(i)*e(i|j)) << '\n';
+        std::cout << FORMAT_VALUE(u(i)*e(i|j)) << '\n';
         std::cout << FORMAT_VALUE(e(i|j)*v(j)) << '\n';
-        std::cout << FORMAT_VALUE(v(i)*e(i|j)*v(j)) << '\n';
-        std::cout << FORMAT_VALUE(e(i|i)) << '\n';
-        T w(Static<WithoutInitialization>::SINGLETON);
+        std::cout << FORMAT_VALUE(u(i)*e(i|j)*v(j)) << '\n';
+        //std::cout << FORMAT_VALUE(e(i|i)) << '\n';
+        T_WithStandardEuclideanBasis w(Static<WithoutInitialization>::SINGLETON);
         w(i) = e(i|j)*v(j);
         std::cout << "after w(i) = e(i|j)*v(j), " << FORMAT_VALUE(w) << '\n';
-        std::cout << "squared norm of v = " << v(i)*v(i) << '\n';
+        std::cout << "squared norm of v = " << v(j)*v(j) << '\n';
         float hand_calculated = float(0);
-        for (typename T::Index k; k.is_not_at_end(); ++k)
+        for (typename T_WithStandardEuclideanBasis::Index k; k.is_not_at_end(); ++k)
             hand_calculated += sqr(w[k]);
         std::cout << "hand calculated squared norm of v = " << hand_calculated << '\n';
         std::cout << '\n';
@@ -938,26 +947,30 @@ void test_EuclideanEmbedding_t ()
     {
         std::cout << "\ton Tensor2Diagonal\n";
         typedef Tensor2Diagonal_t<V,V> T;
+        typedef typename T::WithStandardEuclideanBasis T_WithStandardEuclideanBasis;
         typedef EuclideanEmbedding_t<T> EE;
         EE e;
         typename EE::MultiIndex m;
         std::cout << FORMAT_VALUE(e) << '\n';
+        T_WithStandardEuclideanBasis u(Static<WithoutInitialization>::SINGLETON);
         T v(Static<WithoutInitialization>::SINGLETON);
+        for (typename T_WithStandardEuclideanBasis::Index i; i.is_not_at_end(); ++i)
+            u[i] = sqr(i.value()) + 1;
         for (typename T::Index i; i.is_not_at_end(); ++i)
             v[i] = i.value() + 1;
         std::cout << FORMAT_VALUE(v) << '\n';
-        TypedIndex_t<T,'i'> i;
+        TypedIndex_t<T_WithStandardEuclideanBasis,'i'> i;
         TypedIndex_t<T,'j'> j;
-        std::cout << FORMAT_VALUE(v(i)*e(i|j)) << '\n';
+        std::cout << FORMAT_VALUE(u(i)*e(i|j)) << '\n';
         std::cout << FORMAT_VALUE(e(i|j)*v(j)) << '\n';
-        std::cout << FORMAT_VALUE(v(i)*e(i|j)*v(j)) << '\n';
-        std::cout << FORMAT_VALUE(e(i|i)) << '\n';
-        T w(Static<WithoutInitialization>::SINGLETON);
+        std::cout << FORMAT_VALUE(u(i)*e(i|j)*v(j)) << '\n';
+        //std::cout << FORMAT_VALUE(e(i|i)) << '\n';
+        T_WithStandardEuclideanBasis w(Static<WithoutInitialization>::SINGLETON);
         w(i) = e(i|j)*v(j);
         std::cout << "after w(i) = e(i|j)*v(j), " << FORMAT_VALUE(w) << '\n';
-        std::cout << "squared norm of v = " << v(i)*v(i) << '\n';
+        std::cout << "squared norm of v = " << v(j)*v(j) << '\n';
         float hand_calculated = float(0);
-        for (typename T::Index k; k.is_not_at_end(); ++k)
+        for (typename T_WithStandardEuclideanBasis::Index k; k.is_not_at_end(); ++k)
             hand_calculated += sqr(w[k]);
         std::cout << "hand calculated squared norm of v = " << hand_calculated << '\n';
         std::cout << '\n';
@@ -966,31 +979,34 @@ void test_EuclideanEmbedding_t ()
     {
         std::cout << "\ton Tensor2Symmetric_t\n";
         typedef Tensor2Symmetric_t<V,V> T;
+        typedef typename T::WithStandardEuclideanBasis T_WithStandardEuclideanBasis;
         typedef EuclideanEmbedding_t<T> EE;
         EE e;
         typename EE::MultiIndex m;
         std::cout << FORMAT_VALUE(e) << '\n';
+        T_WithStandardEuclideanBasis u(Static<WithoutInitialization>::SINGLETON);
         T v(Static<WithoutInitialization>::SINGLETON);
+        for (typename T_WithStandardEuclideanBasis::Index i; i.is_not_at_end(); ++i)
+            u[i] = sqr(i.value()) + 1;
         for (typename T::Index i; i.is_not_at_end(); ++i)
             v[i] = i.value() + 1;
         std::cout << FORMAT_VALUE(v) << '\n';
-        TypedIndex_t<T,'i'> i;
+        TypedIndex_t<T_WithStandardEuclideanBasis,'i'> i;
         TypedIndex_t<T,'j'> j;
-        std::cout << FORMAT_VALUE(v(i)*e(i|j)) << '\n';
+        std::cout << FORMAT_VALUE(u(i)*e(i|j)) << '\n';
         std::cout << FORMAT_VALUE(e(i|j)*v(j)) << '\n';
-        std::cout << FORMAT_VALUE(v(i)*e(i|j)*v(j)) << '\n';
-        std::cout << FORMAT_VALUE(e(i|i)) << '\n';
-        T w(Static<WithoutInitialization>::SINGLETON);
+        std::cout << FORMAT_VALUE(u(i)*e(i|j)*v(j)) << '\n';
+        //std::cout << FORMAT_VALUE(e(i|i)) << '\n';
+        T_WithStandardEuclideanBasis w(Static<WithoutInitialization>::SINGLETON);
         w(i) = e(i|j)*v(j);
         std::cout << "after w(i) = e(i|j)*v(j), " << FORMAT_VALUE(w) << '\n';
-        std::cout << "squared norm of v = " << v(i)*v(i) << '\n';
+        std::cout << "squared norm of v = " << v(j)*v(j) << '\n';
         float hand_calculated = float(0);
-        for (typename T::Index k; k.is_not_at_end(); ++k)
+        for (typename T_WithStandardEuclideanBasis::Index k; k.is_not_at_end(); ++k)
             hand_calculated += sqr(w[k]);
         std::cout << "hand calculated squared norm of v = " << hand_calculated << '\n';
         std::cout << '\n';
     }
-    
     std::cout << '\n';
 }
 

@@ -26,9 +26,21 @@ namespace Tenh {
 // factors of 2 multiplying the off-diagonal components;
 //    (a1,b1,c1,d1,e1,f1)*(a2,b2,c2,d2,e2,f2) = a1*a2 + 2*b1*b2 + 2*c1*c2 + d1*d2 + 2*e1*e2 + f1*f2.
 
-template <typename Vector>
-struct InnerProduct_t
+template <typename Vector, typename Basis>
+struct InnerProduct_t;
+
+struct StandardEuclideanBasis
 {
+    static std::string type_as_string () { return "StandardEuclideanBasis"; }
+};
+
+// template specialization for the standard inner product on a Euclidean space.
+// this can be used on any vector type, including tensor types.
+template <typename Vector>
+struct InnerProduct_t<Vector,StandardEuclideanBasis>
+{
+    enum { STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename Vector::Basis,StandardEuclideanBasis>::v), BASIS_IS_STANDARD_EUCLIDEAN) };
+
     typedef typename Vector::Scalar Scalar;
     typedef typename Vector::Index Index;
 

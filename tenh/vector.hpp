@@ -11,23 +11,26 @@
 
 #include "tenh/array.hpp"
 #include "tenh/core.hpp"
+#include "tenh/euclideanembedding.hpp"
 #include "tenh/interface/vector.hpp"
 
 namespace Tenh {
 
 // NOTE: Scalar_ MUST be a POD data type.
-template <typename Scalar_, Uint32 DIM_, typename Derived_ = NullType> // don't worry about type ID for now
+template <typename Scalar_, Uint32 DIM_, typename Basis_ = StandardEuclideanBasis, typename Derived_ = NullType> // don't worry about type ID for now
 struct Vector_t
     :
-    public Vector_i<typename DerivedType_t<Derived_,Vector_t<Scalar_,DIM_,Derived_> >::T,Scalar_,DIM_>,
-    private Array_t<Scalar_,DIM_,typename DerivedType_t<Derived_,Vector_t<Scalar_,DIM_,Derived_> >::T>
+    public Vector_i<typename DerivedType_t<Derived_,Vector_t<Scalar_,DIM_,Basis_,Derived_> >::T,Scalar_,DIM_,Basis_>,
+    private Array_t<Scalar_,DIM_,typename DerivedType_t<Derived_,Vector_t<Scalar_,DIM_,Basis_,Derived_> >::T>
     // Array_t is privately inherited because it is an implementation detail
 {
-    typedef Vector_i<typename DerivedType_t<Derived_,Vector_t<Scalar_,DIM_,Derived_> >::T,Scalar_,DIM_> Parent_Vector_i;
-    typedef Array_t<Scalar_,DIM_,typename DerivedType_t<Derived_,Vector_t<Scalar_,DIM_,Derived_> >::T> Parent_Array_t;
+    typedef Vector_i<typename DerivedType_t<Derived_,Vector_t<Scalar_,DIM_,Basis_,Derived_> >::T,Scalar_,DIM_,Basis_> Parent_Vector_i;
+    typedef Array_t<Scalar_,DIM_,typename DerivedType_t<Derived_,Vector_t<Scalar_,DIM_,Basis_,Derived_> >::T> Parent_Array_t;
     typedef typename Parent_Vector_i::Derived Derived;
     typedef typename Parent_Vector_i::Scalar Scalar;
     static Uint32 const DIM = Parent_Vector_i::DIM;
+    typedef typename Parent_Vector_i::Basis Basis;
+    typedef Vector_t<Scalar,DIM,StandardEuclideanBasis,Derived_> WithStandardEuclideanBasis; // TEMP KLUDGE
     typedef typename Parent_Vector_i::Index Index;
     typedef typename Parent_Vector_i::MultiIndex MultiIndex;
 
@@ -45,9 +48,52 @@ struct Vector_t
     static std::string type_as_string ()
     {
         if (Lvd::Meta::TypesAreEqual<Derived_,NullType>::v)
-            return "Vector_t<" + TypeStringOf_t<Scalar>::eval() + ',' + AS_STRING(DIM) + '>';
+            return "Vector_t<" + TypeStringOf_t<Scalar>::eval() + ',' + AS_STRING(DIM) + ',' + TypeStringOf_t<Basis>::eval() + '>';
         else
-            return "Vector_t<" + TypeStringOf_t<Scalar>::eval() + ',' + AS_STRING(DIM) + ',' + TypeStringOf_t<Derived>::eval() + '>';
+            return "Vector_t<" + TypeStringOf_t<Scalar>::eval() + ',' + AS_STRING(DIM) + ',' 
+                               + TypeStringOf_t<Basis>::eval() + ',' + TypeStringOf_t<Derived>::eval() + '>';
+    }
+};
+
+// NOTE: while this is a tensor, it isn't a tensor space, and so it technically shouldn't be used as a factor
+// type in a tensor product.  this is essentially a constant value -- it has only const accessors and can't be written to.
+// TODO: once bases IDs are implemented, change this to not provide a default implementation,
+// but only a specialization for Vector_t<Scalar,DIM,StandardEuclideanBasis>
+template <typename Scalar_, Uint32 DIM_, typename Derived_>
+struct EuclideanEmbedding_t<Vector_t<Scalar_,DIM_,StandardEuclideanBasis,Derived_> >
+    :
+    public EuclideanEmbedding_Parent_Tensor_i<Vector_t<Scalar_,DIM_,StandardEuclideanBasis,Derived_> >::T
+{
+    typedef typename EuclideanEmbedding_Parent_Tensor_i<Vector_t<Scalar_,DIM_,StandardEuclideanBasis,Derived_> >::T Parent_Tensor_i;
+    typedef typename Parent_Tensor_i::Derived Derived;
+    typedef typename Parent_Tensor_i::Scalar Scalar;
+    using Parent_Tensor_i::DIM;
+    typedef typename Parent_Tensor_i::Basis Basis;
+    typedef typename Parent_Tensor_i::Index Index;
+    typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
+    typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
+    typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
+    using Parent_Tensor_i::DEGREE;
+    typedef Vector_t<Scalar_,DIM_,StandardEuclideanBasis,Derived_> Vector;
+    
+    // 1 on the diagonal, 0 otherwise
+    Scalar operator [] (Index const &i) const
+    {
+        return (i.value() % Vector::DIM == i.value() / Vector::DIM) ? Scalar(1) : Scalar(0);
+    }
+    Scalar operator [] (MultiIndex const &m) const
+    {
+        return m.template el<0>() == m.template el<1>() ? Scalar(1) : Scalar(0);
+    }
+
+    // NOTE: these may be unnecessary/undesired, because this type does not represent a vector space
+//     using Parent_Tensor_i::component_is_immutable_zero;
+//     using Parent_Tensor_i::scalar_factor_for_component;
+//     using Parent_Tensor_i::vector_index_of;
+
+    static std::string type_as_string ()
+    {
+        return "EuclideanEmbedding_t<" + TypeStringOf_t<Vector>::eval() + '>';
     }
 };
 

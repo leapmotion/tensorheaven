@@ -19,29 +19,42 @@
 
 namespace Tenh {
 
+template <typename Factor1, typename Factor2 = Factor1>
+struct BasisOfTensor2Antisymmetric_t
+{
+    static std::string type_as_string () { return "BasisOfTensor2Antisymmetric_t<" + TypeStringOf_t<Factor1>::eval() + ',' + TypeStringOf_t<Factor2>::eval() + '>'; }
+};
+
 // antisymmetric 2-tensor (its transpose is equal to its negative)
-template <typename Factor1_, typename Factor2_ = Factor1_, typename Derived_ = NullType>
+template <typename Factor1_, typename Factor2_ = Factor1_, typename Basis_ = BasisOfTensor2Antisymmetric_t<Factor1_,Factor2_>, typename Derived_ = NullType>
 struct Tensor2Antisymmetric_t
     :
-    public Tensor_i<typename DerivedType_t<Derived_,Tensor2Antisymmetric_t<Factor1_,Factor2_,Derived_> >::T,
+    public Tensor_i<typename DerivedType_t<Derived_,Tensor2Antisymmetric_t<Factor1_,Factor2_,Basis_,Derived_> >::T,
                     TypeList_t<Factor1_,TypeList_t<Factor2_> >,
-                    ((Factor1_::DIM-1)*Factor1_::DIM)/2>,
+                    ((Factor1_::DIM-1)*Factor1_::DIM)/2,
+                    Basis_>,
     private Array_t<typename Factor1_::Scalar,
                     ((Factor1_::DIM-1)*Factor1_::DIM)/2,
-                    typename DerivedType_t<Derived_,Tensor2Antisymmetric_t<Factor1_,Factor2_,Derived_> >::T>
+                    typename DerivedType_t<Derived_,Tensor2Antisymmetric_t<Factor1_,Factor2_,Basis_,Derived_> >::T>
     // privately inherited because the use of Array_t is an implementation detail
 {
     enum { STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<Factor1_,Factor2_>::v), FACTOR1_AND_FACTOR2_MUST_BE_IDENTICAL) };
 
-    typedef Tensor_i<typename DerivedType_t<Derived_,Tensor2Antisymmetric_t<Factor1_,Factor2_,Derived_> >::T,
+    typedef Tensor_i<typename DerivedType_t<Derived_,Tensor2Antisymmetric_t<Factor1_,Factor2_,Basis_,Derived_> >::T,
                      TypeList_t<Factor1_,TypeList_t<Factor2_> >,
-                     ((Factor1_::DIM-1)*Factor1_::DIM)/2> Parent_Tensor_i;
+                     ((Factor1_::DIM-1)*Factor1_::DIM)/2,
+                     Basis_> Parent_Tensor_i;
     typedef Array_t<typename Factor1_::Scalar,
                     ((Factor1_::DIM-1)*Factor1_::DIM)/2,
-                    typename DerivedType_t<Derived_,Tensor2Antisymmetric_t<Factor1_,Factor2_,Derived_> >::T> Parent_Array_t;
+                    typename DerivedType_t<Derived_,Tensor2Antisymmetric_t<Factor1_,Factor2_,Basis_,Derived_> >::T> Parent_Array_t;
+    typedef typename Parent_Tensor_i::Derived Derived;
     typedef typename Parent_Tensor_i::Scalar Scalar;
     static Uint32 const DIM = Parent_Tensor_i::DIM;
-    typedef typename Parent_Tensor_i::Derived Derived;
+    typedef typename Parent_Tensor_i::Basis Basis;
+    typedef Tensor2Antisymmetric_t<typename Factor1_::WithStandardEuclideanBasis,
+                                   typename Factor2_::WithStandardEuclideanBasis,
+                                   StandardEuclideanBasis,
+                                   Derived_> WithStandardEuclideanBasis; // TEMP KLUDGE -- recursively convert to StandardEuclideanBasis
     typedef typename Parent_Tensor_i::Index Index;
     typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
     typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
@@ -97,10 +110,6 @@ struct Tensor2Antisymmetric_t
     template <typename Index1, typename Index2>
     Scalar operator [] (MultiIndex_t<TypeList_t<Index1,TypeList_t<Index2> > > const &m) const
     {
-//         // NOTE: these constructions are unnecessary to the code, but ARE necessary to the compile-time type checking
-//         // the compiler should optimize it out anyway.
-//         typename Factor1::Index(m.template el<0>());
-//         typename Factor2::Index(m.template el<1>());
         return component(m.template el<0>(), m.template el<1>());
     }
 
@@ -173,9 +182,10 @@ struct Tensor2Antisymmetric_t
     static std::string type_as_string ()
     {
         if (Lvd::Meta::TypesAreEqual<Derived_,NullType>::v)
-            return "Tensor2Antisymmetric_t<" + TypeStringOf_t<Factor>::eval() + '>';
+            return "Tensor2Antisymmetric_t<" + TypeStringOf_t<Factor>::eval() + ',' + TypeStringOf_t<Basis>::eval() + '>';
         else
-            return "Tensor2Antisymmetric_t<" + TypeStringOf_t<Factor>::eval() + ',' + TypeStringOf_t<Derived>::eval() + '>';
+            return "Tensor2Antisymmetric_t<" + TypeStringOf_t<Factor>::eval() + ',' + TypeStringOf_t<Basis>::eval() + ',' 
+                                             + TypeStringOf_t<Derived>::eval() + '>';
     }
 
 private:
@@ -205,14 +215,15 @@ private:
         col = i - row*(row-1)/2;
     }
     
-    friend struct InnerProduct_t<Tensor2Antisymmetric_t>;
+    friend struct InnerProduct_t<Tensor2Antisymmetric_t,Basis>;
 };
 
 // template specialization for the inner product in this particular coordinatization of Tensor2Antisymmetric_t
+// (specified by BasisOfTensor2Antisymmetric_t<Factor1,Factor2>).
 template <typename Factor1, typename Factor2, typename Derived>
-struct InnerProduct_t<Tensor2Antisymmetric_t<Factor1,Factor2,Derived> >
+struct InnerProduct_t<Tensor2Antisymmetric_t<Factor1,Factor2,BasisOfTensor2Antisymmetric_t<Factor1,Factor2>,Derived>,BasisOfTensor2Antisymmetric_t<Factor1,Factor2> >
 {
-    typedef Tensor2Antisymmetric_t<Factor1,Factor2,Derived> Tensor2Antisymmetric;
+    typedef Tensor2Antisymmetric_t<Factor1,Factor2,BasisOfTensor2Antisymmetric_t<Factor1,Factor2>,Derived> Tensor2Antisymmetric;
     typedef typename Tensor2Antisymmetric::Scalar Scalar;
     typedef typename Tensor2Antisymmetric::Index Index;
 
@@ -222,20 +233,30 @@ struct InnerProduct_t<Tensor2Antisymmetric_t<Factor1,Factor2,Derived> >
         Uint32 col;
         Tensor2Antisymmetric::contiguous_index_to_rowcol_index(i.value(), row, col);
         return Scalar(2) * 
-               InnerProduct_t<Factor1>::component(typename Factor1::Index(row, DONT_CHECK_RANGE)) *
-               InnerProduct_t<Factor2>::component(typename Factor2::Index(col, DONT_CHECK_RANGE));
+               InnerProduct_t<Factor1,typename Factor1::Basis>::component(typename Factor1::Index(row, DONT_CHECK_RANGE)) *
+               InnerProduct_t<Factor2,typename Factor2::Basis>::component(typename Factor2::Index(col, DONT_CHECK_RANGE));
     }
 };
 
 template <typename TensorFactor1_, typename TensorFactor2_, typename TensorDerived>
-struct EuclideanEmbedding_t<Tensor2Antisymmetric_t<TensorFactor1_,TensorFactor2_,TensorDerived> >
+struct EuclideanEmbedding_t<Tensor2Antisymmetric_t<TensorFactor1_,
+                                                   TensorFactor2_,
+                                                   BasisOfTensor2Antisymmetric_t<TensorFactor1_,TensorFactor2_>,
+                                                   TensorDerived> >
     :
-    public EuclideanEmbedding_Parent_Tensor_i<Tensor2Antisymmetric_t<TensorFactor1_,TensorFactor2_,TensorDerived> >::T
+    public EuclideanEmbedding_Parent_Tensor_i<Tensor2Antisymmetric_t<TensorFactor1_,
+                                                                     TensorFactor2_,
+                                                                     BasisOfTensor2Antisymmetric_t<TensorFactor1_,TensorFactor2_>,
+                                                                     TensorDerived> >::T
 {
-    typedef typename EuclideanEmbedding_Parent_Tensor_i<Tensor2Antisymmetric_t<TensorFactor1_,TensorFactor2_,TensorDerived> >::T Parent_Tensor_i;
+    typedef typename EuclideanEmbedding_Parent_Tensor_i<Tensor2Antisymmetric_t<TensorFactor1_,
+                                                                               TensorFactor2_,
+                                                                               BasisOfTensor2Antisymmetric_t<TensorFactor1_,TensorFactor2_>,
+                                                                               TensorDerived> >::T Parent_Tensor_i;
     typedef typename Parent_Tensor_i::Derived Derived;
     typedef typename Parent_Tensor_i::Scalar Scalar;
     using Parent_Tensor_i::DIM;
+    typedef typename Parent_Tensor_i::Basis Basis;
     typedef typename Parent_Tensor_i::Index Index;
     typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
     typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
@@ -243,21 +264,24 @@ struct EuclideanEmbedding_t<Tensor2Antisymmetric_t<TensorFactor1_,TensorFactor2_
     using Parent_Tensor_i::DEGREE;
     typedef TensorFactor1_ TensorFactor1;
     typedef TensorFactor2_ TensorFactor2;
-    typedef Tensor2Antisymmetric_t<TensorFactor1,TensorFactor2,TensorDerived> Tensor2Antisymmetric;
+    typedef Tensor2Antisymmetric_t<TensorFactor1,
+                                   TensorFactor2,
+                                   BasisOfTensor2Antisymmetric_t<TensorFactor1,TensorFactor2>,
+                                   TensorDerived> Tensor2Antisymmetric;
 
     Scalar operator [] (MultiIndex const &m) const
     {
         EuclideanEmbedding_t<TensorFactor1> e1;
         EuclideanEmbedding_t<TensorFactor2> e2;
-        TypedIndex_t<TensorFactor1,'i'> i;
+        TypedIndex_t<typename TensorFactor1::WithStandardEuclideanBasis,'i'> i;
         TypedIndex_t<TensorFactor1,'j'> j;
-        TypedIndex_t<TensorFactor2,'k'> k;
+        TypedIndex_t<typename TensorFactor2::WithStandardEuclideanBasis,'k'> k;
         TypedIndex_t<TensorFactor2,'l'> l;
-        TypedIndex_t<Tensor2Antisymmetric,'p'> p;
+        TypedIndex_t<typename Tensor2Antisymmetric::WithStandardEuclideanBasis,'p'> p;
         TypedIndex_t<Tensor2Antisymmetric,'q'> q;
         // TODO: the InnerProduct_t is providing a factor of 2, hence why we're providing
         // a factor of 1/sqrt(2) -- figure out how to use the default InnerProduct_t instead
-        return (Scalar(1)/Static<Scalar>::SQRT_TWO*(e1(i|j)*e2(k|l)).bundle(j|l,q).bundle(i|k,p))[m];
+        return (Scalar(1)/Static<Scalar>::SQRT_TWO*(e1(i|j)*e2(k|l)).bundle(i|k,p).bundle(j|l,q))[m];
     }
 
     // NOTE: these may be unnecessary/undesired, because this type does not represent a vector space

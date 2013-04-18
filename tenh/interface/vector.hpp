@@ -19,7 +19,7 @@ namespace Tenh {
 // NOTE: Scalar_ MUST be a POD data type.  An implementation of this interface
 // really only needs to provide implementations of the const and non-const
 // component_access_without_range_check methods.
-template <typename Derived_, typename Scalar_, Uint32 DIM_> // don't worry about type ID for now
+template <typename Derived_, typename Scalar_, Uint32 DIM_, typename Basis_> // don't worry about type ID for now
 struct Vector_i
 {
     enum
@@ -31,6 +31,7 @@ struct Vector_i
     typedef Derived_ Derived;
     typedef Scalar_ Scalar;
     static Uint32 const DIM = DIM_;
+    typedef Basis_ Basis;
     // here is the "basic" (non-named) Index of this vector type, and it is aware of Derived
     typedef Index_t<Derived> Index;
     // the MultiIndex_t encapsulation of Index
@@ -112,14 +113,25 @@ struct Vector_i
 
     static std::string type_as_string ()
     {
-        return "Vector_i<" + TypeStringOf_t<Derived>::eval() + ',' + TypeStringOf_t<Scalar>::eval() + ',' + AS_STRING(DIM) + '>';
+        // if Basis is StandardEuclideanBasis, leave it out of the type string, since it's the default value
+        // and it tends to clutter up output pretty mightily.
+        if (Lvd::Meta::TypesAreEqual<Basis,StandardEuclideanBasis>())
+        {
+            return "Vector_i<" + TypeStringOf_t<Derived>::eval() + ',' + TypeStringOf_t<Scalar>::eval() + ',' 
+                               + AS_STRING(DIM) + '>';
+        }
+        else
+        {
+            return "Vector_i<" + TypeStringOf_t<Derived>::eval() + ',' + TypeStringOf_t<Scalar>::eval() + ',' 
+                               + AS_STRING(DIM) + ',' + TypeStringOf_t<Basis>::eval() + '>';
+        }
     }
 };
 
-template <typename Derived, typename Scalar, Uint32 DIM>
-std::ostream &operator << (std::ostream &out, Vector_i<Derived,Scalar,DIM> const &v)
+template <typename Derived, typename Scalar, Uint32 DIM, typename Basis>
+std::ostream &operator << (std::ostream &out, Vector_i<Derived,Scalar,DIM,Basis> const &v)
 {
-    typedef Vector_i<Derived,Scalar,DIM> Vector;
+    typedef Vector_i<Derived,Scalar,DIM,Basis> Vector;
     typedef typename Vector::Index Index;
 
     if (DIM == 0)

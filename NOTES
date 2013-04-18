@@ -69,11 +69,13 @@ random TODOs:
 - make a nonpublic directory and put all NonPublic code in there (and actually put appropriate stuff in NonPublic namespace)
 - allow 0-dimensional vector spaces (otherwise certain induced types (e.g. antisymmetric 2-tensors) will cause static asserts)
 - use -Wno-tautological-compare for clang builds
+- is it possible to specify the default value for Derived directly?
 
 features necessary for version 0.5:
-- euclidean embedding (using short-term zero-dimensional hack (?))
+x euclidean embedding (using short-term zero-dimensional hack (?))
 x eval (for 2-tensors)
-- basis specification (e.g. in diagonalization/SVD, and the orthonormal matrix could/should be called "basis vectors")
+x basis specification (e.g. in diagonalization/SVD, and the orthonormal matrix could/should be called "basis vectors")
+- provide a way to "name" the basis for diagonalization/SVD/etc
 x stub-out: noalias (?) for situations like a(i) = a(i) + b(i), but also to avoid the runtime check of aliasing, so the human
   can specify no-alias in a situation like a(i) = b(i) + c(i).
 - additional eigen interop:
@@ -105,6 +107,9 @@ x Eigen interop for using Tensor2_t as Eigen::Map (no memory copy necessary)
 x functions for converting Tensor2Antisymmetric_t and Tensor2Symmetric_t to Eigen::Matrix types
 x eval method for expression templates (to avoid aliasing problem when assigning)
 x no_alias method for avoiding the run-time check against aliased expression template assignments
+x Euclidean embeddings for vector and tensor types for when an inner-product-compatible representation is needed.
+x Basis identifier for each vector space, giving an additional feature to distinguish vector types with,
+  for added correctness, which is particularly useful for the Euclidean embedding stuff.
 
 ---------------------------
 

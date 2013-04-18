@@ -33,7 +33,7 @@ void verify_on_vector_type (Context const &context)
     typedef typename VectorType::Scalar Scalar;
     typedef VectorType V;
 
-    Tenh::TypedIndex_t<V,'p'> p;
+    Tenh::TypedIndex_t<typename V::WithStandardEuclideanBasis,'p'> p;
     Tenh::TypedIndex_t<V,'q'> q;
     Tenh::EuclideanEmbedding_t<V> e;
     
@@ -41,22 +41,22 @@ void verify_on_vector_type (Context const &context)
     {
         V v_i(0);
         v_i[i] = Scalar(1);
-        V w_i(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
-        w_i(p) = e(p|q)*v_i(q);
+        typename V::WithStandardEuclideanBasis w_i(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+        w_i(p).no_alias() = e(p|q)*v_i(q);
         
         for (typename V::Index j; j.is_not_at_end(); ++j)
         {
             V v_j(0);
             v_j[j] = Scalar(1);
-            V w_j(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
-            w_j(p) = e(p|q)*v_j(q);
+            typename V::WithStandardEuclideanBasis w_j(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+            w_j(p).no_alias() = e(p|q)*v_j(q);
             
             Scalar w_i_dot_w_j(0);
-            for (typename V::Index k; k.is_not_at_end(); ++k)
+            for (typename V::WithStandardEuclideanBasis::Index k; k.is_not_at_end(); ++k)
                 w_i_dot_w_j += w_i[k]*w_j[k]; // NOT an expression template
             
             // now to compute the same dot product, but using an expression template
-            Scalar v_i_dot_v_j = v_i(p)*v_j(p);
+            Scalar v_i_dot_v_j = v_i(q)*v_j(q);
 
 //             std::cerr << FORMAT_VALUE(i) << ", " << FORMAT_VALUE(j) << ", " 
 //                       << FORMAT_VALUE(w_i_dot_w_j) << ", " << FORMAT_VALUE(v_i_dot_v_j) << ", "
@@ -121,30 +121,31 @@ void verify_on_tensor_type (Context const &context)
 
     Tenh::TypedIndex_t<Factor1,'a'> a;
     Tenh::TypedIndex_t<Factor2,'b'> b;
-    Tenh::TypedIndex_t<S,'p'> p;
+    Tenh::TypedIndex_t<typename S::WithStandardEuclideanBasis,'p'> p;
     Tenh::TypedIndex_t<S,'q'> q;
+    Tenh::TypedIndex_t<S,'r'> r;
     Tenh::EuclideanEmbedding_t<S> e;
     for (typename S::Index i; i.is_not_at_end(); ++i)
     {
         S v_i(0);
         v_i[i] = Scalar(1);
-        S w_i(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
-        w_i(p) = e(p|q)*v_i(q);
+        typename S::WithStandardEuclideanBasis w_i(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+        w_i(p).no_alias() = e(p|q)*v_i(q);
         for (typename S::Index j; j.is_not_at_end(); ++j)
         {
             S v_j(0);
             v_j[j] = Scalar(1);
-            S w_j(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
-            w_j(p) = e(p|q)*v_j(q);
+            typename S::WithStandardEuclideanBasis w_j(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+            w_j(p).no_alias() = e(p|q)*v_j(q);
             
             // have to compute the dot product by hand because InnerProduct_t
             // may not be the standard inner product.
             Scalar w_i_dot_w_j(0);
-            for (typename S::Index k; k.is_not_at_end(); ++k)
+            for (typename S::WithStandardEuclideanBasis::Index k; k.is_not_at_end(); ++k)
                 w_i_dot_w_j += w_i[k]*w_j[k]; // NOT an expression template
             
             // now to compute the same dot product, but in the "blown up" space of nonsymmetric tensors
-            Scalar v_i_dot_v_j = v_i(p).split(p,a|b) * v_j(q).split(q,a|b);
+            Scalar v_i_dot_v_j = v_i(q).split(q,a|b) * v_j(r).split(r,a|b);
             
 //             std::cerr << FORMAT_VALUE(i) << ", " << FORMAT_VALUE(j) << ", " 
 //                       << FORMAT_VALUE(w_i_dot_w_j) << ", " << FORMAT_VALUE(v_i_dot_v_j) << ", "

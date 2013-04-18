@@ -62,8 +62,8 @@ struct FactorIndexTypeList_t<EmptyTypeList>
 // compile-time interface for a tensor product class.  the factors should each
 // be a vector space type (and NOT for example an affine space type or other non-
 // vector space type) -- the tensor product is only defined on vector spaces
-template <typename Derived_, typename FactorTypeList_, Uint32 DIM_>
-struct Tensor_i : public Vector_i<Derived_,typename FactorTypeList_::HeadType::Scalar,DIM_>
+template <typename Derived_, typename FactorTypeList_, Uint32 DIM_, typename Basis_>
+struct Tensor_i : public Vector_i<Derived_,typename FactorTypeList_::HeadType::Scalar,DIM_,Basis_>
 {
     enum
     {
@@ -72,10 +72,11 @@ struct Tensor_i : public Vector_i<Derived_,typename FactorTypeList_::HeadType::S
         STATIC_ASSERT_IN_ENUM((FactorTypeList_::LENGTH > 0), FACTOR_TYPE_LIST_IS_NONEMPTY)
     };
 
-    typedef Vector_i<Derived_,typename FactorTypeList_::HeadType::Scalar,DIM_> Parent_Vector_i;
+    typedef Vector_i<Derived_,typename FactorTypeList_::HeadType::Scalar,DIM_,Basis_> Parent_Vector_i;
     typedef typename Parent_Vector_i::Derived Derived;
     typedef typename Parent_Vector_i::Scalar Scalar;
     using Parent_Vector_i::DIM;
+    typedef typename Parent_Vector_i::Basis Basis;
     typedef typename Parent_Vector_i::Index Index;
 
     typedef FactorTypeList_ FactorTypeList;
@@ -110,12 +111,17 @@ struct Tensor_i : public Vector_i<Derived_,typename FactorTypeList_::HeadType::S
         AssertThatEachTypeIsATypedIndex_t<ArgumentIndexTypeList>();
         // make sure there are type conversions for all types in the index lists
         compile_time_check_that_there_is_a_type_conversion(ArgumentIndexTypeList(), FactorIndexTypeList());
+        // TEMP KLUDGE - forbit contraction with this tensor if its basis is StandardEuclideanBasis,
+        // because its components are then not necessarily those that should be contracted with --
+        // they would be some tensor-implementation-dependent scalar multiples of the components,
+        // and this particular capability is too complicated to implement currently.
+        STATIC_ASSERT((!Lvd::Meta::TypesAreEqual<Basis,StandardEuclideanBasis>::v), CANT_CONTRACT_WITH_EUCLIDEANLY_EMBEDDED_TENSOR);
         return ExpressionTemplate_IndexedObject_t<
             Derived,
             TypeList_t<IndexTypeListHeadType,IndexTypeListBodyTypeList>,
             typename SummedIndexTypeList_t<TypeList_t<IndexTypeListHeadType,IndexTypeListBodyTypeList> >::T,
             FORCE_CONST,
-            CHECK_FOR_ALIASING>(this->as_derived());
+            CHECK_FOR_ALIASING>(as_derived());
     }
     template <typename IndexTypeListHeadType, typename IndexTypeListBodyTypeList>
     ExpressionTemplate_IndexedObject_t<
@@ -132,12 +138,17 @@ struct Tensor_i : public Vector_i<Derived_,typename FactorTypeList_::HeadType::S
         AssertThatEachTypeIsATypedIndex_t<ArgumentIndexTypeList>();
         // make sure there are type conversions for all types in the index lists
         compile_time_check_that_there_is_a_type_conversion(ArgumentIndexTypeList(), FactorIndexTypeList());
+        // TEMP KLUDGE - forbit contraction with this tensor if its basis is StandardEuclideanBasis,
+        // because its components are then not necessarily those that should be contracted with --
+        // they would be some tensor-implementation-dependent scalar multiples of the components,
+        // and this particular capability is too complicated to implement currently.
+        STATIC_ASSERT((!Lvd::Meta::TypesAreEqual<Basis,StandardEuclideanBasis>::v), CANT_CONTRACT_WITH_EUCLIDEANLY_EMBEDDED_TENSOR);
         return ExpressionTemplate_IndexedObject_t<
             Derived,
             TypeList_t<IndexTypeListHeadType,IndexTypeListBodyTypeList>,
             typename SummedIndexTypeList_t<TypeList_t<IndexTypeListHeadType,IndexTypeListBodyTypeList> >::T,
             DONT_FORCE_CONST,
-            CHECK_FOR_ALIASING>(this->as_derived());
+            CHECK_FOR_ALIASING>(as_derived());
     }
 
     using Parent_Vector_i::component_is_immutable_zero;
@@ -154,10 +165,10 @@ struct Tensor_i : public Vector_i<Derived_,typename FactorTypeList_::HeadType::S
 // and use iomanip::setw to do really nice formatting that isn't the hackyness of using tabs.
 
 // specialization for 1-tensors
-template <typename Derived, typename Factor1, Uint32 DIM>
-std::ostream &operator << (std::ostream &out, Tensor_i<Derived,TypeList_t<Factor1>,DIM> const &t)
+template <typename Derived, typename Factor1, Uint32 DIM, typename Basis>
+std::ostream &operator << (std::ostream &out, Tensor_i<Derived,TypeList_t<Factor1>,DIM,Basis> const &t)
 {
-    typedef Tensor_i<Derived,TypeList_t<Factor1>,DIM> Tensor;
+    typedef Tensor_i<Derived,TypeList_t<Factor1>,DIM,Basis> Tensor;
 
     // determine the max size that a component takes up
     Uint32 max_component_width = 0;
@@ -180,10 +191,10 @@ std::ostream &operator << (std::ostream &out, Tensor_i<Derived,TypeList_t<Factor
 }
 
 // specialization for 2-tensors
-template <typename Derived, typename Factor1, typename Factor2, Uint32 DIM>
-std::ostream &operator << (std::ostream &out, Tensor_i<Derived,TypeList_t<Factor1,TypeList_t<Factor2> >,DIM> const &t)
+template <typename Derived, typename Factor1, typename Factor2, Uint32 DIM, typename Basis>
+std::ostream &operator << (std::ostream &out, Tensor_i<Derived,TypeList_t<Factor1,TypeList_t<Factor2> >,DIM,Basis> const &t)
 {
-    typedef Tensor_i<Derived,TypeList_t<Factor1,TypeList_t<Factor2> >,DIM> Tensor;
+    typedef Tensor_i<Derived,TypeList_t<Factor1,TypeList_t<Factor2> >,DIM,Basis> Tensor;
     
     // determine the max size that a component takes up
     Uint32 max_component_width = 0;
@@ -222,10 +233,10 @@ std::ostream &operator << (std::ostream &out, Tensor_i<Derived,TypeList_t<Factor
 }
 
 // specialization for 3-tensors
-template <typename Derived, typename Factor1, typename Factor2, typename Factor3, Uint32 DIM>
-std::ostream &operator << (std::ostream &out, Tensor_i<Derived,TypeList_t<Factor1,TypeList_t<Factor2,TypeList_t<Factor3> > >,DIM> const &t)
+template <typename Derived, typename Factor1, typename Factor2, typename Factor3, Uint32 DIM, typename Basis>
+std::ostream &operator << (std::ostream &out, Tensor_i<Derived,TypeList_t<Factor1,TypeList_t<Factor2,TypeList_t<Factor3> > >,DIM,Basis> const &t)
 {
-    typedef Tensor_i<Derived,TypeList_t<Factor1,TypeList_t<Factor2,TypeList_t<Factor3> > >,DIM> Tensor;
+    typedef Tensor_i<Derived,TypeList_t<Factor1,TypeList_t<Factor2,TypeList_t<Factor3> > >,DIM,Basis> Tensor;
 
     // determine the max size that a component takes up
     Uint32 max_component_width = 0;

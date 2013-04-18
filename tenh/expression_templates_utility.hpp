@@ -30,13 +30,13 @@ struct FreeIndexTypeList_t
 template <typename HeadType>
 typename HeadType::Owner::Scalar summation_component_factor (MultiIndex_t<TypeList_t<HeadType> > const &s)
 {
-    return InnerProduct_t<typename HeadType::Owner>::component(s.head());
+    return InnerProduct_t<typename HeadType::Owner,typename HeadType::Owner::Basis>::component(s.head());
 }
 
 template <typename HeadType, typename BodyTypeList>
 typename HeadType::Owner::Scalar summation_component_factor (MultiIndex_t<TypeList_t<HeadType,BodyTypeList> > const &s)
 {
-    return InnerProduct_t<typename HeadType::Owner>::component(s.head()) * summation_component_factor(s.body());
+    return InnerProduct_t<typename HeadType::Owner,typename HeadType::Owner::Basis>::component(s.head()) * summation_component_factor(s.body());
 }
 
 // TODO: think about how UnarySummation_t and BinarySummation_t could be combined (if it makes sense to do it)

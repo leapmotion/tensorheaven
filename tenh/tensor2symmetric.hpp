@@ -23,28 +23,41 @@
 
 namespace Tenh {
 
+template <typename Factor1, typename Factor2 = Factor1>
+struct BasisOfTensor2Symmetric_t
+{
+    static std::string type_as_string () { return "BasisOfTensor2Symmetric_t<" + TypeStringOf_t<Factor1>::eval() + ',' + TypeStringOf_t<Factor2>::eval() + '>'; }
+};
+
 // symmetric 2-tensor (it is equal to its transpose)
-template <typename Factor1_, typename Factor2_ = Factor1_, typename Derived_ = NullType>
+template <typename Factor1_, typename Factor2_ = Factor1_, typename Basis_ = BasisOfTensor2Symmetric_t<Factor1_,Factor2_>, typename Derived_ = NullType>
 struct Tensor2Symmetric_t
     :
-    public Tensor_i<typename DerivedType_t<Derived_,Tensor2Symmetric_t<Factor1_,Factor2_,Derived_> >::T,
+    public Tensor_i<typename DerivedType_t<Derived_,Tensor2Symmetric_t<Factor1_,Factor2_,Basis_,Derived_> >::T,
                     TypeList_t<Factor1_,TypeList_t<Factor2_> >,
-                    ((Factor1_::DIM+1)*Factor1_::DIM)/2>,
+                    ((Factor1_::DIM+1)*Factor1_::DIM)/2,
+                    Basis_>,
     private Array_t<typename Factor1_::Scalar,
                     ((Factor1_::DIM+1)*Factor1_::DIM)/2,
-                    typename DerivedType_t<Derived_,Tensor2Symmetric_t<Factor1_,Factor2_,Derived_> >::T>
+                    typename DerivedType_t<Derived_,Tensor2Symmetric_t<Factor1_,Factor2_,Basis_,Derived_> >::T>
 {
     enum { STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<Factor1_,Factor2_>::v), FACTOR1_AND_FACTOR2_MUST_BE_IDENTICAL) };
 
-    typedef Tensor_i<typename DerivedType_t<Derived_,Tensor2Symmetric_t<Factor1_,Factor2_,Derived_> >::T,
+    typedef Tensor_i<typename DerivedType_t<Derived_,Tensor2Symmetric_t<Factor1_,Factor2_,Basis_,Derived_> >::T,
                      TypeList_t<Factor1_,TypeList_t<Factor2_> >,
-                     ((Factor1_::DIM+1)*Factor1_::DIM)/2> Parent_Tensor_i;
+                     ((Factor1_::DIM+1)*Factor1_::DIM)/2,
+                     Basis_> Parent_Tensor_i;
     typedef Array_t<typename Factor1_::Scalar,
                     ((Factor1_::DIM+1)*Factor1_::DIM)/2,
-                    typename DerivedType_t<Derived_,Tensor2Symmetric_t<Factor1_,Factor2_,Derived_> >::T> Parent_Array_t;
+                    typename DerivedType_t<Derived_,Tensor2Symmetric_t<Factor1_,Factor2_,Basis_,Derived_> >::T> Parent_Array_t;
+    typedef typename Parent_Tensor_i::Derived Derived;
     typedef typename Parent_Tensor_i::Scalar Scalar;
     static Uint32 const DIM = Parent_Tensor_i::DIM;
-    typedef typename Parent_Tensor_i::Derived Derived;
+    typedef typename Parent_Tensor_i::Basis Basis;
+    typedef Tensor2Symmetric_t<typename Factor1_::WithStandardEuclideanBasis,
+                               typename Factor2_::WithStandardEuclideanBasis,
+                               StandardEuclideanBasis,
+                               Derived_> WithStandardEuclideanBasis; // TEMP KLUDGE -- recursively convert to StandardEuclideanBasis
     typedef typename Parent_Tensor_i::Index Index;
     typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
     typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
@@ -100,10 +113,6 @@ struct Tensor2Symmetric_t
     template <typename Index1, typename Index2>
     Scalar operator [] (MultiIndex_t<TypeList_t<Index1,TypeList_t<Index2> > > const &m) const
     {
-//         // NOTE: these constructions are unnecessary to the code, but ARE necessary to the compile-time type checking
-//         // the compiler should optimize it out anyway.
-//         typename Factor1::Index(m.template el<0>());
-//         typename Factor2::Index(m.template el<1>());
         return component(m.template el<0>(), m.template el<1>());
     }
 
@@ -158,9 +167,10 @@ struct Tensor2Symmetric_t
     static std::string type_as_string ()
     {
         if (Lvd::Meta::TypesAreEqual<Derived_,NullType>::v)
-            return "Tensor2Symmetric_t<" + TypeStringOf_t<Factor>::eval() + '>';
+            return "Tensor2Symmetric_t<" + TypeStringOf_t<Factor>::eval() + ',' + TypeStringOf_t<Basis>::eval() + '>';
         else
-            return "Tensor2Symmetric_t<" + TypeStringOf_t<Factor>::eval() + ',' + TypeStringOf_t<Derived>::eval() + '>';
+            return "Tensor2Symmetric_t<" + TypeStringOf_t<Factor>::eval() + ',' + TypeStringOf_t<Basis>::eval() + ',' 
+                                         + TypeStringOf_t<Derived>::eval() + '>';
     }
 
 private:
@@ -201,14 +211,15 @@ private:
         }
     }
     
-    friend struct InnerProduct_t<Tensor2Symmetric_t>;
+    friend struct InnerProduct_t<Tensor2Symmetric_t,Basis>;
 };
 
 // template specialization for the inner product in this particular coordinatization of Tensor2Symmetric_t
+// (specified by BasisOfTensor2Diagonal_t<Factor1,Factor2>).
 template <typename Factor1, typename Factor2, typename Derived>
-struct InnerProduct_t<Tensor2Symmetric_t<Factor1,Factor2,Derived> >
+struct InnerProduct_t<Tensor2Symmetric_t<Factor1,Factor2,BasisOfTensor2Symmetric_t<Factor1,Factor2>,Derived>,BasisOfTensor2Symmetric_t<Factor1,Factor2> >
 {
-    typedef Tensor2Symmetric_t<Factor1,Factor2,Derived> Tensor2Symmetric;
+    typedef Tensor2Symmetric_t<Factor1,Factor2,BasisOfTensor2Symmetric_t<Factor1,Factor2>,Derived> Tensor2Symmetric;
     typedef typename Tensor2Symmetric::Scalar Scalar;
     typedef typename Tensor2Symmetric::Index Index;
 
@@ -218,20 +229,30 @@ struct InnerProduct_t<Tensor2Symmetric_t<Factor1,Factor2,Derived> >
         Uint32 col;
         Tensor2Symmetric::contiguous_index_to_rowcol_index(i.value(), row, col);
         return (i.value() < Tensor2Symmetric::STRICTLY_LOWER_TRIANGULAR_COMPONENT_COUNT ? Scalar(2) : Scalar(1)) *
-               InnerProduct_t<Factor1>::component(typename Factor1::Index(row, DONT_CHECK_RANGE)) *
-               InnerProduct_t<Factor2>::component(typename Factor2::Index(col, DONT_CHECK_RANGE));
+               InnerProduct_t<Factor1,typename Factor1::Basis>::component(typename Factor1::Index(row, DONT_CHECK_RANGE)) *
+               InnerProduct_t<Factor2,typename Factor2::Basis>::component(typename Factor2::Index(col, DONT_CHECK_RANGE));
     }
 };
 
 template <typename TensorFactor1_, typename TensorFactor2_, typename TensorDerived>
-struct EuclideanEmbedding_t<Tensor2Symmetric_t<TensorFactor1_,TensorFactor2_,TensorDerived> >
+struct EuclideanEmbedding_t<Tensor2Symmetric_t<TensorFactor1_,
+                                               TensorFactor2_,
+                                               BasisOfTensor2Symmetric_t<TensorFactor1_,TensorFactor2_>,
+                                               TensorDerived> >
     :
-    public EuclideanEmbedding_Parent_Tensor_i<Tensor2Symmetric_t<TensorFactor1_,TensorFactor2_,TensorDerived> >::T
+    public EuclideanEmbedding_Parent_Tensor_i<Tensor2Symmetric_t<TensorFactor1_,
+                                                                 TensorFactor2_,
+                                                                 BasisOfTensor2Symmetric_t<TensorFactor1_,TensorFactor2_>,
+                                                                 TensorDerived> >::T
 {
-    typedef typename EuclideanEmbedding_Parent_Tensor_i<Tensor2Symmetric_t<TensorFactor1_,TensorFactor2_,TensorDerived> >::T Parent_Tensor_i;
+    typedef typename EuclideanEmbedding_Parent_Tensor_i<Tensor2Symmetric_t<TensorFactor1_,
+                                                                           TensorFactor2_,
+                                                                           BasisOfTensor2Symmetric_t<TensorFactor1_,TensorFactor2_>,
+                                                                           TensorDerived> >::T Parent_Tensor_i;
     typedef typename Parent_Tensor_i::Derived Derived;
     typedef typename Parent_Tensor_i::Scalar Scalar;
     using Parent_Tensor_i::DIM;
+    typedef typename Parent_Tensor_i::Basis Basis;
     typedef typename Parent_Tensor_i::Index Index;
     typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
     typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
@@ -239,17 +260,20 @@ struct EuclideanEmbedding_t<Tensor2Symmetric_t<TensorFactor1_,TensorFactor2_,Ten
     using Parent_Tensor_i::DEGREE;
     typedef TensorFactor1_ TensorFactor1;
     typedef TensorFactor2_ TensorFactor2;
-    typedef Tensor2Symmetric_t<TensorFactor1,TensorFactor2,TensorDerived> Tensor2Symmetric;
+    typedef Tensor2Symmetric_t<TensorFactor1,
+                               TensorFactor2,
+                               BasisOfTensor2Symmetric_t<TensorFactor1,TensorFactor2>,
+                               TensorDerived> Tensor2Symmetric;
 
     Scalar operator [] (MultiIndex const &m) const
     {
         EuclideanEmbedding_t<TensorFactor1> e1;
         EuclideanEmbedding_t<TensorFactor2> e2;
-        TypedIndex_t<TensorFactor1,'i'> i;
+        TypedIndex_t<typename TensorFactor1::WithStandardEuclideanBasis,'i'> i;
         TypedIndex_t<TensorFactor1,'j'> j;
-        TypedIndex_t<TensorFactor2,'k'> k;
+        TypedIndex_t<typename TensorFactor2::WithStandardEuclideanBasis,'k'> k;
         TypedIndex_t<TensorFactor2,'l'> l;
-        TypedIndex_t<Tensor2Symmetric,'p'> p;
+        TypedIndex_t<typename Tensor2Symmetric::WithStandardEuclideanBasis,'p'> p;
         TypedIndex_t<Tensor2Symmetric,'q'> q;
         // the InnerProduct_t is providing a factor of 2, hence why we're providing
         // a factor of 1/sqrt(2) -- figure out how to use the default InnerProduct_t instead
