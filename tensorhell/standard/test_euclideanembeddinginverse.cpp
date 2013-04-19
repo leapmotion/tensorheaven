@@ -9,6 +9,7 @@
 #include <string>
 
 #include "tenh/euclideanembedding.hpp"
+#include "tenh/expressiontemplate_eval.hpp"
 #include "tenh/tensor2.hpp"
 #include "tenh/tensor2antisymmetric.hpp"
 #include "tenh/tensor2diagonal.hpp"
@@ -26,11 +27,12 @@ using namespace TestSystem;
 namespace Test {
 namespace EuclideanEmbeddingInverse {
 
-// this ensures that EuclideanEmbeddingInverse_t<VectorType> is the actual inverse of EuclideanEmbedding_t<VectorType>
+// this ensures that EuclideanEmbeddingInverse_t<VectorType> is the actual inverse of EuclideanEmbedding_t<VectorType> (one composition)
 template <typename VectorType>
-void verify_on_vector_type (Context const &context)
+void e_inv_e_composition (Context const &context)
 {
-    //typedef typename VectorType::Scalar Scalar;
+    typedef typename VectorType::Scalar Scalar;
+    typedef typename Tenh::AssociatedFloatingPointType_t<Scalar>::T AssociatedFloatingPointType;
     typedef VectorType V;
 
     Tenh::TypedIndex_t<typename V::WithStandardEuclideanBasis,'p'> p;
@@ -42,58 +44,87 @@ void verify_on_vector_type (Context const &context)
     Tenh::Tensor2Diagonal_t<V,V> identity_on_V(1); // TODO: could be a "constant tensor" (see various implementations of EuclideanEmbedding_t)
     // should really be InnerProduct_t<V>, once InnerProduct_t is implemented as a bona-fide Tensor_i.
 //     Tenh::Tensor2Diagonal_t<typename V::WithStandardEuclideanBasis,
-//                             typename V::WithStandardEuclideanBasis> identity_on_V_WithStandardEuclideanBasis(1);
-    
-    std::cerr << "\tEuclideanEmbeddingInverse - verify_on_vector_type<" << Tenh::TypeStringOf_t<V>::eval() << '\n';
-    std::cerr << FORMAT_VALUE(e_inv(q|r)*e(r|s) - identity_on_V(q|s)) << '\n';
+//                             typename V::WithStandardEuclideanBasis> inner_product_on_V(1);
+
+    // NOTE: the following comments contain an important case motivating compile error message improvement
+//     std::cerr << "\tEuclideanEmbeddingInverse - e_inv_e_composition<" << Tenh::TypeStringOf_t<V>::eval() << '\n';
+//     std::cerr << FORMAT_VALUE(e_inv(q|r)*e(r|s) - identity_on_V(q|s)) << '\n';
     // the following line produces THE worst compile error i have ever seen (over 20000 lines in GCC)
-//     std::cerr << FORMAT_VALUE(e_inv(q|r)*e(r|s) - identity_on_V_WithStandardEuclideanBasis(q|s)) << '\n';
-    // the following line is correct
-//     std::cerr << FORMAT_VALUE(e(p|q)*e_inv(q|r) - identity_on_V_WithStandardEuclideanBasis(p|r)) << '\n';
+//     std::cerr << FORMAT_VALUE(e_inv(q|r)*e(r|s) - inner_product_on_V(q|s)) << '\n';
+    // the following line compiles
+//     std::cerr << FORMAT_VALUE(e(p|q)*e_inv(q|r) - inner_product_on_V(p|r)) << '\n';
+
+    // NOTE: the squared norm maybe isn't the correct measurement of error, but screw it for now.
+    assert_leq((e_inv(q|r)*e(r|s) - identity_on_V(q|s)).squared_norm(), numeric_limits<AssociatedFloatingPointType>::epsilon());
+}
+
+// this ensures that EuclideanEmbeddingInverse_t<VectorType> is the actual inverse of EuclideanEmbedding_t<VectorType> (one composition)
+template <typename VectorType>
+void e_e_inv_composition (Context const &context)
+{
+    typedef typename VectorType::Scalar Scalar;
+    typedef typename Tenh::AssociatedFloatingPointType_t<Scalar>::T AssociatedFloatingPointType;
+    typedef VectorType V;
+
+    Tenh::TypedIndex_t<typename V::WithStandardEuclideanBasis,'p'> p;
+    Tenh::TypedIndex_t<V,'q'> q;
+    Tenh::TypedIndex_t<typename V::WithStandardEuclideanBasis,'r'> r;
+    Tenh::TypedIndex_t<V,'s'> s;
+    Tenh::EuclideanEmbedding_t<V> e;
+    Tenh::EuclideanEmbeddingInverse_t<V> e_inv;
+    // should really be InnerProduct_t<V> directly, once InnerProduct_t is implemented as a bona-fide Tensor_i.
+    typedef Tenh::Tensor2Diagonal_t<typename V::WithStandardEuclideanBasis,typename V::WithStandardEuclideanBasis> D;
+    D inner_product_on_V(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    // manually populate the result tensor
+    Lvd::Meta::Assert<(D::Index::COMPONENT_COUNT == V::Index::COMPONENT_COUNT)>();
+    for (typename D::Index i; i.is_not_at_end(); ++i)
+        inner_product_on_V[i] = Tenh::InnerProduct_t<V,typename V::Basis>::component(typename V::Index(i.value()));
+
+    assert_leq((e(p|q)*e_inv(q|r) - inner_product_on_V(p|r)).squared_norm(), numeric_limits<AssociatedFloatingPointType>::epsilon());
 }
 
 template <typename VectorType>
-void add_test_for_verify_on_vector_type (Directory *parent)
+void add_test_for_each_composition (Directory *parent)
 {
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent,
-                                     Tenh::TypeStringOf_t<VectorType>::eval(),
-                                     verify_on_vector_type<VectorType>,
-                                     RESULT_NO_ERROR);
+    Directory *d = new Directory(Tenh::TypeStringOf_t<VectorType>::eval(), parent);
+
+    LVD_ADD_TEST_CASE_FUNCTION(d, e_inv_e_composition<VectorType>, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(d, e_e_inv_composition<VectorType>, RESULT_NO_ERROR);
 }
 
 // vector types and tensor types having identical factor types
 template <typename Scalar, Uint32 DIM>
-void add_tests_for_verify_on_vector_type (Directory *parent)
+void add_tests (Directory *parent)
 {
     typedef Tenh::Vector_t<Scalar,DIM> V;
     typedef Tenh::Tensor2Antisymmetric_t<V,V> A;
     typedef Tenh::Tensor2Symmetric_t<V,V> S;
-    
-    add_test_for_verify_on_vector_type<V>(parent);
-    add_test_for_verify_on_vector_type<A>(parent);
-    add_test_for_verify_on_vector_type<S>(parent);
-//     add_test_for_verify_on_vector_type<Tenh::Tensor2Antisymmetric_t<A> >(parent); // TODO: allow zero-dimensional vector spaces
-    add_test_for_verify_on_vector_type<Tenh::Tensor2Antisymmetric_t<S> >(parent);
-    add_test_for_verify_on_vector_type<Tenh::Tensor2Symmetric_t<A> >(parent);
-    add_test_for_verify_on_vector_type<Tenh::Tensor2Symmetric_t<S> >(parent);
+
+    add_test_for_each_composition<V>(parent);
+    add_test_for_each_composition<A>(parent);
+    add_test_for_each_composition<S>(parent);
+//     add_test_for_each_composition<Tenh::Tensor2Antisymmetric_t<A> >(parent); // TODO: allow zero-dimensional vector spaces
+    add_test_for_each_composition<Tenh::Tensor2Antisymmetric_t<S> >(parent);
+    add_test_for_each_composition<Tenh::Tensor2Symmetric_t<A> >(parent);
+    add_test_for_each_composition<Tenh::Tensor2Symmetric_t<S> >(parent);
 }
 
 void AddTests (Directory *parent)
 {
     Directory *euclidean_embedding_inverse = new Directory("EuclideanEmbeddingInverse", parent);
-    
+
     {
-        Directory *d = new Directory("verify_as_vector", euclidean_embedding_inverse);
-        
-//         add_tests_for_verify_on_vector_type<float,1>(d); // TODO: allow 0-dimensional vector spaces
-        add_tests_for_verify_on_vector_type<float,2>(d);
-        add_tests_for_verify_on_vector_type<float,3>(d);
-        add_tests_for_verify_on_vector_type<float,4>(d);
-        
-//         add_tests_for_verify_on_vector_type<double,1>(d); // TODO: allow 0-dimensional vector spaces
-        add_tests_for_verify_on_vector_type<double,2>(d);
-        add_tests_for_verify_on_vector_type<double,3>(d);
-        add_tests_for_verify_on_vector_type<double,4>(d);
+        Directory *d = new Directory("verify", euclidean_embedding_inverse);
+
+//         add_tests<float,1>(d); // TODO: allow 0-dimensional vector spaces
+        add_tests<float,2>(d);
+        add_tests<float,3>(d);
+        add_tests<float,4>(d);
+
+//         add_tests<double,1>(d); // TODO: allow 0-dimensional vector spaces
+        add_tests<double,2>(d);
+        add_tests<double,3>(d);
+        add_tests<double,4>(d);
     }
 }
 

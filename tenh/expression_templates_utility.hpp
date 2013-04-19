@@ -236,7 +236,7 @@ struct IndexBundle_t
         typedef BundleIndexMap_t<BundleIndexTypeList,ResultingIndexType> BundleIndexMap;
         static typename BundleIndexMap::T const bundle_index_map = BundleIndexMap::V;
         // |= is concatenation of MultiIndex_t instances
-        return m_operand[operand_index_map(m.template leading_list<MultiIndex::LENGTH-1>() |= 
+        return m_operand[operand_index_map(m.template leading_list<MultiIndex::LENGTH-1>() |=
                                            bundle_index_map(m.template el<MultiIndex::LENGTH-1>()))];
     }
 

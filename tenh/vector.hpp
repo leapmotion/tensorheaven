@@ -50,11 +50,11 @@ struct Vector_t
         std::string basis_string;
         if (!Lvd::Meta::TypesAreEqual<Basis,StandardEuclideanBasis>())
             basis_string = ',' + TypeStringOf_t<Basis>::eval();
-    
+
         std::string derived_string;
         if (!Lvd::Meta::TypesAreEqual<Derived_,NullType>())
             derived_string = ',' + TypeStringOf_t<Derived>::eval();
-    
+
         return "Vector_t<" + TypeStringOf_t<Scalar>::eval() + ',' + AS_STRING(DIM) + basis_string + derived_string + '>';
     }
 };
@@ -79,7 +79,7 @@ struct EuclideanEmbedding_t<Vector_t<Scalar_,DIM_,StandardEuclideanBasis,Derived
     typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
     using Parent_Tensor_i::DEGREE;
     typedef Vector_t<Scalar_,DIM_,StandardEuclideanBasis,Derived_> Vector;
-    
+
     // 1 on the diagonal, 0 otherwise
     Scalar operator [] (Index const &i) const
     {
@@ -117,7 +117,7 @@ struct EuclideanEmbeddingInverse_t<Vector_t<Scalar_,DIM_,StandardEuclideanBasis,
     typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
     using Parent_Tensor_i::DEGREE;
     typedef Vector_t<Scalar_,DIM_,StandardEuclideanBasis,Derived_> Vector;
-    
+
     // 1 on the diagonal, 0 otherwise
     Scalar operator [] (Index const &i) const
     {

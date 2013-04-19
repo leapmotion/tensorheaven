@@ -65,13 +65,24 @@ struct ExpressionTemplate_Eval_t<Operand,TypeList_t<Index1> >
 //         return operator[](MultiIndex());
 //     }
 
+    // requires InnerProduct_t to be implemented for all free-indexed types
+    // NOTE: will not currently work for complex types
+    typename AssociatedFloatingPointType_t<Scalar>::T squared_norm () const
+    {
+        ensure_tensor_is_cached();
+        return m_cached_tensor.squared_norm();
+    }
+    // requires InnerProduct_t to be implemented for all free-indexed types
+    // NOTE: will not currently work for complex types
+    typename AssociatedFloatingPointType_t<Scalar>::T norm () const
+    {
+        this->ensure_tensor_is_cached();
+        return m_cached_tensor.norm();
+    }
+
     Scalar const &operator [] (MultiIndex const &m) const
     {
-        if (!m_eval_is_cached)
-        {
-            m_cached_tensor(Index1()) = m_operand; // this should populate m_cached_tensor2 via expression templates
-            m_eval_is_cached = true;
-        }
+        this->ensure_tensor_is_cached();
         return m_cached_tensor[m];
     }
 
@@ -80,6 +91,15 @@ struct ExpressionTemplate_Eval_t<Operand,TypeList_t<Index1> >
     bool uses_tensor (OtherTensor const &t) const { return false; }
 
 private:
+
+    void ensure_tensor_is_cached () const
+    {
+        if (!m_eval_is_cached)
+        {
+            m_cached_tensor(Index1()) = m_operand; // this should populate m_cached_tensor2 via expression templates
+            m_eval_is_cached = true;
+        }
+    }
 
     typedef typename FreeIndexTypeList::HeadType::Owner::Derived Factor1;
     typedef Factor1 Tensor;
@@ -128,13 +148,24 @@ struct ExpressionTemplate_Eval_t<Operand,TypeList_t<Index1,TypeList_t<Index2> > 
 //         return operator[](MultiIndex());
 //     }
 
+    // requires InnerProduct_t to be implemented for all free-indexed types
+    // NOTE: will not currently work for complex types
+    typename AssociatedFloatingPointType_t<Scalar>::T squared_norm () const
+    {
+        this->ensure_tensor_is_cached();
+        return m_cached_tensor.squared_norm();
+    }
+    // requires InnerProduct_t to be implemented for all free-indexed types
+    // NOTE: will not currently work for complex types
+    typename AssociatedFloatingPointType_t<Scalar>::T norm () const
+    {
+        this->ensure_tensor_is_cached();
+        return m_cached_tensor.norm();
+    }
+
     Scalar const &operator [] (MultiIndex const &m) const
     {
-        if (!m_eval_is_cached)
-        {
-            m_cached_tensor(FreeIndexTypeList()) = m_operand; // this should populate m_cached_tensor2 via expression templates
-            m_eval_is_cached = true;
-        }
+        ensure_tensor_is_cached();
         return m_cached_tensor[m];
     }
 
@@ -144,6 +175,15 @@ struct ExpressionTemplate_Eval_t<Operand,TypeList_t<Index1,TypeList_t<Index2> > 
 
 private:
 
+    void ensure_tensor_is_cached () const
+    {
+        if (!m_eval_is_cached)
+        {
+            m_cached_tensor(FreeIndexTypeList()) = m_operand; // this should populate m_cached_tensor2 via expression templates
+            m_eval_is_cached = true;
+        }
+    }
+
     typedef typename FreeIndexTypeList::HeadType::Owner::Derived Factor1;
     typedef typename FreeIndexTypeList::BodyTypeList::HeadType::Owner::Derived Factor2;
     typedef Tensor2_t<Factor1,Factor2> Tensor;
@@ -152,6 +192,19 @@ private:
     mutable bool m_eval_is_cached;
     mutable Tensor m_cached_tensor;
 };
+
+// definitions of the squared_norm and norm methods of ExpressionTemplate_i had to wait until ExpressionTemplate_Eval_t was defined.
+template <typename Derived, typename Scalar, typename FreeIndexTypeList, typename UsedIndexTypeList>
+typename AssociatedFloatingPointType_t<Scalar>::T ExpressionTemplate_i<Derived,Scalar,FreeIndexTypeList,UsedIndexTypeList>::squared_norm () const
+{
+    return eval().squared_norm();
+}
+
+template <typename Derived, typename Scalar, typename FreeIndexTypeList, typename UsedIndexTypeList>
+typename AssociatedFloatingPointType_t<Scalar>::T ExpressionTemplate_i<Derived,Scalar,FreeIndexTypeList,UsedIndexTypeList>::norm () const
+{
+    return eval().norm();
+}
 
 } // end of namespace Tenh
 

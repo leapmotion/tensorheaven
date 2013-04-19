@@ -21,7 +21,7 @@ template <typename Tensor2Symmetric, typename DiagonalizingBasis>
 struct SelfAdjointEigenDecomposition_t
 {
     enum { STATIC_ASSERT_IN_ENUM(Tensor2Symmetric::IS_TENSOR2SYMMETRIC_T, TYPE_MUST_BE_TENSOR2SYMMETRIC_T) };
-        
+
     typedef typename Tensor2Symmetric::Factor Factor;
     typedef Tensor2Diagonal_t<DiagonalizingBasis,DiagonalizingBasis> Eigenvalues;
     typedef Tensor2_t<DiagonalizingBasis,Factor> Eigenvectors;
@@ -42,7 +42,7 @@ struct SelfAdjointEigenDecomposition_t
         memcpy(eigenvalues.data_pointer(), &solver.eigenvalues()(0,0), eigenvalues.data_size_in_bytes());    // copy the eigenvalues
         typedef Tensor2_t<DiagonalizingBasis,typename Factor::WithStandardEuclideanBasis> T;                 // type of computed eigenvectors
         T &euclideanly_embedded_eigenvectors = *reinterpret_cast<T *>(&solver.eigenvalues()(0,0));           // hacky way to avoid a copy
-        // transform back to the original basis        
+        // transform back to the original basis
         TypedIndex_t<Factor,'i'> i;
         TypedIndex_t<typename Factor::WithStandardEuclideanBasis,'j'> j;
         TypedIndex_t<typename Factor::WithStandardEuclideanBasis,'k'> k;

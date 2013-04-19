@@ -7,6 +7,7 @@
 #define TENH_CORE_HPP_
 
 #include <cassert>
+#include <complex>
 
 #include "tenh/meta/lvd.hpp"
 #include "tenh/meta/static_assert.hpp"
@@ -15,7 +16,14 @@
 
 namespace Tenh {
 
+typedef Lvd::Sint8 Sint8;
+typedef Lvd::Uint8 Uint8;
+typedef Lvd::Sint16 Sint16;
+typedef Lvd::Uint16 Uint16;
+typedef Lvd::Sint32 Sint32;
 typedef Lvd::Uint32 Uint32;
+typedef Lvd::Sint64 Sint64;
+typedef Lvd::Uint64 Uint64;
 
 // shouldn't ever actually construct one of these
 struct NullType
@@ -75,6 +83,47 @@ struct DerivedType_t
                                    DefaultType,
                                    Derived>::T T;
 };
+
+// provide an implementation of this for any custom scalar type (e.g. an arbitrary-precision
+// floating point type).
+template <typename Scalar>
+struct AssociatedFloatingPointType_t;
+
+template <>
+struct AssociatedFloatingPointType_t<float> { typedef float T; };
+
+template <>
+struct AssociatedFloatingPointType_t<double> { typedef double T; };
+
+template <>
+struct AssociatedFloatingPointType_t<long double> { typedef long double T; };
+
+template <typename RealScalar>
+struct AssociatedFloatingPointType_t<std::complex<RealScalar> > { typedef RealScalar T; };
+
+template <>
+struct AssociatedFloatingPointType_t<Sint8> { typedef float T; }; // smallest lossless floating point conversion
+
+template <>
+struct AssociatedFloatingPointType_t<Uint8> { typedef float T; }; // smallest lossless floating point conversion
+
+template <>
+struct AssociatedFloatingPointType_t<Sint16> { typedef float T; }; // smallest lossless floating point conversion
+
+template <>
+struct AssociatedFloatingPointType_t<Uint16> { typedef float T; }; // smallest lossless floating point conversion
+
+template <>
+struct AssociatedFloatingPointType_t<Sint32> { typedef double T; }; // smallest lossless floating point conversion
+
+template <>
+struct AssociatedFloatingPointType_t<Uint32> { typedef double T; }; // smallest lossless floating point conversion
+
+template <>
+struct AssociatedFloatingPointType_t<Sint64> { typedef long double T; }; // smallest lossless floating point conversion
+
+template <>
+struct AssociatedFloatingPointType_t<Uint64> { typedef long double T; }; // smallest lossless floating point conversion
 
 } // end of namespace Tenh
 

@@ -59,6 +59,16 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     Derived const &as_derived () const { return *static_cast<Derived const *>(this); }
     Derived &as_derived () { return *static_cast<Derived *>(this); }
 
+    // convenience methods for squared_norm and norm
+    // requires InnerProduct_t to be implemented on all free-indexed types
+    // NOTE: will not currently work for complex types
+    // NOTE: you must include tenh/expressiontemplate_eval.hpp for the definition of this method
+    typename AssociatedFloatingPointType_t<Scalar>::T squared_norm () const;
+    // requires InnerProduct_t<Derived> to be implemented
+    // NOTE: will not currently work for complex types
+    // NOTE: you must include tenh/expressiontemplate_eval.hpp for the definition of this method
+    typename AssociatedFloatingPointType_t<Scalar>::T norm () const; // definition is in expressiontemplate_eval.hpp
+
     // method for "bundling" two separate indices into a single 2-tensor index
     // (m(j|i)*a(j|k)*m(k|l)).bundle(i|l,Q) -- bundle i,l into Q
     template <typename IndexHeadType, typename IndexBodyTypeList, typename ResultingIndexType>
@@ -168,7 +178,7 @@ std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scala
         if (sout.str().length() > max_component_width)
             max_component_width = sout.str().length();
     }
-    
+
     typename Derived::MultiIndex m;
     if (m.is_at_end())
         return out << "\n[[[ ]]]\n";

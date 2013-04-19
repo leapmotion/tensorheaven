@@ -6,6 +6,7 @@
 #ifndef TENH_INTERFACE_VECTOR_HPP_
 #define TENH_INTERFACE_VECTOR_HPP_
 
+#include <cmath> // for the square root in Vector_i::norm (could break <cmath> and the definition of Vector_i::norm out into a separate file)
 #include <ostream>
 
 #include "tenh/core.hpp"
@@ -26,7 +27,7 @@ struct Vector_i
     {
         STATIC_ASSERT_IN_ENUM((!Lvd::Meta::TypesAreEqual<Derived_,NullType>::v), DERIVED_MUST_NOT_BE_NULL_TYPE),
         STATIC_ASSERT_IN_ENUM((DIM_ > 0), DIMENSION_MUST_BE_POSITIVE) // TODO: zero-dimensional vector spaces (?)
-    }; 
+    };
 
     typedef Derived_ Derived;
     typedef Scalar_ Scalar;
@@ -55,6 +56,20 @@ struct Vector_i
     // accessor as Derived type
     Derived const &as_derived () const { return *static_cast<Derived const *>(this); }
     Derived &as_derived () { return *static_cast<Derived *>(this); }
+
+    // requires InnerProduct_t<Derived> to be implemented
+    // NOTE: will not currently work for complex types
+    typename AssociatedFloatingPointType_t<Scalar>::T squared_norm () const
+    {
+        TypedIndex_t<Derived,'i'> i;
+        return operator()(i)*operator()(i);
+    }
+    // requires InnerProduct_t<Derived> to be implemented
+    // NOTE: will not currently work for complex types
+    typename AssociatedFloatingPointType_t<Scalar>::T norm () const
+    {
+        return std::sqrt(squared_norm());
+    }
 
     // NOTE: operator [] will be used to return values, while operator () will be
     // used to create expression templates for the purposes of indexed contractions.
@@ -118,12 +133,12 @@ struct Vector_i
         // and it tends to clutter up output pretty mightily.
         if (Lvd::Meta::TypesAreEqual<Basis,StandardEuclideanBasis>())
         {
-            return "Vector_i<" + TypeStringOf_t<Derived>::eval() + ',' + TypeStringOf_t<Scalar>::eval() + ',' 
+            return "Vector_i<" + TypeStringOf_t<Derived>::eval() + ',' + TypeStringOf_t<Scalar>::eval() + ','
                                + AS_STRING(DIM) + '>';
         }
         else
         {
-            return "Vector_i<" + TypeStringOf_t<Derived>::eval() + ',' + TypeStringOf_t<Scalar>::eval() + ',' 
+            return "Vector_i<" + TypeStringOf_t<Derived>::eval() + ',' + TypeStringOf_t<Scalar>::eval() + ','
                                + AS_STRING(DIM) + ',' + TypeStringOf_t<Basis>::eval() + '>';
         }
     }

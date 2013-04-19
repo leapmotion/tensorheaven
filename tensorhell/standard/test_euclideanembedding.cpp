@@ -36,36 +36,36 @@ void verify_on_vector_type (Context const &context)
     Tenh::TypedIndex_t<typename V::WithStandardEuclideanBasis,'p'> p;
     Tenh::TypedIndex_t<V,'q'> q;
     Tenh::EuclideanEmbedding_t<V> e;
-    
+
     // TODO: if InnerProduct_t is ever implemented like EuclideanEmbedding_t (as an implementation of
     // Tensor_i), then this nested for-loop could be replaced by showing that E^T E = InnerProduct,
     // where E is EuclideanEmbedding_t.
-    
+
     for (typename V::Index i; i.is_not_at_end(); ++i)
     {
         V v_i(0);
         v_i[i] = Scalar(1);
         typename V::WithStandardEuclideanBasis w_i(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
         w_i(p).no_alias() = e(p|q)*v_i(q);
-        
+
         for (typename V::Index j; j.is_not_at_end(); ++j)
         {
             V v_j(0);
             v_j[j] = Scalar(1);
             typename V::WithStandardEuclideanBasis w_j(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
             w_j(p).no_alias() = e(p|q)*v_j(q);
-            
+
             Scalar w_i_dot_w_j(0);
             for (typename V::WithStandardEuclideanBasis::Index k; k.is_not_at_end(); ++k)
                 w_i_dot_w_j += w_i[k]*w_j[k]; // NOT an expression template
-            
+
             // now to compute the same dot product, but using an expression template
             Scalar v_i_dot_v_j = v_i(q)*v_j(q);
 
-//             std::cerr << FORMAT_VALUE(i) << ", " << FORMAT_VALUE(j) << ", " 
+//             std::cerr << FORMAT_VALUE(i) << ", " << FORMAT_VALUE(j) << ", "
 //                       << FORMAT_VALUE(w_i_dot_w_j) << ", " << FORMAT_VALUE(v_i_dot_v_j) << ", "
 //                       << FORMAT_VALUE(abs(w_i_dot_w_j - v_i_dot_v_j)) << '\n';
-            
+
             assert_about_eq(w_i_dot_w_j, v_i_dot_v_j);
         }
     }
@@ -87,7 +87,7 @@ void add_tests_for_verify_on_vector_type_1 (Directory *parent)
     typedef Tenh::Vector_t<Scalar,DIM> V;
     typedef Tenh::Tensor2Antisymmetric_t<V,V> A;
     typedef Tenh::Tensor2Symmetric_t<V,V> S;
-    
+
     add_test_for_verify_on_vector_type<V>(parent);
     add_test_for_verify_on_vector_type<A>(parent);
     add_test_for_verify_on_vector_type<S>(parent);
@@ -141,20 +141,20 @@ void verify_on_tensor_type (Context const &context)
             v_j[j] = Scalar(1);
             typename S::WithStandardEuclideanBasis w_j(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
             w_j(p).no_alias() = e(p|q)*v_j(q);
-            
+
             // have to compute the dot product by hand because InnerProduct_t
             // may not be the standard inner product.
             Scalar w_i_dot_w_j(0);
             for (typename S::WithStandardEuclideanBasis::Index k; k.is_not_at_end(); ++k)
                 w_i_dot_w_j += w_i[k]*w_j[k]; // NOT an expression template
-            
+
             // now to compute the same dot product, but in the "blown up" space of nonsymmetric tensors
             Scalar v_i_dot_v_j = v_i(q).split(q,a|b) * v_j(r).split(r,a|b);
-            
-//             std::cerr << FORMAT_VALUE(i) << ", " << FORMAT_VALUE(j) << ", " 
+
+//             std::cerr << FORMAT_VALUE(i) << ", " << FORMAT_VALUE(j) << ", "
 //                       << FORMAT_VALUE(w_i_dot_w_j) << ", " << FORMAT_VALUE(v_i_dot_v_j) << ", "
 //                       << FORMAT_VALUE(abs(w_i_dot_w_j - v_i_dot_v_j)) << '\n';
-            
+
             assert_about_eq(w_i_dot_w_j, v_i_dot_v_j);
         }
     }
@@ -176,7 +176,7 @@ void add_tests_for_verify_on_tensor_type_1 (Directory *parent)
     typedef Tenh::Vector_t<Scalar,DIM> V;
     typedef Tenh::Tensor2Antisymmetric_t<V,V> A;
     typedef Tenh::Tensor2Symmetric_t<V,V> S;
-    
+
     add_test_for_verify_on_tensor_type<A>(parent);
     add_test_for_verify_on_tensor_type<S>(parent);
 //     add_test_for_verify_on_tensor_type<Tenh::Tensor2Antisymmetric_t<A> >(parent); // TODO: allow zero-dimensional vector spaces
@@ -201,21 +201,21 @@ void add_tests_for_verify_on_tensor_type_2 (Directory *parent)
 void AddTests (Directory *parent)
 {
     Directory *euclidean_embedding = new Directory("EuclideanEmbedding", parent);
-    
+
     {
         Directory *d = new Directory("verify_as_vector", euclidean_embedding);
-        
+
 //         add_tests_for_verify_on_vector_type_1<float,1>(d); // TODO: allow 0-dimensional vector spaces
         add_tests_for_verify_on_vector_type_1<float,2>(d);
         add_tests_for_verify_on_vector_type_1<float,3>(d);
         add_tests_for_verify_on_vector_type_1<float,4>(d);
-        
+
 //         add_tests_for_verify_on_vector_type_1<double,1>(d); // TODO: allow 0-dimensional vector spaces
         add_tests_for_verify_on_vector_type_1<double,2>(d);
         add_tests_for_verify_on_vector_type_1<double,3>(d);
         add_tests_for_verify_on_vector_type_1<double,4>(d);
-        
-        
+
+
         add_tests_for_verify_on_vector_type_2<float,1,float,1>(d);
         add_tests_for_verify_on_vector_type_2<float,1,float,3>(d);
         add_tests_for_verify_on_vector_type_2<float,1,float,4>(d);
@@ -225,7 +225,7 @@ void AddTests (Directory *parent)
         add_tests_for_verify_on_vector_type_2<float,4,float,1>(d);
         add_tests_for_verify_on_vector_type_2<float,4,float,3>(d);
         add_tests_for_verify_on_vector_type_2<float,4,float,4>(d);
-        
+
         add_tests_for_verify_on_vector_type_2<double,1,double,1>(d);
         add_tests_for_verify_on_vector_type_2<double,1,double,3>(d);
         add_tests_for_verify_on_vector_type_2<double,1,double,4>(d);
@@ -236,21 +236,21 @@ void AddTests (Directory *parent)
         add_tests_for_verify_on_vector_type_2<double,4,double,3>(d);
         add_tests_for_verify_on_vector_type_2<double,4,double,4>(d);
     }
-    
+
     {
         Directory *d = new Directory("verify_as_tensor", euclidean_embedding);
-        
+
 //         add_tests_for_verify_on_tensor_type_1<float,1>(d); // TODO: allow 0-dimensional vector spaces
         add_tests_for_verify_on_tensor_type_1<float,2>(d);
         add_tests_for_verify_on_tensor_type_1<float,3>(d);
         add_tests_for_verify_on_tensor_type_1<float,4>(d);
-        
+
 //         add_tests_for_verify_on_tensor_type_1<double,1>(d); // TODO: allow 0-dimensional vector spaces
         add_tests_for_verify_on_tensor_type_1<double,2>(d);
         add_tests_for_verify_on_tensor_type_1<double,3>(d);
         add_tests_for_verify_on_tensor_type_1<double,4>(d);
-        
-        
+
+
         add_tests_for_verify_on_tensor_type_2<float,1,float,1>(d);
         add_tests_for_verify_on_tensor_type_2<float,1,float,3>(d);
         add_tests_for_verify_on_tensor_type_2<float,1,float,4>(d);
@@ -260,7 +260,7 @@ void AddTests (Directory *parent)
         add_tests_for_verify_on_tensor_type_2<float,4,float,1>(d);
         add_tests_for_verify_on_tensor_type_2<float,4,float,3>(d);
         add_tests_for_verify_on_tensor_type_2<float,4,float,4>(d);
-        
+
         add_tests_for_verify_on_tensor_type_2<double,1,double,1>(d);
         add_tests_for_verify_on_tensor_type_2<double,1,double,3>(d);
         add_tests_for_verify_on_tensor_type_2<double,1,double,4>(d);

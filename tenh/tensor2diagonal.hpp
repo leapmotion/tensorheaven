@@ -179,11 +179,11 @@ struct Tensor2Diagonal_t
         std::string basis_string;
         if (!Lvd::Meta::TypesAreEqual<Basis,BasisOfTensor2Diagonal_t<Factor1,Factor2> >())
             basis_string = ',' + TypeStringOf_t<Basis>::eval();
-    
+
         std::string derived_string;
         if (!Lvd::Meta::TypesAreEqual<Derived_,NullType>())
             derived_string = ',' + TypeStringOf_t<Derived>::eval();
-    
+
         return "Tensor2Diagonal_t<" + TypeStringOf_t<Factor1>::eval() + ',' + TypeStringOf_t<Factor2>::eval() + basis_string + derived_string + '>';
     }
 
@@ -202,7 +202,7 @@ private:
         row = i*(Factor2::DIM+1);
         col = row;
     }
-    
+
     friend struct InnerProduct_t<Tensor2Diagonal_t,Basis>;
 };
 
@@ -225,7 +225,7 @@ struct InnerProduct_t<Tensor2Diagonal_t<Factor1,Factor2,BasisOfTensor2Diagonal_t
     }
 };
 
-// TODO: this does not really use BasisOfTensor2Diagonal_t<...> -- upon seeing this comment again, 
+// TODO: this does not really use BasisOfTensor2Diagonal_t<...> -- upon seeing this comment again,
 // i don't actually remember what it was for.
 template <typename TensorFactor1_, typename TensorFactor2_, typename TensorDerived>
 struct EuclideanEmbedding_t<Tensor2Diagonal_t<TensorFactor1_,

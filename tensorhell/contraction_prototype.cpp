@@ -624,7 +624,7 @@ void test_IndexBundle ()
         Tensor2 const &t2 = t;
         typedef ExpressionTemplate_IndexedObject_t<Tensor2,BundleIndexTypeList,EmptyTypeList,FORCE_CONST,CHECK_FOR_ALIASING> EI2;
         EI2 ei(t2(i|j));
-        
+
         std::cout << FORMAT_VALUE(ei) << '\n';
     }
     for (typename Tensor2Symmetric::Index r; r.is_not_at_end(); ++r)
@@ -887,7 +887,7 @@ void test_EuclideanEmbedding_t ()
         EE e;
         typename EE::MultiIndex m;
         std::cout << FORMAT_VALUE(e) << '\n';
-        
+
         T_WithStandardEuclideanBasis u(Static<WithoutInitialization>::SINGLETON);
         T v(Static<WithoutInitialization>::SINGLETON);
         for (typename T_WithStandardEuclideanBasis::Index i; i.is_not_at_end(); ++i)
@@ -1632,7 +1632,7 @@ int main (int argc, char **argv)
                 assert(false && "this should not happen");
             }
         }
-        
+
         {
             std::cout << "\ton Tensor2Symmetric_t<Tensor2Symmetric_t<V> >\n";
             typedef Vector_t<float,2> V;

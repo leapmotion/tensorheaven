@@ -36,17 +36,17 @@ void test_Tensor2_t (Context const &context)
     typedef typename Tensor::Factor1 Factor1;
     typedef typename Tensor::Factor2 Factor2;
     typedef typename Tensor::Scalar Scalar;
-    
+
     Tensor a(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
     Tensor b(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
     randomize(a);
     randomize(b);
-    
+
     Tenh::TypedIndex_t<Tensor,'i'> i;
     Tenh::TypedIndex_t<Factor1,'j'> j;
     Tenh::TypedIndex_t<Factor2,'k'> k;
-    
-    assert_about_eq(static_cast<Scalar>(a(i)*b(i)), static_cast<Scalar>(a(j|k)*b(j|k)));
+
+    assert_about_eq(Scalar(a(i)*b(i)), Scalar(a(j|k)*b(j|k)));
 }
 
 template <typename Scalar, Uint32 DIM>
@@ -95,7 +95,7 @@ void add_particular_tests_for_scalar (Directory *parent)
 void AddTests (Directory *parent)
 {
     Directory *expression_templates = new Directory("ExpressionTemplates", parent);
-    
+
     add_particular_tests_for_scalar<float>(expression_templates);
     add_particular_tests_for_scalar<double>(expression_templates);
     add_particular_tests_for_scalar<long double>(expression_templates);

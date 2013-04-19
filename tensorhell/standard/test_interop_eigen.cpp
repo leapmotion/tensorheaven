@@ -30,7 +30,7 @@ void test_self_adjoint_eigen_decomp (Context const &context)
     // TODO: real random S value
     for (typename S::Index i; i.is_not_at_end(); ++i)
         s[i] = i.value() + 1;
-    
+
     typedef Tenh::Tensor2Diagonal_t<typename Factor::WithStandardEuclideanBasis,
                                     typename Factor::WithStandardEuclideanBasis> D;
     typedef Tenh::Tensor2_t<typename Factor::WithStandardEuclideanBasis,Factor> U;
@@ -38,7 +38,7 @@ void test_self_adjoint_eigen_decomp (Context const &context)
     U eigenvectors(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
     // diagonalize
     diagonalize_Tensor2Symmetric(s, d, u);
-    // verify that 
+    // verify that
 }
 
 template <typename Factor>

@@ -185,11 +185,11 @@ struct Tensor2Antisymmetric_t
         std::string basis_string;
         if (!Lvd::Meta::TypesAreEqual<Basis,BasisOfTensor2Antisymmetric_t<Factor1,Factor2> >())
             basis_string = ',' + TypeStringOf_t<Basis>::eval();
-    
+
         std::string derived_string;
         if (!Lvd::Meta::TypesAreEqual<Derived_,NullType>())
             derived_string = ',' + TypeStringOf_t<Derived>::eval();
-    
+
         return "Tensor2Antisymmetric_t<" + TypeStringOf_t<Factor>::eval() + basis_string + derived_string + '>';
     }
 
@@ -219,7 +219,7 @@ private:
         row = Uint32(std::floor(0.5f + std::sqrt(0.25f + 2.0f*i)));
         col = i - row*(row-1)/2;
     }
-    
+
     friend struct InnerProduct_t<Tensor2Antisymmetric_t,Basis>;
 };
 
@@ -237,7 +237,7 @@ struct InnerProduct_t<Tensor2Antisymmetric_t<Factor1,Factor2,BasisOfTensor2Antis
         Uint32 row;
         Uint32 col;
         Tensor2Antisymmetric::contiguous_index_to_rowcol_index(i.value(), row, col);
-        return Scalar(2) * 
+        return Scalar(2) *
                InnerProduct_t<Factor1,typename Factor1::Basis>::component(typename Factor1::Index(row, DONT_CHECK_RANGE)) *
                InnerProduct_t<Factor2,typename Factor2::Basis>::component(typename Factor2::Index(col, DONT_CHECK_RANGE));
     }

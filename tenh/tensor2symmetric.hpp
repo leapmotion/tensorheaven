@@ -170,11 +170,11 @@ struct Tensor2Symmetric_t
         std::string basis_string;
         if (!Lvd::Meta::TypesAreEqual<Basis,BasisOfTensor2Symmetric_t<Factor1,Factor2> >())
             basis_string = ',' + TypeStringOf_t<Basis>::eval();
-    
+
         std::string derived_string;
         if (!Lvd::Meta::TypesAreEqual<Derived_,NullType>())
             derived_string = ',' + TypeStringOf_t<Derived>::eval();
-    
+
         return "Tensor2Symmetric_t<" + TypeStringOf_t<Factor>::eval() + basis_string + derived_string + '>';
     }
 
@@ -215,7 +215,7 @@ private:
             col = i - row*(row-1)/2;
         }
     }
-    
+
     friend struct InnerProduct_t<Tensor2Symmetric_t,Basis>;
 };
 

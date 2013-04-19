@@ -187,11 +187,11 @@ struct Tensor2_t
         std::string basis_string;
         if (!Lvd::Meta::TypesAreEqual<Basis,BasisOfTensor2_t<Factor1,Factor2> >())
             basis_string = ',' + TypeStringOf_t<Basis>::eval();
-    
+
         std::string derived_string;
         if (!Lvd::Meta::TypesAreEqual<Derived_,NullType>())
             derived_string = ',' + TypeStringOf_t<Derived>::eval();
-    
+
         return "Tensor2_t<" + TypeStringOf_t<Factor1>::eval() + ',' + TypeStringOf_t<Factor2>::eval() + basis_string + derived_string + '>';
     }
 
@@ -207,7 +207,7 @@ private:
         row = i / Factor2::DIM;
         col = i % Factor2::DIM;
     }
-   
+
     friend struct InnerProduct_t<Tensor2_t,Basis>;
 };
 
@@ -236,7 +236,7 @@ struct InnerProduct_t<Tensor2_t<Factor1,Factor2,BasisOfTensor2_t<Factor1,Factor2
 //     typedef Tensor2_t<Factor1,Factor2,BasisOfTensor2_t<Factor1,Factor2>,Derived> Tensor2;
 //     typedef typename Tensor2::Scalar Scalar;
 //     typedef typename Tensor2::Index Index;
-// 
+//
 //     static Scalar component (Index const &i)
 //     {
 //         Uint32 row;
