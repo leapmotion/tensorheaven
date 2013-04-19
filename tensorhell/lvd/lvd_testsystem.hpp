@@ -251,16 +251,20 @@ private:
 template <typename T>
 bool about_equal(T lhs, T rhs)
 {
-    T bound = std::max(std::abs(lhs), std::abs(rhs))*8*std::numeric_limits<T>::epsilon();
-
+    T bound = (lhs == T(0) || rhs == T(0)) ?
+        2*std::numeric_limits<T>::epsilon() :
+        std::max(std::abs(lhs), std::abs(rhs))*8*std::numeric_limits<T>::epsilon();
+    
     return std::abs(lhs - rhs) <= bound;
 }
 
 template <typename T> // oveload to use the epsilon for the underlying value type for a complex type
 bool about_equal(std::complex<T> lhs, std::complex<T> rhs)
 {
-    T bound = std::max(std::abs(lhs), std::abs(rhs))*8*std::numeric_limits<T>::epsilon();
-
+    T bound = (lhs == std::complex<T>(0) || rhs == std::complex<T>(0)) ?
+        2*std::numeric_limits<T>::epsilon() :
+        std::max(std::abs(lhs), std::abs(rhs))*8*std::numeric_limits<T>::epsilon();
+    
     return std::abs(lhs - rhs) <= bound;
 }
 
