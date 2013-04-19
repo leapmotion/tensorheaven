@@ -8,6 +8,7 @@
 #include <cstring>
 #include <exception>
 #include <sstream>
+#include <sys/wait.h>
 
 #include "lvd_callstack.hpp"
 #include "lvd_commandlineparser.hpp"
@@ -263,7 +264,7 @@ void EmitStatusMessage (Result result, Stage stage, int signum, string const &me
 void SignalHandler (int signum)
 {
     PRINT_DEBUG_MESSAGE("*** RUNNER DEBUG MESSAGE *** : caught signal " << SignalString(signum) << '\n');
-                                                                   
+
     ostringstream out;
 
     // if there was a premade message (e.g. from FailAssert), use that
@@ -879,7 +880,7 @@ void Directory::AddSubDirectory (string const &sub_directory_name, Directory &su
              << sub_directory_name << "\"\n";
         error_encountered = true;
     }
-    assert(!error_encountered && "there was an error in adding the subdirectory");
+    assert(!error_encountered && "there was an error in adding the subdirectory (see stderr output for messages)");
     m_sub_directory_map[sub_directory_name] = &sub_directory;
 }
 
@@ -937,26 +938,72 @@ void Directory::CheckTestCase (
     Stage expected_stage,
     int expected_signum)
 {
-    assert(!test_case_name.empty() && "every test case name must be non-empty");
-    assert(test_case_name.find_first_of("/") == string::npos && "every test case name must not contain any forwardslashes");
-    assert(m_sub_directory_map.find(test_case_name) == m_sub_directory_map.end() && "test case name collision with existing subdirectory");
-    assert(m_test_case_map.find(test_case_name) == m_test_case_map.end() && "test case name collision with existing test case");
-    assert(expected_result != RESULT_UNSPECIFIED_FAILURE && "RESULT_UNSPECIFIED_FAILURE is not a valid expected_result");
+    bool error_encountered = false;
+    if (test_case_name.empty())
+    {
+        cerr << "TEST CODE PROGRAMMER ERROR in adding a test case: every test case name must be non-empty\n";
+        error_encountered = true;
+    }
+    if (test_case_name.find_first_of("/") != string::npos)
+    {
+        cerr << "TEST CODE PROGRAMMER ERROR in adding a test case: every test case name must not contain any forwardslashes\n";
+        error_encountered = true;
+    }
+    if (m_sub_directory_map.find(test_case_name) != m_sub_directory_map.end())
+    {
+        cerr << "TEST CODE PROGRAMMER ERROR in adding a test case: test case name collision with existing subdirectory\n";
+        error_encountered = true;
+    }
+    if (m_test_case_map.find(test_case_name) != m_test_case_map.end())
+    {
+        cerr << "TEST CODE PROGRAMMER ERROR in adding a test case: test case name collision with existing test case\n";
+        error_encountered = true;
+    }
+    if (expected_result == RESULT_UNSPECIFIED_FAILURE)
+    {
+        cerr << "TEST CODE PROGRAMMER ERROR in adding a test case: RESULT_UNSPECIFIED_FAILURE is not a valid expected_result\n";
+        error_encountered = true;
+    }
     if (expected_result == RESULT_NO_ERROR)
     {
-        assert(expected_stage == STAGE_COMPLETED && "if expected_result is RESULT_NO_ERROR, then expected_stage must be STAGE_COMPLETED");
-        assert(expected_signum == 0 && "if expected_result is RESULT_NO_ERROR, then expected_signum must be 0");
+        if (expected_stage != STAGE_COMPLETED)
+        {
+            cerr << "TEST CODE PROGRAMMER ERROR in adding a test case: if expected_result is RESULT_NO_ERROR, then expected_stage must be STAGE_COMPLETED\n";
+            error_encountered = true;
+        }
+        if (expected_signum != 0)
+        {
+            cerr << "TEST CODE PROGRAMMER ERROR in adding a test case: if expected_result is RESULT_NO_ERROR, then expected_signum must be 0\n";
+            error_encountered = true;
+        }
     }
     else if (expected_result == RESULT_CAUGHT_SIGNAL)
     {
-        assert((expected_stage == STAGE_INITIALIZE || expected_stage == STAGE_TEST_BODY || expected_stage == STAGE_SHUTDOWN) && "if expected_result is RESULT_CAUGHT_SIGNAL, then expected_stage must be one of STAGE_INITIALIZE, STAGE_TEST_BODY, or STAGE_SHUTDOWN");
-        assert(expected_signum != 0 && "if expected_result is RESULT_CAUGHT_SIGNAL, then expected_signum must not be 0");
+        if (!(expected_stage == STAGE_INITIALIZE || expected_stage == STAGE_TEST_BODY || expected_stage == STAGE_SHUTDOWN))
+        {
+            cerr << "TEST CODE PROGRAMMER ERROR in adding a test case: if expected_result is RESULT_CAUGHT_SIGNAL, then expected_stage must be one of STAGE_INITIALIZE, STAGE_TEST_BODY, or STAGE_SHUTDOWN\n";
+            error_encountered = true;
+        }
+        if (expected_signum == 0)
+        {
+            cerr << "TEST CODE PROGRAMMER ERROR in adding a test case: if expected_result is RESULT_CAUGHT_SIGNAL, then expected_signum must not be 0\n";
+            error_encountered = true;
+        }
     }
     else if (expected_result == RESULT_UNCAUGHT_EXCEPTION)
     {
-        assert((expected_stage == STAGE_INITIALIZE || expected_stage == STAGE_TEST_BODY || expected_stage == STAGE_SHUTDOWN) && "if expected_result is RESULT_UNCAUGHT_EXCEPTION, then expected_stage must be one of STAGE_INITIALIZE, STAGE_TEST_BODY, or STAGE_SHUTDOWN");
-        assert(expected_signum == 0 && "if expected_result is RESULT_UNCAUGHT_EXCEPTION, then expected_signum must be 0");
+        if (!(expected_stage == STAGE_INITIALIZE || expected_stage == STAGE_TEST_BODY || expected_stage == STAGE_SHUTDOWN))
+        {
+            cerr << "TEST CODE PROGRAMMER ERROR in adding a test case: if expected_result is RESULT_UNCAUGHT_EXCEPTION, then expected_stage must be one of STAGE_INITIALIZE, STAGE_TEST_BODY, or STAGE_SHUTDOWN\n";
+            error_encountered = true;
+        }
+        if (expected_signum != 0)
+        {
+            cerr << "TEST CODE PROGRAMMER ERROR in adding a test case: if expected_result is RESULT_UNCAUGHT_EXCEPTION, then expected_signum must be 0\n";
+            error_encountered = true;
+        }
     }
+    assert(!error_encountered && "the test case check failed (see stderr output for messages)");
 }
 
 } // end of namespace TestSystem

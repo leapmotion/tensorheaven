@@ -78,7 +78,7 @@ struct Addr2line
 // #if defined(__MACH__)
 //         return "TEMP DUMMY STRINGIFIED ADDRESS";
 // #endif
-            
+
         // send the address to the child process
         ostringstream out;
         out << address << endl;
@@ -90,50 +90,50 @@ struct Addr2line
         char buffer[RESPONSE_BUFFER_SIZE];
         size_t bytes_actually_read = read(m_child_to_parent_pipe[PIPE_READ], buffer, RESPONSE_BUFFER_SIZE);
         if (bytes_actually_read == size_t(-1))
-        {
-            // this indicates error, the error condition is in errno
-            std::cerr << "errno = " << errno << std::endl;
-//             switch (errno)
-//             {
-//                 case EAGAIN: // non-blocking I/O call didn't return any input
-//                 case EBADF:  // bad file descriptor
-//                 case EFAULT:
-//             }
-        }
+            throw runtime_error(string("read response from child failed: ") + strerror(errno));
         assert(bytes_actually_read > 0);
         assert(bytes_actually_read <= RESPONSE_BUFFER_SIZE);
         string response(buffer, bytes_actually_read);
 
-        // parse the response into function name and file location
-        string::size_type first_newline = response.find_first_of("\n");
-        assert(first_newline != string::npos);
-        string function_name(response.substr(0, first_newline));
-        string file_location(response.substr(first_newline+1));
-        assert(file_location.find_first_of("\n") == file_location.length()-1);
-        file_location.resize(file_location.length()-1);
-
-        // perform PathFormat formatting
-        if (path_format == CHOMP_DOT_DOT)
-        {
-            string::size_type pos = 0;
-            string::size_type new_pos;
-            while ((new_pos = file_location.find("../", pos)) != string::npos)
-                pos = new_pos + 3;
-            file_location.erase(0, pos);
-        }
-        else if (path_format == CHOMP_PATH)
-        {
-            string::size_type pos = file_location.find_last_of("/");
-            if (pos != string::npos)
-                file_location.erase(0, pos+1);
-        }
-
-        // format the return string and return it
-        response.clear();
-        response += file_location;
-        response += " - ";
-        response += function_name;
-        return response;
+//         // parse the response into function name and file location
+//         string::size_type first_newline = response.find_first_of("\n");
+//         assert(first_newline != string::npos);
+//         string function_name(response.substr(0, first_newline));
+//         string file_location(response.substr(first_newline+1));
+// //         std::cerr << "\nHIPPO: file_location = \"" << file_location << "\" END HIPPO\n\n";
+//         assert(file_location.find_first_of("\n") == file_location.length()-1);
+//         file_location.resize(file_location.length()-1);
+//
+//         // perform PathFormat formatting
+//         if (path_format == CHOMP_DOT_DOT)
+//         {
+//             string::size_type pos = 0;
+//             string::size_type new_pos;
+//             while ((new_pos = file_location.find("../", pos)) != string::npos)
+//                 pos = new_pos + 3;
+//             file_location.erase(0, pos);
+//         }
+//         else if (path_format == CHOMP_PATH)
+//         {
+//             string::size_type pos = file_location.find_last_of("/");
+//             if (pos != string::npos)
+//                 file_location.erase(0, pos+1);
+//         }
+//
+//         // format the return string and return it
+//         response.clear();
+//         response += file_location;
+//         response += " - ";
+//         response += function_name;
+//         return response;
+        // TODO: if -O0 is specified, it seems like the above formatting assumptions hold.
+        // if there is optimization and therefore inlining of function calls, then the formatting
+        // may include multiple lines.  so for now, just use the full response, with a check
+        // that it ends with a newline.
+        if (response[response.length()-1] != '\n')
+            response += '\n';
+        // tag on a little arrow to delimit each item in the callstack
+        return "--> " + response;
     }
 
 private:
