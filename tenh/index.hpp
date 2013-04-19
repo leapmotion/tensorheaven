@@ -7,6 +7,7 @@
 #define TENH_INDEX_HPP_
 
 #include <ostream>
+#include <stdexcept>
 #include <string>
 
 #include "tenh/core.hpp"

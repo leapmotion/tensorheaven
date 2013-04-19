@@ -7,7 +7,7 @@
 #define TENH_INTERFACE_EXPRESSIONTEMPLATE_HPP_
 
 #include "tenh/core.hpp"
-// #include "tenh/expression_templates_utility.hpp"
+#include "tenh/multiindex.hpp"
 #include "tenh/index.hpp"
 
 namespace Tenh {

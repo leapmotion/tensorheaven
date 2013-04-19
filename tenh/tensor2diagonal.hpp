@@ -199,8 +199,7 @@ private:
     }
     static void contiguous_index_to_rowcol_index (Uint32 i, Uint32 &row, Uint32 &col)
     {
-        row = i*(Factor2::DIM+1);
-        col = row;
+        row = col = i;
     }
 
     friend struct InnerProduct_t<Tensor2Diagonal_t,Basis>;

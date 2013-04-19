@@ -34,6 +34,7 @@ set(test_SRCS
     standard/test_euclideanembedding.cpp
     standard/test_euclideanembeddinginverse.cpp
     standard/test_expressiontemplates.cpp
+    standard/test_interop_eigen.cpp
     standard/test_list.cpp
     standard/test_tensor2.cpp
     standard/test_tensor2diagonal.cpp
