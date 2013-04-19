@@ -88,8 +88,8 @@ void add_test_for_each_composition (Directory *parent)
 {
     Directory *d = new Directory(Tenh::TypeStringOf_t<VectorType>::eval(), parent);
 
-    LVD_ADD_TEST_CASE_FUNCTION(d, e_inv_e_composition<VectorType>, RESULT_NO_ERROR);
-    LVD_ADD_TEST_CASE_FUNCTION(d, e_e_inv_composition<VectorType>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(d, "e_inv_e_composition", e_inv_e_composition<VectorType>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(d, "e_e_inv_composition", e_e_inv_composition<VectorType>, RESULT_NO_ERROR);
 }
 
 // vector types and tensor types having identical factor types

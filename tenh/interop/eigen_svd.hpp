@@ -24,7 +24,7 @@ void SVD_of_Tensor2 (Tensor2_t<Factor1,Factor2,Basis,Derived> const &t,
                      Tensor2_t<Factor2,Factor2> &v)
 {
     typedef Eigen::Matrix<typename Factor1::Scalar,Factor1::DIM,Factor2::DIM,Eigen::RowMajor> EigenMatrix;
-    Eigen::JacobiSVD<EigenMatrix> svd(euclideanly_embedded_EigenMatrix_of(t).jacobiSvd(Eigen::ComputeFullU|Eigen::ComputeFullV));
+    Eigen::JacobiSVD<EigenMatrix> svd(euclideanly_embedded_EigenMatrix_from(t).jacobiSvd(Eigen::ComputeFullU|Eigen::ComputeFullV));
     memcpy(u.data_pointer(), &svd.matrixU()(0,0), u.data_size_in_bytes());
     memcpy(s.data_pointer(), &svd.singularValues()(0,0), s.data_size_in_bytes());
     memcpy(v.data_pointer(), &svd.matrixV()(0,0), v.data_size_in_bytes());
@@ -37,7 +37,7 @@ void SVD_of_Tensor2 (Tensor2_t<Factor1,Factor2,Basis,Derived> const &t,
                      Tensor2Diagonal_t<Factor1,Factor2> &s)
 {
     typedef Eigen::Matrix<typename Factor1::Scalar,Factor1::DIM,Factor2::DIM,Eigen::RowMajor> EigenMatrix;
-    Eigen::JacobiSVD<EigenMatrix> svd(euclideanly_embedded_EigenMatrix_of(t).jacobiSvd(Eigen::ComputeFullU));
+    Eigen::JacobiSVD<EigenMatrix> svd(euclideanly_embedded_EigenMatrix_from(t).jacobiSvd(Eigen::ComputeFullU));
     memcpy(u.data_pointer(), &svd.matrixU()(0,0), u.data_size_in_bytes());
     memcpy(s.data_pointer(), &svd.singularValues()(0,0), s.data_size_in_bytes());
 }
@@ -49,7 +49,7 @@ void SVD_of_Tensor2 (Tensor2_t<Factor1,Factor2,Basis,Derived> const &t,
                      Tensor2_t<Factor2,Factor2> &v)
 {
     typedef Eigen::Matrix<typename Factor1::Scalar,Factor1::DIM,Factor2::DIM,Eigen::RowMajor> EigenMatrix;
-    Eigen::JacobiSVD<EigenMatrix> svd(euclideanly_embedded_EigenMatrix_of(t).jacobiSvd(Eigen::ComputeFullU));
+    Eigen::JacobiSVD<EigenMatrix> svd(euclideanly_embedded_EigenMatrix_from(t).jacobiSvd(Eigen::ComputeFullU));
     memcpy(s.data_pointer(), &svd.singularValues()(0,0), s.data_size_in_bytes());
     memcpy(v.data_pointer(), &svd.matrixV()(0,0), v.data_size_in_bytes());
 }
@@ -60,7 +60,7 @@ void SVD_of_Tensor2 (Tensor2_t<Factor1,Factor2,Basis,Derived> const &t,
                      Tensor2Diagonal_t<Factor1,Factor2> &s)
 {
     typedef Eigen::Matrix<typename Factor1::Scalar,Factor1::DIM,Factor2::DIM,Eigen::RowMajor> EigenMatrix;
-    Eigen::JacobiSVD<EigenMatrix> svd(euclideanly_embedded_EigenMatrix_of(t).jacobiSvd());
+    Eigen::JacobiSVD<EigenMatrix> svd(euclideanly_embedded_EigenMatrix_from(t).jacobiSvd());
     memcpy(s.data_pointer(), &svd.singularValues()(0,0), s.data_size_in_bytes());
 }
 
