@@ -32,6 +32,7 @@ template <> struct TypeStringOf_t<Lvd::Uint64> { static std::string eval () { re
 template <> struct TypeStringOf_t<bool> { static std::string eval () { return "bool"; } };
 template <> struct TypeStringOf_t<float> { static std::string eval () { return "float"; } };
 template <> struct TypeStringOf_t<double> { static std::string eval () { return "double"; } };
+template <> struct TypeStringOf_t<long double> { static std::string eval () { return "long double"; } };
 template <> struct TypeStringOf_t<std::string> { static std::string eval () { return "std::string"; } };
 
 } // end of namespace Tenh

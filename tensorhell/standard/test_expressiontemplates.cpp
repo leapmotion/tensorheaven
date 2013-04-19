@@ -98,11 +98,12 @@ void AddTests (Directory *parent)
     
     add_particular_tests_for_scalar<float>(expression_templates);
     add_particular_tests_for_scalar<double>(expression_templates);
+    add_particular_tests_for_scalar<long double>(expression_templates);
     add_particular_tests_for_scalar<complex<float> >(expression_templates);
     add_particular_tests_for_scalar<complex<double> >(expression_templates);
-    add_particular_tests_for_scalar<char>(expression_templates);
-    add_particular_tests_for_scalar<int>(expression_templates);
-    add_particular_tests_for_scalar<long>(expression_templates);
+    add_particular_tests_for_scalar<Sint8>(expression_templates);
+    add_particular_tests_for_scalar<Sint16>(expression_templates);
+    add_particular_tests_for_scalar<Sint32>(expression_templates);
 }
 
 } // end of namespace ExpressionTemplates

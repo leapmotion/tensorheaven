@@ -23,21 +23,27 @@
 namespace Tenh {
 boost::random::mt19937 gen;
 
-void randomize(int & i, int mean = 0, int sigma = 10)
+void randomize(Lvd::Sint8 & i, Lvd::Sint8 mean = 0, Lvd::Sint8 sigma = 10)
 {
-    boost::random::uniform_int_distribution<int> dist(static_cast<int>(mean - 2.5*sigma), static_cast<int>(mean + 2.5*sigma));
+    boost::random::uniform_int_distribution<Lvd::Sint8> dist(static_cast<int>(mean - 2.5*sigma), static_cast<int>(mean + 2.5*sigma));
     i = dist(gen);
 }
 
-void randomize(char & i, char mean = 0, char sigma = 10)
+void randomize(Lvd::Sint16 & i, Lvd::Sint16 mean = 0, Lvd::Sint16 sigma = 10)
 {
-    boost::random::uniform_int_distribution<char> dist(static_cast<int>(mean - 2.5*sigma), static_cast<int>(mean + 2.5*sigma));
+    boost::random::uniform_int_distribution<Lvd::Sint16> dist(static_cast<int>(mean - 2.5*sigma), static_cast<int>(mean + 2.5*sigma));
     i = dist(gen);
 }
 
-void randomize(long & i, long mean = 0, long sigma = 10)
+void randomize(Lvd::Sint32 & i, Lvd::Sint32 mean = 0, Lvd::Sint32 sigma = 10)
 {
-    boost::random::uniform_int_distribution<long> dist(static_cast<int>(mean - 2.5*sigma), static_cast<int>(mean + 2.5*sigma));
+    boost::random::uniform_int_distribution<Lvd::Sint32> dist(static_cast<int>(mean - 2.5*sigma), static_cast<int>(mean + 2.5*sigma));
+    i = dist(gen);
+}
+
+void randomize(Lvd::Sint64 & i, Lvd::Sint64 mean = 0, Lvd::Sint64 sigma = 10)
+{
+    boost::random::uniform_int_distribution<Lvd::Sint64> dist(static_cast<int>(mean - 2.5*sigma), static_cast<int>(mean + 2.5*sigma));
     i = dist(gen);
 }
 
@@ -52,6 +58,13 @@ void randomize(double & d, double mean = 0, double sigma = 10)
     boost::random::normal_distribution<double> dist(mean, sigma);
     d = dist(gen);
 }
+
+void randomize(long double & d, long double mean = 0, long double sigma = 10)
+{
+    boost::random::normal_distribution<long double> dist(mean, sigma);
+    d = dist(gen);
+}
+
 
 template <typename T>
 void randomize(std::complex<T> & z, std::complex<T> mean = 0, std::complex<T> sigma = 10)

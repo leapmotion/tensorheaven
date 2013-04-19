@@ -75,9 +75,9 @@ void add_particular_tests_for_scalar (Directory *parent)
 void AddTests (Directory *parent)
 {
     Directory *vector = new Directory("Vector_t", parent);
-    add_particular_tests_for_scalar<char>(vector);
-    add_particular_tests_for_scalar<unsigned int>(vector);
-    add_particular_tests_for_scalar<long>(vector);
+    add_particular_tests_for_scalar<Sint8>(vector);
+    add_particular_tests_for_scalar<Uint32>(vector);
+    add_particular_tests_for_scalar<Sint64>(vector);
     add_particular_tests_for_scalar<float>(vector);
     add_particular_tests_for_scalar<double>(vector);
     add_particular_tests_for_scalar<complex<float> >(vector);

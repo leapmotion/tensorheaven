@@ -139,8 +139,8 @@ void AddTests (Directory *parent)
 
     LVD_ADD_TEST_CASE_FUNCTION(list, test_EmptyList, RESULT_NO_ERROR);
     add_particular_tests_for_list<Tenh::EmptyTypeList>(list);
-    add_particular_tests_for_list<Tenh::TypeList_t<int> >(list);
-    add_particular_tests_for_list<Tenh::TypeList_t<int,Tenh::TypeList_t<char> > >(list);
+    add_particular_tests_for_list<Tenh::TypeList_t<Sint32> >(list);
+    add_particular_tests_for_list<Tenh::TypeList_t<Sint32,Tenh::TypeList_t<Sint8> > >(list);
     add_leading_and_trailing_list_tests(list);
 }
 

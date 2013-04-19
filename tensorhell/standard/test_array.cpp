@@ -73,9 +73,9 @@ void add_particular_tests_for_scalar (Directory *parent)
 void AddTests (Directory *parent)
 {
     Directory *array = new Directory("Array_t", parent);
-    add_particular_tests_for_scalar<char>(array);
-    add_particular_tests_for_scalar<unsigned int>(array);
-    add_particular_tests_for_scalar<long>(array);
+    add_particular_tests_for_scalar<Sint8>(array);
+    add_particular_tests_for_scalar<Uint32>(array);
+    add_particular_tests_for_scalar<Sint64>(array);
     add_particular_tests_for_scalar<float>(array);
     add_particular_tests_for_scalar<double>(array);
     add_particular_tests_for_scalar<complex<float> >(array);

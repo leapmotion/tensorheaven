@@ -132,8 +132,8 @@ void AddTests (Directory *parent)
     Directory *typelist = new Directory("TypeList_t", parent);
 
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(typelist, Tenh::TypeStringOf_t<Tenh::EmptyTypeList>::eval(), test_EmptyTypeList, RESULT_NO_ERROR);
-    add_particular_tests_for_typelist<Tenh::TypeList_t<int>,1>(typelist);
-    add_particular_tests_for_typelist<Tenh::TypeList_t<int,Tenh::TypeList_t<char> >,2>(typelist);
+    add_particular_tests_for_typelist<Tenh::TypeList_t<Sint32>,1>(typelist);
+    add_particular_tests_for_typelist<Tenh::TypeList_t<Sint32,Tenh::TypeList_t<Sint8> >,2>(typelist);
 
     add_leading_and_trailing_type_list_tests(typelist);
 }

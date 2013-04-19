@@ -130,7 +130,7 @@ void AddTests (Directory *parent)
 {
     Directory *tensor2 = new Directory("Tensor2_t", parent);
 
-    add_particular_tests_for_scalar<int>(tensor2);
+    add_particular_tests_for_scalar<Sint32>(tensor2);
     add_particular_tests_for_scalar<float>(tensor2);
     add_particular_tests_for_scalar<double>(tensor2);
     add_particular_tests_for_scalar<complex<float> >(tensor2);

@@ -173,7 +173,7 @@ void AddTests (Directory *parent)
 {
     Directory *tensor2diagonal = new Directory("Tensor2Diagonal_t", parent);
 
-    add_particular_tests_for_scalar<int>(tensor2diagonal);
+    add_particular_tests_for_scalar<Sint32>(tensor2diagonal);
     add_particular_tests_for_scalar<float>(tensor2diagonal);
     add_particular_tests_for_scalar<double>(tensor2diagonal);
     add_particular_tests_for_scalar<complex<float> >(tensor2diagonal);
