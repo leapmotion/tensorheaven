@@ -7,6 +7,7 @@
 #define TENH_INTEROP_EIGEN_HPP_
 
 #include "tenh/core.hpp"
+#include "tenh/euclideanembedding.hpp"
 #include "tenh/tensor2.hpp"
 
 #include "Eigen/Core"
@@ -67,6 +68,16 @@ void euclideanly_embedded_EigenMatrix_to (
     EuclideanEmbeddingInverse_t<Tensor2Type> e_inv;
     // NOTE: bundle does NOT check if euclideanly_embedded_t has the symmetries of Tensor2Type
     t(q).no_alias() = e_inv(q|p) * euclideanly_embedded_t(i|j).bundle(i|j,p);
+}
+
+// NOTE: this assumes that the inverse is the same type as the input
+template <typename Tensor2Type>
+void invert_tensor2 (Tensor2Type const &t, Tensor2Type const &t_inverse)
+{
+    STATIC_ASSERT(Tensor2Type::Factor1::DIM == Tensor2Type::Factor2::DIM, FACTOR_DIMENSIONS_MUST_BE_EQUAL);
+    Eigen::Matrix<typename Tensor2Type::Scalar,Tensor2Type::Factor1::DIM,Tensor2Type::Factor2::DIM,Eigen::RowMajor>
+        m(euclideanly_embedded_EigenMatrix_from(t).inverse());
+    euclideanly_embedded_EigenMatrix_to(m, t_inverse);
 }
 
 } // end of namespace Tenh

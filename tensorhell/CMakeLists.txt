@@ -30,6 +30,7 @@ set(test_SRCS
     lvd/lvd_commandlineparser.cpp
     lvd/lvd_spawner.cpp
     lvd/lvd_testsystem.cpp
+    standard/randomize.cpp
     standard/test_array.cpp
     standard/test_euclideanembedding.cpp
     standard/test_euclideanembeddinginverse.cpp

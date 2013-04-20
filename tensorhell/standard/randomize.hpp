@@ -1,10 +1,12 @@
 // ///////////////////////////////////////////////////////////////////////////
-// random.hpp by Ted Nitz, created 2013/04/04
+// randomize.hpp by Ted Nitz, created 2013/04/04
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
 #if !defined(RANDOMIZE_HPP_)
 #define RANDOMIZE_HPP_
+
+// TODO: figure out which ones should be in the header and which ones in the cpp
 
 #include <complex>
 #include <algorithm>
@@ -21,60 +23,26 @@
 #include "tenh/vector.hpp"
 
 namespace Tenh {
-boost::random::mt19937 gen;
 
-void randomize(Lvd::Sint8 & i, Lvd::Sint8 mean = 0, Lvd::Sint8 sigma = 10)
-{
-    boost::random::uniform_int_distribution<Lvd::Sint8> dist(static_cast<int>(mean - 2.5*sigma), static_cast<int>(mean + 2.5*sigma));
-    i = dist(gen);
-}
+extern boost::random::mt19937 gen;
 
-void randomize(Lvd::Sint16 & i, Lvd::Sint16 mean = 0, Lvd::Sint16 sigma = 10)
-{
-    boost::random::uniform_int_distribution<Lvd::Sint16> dist(static_cast<int>(mean - 2.5*sigma), static_cast<int>(mean + 2.5*sigma));
-    i = dist(gen);
-}
-
-void randomize(Lvd::Sint32 & i, Lvd::Sint32 mean = 0, Lvd::Sint32 sigma = 10)
-{
-    boost::random::uniform_int_distribution<Lvd::Sint32> dist(static_cast<int>(mean - 2.5*sigma), static_cast<int>(mean + 2.5*sigma));
-    i = dist(gen);
-}
-
-void randomize(Lvd::Sint64 & i, Lvd::Sint64 mean = 0, Lvd::Sint64 sigma = 10)
-{
-    boost::random::uniform_int_distribution<Lvd::Sint64> dist(static_cast<int>(mean - 2.5*sigma), static_cast<int>(mean + 2.5*sigma));
-    i = dist(gen);
-}
-
-void randomize(float & f, float mean = 0, float sigma = 10)
-{
-    boost::random::normal_distribution<float> dist(mean, sigma);
-    f = dist(gen);
-}
-
-void randomize(double & d, double mean = 0, double sigma = 10)
-{
-    boost::random::normal_distribution<double> dist(mean, sigma);
-    d = dist(gen);
-}
-
-void randomize(long double & d, long double mean = 0, long double sigma = 10)
-{
-    boost::random::normal_distribution<long double> dist(mean, sigma);
-    d = dist(gen);
-}
-
+void randomize (Lvd::Sint8 & i, Lvd::Sint8 mean = 0, Lvd::Sint8 sigma = 10);
+void randomize (Lvd::Sint16 & i, Lvd::Sint16 mean = 0, Lvd::Sint16 sigma = 10);
+void randomize (Lvd::Sint32 & i, Lvd::Sint32 mean = 0, Lvd::Sint32 sigma = 10);
+void randomize (Lvd::Sint64 & i, Lvd::Sint64 mean = 0, Lvd::Sint64 sigma = 10);
+void randomize (float & f, float mean = 0, float sigma = 10);
+void randomize (double & d, double mean = 0, double sigma = 10);
+void randomize (long double & d, long double mean = 0, long double sigma = 10);
 
 template <typename T>
-void randomize(std::complex<T> & z, std::complex<T> mean = 0, std::complex<T> sigma = 10)
+void randomize (std::complex<T> & z, std::complex<T> mean = 0, std::complex<T> sigma = 10)
 {
     randomize(z.real(), mean.real(), abs(sigma));
     randomize(z.imag(), mean.imag(), abs(sigma));
 }
 
 template <typename Derived, typename Scalar, Uint32 DIM, typename Basis>
-void randomize(Vector_i<Derived, Scalar, DIM, Basis> & v, Scalar mean = 0, Scalar sigma = 10)
+void randomize (Vector_i<Derived, Scalar, DIM, Basis> & v, Scalar mean = 0, Scalar sigma = 10)
 {
     for(typename Vector_i<Derived, Scalar, DIM, Basis>::Index i; i.is_not_at_end(); ++i)
     {
@@ -82,9 +50,8 @@ void randomize(Vector_i<Derived, Scalar, DIM, Basis> & v, Scalar mean = 0, Scala
     }
 }
 
-
 template <typename Factor1, typename Factor2>
-void randomize(Tensor2_t<Factor1, Factor2> & t, Uint32 maximum_rank)
+void randomize (Tensor2_t<Factor1, Factor2> & t, Uint32 maximum_rank)
 {
     maximum_rank = std::min(maximum_rank, std::min(Factor1::DIM, Factor2::DIM));
     typedef typename Factor1::Scalar Scalar;
@@ -107,7 +74,7 @@ void randomize(Tensor2_t<Factor1, Factor2> & t, Uint32 maximum_rank)
 }
 
 template<typename Factor>
-void randomize(Tensor2Antisymmetric_t<Factor> & s, Uint32 maximum_rank)
+void randomize (Tensor2Antisymmetric_t<Factor> & s, Uint32 maximum_rank)
 {
     maximum_rank = std::min(maximum_rank, Factor::DIM);
     typedef typename Factor::Scalar Scalar;
@@ -133,7 +100,7 @@ void randomize(Tensor2Antisymmetric_t<Factor> & s, Uint32 maximum_rank)
 }
 
 template<typename Factor>
-void randomize(Tensor2Symmetric_t<Factor> & s, Uint32 maximum_rank)
+void randomize (Tensor2Symmetric_t<Factor> & s, Uint32 maximum_rank)
 {
     maximum_rank = std::min(maximum_rank, Factor::DIM);
     typedef typename Factor::Scalar Scalar;
