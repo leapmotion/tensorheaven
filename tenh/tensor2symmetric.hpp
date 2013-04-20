@@ -282,10 +282,10 @@ struct EuclideanEmbedding_t<Tensor2Symmetric_t<TensorFactor1_,
         TypedIndex_t<Tensor2Symmetric,'q'> q;
         // the InnerProduct_t is providing a factor of 2, hence why we're providing
         // a factor of 1/sqrt(2) -- figure out how to use the default InnerProduct_t instead
-        Uint32 row = m.template el<0>().value();
-        if (row < Tensor2Symmetric::STRICTLY_LOWER_TRIANGULAR_COMPONENT_COUNT)
+        Uint32 col = m.template el<1>().value();
+        if (col < Tensor2Symmetric::STRICTLY_LOWER_TRIANGULAR_COMPONENT_COUNT)
         {
-            return (Scalar(1)/Static<Scalar>::SQRT_TWO*(e1(i|j)*e2(k|l)).bundle(i|k,p).bundle(j|l,q))[m];
+            return (Static<Scalar>::SQRT_TWO/Scalar(2)*(e1(i|j)*e2(k|l)).bundle(i|k,p).bundle(j|l,q))[m];
         }
         else
         {
@@ -348,7 +348,7 @@ struct EuclideanEmbeddingInverse_t<Tensor2Symmetric_t<TensorFactor1_,
         Uint32 row = m.template el<0>().value();
         if (row < Tensor2Symmetric::STRICTLY_LOWER_TRIANGULAR_COMPONENT_COUNT)
         {
-            return (Static<Scalar>::SQRT_TWO*(e1_inv(i|j)*e2_inv(k|l)).bundle(i|k,p).bundle(j|l,q))[m];
+            return (Static<Scalar>::SQRT_TWO/Scalar(2)*(e1_inv(i|j)*e2_inv(k|l)).bundle(i|k,p).bundle(j|l,q))[m];
         }
         else
         {

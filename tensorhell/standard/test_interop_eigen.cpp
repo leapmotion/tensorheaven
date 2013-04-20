@@ -58,16 +58,6 @@ void add_particular_self_adjoint_eigen_decomp_test (Directory *parent)
 }
 */
 
-/*
-template <typename Tensor2Type>
-Eigen::Matrix<typename Tensor2Type::Scalar,Tensor2Type::Factor1::DIM,Tensor2Type::Factor2::DIM,Eigen::RowMajor>
-    euclideanly_embedded_EigenMatrix_from (Tensor2Type const &t);
-
-template <typename Tensor2Type>
-void euclideanly_embedded_EigenMatrix_to (
-    Eigen::Matrix<typename Tensor2Type::Scalar,Tensor2Type::Factor1::DIM,Tensor2Type::Factor2::DIM,Eigen::RowMajor> const &m,
-    Tensor2Type &t);
- */
 template <typename Tensor2Type>
 void test_euclideanly_embedded_EigenMatrix_from_and_to (Context const &context)
 {
@@ -86,7 +76,7 @@ void test_euclideanly_embedded_EigenMatrix_from_and_to (Context const &context)
     Tenh::euclideanly_embedded_EigenMatrix_to(m, munged_t);
 
     Tenh::TypedIndex_t<Tensor2Type,'i'> i;
-    std::cerr << FORMAT_VALUE(t) << FORMAT_VALUE(munged_t) << '\n';
+//     std::cerr << FORMAT_VALUE(t) << FORMAT_VALUE(munged_t) << '\n';
     assert_leq((munged_t(i) - t(i)).squared_norm(), numeric_limits<AssociatedFloatingPointType>::epsilon());
 }
 

@@ -41,12 +41,10 @@ void e_inv_e_composition (Context const &context)
     Tenh::TypedIndex_t<V,'s'> s;
     Tenh::EuclideanEmbedding_t<V> e;
     Tenh::EuclideanEmbeddingInverse_t<V> e_inv;
-    Tenh::Tensor2Diagonal_t<V,V> identity_on_V(1); // TODO: could be a "constant tensor" (see various implementations of EuclideanEmbedding_t)
-    // should really be InnerProduct_t<V>, once InnerProduct_t is implemented as a bona-fide Tensor_i.
-//     Tenh::Tensor2Diagonal_t<typename V::WithStandardEuclideanBasis,
-//                             typename V::WithStandardEuclideanBasis> inner_product_on_V(1);
 
     // NOTE: the following comments contain an important case motivating compile error message improvement
+//     Tenh::Tensor2Diagonal_t<typename V::WithStandardEuclideanBasis,
+//                             typename V::WithStandardEuclideanBasis> inner_product_on_V(1);
 //     std::cerr << "\tEuclideanEmbeddingInverse - e_inv_e_composition<" << Tenh::TypeStringOf_t<V>::eval() << '\n';
 //     std::cerr << FORMAT_VALUE(e_inv(q|r)*e(r|s) - identity_on_V(q|s)) << '\n';
     // the following line produces THE worst compile error i have ever seen (over 20000 lines in GCC)
@@ -54,8 +52,20 @@ void e_inv_e_composition (Context const &context)
     // the following line compiles
 //     std::cerr << FORMAT_VALUE(e(p|q)*e_inv(q|r) - inner_product_on_V(p|r)) << '\n';
 
+    // should really be InnerProduct_t<V> directly, once InnerProduct_t is implemented as a bona-fide Tensor_i.
+    typedef Tenh::Tensor2Diagonal_t<V,V> D;
+    D inner_product_inverse_on_V(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    // manually populate the result tensor
+    Lvd::Meta::Assert<(D::Index::COMPONENT_COUNT == V::Index::COMPONENT_COUNT)>();
+    // NOTE: this is only the inverse if the inner product is diagonal (which it currently is)
+    for (typename D::Index i; i.is_not_at_end(); ++i)
+        inner_product_inverse_on_V[i] = Scalar(1) / Tenh::InnerProduct_t<V,typename V::Basis>::component(typename V::Index(i.value()));
+
+//     std::cerr << FORMAT_VALUE(e_inv(q|r)*e(r|s)) << '\n';
+//     std::cerr << FORMAT_VALUE(inner_product_inverse_on_V) << '\n';
     // NOTE: the squared norm maybe isn't the correct measurement of error, but screw it for now.
-    assert_leq((e_inv(q|r)*e(r|s) - identity_on_V(q|s)).squared_norm(), numeric_limits<AssociatedFloatingPointType>::epsilon());
+    assert_leq((e_inv(q|r)*e(r|s) - inner_product_inverse_on_V(q|s)).squared_norm(),
+               numeric_limits<AssociatedFloatingPointType>::epsilon());
 }
 
 // this ensures that EuclideanEmbeddingInverse_t<VectorType> is the actual inverse of EuclideanEmbedding_t<VectorType> (one composition)
@@ -72,15 +82,15 @@ void e_e_inv_composition (Context const &context)
     Tenh::TypedIndex_t<V,'s'> s;
     Tenh::EuclideanEmbedding_t<V> e;
     Tenh::EuclideanEmbeddingInverse_t<V> e_inv;
-    // should really be InnerProduct_t<V> directly, once InnerProduct_t is implemented as a bona-fide Tensor_i.
-    typedef Tenh::Tensor2Diagonal_t<typename V::WithStandardEuclideanBasis,typename V::WithStandardEuclideanBasis> D;
-    D inner_product_on_V(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
-    // manually populate the result tensor
-    Lvd::Meta::Assert<(D::Index::COMPONENT_COUNT == V::Index::COMPONENT_COUNT)>();
-    for (typename D::Index i; i.is_not_at_end(); ++i)
-        inner_product_on_V[i] = Tenh::InnerProduct_t<V,typename V::Basis>::component(typename V::Index(i.value()));
+    // TODO: could be a "constant tensor" (see various implementations of EuclideanEmbedding_t)
+    Tenh::Tensor2Diagonal_t<typename V::WithStandardEuclideanBasis,
+                            typename V::WithStandardEuclideanBasis> identity_on_V_WithStandardEuclideanBasis(1);
 
-    assert_leq((e(p|q)*e_inv(q|r) - inner_product_on_V(p|r)).squared_norm(), numeric_limits<AssociatedFloatingPointType>::epsilon());
+//     std::cerr << FORMAT_VALUE(e(p|q)*e_inv(q|r)) << '\n';
+//     std::cerr << FORMAT_VALUE(identity_on_V_WithStandardEuclideanBasis) << '\n';
+    // NOTE: the squared norm maybe isn't the correct measurement of error, but screw it for now.
+    assert_leq((e(p|q)*e_inv(q|r) - identity_on_V_WithStandardEuclideanBasis(p|r)).squared_norm(),
+               numeric_limits<AssociatedFloatingPointType>::epsilon());
 }
 
 template <typename VectorType>

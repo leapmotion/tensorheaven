@@ -4,17 +4,16 @@
 // ///////////////////////////////////////////////////////////////////////////
 
 #include <cassert>
+#include <cerrno>
 #include <csignal>
 #include <cstdlib>
 #include <cstring>
-#include <stdexcept>
-#include <cerrno>
 #include <execinfo.h>
+#include <iostream>
+#include <stdexcept>
 #include <sstream>
 #include <string>
 #include <unistd.h>
-
-#include <iostream> // TEMP HIPPO
 
 #include "lvd_callstack.hpp"
 
@@ -59,7 +58,7 @@ struct Addr2line
             // execute the child process
             execvp(argv[0], argv);
             // this should only happen if execv() fails
-            std::cerr << "execvp failed" << std::endl;
+            cerr << "execvp failed" << endl;
             exit(-1);
         }
         // TODO: have the parent actually check that the child execvp succeeded
@@ -100,7 +99,7 @@ struct Addr2line
 //         assert(first_newline != string::npos);
 //         string function_name(response.substr(0, first_newline));
 //         string file_location(response.substr(first_newline+1));
-// //         std::cerr << "\nHIPPO: file_location = \"" << file_location << "\" END HIPPO\n\n";
+// //         cerr << "\nHIPPO: file_location = \"" << file_location << "\" END HIPPO\n\n";
 //         assert(file_location.find_first_of("\n") == file_location.length()-1);
 //         file_location.resize(file_location.length()-1);
 //
@@ -144,7 +143,7 @@ private:
 };
 
 void PrintCallstack (
-    std::ostream &out,
+    ostream &out,
     char const *executable_filename,
     PathFormat path_format,
     unsigned int frame_skip_count)

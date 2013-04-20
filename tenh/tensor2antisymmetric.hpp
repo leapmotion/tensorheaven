@@ -286,7 +286,7 @@ struct EuclideanEmbedding_t<Tensor2Antisymmetric_t<TensorFactor1_,
         TypedIndex_t<Tensor2Antisymmetric,'q'> q;
         // TODO: the InnerProduct_t is providing a factor of 2, hence why we're providing
         // a factor of 1/sqrt(2) -- figure out how to use the default InnerProduct_t instead
-        return (Scalar(1)/Static<Scalar>::SQRT_TWO*(e1(i|j)*e2(k|l)).bundle(i|k,p).bundle(j|l,q))[m];
+        return (Static<Scalar>::SQRT_TWO/Scalar(2)*(e1(i|j)*e2(k|l)).bundle(i|k,p).bundle(j|l,q))[m];
     }
 
     // NOTE: these may be unnecessary/undesired, because this type does not represent a vector space
@@ -341,7 +341,7 @@ struct EuclideanEmbeddingInverse_t<Tensor2Antisymmetric_t<TensorFactor1_,
         TypedIndex_t<Tensor2Antisymmetric,'p'> p;
         TypedIndex_t<typename Tensor2Antisymmetric::WithStandardEuclideanBasis,'q'> q;
         // TODO: figure out real scalar factor
-        return (Static<Scalar>::SQRT_TWO*(e1_inv(i|j)*e2_inv(k|l)).bundle(i|k,p).bundle(j|l,q))[m];
+        return (Static<Scalar>::SQRT_TWO/Scalar(2)*(e1_inv(i|j)*e2_inv(k|l)).bundle(i|k,p).bundle(j|l,q))[m];
     }
 
     // NOTE: these may be unnecessary/undesired, because this type does not represent a vector space

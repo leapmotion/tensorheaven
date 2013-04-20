@@ -88,15 +88,15 @@ void randomize(Tensor2_t<Factor1, Factor2> & t, Uint32 maximum_rank)
 {
     maximum_rank = std::min(maximum_rank, std::min(Factor1::DIM, Factor2::DIM));
     typedef typename Factor1::Scalar Scalar;
-    
+
     t = Tensor2_t<Factor1, Factor2>(0);
-    
+
     Factor1 v(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
     Factor2 w(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
-    
+
     TypedIndex_t<Factor1,'i'> j;
     TypedIndex_t<Factor2,'j'> k;
-    
+
     for (int i = 0; i < maximum_rank; ++i)
     {
         randomize(v, static_cast<Scalar>(0), static_cast<Scalar>(sqrt(10)));
@@ -111,17 +111,17 @@ void randomize(Tensor2Antisymmetric_t<Factor> & s, Uint32 maximum_rank)
 {
     maximum_rank = std::min(maximum_rank, Factor::DIM);
     typedef typename Factor::Scalar Scalar;
-    
+
     Uint32 number_of_iterations = maximum_rank / 2;
     s = Tensor2Antisymmetric_t<Factor>(0);
-    
+
     Factor v(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
     Factor w(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
-    
+
     TypedIndex_t<Factor,'i'> j;
     TypedIndex_t<Factor,'j'> k;
     TypedIndex_t<Tensor2Antisymmetric_t<Factor>,'p'> p;
-    
+
     for (int i = 0; i < number_of_iterations; ++i)
     {
         randomize(v, static_cast<Scalar>(0), static_cast<Scalar>(sqrt(10)));
@@ -137,17 +137,17 @@ void randomize(Tensor2Symmetric_t<Factor> & s, Uint32 maximum_rank)
 {
     maximum_rank = std::min(maximum_rank, Factor::DIM);
     typedef typename Factor::Scalar Scalar;
-    
+
     s = Tensor2Symmetric_t<Factor>(0);
-    
+
     Factor v(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
     int sign;
     boost::random::uniform_int_distribution<int> dist(0, 1);
-    
+
     TypedIndex_t<Factor,'i'> j;
     TypedIndex_t<Factor,'j'> k;
     TypedIndex_t<Tensor2Symmetric_t<Factor>,'p'> p;
-    
+
     for (int i = 0; i < maximum_rank; ++i)
     {
         sign = dist(gen) ? 1 : -1;
