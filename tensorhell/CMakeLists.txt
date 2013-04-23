@@ -45,6 +45,14 @@ set(test_SRCS
     standard/test_interop_eigen_euclideanlyembedded6.cpp
     standard/test_interop_eigen_euclideanlyembedded7.cpp
     standard/test_interop_eigen_inversion.cpp
+    standard/test_interop_eigen_inversion0.cpp
+    standard/test_interop_eigen_inversion1.cpp
+    standard/test_interop_eigen_inversion2.cpp
+    standard/test_interop_eigen_inversion3.cpp
+    standard/test_interop_eigen_inversion4.cpp
+    standard/test_interop_eigen_inversion5.cpp
+    standard/test_interop_eigen_inversion6.cpp
+    standard/test_interop_eigen_inversion7.cpp
     standard/test_list.cpp
     standard/test_tensor2.cpp
     standard/test_tensor2diagonal.cpp
