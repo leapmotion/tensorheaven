@@ -8,7 +8,8 @@
 #include "test_array.hpp"
 #include "test_euclideanembedding.hpp"
 #include "test_euclideanembeddinginverse.hpp"
-#include "test_interop_eigen.hpp"
+#include "test_interop_eigen_euclideanlyembedded.hpp"
+#include "test_interop_eigen_inversion.hpp"
 #include "test_list.hpp"
 #include "test_typelist.hpp"
 #include "test_vector.hpp"
@@ -32,7 +33,11 @@ int main (int argc, char **argv, char **envp)
     Test::EuclideanEmbedding::AddTests(&root);
     Test::EuclideanEmbeddingInverse::AddTests(&root);
     Test::ExpressionTemplates::AddTests(&root);
-    Test::InteropEigen::AddTests(&root);
+    {
+        Directory *interop_eigen = new Directory("interop_eigen", &root);
+        Test::InteropEigen::EuclideanlyEmbedded::AddTests(interop_eigen);
+        Test::InteropEigen::Inversion::AddTests(interop_eigen);
+    }
     Test::List::AddTests(&root);
     Test::TypeList::AddTests(&root);
     Test::Vector::AddTests(&root);

@@ -35,7 +35,16 @@ set(test_SRCS
     standard/test_euclideanembedding.cpp
     standard/test_euclideanembeddinginverse.cpp
     standard/test_expressiontemplates.cpp
-    standard/test_interop_eigen.cpp
+    standard/test_interop_eigen_euclideanlyembedded.cpp
+    standard/test_interop_eigen_euclideanlyembedded0.cpp
+    standard/test_interop_eigen_euclideanlyembedded1.cpp
+    standard/test_interop_eigen_euclideanlyembedded2.cpp
+    standard/test_interop_eigen_euclideanlyembedded3.cpp
+    standard/test_interop_eigen_euclideanlyembedded4.cpp
+    standard/test_interop_eigen_euclideanlyembedded5.cpp
+    standard/test_interop_eigen_euclideanlyembedded6.cpp
+    standard/test_interop_eigen_euclideanlyembedded7.cpp
+    standard/test_interop_eigen_inversion.cpp
     standard/test_list.cpp
     standard/test_tensor2.cpp
     standard/test_tensor2diagonal.cpp
