@@ -87,6 +87,21 @@ x stub-out: noalias (?) for situations like a(i) = a(i) + b(i), but also to avoi
   * non-self-adjoint eigensolve
   * LU
 
+basis considerations for strongly typed vector edition:
+- several choices for bases on induced tensor products exist
+  * "normalized" where square roots of multiplicities occur in both vector space and dual
+    which is a "safe" compromise in the sense that it is uniform between vector space and dual
+    but has the lowest component-to-actual-memory-location correspondence
+  * "dual of induced basis", where the dual space incorporates the multiplicities
+    which has an intermediate level of component-to-actual-memory-location correspondence
+    but natural pairings never involve multiplicities
+  * "induced of dual basis", where the dual space doesn't incorporate multiplicities
+    which (probably) has the highest component-to-actual-memory-location correspondence
+    but natural pairings involve the multiplicities
+- the choice of basis will depend on the particular problem being addressed
+  * some problems are contraction heavy, in which case "dual of induced basis" could be a good choice
+  * some problems are split/bundle heavy, in which case the "induced of dual basis" could be a good choice
+
 implemented features/items:
 x operator overloads for expression templates
 x trace-type expression templates (where a tensor is contracted with itself, a case which is distinct from * style expression templates)
