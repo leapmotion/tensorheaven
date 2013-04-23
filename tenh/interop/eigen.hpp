@@ -83,7 +83,7 @@ void euclideanly_embedded_EigenMatrix_to (
 //
 //   identity_on_V(i|l).
 //
-// Similarly, 
+// Similarly,
 //
 //   t_inverse(k|l) * squared_inverse_inner_product_on_V(l|i) * t(i|j)
 //

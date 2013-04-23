@@ -210,35 +210,35 @@ void AddTests (Directory *parent)
     Directory *interop_eigen = new Directory("interop_eigen", parent);
 
     {
-//         Directory *euclidean_embedding = new Directory("euclideanly_embedded_EigenMatrix_from_and_to", interop_eigen);
+        Directory *euclidean_embedding = new Directory("euclideanly_embedded_EigenMatrix_from_and_to", interop_eigen);
 
-//         add_embedding_tests_1<float,2>(euclidean_embedding);
-//         add_embedding_tests_1<float,3>(euclidean_embedding);
-//         add_embedding_tests_1<float,4>(euclidean_embedding);
-//
-//         add_embedding_tests_1<double,2>(euclidean_embedding);
-//         add_embedding_tests_1<double,3>(euclidean_embedding);
-//         add_embedding_tests_1<double,4>(euclidean_embedding);
-//
-//         add_embedding_tests_2<float,1,1>(euclidean_embedding);
-//         add_embedding_tests_2<float,1,3>(euclidean_embedding);
-//         add_embedding_tests_2<float,1,4>(euclidean_embedding);
-//     //     add_embedding_tests_2<float,3,1>(euclidean_embedding); // this causes a static assert in Eigen
-//         add_embedding_tests_2<float,3,3>(euclidean_embedding);
-//         add_embedding_tests_2<float,3,4>(euclidean_embedding);
-//     //     add_embedding_tests_2<float,4,1>(euclidean_embedding); // this causes a static assert in Eigen
-//         add_embedding_tests_2<float,4,3>(euclidean_embedding);
-//         add_embedding_tests_2<float,4,4>(euclidean_embedding);
-//
-//         add_embedding_tests_2<double,1,1>(euclidean_embedding);
-//         add_embedding_tests_2<double,1,3>(euclidean_embedding);
-//         add_embedding_tests_2<double,1,4>(euclidean_embedding);
-//     //     add_embedding_tests_2<double,3,1>(euclidean_embedding); // this causes a static assert in Eigen
-//         add_embedding_tests_2<double,3,3>(euclidean_embedding);
-//         add_embedding_tests_2<double,3,4>(euclidean_embedding);
-//     //     add_embedding_tests_2<double,4,1>(euclidean_embedding); // this causes a static assert in Eigen
-//         add_embedding_tests_2<double,4,3>(euclidean_embedding);
-//         add_embedding_tests_2<double,4,4>(euclidean_embedding);
+        add_embedding_tests_1<float,2>(euclidean_embedding);
+        add_embedding_tests_1<float,3>(euclidean_embedding);
+        add_embedding_tests_1<float,4>(euclidean_embedding);
+
+        add_embedding_tests_1<double,2>(euclidean_embedding);
+        add_embedding_tests_1<double,3>(euclidean_embedding);
+        add_embedding_tests_1<double,4>(euclidean_embedding);
+
+        add_embedding_tests_2<float,1,1>(euclidean_embedding);
+        add_embedding_tests_2<float,1,3>(euclidean_embedding);
+        add_embedding_tests_2<float,1,4>(euclidean_embedding);
+    //     add_embedding_tests_2<float,3,1>(euclidean_embedding); // this causes a static assert in Eigen
+        add_embedding_tests_2<float,3,3>(euclidean_embedding);
+        add_embedding_tests_2<float,3,4>(euclidean_embedding);
+    //     add_embedding_tests_2<float,4,1>(euclidean_embedding); // this causes a static assert in Eigen
+        add_embedding_tests_2<float,4,3>(euclidean_embedding);
+        add_embedding_tests_2<float,4,4>(euclidean_embedding);
+
+        add_embedding_tests_2<double,1,1>(euclidean_embedding);
+        add_embedding_tests_2<double,1,3>(euclidean_embedding);
+        add_embedding_tests_2<double,1,4>(euclidean_embedding);
+    //     add_embedding_tests_2<double,3,1>(euclidean_embedding); // this causes a static assert in Eigen
+        add_embedding_tests_2<double,3,3>(euclidean_embedding);
+        add_embedding_tests_2<double,3,4>(euclidean_embedding);
+    //     add_embedding_tests_2<double,4,1>(euclidean_embedding); // this causes a static assert in Eigen
+        add_embedding_tests_2<double,4,3>(euclidean_embedding);
+        add_embedding_tests_2<double,4,4>(euclidean_embedding);
     }
 
     {
@@ -248,9 +248,9 @@ void AddTests (Directory *parent)
         add_inversion_tests_1<float,3>(inversion);
         add_inversion_tests_1<float,4>(inversion);
 
-//         add_inversion_tests_1<double,2>(inversion);
-//         add_inversion_tests_1<double,3>(inversion);
-//         add_inversion_tests_1<double,4>(inversion);
+        add_inversion_tests_1<double,2>(inversion);
+        add_inversion_tests_1<double,3>(inversion);
+        add_inversion_tests_1<double,4>(inversion);
 
         // add tests for factors having matching dimensions
         typedef Tenh::Vector_t<float,1> Float1;          // dim = 1
@@ -274,7 +274,7 @@ void AddTests (Directory *parent)
         typedef Tenh::Tensor2Symmetric_t<Float2> S2;     // dim = 3
         typedef Tenh::Tensor2Symmetric_t<Float3> S3;     // dim = 6
         typedef Tenh::Tensor2Symmetric_t<Float4> S4;     // dim = 10
-/*
+
         // dim = 1
         add_inversion_test_2<Float1,Float1x1>(inversion);
         add_inversion_test_2<Float1,A2>(inversion);
@@ -291,16 +291,12 @@ void AddTests (Directory *parent)
         // dim = 3
         add_inversion_test_2<Float3,Float1x3>(inversion);
         add_inversion_test_2<Float3,Float3x1>(inversion);
-        */
         add_inversion_test_2<Float3,A3>(inversion);
         add_inversion_test_2<Float3,S2>(inversion);
-        /*
         add_inversion_test_2<Float1x3,Float3x1>(inversion);
         add_inversion_test_2<Float1x3,A3>(inversion);
         add_inversion_test_2<Float1x3,S2>(inversion);
-        */
         add_inversion_test_2<A3,S2>(inversion);
-        /*
 
         // dim = 6
         add_inversion_test_2<Float2x3,Float3x2>(inversion);
@@ -314,7 +310,6 @@ void AddTests (Directory *parent)
         add_inversion_test_2<Float2x5,A5>(inversion);
         add_inversion_test_2<Float2x5,S4>(inversion);
         add_inversion_test_2<A5,S4>(inversion);
-        */
     }
 }
 

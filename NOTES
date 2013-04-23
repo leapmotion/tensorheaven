@@ -73,6 +73,10 @@ random TODOs:
 - make various tensor types check the IS_XYZ values for their template parameters
 - see if some sort of static_cast can be used to detect if a type inherts a class, and use this to replace
   IS_EXPRESSION_TEMPLATE, IS_TENSOR2_T, etc.  Or failing that, use some template metafunction for this.
+- in relaxing the C++-driven type checking in preference to static-assert-driven type checking, could make all
+  indices used in indexed expressions "weakly typed", except for bundled indices (e.g. the index p in
+  t(i|j).bundle(i|j,p) -- it is necessary to know the type of p for this to be a well-defined bundle).  all
+  other index types can be inferred from their use in the expression.
 
 features necessary for version 0.5:
 x euclidean embedding (using short-term zero-dimensional hack (?))
