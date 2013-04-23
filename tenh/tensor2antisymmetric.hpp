@@ -221,6 +221,9 @@ private:
     }
 
     friend struct InnerProduct_t<Tensor2Antisymmetric_t,Basis>;
+
+    // this has no definition, and is designed to generate a compiler error if used (use the one accepting WithoutInitialization instead).
+    Tensor2Antisymmetric_t ();
 };
 
 // template specialization for the inner product in this particular coordinatization of Tensor2Antisymmetric_t

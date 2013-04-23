@@ -55,6 +55,11 @@ struct Array_t
 protected:
 
     Component m_component[DIM];
+
+private:
+
+    // this has no definition, and is designed to generate a compiler error if used (use the one accepting WithoutInitialization instead).
+    Array_t ();
 };
 
 } // end of namespace Tenh

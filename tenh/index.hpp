@@ -84,7 +84,7 @@ struct TypedIndex_t : public Index_t<Owner_>
     static char const SYMBOL = SYMBOL_;
     using Parent::COMPONENT_COUNT;
 
-    TypedIndex_t () { }
+    TypedIndex_t () : Parent() { }
     explicit TypedIndex_t (Uint32 i, bool check_range = CHECK_RANGE) : Parent(i, check_range) { }
     TypedIndex_t (Parent const &i) : Parent(i) { }
     TypedIndex_t (TypedIndex_t const &i) : Parent(i) { }

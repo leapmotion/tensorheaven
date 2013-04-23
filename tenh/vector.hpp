@@ -57,6 +57,11 @@ struct Vector_t
 
         return "Vector_t<" + TypeStringOf_t<Scalar>::eval() + ',' + AS_STRING(DIM) + basis_string + derived_string + '>';
     }
+
+private:
+
+    // this has no definition, and is designed to generate a compiler error if used (use the one accepting WithoutInitialization instead).
+    Vector_t ();
 };
 
 // NOTE: while this is a tensor, it isn't a tensor space, and so it technically shouldn't be used as a factor
