@@ -132,40 +132,40 @@ void test_invert_tensor2 (Context const &context)
     InverseTensor2Type t_inverse(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
     randomize(t); // will be invertible with full measure
     Tenh::invert_tensor2(t, t_inverse);
-//     std::cerr << FORMAT_VALUE(t) << '\n';
-//     std::cerr << FORMAT_VALUE(t_inverse) << '\n';
     Tenh::TypedIndex_t<Factor1,'i'> i;
     Tenh::TypedIndex_t<Factor1,'j'> j;
     Tenh::TypedIndex_t<Factor2,'k'> k;
     Tenh::TypedIndex_t<Factor2,'l'> l;
-//     std::cerr << FORMAT_VALUE(t(i|k)*t_inverse(k|j)) << '\n';
 
     Tenh::Tensor2Diagonal_t<Factor1,Factor1> identity_on_Factor1(1);
+    Tenh::Tensor2Diagonal_t<Factor2,Factor2> identity_on_Factor2(1);
     typedef Tenh::Tensor2Diagonal_t<Factor1,Factor1> D1;
     typedef Tenh::Tensor2Diagonal_t<Factor2,Factor2> D2;
-    D1 inner_product_inverse_on_Factor1(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
-    D2 inner_product_inverse_on_Factor2(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    D1 inner_product_inverse_squared_on_Factor1(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    D2 inner_product_inverse_squared_on_Factor2(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
     // manually populate the result tensor
     Lvd::Meta::Assert<(D1::Index::COMPONENT_COUNT == Factor1::Index::COMPONENT_COUNT)>();
     Lvd::Meta::Assert<(D2::Index::COMPONENT_COUNT == Factor2::Index::COMPONENT_COUNT)>();
     // NOTE: this is only the inverse if the inner product is diagonal (which it currently is)
     for (typename D1::Index i; i.is_not_at_end(); ++i)
-        inner_product_inverse_on_Factor1[i] =
+    {
+        inner_product_inverse_squared_on_Factor1[i] =
             Scalar(1) /
-            Tenh::InnerProduct_t<Factor1,typename Factor1::Basis>::component(typename Factor1::Index(i.value()));
+            Tenh::sqr(Tenh::InnerProduct_t<Factor1,typename Factor1::Basis>::component(typename Factor1::Index(i.value())));
+    }
     for (typename D2::Index i; i.is_not_at_end(); ++i)
-        inner_product_inverse_on_Factor2[i] =
+    {
+        inner_product_inverse_squared_on_Factor2[i] =
             Scalar(1) /
-            Tenh::InnerProduct_t<Factor2,typename Factor2::Basis>::component(typename Factor2::Index(i.value()));
+            Tenh::sqr(Tenh::InnerProduct_t<Factor2,typename Factor2::Basis>::component(typename Factor2::Index(i.value())));
+    }
 
-    std::cerr << FORMAT_VALUE(t(i|k)*t_inverse(k|j)) << '\n';
-    std::cerr << FORMAT_VALUE(inner_product_inverse_on_Factor1(i|j)) << '\n';
-    std::cerr << FORMAT_VALUE((t(i|k)*t_inverse(k|j) - inner_product_inverse_on_Factor1(i|j)).squared_norm()) << '\n' << '\n';
-    std::cerr << FORMAT_VALUE(t_inverse(k|i)*t(i|l)) << '\n';
-    std::cerr << FORMAT_VALUE(inner_product_inverse_on_Factor2(k|l)) << '\n';
-    std::cerr << FORMAT_VALUE((t_inverse(k|i)*t(i|l) - inner_product_inverse_on_Factor2(k|l)).squared_norm()) << '\n';
-//     assert_leq((t(i|k)*t_inverse(k|j) - inner_product_inverse_on_Factor1(i|j)).squared_norm(), numeric_limits<AssociatedFloatingPointType>::epsilon());
-//     assert_leq((t_inverse(k|i)*t(i|l) - inner_product_inverse_on_Factor2(k|l)).squared_norm(), numeric_limits<AssociatedFloatingPointType>::epsilon());
+//     std::cerr << FORMAT_VALUE(t(i|k)*inner_product_inverse_squared_on_Factor2(k|l)*t_inverse(l|j)) << '\n';
+//     std::cerr << FORMAT_VALUE((t(i|k)*inner_product_inverse_squared_on_Factor2(k|l)*t_inverse(l|j) - identity_on_Factor1(i|j)).squared_norm()) << '\n' << '\n';
+//     std::cerr << FORMAT_VALUE(t_inverse(k|i)*inner_product_inverse_squared_on_Factor1(i|j)*t(j|l)) << '\n';
+//     std::cerr << FORMAT_VALUE((t_inverse(k|i)*inner_product_inverse_squared_on_Factor1(i|j)*t(j|l) - identity_on_Factor2(k|l)).squared_norm()) << '\n';
+    assert_leq((t(i|k)*inner_product_inverse_squared_on_Factor2(k|l)*t_inverse(l|j) - identity_on_Factor1(i|j)).squared_norm(), numeric_limits<AssociatedFloatingPointType>::epsilon());
+    assert_leq((t_inverse(k|i)*inner_product_inverse_squared_on_Factor1(i|j)*t(j|l) - identity_on_Factor2(k|l)).squared_norm(), numeric_limits<AssociatedFloatingPointType>::epsilon());
 }
 
 template <typename Tensor2Type, typename InverseTensor2Type>
@@ -251,65 +251,70 @@ void AddTests (Directory *parent)
 //         add_inversion_tests_1<double,2>(inversion);
 //         add_inversion_tests_1<double,3>(inversion);
 //         add_inversion_tests_1<double,4>(inversion);
-//
-//         // add tests for factors having matching dimensions
-//         typedef Tenh::Vector_t<float,1> Float1;          // dim = 1
-//         typedef Tenh::Vector_t<float,2> Float2;          // dim = 2
-//         typedef Tenh::Vector_t<float,3> Float3;          // dim = 3
-//         typedef Tenh::Vector_t<float,4> Float4;          // dim = 4
-//         typedef Tenh::Vector_t<float,5> Float5;          // dim = 5
-//         typedef Tenh::Tensor2_t<Float1,Float1> Float1x1; // dim = 1
-//         typedef Tenh::Tensor2_t<Float1,Float2> Float1x2; // dim = 2
-//         typedef Tenh::Tensor2_t<Float1,Float3> Float1x3; // dim = 3
-//         typedef Tenh::Tensor2_t<Float2,Float1> Float2x1; // dim = 2
-//         typedef Tenh::Tensor2_t<Float2,Float3> Float2x3; // dim = 6
-//         typedef Tenh::Tensor2_t<Float2,Float5> Float2x5; // dim = 10
-//         typedef Tenh::Tensor2_t<Float3,Float1> Float3x1; // dim = 3
-//         typedef Tenh::Tensor2_t<Float3,Float2> Float3x2; // dim = 6
-//         typedef Tenh::Tensor2Antisymmetric_t<Float2> A2; // dim = 1
-//         typedef Tenh::Tensor2Antisymmetric_t<Float3> A3; // dim = 3
-//         typedef Tenh::Tensor2Antisymmetric_t<Float4> A4; // dim = 6
-//         typedef Tenh::Tensor2Antisymmetric_t<Float5> A5; // dim = 10
-//         typedef Tenh::Tensor2Symmetric_t<Float1> S1; // dim = 1
-//         typedef Tenh::Tensor2Symmetric_t<Float2> S2; // dim = 3
-//         typedef Tenh::Tensor2Symmetric_t<Float3> S3; // dim = 6
-//         typedef Tenh::Tensor2Symmetric_t<Float4> S4; // dim = 10
-//
-//         // dim = 1
-//         add_inversion_test_2<Float1,Float1x1>(inversion);
-//         add_inversion_test_2<Float1,A2>(inversion);
-//         add_inversion_test_2<Float1,S1>(inversion);
-//         add_inversion_test_2<Float1x1,A2>(inversion);
-//         add_inversion_test_2<Float1x1,S1>(inversion);
-//         add_inversion_test_2<A2,S1>(inversion);
-//
-//         // dim = 2
-//         add_inversion_test_2<Float2,Float1x2>(inversion);
-//         add_inversion_test_2<Float2,Float2x1>(inversion);
-//         add_inversion_test_2<Float1x2,Float2x1>(inversion);
-//
-//         // dim = 3
-//         add_inversion_test_2<Float3,Float1x3>(inversion);
-//         add_inversion_test_2<Float3,Float3x1>(inversion);
-//         add_inversion_test_2<Float3,A3>(inversion);
-//         add_inversion_test_2<Float3,S2>(inversion);
-//         add_inversion_test_2<Float1x3,Float3x1>(inversion);
-//         add_inversion_test_2<Float1x3,A3>(inversion);
-//         add_inversion_test_2<Float1x3,S2>(inversion);
-//         add_inversion_test_2<A3,S2>(inversion);
-//
-//         // dim = 6
-//         add_inversion_test_2<Float2x3,Float3x2>(inversion);
-//         add_inversion_test_2<Float2x3,A4>(inversion);
-//         add_inversion_test_2<Float2x3,S3>(inversion);
-//         add_inversion_test_2<Float3x2,A4>(inversion);
-//         add_inversion_test_2<Float3x2,S3>(inversion);
-//         add_inversion_test_2<A4,S3>(inversion);
-//
-//         // dim = 10
-//         add_inversion_test_2<Float2x5,A5>(inversion);
-//         add_inversion_test_2<Float2x5,S4>(inversion);
-//         add_inversion_test_2<A5,S4>(inversion);
+
+        // add tests for factors having matching dimensions
+        typedef Tenh::Vector_t<float,1> Float1;          // dim = 1
+        typedef Tenh::Vector_t<float,2> Float2;          // dim = 2
+        typedef Tenh::Vector_t<float,3> Float3;          // dim = 3
+        typedef Tenh::Vector_t<float,4> Float4;          // dim = 4
+        typedef Tenh::Vector_t<float,5> Float5;          // dim = 5
+        typedef Tenh::Tensor2_t<Float1,Float1> Float1x1; // dim = 1
+        typedef Tenh::Tensor2_t<Float1,Float2> Float1x2; // dim = 2
+        typedef Tenh::Tensor2_t<Float1,Float3> Float1x3; // dim = 3
+        typedef Tenh::Tensor2_t<Float2,Float1> Float2x1; // dim = 2
+        typedef Tenh::Tensor2_t<Float2,Float3> Float2x3; // dim = 6
+        typedef Tenh::Tensor2_t<Float2,Float5> Float2x5; // dim = 10
+        typedef Tenh::Tensor2_t<Float3,Float1> Float3x1; // dim = 3
+        typedef Tenh::Tensor2_t<Float3,Float2> Float3x2; // dim = 6
+        typedef Tenh::Tensor2Antisymmetric_t<Float2> A2; // dim = 1
+        typedef Tenh::Tensor2Antisymmetric_t<Float3> A3; // dim = 3
+        typedef Tenh::Tensor2Antisymmetric_t<Float4> A4; // dim = 6
+        typedef Tenh::Tensor2Antisymmetric_t<Float5> A5; // dim = 10
+        typedef Tenh::Tensor2Symmetric_t<Float1> S1;     // dim = 1
+        typedef Tenh::Tensor2Symmetric_t<Float2> S2;     // dim = 3
+        typedef Tenh::Tensor2Symmetric_t<Float3> S3;     // dim = 6
+        typedef Tenh::Tensor2Symmetric_t<Float4> S4;     // dim = 10
+/*
+        // dim = 1
+        add_inversion_test_2<Float1,Float1x1>(inversion);
+        add_inversion_test_2<Float1,A2>(inversion);
+        add_inversion_test_2<Float1,S1>(inversion);
+        add_inversion_test_2<Float1x1,A2>(inversion);
+        add_inversion_test_2<Float1x1,S1>(inversion);
+        add_inversion_test_2<A2,S1>(inversion);
+
+        // dim = 2
+        add_inversion_test_2<Float2,Float1x2>(inversion);
+        add_inversion_test_2<Float2,Float2x1>(inversion);
+        add_inversion_test_2<Float1x2,Float2x1>(inversion);
+
+        // dim = 3
+        add_inversion_test_2<Float3,Float1x3>(inversion);
+        add_inversion_test_2<Float3,Float3x1>(inversion);
+        */
+        add_inversion_test_2<Float3,A3>(inversion);
+        add_inversion_test_2<Float3,S2>(inversion);
+        /*
+        add_inversion_test_2<Float1x3,Float3x1>(inversion);
+        add_inversion_test_2<Float1x3,A3>(inversion);
+        add_inversion_test_2<Float1x3,S2>(inversion);
+        */
+        add_inversion_test_2<A3,S2>(inversion);
+        /*
+
+        // dim = 6
+        add_inversion_test_2<Float2x3,Float3x2>(inversion);
+        add_inversion_test_2<Float2x3,A4>(inversion);
+        add_inversion_test_2<Float2x3,S3>(inversion);
+        add_inversion_test_2<Float3x2,A4>(inversion);
+        add_inversion_test_2<Float3x2,S3>(inversion);
+        add_inversion_test_2<A4,S3>(inversion);
+
+        // dim = 10
+        add_inversion_test_2<Float2x5,A5>(inversion);
+        add_inversion_test_2<Float2x5,S4>(inversion);
+        add_inversion_test_2<A5,S4>(inversion);
+        */
     }
 }
 
