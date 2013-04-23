@@ -89,6 +89,9 @@ struct Tensor_i : public Vector_i<Derived_,typename FactorTypeList_::HeadType::S
 
     // TODO: could put canonical as_factorX conversions here
 
+    static Uint32 degree () { return DEGREE; }
+
+    using Parent_Vector_i::dim;
     using Parent_Vector_i::as_derived;
     using Parent_Vector_i::operator[];
     Scalar operator [] (MultiIndex const &m) const { return as_derived().Derived::operator[](m); }

@@ -5,7 +5,6 @@
 
 #include "test_euclideanembedding.hpp"
 
-#include <iostream> // TEMP
 #include <string>
 
 #include "tenh/euclideanembedding.hpp"

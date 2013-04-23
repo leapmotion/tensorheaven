@@ -39,6 +39,8 @@ struct Vector_i
     typedef MultiIndex_t<TypeList_t<Index> > MultiIndex;
     static bool const IS_VECTOR_I = true;
 
+    static Uint32 dim () { return DIM; }
+
     // TODO: only allow when Basis = Unit (or generic) once strongly-typed vectors are implemented
     // type conversion operator for canonical coercion to Scalar type when the vector is 1-dimensional
     operator Scalar const & () const

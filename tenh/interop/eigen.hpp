@@ -11,6 +11,7 @@
 #include "tenh/tensor2.hpp"
 
 #include "Eigen/Core"
+#include "Eigen/LU"
 
 namespace Tenh {
 
@@ -71,13 +72,72 @@ void euclideanly_embedded_EigenMatrix_to (
 }
 
 // NOTE: this assumes that the inverse is the same type as the input
-template <typename Tensor2Type>
-void invert_tensor2 (Tensor2Type const &t, Tensor2Type const &t_inverse)
+template <typename Tensor2Type, typename InverseTensor2Type>
+void invert_tensor2 (Tensor2Type const &t, InverseTensor2Type &t_inverse)
 {
     STATIC_ASSERT(Tensor2Type::Factor1::DIM == Tensor2Type::Factor2::DIM, FACTOR_DIMENSIONS_MUST_BE_EQUAL);
-    Eigen::Matrix<typename Tensor2Type::Scalar,Tensor2Type::Factor1::DIM,Tensor2Type::Factor2::DIM,Eigen::RowMajor>
-        m(euclideanly_embedded_EigenMatrix_from(t).inverse());
-    euclideanly_embedded_EigenMatrix_to(m, t_inverse);
+    // the factors of InverseTensor2Type must be the reverse of those of Tensor2Type
+    STATIC_ASSERT((Lvd::Meta::TypesAreEqual<typename Tensor2Type::Factor1,typename InverseTensor2Type::Factor2>::v),
+                  FACTOR_TYPE_ERROR_ON_INVERSE_TENSOR_TYPE);
+    STATIC_ASSERT((Lvd::Meta::TypesAreEqual<typename Tensor2Type::Factor2,typename InverseTensor2Type::Factor1>::v),
+                  FACTOR_TYPE_ERROR_ON_INVERSE_TENSOR_TYPE);
+//     Eigen::Matrix<typename Tensor2Type::Scalar,Tensor2Type::Factor1::DIM,Tensor2Type::Factor2::DIM,Eigen::RowMajor>
+//         m(euclideanly_embedded_EigenMatrix_from(t).inverse());
+//     euclideanly_embedded_EigenMatrix_to(m, t_inverse);
+    typedef typename Tensor2Type::Scalar Scalar;
+    typedef typename Tensor2Type::Factor1 Factor1;
+    typedef typename Tensor2Type::Factor2 Factor2;
+    typedef Tensor2_t<Factor1,Factor2> T;
+    typedef Tensor2_t<Factor2,Factor1> T_inv;
+    T blown_up_t(Static<WithoutInitialization>::SINGLETON);
+    TypedIndex_t<Factor1,'i'> i;
+    TypedIndex_t<Factor2,'j'> j;
+    TypedIndex_t<Factor2,'k'> k;
+
+    typedef Tenh::Tensor2Diagonal_t<Factor2,Factor2> D2;
+    D2 inner_product_on_Factor2(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    D2 inner_product_inverse_squared_on_Factor2(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    // manually populate the result tensor
+    Lvd::Meta::Assert<(D2::Index::COMPONENT_COUNT == Factor2::Index::COMPONENT_COUNT)>();
+    // NOTE: this is only the inverse if the inner product is diagonal (which it currently is)
+    for (typename D2::Index i; i.is_not_at_end(); ++i)
+    {
+        inner_product_on_Factor2[i] =
+            Tenh::InnerProduct_t<Factor2,typename Factor2::Basis>::component(typename Factor2::Index(i.value()));
+        inner_product_inverse_squared_on_Factor2[i] =
+            Scalar(1) /
+            sqr(Tenh::InnerProduct_t<Factor2,typename Factor2::Basis>::component(typename Factor2::Index(i.value())));
+    }
+
+    std::cerr << FORMAT_VALUE(t) << '\n';
+    blown_up_t(i|j).no_alias() = t(i|j);//*inner_product_inverse_squared_on_Factor2(j|k); // blow up into full tensor on correct basis
+    std::cerr << FORMAT_VALUE(blown_up_t) << '\n';
+    typedef Eigen::Matrix<typename Tensor2Type::Scalar,Tensor2Type::Factor1::DIM,Tensor2Type::Factor2::DIM,Eigen::RowMajor> EigenMatrix;
+    EigenMatrix blown_up_t_as_EigenMatrix(EigenMap_of_Tensor2(blown_up_t));
+    std::cerr << FORMAT_VALUE(blown_up_t_as_EigenMatrix.determinant()) << '\n';
+    typedef Eigen::Matrix<typename Tensor2Type::Scalar,Tensor2Type::Factor2::DIM,Tensor2Type::Factor1::DIM,Eigen::RowMajor> EigenMatrixInverse;
+    EigenMatrixInverse blown_up_t_inv(blown_up_t_as_EigenMatrix.inverse());
+    std::cerr << FORMAT_VALUE(blown_up_t_inv) << '\n';
+    std::cerr << "Eigen's product:\n" << (blown_up_t_as_EigenMatrix * blown_up_t_inv) << '\n';
+//     T_inv &temp = *reinterpret_cast<T_inv *>(&blown_up_t_inv(0,0));
+    T_inv temp(Static<WithoutInitialization>::SINGLETON);
+    memcpy(temp.data_pointer(), &blown_up_t_inv(0,0), temp.data_size_in_bytes());
+    std::cerr << FORMAT_VALUE(temp) << '\n';
+    TypedIndex_t<InverseTensor2Type,'p'> p;
+    std::cerr << FORMAT_VALUE(temp(i|j)*inner_product_inverse_squared_on_Factor2(j|k)) << '\n';
+    t_inverse(p).no_alias() = (temp(i|j)*inner_product_inverse_squared_on_Factor2(j|k)).bundle(i|k,p);
+
+//     typedef Eigen::Matrix<typename Tensor2Type::Scalar,Tensor2Type::Factor1::DIM,Tensor2Type::Factor2::DIM,Eigen::RowMajor> EigenMatrix;
+//     EigenMatrix a = EigenMap_of_Tensor2(t);
+//     std::cerr << FORMAT_VALUE(a.determinant()) << '\n';
+//     EigenMatrix b(a.inverse());
+//     // TEMP HIPPO
+//     typedef Tensor2_t<Factor1,Factor2> T;
+//     T &temp = *reinterpret_cast<T *>(&b(0,0));
+//     TypedIndex_t<Factor1,'i'> i;
+//     TypedIndex_t<Factor2,'j'> j;
+//     TypedIndex_t<InverseTensor2Type,'p'> p;
+//     t_inverse(p).no_alias() = temp(i|j).bundle(i|j,p);
 }
 
 } // end of namespace Tenh

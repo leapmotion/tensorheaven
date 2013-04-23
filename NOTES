@@ -73,6 +73,7 @@ random TODOs:
 - make various tensor types check the IS_XYZ values for their template parameters
 - see if some sort of static_cast can be used to detect if a type inherts a class, and use this to replace
   IS_EXPRESSION_TEMPLATE, IS_TENSOR2_T, etc.  Or failing that, use some template metafunction for this.
+- make a STATIC_ASSERT_TYPES_ARE_EQUAL for convenience
 
 features necessary for version 0.5:
 x euclidean embedding (using short-term zero-dimensional hack (?))
@@ -178,3 +179,12 @@ categorical/conceptual design ideas
 - Tensor_t<Scalar,TensorProductAndBases>
   * actual implementation of a strongly typed tensor (no default values, as that wouldn't make sense)
 
+Notes/Reflections on the development of a really really template-heavy library
+- Trying to have the compiler enforce the conceptual type system through the C++ type system
+  is untenable, as it is too strict and the compile errors it produces are unreadable.
+  * A good trick is to write template metafunctions with less constraint and then use static
+    asserts to enforce the conceptual type system.  Ted calls this a "honey bucket" for the compiler.
+    For example, to enforce that only up/down index pairs can be contracted in a tensor expression,
+    write the C++ template code to allow any pairs of indices to be contracted, and then use a
+    static assert to enforce the up/down pairing, thereby controlling the situation when there
+    is an index mismatch.  The error message produced is then readable and meaningful.
