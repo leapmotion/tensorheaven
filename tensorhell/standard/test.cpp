@@ -10,6 +10,7 @@
 #include "test_euclideanembeddinginverse.hpp"
 #include "test_interop_eigen_euclideanlyembedded.hpp"
 #include "test_interop_eigen_inversion.hpp"
+#include "test_interop_eigen_ldlt.hpp"
 #include "test_list.hpp"
 #include "test_typelist.hpp"
 #include "test_vector.hpp"
@@ -30,6 +31,7 @@ int main (int argc, char **argv, char **envp)
     Directory root;
 
     Test::Array::AddTests(&root);
+    Test::EigenLDLT::AddTests(&root);
     Test::EuclideanEmbedding::AddTests(&root);
     Test::EuclideanEmbeddingInverse::AddTests(&root);
     Test::ExpressionTemplates::AddTests(&root);

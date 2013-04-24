@@ -54,6 +54,45 @@ void LDLT_Tensor2Symmetric (Tensor2Symmetric_t<Factor> const &s,
     memcpy(diagonal.data_pointer(), &eigen_diagonal(0,0), diagonal.data_size_in_bytes());              // copy the diagonal diagonal matrix
 }
 
+template <typename Factor>
+void LDLT_Solve (Tensor2Symmetric_t<Factor> const & a,
+                 Factor & x,
+                 Factor const & b)
+{
+    typedef Eigen::Matrix<typename Factor::Scalar,Factor::DIM,Factor::DIM,Eigen::RowMajor> EigenMatrix;
+    typedef Eigen::Matrix<typename Factor::Scalar,Factor::DIM,1,Eigen::ColMajor> EigenVector;
+    typedef Tensor2_t<typename Factor::WithStandardEuclideanBasis, typename Factor::WithStandardEuclideanBasis> Tensor;
+    
+    Tensor blow_up(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    
+    EuclideanEmbedding_t<Factor> e;
+    EuclideanEmbeddingInverse_t<Factor> e_inv;
+    
+    TypedIndex_t<typename Factor::WithStandardEuclideanBasis,'i'> i;
+    TypedIndex_t<Factor,'j'> j;
+    TypedIndex_t<Factor,'k'> k;
+    TypedIndex_t<typename Factor::WithStandardEuclideanBasis,'l'> l;
+    
+    typename Factor::WithStandardEuclideanBasis tensor_return_value(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON),
+                                                tensor_column(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    
+    blow_up(i|l) = e(i|j)*a(j|k)*e(l|k);
+    
+    tensor_column(i) = e(i|j)*b(j);
+    
+    EigenVector return_value, eigen_column;
+    
+    Eigen::LDLT<EigenMatrix> LDLTMatrix(EigenMap_of_Tensor2(blow_up).ldlt());
+    
+    memcpy(&eigen_column(0,0), tensor_column.data_pointer(), tensor_column.data_size_in_bytes());
+    
+    return_value = LDLTMatrix.solve(eigen_column);
+    
+    memcpy(tensor_return_value.data_pointer(), &return_value(0,0), tensor_return_value.data_size_in_bytes());
+    
+    x(j) = e_inv(j|i)*tensor_return_value(i);
+}
+
 } // end of namespace Tenh
 
 #endif // TENH_INTEROP_EIGEN_LDLT_HPP_

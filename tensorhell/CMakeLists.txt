@@ -53,6 +53,7 @@ set(test_SRCS
     standard/test_interop_eigen_inversion5.cpp
     standard/test_interop_eigen_inversion6.cpp
     standard/test_interop_eigen_inversion7.cpp
+    standard/test_interop_eigen_ldlt.cpp
     standard/test_list.cpp
     standard/test_tensor2.cpp
     standard/test_tensor2diagonal.cpp
