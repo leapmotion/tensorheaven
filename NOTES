@@ -166,31 +166,93 @@ categorical/conceptual design ideas
   for a field (so Real_c could use float or double, but not int, whereas F2_c could use int but
   not float or double).
   * Module_c, Ring_c (?)
+
 - VectorSpace_c<Field,DIM,Id>
   * Id is just a "name" for the particular type (so that vector spaces can be distinguished
     by more than just their field and dimension), e.g. struct Device3Space { }; or
     struct Screen2Space { };
-- TensorProduct_c<VS1,VS2,...,VSN>
-  * can only take tensor product of VectorSpace_c types.
-- VectorSpaceAndBasis_c<VectorSpace,BasisId>
+- Basis_c<VS,Id>
+  * A strongly typed "tag" to denote a basis
+
+- Dual_c<X>
+  * X could be a VectorSpace_c or a Basis_c
+- TensorProduct_c<X1,X2,...,Xn>
+  * Xi could be a VectorSpace_c or a Basis_c
+  * maybe support taking tensor products of BasedVectorSpace_c ?
+  * if it is "overloaded" like this, then maybe use TensorProductOf_c<X1,...,Xn> as a template
+    typedef (i.e. used via the typedef TensorProductOf_c<...>::T, which returns a 
+    TensorProduct_c<V1,...,Vn> or TensorProduct_c<Basis1,...,Basisn> or 
+    BasedTensorProduct_c<BVS1,...,BVSn>)
+  * if it is overloaded, it would probably make sense to make separate templates
+    TensorProductOfVectorSpaces_c, TensorProductOfBases_c, etc.
+- TensorPower_c<X,ORDER>
+  * X could be a VectorSpace_c or a Basis_c
+- ExteriorPower_c<X,ORDER>
+  * X could be a VectorSpace_c or a Basis_c
+- SymmetricPower_c<X,ORDER>
+  * X could be a VectorSpace_c or a Basis_c
+- TODO: Young Tableaux
+- Scalar2TensorProduct_c<X>
+  * The 1-dimensional space of all scaling endomorphisms of X
+  * should have a conversion to TensorProduct_c<X,Dual_c<X> >
+
+- BasedVectorSpace_c<VectorSpace,Basis>
   * is really just a way to specify a vector space with a choice of basis
-- TensorProductAndBases_c<TensorProduct,BasisIdTypeList>
+- BasedTensorProduct_c<TensorProduct,Basis>
   * a choice of tensor product and basis for each factor
+  * e.g. BasedTensorProduct_c<TensorProduct_c<V1,V2>,TensorProduct_c<Basis1,Basis2> >
+- BasedTensorPower_c<TensorPower,Basis>
+  * a choice of tensor power and basis for said power
+- BasedExteriorPower_c<ExteriorPower,Basis>
+  * a choice of exterior power and basis for said power
+- BasedSymmetricPower_c<SymmetricPower,Basis>
+  * a choice of symmetric power and basis for said power
+- TODO: Based Young Tableaux
+- ScalarBased2TensorProduct<X,Basis>
+  * is this necessary?
+  * should have a conversion to DiagonalBased2TensorProduct_c.
+- DiagonalBased2TensorProduct_c<VS1,VS2,Basis1,Basis2>
+  * guarantees that the based representation of the tensors in this space have the form 
+  \lambda^{i}_{j}, where \lambda^{i}_{j} = 0 if i != j, and i and j are are indices for 
+  (VS1,Basis1) and (VS2,Basis2) respectively.
+- LowerTriangularBased2TensorProduct_c<VS1,VS2,Basis1,Basis2>
+  * similar to Diagonal2BasedTensorProduct_c, only with assuming that the matrix is lower triangular
+- More along the same lines, such as StrictlyLowerTriangularBased2TensorProduct_c,
+  UpperTriangularBased2TensorProduct_c, etc.
+
+While Dual_c<TensorPower_c<Basis_c<V,Id>,N> > is the same as TensorPower_c<Dual_c<Basis_c<V,Id> >,N>, 
+Dual_c<ExteriorPower_c<Basis_c<V,Id>,N> > is different than ExteriorPower_c<Dual_c<Basis_c<V,Id> >,N>
+due to a discrepancy in the multiplities (the pairing is off by a factor of N!).
+
 - Vector_i<Scalar,VectorSpaceAndBasis>
   * is the compile-time interface for a type that will be an instance of a vector
+  * this is where the expression-template-generating code goes (via operator())
 - Tensor_i<Scalar,TensorProductAndBasis>
   * is the compile-time interface for a type that will be an instance of a tensor
-- Vector_t<Scalar,DIM,VectorSpaceAndBasis = VectorSpaceAndBasis_c<EuclideanInnerProductSpace,StandardBasis> >
+  * this is where the expression-template-generating code goes (via operator())
+
+- Vector_t<Scalar,DIM,BasedVectorSpace = BasedVectorSpace_c<EuclideanInnerProductSpace<Scalar,DIM>,StandardBasis> >
   * actual implementation of a strongly typed vector (whose default values make it weakly typed)
-- Tensor_t<Scalar,TensorProductAndBases>
+- Tensor_t<Scalar,BasedTensorProduct>
   * actual implementation of a strongly typed tensor (no default values, as that wouldn't make sense)
 
 Notes/Reflections on the development of a really really template-heavy library
 - Trying to have the compiler enforce the conceptual type system through the C++ type system
   is untenable, as it is too strict and the compile errors it produces are unreadable.
-  * A good trick is to write template metafunctions with less constraint and then use static
+  * A good trick is to write template metafunctions with less constraint and then use explicit static
     asserts to enforce the conceptual type system.  Ted calls this a "honey bucket" for the compiler.
     For example, to enforce that only up/down index pairs can be contracted in a tensor expression,
     write the C++ template code to allow any pairs of indices to be contracted, and then use a
     static assert to enforce the up/down pairing, thereby controlling the situation when there
     is an index mismatch.  The error message produced is then readable and meaningful.
+- Trying to encode the full, deep mathematical relationships in the C++ type system proved to be
+  too difficult, because C++ ties its types to code.
+  * The solution appears to be (though the full solution is yet to be implemented as of 2013.07.21)
+    implementing the mathematical relationships in "pure" types (compile-time only, no code) in a
+    "conceptual" layer, and put the implementations in its own layer.  This forces the designer
+    not to mix up the two domains, and the division enhances clarity. 
+- Template code takes forever to compile in some cases.  This certainly happened in some of the
+  Tensor Hell unit tests, where there the same templatized tests were being run on many types.
+  * When possible and when it makes sense (such as in unit tests where there are many test cases),
+    break code that uses templates up into many separate source files, so that parallel computation
+    can be used to speed things along.

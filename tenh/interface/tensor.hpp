@@ -69,7 +69,7 @@ struct Tensor_i : public Vector_i<Derived_,typename FactorTypeList_::HeadType::S
     {
         STATIC_ASSERT_IN_ENUM((!Lvd::Meta::TypesAreEqual<Derived_,NullType>::v), DERIVED_MUST_NOT_BE_NULL_TYPE),
         STATIC_ASSERT_IN_ENUM((AllFactorTypeScalarsAreEqual_t<FactorTypeList_>::V), ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM((FactorTypeList_::LENGTH > 0), FACTOR_TYPE_LIST_IS_NONEMPTY)
+        STATIC_ASSERT_IN_ENUM((FactorTypeList_::LENGTH > 0), FACTOR_TYPE_LIST_MUST_BE_NONEMPTY)
     };
 
     typedef Vector_i<Derived_,typename FactorTypeList_::HeadType::Scalar,DIM_,Basis_> Parent_Vector_i;

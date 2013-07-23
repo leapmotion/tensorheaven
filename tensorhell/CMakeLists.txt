@@ -17,6 +17,7 @@ set(CMAKE_CXX_FLAGS_ASMEXAM "-g0 -O3 -save-temps -DNDEBUG")
 
 # temp tests
 add_executable(asm_exam asm_exam.cpp asm_exam_separate_functions.cpp)
+add_executable(conceptual_prototype conceptual_prototype.cpp)
 add_executable(contraction_prototype contraction_prototype.cpp)
 add_executable(eigen_interop_prototype eigen_interop_prototype.cpp)
 add_executable(list list.cpp)
