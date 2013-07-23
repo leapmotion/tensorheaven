@@ -16,13 +16,12 @@ namespace Tenh {
 template <typename Field_, Uint32 DIM_, typename Id_>
 struct VectorSpace_c
 {
-    enum { STATIC_ASSERT_IN_ENUM(Field_::IS_FIELD, MUST_BE_FIELD) };
+    enum { STATIC_ASSERT_IN_ENUM(IsAField_t<Field_>::V, MUST_BE_FIELD) };
 
 	typedef Field_ Field;
 	static Uint32 const DIM = DIM_;
 	typedef Id_ Id;
     typedef typename DualOf_c<VectorSpace_c>::T Dual; // relies on the template specialization below
-	static bool const IS_VECTOR_SPACE = true;
 
     static std::string type_as_string ()
     {
@@ -30,6 +29,9 @@ struct VectorSpace_c
                                 + AS_STRING(DIM) + ',' + TypeStringOf_t<Id>::eval() + '>';
     }
 };
+
+template <typename T> struct IsAVectorSpace_t { static bool const V = false; };
+template <typename Field, Uint32 DIM, typename Id> struct IsAVectorSpace_t<VectorSpace_c<Field,DIM,Id> > { static bool const V = true; };
 
 template <typename Field, Uint32 DIM, typename Id>
 struct DualOf_c<VectorSpace_c<Field,DIM,Id> >
@@ -41,8 +43,8 @@ struct DualOf_c<VectorSpace_c<Field,DIM,Id> >
 template <typename VectorSpace_, typename Basis_>
 struct BasedVectorSpace_c : public VectorSpace_
 {
-	enum { STATIC_ASSERT_IN_ENUM(VectorSpace_::IS_VECTOR_SPACE, MUST_BE_VECTOR_SPACE),
-	       STATIC_ASSERT_IN_ENUM(Basis_::IS_BASIS, MUST_BE_BASIS) };
+	enum { STATIC_ASSERT_IN_ENUM(IsAVectorSpace_t<VectorSpace_>::V, MUST_BE_VECTOR_SPACE),
+	       STATIC_ASSERT_IN_ENUM(IsABasis_t<Basis_>::V, MUST_BE_BASIS) };
 
 	typedef VectorSpace_ VectorSpace;
 	typedef typename VectorSpace::Field Field;
@@ -51,13 +53,15 @@ struct BasedVectorSpace_c : public VectorSpace_
     typedef typename DualOf_c<BasedVectorSpace_c>::T Dual; // relies on the template specialization below
     using VectorSpace::IS_VECTOR_SPACE;
     typedef Basis_ Basis;
-	static bool const IS_BASED_VECTOR_SPACE = true;
 
     static std::string type_as_string ()
     {
         return "BasedVectorSpace_c<" + TypeStringOf_t<VectorSpace>::eval() + ',' + TypeStringOf_t<Basis>::eval() + '>';
     }
 };
+
+template <typename T> struct IsABasedVectorSpace_t { static bool const V = false; };
+template <typename VectorSpace, typename Basis> struct IsABasedVectorSpace_t<BasedVectorSpace_c<VectorSpace,Basis> > { static bool const V = true; };
 
 template <typename VectorSpace, typename Basis>
 struct DualOf_c<BasedVectorSpace_c<VectorSpace,Basis> >

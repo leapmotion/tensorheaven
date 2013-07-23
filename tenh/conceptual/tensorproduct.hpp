@@ -41,8 +41,7 @@ struct TensorProduct_c
 {
     typedef FactorTypeList_ FactorTypeList;
     static Uint32 const ORDER = FactorTypeList::LENGTH;
-    typedef typename DualOf_c<TensorProduct_c>::T Dual;
-    static bool const IS_TENSOR_PRODUCT = true;
+    typedef typename DualOf_c<TensorProduct_c>::T Dual; // relies on the template specialization below
 
     static std::string type_as_string ()
     {
@@ -50,20 +49,69 @@ struct TensorProduct_c
     }
 };
 
+template <typename T> struct IsATensorProduct_t { static bool const V = false; };
+template <typename FactorTypeList> struct IsATensorProduct_t<TensorProduct_c<FactorTypeList> > { static bool const V = true; };
+
 template <typename FactorTypeList>
 struct DualOf_c<TensorProduct_c<FactorTypeList> >
 {
     typedef TensorProduct_c<typename DualsOfTypeList_t<FactorTypeList>::T> T;
 };
 
-/*
-template <typename VectorSpaceTypeList>
+template <typename FactorTypeList>
+struct AllFactorsAreVectorSpaces_t
+{
+    static bool const V = IsAVectorSpace_t<typename FactorTypeList::HeadType>::V && 
+                          AllFactorsAreVectorSpaces_t<typename FactorTypeList::BodyTypeList>::V;
+};
+
+template <>
+struct AllFactorsAreVectorSpaces_t<EmptyTypeList>
+{
+    static bool const V = true;
+};
+
+template <typename FactorTypeList>
+struct AllFactorsAreBases_t
+{
+    static bool const V = IsABasis_t<typename FactorTypeList::HeadType>::V && 
+                          AllFactorsAreBases_t<typename FactorTypeList::BodyTypeList>::V;
+};
+
+template <>
+struct AllFactorsAreBases_t<EmptyTypeList>
+{
+    static bool const V = true;
+};
+
+template <typename FactorTypeList>
+struct AllFactorsHaveTheSameField_t
+{
+    typedef typename FactorTypeList::HeadType HeadType;
+    typedef typename FactorTypeList::BodyTypeList BodyTypeList;
+    static bool const V = Lvd::Meta::TypesAreEqual<typename HeadType::Field,typename BodyTypeList::HeadType::Field>::v &&
+                          AllFactorsHaveTheSameField_t<BodyTypeList>::V;
+};
+
+template <typename HeadType>
+struct AllFactorsHaveTheSameField_t<TypeList_t<HeadType> >
+{
+    static bool const V = true;
+};
+
+template <>
+struct AllFactorsHaveTheSameField_t<EmptyTypeList>
+{
+    static bool const V = true;
+};
+
+template <typename FactorTypeList>
 struct ProductOfDimensions_t
 {
-    enum { STATIC_ASSERT_IN_ENUM(VectorSpaceTypeList::HeadType::IS_VECTOR_SPACE, MUST_BE_VECTOR_SPACE) };
+    enum { STATIC_ASSERT_IN_ENUM(IsAVectorSpace_t<typename FactorTypeList::HeadType>::V, MUST_BE_VECTOR_SPACE) };
 
-    static Uint32 const V = VectorSpaceTypeList::HeadType::DIM * 
-                            ProductOfDimensions_t<typename VectorSpaceTypeList::BodyTypeList>::V;
+    static Uint32 const V = FactorTypeList::HeadType::DIM * 
+                            ProductOfDimensions_t<typename FactorTypeList::BodyTypeList>::V;
 };
 
 template <>
@@ -85,37 +133,32 @@ struct IdsOfTypeList_t<EmptyTypeList>
     typedef EmptyTypeList T;
 };
 
-template <>
-struct DualOfVectorSpaceTypeList_t<EmptyTypeList>
-{
-    typedef EmptyTypeList T;
-};
-
-template <typename VectorSpaceTypeList_>
+// FactorTypeList_ must be a TypeList_t of VectorSpace_c types
+template <typename FactorTypeList_>
 struct TensorProductOfVectorSpaces_c
     : 
-    public TensorProduct_c<VectorSpaceTypeList_>,
-    public VectorSpace_c<typename VectorSpaceTypeList_::HeadType::Field,
-                         ProductOfDimensions_t<VectorSpaceTypeList_>::V,
-                         TensorProduct_c<typename IdsOfTypeList_t<VectorSpaceTypeList_>::T> >
+    public TensorProduct_c<FactorTypeList_>,
+    public VectorSpace_c<typename FactorTypeList_::HeadType::Field,
+                         ProductOfDimensions_t<FactorTypeList_>::V,
+                         TensorProduct_c<typename IdsOfTypeList_t<FactorTypeList_>::T> >
 {
-    typedef TensorProduct_c<VectorSpaceTypeList_> Parent_TensorProduct;
-    typedef VectorSpace_c<typename VectorSpaceTypeList_::HeadType::Field,
-                          ProductOfDimensions_t<VectorSpaceTypeList_>::V,
-                          TensorProduct_c<typename IdsOfTypeList_t<VectorSpaceTypeList_>::T> > Parent_VectorSpace;
+    typedef TensorProduct_c<FactorTypeList_> Parent_TensorProduct;
+    typedef VectorSpace_c<typename FactorTypeList_::HeadType::Field,
+                          ProductOfDimensions_t<FactorTypeList_>::V,
+                          TensorProduct_c<typename IdsOfTypeList_t<FactorTypeList_>::T> > Parent_VectorSpace;
 
-    // TODO: static assert that all factor types are vector spaces having the same base field
-    //enum { STATIC_ASSERT_IN_ENUM(Field_::IS_FIELD, MUST_BE_FIELD) };
+    enum
+    {
+        STATIC_ASSERT_IN_ENUM(AllFactorsAreVectorSpaces_t<FactorTypeList_>::V, ALL_FACTORS_MUST_BE_VECTOR_SPACES),
+        STATIC_ASSERT_IN_ENUM(AllFactorsHaveTheSameField_t<FactorTypeList_>::V, ALL_FACTORS_MUST_HAVE_SAME_FIELD)
+    };
 
     typedef typename Parent_TensorProduct::FactorTypeList FactorTypeList;
     using Parent_TensorProduct::ORDER;
-    using Parent_TensorProduct::IS_TENSOR_PRODUCT;
     typedef typename Parent_VectorSpace::Field Field;
     using Parent_VectorSpace::DIM;
     typedef typename Parent_VectorSpace::Id Id;
-    //typedef typename Parent_VectorSpace::Dual Dual; // TODO: real dual space
-    using Parent_VectorSpace::IS_VECTOR_SPACE;
-    static bool const IS_TENSOR_PRODUCT_OF_VECTOR_SPACES = true;
+    typedef typename DualOf_c<TensorProductOfVectorSpaces_c>::T Dual; // relies on the template specialization below
 
     static std::string type_as_string ()
     {
@@ -123,22 +166,37 @@ struct TensorProductOfVectorSpaces_c
     }
 };
 
-template <typename VectorSpaceTypeList>
-struct DualOf_c<TensorProductOfVectorSpaces_c<VectorSpaceTypeList> >
-{
-    typedef Basis_c<typename DualOf_c<Id>::T> T; TODO real code
-};
-*/
-/*
-template <typename FactorTypeList_>
-struct TensorProductOfBases_c : public Basis_c<
-{
-    // TODO: static assert that all factor types are bases
-    //enum { STATIC_ASSERT_IN_ENUM(Field_::IS_FIELD, MUST_BE_FIELD) };
+template <typename T> struct IsATensorProductOfVectorSpaces_t { static bool const V = false; };
+template <typename FactorTypeList> struct IsATensorProductOfVectorSpaces_t<TensorProductOfVectorSpaces_c<FactorTypeList> > { static bool const V = true; };
 
-    typedef FactorTypeList_ FactorTypeList;
-    static Uint32 const ORDER = FactorTypeList::LENGTH;
-    static bool const IS_TENSOR_PRODUCT_OF_BASES = true;
+template <typename FactorTypeList>
+struct DualOf_c<TensorProductOfVectorSpaces_c<FactorTypeList> >
+{
+    typedef TensorProductOfVectorSpaces_c<typename DualsOfTypeList_t<FactorTypeList>::T> T;
+};
+
+
+
+
+// FactorTypeList_ must be a TypeList_t of Basis_c types
+template <typename FactorTypeList_>
+struct TensorProductOfBases_c
+    : 
+    public TensorProduct_c<FactorTypeList_>,
+    public Basis_c<TensorProduct_c<typename IdsOfTypeList_t<FactorTypeList_>::T> >
+{
+    typedef TensorProduct_c<FactorTypeList_> Parent_TensorProduct;
+    typedef Basis_c<TensorProduct_c<typename IdsOfTypeList_t<FactorTypeList_>::T> > Parent_Basis;
+
+    enum
+    {
+        STATIC_ASSERT_IN_ENUM(AllFactorsAreBases_t<FactorTypeList_>::V, ALL_FACTORS_MUST_BE_BASES)
+    };
+
+    typedef typename Parent_TensorProduct::FactorTypeList FactorTypeList;
+    using Parent_TensorProduct::ORDER;
+    typedef typename Parent_Basis::Id Id;
+    typedef typename DualOf_c<TensorProductOfBases_c>::T Dual; // relies on the template specialization below
 
     static std::string type_as_string ()
     {
@@ -146,6 +204,16 @@ struct TensorProductOfBases_c : public Basis_c<
     }
 };
 
+template <typename T> struct IsATensorProductOfBases_t { static bool const V = false; };
+template <typename FactorTypeList> struct IsATensorProductOfBases_t<TensorProductOfBases_c<FactorTypeList> > { static bool const V = true; };
+
+template <typename FactorTypeList>
+struct DualOf_c<TensorProductOfBases_c<FactorTypeList> >
+{
+    typedef TensorProductOfBases_c<typename DualsOfTypeList_t<FactorTypeList>::T> T;
+};
+
+/*
 template <typename TensorProduct_, typename BasisOfTensorProduct_>
 struct BasedTensorProduct_c
 {

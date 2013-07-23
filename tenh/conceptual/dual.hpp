@@ -23,14 +23,14 @@ struct Dual_c
     }
 };
 
-// for taking the dual of a formal symbol (even for things like a float), and it is assumed to be reflexive (self-dual)
+// for taking the dual of a formal symbol (even for things like a float), and it is assumed to be reflexive (self-double-dual)
 template <typename Primal>
 struct DualOf_c
 {
 	typedef Dual_c<Primal> T;
 };
 
-// here is where the self-dualness is implemented (as a template specialization)
+// here is where the self-double-dualness is implemented (as a template specialization)
 template <typename Primal>
 struct DualOf_c<Dual_c<Primal> >
 {
