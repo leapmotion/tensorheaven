@@ -49,8 +49,8 @@ struct TensorProduct_c
     }
 };
 
-template <typename T> struct IsATensorProduct_t { static bool const V = false; };
-template <typename FactorTypeList> struct IsATensorProduct_t<TensorProduct_c<FactorTypeList> > { static bool const V = true; };
+template <typename T> struct IsATensorProduct_c { static bool const V = false; };
+template <typename FactorTypeList> struct IsATensorProduct_c<TensorProduct_c<FactorTypeList> > { static bool const V = true; };
 
 template <typename FactorTypeList>
 struct DualOf_c<TensorProduct_c<FactorTypeList> >
@@ -61,7 +61,7 @@ struct DualOf_c<TensorProduct_c<FactorTypeList> >
 template <typename FactorTypeList>
 struct AllFactorsAreVectorSpaces_t
 {
-    static bool const V = IsAVectorSpace_t<typename FactorTypeList::HeadType>::V && 
+    static bool const V = IsAVectorSpace_c<typename FactorTypeList::HeadType>::V && 
                           AllFactorsAreVectorSpaces_t<typename FactorTypeList::BodyTypeList>::V;
 };
 
@@ -74,7 +74,7 @@ struct AllFactorsAreVectorSpaces_t<EmptyTypeList>
 template <typename FactorTypeList>
 struct AllFactorsAreBases_t
 {
-    static bool const V = IsABasis_t<typename FactorTypeList::HeadType>::V && 
+    static bool const V = IsABasis_c<typename FactorTypeList::HeadType>::V && 
                           AllFactorsAreBases_t<typename FactorTypeList::BodyTypeList>::V;
 };
 
@@ -108,7 +108,7 @@ struct AllFactorsHaveTheSameField_t<EmptyTypeList>
 template <typename FactorTypeList>
 struct ProductOfDimensions_t
 {
-    enum { STATIC_ASSERT_IN_ENUM(IsAVectorSpace_t<typename FactorTypeList::HeadType>::V, MUST_BE_VECTOR_SPACE) };
+    enum { STATIC_ASSERT_IN_ENUM(IsAVectorSpace_c<typename FactorTypeList::HeadType>::V, MUST_BE_VECTOR_SPACE) };
 
     static Uint32 const V = FactorTypeList::HeadType::DIM * 
                             ProductOfDimensions_t<typename FactorTypeList::BodyTypeList>::V;
@@ -166,8 +166,11 @@ struct TensorProductOfVectorSpaces_c
     }
 };
 
-template <typename T> struct IsATensorProductOfVectorSpaces_t { static bool const V = false; };
-template <typename FactorTypeList> struct IsATensorProductOfVectorSpaces_t<TensorProductOfVectorSpaces_c<FactorTypeList> > { static bool const V = true; };
+template <typename FactorTypeList> struct IsATensorProduct_c<TensorProductOfVectorSpaces_c<FactorTypeList> > { static bool const V = true; };
+template <typename FactorTypeList> struct IsAVectorSpace_c<TensorProductOfVectorSpaces_c<FactorTypeList> > { static bool const V = true; };
+
+template <typename T> struct IsATensorProductOfVectorSpaces_c { static bool const V = false; };
+template <typename FactorTypeList> struct IsATensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_c<FactorTypeList> > { static bool const V = true; };
 
 template <typename FactorTypeList>
 struct DualOf_c<TensorProductOfVectorSpaces_c<FactorTypeList> >
@@ -204,8 +207,11 @@ struct TensorProductOfBases_c
     }
 };
 
-template <typename T> struct IsATensorProductOfBases_t { static bool const V = false; };
-template <typename FactorTypeList> struct IsATensorProductOfBases_t<TensorProductOfBases_c<FactorTypeList> > { static bool const V = true; };
+template <typename FactorTypeList> struct IsATensorProduct_c<TensorProductOfBases_c<FactorTypeList> > { static bool const V = true; };
+template <typename FactorTypeList> struct IsABasis_c<TensorProductOfBases_c<FactorTypeList> > { static bool const V = true; };
+
+template <typename T> struct IsATensorProductOfBases_c { static bool const V = false; };
+template <typename FactorTypeList> struct IsATensorProductOfBases_c<TensorProductOfBases_c<FactorTypeList> > { static bool const V = true; };
 
 template <typename FactorTypeList>
 struct DualOf_c<TensorProductOfBases_c<FactorTypeList> >
@@ -213,6 +219,133 @@ struct DualOf_c<TensorProductOfBases_c<FactorTypeList> >
     typedef TensorProductOfBases_c<typename DualsOfTypeList_t<FactorTypeList>::T> T;
 };
 
+
+
+template <typename TensorProductOfVectorSpaces, typename Basis_>
+struct BasedTensorProductOfVectorSpaces_c
+    :
+    public TensorProductOfVectorSpaces,
+    public BasedVectorSpace_c<TensorProductOfVectorSpaces,Basis_>
+{
+    typedef TensorProductOfVectorSpaces Parent_TensorProductOfVectorSpaces;
+    typedef BasedVectorSpace_c<TensorProductOfVectorSpaces,Basis_> Parent_BasedVectorSpace;
+
+    enum
+    {
+        STATIC_ASSERT_IN_ENUM(IsATensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces>::V, MUST_BE_TENSOR_PRODUCT_OF_VECTOR_SPACES),
+        STATIC_ASSERT_IN_ENUM(IsABasis_c<Basis_>::V, MUST_BE_BASIS),
+    };
+
+    typedef typename Parent_TensorProductOfVectorSpaces::FactorTypeList FactorTypeList;
+    using Parent_TensorProductOfVectorSpaces::ORDER;
+    typedef typename Parent_BasedVectorSpace::Field Field;
+    using Parent_BasedVectorSpace::DIM;
+    typedef typename Parent_BasedVectorSpace::Id Id;
+    typedef typename Parent_BasedVectorSpace::Basis Basis;
+    typedef typename DualOf_c<BasedTensorProductOfVectorSpaces_c>::T Dual; // relies on the template specialization below
+
+    static std::string type_as_string ()
+    {
+        return "BasedTensorProductOfVectorSpaces_c<" + TypeStringOf_t<TensorProductOfVectorSpaces>::eval() + ','
+                                                     + TypeStringOf_t<Basis>::eval() + '>';
+    }
+};
+
+template <typename TensorProductOfVectorSpaces, typename Basis> struct IsAVectorSpace_c<BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces,Basis> > { static bool const V = true; };
+template <typename TensorProductOfVectorSpaces, typename Basis> struct IsATensorProduct_c<BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces,Basis> > { static bool const V = true; };
+template <typename TensorProductOfVectorSpaces, typename Basis> struct IsATensorProductOfVectorSpaces_c<BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces,Basis> > { static bool const V = true; };
+template <typename TensorProductOfVectorSpaces, typename Basis> struct IsABasedVectorSpace_c<BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces,Basis> > { static bool const V = true; };
+
+template <typename T> struct IsABasedTensorProductOfVectorSpaces_c { static bool const V = false; };
+template <typename TensorProductOfVectorSpaces, typename Basis> struct IsABasedTensorProductOfVectorSpaces_c<BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces,Basis> > { static bool const V = true; };
+
+template <typename TensorProductOfVectorSpaces, typename Basis>
+struct DualOf_c<BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces,Basis> >
+{
+    typedef BasedTensorProductOfVectorSpaces_c<typename DualOf_c<TensorProductOfVectorSpaces>::T,typename DualOf_c<Basis>::T> T;
+};
+
+
+/*
+template <typename FactorTypeList>
+struct AllFactorsAreBasedVectorSpaces_t
+{
+    static bool const V = IsABasedVectorSpace_c<typename FactorTypeList::HeadType>::V && 
+                          AllFactorsAreBasedVectorSpaces_t<typename FactorTypeList::BodyTypeList>::V;
+};
+
+template <>
+struct AllFactorsAreBasedVectorSpaces_t<EmptyTypeList>
+{
+    static bool const V = true;
+};
+
+template <typename TypeList>
+struct VectorSpacesOfTypeList_t
+{
+    typedef TypeList_t<typename TypeList::HeadType::VectorSpace,
+                       typename VectorSpacesOfTypeList_t<typename TypeList::BodyTypeList>::T> T;
+};
+
+template <>
+struct VectorSpacesOfTypeList_t<EmptyTypeList>
+{
+    typedef EmptyTypeList T;
+};
+
+template <typename TypeList>
+struct BasesOfTypeList_t
+{
+    typedef TypeList_t<typename TypeList::HeadType::Basis,
+                       typename BasesOfTypeList_t<typename TypeList::BodyTypeList>::T> T;
+};
+
+template <>
+struct BasesOfTypeList_t<EmptyTypeList>
+{
+    typedef EmptyTypeList T;
+};
+
+// FactorTypeList_ must be a TypeList_t of VectorSpace_c types
+template <typename FactorTypeList_>
+struct TensorProductOfBasedVectorSpaces_c
+    : 
+    public TensorProductOfVectorSpaces_c<typename VectorSpacesOfTypeList_t<FactorTypeList_>::T>,
+    public BasedVectorSpace_c<TensorProductOfVectorSpaces_c<typename VectorSpacesOfTypeList_t<FactorTypeList_>::T>,
+                              TensorProductOfBases_c<typename BasesOfTypeList_t<FactorTypeList_>::T> >
+{
+    typedef TensorProductOfVectorSpaces_c<typename VectorSpacesOfTypeList_t<FactorTypeList_>::T> Parent_TensorProduct;
+    typedef BasedVectorSpace_c<TensorProductOfVectorSpaces_c<typename VectorSpacesOfTypeList_t<FactorTypeList_>::T>,
+                               TensorProductOfBases_c<typename BasesOfTypeList_t<FactorTypeList_>::T> > Parent_BasedVectorSpace;
+
+    enum
+    {
+        STATIC_ASSERT_IN_ENUM(AllFactorsAreBasedVectorSpaces_t<FactorTypeList_>::V, ALL_FACTORS_MUST_BE_BASED_VECTOR_SPACES),
+    };
+
+    typedef typename Parent_TensorProduct::FactorTypeList FactorTypeList;
+    using Parent_TensorProduct::ORDER;
+    typedef typename Parent_BasedVectorSpace::Field Field;
+    using Parent_BasedVectorSpace::DIM;
+    typedef typename Parent_BasedVectorSpace::Id Id;
+    typedef typename Parent_BasedVectorSpace::Basis Basis;
+    typedef typename DualOf_c<TensorProductOfBasedVectorSpaces_c>::T Dual; // relies on the template specialization below
+
+    static std::string type_as_string ()
+    {
+        return "TensorProductOfBasedVectorSpaces_c<" + TypeStringOf_t<FactorTypeList>::eval() + '>';
+    }
+};
+
+template <typename T> struct IsATensorProductOfVectorSpaces_c { static bool const V = false; };
+template <typename FactorTypeList> struct IsATensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_c<FactorTypeList> > { static bool const V = true; };
+
+template <typename FactorTypeList>
+struct DualOf_c<TensorProductOfVectorSpaces_c<FactorTypeList> >
+{
+    typedef TensorProductOfVectorSpaces_c<typename DualsOfTypeList_t<FactorTypeList>::T> T;
+};
+*/
 /*
 template <typename TensorProduct_, typename BasisOfTensorProduct_>
 struct BasedTensorProduct_c

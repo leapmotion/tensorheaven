@@ -16,8 +16,8 @@ namespace Tenh {
 // TODO: think about if Basis_c needs to exist, or if it could just be
 // a generic identifier.  if it were a generic identifier, this would
 // obviate the need for TensorProductOfBases_c.  if this is done, then
-// IsABasis_t should still exist, and the user would need to specialize
-// IsABasis_t<UserBasisType>, providing "static bool const V = true".
+// IsABasis_c should still exist, and the user would need to specialize
+// IsABasis_c<UserBasisType>, providing "static bool const V = true".
 
 template <typename Id_>
 struct Basis_c
@@ -31,8 +31,8 @@ struct Basis_c
     }
 };
 
-template <typename T> struct IsABasis_t { static bool const V = false; };
-template <typename Id> struct IsABasis_t<Basis_c<Id> > { static bool const V = true; };
+template <typename T> struct IsABasis_c { static bool const V = false; };
+template <typename Id> struct IsABasis_c<Basis_c<Id> > { static bool const V = true; };
 
 template <typename Id>
 struct DualOf_c<Basis_c<Id> >

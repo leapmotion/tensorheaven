@@ -16,7 +16,7 @@ namespace Tenh {
 template <typename Field_, Uint32 DIM_, typename Id_>
 struct VectorSpace_c
 {
-    enum { STATIC_ASSERT_IN_ENUM(IsAField_t<Field_>::V, MUST_BE_FIELD) };
+    enum { STATIC_ASSERT_IN_ENUM(IsAField_c<Field_>::V, MUST_BE_FIELD) };
 
 	typedef Field_ Field;
 	static Uint32 const DIM = DIM_;
@@ -30,8 +30,11 @@ struct VectorSpace_c
     }
 };
 
-template <typename T> struct IsAVectorSpace_t { static bool const V = false; };
-template <typename Field, Uint32 DIM, typename Id> struct IsAVectorSpace_t<VectorSpace_c<Field,DIM,Id> > { static bool const V = true; };
+// NOTE: unfortunately the template type inference system will not recognize subclasses 
+// of VectorSpace_c for use in the template specialization, so one must be provided for
+// each subclass of VectorSpace_c.
+template <typename T> struct IsAVectorSpace_c { static bool const V = false; };
+template <typename Field, Uint32 DIM, typename Id> struct IsAVectorSpace_c<VectorSpace_c<Field,DIM,Id> > { static bool const V = true; };
 
 template <typename Field, Uint32 DIM, typename Id>
 struct DualOf_c<VectorSpace_c<Field,DIM,Id> >
@@ -41,17 +44,18 @@ struct DualOf_c<VectorSpace_c<Field,DIM,Id> >
 
 
 template <typename VectorSpace_, typename Basis_>
-struct BasedVectorSpace_c : public VectorSpace_
+struct BasedVectorSpace_c
+    :
+    public VectorSpace_ // NOTE: must template-specialize IsAVectorSpace_c<BasedVectorSpace_c<...> >
 {
-	enum { STATIC_ASSERT_IN_ENUM(IsAVectorSpace_t<VectorSpace_>::V, MUST_BE_VECTOR_SPACE),
-	       STATIC_ASSERT_IN_ENUM(IsABasis_t<Basis_>::V, MUST_BE_BASIS) };
+	enum { STATIC_ASSERT_IN_ENUM(IsAVectorSpace_c<VectorSpace_>::V, MUST_BE_VECTOR_SPACE),
+	       STATIC_ASSERT_IN_ENUM(IsABasis_c<Basis_>::V, MUST_BE_BASIS) };
 
 	typedef VectorSpace_ VectorSpace;
 	typedef typename VectorSpace::Field Field;
 	using VectorSpace::DIM;
 	typedef typename VectorSpace::Id Id;
     typedef typename DualOf_c<BasedVectorSpace_c>::T Dual; // relies on the template specialization below
-    using VectorSpace::IS_VECTOR_SPACE;
     typedef Basis_ Basis;
 
     static std::string type_as_string ()
@@ -60,8 +64,11 @@ struct BasedVectorSpace_c : public VectorSpace_
     }
 };
 
-template <typename T> struct IsABasedVectorSpace_t { static bool const V = false; };
-template <typename VectorSpace, typename Basis> struct IsABasedVectorSpace_t<BasedVectorSpace_c<VectorSpace,Basis> > { static bool const V = true; };
+// this is a necessary kludge because C++ doesn't recognize BasedVectorSpace_c as a VectorSpace_c in IsAVectorSpace_c
+template <typename VectorSpace, typename Basis> struct IsAVectorSpace_c<BasedVectorSpace_c<VectorSpace,Basis> > { static bool const V = true; };
+
+template <typename T> struct IsABasedVectorSpace_c { static bool const V = false; };
+template <typename VectorSpace, typename Basis> struct IsABasedVectorSpace_c<BasedVectorSpace_c<VectorSpace,Basis> > { static bool const V = true; };
 
 template <typename VectorSpace, typename Basis>
 struct DualOf_c<BasedVectorSpace_c<VectorSpace,Basis> >

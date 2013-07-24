@@ -21,8 +21,8 @@ struct Field_c
     }
 };
 
-template <typename T> struct IsAField_t { static bool const V = false; };
-template <typename Id> struct IsAField_t<Field_c<Id> > { static bool const V = true; };
+template <typename T> struct IsAField_c { static bool const V = false; };
+template <typename Id> struct IsAField_c<Field_c<Id> > { static bool const V = true; };
 
 // TODO: some way of specifying associated representation (e.g. double, complex<double>, bool)
 

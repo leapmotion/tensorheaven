@@ -80,6 +80,12 @@ random TODOs:
   indices used in indexed expressions "weakly typed", except for bundled indices (e.g. the index p in
   t(i|j).bundle(i|j,p) -- it is necessary to know the type of p for this to be a well-defined bundle).  all
   other index types can be inferred from their use in the expression.
+- decide on template metaprogramming naming convention.  something along the lines of
+  * Blah_t<...> for types that actually implement stuff and have significant runtime code (is there
+    something better than _t ?)
+  * Blah_c<...> for the conceptual layer
+  * Blah_i<...> for the templatized interface layer (this is somewhere between _c and _i)
+  * Blah_m<...> for meta-programmingy things like type lists and related metafunctions
 
 features necessary for version 0.5:
 x euclidean embedding (using short-term zero-dimensional hack (?))
