@@ -1,6 +1,7 @@
 #include <cassert>
 #include <iostream>
 #include "tenh/conceptual/basis.hpp"
+#include "tenh/conceptual/diagonalbased2tensorproduct.hpp"
 #include "tenh/conceptual/tensorpower.hpp"
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/conceptual/vectorspace.hpp"
@@ -181,6 +182,28 @@ int main (int argc, char **argv)
                       << "DualOf_c<TensorProductOfBasedVectorSpaces>::T = " << TypeStringOf_t<DualOf_c<T>::T>::eval() << '\n'
                       << "DualDualTensorProductOfBasedVectorSpaces = " << TypeStringOf_t<DualDualT>::eval() << '\n' << '\n';
             // make sure the tensor product of based vector spaces is reflexive (self-double-dual)
+            assert((Lvd::Meta::TypesAreEqual<T,DualDualT>::v));
+            // make sure that T::Dual and DualOf_c<T>::T are the same
+            assert((Lvd::Meta::TypesAreEqual<DualT,DualOf_c<T>::T>::v));
+        }
+
+        {
+            typedef Diagonal2TensorProductOfBasedVectorSpaces_c<BasedX,BasedY> T;
+            assert(IsATensorProduct_c<T>::V);
+            assert(IsAVectorSpace_c<T>::V);
+            assert(IsABasedVectorSpace_c<T>::V);
+            assert(IsATensorProductOfVectorSpaces_c<T>::V);
+            assert(IsABasedTensorProductOfVectorSpaces_c<T>::V);
+            assert(IsATensorProductOfBasedVectorSpaces_c<T>::V);
+            assert(IsADiagonal2TensorProductOfBasedVectorSpaces_c<T>::V);
+
+            typedef T::Dual DualT;
+            typedef DualT::Dual DualDualT;
+            std::cout << "Diagonal2TensorProductOfBasedVectorSpaces = "  << TypeStringOf_t<T>::eval() << '\n'
+                      << "DualDiagonal2TensorProductOfBasedVectorSpaces = " << TypeStringOf_t<DualT>::eval() << '\n'
+                      << "DualOf_c<Diagonal2TensorProductOfBasedVectorSpaces>::T = " << TypeStringOf_t<DualOf_c<T>::T>::eval() << '\n'
+                      << "DualDualDiagonal2TensorProductOfBasedVectorSpaces = " << TypeStringOf_t<DualDualT>::eval() << '\n' << '\n';
+            // make sure the diagonal 2 tensor product of based vector spaces is reflexive (self-double-dual)
             assert((Lvd::Meta::TypesAreEqual<T,DualDualT>::v));
             // make sure that T::Dual and DualOf_c<T>::T are the same
             assert((Lvd::Meta::TypesAreEqual<DualT,DualOf_c<T>::T>::v));

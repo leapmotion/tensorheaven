@@ -222,6 +222,8 @@ categorical/conceptual design ideas
   * guarantees that the based representation of the tensors in this space have the form 
   \lambda^{i}_{j}, where \lambda^{i}_{j} = 0 if i != j, and i and j are are indices for 
   (VS1,Basis1) and (VS2,Basis2) respectively.
+- Would it make sense to have a "diagonal" based tensor product of arbitrary order?  where
+  the indices i and j become multiindices?
 - LowerTriangularBased2TensorProduct_c<VS1,VS2,Basis1,Basis2>
   * similar to Diagonal2BasedTensorProduct_c, only with assuming that the matrix is lower triangular
 - More along the same lines, such as StrictlyLowerTriangularBased2TensorProduct_c,
