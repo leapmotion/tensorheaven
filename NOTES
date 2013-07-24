@@ -86,6 +86,7 @@ random TODOs:
   * Blah_c<...> for the conceptual layer
   * Blah_i<...> for the templatized interface layer (this is somewhere between _c and _i)
   * Blah_m<...> for meta-programmingy things like type lists and related metafunctions
+  * Blah_?<...> for meta-functions which "return" a type T
 
 features necessary for version 0.5:
 x euclidean embedding (using short-term zero-dimensional hack (?))

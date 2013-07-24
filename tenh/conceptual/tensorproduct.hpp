@@ -15,13 +15,6 @@
 
 namespace Tenh {
 
-/*
-TensorProductOf_c<list of vector spaces> -- instantiates TensorProductOfVectorSpaces_c, is a VectorSpace_c
-TensorProductOf_c<list of bases> -- instantiates TensorProductOfBases_c, is a Basis_c
-TensorProductOf_c<list of based vector spaces> -- inherits TensorProductOfBasedVectorSpaces_c, is a BasedTensorProduct_c
-BasedTensorProduct_c<TensorProductOfVectorSpaces,Basis> -- 
-*/
-
 template <typename TypeList>
 struct DualsOfTypeList_t
 {
@@ -306,7 +299,7 @@ struct BasesOfTypeList_t<EmptyTypeList>
     typedef EmptyTypeList T;
 };
 
-// FactorTypeList_ must be a TypeList_t of VectorSpace_c types
+// FactorTypeList_ must be a TypeList_t of BasedVectorSpace_c types
 template <typename FactorTypeList_>
 struct TensorProductOfBasedVectorSpaces_c
     : 
@@ -314,7 +307,7 @@ struct TensorProductOfBasedVectorSpaces_c
     public BasedVectorSpace_c<TensorProductOfVectorSpaces_c<typename VectorSpacesOfTypeList_t<FactorTypeList_>::T>,
                               TensorProductOfBases_c<typename BasesOfTypeList_t<FactorTypeList_>::T> >
 {
-    typedef TensorProductOfVectorSpaces_c<typename VectorSpacesOfTypeList_t<FactorTypeList_>::T> Parent_TensorProduct;
+    typedef TensorProductOfVectorSpaces_c<typename VectorSpacesOfTypeList_t<FactorTypeList_>::T> Parent_TensorProductOfVectorSpaces;
     typedef BasedVectorSpace_c<TensorProductOfVectorSpaces_c<typename VectorSpacesOfTypeList_t<FactorTypeList_>::T>,
                                TensorProductOfBases_c<typename BasesOfTypeList_t<FactorTypeList_>::T> > Parent_BasedVectorSpace;
 
@@ -323,8 +316,8 @@ struct TensorProductOfBasedVectorSpaces_c
         STATIC_ASSERT_IN_ENUM(AllFactorsAreBasedVectorSpaces_t<FactorTypeList_>::V, ALL_FACTORS_MUST_BE_BASED_VECTOR_SPACES),
     };
 
-    typedef typename Parent_TensorProduct::FactorTypeList FactorTypeList;
-    using Parent_TensorProduct::ORDER;
+    typedef typename Parent_TensorProductOfVectorSpaces::FactorTypeList FactorTypeList;
+    using Parent_TensorProductOfVectorSpaces::ORDER;
     typedef typename Parent_BasedVectorSpace::Field Field;
     using Parent_BasedVectorSpace::DIM;
     typedef typename Parent_BasedVectorSpace::Id Id;
