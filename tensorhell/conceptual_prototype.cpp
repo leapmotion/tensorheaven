@@ -128,6 +128,12 @@ int main (int argc, char **argv)
         typedef Basis_c<X> BX;
         typedef Basis_c<Y> BY;
         typedef Basis_c<Z> BZ;
+        typedef BasedVectorSpace_c<X3,BX> BasedX;
+        typedef BasedVectorSpace_c<Y4,BY> BasedY;
+        typedef BasedVectorSpace_c<Z5,BZ> BasedZ;
+        assert(IsABasedVectorSpace_c<BasedX>::V);
+        assert(IsABasedVectorSpace_c<BasedY>::V);
+        assert(IsABasedVectorSpace_c<BasedZ>::V);
 
         typedef TensorProductOfVectorSpaces_c<TypeList_t<X3,TypeList_t<Y4,TypeList_t<Z5> > > > TVS;
         assert(IsAVectorSpace_c<TVS>::V);
@@ -138,23 +144,46 @@ int main (int argc, char **argv)
         assert(IsABasis_c<TB>::V);
         assert(IsATensorProduct_c<TB>::V);
 
-        typedef BasedTensorProductOfVectorSpaces_c<TVS,TB> T;
-        assert(IsATensorProduct_c<T>::V);
-        assert(IsAVectorSpace_c<T>::V);
-        assert(IsABasedVectorSpace_c<T>::V);
-        assert(IsATensorProductOfVectorSpaces_c<T>::V);
-        assert(IsABasedTensorProductOfVectorSpaces_c<T>::V);
+        {
+            typedef BasedTensorProductOfVectorSpaces_c<TVS,TB> T;
+            assert(IsATensorProduct_c<T>::V);
+            assert(IsAVectorSpace_c<T>::V);
+            assert(IsABasedVectorSpace_c<T>::V);
+            assert(IsATensorProductOfVectorSpaces_c<T>::V);
+            assert(IsABasedTensorProductOfVectorSpaces_c<T>::V);
 
-        typedef T::Dual DualT;
-        typedef DualT::Dual DualDualT;
-        std::cout << "BasedTensorProductOfVectorSpaces = "  << TypeStringOf_t<T>::eval() << '\n'
-                  << "DualBasedTensorProductOfVectorSpaces = " << TypeStringOf_t<DualT>::eval() << '\n'
-                  << "DualOf_c<BasedTensorProductOfVectorSpaces>::T = " << TypeStringOf_t<DualOf_c<T>::T>::eval() << '\n'
-                  << "DualDualBasedTensorProductOfVectorSpaces = " << TypeStringOf_t<DualDualT>::eval() << '\n' << '\n';
-        // make sure the based tensor product of vector spaces is reflexive (self-double-dual)
-        assert((Lvd::Meta::TypesAreEqual<T,DualDualT>::v));
-        // make sure that T::Dual and DualOf_c<T>::T are the same
-        assert((Lvd::Meta::TypesAreEqual<DualT,DualOf_c<T>::T>::v));
+            typedef T::Dual DualT;
+            typedef DualT::Dual DualDualT;
+            std::cout << "BasedTensorProductOfVectorSpaces = "  << TypeStringOf_t<T>::eval() << '\n'
+                      << "DualBasedTensorProductOfVectorSpaces = " << TypeStringOf_t<DualT>::eval() << '\n'
+                      << "DualOf_c<BasedTensorProductOfVectorSpaces>::T = " << TypeStringOf_t<DualOf_c<T>::T>::eval() << '\n'
+                      << "DualDualBasedTensorProductOfVectorSpaces = " << TypeStringOf_t<DualDualT>::eval() << '\n' << '\n';
+            // make sure the based tensor product of vector spaces is reflexive (self-double-dual)
+            assert((Lvd::Meta::TypesAreEqual<T,DualDualT>::v));
+            // make sure that T::Dual and DualOf_c<T>::T are the same
+            assert((Lvd::Meta::TypesAreEqual<DualT,DualOf_c<T>::T>::v));
+        }
+
+        {
+            typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedX,TypeList_t<BasedY,TypeList_t<BasedZ> > > > T;
+            assert(IsATensorProduct_c<T>::V);
+            assert(IsAVectorSpace_c<T>::V);
+            assert(IsABasedVectorSpace_c<T>::V);
+            assert(IsATensorProductOfVectorSpaces_c<T>::V);
+            assert(IsABasedTensorProductOfVectorSpaces_c<T>::V);
+            assert(IsATensorProductOfBasedVectorSpaces_c<T>::V);
+
+            typedef T::Dual DualT;
+            typedef DualT::Dual DualDualT;
+            std::cout << "TensorProductOfBasedVectorSpaces = "  << TypeStringOf_t<T>::eval() << '\n'
+                      << "DualTensorProductOfBasedVectorSpaces = " << TypeStringOf_t<DualT>::eval() << '\n'
+                      << "DualOf_c<TensorProductOfBasedVectorSpaces>::T = " << TypeStringOf_t<DualOf_c<T>::T>::eval() << '\n'
+                      << "DualDualTensorProductOfBasedVectorSpaces = " << TypeStringOf_t<DualDualT>::eval() << '\n' << '\n';
+            // make sure the tensor product of based vector spaces is reflexive (self-double-dual)
+            assert((Lvd::Meta::TypesAreEqual<T,DualDualT>::v));
+            // make sure that T::Dual and DualOf_c<T>::T are the same
+            assert((Lvd::Meta::TypesAreEqual<DualT,DualOf_c<T>::T>::v));
+        }
     }
 
     return 0;

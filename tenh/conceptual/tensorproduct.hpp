@@ -266,7 +266,7 @@ struct DualOf_c<BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces,B
 };
 
 
-/*
+
 template <typename FactorTypeList>
 struct AllFactorsAreBasedVectorSpaces_t
 {
@@ -337,54 +337,21 @@ struct TensorProductOfBasedVectorSpaces_c
     }
 };
 
-template <typename T> struct IsATensorProductOfVectorSpaces_c { static bool const V = false; };
-template <typename FactorTypeList> struct IsATensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_c<FactorTypeList> > { static bool const V = true; };
+template <typename FactorTypeList> struct IsAVectorSpace_c<TensorProductOfBasedVectorSpaces_c<FactorTypeList> > { static bool const V = true; };
+template <typename FactorTypeList> struct IsATensorProduct_c<TensorProductOfBasedVectorSpaces_c<FactorTypeList> > { static bool const V = true; };
+template <typename FactorTypeList> struct IsATensorProductOfVectorSpaces_c<TensorProductOfBasedVectorSpaces_c<FactorTypeList> > { static bool const V = true; };
+template <typename FactorTypeList> struct IsABasedVectorSpace_c<TensorProductOfBasedVectorSpaces_c<FactorTypeList> > { static bool const V = true; };
+template <typename FactorTypeList> struct IsABasedTensorProductOfVectorSpaces_c<TensorProductOfBasedVectorSpaces_c<FactorTypeList> > { static bool const V = true; };
+
+template <typename T> struct IsATensorProductOfBasedVectorSpaces_c { static bool const V = false; };
+template <typename FactorTypeList> struct IsATensorProductOfBasedVectorSpaces_c<TensorProductOfBasedVectorSpaces_c<FactorTypeList> > { static bool const V = true; };
 
 template <typename FactorTypeList>
-struct DualOf_c<TensorProductOfVectorSpaces_c<FactorTypeList> >
+struct DualOf_c<TensorProductOfBasedVectorSpaces_c<FactorTypeList> >
 {
-    typedef TensorProductOfVectorSpaces_c<typename DualsOfTypeList_t<FactorTypeList>::T> T;
-};
-*/
-/*
-template <typename TensorProduct_, typename BasisOfTensorProduct_>
-struct BasedTensorProduct_c
-{
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(TensorProduct_::IS_TENSOR_PRODUCT, MUST_BE_TENSOR_PRODUCT),
-        STATIC_ASSERT_IN_ENUM(TensorProduct_::IS_BASIS, MUST_BE_BASIS)
-    };
+    typedef TensorProductOfBasedVectorSpaces_c<typename DualsOfTypeList_t<FactorTypeList>::T> T;
 };
 
-template <typename FactorTypeList_>
-struct TensorProductOfBasedVectorSpaces_c
-{
-    // TODO: static assert that all factor types are based vector spaces
-    //enum { STATIC_ASSERT_IN_ENUM(Field_::IS_FIELD, MUST_BE_FIELD) };
-
-    typedef FactorTypeList_ FactorTypeList;
-    static Uint32 const ORDER = FactorTypeList::LENGTH;
-    static bool const IS_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES = true;
-
-    static std::string type_as_string ()
-    {
-        return "TensorProductOfBasedVectorSpaces_c<" + TypeStringOf_t<FactorTypeList>::eval() + '>';
-    }
-};
-
-// NOTES: the most "basic" type of tensor product with basis is a pair (TensorProduct, BasisOfSaidTensorProduct).
-// tensor products of based vector spaces inherit this type, where TensorProduct is the tensor product of the
-// vector spaces, and BasisOfSaidTensorProduct is given by the tensor product of the bases of the vector spaces
-
-template <typename FactorTypeList>
-struct TensorProductOf_c
-{
-    enum { STATIC_ASSERT_IN_ENUM((FactorTypeList::LENGTH > 0), FACTOR_TYPE_LIST_MUST_BE_NONEMPTY)}
-
-    typedef typename Meta::If<(Meta::TypesAreEqual<typename FactorTypeList::Head,)
-};
-*/
 } // end of namespace Tenh
 
 #endif // TENH_CONCEPTUAL_TENSORPRODUCT_HPP_
