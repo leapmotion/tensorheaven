@@ -10,6 +10,7 @@
 
 namespace Tenh {
 
+// TODO: can Field_c be deprecated, in favor of just using IsAField_c with custom typedefs?
 template <typename Id_>
 struct Field_c
 {
@@ -24,6 +25,9 @@ struct Field_c
 template <typename T> struct IsAField_c { static bool const V = false; };
 template <typename Id> struct IsAField_c<Field_c<Id> > { static bool const V = true; };
 
+// // used for checking if a given C++ type is an acceptable representation for the field
+// template <typename ScalarRepresentation, typename Field> struct IsAValidScalarRepresentationForField { static bool const V = false; };
+
 // TODO: some way of specifying associated representation (e.g. double, complex<double>, bool)
 
 struct Real_c
@@ -35,6 +39,9 @@ struct Real_c
 };
 
 typedef Field_c<Real_c> RealField;
+// template <> struct IsAValidScalarRepresentationForField<float,RealField> { static bool const V = true; };
+// template <> struct IsAValidScalarRepresentationForField<double,RealField> { static bool const V = true; };
+// // could add one for some arbitrary-precision floating point representation
 
 // TODO: Complex_c, F2_c, etc.
 // TODO: maybe quaternion (skew-field)?

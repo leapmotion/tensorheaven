@@ -147,7 +147,7 @@ x Basis identifier for each vector space, giving an additional feature to distin
 
 different multi-indexing schemes
 - "split"                 : if t is Tensor2<Tensor2Sym<V>,Tensor2Sym<V> >, then t(P,Q).split(P,i,j),split(Q,k,l)
-                            converse to bundle, implementation would be similar.
+                            is converse to bundle, implementation would be similar.
 - "multi-index"           : if s is Tensor2<Tensor5,V>, then s(i,j,k,l,m,T) would be s(multiindex(i,j,k,l,m),T)
                             implementation may be difficult if there are nested multi-indices
 - "streaming multi-index" : s/i/j/k/l/m/T or s^i^j^k^l^m^T -- need intermediate "streaming" type
@@ -169,9 +169,9 @@ categorical/conceptual design ideas
   * Field_c<Complex_c>
   * Field_c<F2_c>
   * etc (quaternions could be used, as a skew-field, and maybe SkewField_c<Id> could be a thing
-  this should be able to check the validity of a Scalar type (e.g. float, double, int, bool)
-  for a field (so Real_c could use float or double, but not int, whereas F2_c could use int but
-  not float or double).
+    this should be able to check the validity of a Scalar type (e.g. float, double, int, bool)
+    for a field (so Real_c could use float or double, but not int, whereas F2_c could use int but
+    not float or double).
   * Module_c, Ring_c (?)
 
 - VectorSpace_c<Field,DIM,Id>
@@ -245,7 +245,32 @@ due to a discrepancy in the multiplities (the pairing is off by a factor of N!).
 - Tensor_t<Scalar,BasedTensorProduct>
   * actual implementation of a strongly typed tensor (no default values, as that wouldn't make sense)
 
-Notes/Reflections on the development of a really really template-heavy library
+Notes for conceptual layer and refactor
+- In order to incorporate the order-of-operations and diagonal 2-tensor contraction optimizations,
+  the operator overloads which generate expression templates should do the expression template AST
+  optimization (e.g. if the expression is a(i)*d(i|j)*b(j) and d is diagonal, then this should turn
+  into an expression template that sums a(k)*d(k|k)*b(k) with the single index k).  In the case where
+  a change of order of operations would produce an optimization, the expression template AST tree
+  should be modified here -- this affects the return type of each operator overload.
+- Should the index-notated expression templates be done at the conceptual level?  The optimization
+  and type checking could be done here in isolation from the actual computation -- effectively
+  the conceptual level will produce an "optimized AST" expression template.  While the indexed
+  expressions should all be tensorial in nature, some of the optimizations depend on the chosen
+  basis (e.g. the diagonal based 2-tensor product one), so this should be done at the
+  based-vector-space and based-tensor-product level.
+- Provide way to specify/override natural pairing on any given space -- use Alt convention by
+  default (this gives certain simplifications), but for example the det convention would make
+  use of finite-characteristic fields possible. 
+- Indexing scheme for wedges and symmetric products consists of sorting the indices of a multi-index.
+  For Young tableaux, this would generalize to imposing sorting constraints on various subsets of
+  indices (based on the rows (alternating) and columns (symmetric)).  Negative signs are accumulated
+  for swaps in rows, and zero is returned for repetitions in the rows.
+- Grey (gray?) coding scheme would be desired for generating non-symmetric multi-indices for
+  when iterating through components for e.g. the bundle operation. 
+
+
+
+Notes/Reflections on the development of a really really template-heavy math library
 - Trying to have the compiler enforce the conceptual type system through the C++ type system
   is untenable, as it is too strict and the compile errors it produces are unreadable.
   * A good trick is to write template metafunctions with less constraint and then use explicit static
