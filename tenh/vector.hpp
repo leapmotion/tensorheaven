@@ -16,21 +16,21 @@
 
 namespace Tenh {
 
-// NOTE: Scalar_ MUST be a POD data type.
-template <typename Scalar_, Uint32 DIM_, typename Basis_ = StandardEuclideanBasis, typename Derived_ = NullType> // don't worry about type ID for now
+// NOTE: Scalar_ MUST be a POD data type.  BasedVectorSpace_ must be a BasedVectorSpace_c type.
+template <typename Scalar_, typename BasedVectorSpace_, typename Derived_ = NullType>
 struct Vector_t
     :
-    public Vector_i<typename DerivedType_t<Derived_,Vector_t<Scalar_,DIM_,Basis_,Derived_> >::T,Scalar_,DIM_,Basis_>,
-    private Array_t<Scalar_,DIM_,typename DerivedType_t<Derived_,Vector_t<Scalar_,DIM_,Basis_,Derived_> >::T>
+    public Vector_i<typename DerivedType_t<Derived_,Vector_t<Scalar_,DIM_,Basis_,Derived_> >::T,Scalar_,BasedVectorSpace_>,
+    private Array_t<Scalar_,DIM_,typename DerivedType_t<Derived_,Vector_t<Scalar_,BasedVectorSpace_,Derived_> >::T>
     // Array_t is privately inherited because it is an implementation detail
 {
-    typedef Vector_i<typename DerivedType_t<Derived_,Vector_t<Scalar_,DIM_,Basis_,Derived_> >::T,Scalar_,DIM_,Basis_> Parent_Vector_i;
-    typedef Array_t<Scalar_,DIM_,typename DerivedType_t<Derived_,Vector_t<Scalar_,DIM_,Basis_,Derived_> >::T> Parent_Array_t;
+    typedef Vector_i<typename DerivedType_t<Derived_,Vector_t<Scalar_,DIM_,Basis_,Derived_> >::T,Scalar_,BasedVectorSpace_> Parent_Vector_i;
+    typedef Array_t<Scalar_,DIM_,typename DerivedType_t<Derived_,Vector_t<Scalar_,BasedVectorSpace_,Derived_> >::T> Parent_Array_t;
     typedef typename Parent_Vector_i::Derived Derived;
     typedef typename Parent_Vector_i::Scalar Scalar;
+    typedef typename Parent_Vector_i::BasedVectorSpace BasedVectorSpace;
     static Uint32 const DIM = Parent_Vector_i::DIM;
     typedef typename Parent_Vector_i::Basis Basis;
-    typedef Vector_t<Scalar,DIM,StandardEuclideanBasis,Derived_> WithStandardEuclideanBasis; // TEMP KLUDGE
     typedef typename Parent_Vector_i::Index Index;
     typedef typename Parent_Vector_i::MultiIndex MultiIndex;
 
@@ -47,23 +47,21 @@ struct Vector_t
 
     static std::string type_as_string ()
     {
-        std::string basis_string;
-        if (!Lvd::Meta::TypesAreEqual<Basis,StandardEuclideanBasis>())
-            basis_string = ',' + TypeStringOf_t<Basis>::eval();
-
         std::string derived_string;
         if (!Lvd::Meta::TypesAreEqual<Derived_,NullType>())
             derived_string = ',' + TypeStringOf_t<Derived>::eval();
 
-        return "Vector_t<" + TypeStringOf_t<Scalar>::eval() + ',' + AS_STRING(DIM) + basis_string + derived_string + '>';
+        return "Vector_t<" + TypeStringOf_t<Scalar>::eval() + ',' + TypeStringOf_t<BasedVectorSpace>::eval() + derived_string + '>';
     }
 
 private:
 
     // this has no definition, and is designed to generate a compiler error if used (use the one accepting WithoutInitialization instead).
+    // TODO: may need to make this public to allow 0-dimensional vectors, adding a static assert to check that it's actually 0-dimensional
+    // and not being used improperly.
     Vector_t ();
 };
-
+/*
 // NOTE: while this is a tensor, it isn't a tensor space, and so it technically shouldn't be used as a factor
 // type in a tensor product.  this is essentially a constant value -- it has only const accessors and can't be written to.
 // TODO: once bases IDs are implemented, change this to not provide a default implementation,
@@ -143,7 +141,7 @@ struct EuclideanEmbeddingInverse_t<Vector_t<Scalar_,DIM_,StandardEuclideanBasis,
         return "EuclideanEmbeddingInverse_t<" + TypeStringOf_t<Vector>::eval() + '>';
     }
 };
-
+*/
 } // end of namespace Tenh
 
 #endif // TENH_VECTOR_HPP_

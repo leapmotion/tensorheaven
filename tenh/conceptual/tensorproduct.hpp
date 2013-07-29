@@ -10,20 +10,26 @@
 
 #include "tenh/conceptual/basis.hpp"
 #include "tenh/conceptual/dual.hpp"
+#include "tenh/conceptual/multiindex.hpp"
 #include "tenh/conceptual/vectorspace.hpp"
 #include "tenh/meta/typelist.hpp"
 
 namespace Tenh {
 
-template <typename TypeList>
-struct DualsOfTypeList_t
+template <typename FactorTypeList>
+struct IndicesOfTypeList_t
 {
-    typedef TypeList_t<typename DualOf_c<typename TypeList::HeadType>::T,
-                       typename DualsOfTypeList_t<typename TypeList::BodyTypeList>::T> T;
+    typedef TypeList_t<typename FactorTypeList::HeadType::Index,typename IndicesOfTypeList_t<typename FactorTypeList::BodyTypeList>::T> T;
+};
+
+template <typename HeadType>
+struct IndicesOfTypeList_t<TypeList_t<HeadType> >
+{
+    typedef TypeList_t<typename HeadType::Index> T;
 };
 
 template <>
-struct DualsOfTypeList_t<EmptyTypeList>
+struct IndicesOfTypeList_t<EmptyTypeList>
 {
     typedef EmptyTypeList T;
 };
@@ -235,6 +241,7 @@ struct BasedTensorProductOfVectorSpaces_c
     using Parent_BasedVectorSpace::DIM;
     typedef typename Parent_BasedVectorSpace::Id Id;
     typedef typename Parent_BasedVectorSpace::Basis Basis;
+    typedef typename Parent_BasedVectorSpace::Index Index;
     typedef typename DualOf_c<BasedTensorProductOfVectorSpaces_c>::T Dual; // relies on the template specialization below
 
     static std::string type_as_string ()
@@ -316,13 +323,15 @@ struct TensorProductOfBasedVectorSpaces_c
         STATIC_ASSERT_IN_ENUM(AllFactorsAreBasedVectorSpaces_t<FactorTypeList_>::V, ALL_FACTORS_MUST_BE_BASED_VECTOR_SPACES),
     };
 
-    typedef typename Parent_TensorProductOfVectorSpaces::FactorTypeList FactorTypeList;
+    typedef FactorTypeList_ FactorTypeList;
     using Parent_TensorProductOfVectorSpaces::ORDER;
     typedef typename Parent_BasedVectorSpace::Field Field;
     using Parent_BasedVectorSpace::DIM;
     typedef typename Parent_BasedVectorSpace::Id Id;
     typedef typename Parent_BasedVectorSpace::Basis Basis;
+    typedef typename Parent_BasedVectorSpace::Index Index;
     typedef typename DualOf_c<TensorProductOfBasedVectorSpaces_c>::T Dual; // relies on the template specialization below
+    typedef MultiIndex_c<typename IndicesOfTypeList_t<FactorTypeList>::T> MultiIndex;
 
     static std::string type_as_string ()
     {

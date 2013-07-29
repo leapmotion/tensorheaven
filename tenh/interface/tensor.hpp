@@ -9,12 +9,14 @@
 #include <ostream>
 
 #include "tenh/core.hpp"
+
+#include "tenh/conceptual/index.hpp"
+#include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/expression_templates.hpp"
-#include "tenh/index.hpp"
 #include "tenh/interface/vector.hpp"
 
 namespace Tenh {
-
+/*
 template <typename FactorTypeList>
 struct AllFactorTypeScalarsAreEqual_t
 {
@@ -40,7 +42,7 @@ struct AllFactorTypeScalarsAreEqual_t<EmptyTypeList>
 {
     static bool const V = true;
 };
-
+*/
 template <typename FactorTypeList>
 struct FactorIndexTypeList_t
 {
@@ -59,26 +61,26 @@ struct FactorIndexTypeList_t<EmptyTypeList>
     typedef EmptyTypeList T;
 };
 
-// compile-time interface for a tensor product class.  the factors should each
-// be a vector space type (and NOT for example an affine space type or other non-
-// vector space type) -- the tensor product is only defined on vector spaces
-template <typename Derived_, typename FactorTypeList_, Uint32 DIM_, typename Basis_>
-struct Tensor_i : public Vector_i<Derived_,typename FactorTypeList_::HeadType::Scalar,DIM_,Basis_>
+// compile-time interface for a tensor product class.  BasedTensorProduct_
+// should be a BasedTensorProduct_c type.
+template <typename Derived_, typename Scalar_, typename BasedTensorProduct_>
+struct Tensor_i : public Vector_i<Derived_,Scalar_,BasedTensorProduct_>
 {
     enum
     {
         STATIC_ASSERT_IN_ENUM((!Lvd::Meta::TypesAreEqual<Derived_,NullType>::v), DERIVED_MUST_NOT_BE_NULL_TYPE),
-        STATIC_ASSERT_IN_ENUM((AllFactorTypeScalarsAreEqual_t<FactorTypeList_>::V), ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM((FactorTypeList_::LENGTH > 0), FACTOR_TYPE_LIST_MUST_BE_NONEMPTY)
+        //STATIC_ASSERT_IN_ENUM((FactorTypeList_::LENGTH > 0), FACTOR_TYPE_LIST_MUST_BE_NONEMPTY) // NOTE: deprecate this, since 0-order tensors should be allowed
     };
 
-    typedef Vector_i<Derived_,typename FactorTypeList_::HeadType::Scalar,DIM_,Basis_> Parent_Vector_i;
+    typedef Vector_i<Derived_,Scalar_,BasedTensorProduct_> Parent_Vector_i;
     typedef typename Parent_Vector_i::Derived Derived;
     typedef typename Parent_Vector_i::Scalar Scalar;
+    typedef typename Parent_Vector_i::BasedVectorSpace BasedVectorSpace;
     using Parent_Vector_i::DIM;
     typedef typename Parent_Vector_i::Basis Basis;
     typedef typename Parent_Vector_i::Index Index;
 
+    typedef BasedTensorProduct_ BasedTensorProduct;
     typedef FactorTypeList_ FactorTypeList;
     typedef typename FactorIndexTypeList_t<FactorTypeList>::T FactorIndexTypeList;
     typedef MultiIndex_t<FactorIndexTypeList> MultiIndex;

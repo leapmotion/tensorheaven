@@ -9,8 +9,9 @@
 #include <stdexcept>
 
 #include "tenh/core.hpp"
+
+#include "tenh/conceptual/index.hpp"
 #include "tenh/expression_templates_utility.hpp"
-#include "tenh/index.hpp"
 #include "tenh/interface/expressiontemplate.hpp"
 
 namespace Tenh {

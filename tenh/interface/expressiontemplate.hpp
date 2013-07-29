@@ -7,8 +7,9 @@
 #define TENH_INTERFACE_EXPRESSIONTEMPLATE_HPP_
 
 #include "tenh/core.hpp"
-#include "tenh/multiindex.hpp"
-#include "tenh/index.hpp"
+
+#include "tenh/conceptual/index.hpp"
+#include "tenh/conceptual/multiindex.hpp"
 
 namespace Tenh {
 

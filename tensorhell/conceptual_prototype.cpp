@@ -59,9 +59,13 @@ int main (int argc, char **argv)
         typedef VectorSpace_c<RealField,3,X> VectorSpace;
         typedef Basis_c<Y> Basis;
         typedef BasedVectorSpace_c<VectorSpace,Basis> BasedVectorSpace;
+        BasedVectorSpace::Index i;
         typedef BasedVectorSpace::Dual DualBasedVectorSpace;
         typedef DualBasedVectorSpace::Dual DualDualBasedVectorSpace;
         std::cout << "BasedVectorSpace = "  << TypeStringOf_t<BasedVectorSpace>::eval() << '\n'
+                  << "BasedVectorSpace::Index = " << TypeStringOf_t<BasedVectorSpace::Index>::eval() << '\n'  
+                  << "BasedVectorSpace::Index::Dual = " << TypeStringOf_t<BasedVectorSpace::Index::Dual>::eval() << '\n'  
+                  << "BasedVectorSpace::Dual::Index = " << TypeStringOf_t<BasedVectorSpace::Dual::Index>::eval() << '\n'  
                   << "DualBasedVectorSpace = " << TypeStringOf_t<DualBasedVectorSpace>::eval() << '\n' 
                   << "DualOf_c<BasedVectorSpace>::T = " << TypeStringOf_t<DualOf_c<BasedVectorSpace>::T>::eval() << '\n'
                   << "DualDualBasedVectorSpace = " << TypeStringOf_t<DualDualBasedVectorSpace>::eval() << '\n' << '\n';
@@ -69,6 +73,8 @@ int main (int argc, char **argv)
         assert((Lvd::Meta::TypesAreEqual<BasedVectorSpace,DualDualBasedVectorSpace>::v));
         // make sure that BasedVectorSpace::Dual and DualOf_c<BasedVectorSpace>::T are the same
         assert((Lvd::Meta::TypesAreEqual<DualBasedVectorSpace,DualOf_c<BasedVectorSpace>::T>::v));
+        // make sure that BasedVectorSpace::Dual::Index and BasedVectorSpace::Dual::Index are the same
+        assert((Lvd::Meta::TypesAreEqual<BasedVectorSpace::Dual::Index,BasedVectorSpace::Index::Dual>::v));
         // make sure BasedVectorSpace is actually a VectorSpace_c and a BasedVectorSpace_c
         assert(IsAVectorSpace_c<BasedVectorSpace>::V);
         assert(IsABasedVectorSpace_c<BasedVectorSpace>::V);

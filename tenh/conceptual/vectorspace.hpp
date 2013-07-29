@@ -10,6 +10,7 @@
 
 #include "tenh/conceptual/dual.hpp"
 #include "tenh/conceptual/field.hpp"
+#include "tenh/conceptual/index.hpp"
 
 namespace Tenh {
 
@@ -57,6 +58,7 @@ struct BasedVectorSpace_c
 	typedef typename VectorSpace::Id Id;
     typedef typename DualOf_c<BasedVectorSpace_c>::T Dual; // relies on the template specialization below
     typedef Basis_ Basis;
+    typedef Index_c<BasedVectorSpace_c> Index;
 
     static std::string type_as_string ()
     {

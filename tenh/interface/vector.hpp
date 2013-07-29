@@ -10,34 +10,39 @@
 #include <ostream>
 
 #include "tenh/core.hpp"
+
+#include "tenh/conceptual/index.hpp"
+#include "tenh/conceptual/multiindex.hpp"
+#include "tenh/conceptual/vectorspace.hpp"
 #include "tenh/expression_templates.hpp"
-#include "tenh/index.hpp"
 #include "tenh/meta/typestringof.hpp"
-#include "tenh/multiindex.hpp"
 
 namespace Tenh {
 
 // NOTE: Scalar_ MUST be a POD data type.  An implementation of this interface
 // really only needs to provide implementations of the const and non-const
-// component_access_without_range_check methods.
-template <typename Derived_, typename Scalar_, Uint32 DIM_, typename Basis_> // don't worry about type ID for now
+// component_access_without_range_check methods.  BasedVectorSpace_ should be
+// a BasedVectorSpace_c type.
+template <typename Derived_, typename Scalar_, typename BasedVectorSpace_>
 struct Vector_i
 {
     enum
     {
         STATIC_ASSERT_IN_ENUM((!Lvd::Meta::TypesAreEqual<Derived_,NullType>::v), DERIVED_MUST_NOT_BE_NULL_TYPE),
-        STATIC_ASSERT_IN_ENUM((DIM_ > 0), DIMENSION_MUST_BE_POSITIVE) // TODO: zero-dimensional vector spaces (?)
+        STATIC_ASSERT_IN_ENUM(IsABasedVectorSpace_c<BasedVectorSpace_>::V, MUST_BE_BASED_VECTOR_SPACE)
     };
 
     typedef Derived_ Derived;
     typedef Scalar_ Scalar;
-    static Uint32 const DIM = DIM_;
-    typedef Basis_ Basis;
+    typedef BasedVectorSpace_ BasedVectorSpace;
+    static Uint32 const DIM = BasedVectorSpace::DIM;
+    typedef typename BasedVectorSpace::Basis Basis;
+
     // here is the "basic" (non-named) Index of this vector type, and it is aware of Derived
-    typedef Index_t<Derived> Index;
-    // the MultiIndex_t encapsulation of Index
-    typedef MultiIndex_t<TypeList_t<Index> > MultiIndex;
-    static bool const IS_VECTOR_I = true;
+    typedef Index_c<Derived> Index;
+    // the MultiIndex_c encapsulation of Index -- TODO: think about if this should go away,
+    // preferring an order-1 tensor power to use a 1-multi-index.
+    typedef MultiIndex_c<TypeList_t<Index> > MultiIndex;
 
     static Uint32 dim () { return DIM; }
 
@@ -63,7 +68,7 @@ struct Vector_i
     // NOTE: will not currently work for complex types
     typename AssociatedFloatingPointType_t<Scalar>::T squared_norm () const
     {
-        TypedIndex_t<Derived,'i'> i;
+        TypedIndex_c<Derived,'i'> i;
         return operator()(i)*operator()(i);
     }
     // requires InnerProduct_t<Derived> to be implemented
@@ -80,41 +85,41 @@ struct Vector_i
     Scalar &operator [] (Index const &i) { return as_derived().Derived::operator[](i); }
 
     template <typename Index_>
-    Scalar const &operator [] (MultiIndex_t<TypeList_t<Index_> > const &m) const { return as_derived().Derived::operator[](m.head()); }
+    Scalar const &operator [] (MultiIndex_c<TypeList_t<Index_> > const &m) const { return as_derived().Derived::operator[](m.head()); }
     template <typename Index_>
-    Scalar &operator [] (MultiIndex_t<TypeList_t<Index_> > const &m) { return as_derived().Derived::operator[](m.head()); }
+    Scalar &operator [] (MultiIndex_c<TypeList_t<Index_> > const &m) { return as_derived().Derived::operator[](m.head()); }
 
     // the argument is technically unnecessary, as its value is not used.  however,
-    // this allows the template system to deduce the SYMBOL of the TypedIndex_t, so
+    // this allows the template system to deduce the SYMBOL of the TypedIndex_c, so
     // it doesn't need to be specified explicitly.
     // in this, an outer product would be
-    // TypedIndex_t<'i'> i;
-    // TypedIndex_t<'j'> j;
+    // TypedIndex_c<'i'> i;
+    // TypedIndex_c<'j'> j;
     // u(i)*v(j)
     template <char SYMBOL>
     ExpressionTemplate_IndexedObject_t<Derived,
-                                       TypeList_t<TypedIndex_t<Derived,SYMBOL> >,
+                                       TypeList_t<TypedIndex_c<Derived,SYMBOL> >,
                                        EmptyTypeList,
                                        FORCE_CONST,
-                                       CHECK_FOR_ALIASING> operator () (TypedIndex_t<Derived,SYMBOL> const &) const
+                                       CHECK_FOR_ALIASING> operator () (TypedIndex_c<Derived,SYMBOL> const &) const
     {
         STATIC_ASSERT((SYMBOL != '\0'), TYPEDINDEX_SYMBOL_MUST_NOT_BE_NULL);
         return ExpressionTemplate_IndexedObject_t<Derived,
-                                                  TypeList_t<TypedIndex_t<Derived,SYMBOL> >,
+                                                  TypeList_t<TypedIndex_c<Derived,SYMBOL> >,
                                                   EmptyTypeList,
                                                   FORCE_CONST,
                                                   CHECK_FOR_ALIASING>(as_derived());
     }
     template <char SYMBOL>
     ExpressionTemplate_IndexedObject_t<Derived,
-                                       TypeList_t<TypedIndex_t<Derived,SYMBOL> >,
+                                       TypeList_t<TypedIndex_c<Derived,SYMBOL> >,
                                        EmptyTypeList,
                                        DONT_FORCE_CONST,
-                                       CHECK_FOR_ALIASING> operator () (TypedIndex_t<Derived,SYMBOL> const &)
+                                       CHECK_FOR_ALIASING> operator () (TypedIndex_c<Derived,SYMBOL> const &)
     {
         STATIC_ASSERT((SYMBOL != '\0'), TYPEDINDEX_SYMBOL_MUST_NOT_BE_NULL);
         return ExpressionTemplate_IndexedObject_t<Derived,
-                                                  TypeList_t<TypedIndex_t<Derived,SYMBOL> >,
+                                                  TypeList_t<TypedIndex_c<Derived,SYMBOL> >,
                                                   EmptyTypeList,
                                                   DONT_FORCE_CONST,
                                                   CHECK_FOR_ALIASING>(as_derived());
@@ -131,20 +136,13 @@ struct Vector_i
 
     static std::string type_as_string ()
     {
-        // if Basis is StandardEuclideanBasis, leave it out of the type string, since it's the default value
-        // and it tends to clutter up output pretty mightily.
-        if (Lvd::Meta::TypesAreEqual<Basis,StandardEuclideanBasis>())
-        {
-            return "Vector_i<" + TypeStringOf_t<Derived>::eval() + ',' + TypeStringOf_t<Scalar>::eval() + ','
-                               + AS_STRING(DIM) + '>';
-        }
-        else
-        {
-            return "Vector_i<" + TypeStringOf_t<Derived>::eval() + ',' + TypeStringOf_t<Scalar>::eval() + ','
-                               + AS_STRING(DIM) + ',' + TypeStringOf_t<Basis>::eval() + '>';
-        }
+        return "Vector_i<" + TypeStringOf_t<Derived>::eval() + ',' + TypeStringOf_t<Scalar>::eval() + ','
+                           + TypeStringOf_t<BasedVectorSpace>::eval() + '>';
     }
 };
+
+template <typename T> struct IsAVector_i { static bool const V = false; };
+template <typename Derived, typename Scalar, typename BasedVectorSpace> struct IsAVector_i<Vector_i<Derived,Scalar,BasedVectorSpace> > { static bool const V = true; };
 
 template <typename Derived, typename Scalar, Uint32 DIM, typename Basis>
 std::ostream &operator << (std::ostream &out, Vector_i<Derived,Scalar,DIM,Basis> const &v)

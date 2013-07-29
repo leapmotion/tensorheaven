@@ -7,9 +7,10 @@
 #define TENH_EXPRESSIONTEMPLATE_EVAL_HPP_
 
 #include "tenh/core.hpp"
-#include "tenh/index.hpp"
+
+#include "tenh/conceptual/index.hpp"
+#include "tenh/conceptual/multiindex.hpp"
 #include "tenh/interface/expressiontemplate.hpp"
-#include "tenh/multiindex.hpp"
 #include "tenh/tensor2.hpp" // TEMP until general Tensor_t and eval are implemented
 
 namespace Tenh {

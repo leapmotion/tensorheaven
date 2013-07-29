@@ -9,7 +9,8 @@
 #include <stdexcept>
 
 #include "tenh/core.hpp"
-#include "tenh/index.hpp"
+
+#include "tenh/conceptual/index.hpp"
 #include "tenh/meta/typestringof.hpp"
 
 namespace Tenh {
@@ -17,13 +18,16 @@ namespace Tenh {
 // fixed-length array of a given component type, which must be a POD type
 // (the data_size_in_bytes and data_pointer methods require this).
 // Derived is only used to define the Index type.
+// TODO: Array_t should probably not use Index_c (or BasedIndex_c if/when
+// it is made, but rather something more basic non-conceptual type like
+// "RangedUint_t<DIM>")
 template <typename Component_, Uint32 DIM_, typename Derived_ = NullType>
 struct Array_t
 {
     typedef typename DerivedType_t<Derived_,Array_t<Component_,DIM_,Derived_> >::T Derived;
     typedef Component_ Component;
     static Uint32 const DIM = DIM_;
-    typedef Index_t<Derived> Index;
+    typedef Index_c<Derived> Index;
 
     explicit Array_t (WithoutInitialization const &) { }
     explicit Array_t (Component const &fill_with) { for (Uint32 i = 0; i < DIM; ++i) m_component[i] = fill_with; }
@@ -33,12 +37,12 @@ struct Array_t
 
     Component const &operator [] (Index const &i) const
     {
-        assert(i.is_not_at_end() && "you used Index_t(x, DONT_RANGE_CHECK) inappropriately");
+        assert(i.is_not_at_end() && "you used Index_c(x, DONT_RANGE_CHECK) inappropriately");
         return m_component[i.value()];
     }
     Component &operator [] (Index const &i)
     {
-        assert(i.is_not_at_end() && "you used Index_t(x, DONT_RANGE_CHECK) inappropriately");
+        assert(i.is_not_at_end() && "you used Index_c(x, DONT_RANGE_CHECK) inappropriately");
         return m_component[i.value()];
     }
 

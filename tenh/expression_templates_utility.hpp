@@ -7,8 +7,9 @@
 #define TENH_EXPRESSION_TEMPLATES_UTILITY_HPP_
 
 #include "tenh/core.hpp"
+
+#include "tenh/conceptual/multiindex.hpp"
 #include "tenh/innerproduct.hpp"
-#include "tenh/multiindex.hpp"
 #include "tenh/meta/typelist.hpp"
 
 namespace Tenh {
@@ -69,6 +70,10 @@ struct UnarySummation_t
         // t = (f,s), which is a concatenation of the free access indices and the summed access indices.
         // s is a reference to the second part, which is what is iterated over in the summation.
         for (SummedIndex &s = t.template trailing_list<FreeIndexTypeList::LENGTH>(); s.is_not_at_end(); ++s)
+            // TODO: when the dual-vector-space/conceptual refactor is done, this summation_component_factor
+            // should go away, since this is a non-natural pairing, and it causes C++ plumbing issues
+            // (getting the C++ scalar type from the index, where the index will only be aware of the
+            // abstract BasedVectorSpace).
             retval += tensor[tensor_index_map(t)] * summation_component_factor(s);
         return retval;
     }

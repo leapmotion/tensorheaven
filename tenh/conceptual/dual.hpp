@@ -8,6 +8,7 @@
 
 #include "tenh/core.hpp"
 
+#include "tenh/meta/typelist.hpp"
 #include "tenh/meta/typestringof.hpp"
 
 namespace Tenh {
@@ -35,6 +36,19 @@ template <typename Primal>
 struct DualOf_c<Dual_c<Primal> >
 {
 	typedef Primal T;
+};
+
+template <typename TypeList>
+struct DualsOfTypeList_t
+{
+    typedef TypeList_t<typename DualOf_c<typename TypeList::HeadType>::T,
+                       typename DualsOfTypeList_t<typename TypeList::BodyTypeList>::T> T;
+};
+
+template <>
+struct DualsOfTypeList_t<EmptyTypeList>
+{
+    typedef EmptyTypeList T;
 };
 
 } // end of namespace Tenh

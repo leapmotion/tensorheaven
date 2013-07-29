@@ -267,7 +267,25 @@ Notes for conceptual layer and refactor
   for swaps in rows, and zero is returned for repetitions in the rows.
 - Grey (gray?) coding scheme would be desired for generating non-symmetric multi-indices for
   when iterating through components for e.g. the bundle operation. 
-
+- Think about difference between BasedTensorProduct (which may have basis elements which are non-simple,
+  thereby complicating the component access for the split operation) and TensorProductOfBasedVectorSpaces 
+  (whose basis elements are all simple, and therefore give a simple operation for the split operation).
+  It might make sense to prohibit non-simple tensor product bases, opting for explicit embeddings
+  instead (which is [probably] computationally equivalent and better yet, makes it more clear that
+  extra computation is necessary in the tensor expressions themselves).  In this case, BasedTensorProduct
+  might be downgraded to BasedVectorSpace.
+- Idea for handling the split operation -- don't bother with multi-indices for any sort of tensor
+  power with symmetry, and only do multi-indices for TensorProductOfBasedVectorSpaces_c.  Then use
+  explicit embeddings (which are easy to explicitly specify via C++ code in indexed expressions, and 
+  they would almost always use diagonal 2-tensors) to embed the symmetric thing in the non-symmetric 
+  space, in which the contractions are actually done.  This way, the choice of "projection" embedding 
+  or "non-projection" can be made clearly and explicitly, instead of through some weird choice of 
+  template type.  Another advantage to this approach is that "smaller" splits can be done -- e.g. 
+  splitting "S^4 V" into "S^2 V \otimes S^2 V" or into "V \otimes S^3 V", and this might be a crucial
+  feature, as it really enriches the type system without adding too much library-template-driven code 
+  (the embeddings would be neatly packaged bits of code that could be user-specified also).
+- Possible idea for efficient contraction of tensors having different symmetries -- express their 
+  contraction as a linear map (a 2-tensor), then contract this with the outer product of the operands.
 
 
 Notes/Reflections on the development of a really really template-heavy math library
