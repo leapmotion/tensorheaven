@@ -286,7 +286,14 @@ Notes for conceptual layer and refactor
   (the embeddings would be neatly packaged bits of code that could be user-specified also).
 - Possible idea for efficient contraction of tensors having different symmetries -- express their 
   contraction as a linear map (a 2-tensor), then contract this with the outer product of the operands.
-
+- Use ElementOf_t<ConceptualType> to instantiate vectors and tensors?  This would be something like
+    ElementOf_t<R4> x; // a 4-vector
+  or
+    ElementOf_t<BasedTensorPower_c<R3,2> > y; // a 2-tensor over R^3.
+  or
+    ElementOf_t<BasedTensorPower_c<R3,0> > r; // a scalar (or convertible to one)
+  or
+    ElementOf_t<BasedTensorPower_c<R4,1> > z; // same as x.
 
 Notes/Reflections on the development of a really really template-heavy math library
 - Trying to have the compiler enforce the conceptual type system through the C++ type system

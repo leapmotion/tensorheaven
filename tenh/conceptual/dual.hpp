@@ -16,7 +16,8 @@ namespace Tenh {
 template <typename Primal_>
 struct Dual_c
 {
-	typedef Primal_ Primal;
+	typedef Primal_ Primal; // this probably doesn't really need to be here
+	typedef Primal Dual;
 
     static std::string type_as_string ()
     {
