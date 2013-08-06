@@ -211,9 +211,23 @@ template <typename TypeList, typename Predicate>
 struct ElementsOfTypeListSatisfyingPredicate_t
 {
     typedef typename ElementsOfTypeListSatisfyingPredicate_t<typename TypeList::BodyTypeList,Predicate>::T ElementsInBodyTypeListSatisfyingPredicate;
-    typedef typename Lvd::Meta::If<Predicate::template Eval_t<typename TypeList::Head>::V,
+    typedef typename Lvd::Meta::If<Predicate::template Eval_t<typename TypeList::HeadType>::V,
                                    TypeList_t<typename TypeList::HeadType,ElementsInBodyTypeListSatisfyingPredicate>,
                                    ElementsInBodyTypeListSatisfyingPredicate>::T T;
+};
+
+template <typename HeadType, typename Predicate>
+struct ElementsOfTypeListSatisfyingPredicate_t<TypeList_t<HeadType>,Predicate>
+{
+    typedef typename Lvd::Meta::If<Predicate::template Eval_t<HeadType>::V,
+                                   TypeList_t<HeadType>,
+                                   EmptyTypeList>::T T;
+};
+
+template <typename Predicate>
+struct ElementsOfTypeListSatisfyingPredicate_t<EmptyTypeList,Predicate>
+{
+    typedef EmptyTypeList T;
 };
 
 
