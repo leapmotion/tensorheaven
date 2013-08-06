@@ -17,6 +17,9 @@ struct EmptyTypeList;
 #define STATIC_ASSERT(CONDITION,MESSAGE) do { if(Tenh::StaticAssert<bool(CONDITION)>::MESSAGE) {} } while (false)
 #define STATIC_ASSERT_AS_RVALUE(CONDITION,MESSAGE) Tenh::StaticAssert<bool(CONDITION)>::MESSAGE
 #define STATIC_ASSERT_IN_ENUM(CONDITION,MESSAGE) MESSAGE = Tenh::StaticAssert<bool(CONDITION)>::MESSAGE
+// the purpose of STATIC_ASSERT_IN_ENUM__UNIQUE is so that the same assert message can be used
+// multiple times in the same enum without a compile error -- however the AUX_MSG must be unique.
+#define STATIC_ASSERT_IN_ENUM__UNIQUE(CONDITION,MESSAGE,AUX_MSG) MESSAGE_##AUX_MSG = Tenh::StaticAssert<bool(CONDITION)>::MESSAGE
 #define STATIC_ASSERT_TYPELIST_IS_EMPTY(TYPELIST) STATIC_ASSERT((Lvd::Meta::TypesAreEqual<TYPELIST,Tenh::EmptyTypeList>::v), TYPELIST_MUST_BE_EMPTY)
 #define STATIC_ASSERT_TYPES_ARE_EQUAL(TYPE1,TYPE2) STATIC_ASSERT((Lvd::Meta::TypesAreEqual<TYPE1,TYPE2>::v), TYPES_MUST_BE_EQUAL)
 
@@ -65,7 +68,9 @@ struct StaticAssert<true>
         MUST_BE_TENSOR_POWER_OF_VECTOR_SPACES,
         MUST_BE_TENSOR_PRODUCT,
         MUST_BE_TENSOR_PRODUCT_OF_VECTOR_SPACES,
+        MUST_BE_TYPELIST,
         MUST_BE_VECTOR_SPACE,
+        MUST_HAVE_EQUAL_LENGTHS,
         ONLY_ONE_DIMENSIONAL_VECTORS_CAN_BE_CONVERTED_TO_SCALARS,
         OPERAND_HAS_THE_SAME_FREE_INDICES,
         OPERAND_IS_EXPRESSION_TEMPLATE,

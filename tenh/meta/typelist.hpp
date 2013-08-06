@@ -137,6 +137,13 @@ struct TypeList_t
     }
 };
 
+
+template <typename T> struct IsATypeList_t { static bool const V = false; };
+template <typename HeadType, typename BodyTypeList> struct IsATypeList_t<TypeList_t<HeadType,BodyTypeList> > { static bool const V = IsATypeList_t<BodyTypeList>::V; };
+template <typename HeadType> struct IsATypeList_t<TypeList_t<HeadType> > { static bool const V = true; };
+template <> struct IsATypeList_t<EmptyTypeList> { static bool const V = true; };
+
+
 } // end of namespace Tenh
 
 #endif // TENH_META_TYPELIST_HPP_

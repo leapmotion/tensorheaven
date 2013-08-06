@@ -181,16 +181,16 @@ struct FirstMatchingIn_t<TypeList_t<HeadType>,Type>
 // input: TypeList_t TypeList, typename UniqueTypeList, Uint32 MULTIPLICITY -- output: the types in UniqueTypeList which occur
 // exactly MULTIPLICITY times in TypeList
 template <typename TypeList, typename UniqueTypeList, Uint32 MULTIPLICITY>
-struct ElementsOfListHavingMultiplicity_t
+struct ElementsOfTypeListHavingMultiplicity_t
 {
-    typedef typename ElementsOfListHavingMultiplicity_t<TypeList,typename UniqueTypeList::BodyTypeList,MULTIPLICITY>::T InBody;
+    typedef typename ElementsOfTypeListHavingMultiplicity_t<TypeList,typename UniqueTypeList::BodyTypeList,MULTIPLICITY>::T InBody;
     typedef typename Lvd::Meta::If<(Occurrence_t<TypeList,typename UniqueTypeList::HeadType>::COUNT == MULTIPLICITY),
                                    TypeList_t<typename UniqueTypeList::HeadType,InBody>,
                                    InBody>::T T;
 };
 
 template <typename TypeList, Uint32 MULTIPLICITY>
-struct ElementsOfListHavingMultiplicity_t<TypeList,EmptyTypeList,MULTIPLICITY>
+struct ElementsOfTypeListHavingMultiplicity_t<TypeList,EmptyTypeList,MULTIPLICITY>
 {
     typedef EmptyTypeList T;
 };
@@ -200,8 +200,23 @@ template <typename TypeList, Uint32 MULTIPLICITY>
 struct ElementsHavingMultiplicity_t
 {
     typedef typename UniqueTypesIn_t<TypeList>::T UniqueTypeList;
-    typedef typename ElementsOfListHavingMultiplicity_t<TypeList,UniqueTypeList,MULTIPLICITY>::T T;
+    typedef typename ElementsOfTypeListHavingMultiplicity_t<TypeList,UniqueTypeList,MULTIPLICITY>::T T;
 };
+
+
+
+
+// Predicate must be a struct having a template <> struct Eval_t { static bool const V; };
+template <typename TypeList, typename Predicate>
+struct ElementsOfTypeListSatisfyingPredicate_t
+{
+    typedef typename ElementsOfTypeListSatisfyingPredicate_t<typename TypeList::BodyTypeList,Predicate>::T ElementsInBodyTypeListSatisfyingPredicate;
+    typedef typename Lvd::Meta::If<Predicate::template Eval_t<typename TypeList::Head>::V,
+                                   TypeList_t<typename TypeList::HeadType,ElementsInBodyTypeListSatisfyingPredicate>,
+                                   ElementsInBodyTypeListSatisfyingPredicate>::T T;
+};
+
+
 
 
 
@@ -300,6 +315,160 @@ template <typename TypeListB>
 struct SetSubtraction_t<EmptyTypeList,TypeListB>
 {
     typedef EmptyTypeList T;
+};
+
+
+
+template <typename TypeLists>
+struct EachTypeListHasEqualLength_t
+{
+private:
+    enum
+    {
+        STATIC_ASSERT_IN_ENUM(IsATypeList_t<TypeLists>::V, MUST_BE_TYPELIST)
+    };
+    typedef typename TypeLists::HeadType First;
+    typedef typename TypeLists::BodyTypeList::HeadType Second;
+public:
+    static bool const V = (First::LENGTH == Second::LENGTH) && 
+                          EachTypeListHasEqualLength_t<typename TypeLists::BodyTypeList>::V;
+};
+
+template <typename HeadType>
+struct EachTypeListHasEqualLength_t<TypeList_t<HeadType> >
+{
+    static bool const V = true; // trivially true
+};
+
+template <>
+struct EachTypeListHasEqualLength_t<EmptyTypeList>
+{
+    static bool const V = true; // vacuously true
+};
+
+
+// makes a TypeList_t of the HeadType of each TypeList_t in the list
+template <typename TypeLists>
+struct HeadTypeOfEach_t
+{
+private:
+    typedef typename TypeLists::HeadType FirstTypeList;
+    typedef typename TypeLists::BodyTypeList RestOfTypeLists;
+    enum
+    { 
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IsATypeList_t<TypeLists>::V, MUST_BE_TYPELIST, TYPELISTS),
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IsATypeList_t<FirstTypeList>::V, MUST_BE_TYPELIST, FIRSTTYPELIST),
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IsATypeList_t<RestOfTypeLists>::V, MUST_BE_TYPELIST, RESTOFTYPELISTS),
+        STATIC_ASSERT_IN_ENUM(EachTypeListHasEqualLength_t<TypeLists>::V, MUST_HAVE_EQUAL_LENGTHS)
+    };
+public:
+    typedef TypeList_t<typename FirstTypeList::HeadType,typename HeadTypeOfEach_t<RestOfTypeLists>::T> T;
+};
+
+template <typename RestOfTypeLists>
+struct HeadTypeOfEach_t<TypeList_t<EmptyTypeList,RestOfTypeLists> >
+{
+private:
+    typedef TypeList_t<EmptyTypeList,RestOfTypeLists> TypeLists;
+    enum
+    { 
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IsATypeList_t<TypeLists>::V, MUST_BE_TYPELIST, TYPELISTS),
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IsATypeList_t<RestOfTypeLists>::V, MUST_BE_TYPELIST, RESTOFTYPELISTS),
+        STATIC_ASSERT_IN_ENUM(EachTypeListHasEqualLength_t<TypeLists>::V, MUST_HAVE_EQUAL_LENGTHS)
+    };
+public:
+    typedef EmptyTypeList T;
+};
+
+template <>
+struct HeadTypeOfEach_t<EmptyTypeList>
+{
+    typedef EmptyTypeList T;
+};
+
+
+// makes a TypeList_t of the BodyTypeList of each TypeList_t in the list
+template <typename TypeLists>
+struct BodyTypeListOfEach_t
+{
+private:
+    typedef typename TypeLists::HeadType FirstTypeList;
+    typedef typename TypeLists::BodyTypeList RestOfTypeLists;
+    enum
+    { 
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IsATypeList_t<TypeLists>::V, MUST_BE_TYPELIST, TYPELISTS),
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IsATypeList_t<FirstTypeList>::V, MUST_BE_TYPELIST, FIRSTTYPELIST),
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IsATypeList_t<RestOfTypeLists>::V, MUST_BE_TYPELIST, RESTOFTYPELISTS),
+        STATIC_ASSERT_IN_ENUM(EachTypeListHasEqualLength_t<TypeLists>::V, MUST_HAVE_EQUAL_LENGTHS)
+    };
+public:
+    typedef TypeList_t<typename FirstTypeList::BodyTypeList,typename BodyTypeListOfEach_t<RestOfTypeLists>::T> T;
+};
+
+template <typename RestOfTypeLists>
+struct BodyTypeListOfEach_t<TypeList_t<EmptyTypeList,RestOfTypeLists> >
+{
+private:
+    typedef TypeList_t<EmptyTypeList,RestOfTypeLists> TypeLists;
+    enum
+    { 
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IsATypeList_t<TypeLists>::V, MUST_BE_TYPELIST, TYPELISTS),
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IsATypeList_t<RestOfTypeLists>::V, MUST_BE_TYPELIST, RESTOFTYPELISTS),
+        STATIC_ASSERT_IN_ENUM(EachTypeListHasEqualLength_t<TypeLists>::V, MUST_HAVE_EQUAL_LENGTHS)
+    };
+public:
+    typedef EmptyTypeList T;
+};
+
+template <>
+struct BodyTypeListOfEach_t<EmptyTypeList>
+{
+    typedef EmptyTypeList T;
+};
+
+
+// "zips" a list of typelists into a typelist of tuples (implemented via TypeList_t).
+// the heads of all the typelists are put into the head element, etc.
+// e.g. (('a','b','c'),(1,2,3)) turns into (('a',1),('b',2),('c',3)).
+template <typename TypeLists>
+struct Zip_t
+{
+private:
+    enum 
+    { 
+        STATIC_ASSERT_IN_ENUM(EachTypeListHasEqualLength_t<TypeLists>::V, MUST_HAVE_EQUAL_LENGTHS)
+    };
+    typedef typename HeadTypeOfEach_t<TypeLists>::T HeadTypes;
+    typedef typename BodyTypeListOfEach_t<TypeLists>::T BodyTypeLists;
+public:
+    typedef TypeList_t<HeadTypes,typename Zip_t<BodyTypeLists>::T> T;
+};
+
+template <typename RestOfTypeLists>
+struct Zip_t<TypeList_t<EmptyTypeList,RestOfTypeLists> >
+{
+private:
+    typedef TypeList_t<EmptyTypeList,RestOfTypeLists> TypeLists;
+    enum 
+    { 
+        STATIC_ASSERT_IN_ENUM(EachTypeListHasEqualLength_t<TypeLists>::V, MUST_HAVE_EQUAL_LENGTHS)
+    };
+public:
+    typedef EmptyTypeList T;
+};
+
+template <>
+struct Zip_t<EmptyTypeList>
+{
+    typedef EmptyTypeList T;
+};
+
+
+// the inverse to Zip_t -- e.g. (('a',1),('b',2),('c',3)) turns into (('a','b','c'),(1,2,3)).
+template <typename ZippedTypeLists>
+struct Unzip_t
+{
+    typedef typename Zip_t<ZippedTypeLists>::T T; // Zip_t is its own inverse
 };
 
 } // end of namespace Tenh
