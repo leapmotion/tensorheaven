@@ -87,6 +87,7 @@ random TODOs:
   * Blah_i<...> for the templatized interface layer (this is somewhere between _c and _i)
   * Blah_m<...> for meta-programmingy things like type lists and related metafunctions
   * Blah_?<...> for meta-functions which "return" a type T
+- add "operator std::string ()" to TypeStringOf_t (?), so that "TypeStringOf_t<Foo>()" can be used
 
 features necessary for version 0.5:
 x euclidean embedding (using short-term zero-dimensional hack (?))
@@ -294,6 +295,12 @@ Notes for conceptual layer and refactor
     ElementOf_t<BasedTensorPower_c<R3,0> > r; // a scalar (or convertible to one)
   or
     ElementOf_t<BasedTensorPower_c<R4,1> > z; // same as x.
+- Changing over to AbstractIndex_c<char SYMBOL> should be done -- the "bundle" operation would then
+  need to specify the bundling type explicitly (which is probably a good thing).  This may simplify
+  a bunch of code, and ease the honey-bucket approach to compile-time checking.
+- Could make Vector_i not be an indexable object, but rather require usage of tensors to provide this.
+  This would probably collapse some library code, but could make instantiating a vector more annoying
+  for the user.
 
 Notes/Reflections on the development of a really really template-heavy math library
 - Trying to have the compiler enforce the conceptual type system through the C++ type system
