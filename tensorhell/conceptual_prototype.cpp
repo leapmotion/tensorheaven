@@ -1,13 +1,17 @@
 #include <cassert>
 #include <iostream>
+
+#include "tenh/core.hpp"
+
+#include "tenh/array.hpp"
 #include "tenh/conceptual/basis.hpp"
 #include "tenh/conceptual/diagonalbased2tensorproduct.hpp"
 #include "tenh/conceptual/symmetricpower.hpp"
 #include "tenh/conceptual/tensorpower.hpp"
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/conceptual/vectorspace.hpp"
-
-using namespace Tenh;
+#include "tenh/conceptual/dual.hpp"
+#include "tenh/interface/vector.hpp"
 
 struct X
 {
@@ -23,6 +27,68 @@ struct Z
 {
     static std::string type_as_string () { return "Z"; }
 };
+
+namespace Tenh {
+
+template <typename Scalar, typename Space> struct ElementOf_t;
+
+template <typename Scalar_, typename VectorSpace_, typename Basis_>
+struct ElementOf_t<Scalar_,BasedVectorSpace_c<VectorSpace_,Basis_> >
+    :
+    public Vector_i<ElementOf_t<Scalar_,BasedVectorSpace_c<VectorSpace_,Basis_> >,
+                    Scalar_,
+                    BasedVectorSpace_c<VectorSpace_,Basis_> >,
+    // Array_t is privately inherited because it is an implementation detail
+    private Array_t<Scalar_,VectorSpace_::DIM>
+{
+    typedef Vector_i<ElementOf_t<Scalar_,BasedVectorSpace_c<VectorSpace_,Basis_> >,
+                     Scalar_,
+                     BasedVectorSpace_c<VectorSpace_,Basis_> > Parent_Vector_i;
+    typedef Array_t<Scalar_,VectorSpace_::DIM> Parent_Array_t;
+
+    typedef typename Parent_Vector_i::Derived Derived;
+    typedef typename Parent_Vector_i::Scalar Scalar;
+    typedef typename Parent_Vector_i::BasedVectorSpace BasedVectorSpace;
+    using Parent_Vector_i::DIM;
+    typedef typename Parent_Vector_i::Basis Basis;
+    typedef typename Parent_Vector_i::ComponentIndex ComponentIndex;
+    typedef typename Parent_Vector_i::MultiIndex MultiIndex;
+
+    typedef typename DualOf_c<ElementOf_t>::T Dual; // relies on the template specialization below
+
+    explicit ElementOf_t (WithoutInitialization const &w) : Parent_Array_t(w) { }
+    explicit ElementOf_t (Scalar fill_with) : Parent_Array_t(fill_with) { }
+    ElementOf_t (Scalar x0, Scalar x1) : Parent_Array_t(x0, x1) { }
+    ElementOf_t (Scalar x0, Scalar x1, Scalar x2) : Parent_Array_t(x0, x1, x2) { }
+    ElementOf_t (Scalar x0, Scalar x1, Scalar x2, Scalar x3) : Parent_Array_t(x0, x1, x2, x3) { }
+
+    using Parent_Vector_i::as_derived;
+    using Parent_Array_t::operator[];
+    using Parent_Array_t::data_size_in_bytes;
+    using Parent_Array_t::data_pointer;
+
+    static std::string type_as_string ()
+    {
+        return "ElementOf_t<" + TypeStringOf_t<Scalar>::eval() + ',' + TypeStringOf_t<BasedVectorSpace>::eval() + '>';
+    }
+
+private:
+
+    // this has no definition, and is designed to generate a compiler error if used (use the one accepting WithoutInitialization instead).
+    // TODO: may need to make this public to allow 0-dimensional vectors, adding a static assert to check that it's actually 0-dimensional
+    // and not being used improperly.
+    ElementOf_t ();
+};
+
+template <typename Scalar, typename VectorSpace, typename Basis>
+struct DualOf_c<ElementOf_t<Scalar,BasedVectorSpace_c<VectorSpace,Basis> > >
+{
+    typedef ElementOf_t<Scalar,typename BasedVectorSpace_c<VectorSpace,Basis>::Dual> T;
+};
+
+}
+
+using namespace Tenh;
 
 int main (int argc, char **argv)
 {
@@ -60,13 +126,13 @@ int main (int argc, char **argv)
         typedef VectorSpace_c<RealField,3,X> VectorSpace;
         typedef Basis_c<Y> Basis;
         typedef BasedVectorSpace_c<VectorSpace,Basis> BasedVectorSpace;
-        BasedVectorSpace::Index i;
+        // BasedVectorSpace::Index i;
         typedef BasedVectorSpace::Dual DualBasedVectorSpace;
         typedef DualBasedVectorSpace::Dual DualDualBasedVectorSpace;
         std::cout << "BasedVectorSpace = "  << TypeStringOf_t<BasedVectorSpace>::eval() << '\n'
-                  << "BasedVectorSpace::Index = " << TypeStringOf_t<BasedVectorSpace::Index>::eval() << '\n'  
-                  << "BasedVectorSpace::Index::Dual = " << TypeStringOf_t<BasedVectorSpace::Index::Dual>::eval() << '\n'  
-                  << "BasedVectorSpace::Dual::Index = " << TypeStringOf_t<BasedVectorSpace::Dual::Index>::eval() << '\n'  
+                  // << "BasedVectorSpace::Index = " << TypeStringOf_t<BasedVectorSpace::Index>::eval() << '\n'  
+                  // << "BasedVectorSpace::Index::Dual = " << TypeStringOf_t<BasedVectorSpace::Index::Dual>::eval() << '\n'  
+                  // << "BasedVectorSpace::Dual::Index = " << TypeStringOf_t<BasedVectorSpace::Dual::Index>::eval() << '\n'  
                   << "DualBasedVectorSpace = " << TypeStringOf_t<DualBasedVectorSpace>::eval() << '\n' 
                   << "DualOf_c<BasedVectorSpace>::T = " << TypeStringOf_t<DualOf_c<BasedVectorSpace>::T>::eval() << '\n'
                   << "DualDualBasedVectorSpace = " << TypeStringOf_t<DualDualBasedVectorSpace>::eval() << '\n' << '\n';
@@ -75,7 +141,7 @@ int main (int argc, char **argv)
         // make sure that BasedVectorSpace::Dual and DualOf_c<BasedVectorSpace>::T are the same
         assert((Lvd::Meta::TypesAreEqual<DualBasedVectorSpace,DualOf_c<BasedVectorSpace>::T>::v));
         // make sure that BasedVectorSpace::Dual::Index and BasedVectorSpace::Dual::Index are the same
-        assert((Lvd::Meta::TypesAreEqual<BasedVectorSpace::Dual::Index,BasedVectorSpace::Index::Dual>::v));
+        // assert((Lvd::Meta::TypesAreEqual<BasedVectorSpace::Dual::Index,BasedVectorSpace::Index::Dual>::v));
         // make sure BasedVectorSpace is actually a VectorSpace_c and a BasedVectorSpace_c
         assert(IsAVectorSpace_c<BasedVectorSpace>::V);
         assert(IsABasedVectorSpace_c<BasedVectorSpace>::V);
@@ -430,6 +496,31 @@ int main (int argc, char **argv)
             // make sure that T::Dual and DualOf_c<T>::T are the same
             assert((Lvd::Meta::TypesAreEqual<DualT,DualOf_c<T>::T>::v));
         }
+    }
+
+    {
+        typedef VectorSpace_c<RealField,3,X> VSX;
+        typedef Basis_c<X> B;
+        typedef BasedVectorSpace_c<VSX,B> BasedX;
+
+        typedef ElementOf_t<float,BasedX> V;
+        V v(1.0f, 2.0f, 3.0f);
+        V w(8.0f, -2.0f, 6.0f);
+        std::cout << TypeStringOf_t<V>::eval() << '\n';
+        std::cout << FORMAT_VALUE(v) << '\n';
+        std::cout << FORMAT_VALUE(w) << '\n';
+
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        std::cout << FORMAT_VALUE(v(i) + w(i)) << '\n';
+        std::cout << FORMAT_VALUE(v(i) - w(i)) << '\n';
+
+        V::Dual a(0.0f, 2.0f, -3.0f);
+        std::cout << TypeStringOf_t<V::Dual>::eval() << '\n';
+        std::cout << FORMAT_VALUE(a) << '\n';
+        std::cout << FORMAT_VALUE(a(i)*v(i)) << '\n';
+        std::cout << FORMAT_VALUE(v(i)*a(i)) << '\n';
+        std::cout << FORMAT_VALUE(v(i)*a(j)) << '\n';
     }
 
     return 0;

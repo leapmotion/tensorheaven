@@ -11,11 +11,12 @@
 
 #include "tenh/core.hpp"
 
-#include "tenh/conceptual/index.hpp"
-#include "tenh/conceptual/multiindex.hpp"
+#include "tenh/componentindex.hpp"
+#include "tenh/conceptual/abstractindex.hpp"
 #include "tenh/conceptual/vectorspace.hpp"
 #include "tenh/expression_templates.hpp"
 #include "tenh/meta/typestringof.hpp"
+#include "tenh/multiindex.hpp"
 
 namespace Tenh {
 
@@ -38,11 +39,12 @@ struct Vector_i
     static Uint32 const DIM = BasedVectorSpace::DIM;
     typedef typename BasedVectorSpace::Basis Basis;
 
-    // here is the "basic" (non-named) Index of this vector type, and it is aware of Derived
-    typedef Index_c<Derived> Index;
-    // the MultiIndex_c encapsulation of Index -- TODO: think about if this should go away,
-    // preferring an order-1 tensor power to use a 1-multi-index.
-    typedef MultiIndex_c<TypeList_t<Index> > MultiIndex;
+    typedef ComponentIndex_t<DIM> ComponentIndex;
+    typedef MultiIndex_t<TypeList_t<ComponentIndex> > MultiIndex;
+
+    // this is necessary so that ExpressionTemplate_IndexedObject_t knows that a vector is
+    // a 1-tensor having a particular type.
+    typedef TypeList_t<BasedVectorSpace> FactorTypeList;
 
     static Uint32 dim () { return DIM; }
 
@@ -51,13 +53,13 @@ struct Vector_i
     operator Scalar const & () const
     {
         STATIC_ASSERT((DIM == 1), ONLY_ONE_DIMENSIONAL_VECTORS_CAN_BE_CONVERTED_TO_SCALARS);
-        return as_derived().Derived::operator[](Index(0, DONT_CHECK_RANGE));
+        return as_derived().Derived::operator[](ComponentIndex(0, DONT_CHECK_RANGE));
     }
     // this could be implemented as "operator Scalar & ()" but it would be bad to make implicit casts that can be used to change the value of this.
     Scalar &as_scalar ()
     {
         STATIC_ASSERT((DIM == 1), ONLY_ONE_DIMENSIONAL_VECTORS_CAN_BE_CONVERTED_TO_SCALARS);
-        return as_derived().Derived::operator[](Index(0, DONT_CHECK_RANGE));
+        return as_derived().Derived::operator[](ComponentIndex(0, DONT_CHECK_RANGE));
     }
 
     // accessor as Derived type
@@ -68,7 +70,7 @@ struct Vector_i
     // NOTE: will not currently work for complex types
     typename AssociatedFloatingPointType_t<Scalar>::T squared_norm () const
     {
-        TypedIndex_c<Derived,'i'> i;
+        AbstractIndex_c<'i'> i;
         return operator()(i)*operator()(i);
     }
     // requires InnerProduct_t<Derived> to be implemented
@@ -81,45 +83,47 @@ struct Vector_i
     // NOTE: operator [] will be used to return values, while operator () will be
     // used to create expression templates for the purposes of indexed contractions.
 
-    Scalar const &operator [] (Index const &i) const { return as_derived().Derived::operator[](i); }
-    Scalar &operator [] (Index const &i) { return as_derived().Derived::operator[](i); }
+    Scalar const &operator [] (ComponentIndex const &i) const { return as_derived().Derived::operator[](i); }
+    Scalar &operator [] (ComponentIndex const &i) { return as_derived().Derived::operator[](i); }
 
-    template <typename Index_>
-    Scalar const &operator [] (MultiIndex_c<TypeList_t<Index_> > const &m) const { return as_derived().Derived::operator[](m.head()); }
-    template <typename Index_>
-    Scalar &operator [] (MultiIndex_c<TypeList_t<Index_> > const &m) { return as_derived().Derived::operator[](m.head()); }
+    // template <typename Index_>
+    // Scalar const &operator [] (MultiIndex_t<TypeList_t<Index_> > const &m) const { return as_derived().Derived::operator[](m.head()); }
+    // template <typename Index_>
+    // Scalar &operator [] (MultiIndex_t<TypeList_t<Index_> > const &m) { return as_derived().Derived::operator[](m.head()); }
+    Scalar const &operator [] (MultiIndex const &m) const { return as_derived().Derived::operator[](m.head()); }
+    Scalar &operator [] (MultiIndex const &m) { return as_derived().Derived::operator[](m.head()); }
 
     // the argument is technically unnecessary, as its value is not used.  however,
     // this allows the template system to deduce the SYMBOL of the TypedIndex_c, so
     // it doesn't need to be specified explicitly.
     // in this, an outer product would be
-    // TypedIndex_c<'i'> i;
-    // TypedIndex_c<'j'> j;
+    // AbstractIndex_c<'i'> i;
+    // AbstractIndex_c<'j'> j;
     // u(i)*v(j)
     template <char SYMBOL>
     ExpressionTemplate_IndexedObject_t<Derived,
-                                       TypeList_t<TypedIndex_c<Derived,SYMBOL> >,
+                                       TypeList_t<DimIndex_t<SYMBOL,DIM> >,
                                        EmptyTypeList,
                                        FORCE_CONST,
-                                       CHECK_FOR_ALIASING> operator () (TypedIndex_c<Derived,SYMBOL> const &) const
+                                       CHECK_FOR_ALIASING> operator () (AbstractIndex_c<SYMBOL> const &) const
     {
-        STATIC_ASSERT((SYMBOL != '\0'), TYPEDINDEX_SYMBOL_MUST_NOT_BE_NULL);
+        STATIC_ASSERT((SYMBOL != '\0'), ABSTRACTINDEX_SYMBOL_MUST_NOT_BE_NULL);
         return ExpressionTemplate_IndexedObject_t<Derived,
-                                                  TypeList_t<TypedIndex_c<Derived,SYMBOL> >,
+                                                  TypeList_t<DimIndex_t<SYMBOL,DIM> >,
                                                   EmptyTypeList,
                                                   FORCE_CONST,
                                                   CHECK_FOR_ALIASING>(as_derived());
     }
     template <char SYMBOL>
     ExpressionTemplate_IndexedObject_t<Derived,
-                                       TypeList_t<TypedIndex_c<Derived,SYMBOL> >,
+                                       TypeList_t<DimIndex_t<SYMBOL,DIM> >,
                                        EmptyTypeList,
                                        DONT_FORCE_CONST,
-                                       CHECK_FOR_ALIASING> operator () (TypedIndex_c<Derived,SYMBOL> const &)
+                                       CHECK_FOR_ALIASING> operator () (AbstractIndex_c<SYMBOL> const &)
     {
-        STATIC_ASSERT((SYMBOL != '\0'), TYPEDINDEX_SYMBOL_MUST_NOT_BE_NULL);
+        STATIC_ASSERT((SYMBOL != '\0'), ABSTRACTINDEX_SYMBOL_MUST_NOT_BE_NULL);
         return ExpressionTemplate_IndexedObject_t<Derived,
-                                                  TypeList_t<TypedIndex_c<Derived,SYMBOL> >,
+                                                  TypeList_t<DimIndex_t<SYMBOL,DIM> >,
                                                   EmptyTypeList,
                                                   DONT_FORCE_CONST,
                                                   CHECK_FOR_ALIASING>(as_derived());
@@ -127,16 +131,17 @@ struct Vector_i
 
     // NOTE: these are sort of part of the Tensor_i interface, but need Vector_i's cooperation.
     // if the return value for a particular MultiIndex is false, then that component is understood to be zero.
-    static bool component_is_immutable_zero (Index const &i) { return false; }
+    static bool component_is_immutable_zero (ComponentIndex const &i) { return false; }
     static bool component_is_immutable_zero (MultiIndex const &m) { return false; }
-    static Scalar scalar_factor_for_component (Index const &m) { return Scalar(1); }
+    static Scalar scalar_factor_for_component (ComponentIndex const &m) { return Scalar(1); }
     static Scalar scalar_factor_for_component (MultiIndex const &m) { return Scalar(1); }
-    static Index vector_index_of (Index const &i) { return i; }
-    static Index vector_index_of (MultiIndex const &m) { return m.head(); }
+    static ComponentIndex vector_index_of (ComponentIndex const &i) { return i; }
+    static ComponentIndex vector_index_of (MultiIndex const &m) { return m.head(); }
 
     static std::string type_as_string ()
     {
-        return "Vector_i<" + TypeStringOf_t<Derived>::eval() + ',' + TypeStringOf_t<Scalar>::eval() + ','
+        return "Vector_i<" + TypeStringOf_t<Derived>::eval() + ',' 
+                           + TypeStringOf_t<Scalar>::eval() + ','
                            + TypeStringOf_t<BasedVectorSpace>::eval() + '>';
     }
 };
@@ -144,16 +149,15 @@ struct Vector_i
 template <typename T> struct IsAVector_i { static bool const V = false; };
 template <typename Derived, typename Scalar, typename BasedVectorSpace> struct IsAVector_i<Vector_i<Derived,Scalar,BasedVectorSpace> > { static bool const V = true; };
 
-template <typename Derived, typename Scalar, Uint32 DIM, typename Basis>
-std::ostream &operator << (std::ostream &out, Vector_i<Derived,Scalar,DIM,Basis> const &v)
+template <typename Derived, typename Scalar, typename BasedVectorSpace>
+std::ostream &operator << (std::ostream &out, Vector_i<Derived,Scalar,BasedVectorSpace> const &v)
 {
-    typedef Vector_i<Derived,Scalar,DIM,Basis> Vector;
-    typedef typename Vector::Index Index;
+    typedef Vector_i<Derived,Scalar,BasedVectorSpace> Vector;
 
-    if (DIM == 0)
+    if (Vector::DIM == 0)
         return out << "()";
 
-    Index i; // initialized to the beginning automatically
+    typename Vector::ComponentIndex i; // initialized to the beginning automatically
     out << '(' << v[i];
     ++i;
     for ( ; i.is_not_at_end(); ++i)

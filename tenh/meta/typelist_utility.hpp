@@ -231,6 +231,13 @@ struct ElementsOfTypeListSatisfyingPredicate_t<EmptyTypeList,Predicate>
 };
 
 
+// used to negate the predicates used in ElementsOfTypeListSatisfyingPredicate_t
+template <typename Predicate>
+struct NegationOfPredicate_t
+{
+    template <typename T> struct Eval_t { static bool const V = !Predicate::template Eval_t<T>::V; };
+};
+
 
 
 
