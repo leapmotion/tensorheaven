@@ -521,6 +521,12 @@ int main (int argc, char **argv)
         std::cout << FORMAT_VALUE(a(i)*v(i)) << '\n';
         std::cout << FORMAT_VALUE(v(i)*a(i)) << '\n';
         std::cout << FORMAT_VALUE(v(i)*a(j)) << '\n';
+
+        // this should cause a compile error due to the non-naturality of the pairing
+//        std::cout << FORMAT_VALUE(v(i)*w(i)) << '\n';
+
+        // this should cause a compile error due to a mismatch of factor types
+//        std::cout << FORMAT_VALUE(a(i) + v(i)) << '\n';
     }
 
     return 0;

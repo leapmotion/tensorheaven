@@ -66,14 +66,13 @@ struct Vector_i
     Derived const &as_derived () const { return *static_cast<Derived const *>(this); }
     Derived &as_derived () { return *static_cast<Derived *>(this); }
 
-    // requires InnerProduct_t<Derived> to be implemented
     // NOTE: will not currently work for complex types
     typename AssociatedFloatingPointType_t<Scalar>::T squared_norm () const
     {
         AbstractIndex_c<'i'> i;
+        // TODO: once strong typing is done, this will require an inner product
         return operator()(i)*operator()(i);
     }
-    // requires InnerProduct_t<Derived> to be implemented
     // NOTE: will not currently work for complex types
     typename AssociatedFloatingPointType_t<Scalar>::T norm () const
     {

@@ -40,7 +40,7 @@ template <char SYMBOL, Uint32 DIM> struct IsAnAbstractIndex_c<DimIndex_t<SYMBOL,
 template <typename DimIndexTypeList>
 struct Parent_ComponentIndex_TypeListOf_t
 {
-    enum { STATIC_ASSERT_IN_ENUM(IsADimIndex_t<typename DimIndexTypeList::HeadType>::V, MUST_BE_DIMINDEX) };
+    enum { STATIC_ASSERT_IN_ENUM(IsADimIndex_t<typename DimIndexTypeList::HeadType>::V, MUST_BE_DIM_INDEX) };
     typedef TypeList_t<typename DimIndexTypeList::HeadType::Parent_Index,
                        typename Parent_ComponentIndex_TypeListOf_t<typename DimIndexTypeList::BodyTypeList>::T> T;
 };

@@ -34,7 +34,7 @@ struct FreeIndexTypeList_t
 {
     typedef typename ElementsHavingMultiplicity_t<IndexTypeList,1>::T T;
 };
-
+/*
 template <typename HeadType>
 typename HeadType::Owner::Scalar summation_component_factor (MultiIndex_t<TypeList_t<HeadType> > const &s)
 {
@@ -46,6 +46,76 @@ typename HeadType::Owner::Scalar summation_component_factor (MultiIndex_t<TypeLi
 {
     return InnerProduct_t<typename HeadType::Owner,typename HeadType::Owner::Basis>::component(s.head()) * summation_component_factor(s.body());
 }
+*/
+
+template <typename DimIndexTypeList>
+struct AbstractIndicesOfDimIndexTypeList_t
+{
+    enum { STATIC_ASSERT_IN_ENUM(EachTypeIsADimIndex_t<DimIndexTypeList>::V, MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES) };
+    typedef TypeList_t<AbstractIndex_c<DimIndexTypeList::HeadType::SYMBOL>,
+                       typename AbstractIndicesOfDimIndexTypeList_t<typename DimIndexTypeList::BodyTypeList>::T> T;
+};
+
+template <>
+struct AbstractIndicesOfDimIndexTypeList_t<EmptyTypeList>
+{
+    typedef EmptyTypeList T;
+};
+
+template <typename AbstractIndexTypeList, typename SummedAbstractIndexTypeList, typename AbstractIndex>
+struct SummedAbstractIndexPairElementIndices_t
+{
+    enum 
+    { 
+        STATIC_ASSERT_IN_ENUM(IsAnAbstractIndex_c<AbstractIndex>::V, MUST_BE_ABSTRACT_INDEX),
+        STATIC_ASSERT_IN_ENUM((Occurrence_t<AbstractIndexTypeList,AbstractIndex>::COUNT == 2), MUST_OCCUR_EXACTLY_TWICE)
+    };
+    static Uint32 const FIRST = FirstMatchingIn_t<AbstractIndexTypeList,AbstractIndex>::INDEX;
+    static Uint32 const FIRST_MATCHING_IN_REST = FirstMatchingIn_t<typename AbstractIndexTypeList::template TrailingTypeList_t<FIRST+1>::T,AbstractIndex>::INDEX;
+    static Uint32 const SECOND = FIRST + 1 + FIRST_MATCHING_IN_REST;
+};
+
+template <typename FirstFactor, typename SecondFactor>
+struct AssertThatSummationIsNaturalPairing_t
+{
+    enum { STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<FirstFactor,typename SecondFactor::Dual>::v), SUMMATION_MUST_BE_NATURAL_PAIRING) };
+    static bool const V = true; 
+};
+
+template <typename FactorTypeList, typename AbstractIndexTypeList, typename SummedAbstractIndexTypeList, typename AbstractIndex>
+struct FactorsOfSummation_t
+{
+    typedef SummedAbstractIndexPairElementIndices_t<AbstractIndexTypeList,SummedAbstractIndexTypeList,AbstractIndex> Pair;
+    typedef typename FactorTypeList::template El_t<Pair::FIRST>::T FirstFactor;
+    typedef typename FactorTypeList::template El_t<Pair::SECOND>::T SecondFactor;
+    enum
+    {
+        STATIC_ASSERT_IN_ENUM((FactorTypeList::LENGTH == AbstractIndexTypeList::LENGTH), MUST_HAVE_EQUAL_LENGTHS),
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IsABasedVectorSpace_c<FirstFactor>::V, MUST_BE_BASED_VECTOR_SPACE, FIRSTFACTOR),
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IsABasedVectorSpace_c<SecondFactor>::V, MUST_BE_BASED_VECTOR_SPACE, SECONDFACTOR)
+    };
+};
+
+template <typename FactorTypeList, typename AbstractIndexTypeList, typename SummedAbstractIndexTypeList>
+struct AssertThatAllSummationsAreNaturalPairings_t
+{
+    typedef FactorsOfSummation_t<FactorTypeList,
+                                 AbstractIndexTypeList,
+                                 SummedAbstractIndexTypeList,
+                                 typename SummedAbstractIndexTypeList::HeadType> FactorsOfSummation;
+    typedef AssertThatSummationIsNaturalPairing_t<typename FactorsOfSummation::FirstFactor,
+                                                  typename FactorsOfSummation::SecondFactor> A1;
+    typedef AssertThatAllSummationsAreNaturalPairings_t<FactorTypeList,
+                                                        AbstractIndexTypeList,
+                                                        typename SummedAbstractIndexTypeList::BodyTypeList> A2;
+    static bool const V = A1::V && A2::V;
+};
+
+template <typename FactorTypeList, typename AbstractIndexTypeList>
+struct AssertThatAllSummationsAreNaturalPairings_t<FactorTypeList,AbstractIndexTypeList,EmptyTypeList>
+{
+    static bool const V = true; // so this can be used in STATIC_ASSERT_IN_ENUM
+};
 
 // TODO: think about how UnarySummation_t and BinarySummation_t could be combined (if it makes sense to do it)
 
@@ -55,6 +125,17 @@ typename HeadType::Owner::Scalar summation_component_factor (MultiIndex_t<TypeLi
 template <typename Tensor, typename TensorDimIndexTypeList, typename SummedDimIndexTypeList>
 struct UnarySummation_t
 {
+private:
+    typedef typename AbstractIndicesOfDimIndexTypeList_t<TensorDimIndexTypeList>::T AbstractIndexTypeList;
+    typedef typename AbstractIndicesOfDimIndexTypeList_t<SummedDimIndexTypeList>::T SummedAbstractIndexTypeList;
+public:
+    enum
+    {
+        STATIC_ASSERT_IN_ENUM((AssertThatAllSummationsAreNaturalPairings_t<typename Tensor::FactorTypeList,
+                                                                           AbstractIndexTypeList,
+                                                                           SummedAbstractIndexTypeList>::V), ALL_SUMMATIONS_MUST_BE_NATURAL_PAIRINGS)
+    };
+
     typedef typename Tensor::Scalar Scalar;
     typedef typename FreeIndexTypeList_t<TensorDimIndexTypeList>::T FreeDimIndexTypeList;
     typedef MultiIndex_t<FreeDimIndexTypeList> MultiIndex;
@@ -89,6 +170,8 @@ struct UnarySummation_t
 template <typename Tensor, typename TensorDimIndexTypeList>
 struct UnarySummation_t<Tensor,TensorDimIndexTypeList,EmptyTypeList>
 {
+    // no summations to check the natural pairing for
+
     typedef typename Tensor::Scalar Scalar;
     typedef typename FreeIndexTypeList_t<TensorDimIndexTypeList>::T FreeDimIndexTypeList;
     typedef MultiIndex_t<FreeDimIndexTypeList> MultiIndex;
@@ -99,12 +182,23 @@ struct UnarySummation_t<Tensor,TensorDimIndexTypeList,EmptyTypeList>
 template <typename LeftOperand, typename RightOperand, typename FreeDimIndexTypeList, typename SummedDimIndexTypeList>
 struct BinarySummation_t
 {
+private:
+    typedef typename ConcatenationOfTypeLists_t<typename LeftOperand::FactorTypeList,
+                                                typename RightOperand::FactorTypeList>::T FactorTypeList;
+    typedef typename ConcatenationOfTypeLists_t<typename LeftOperand::FreeDimIndexTypeList,
+                                                typename RightOperand::FreeDimIndexTypeList>::T DimIndexTypeList;
+    typedef typename AbstractIndicesOfDimIndexTypeList_t<DimIndexTypeList>::T AbstractIndexTypeList;
+    typedef typename AbstractIndicesOfDimIndexTypeList_t<SummedDimIndexTypeList>::T SummedAbstractIndexTypeList;
+public:
     enum
     {
         STATIC_ASSERT_IN_ENUM(LeftOperand::IS_EXPRESSION_TEMPLATE_I, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE_I, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM((SummedDimIndexTypeList::LENGTH > 0), LENGTH_MUST_BE_POSITIVE)
+        STATIC_ASSERT_IN_ENUM((SummedDimIndexTypeList::LENGTH > 0), LENGTH_MUST_BE_POSITIVE),
+        STATIC_ASSERT_IN_ENUM((AssertThatAllSummationsAreNaturalPairings_t<FactorTypeList,
+                                                                           AbstractIndexTypeList,
+                                                                           SummedAbstractIndexTypeList>::V), ALL_SUMMATIONS_MUST_BE_NATURAL_PAIRINGS)
     };
 
     typedef typename LeftOperand::Scalar Scalar;
@@ -147,6 +241,7 @@ struct BinarySummation_t<LeftOperand,RightOperand,FreeDimIndexTypeList,EmptyType
         STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE_I, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v), OPERAND_SCALAR_TYPES_ARE_EQUAL),
         STATIC_ASSERT_IN_ENUM(EachTypeIsADimIndex_t<FreeDimIndexTypeList>::V, MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES)
+        // no summation, so no need to check naturality of pairings
     };
 
     typedef typename LeftOperand::Scalar Scalar;
