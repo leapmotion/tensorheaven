@@ -31,18 +31,18 @@ struct Z
 
 namespace Tenh {
 
-template <typename Scalar, typename Space> struct ElementOf_t;
+template <typename Scalar, typename Space> struct ImplementationOf_t;
 
 template <typename Scalar_, typename VectorSpace_, typename Basis_>
-struct ElementOf_t<Scalar_,BasedVectorSpace_c<VectorSpace_,Basis_> >
+struct ImplementationOf_t<Scalar_,BasedVectorSpace_c<VectorSpace_,Basis_> >
     :
-    public Vector_i<ElementOf_t<Scalar_,BasedVectorSpace_c<VectorSpace_,Basis_> >,
+    public Vector_i<ImplementationOf_t<Scalar_,BasedVectorSpace_c<VectorSpace_,Basis_> >,
                     Scalar_,
                     BasedVectorSpace_c<VectorSpace_,Basis_> >,
     // Array_t is privately inherited because it is an implementation detail
     private Array_t<Scalar_,VectorSpace_::DIM>
 {
-    typedef Vector_i<ElementOf_t<Scalar_,BasedVectorSpace_c<VectorSpace_,Basis_> >,
+    typedef Vector_i<ImplementationOf_t<Scalar_,BasedVectorSpace_c<VectorSpace_,Basis_> >,
                      Scalar_,
                      BasedVectorSpace_c<VectorSpace_,Basis_> > Parent_Vector_i;
     typedef Array_t<Scalar_,VectorSpace_::DIM> Parent_Array_t;
@@ -55,13 +55,13 @@ struct ElementOf_t<Scalar_,BasedVectorSpace_c<VectorSpace_,Basis_> >
     typedef typename Parent_Vector_i::ComponentIndex ComponentIndex;
     typedef typename Parent_Vector_i::MultiIndex MultiIndex;
 
-    typedef typename DualOf_c<ElementOf_t>::T Dual; // relies on the template specialization below
+    typedef typename DualOf_c<ImplementationOf_t>::T Dual; // relies on the template specialization below
 
-    explicit ElementOf_t (WithoutInitialization const &w) : Parent_Array_t(w) { }
-    explicit ElementOf_t (Scalar fill_with) : Parent_Array_t(fill_with) { }
-    ElementOf_t (Scalar x0, Scalar x1) : Parent_Array_t(x0, x1) { }
-    ElementOf_t (Scalar x0, Scalar x1, Scalar x2) : Parent_Array_t(x0, x1, x2) { }
-    ElementOf_t (Scalar x0, Scalar x1, Scalar x2, Scalar x3) : Parent_Array_t(x0, x1, x2, x3) { }
+    explicit ImplementationOf_t (WithoutInitialization const &w) : Parent_Array_t(w) { }
+    explicit ImplementationOf_t (Scalar fill_with) : Parent_Array_t(fill_with) { }
+    ImplementationOf_t (Scalar x0, Scalar x1) : Parent_Array_t(x0, x1) { }
+    ImplementationOf_t (Scalar x0, Scalar x1, Scalar x2) : Parent_Array_t(x0, x1, x2) { }
+    ImplementationOf_t (Scalar x0, Scalar x1, Scalar x2, Scalar x3) : Parent_Array_t(x0, x1, x2, x3) { }
 
     using Parent_Vector_i::as_derived;
     using Parent_Array_t::operator[];
@@ -70,7 +70,7 @@ struct ElementOf_t<Scalar_,BasedVectorSpace_c<VectorSpace_,Basis_> >
 
     static std::string type_as_string ()
     {
-        return "ElementOf_t<" + TypeStringOf_t<Scalar>::eval() + ',' + TypeStringOf_t<BasedVectorSpace>::eval() + '>';
+        return "ImplementationOf_t<" + TypeStringOf_t<Scalar>::eval() + ',' + TypeStringOf_t<BasedVectorSpace>::eval() + '>';
     }
 
 private:
@@ -78,28 +78,28 @@ private:
     // this has no definition, and is designed to generate a compiler error if used (use the one accepting WithoutInitialization instead).
     // TODO: may need to make this public to allow 0-dimensional vectors, adding a static assert to check that it's actually 0-dimensional
     // and not being used improperly.
-    ElementOf_t ();
+    ImplementationOf_t ();
 };
 
 template <typename Scalar, typename VectorSpace, typename Basis>
-struct DualOf_c<ElementOf_t<Scalar,BasedVectorSpace_c<VectorSpace,Basis> > >
+struct DualOf_c<ImplementationOf_t<Scalar,BasedVectorSpace_c<VectorSpace,Basis> > >
 {
-    typedef ElementOf_t<Scalar,typename BasedVectorSpace_c<VectorSpace,Basis>::Dual> T;
+    typedef ImplementationOf_t<Scalar,typename BasedVectorSpace_c<VectorSpace,Basis>::Dual> T;
 };
 
 
 
 
 template <typename Scalar_, typename FactorTypeList_>
-struct ElementOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >
+struct ImplementationOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >
     :
-    public Tensor_i<ElementOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >,
+    public Tensor_i<ImplementationOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >,
                     Scalar_,
                     TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >,
     // Array_t is privately inherited because it is an implementation detail
     private Array_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_>::DIM>
 {
-    typedef Tensor_i<ElementOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >,
+    typedef Tensor_i<ImplementationOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >,
                      Scalar_,
                      TensorProductOfBasedVectorSpaces_c<FactorTypeList_> > Parent_Tensor_i;
     typedef Array_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_>::DIM> Parent_Array_t;
@@ -117,8 +117,10 @@ struct ElementOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >
     using Parent_Tensor_i::DEGREE;
     using Parent_Tensor_i::IS_TENSOR_I;    
 
-    ElementOf_t (WithoutInitialization const &w) : Parent_Array_t(w) { }
-    ElementOf_t (Scalar fill_with) : Parent_Array_t(fill_with) { }
+    typedef typename DualOf_c<ImplementationOf_t>::T Dual; // relies on the template specialization below
+
+    ImplementationOf_t (WithoutInitialization const &w) : Parent_Array_t(w) { }
+    ImplementationOf_t (Scalar fill_with) : Parent_Array_t(fill_with) { }
 
     // TODO: do later
     // template <typename BundleIndexTypeList, typename BundledIndex>
@@ -164,11 +166,13 @@ struct ElementOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >
     //     MultiIndex x(m);
     //     return operator[](Index(m.value(), DONT_CHECK_RANGE));
     // }
-    template <typename OtherMultiIndex>
-    Scalar operator [] (OtherMultiIndex const &m) const
+    template <typename OtherIndexTypeList>
+    Scalar operator [] (MultiIndex_t<OtherIndexTypeList> const &m) const
     {
-        STATIC_ASSERT(IsAMultiIndex_t<OtherMultiIndex>::V, MUST_BE_MULTI_INDEX);
+        STATIC_ASSERT(IsATypeList_t<OtherIndexTypeList>::V, MUST_BE_TYPELIST);
+        typedef MultiIndex_t<OtherIndexTypeList> OtherMultiIndex;
         STATIC_ASSERT((OtherMultiIndex::LENGTH == MultiIndex::LENGTH), MUST_HAVE_EQUAL_LENGTHS);
+        //std::cout << OtherMultiIndex::LENGTH << ", " << MultiIndex::LENGTH << '\n';
         assert(m.is_not_at_end() && "you used ComponentIndex_t(x, DONT_RANGE_CHECK) inappropriately");
         // NOTE: this construction is unnecessary to the code, but IS necessary to the compile-time type checking
         // the compiler should optimize it out anyway.
@@ -176,17 +180,21 @@ struct ElementOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >
         // m.value() is what does the multi-index-to-vector-index computation
         return operator[](ComponentIndex(m.value(), DONT_CHECK_RANGE));
     }
-    template <typename OtherMultiIndex>
-    Scalar &operator [] (OtherMultiIndex const &m)
+    template <typename OtherIndexTypeList>
+    Scalar &operator [] (MultiIndex_t<OtherIndexTypeList> const &m)
     {
-        STATIC_ASSERT(IsAMultiIndex_t<OtherMultiIndex>::V, MUST_BE_MULTI_INDEX);
+        STATIC_ASSERT(IsATypeList_t<OtherIndexTypeList>::V, MUST_BE_TYPELIST);
+        typedef MultiIndex_t<OtherIndexTypeList> OtherMultiIndex;
         STATIC_ASSERT((OtherMultiIndex::LENGTH == MultiIndex::LENGTH), MUST_HAVE_EQUAL_LENGTHS);
+        //std::cout << OtherMultiIndex::LENGTH << ", " << MultiIndex::LENGTH << '\n';
         assert(m.is_not_at_end() && "you used ComponentIndex_t(x, DONT_RANGE_CHECK) inappropriately");
         // NOTE: this construction is unnecessary to the code, but IS necessary to the compile-time type checking
         // the compiler should optimize it out anyway.
         MultiIndex x(m);
         // m.value() is what does the multi-index-to-vector-index computation
         return operator[](ComponentIndex(m.value(), DONT_CHECK_RANGE));
+        // std::cout << TypeStringOf_t<OtherMultiIndex>::eval() << ", " << TypeStringOf_t<MultiIndex>::eval() << '\n';
+        // return Scalar(0);
     }
 
     // these are what provide indexed expressions -- via expression templates
@@ -240,7 +248,7 @@ struct ElementOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >
 
     static std::string type_as_string ()
     {
-        return "ElementOf_t<" + TypeStringOf_t<Scalar>::eval() + ',' + TypeStringOf_t<TensorProductOfBasedVectorSpaces>::eval() + '>';
+        return "ImplementationOf_t<" + TypeStringOf_t<Scalar>::eval() + ',' + TypeStringOf_t<TensorProductOfBasedVectorSpaces>::eval() + '>';
     }
 
 private:
@@ -260,7 +268,13 @@ private:
     friend struct InnerProduct_t<Tensor2_t,Basis>;
 */
     // this has no definition, and is designed to generate a compiler error if used (use the one accepting WithoutInitialization instead).
-    ElementOf_t ();
+    ImplementationOf_t ();
+};
+
+template <typename Scalar, typename FactorTypeList>
+struct DualOf_c<ImplementationOf_t<Scalar,TensorProductOfBasedVectorSpaces_c<FactorTypeList> > >
+{
+    typedef ImplementationOf_t<Scalar,typename TensorProductOfBasedVectorSpaces_c<FactorTypeList>::Dual> T;
 };
 
 
@@ -685,7 +699,7 @@ int main (int argc, char **argv)
         typedef Basis_c<X> B;
         typedef BasedVectorSpace_c<VSX,B> BasedX;
 
-        typedef ElementOf_t<float,BasedX> V;
+        typedef ImplementationOf_t<float,BasedX> V;
         V v(1.0f, 2.0f, 3.0f);
         V w(8.0f, -2.0f, 6.0f);
         std::cout << TypeStringOf_t<V>::eval() << '\n';
@@ -723,9 +737,9 @@ int main (int argc, char **argv)
         typedef BasedVectorSpace_c<VSY,BY> BasedY;
 
         typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedX,TypeList_t<BasedY::Dual> > > TPBVS;
-        typedef ElementOf_t<float,BasedX> U;
-        typedef ElementOf_t<float,BasedY> V;
-        typedef ElementOf_t<float,TPBVS> T;
+        typedef ImplementationOf_t<float,BasedX> U;
+        typedef ImplementationOf_t<float,BasedY> V;
+        typedef ImplementationOf_t<float,TPBVS> T;
         std::cout << TypeStringOf_t<T>::eval() << '\n';
 
         T t(3.0f);
@@ -752,10 +766,12 @@ int main (int argc, char **argv)
 
 
         typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedX,TypeList_t<BasedY::Dual,TypeList_t<BasedY::Dual> > > > H;
-        typedef ElementOf_t<float,H> E;
+        typedef ImplementationOf_t<float,H> E;
         E e(0.0f);
         for (E::ComponentIndex it; it.is_not_at_end(); ++it)
             e[it] = it.value();
+//        std::cout << FORMAT_VALUE(e(i)) << '\n'; // this has problems: TODO: fix -- ExpressionTemplate_i may need a vector-indexable operator[]
+
         V w(1.0f, 3.0f);
 
         AbstractIndex_c<'k'> k;
@@ -763,7 +779,16 @@ int main (int argc, char **argv)
         std::cout << FORMAT_VALUE(e) << '\n';
         std::cout << FORMAT_VALUE(e(i|j|k)*v(j)*w(k)) << '\n';
 
+        //E::Dual f(3.0f);
 
+        typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedY,TypeList_t<BasedY::Dual> > > EndomorphismOfY;
+        typedef ImplementationOf_t<float,EndomorphismOfY> Endo;
+        Endo A(0.0f);
+        A[Endo::MultiIndex(0,0)] = 3.0f;
+        A[Endo::MultiIndex(1,1)] = 4.0f;
+        std::cout << FORMAT_VALUE(A) << '\n';
+        std::cout << FORMAT_VALUE(A(i|j)*v(j)) << '\n';
+        std::cout << FORMAT_VALUE(A(i|i)) << '\n';
 
         std::cout << '\n' << '\n';
     }
