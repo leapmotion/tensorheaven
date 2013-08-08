@@ -11,6 +11,7 @@
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/conceptual/vectorspace.hpp"
 #include "tenh/conceptual/dual.hpp"
+#include "tenh/interface/tensor.hpp"
 #include "tenh/interface/vector.hpp"
 
 struct X
@@ -86,7 +87,186 @@ struct DualOf_c<ElementOf_t<Scalar,BasedVectorSpace_c<VectorSpace,Basis> > >
     typedef ElementOf_t<Scalar,typename BasedVectorSpace_c<VectorSpace,Basis>::Dual> T;
 };
 
-}
+
+
+
+template <typename Scalar_, typename FactorTypeList_>
+struct ElementOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >
+    :
+    public Tensor_i<ElementOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >,
+                    Scalar_,
+                    TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >,
+    // Array_t is privately inherited because it is an implementation detail
+    private Array_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_>::DIM>
+{
+    typedef Tensor_i<ElementOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >,
+                     Scalar_,
+                     TensorProductOfBasedVectorSpaces_c<FactorTypeList_> > Parent_Tensor_i;
+    typedef Array_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_>::DIM> Parent_Array_t;
+
+    typedef typename Parent_Tensor_i::Derived Derived;
+    typedef typename Parent_Tensor_i::Scalar Scalar;
+    typedef typename Parent_Tensor_i::BasedVectorSpace BasedVectorSpace;
+    using Parent_Tensor_i::DIM;
+    typedef typename Parent_Tensor_i::Basis Basis;
+    typedef typename Parent_Tensor_i::ComponentIndex ComponentIndex;
+
+    typedef typename Parent_Tensor_i::TensorProductOfBasedVectorSpaces TensorProductOfBasedVectorSpaces;
+    typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
+    typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
+    using Parent_Tensor_i::DEGREE;
+    using Parent_Tensor_i::IS_TENSOR_I;    
+
+    ElementOf_t (WithoutInitialization const &w) : Parent_Array_t(w) { }
+    ElementOf_t (Scalar fill_with) : Parent_Array_t(fill_with) { }
+
+    // TODO: do later
+    // template <typename BundleIndexTypeList, typename BundledIndex>
+    // static MultiIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)
+    // {
+    //     typedef typename BundleIndexTypeList::template El_t<0>::T Index1;
+    //     typedef typename BundleIndexTypeList::template El_t<1>::T Index2;
+    //     // this is just to check that there is a valid conversion to the requested MultiIndex type.
+    //     // it doesn't actually produce any side-effects, and should be optimized out.
+    //     {
+    //         STATIC_ASSERT((BundleIndexTypeList::LENGTH == 2), CAN_ONLY_BUNDLE_TWO_INDICES);
+    //         Index1 i1;
+    //         Index2 i2;
+    //         typename Factor1::Index f1(i1);
+    //         typename Factor2::Index f2(i2);
+    //         // check that the parameter BundleIndex type is compatible with Index
+    //         Index i(b);
+    //     }
+
+    //     Uint32 row;
+    //     Uint32 col;
+    //     contiguous_index_to_rowcol_index(b.value(), row, col);
+    //     return MultiIndex_t<BundleIndexTypeList>(Index1(row, DONT_CHECK_RANGE), Index2(col, DONT_CHECK_RANGE));
+    // }
+
+    using Parent_Array_t::operator[];
+    using Parent_Array_t::data_size_in_bytes;
+    using Parent_Array_t::data_pointer;
+
+    // // Index1 could be Factor1::Index or Factor1::MultiIndex (checked by its use in the other functions)
+    // // Index2 could be Factor2::Index or Factor2::MultiIndex (checked by its use in the other functions)
+    // template <typename Index1, typename Index2>
+    // Scalar operator [] (MultiIndex_t<TypeList_t<Index1,TypeList_t<Index2> > > const &m) const
+    // {
+    //     return component(m.template el<0>(), m.template el<1>());
+    // }
+    // template <typename Index1, typename Index2>
+    // Scalar &operator [] (MultiIndex_t<TypeList_t<Index1,TypeList_t<Index2> > > const &m)
+    // {
+    //     assert(m.is_not_at_end() && "you used Index_t(x, DONT_RANGE_CHECK) inappropriately");
+    //     // NOTE: this construction is unnecessary to the code, but IS necessary to the compile-time type checking
+    //     // the compiler should optimize it out anyway.
+    //     MultiIndex x(m);
+    //     return operator[](Index(m.value(), DONT_CHECK_RANGE));
+    // }
+    template <typename OtherMultiIndex>
+    Scalar operator [] (OtherMultiIndex const &m) const
+    {
+        STATIC_ASSERT(IsAMultiIndex_t<OtherMultiIndex>::V, MUST_BE_MULTI_INDEX);
+        STATIC_ASSERT((OtherMultiIndex::LENGTH == MultiIndex::LENGTH), MUST_HAVE_EQUAL_LENGTHS);
+        assert(m.is_not_at_end() && "you used ComponentIndex_t(x, DONT_RANGE_CHECK) inappropriately");
+        // NOTE: this construction is unnecessary to the code, but IS necessary to the compile-time type checking
+        // the compiler should optimize it out anyway.
+        MultiIndex x(m);
+        // m.value() is what does the multi-index-to-vector-index computation
+        return operator[](ComponentIndex(m.value(), DONT_CHECK_RANGE));
+    }
+    template <typename OtherMultiIndex>
+    Scalar &operator [] (OtherMultiIndex const &m)
+    {
+        STATIC_ASSERT(IsAMultiIndex_t<OtherMultiIndex>::V, MUST_BE_MULTI_INDEX);
+        STATIC_ASSERT((OtherMultiIndex::LENGTH == MultiIndex::LENGTH), MUST_HAVE_EQUAL_LENGTHS);
+        assert(m.is_not_at_end() && "you used ComponentIndex_t(x, DONT_RANGE_CHECK) inappropriately");
+        // NOTE: this construction is unnecessary to the code, but IS necessary to the compile-time type checking
+        // the compiler should optimize it out anyway.
+        MultiIndex x(m);
+        // m.value() is what does the multi-index-to-vector-index computation
+        return operator[](ComponentIndex(m.value(), DONT_CHECK_RANGE));
+    }
+
+    // these are what provide indexed expressions -- via expression templates
+    using Parent_Tensor_i::operator();
+
+/*
+    // access 2-tensor components
+    // Index1 could be Factor1::Index or Factor1::MultiIndex (checked by its use in the other functions)
+    // Index2 could be Factor2::Index or Factor2::MultiIndex (checked by its use in the other functions)
+    template <typename Index1, typename Index2>
+    Scalar component (Index1 const &i1, Index2 const &i2) const
+    {
+        assert(i1.is_not_at_end() && i2.is_not_at_end() && "you used Index_t(x, DONT_RANGE_CHECK) inappropriately");
+
+        if (Factor1::component_is_immutable_zero(i1) || Factor2::component_is_immutable_zero(i2))
+        {
+            return Scalar(0);
+        }
+        else
+        {
+            return Factor1::scalar_factor_for_component(i1) *
+                   Factor2::scalar_factor_for_component(i2) *
+                   operator[](vector_index_of(MultiIndex(Factor1::vector_index_of(i1), Factor2::vector_index_of(i2))));
+        }
+    }
+    // write 2-tensor components -- will throw if a component doesn't correspond to a memory location
+    // Index1 could be Factor1::Index or Factor1::MultiIndex (checked by its use in the other functions)
+    // Index2 could be Factor2::Index or Factor2::MultiIndex (checked by its use in the other functions)
+    template <typename Index1, typename Index2>
+    void set_component (Index1 const &i1, Index2 const &i2, Scalar s)
+    {
+        assert(i1.is_not_at_end() && i2.is_not_at_end() && "you used Index_t(x, DONT_RANGE_CHECK) inappropriately");
+
+        if (Factor1::component_is_immutable_zero(i1) || Factor2::component_is_immutable_zero(i2))
+        {
+            throw std::invalid_argument("this tensor component is not writable");
+        }
+
+        MultiIndex m(Factor1::vector_index_of(i1), Factor2::vector_index_of(i2));
+        // write to the component, but divide through by the total scale factor for the component.
+        operator[](vector_index_of(m)) = s / (Factor1::scalar_factor_for_component(i1) * Factor2::scalar_factor_for_component(i2));
+    }
+    */
+    using Parent_Tensor_i::component_is_immutable_zero;
+    using Parent_Tensor_i::scalar_factor_for_component;
+    using Parent_Tensor_i::vector_index_of;
+    // all components are stored in memory (in the array m), and have scalar factor 1
+    static bool component_is_immutable_zero (MultiIndex const &m) { return false; }
+    static Scalar scalar_factor_for_component (MultiIndex const &m) { return Scalar(1); }
+    static ComponentIndex vector_index_of (MultiIndex const &m) { return ComponentIndex(m.value(), DONT_CHECK_RANGE); }
+
+    static std::string type_as_string ()
+    {
+        return "ElementOf_t<" + TypeStringOf_t<Scalar>::eval() + ',' + TypeStringOf_t<TensorProductOfBasedVectorSpaces>::eval() + '>';
+    }
+
+private:
+
+/*
+    // functions between the indexing schemes -- multi-index is (row,col) with row > col and vector index is contiguous.
+    static Uint32 rowcol_index_to_contiguous_index (Uint32 row, Uint32 col)
+    {
+        return Factor2::DIM*row + col;
+    }
+    static void contiguous_index_to_rowcol_index (Uint32 i, Uint32 &row, Uint32 &col)
+    {
+        row = i / Factor2::DIM;
+        col = i % Factor2::DIM;
+    }
+
+    friend struct InnerProduct_t<Tensor2_t,Basis>;
+*/
+    // this has no definition, and is designed to generate a compiler error if used (use the one accepting WithoutInitialization instead).
+    ElementOf_t ();
+};
+
+
+} // end of namespace Tenh
+
+
 
 using namespace Tenh;
 
@@ -498,6 +678,8 @@ int main (int argc, char **argv)
         }
     }
 
+    std::cout << '\n' << '\n';
+
     {
         typedef VectorSpace_c<RealField,3,X> VSX;
         typedef Basis_c<X> B;
@@ -527,6 +709,63 @@ int main (int argc, char **argv)
 
         // this should cause a compile error due to a mismatch of factor types
 //        std::cout << FORMAT_VALUE(a(i) + v(i)) << '\n';
+
+        std::cout << '\n' << '\n';
+    }
+
+    {
+        typedef VectorSpace_c<RealField,3,X> VSX;
+        typedef Basis_c<X> BX;
+        typedef BasedVectorSpace_c<VSX,BX> BasedX;
+
+        typedef VectorSpace_c<RealField,2,Y> VSY;
+        typedef Basis_c<Y> BY;
+        typedef BasedVectorSpace_c<VSY,BY> BasedY;
+
+        typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedX,TypeList_t<BasedY::Dual> > > TPBVS;
+        typedef ElementOf_t<float,BasedX> U;
+        typedef ElementOf_t<float,BasedY> V;
+        typedef ElementOf_t<float,TPBVS> T;
+        std::cout << TypeStringOf_t<T>::eval() << '\n';
+
+        T t(3.0f);
+        std::cout << FORMAT_VALUE(t) << '\n';
+        t[T::MultiIndex(0,0)] = 0.0f;
+        t[T::MultiIndex(1,0)] = 4.0f;
+        t[T::MultiIndex(2,0)] = -2.0f;
+        t[T::MultiIndex(0,1)] = 3.0f;
+        t[T::MultiIndex(1,1)] = 4.0f;
+        t[T::MultiIndex(2,1)] = 5.0f;
+        std::cout << "after assignment: " << FORMAT_VALUE(t) << '\n';
+
+        V v(2.0f, 7.0f);
+        std::cout << FORMAT_VALUE(v) << '\n';
+
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        std::cout << FORMAT_VALUE(t(i|j)*v(j)) << '\n';
+
+        U u(1.0f, 0.0f, -1.0f);
+        std::cout << FORMAT_VALUE(u) << '\n';
+        // this should cause a compile error due to the non-naturality of the pairing
+//        std::cout << FORMAT_VALUE(u(i)*t(i|j)) << '\n';
+
+
+        typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedX,TypeList_t<BasedY::Dual,TypeList_t<BasedY::Dual> > > > H;
+        typedef ElementOf_t<float,H> E;
+        E e(0.0f);
+        for (E::ComponentIndex it; it.is_not_at_end(); ++it)
+            e[it] = it.value();
+        V w(1.0f, 3.0f);
+
+        AbstractIndex_c<'k'> k;
+        std::cout << FORMAT_VALUE(w) << '\n';
+        std::cout << FORMAT_VALUE(e) << '\n';
+        std::cout << FORMAT_VALUE(e(i|j|k)*v(j)*w(k)) << '\n';
+
+
+
+        std::cout << '\n' << '\n';
     }
 
     return 0;

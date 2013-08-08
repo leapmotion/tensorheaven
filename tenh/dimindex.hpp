@@ -21,12 +21,12 @@ struct DimIndex_t
     public ComponentIndex_t<DIM_>,
     public AbstractIndex_c<SYMBOL_>
 {
-    typedef ComponentIndex_t<DIM_> Parent_ComponentIndex;
-    typedef AbstractIndex_c<SYMBOL_> Parent_AbstractIndex;
+    typedef ComponentIndex_t<DIM_> Parent_ComponentIndex_t;
+    typedef AbstractIndex_c<SYMBOL_> Parent_AbstractIndex_c;
 
-    using Parent_ComponentIndex::COMPONENT_COUNT;
-    static Uint32 const DIM = Parent_ComponentIndex::COMPONENT_COUNT;
-    using Parent_AbstractIndex::SYMBOL;
+    using Parent_ComponentIndex_t::COMPONENT_COUNT;
+    static Uint32 const DIM = Parent_ComponentIndex_t::COMPONENT_COUNT;
+    using Parent_AbstractIndex_c::SYMBOL;
 
     static std::string type_as_string () { return std::string("DimIndex_t<'") + SYMBOL + "'," + AS_STRING(DIM) + '>'; }
 };
@@ -62,6 +62,12 @@ struct DimIndexTypeListOf_t
     typedef TypeList_t<DimIndex_t<AbstractIndexTypeList::HeadType::SYMBOL,FactorTypeList::HeadType::DIM>,
                        typename DimIndexTypeListOf_t<typename FactorTypeList::BodyTypeList,
                                                      typename AbstractIndexTypeList::BodyTypeList>::T> T; 
+};
+
+template <>
+struct DimIndexTypeListOf_t<EmptyTypeList,EmptyTypeList>
+{
+    typedef EmptyTypeList T; 
 };
 
 template <typename TypeList>

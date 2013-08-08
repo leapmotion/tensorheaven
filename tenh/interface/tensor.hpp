@@ -10,6 +10,7 @@
 
 #include "tenh/core.hpp"
 
+#include "tenh/componentindex.hpp"
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/expression_templates.hpp"
 #include "tenh/interface/vector.hpp"
@@ -17,19 +18,20 @@
 namespace Tenh {
 
 template <typename FactorTypeList>
-struct FactorIndexTypeList_t
+struct FactorComponentIndexTypeList_t
 {
-    typedef TypeList_t<typename FactorTypeList::HeadType::Index,typename FactorIndexTypeList_t<typename FactorTypeList::BodyTypeList>::T> T;
+    typedef TypeList_t<ComponentIndex_t<FactorTypeList::HeadType::DIM>,
+                       typename FactorComponentIndexTypeList_t<typename FactorTypeList::BodyTypeList>::T> T;
 };
 
 template <typename HeadType>
-struct FactorIndexTypeList_t<TypeList_t<HeadType> >
+struct FactorComponentIndexTypeList_t<TypeList_t<HeadType> >
 {
-    typedef TypeList_t<typename HeadType::Index> T;
+    typedef TypeList_t<ComponentIndex_t<HeadType::DIM> > T;
 };
 
 template <>
-struct FactorIndexTypeList_t<EmptyTypeList>
+struct FactorComponentIndexTypeList_t<EmptyTypeList>
 {
     typedef EmptyTypeList T;
 };
@@ -52,12 +54,11 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
     typedef typename Parent_Vector_i::BasedVectorSpace BasedVectorSpace;
     using Parent_Vector_i::DIM;
     typedef typename Parent_Vector_i::Basis Basis;
-    typedef typename Parent_Vector_i::Index Index;
+    typedef typename Parent_Vector_i::ComponentIndex ComponentIndex;
 
     typedef TensorProductOfBasedVectorSpaces_ TensorProductOfBasedVectorSpaces;
     typedef typename TensorProductOfBasedVectorSpaces::FactorTypeList FactorTypeList;
-    //typedef typename FactorIndexTypeList_t<FactorTypeList>::T FactorIndexTypeList;
-    typedef MultiIndex_t<FactorIndexTypeList> MultiIndex;
+    typedef MultiIndex_t<typename FactorComponentIndexTypeList_t<FactorTypeList>::T> MultiIndex;
     // this is not the "fully expanded" degree, but the number of [what you could think of
     // as "parenthesized"] factors that formed this tensor product type.
     static Uint32 const DEGREE = FactorTypeList::LENGTH;
@@ -79,58 +80,52 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
     template <typename AbstractIndexTypeListHeadType, typename AbstractIndexTypeListBodyTypeList>
     ExpressionTemplate_IndexedObject_t<
         Derived,
-        TypeList_t<AbstractIndexTypeListHeadType,AbstractIndexTypeListBodyTypeList>,
-        typename SummedIndexTypeList_t<TypeList_t<AbstractIndexTypeListHeadType,AbstractIndexTypeListBodyTypeList> >::T,
+        typename DimIndexTypeListOf_t<FactorTypeList,
+                                      TypeList_t<AbstractIndexTypeListHeadType,
+                                                 AbstractIndexTypeListBodyTypeList> >::T,
+        typename SummedIndexTypeList_t<typename DimIndexTypeListOf_t<FactorTypeList,
+                                                                     TypeList_t<AbstractIndexTypeListHeadType,
+                                                                                AbstractIndexTypeListBodyTypeList> >::T>::T,
         FORCE_CONST,
         CHECK_FOR_ALIASING> operator () (TypeList_t<AbstractIndexTypeListHeadType,AbstractIndexTypeListBodyTypeList> const &) const
     {
         typedef TypeList_t<AbstractIndexTypeListHeadType,AbstractIndexTypeListBodyTypeList> ArgumentAbstractIndexTypeList;
         STATIC_ASSERT(EachTypeIsAnAbstractIndex_c<ArgumentAbstractIndexTypeList>::V, EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
         STATIC_ASSERT((ArgumentAbstractIndexTypeList::LENGTH == DEGREE), ARGUMENT_LENGTH_MUST_EQUAL_DEGREE);
-        /*
-        // make sure that each type in the index list is actually a TypedIndex_t
-        AssertThatEachTypeIsATypedIndex_t<ArgumentIndexTypeList>();
-        // make sure there are type conversions for all types in the index lists
-        compile_time_check_that_there_is_a_type_conversion(ArgumentAbstractIndexTypeList(), FactorIndexTypeList());
-        // TEMP KLUDGE - forbit contraction with this tensor if its basis is StandardEuclideanBasis,
-        // because its components are then not necessarily those that should be contracted with --
-        // they would be some tensor-implementation-dependent scalar multiples of the components,
-        // and this particular capability is too complicated to implement currently.
-        STATIC_ASSERT((!Lvd::Meta::TypesAreEqual<Basis,StandardEuclideanBasis>::v), CANT_CONTRACT_WITH_EUCLIDEANLY_EMBEDDED_TENSOR);
-        */
         return ExpressionTemplate_IndexedObject_t<
             Derived,
-            TypeList_t<AbstractIndexTypeListHeadType,AbstractIndexTypeListBodyTypeList>,
-            typename SummedIndexTypeList_t<TypeList_t<AbstractIndexTypeListHeadType,AbstractIndexTypeListBodyTypeList> >::T,
+            typename DimIndexTypeListOf_t<FactorTypeList,
+                                          TypeList_t<AbstractIndexTypeListHeadType,
+                                                     AbstractIndexTypeListBodyTypeList> >::T,
+            typename SummedIndexTypeList_t<typename DimIndexTypeListOf_t<FactorTypeList,
+                                                                         TypeList_t<AbstractIndexTypeListHeadType,
+                                                                                    AbstractIndexTypeListBodyTypeList> >::T>::T,
             FORCE_CONST,
             CHECK_FOR_ALIASING>(as_derived());
     }
     template <typename AbstractIndexTypeListHeadType, typename AbstractIndexTypeListBodyTypeList>
     ExpressionTemplate_IndexedObject_t<
         Derived,
-        TypeList_t<AbstractIndexTypeListHeadType,AbstractIndexTypeListBodyTypeList>,
-        typename SummedIndexTypeList_t<TypeList_t<AbstractIndexTypeListHeadType,AbstractIndexTypeListBodyTypeList> >::T,
+        typename DimIndexTypeListOf_t<FactorTypeList,
+                                      TypeList_t<AbstractIndexTypeListHeadType,
+                                                 AbstractIndexTypeListBodyTypeList> >::T,
+        typename SummedIndexTypeList_t<typename DimIndexTypeListOf_t<FactorTypeList,
+                                                                     TypeList_t<AbstractIndexTypeListHeadType,
+                                                                                AbstractIndexTypeListBodyTypeList> >::T>::T,
         DONT_FORCE_CONST,
         CHECK_FOR_ALIASING> operator () (TypeList_t<AbstractIndexTypeListHeadType,AbstractIndexTypeListBodyTypeList> const &)
     {
         typedef TypeList_t<AbstractIndexTypeListHeadType,AbstractIndexTypeListBodyTypeList> ArgumentAbstractIndexTypeList;
         STATIC_ASSERT(EachTypeIsAnAbstractIndex_c<ArgumentAbstractIndexTypeList>::V, EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
         STATIC_ASSERT((ArgumentAbstractIndexTypeList::LENGTH == DEGREE), ARGUMENT_LENGTH_MUST_EQUAL_DEGREE);
-        /*
-        // make sure that each type in the index list is actually a TypedIndex_t
-        AssertThatEachTypeIsATypedIndex_t<ArgumentIndexTypeList>();
-        // make sure there are type conversions for all types in the index lists
-        compile_time_check_that_there_is_a_type_conversion(ArgumentIndexTypeList(), FactorIndexTypeList());
-        // TEMP KLUDGE - forbit contraction with this tensor if its basis is StandardEuclideanBasis,
-        // because its components are then not necessarily those that should be contracted with --
-        // they would be some tensor-implementation-dependent scalar multiples of the components,
-        // and this particular capability is too complicated to implement currently.
-        STATIC_ASSERT((!Lvd::Meta::TypesAreEqual<Basis,StandardEuclideanBasis>::v), CANT_CONTRACT_WITH_EUCLIDEANLY_EMBEDDED_TENSOR);
-        */
         return ExpressionTemplate_IndexedObject_t<
             Derived,
-            TypeList_t<AbstractIndexTypeListHeadType,AbstractIndexTypeListBodyTypeList>,
-            typename SummedIndexTypeList_t<TypeList_t<AbstractIndexTypeListHeadType,AbstractIndexTypeListBodyTypeList> >::T,
+            typename DimIndexTypeListOf_t<FactorTypeList,
+                                          TypeList_t<AbstractIndexTypeListHeadType,
+                                                     AbstractIndexTypeListBodyTypeList> >::T,
+            typename SummedIndexTypeList_t<typename DimIndexTypeListOf_t<FactorTypeList,
+                                                                         TypeList_t<AbstractIndexTypeListHeadType,
+                                                                                    AbstractIndexTypeListBodyTypeList> >::T>::T,
             DONT_FORCE_CONST,
             CHECK_FOR_ALIASING>(as_derived());
     }
@@ -196,13 +191,16 @@ std::ostream &operator << (std::ostream &out, Tensor_i<Derived,Scalar,TensorProd
     if (m.is_at_end())
         return out << "\n[[ ]]\n";
 
+    typedef ComponentIndex_t<Factor1::DIM> Factor1ComponentIndex;
+    typedef ComponentIndex_t<Factor2::DIM> Factor2ComponentIndex;
+
     out << "\n[";
-    for (typename Factor1::Index i; i.is_not_at_end(); ++i)
+    for (Factor1ComponentIndex i; i.is_not_at_end(); ++i)
     {
         if (i.value() != 0)
             out << ' ';
         out << "[ ";
-        for (typename Factor2::Index j; j.is_not_at_end(); ++j)
+        for (Factor2ComponentIndex j; j.is_not_at_end(); ++j)
         {
             out.setf(std::ios_base::right);
             out.width(max_component_width);
@@ -210,7 +208,7 @@ std::ostream &operator << (std::ostream &out, Tensor_i<Derived,Scalar,TensorProd
             ++m;
         }
         out << ']';
-        typename Factor1::Index next(i);
+        Factor1ComponentIndex next(i);
         ++next;
         if (next.is_not_at_end())
             out << '\n';
@@ -238,18 +236,22 @@ std::ostream &operator << (std::ostream &out, Tensor_i<Derived,Scalar,TensorProd
     if (m.is_at_end())
         return out << "\n[[[ ]]]\n";
 
+    typedef ComponentIndex_t<Factor1::DIM> Factor1ComponentIndex;
+    typedef ComponentIndex_t<Factor2::DIM> Factor2ComponentIndex;
+    typedef ComponentIndex_t<Factor3::DIM> Factor3ComponentIndex;
+
     out << "\n[";
-    for (typename Factor1::Index i; i.is_not_at_end(); ++i)
+    for (Factor1ComponentIndex i; i.is_not_at_end(); ++i)
     {
         if (i.value() != 0)
             out << ' ';
         out << '[';
-        for (typename Factor2::Index j; j.is_not_at_end(); ++j)
+        for (Factor2ComponentIndex j; j.is_not_at_end(); ++j)
         {
             if (j.value() != 0)
                 out << "  ";
             out << "[ ";
-            for (typename Factor3::Index k; k.is_not_at_end(); ++k)
+            for (Factor3ComponentIndex k; k.is_not_at_end(); ++k)
             {
                 out.setf(std::ios_base::right);
                 out.width(max_component_width);
@@ -257,13 +259,13 @@ std::ostream &operator << (std::ostream &out, Tensor_i<Derived,Scalar,TensorProd
                 ++m;
             }
             out << ']';
-            typename Factor2::Index next(j);
+            Factor2ComponentIndex next(j);
             ++next;
             if (next.is_not_at_end())
                 out << '\n';
         }
         out << ']';
-        typename Factor1::Index next(i);
+        Factor1ComponentIndex next(i);
         ++next;
         if (next.is_not_at_end())
             out << "\n\n";
