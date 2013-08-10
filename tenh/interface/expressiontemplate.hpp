@@ -122,20 +122,20 @@ std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scala
 {
     // determine the max size that a component takes up
     Uint32 max_component_width = 0;
-    for (FreeDimIndex1 i; i.is_not_at_end(); ++i)
+    for (typename Derived::MultiIndex m; m.is_not_at_end(); ++m)
     {
         std::ostringstream sout;
-        sout << e[i];
+        sout << e[m];
         if (sout.str().length() > max_component_width)
             max_component_width = sout.str().length();
     }
 
     out << "[ ";
-    for (FreeDimIndex1 i; i.is_not_at_end(); ++i)
+    for (typename Derived::MultiIndex m; m.is_not_at_end(); ++m)
     {
         out.setf(std::ios_base::right);
         out.width(max_component_width);
-        out << e[i] << ' ';
+        out << e[m] << ' ';
     }
     return out << "](" << FreeDimIndex1::SYMBOL << ')';
 }

@@ -27,6 +27,7 @@ static bool const DONT_CHECK_FOR_ALIASING = false;
 
 // this is the "const" version of an indexed tensor expression (it has summed indices, so it doesn't make sense to assign to it)
 template <typename Object,
+          typename FactorTypeList_, // this is necessary because the factor type depends on if the thing is being indexed as a vector or tensor
           typename DimIndexTypeList,
           typename SummedDimIndexTypeList_,
           bool FORCE_CONST_,
@@ -36,31 +37,34 @@ struct ExpressionTemplate_IndexedObject_t
     :
     public ExpressionTemplate_i<typename DerivedType_t<Derived_,
                                                        ExpressionTemplate_IndexedObject_t<Object,
+                                                                                          FactorTypeList_,
                                                                                           DimIndexTypeList,
                                                                                           SummedDimIndexTypeList_,
                                                                                           FORCE_CONST_,
                                                                                           CHECK_FOR_ALIASING_,
                                                                                           Derived_> >::T,
                                 typename Object::Scalar,
-                                typename Object::FactorTypeList,
+                                FactorTypeList_,
                                 typename FreeIndexTypeList_t<DimIndexTypeList>::T,
                                 SummedDimIndexTypeList_>
 {
     enum
     {
+        // TODO: assert that FactorTypeList is a TypeList of BasedVectorSpace_c types.
         STATIC_ASSERT_IN_ENUM__UNIQUE(EachTypeIsADimIndex_t<DimIndexTypeList>::V, MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, DIMINDEXTYPELIST),
         STATIC_ASSERT_IN_ENUM__UNIQUE(EachTypeIsADimIndex_t<SummedDimIndexTypeList_>::V, MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, SUMMEDDIMINDEXTYPELIST)
     };
 
     typedef ExpressionTemplate_i<typename DerivedType_t<Derived_,
                                                         ExpressionTemplate_IndexedObject_t<Object,
+                                                                                           FactorTypeList_,
                                                                                            DimIndexTypeList,
                                                                                            SummedDimIndexTypeList_,
                                                                                            FORCE_CONST_,
                                                                                            CHECK_FOR_ALIASING_,
                                                                                            Derived_> >::T,
                                  typename Object::Scalar,
-                                 typename Object::FactorTypeList,
+                                 FactorTypeList_,
                                  typename FreeIndexTypeList_t<DimIndexTypeList>::T,
                                  SummedDimIndexTypeList_> Parent;
     typedef typename Parent::Derived Derived;
@@ -100,18 +104,22 @@ private:
 };
 
 // this is the "non-const" version of an indexed tensor expression (it has no summed indices, so it makes sense to assign to it)
-template <typename Object, typename DimIndexTypeList, bool CHECK_FOR_ALIASING_, typename Derived_>
-struct ExpressionTemplate_IndexedObject_t<Object,DimIndexTypeList,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING_,Derived_>
+template <typename Object, 
+          typename FactorTypeList_, 
+          typename DimIndexTypeList, 
+          bool CHECK_FOR_ALIASING_, 
+          typename Derived_>
+struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList_,DimIndexTypeList,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING_,Derived_>
     :
-    public ExpressionTemplate_i<ExpressionTemplate_IndexedObject_t<Object,DimIndexTypeList,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING_,Derived_>,
+    public ExpressionTemplate_i<ExpressionTemplate_IndexedObject_t<Object,FactorTypeList_,DimIndexTypeList,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING_,Derived_>,
                                 typename Object::Scalar,
-                                typename Object::FactorTypeList,
+                                FactorTypeList_,
                                 typename FreeIndexTypeList_t<DimIndexTypeList>::T,
                                 EmptyTypeList>
 {
-    typedef ExpressionTemplate_i<ExpressionTemplate_IndexedObject_t<Object,DimIndexTypeList,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING_,Derived_>,
+    typedef ExpressionTemplate_i<ExpressionTemplate_IndexedObject_t<Object,FactorTypeList_,DimIndexTypeList,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING_,Derived_>,
                                  typename Object::Scalar,
-                                 typename Object::FactorTypeList,
+                                 FactorTypeList_,
                                  typename FreeIndexTypeList_t<DimIndexTypeList>::T,
                                  EmptyTypeList> Parent;
     typedef typename Parent::Derived Derived;
@@ -129,9 +137,9 @@ struct ExpressionTemplate_IndexedObject_t<Object,DimIndexTypeList,EmptyTypeList,
     // no memory aliasing in the assignment (where the same memory location is being referenced
     // on both the LHS and RHS of the assignment, therefore causing the non-atomically
     // evaluated result to be implementation-dependent and incorrect).
-    ExpressionTemplate_IndexedObject_t<Object,DimIndexTypeList,EmptyTypeList,DONT_FORCE_CONST,DONT_CHECK_FOR_ALIASING,Derived_> no_alias ()
+    ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList,EmptyTypeList,DONT_FORCE_CONST,DONT_CHECK_FOR_ALIASING,Derived_> no_alias ()
     {
-        return ExpressionTemplate_IndexedObject_t<Object,DimIndexTypeList,EmptyTypeList,DONT_FORCE_CONST,DONT_CHECK_FOR_ALIASING,Derived_>(m_object);
+        return ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList,EmptyTypeList,DONT_FORCE_CONST,DONT_CHECK_FOR_ALIASING,Derived_>(m_object);
     }
 
     operator Scalar () const
@@ -143,7 +151,6 @@ struct ExpressionTemplate_IndexedObject_t<Object,DimIndexTypeList,EmptyTypeList,
     // read-only, because it doesn't necessarily make sense to assign to an expression
     // template -- the expression may be a product or some such, where each component
     // is not an L-value.
-    Scalar const &operator [] (typename Object::ComponentIndex const &i) const { return m_object[i]; }
     Scalar operator [] (MultiIndex const &m) const { return m_object[m]; }
 
     // for some dumb reason, the compiler needed a non-templatized assignment operator for the exact matching type
@@ -255,6 +262,7 @@ struct ExpressionTemplate_Addition_t
             return m_left_operand.operator Scalar() - m_right_operand.operator Scalar();
     }
 
+    // read-only, because it doesn't make sense to assign to an expression which is a summation.
     Scalar operator [] (MultiIndex const &m) const
     {
         typedef MultiIndexMap_t<FreeDimIndexTypeList,typename LeftOperand::FreeDimIndexTypeList> LeftOperandIndexMap;
@@ -435,6 +443,7 @@ template <typename Operand, typename BundleDimIndexTypeList, typename ResultingD
 struct ExpressionTemplate_IndexBundle_t
     :
     public ExpressionTemplate_IndexedObject_t<IndexBundle_t<Operand,BundleDimIndexTypeList,ResultingDimIndexType>,
+                                              NullType, // TODO: real code
                                               typename IndexBundle_t<Operand,BundleDimIndexTypeList,ResultingDimIndexType>::DimIndexTypeList,
                                               typename SummedIndexTypeList_t<typename IndexBundle_t<Operand,BundleDimIndexTypeList,ResultingDimIndexType>::DimIndexTypeList>::T,
                                               FORCE_CONST,
@@ -442,6 +451,7 @@ struct ExpressionTemplate_IndexBundle_t
                                               ExpressionTemplate_IndexBundle_t<Operand,BundleDimIndexTypeList,ResultingDimIndexType> >
 {
     typedef ExpressionTemplate_IndexedObject_t<IndexBundle_t<Operand,BundleDimIndexTypeList,ResultingDimIndexType>,
+                                               NullType, // TODO: real code
                                                typename IndexBundle_t<Operand,BundleDimIndexTypeList,ResultingDimIndexType>::DimIndexTypeList,
                                                typename SummedIndexTypeList_t<typename IndexBundle_t<Operand,BundleDimIndexTypeList,ResultingDimIndexType>::DimIndexTypeList>::T,
                                                FORCE_CONST,
@@ -487,6 +497,7 @@ template <typename Operand, typename SourceDimIndexType, typename SplitDimIndexT
 struct ExpressionTemplate_IndexSplit_t
     :
     public ExpressionTemplate_IndexedObject_t<IndexSplitter_t<Operand,SourceDimIndexType,SplitDimIndexTypeList>,
+                                              NullType, // TODO: real code
                                               typename IndexSplitter_t<Operand,SourceDimIndexType,SplitDimIndexTypeList>::DimIndexTypeList,
                                               typename SummedIndexTypeList_t<typename IndexSplitter_t<Operand,SourceDimIndexType,SplitDimIndexTypeList>::DimIndexTypeList>::T,
                                               FORCE_CONST,
@@ -494,6 +505,7 @@ struct ExpressionTemplate_IndexSplit_t
                                               ExpressionTemplate_IndexSplit_t<Operand,SourceDimIndexType,SplitDimIndexTypeList> >
 {
     typedef ExpressionTemplate_IndexedObject_t<IndexSplitter_t<Operand,SourceDimIndexType,SplitDimIndexTypeList>,
+                                               NullType, // TODO: real code
                                                typename IndexSplitter_t<Operand,SourceDimIndexType,SplitDimIndexTypeList>::DimIndexTypeList,
                                                typename SummedIndexTypeList_t<typename IndexSplitter_t<Operand,SourceDimIndexType,SplitDimIndexTypeList>::DimIndexTypeList>::T,
                                                FORCE_CONST,

@@ -190,7 +190,7 @@ struct MultiIndex_t<TypeList_t<HeadIndexType> > : public List_t<TypeList_t<HeadI
     MultiIndex_t () { } // default constructor initializes to "first" component
     // explicit because it has a range-check (in the HeadIndexType constructor)
     explicit MultiIndex_t (Uint32 i, bool check_range = CHECK_RANGE) : Parent(HeadIndexType(i, check_range)) { }
-    MultiIndex_t (HeadIndexType const &head) : Parent(head) { }
+    explicit MultiIndex_t (HeadIndexType const &head) : Parent(head) { }
 
     MultiIndex_t (MultiIndex_t<EmptyTypeList> const &) { } // default construction
     // this is the copy constructor

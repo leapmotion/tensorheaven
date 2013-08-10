@@ -302,7 +302,30 @@ Notes for conceptual layer and refactor
   This would probably collapse some library code, but could make instantiating a vector more annoying
   for the user.
 
+Notes for [probable] upgrade to C++11
+- "Template typedefs" are possible through "alias declarations" in C++11:
+
+    C++11 added alias declarations, which are generalization of typedef, allowing templates:
+
+    template <size_t N>
+    using Vector = Matrix<N, 1>;
+
+    The type Vector<3> is equivalent to Matrix<3, 1>.
+- All the TypeList_t stuff (which is deeply interwoven into Tensor Heaven) could be refactored
+  to use variadic templates, though it would probably be good to do a bunch of experiments and
+  gain experience using them before settling on a design/best practice.
+- Tons of the metaprogramming uses static const variables -- these can be changed to use constexpr.
+- Static asserts with error strings will be awesome (no more making enums for the error messages).
+
+
 Notes/Reflections on the development of a really really template-heavy math library
+- The overarching conclusion is that C++ template metaprogramming (TMP) is the shittiest 
+  functional programming language that is widely used -- it's an emergent property of the original
+  idea of making generic code (container classes, etc), and so was never designed as a first class
+  language, and that really shows.  Doing things in C++ TMP which are quick and easy in a "real"
+  functional language like Haskell require lots of extra red tape (e.g. all the extra uses of
+  the "typename" and "template" keywords) and feel kludgey.  The error messages it produces are
+  clearly tiny glimmers of the light of Hell leaking into our reality.
 - Trying to have the compiler enforce the conceptual type system through the C++ type system
   is untenable, as it is too strict and the compile errors it produces are unreadable.
   * A good trick is to write template metafunctions with less constraint and then use explicit static

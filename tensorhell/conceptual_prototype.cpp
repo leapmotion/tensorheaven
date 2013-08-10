@@ -708,6 +708,8 @@ int main (int argc, char **argv)
 
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
+        std::cout << FORMAT_VALUE(v(i)) << '\n';
+        std::cout << FORMAT_VALUE(w(i)) << '\n';
         std::cout << FORMAT_VALUE(v(i) + w(i)) << '\n';
         std::cout << FORMAT_VALUE(v(i) - w(i)) << '\n';
 
@@ -770,7 +772,7 @@ int main (int argc, char **argv)
         E e(0.0f);
         for (E::ComponentIndex it; it.is_not_at_end(); ++it)
             e[it] = it.value();
-//        std::cout << FORMAT_VALUE(e(i)) << '\n'; // this has problems: TODO: fix -- ExpressionTemplate_i may need a vector-indexable operator[]
+        std::cout << FORMAT_VALUE(e(i)) << '\n'; // this has problems: TODO: fix -- ExpressionTemplate_i may need a vector-indexable operator[]
 
         V w(1.0f, 3.0f);
 
@@ -779,7 +781,8 @@ int main (int argc, char **argv)
         std::cout << FORMAT_VALUE(e) << '\n';
         std::cout << FORMAT_VALUE(e(i|j|k)*v(j)*w(k)) << '\n';
 
-        //E::Dual f(3.0f);
+        // this should cause a compile error due to the non-naturality of the pairing
+//        std::cout << FORMAT_VALUE(e(i|j|j)) << '\n';
 
         typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedY,TypeList_t<BasedY::Dual> > > EndomorphismOfY;
         typedef ImplementationOf_t<float,EndomorphismOfY> Endo;
@@ -789,6 +792,15 @@ int main (int argc, char **argv)
         std::cout << FORMAT_VALUE(A) << '\n';
         std::cout << FORMAT_VALUE(A(i|j)*v(j)) << '\n';
         std::cout << FORMAT_VALUE(A(i|i)) << '\n';
+
+
+        E::Dual f(3.0f);
+        f[E::Dual::MultiIndex(0,0,0,CHECK_RANGE)] = 1.0f;
+        f[E::Dual::MultiIndex(1,0,1,CHECK_RANGE)] = 2.0f;
+        f[E::Dual::MultiIndex(2,1,1,CHECK_RANGE)] = 4.0f;
+        std::cout << FORMAT_VALUE(f) << '\n';
+        std::cout << FORMAT_VALUE(f(i|j|k)*e(i|j|k)) << '\n';
+        std::cout << FORMAT_VALUE(f(i)*e(i)) << '\n';
 
         std::cout << '\n' << '\n';
     }

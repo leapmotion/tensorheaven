@@ -85,12 +85,10 @@ struct Vector_i
     Scalar const &operator [] (ComponentIndex const &i) const { return as_derived().Derived::operator[](i); }
     Scalar &operator [] (ComponentIndex const &i) { return as_derived().Derived::operator[](i); }
 
-    // template <typename Index_>
-    // Scalar const &operator [] (MultiIndex_t<TypeList_t<Index_> > const &m) const { return as_derived().Derived::operator[](m.head()); }
-    // template <typename Index_>
-    // Scalar &operator [] (MultiIndex_t<TypeList_t<Index_> > const &m) { return as_derived().Derived::operator[](m.head()); }
-    Scalar const &operator [] (MultiIndex const &m) const { return as_derived().Derived::operator[](m.head()); }
-    Scalar &operator [] (MultiIndex const &m) { return as_derived().Derived::operator[](m.head()); }
+    template <typename Index_>
+    Scalar const &operator [] (MultiIndex_t<TypeList_t<Index_> > const &m) const { return as_derived().Derived::operator[](m.head()); }
+    template <typename Index_>
+    Scalar &operator [] (MultiIndex_t<TypeList_t<Index_> > const &m) { return as_derived().Derived::operator[](m.head()); }
 
     // the argument is technically unnecessary, as its value is not used.  however,
     // this allows the template system to deduce the SYMBOL of the TypedIndex_c, so
@@ -100,28 +98,32 @@ struct Vector_i
     // AbstractIndex_c<'j'> j;
     // u(i)*v(j)
     template <char SYMBOL>
-    ExpressionTemplate_IndexedObject_t<Derived,
+    ExpressionTemplate_IndexedObject_t<Vector_i,
+                                       TypeList_t<BasedVectorSpace>,
                                        TypeList_t<DimIndex_t<SYMBOL,DIM> >,
                                        EmptyTypeList,
                                        FORCE_CONST,
                                        CHECK_FOR_ALIASING> operator () (AbstractIndex_c<SYMBOL> const &) const
     {
         STATIC_ASSERT((SYMBOL != '\0'), ABSTRACTINDEX_SYMBOL_MUST_NOT_BE_NULL);
-        return ExpressionTemplate_IndexedObject_t<Derived,
+        return ExpressionTemplate_IndexedObject_t<Vector_i,
+                                                  TypeList_t<BasedVectorSpace>,
                                                   TypeList_t<DimIndex_t<SYMBOL,DIM> >,
                                                   EmptyTypeList,
                                                   FORCE_CONST,
                                                   CHECK_FOR_ALIASING>(as_derived());
     }
     template <char SYMBOL>
-    ExpressionTemplate_IndexedObject_t<Derived,
+    ExpressionTemplate_IndexedObject_t<Vector_i,
+                                       TypeList_t<BasedVectorSpace>,
                                        TypeList_t<DimIndex_t<SYMBOL,DIM> >,
                                        EmptyTypeList,
                                        DONT_FORCE_CONST,
                                        CHECK_FOR_ALIASING> operator () (AbstractIndex_c<SYMBOL> const &)
     {
         STATIC_ASSERT((SYMBOL != '\0'), ABSTRACTINDEX_SYMBOL_MUST_NOT_BE_NULL);
-        return ExpressionTemplate_IndexedObject_t<Derived,
+        return ExpressionTemplate_IndexedObject_t<Vector_i,
+                                                  TypeList_t<BasedVectorSpace>,
                                                   TypeList_t<DimIndex_t<SYMBOL,DIM> >,
                                                   EmptyTypeList,
                                                   DONT_FORCE_CONST,

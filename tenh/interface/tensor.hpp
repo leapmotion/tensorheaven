@@ -79,7 +79,8 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
     // from one that takes a single index (i.e. the index-by-vector-index one).
     template <typename AbstractIndexTypeListHeadType, typename AbstractIndexTypeListBodyTypeList>
     ExpressionTemplate_IndexedObject_t<
-        Derived,
+        Tensor_i,
+        FactorTypeList,
         typename DimIndexTypeListOf_t<FactorTypeList,
                                       TypeList_t<AbstractIndexTypeListHeadType,
                                                  AbstractIndexTypeListBodyTypeList> >::T,
@@ -93,7 +94,8 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
         STATIC_ASSERT(EachTypeIsAnAbstractIndex_c<ArgumentAbstractIndexTypeList>::V, EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
         STATIC_ASSERT((ArgumentAbstractIndexTypeList::LENGTH == DEGREE), ARGUMENT_LENGTH_MUST_EQUAL_DEGREE);
         return ExpressionTemplate_IndexedObject_t<
-            Derived,
+            Tensor_i,
+            FactorTypeList,
             typename DimIndexTypeListOf_t<FactorTypeList,
                                           TypeList_t<AbstractIndexTypeListHeadType,
                                                      AbstractIndexTypeListBodyTypeList> >::T,
@@ -105,7 +107,8 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
     }
     template <typename AbstractIndexTypeListHeadType, typename AbstractIndexTypeListBodyTypeList>
     ExpressionTemplate_IndexedObject_t<
-        Derived,
+        Tensor_i,
+        FactorTypeList,
         typename DimIndexTypeListOf_t<FactorTypeList,
                                       TypeList_t<AbstractIndexTypeListHeadType,
                                                  AbstractIndexTypeListBodyTypeList> >::T,
@@ -119,7 +122,8 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
         STATIC_ASSERT(EachTypeIsAnAbstractIndex_c<ArgumentAbstractIndexTypeList>::V, EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
         STATIC_ASSERT((ArgumentAbstractIndexTypeList::LENGTH == DEGREE), ARGUMENT_LENGTH_MUST_EQUAL_DEGREE);
         return ExpressionTemplate_IndexedObject_t<
-            Derived,
+            Tensor_i,
+            FactorTypeList,
             typename DimIndexTypeListOf_t<FactorTypeList,
                                           TypeList_t<AbstractIndexTypeListHeadType,
                                                      AbstractIndexTypeListBodyTypeList> >::T,
