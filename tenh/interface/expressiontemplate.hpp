@@ -25,7 +25,7 @@ struct ExpressionTemplate_IndexBundle_t;
 template <typename Operand, typename SourceIndexType, typename SplitIndexTypeList>
 struct ExpressionTemplate_IndexSplit_t;
 
-template <typename Operand, typename FreeDimIndexTypeList_>
+template <typename Operand>
 struct ExpressionTemplate_Eval_t;
 
 // this is essentially a compile-time interface, requiring:
@@ -108,9 +108,9 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
         return ExpressionTemplate_IndexSplit_t<Derived,SourceAbstractIndexType,TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> >(as_derived());
     }
     // method for doing an intermediate evaluation of an expression template to avoid aliasing
-    ExpressionTemplate_Eval_t<Derived,FreeDimIndexTypeList> eval () const
+    ExpressionTemplate_Eval_t<Derived> eval () const
     {
-        return ExpressionTemplate_Eval_t<Derived,FreeDimIndexTypeList>(as_derived());
+        return ExpressionTemplate_Eval_t<Derived>(as_derived());
     }
 };
 

@@ -11,6 +11,7 @@
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/conceptual/vectorspace.hpp"
 #include "tenh/conceptual/dual.hpp"
+#include "tenh/expressiontemplate_eval.hpp"
 #include "tenh/implementation/tensor.hpp"
 #include "tenh/implementation/vector.hpp"
 
@@ -555,6 +556,9 @@ int main (int argc, char **argv)
         std::cout << FORMAT_VALUE(f) << '\n';
         std::cout << FORMAT_VALUE(f(i|j|k)*e(i|j|k)) << '\n';
         std::cout << FORMAT_VALUE(f(i)*e(i)) << '\n';
+
+        std::cout << FORMAT_VALUE(e(i).eval()) << '\n';
+        std::cout << FORMAT_VALUE(e(i|j|k).eval()) << '\n';
 
         std::cout << '\n' << '\n';
     }
