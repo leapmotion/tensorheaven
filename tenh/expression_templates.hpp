@@ -27,7 +27,7 @@ static bool const DONT_CHECK_FOR_ALIASING = false;
 
 // this is the "const" version of an indexed tensor expression (it has summed indices, so it doesn't make sense to assign to it)
 template <typename Object,
-          typename FactorTypeList_, // this is necessary because the factor type depends on if the thing is being indexed as a vector or tensor
+          typename FactorTypeList, // this is necessary because the factor type depends on if the thing is being indexed as a vector or tensor
           typename DimIndexTypeList,
           typename SummedDimIndexTypeList_,
           bool FORCE_CONST_,
@@ -37,14 +37,14 @@ struct ExpressionTemplate_IndexedObject_t
     :
     public ExpressionTemplate_i<typename DerivedType_t<Derived_,
                                                        ExpressionTemplate_IndexedObject_t<Object,
-                                                                                          FactorTypeList_,
+                                                                                          FactorTypeList,
                                                                                           DimIndexTypeList,
                                                                                           SummedDimIndexTypeList_,
                                                                                           FORCE_CONST_,
                                                                                           CHECK_FOR_ALIASING_,
                                                                                           Derived_> >::T,
                                 typename Object::Scalar,
-                                FactorTypeList_,
+                                typename FreeFactorTypeList_t<FactorTypeList,DimIndexTypeList>::T,
                                 typename FreeIndexTypeList_t<DimIndexTypeList>::T,
                                 SummedDimIndexTypeList_>
 {
@@ -57,19 +57,19 @@ struct ExpressionTemplate_IndexedObject_t
 
     typedef ExpressionTemplate_i<typename DerivedType_t<Derived_,
                                                         ExpressionTemplate_IndexedObject_t<Object,
-                                                                                           FactorTypeList_,
+                                                                                           FactorTypeList,
                                                                                            DimIndexTypeList,
                                                                                            SummedDimIndexTypeList_,
                                                                                            FORCE_CONST_,
                                                                                            CHECK_FOR_ALIASING_,
                                                                                            Derived_> >::T,
                                  typename Object::Scalar,
-                                 FactorTypeList_,
+                                 typename FreeFactorTypeList_t<FactorTypeList,DimIndexTypeList>::T,
                                  typename FreeIndexTypeList_t<DimIndexTypeList>::T,
                                  SummedDimIndexTypeList_> Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
-    typedef typename Parent::FactorTypeList FactorTypeList;
+    typedef typename Parent::FreeFactorTypeList FreeFactorTypeList;
     typedef typename Parent::FreeDimIndexTypeList FreeDimIndexTypeList;
     typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
     typedef typename Parent::MultiIndex MultiIndex;
@@ -105,26 +105,26 @@ private:
 
 // this is the "non-const" version of an indexed tensor expression (it has no summed indices, so it makes sense to assign to it)
 template <typename Object, 
-          typename FactorTypeList_, 
+          typename FactorTypeList, 
           typename DimIndexTypeList, 
           bool CHECK_FOR_ALIASING_, 
           typename Derived_>
-struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList_,DimIndexTypeList,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING_,Derived_>
+struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING_,Derived_>
     :
-    public ExpressionTemplate_i<ExpressionTemplate_IndexedObject_t<Object,FactorTypeList_,DimIndexTypeList,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING_,Derived_>,
+    public ExpressionTemplate_i<ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING_,Derived_>,
                                 typename Object::Scalar,
-                                FactorTypeList_,
+                                typename FreeFactorTypeList_t<FactorTypeList,DimIndexTypeList>::T,
                                 typename FreeIndexTypeList_t<DimIndexTypeList>::T,
                                 EmptyTypeList>
 {
-    typedef ExpressionTemplate_i<ExpressionTemplate_IndexedObject_t<Object,FactorTypeList_,DimIndexTypeList,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING_,Derived_>,
+    typedef ExpressionTemplate_i<ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING_,Derived_>,
                                  typename Object::Scalar,
-                                 FactorTypeList_,
+                                 typename FreeFactorTypeList_t<FactorTypeList,DimIndexTypeList>::T,
                                  typename FreeIndexTypeList_t<DimIndexTypeList>::T,
                                  EmptyTypeList> Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
-    typedef typename Parent::FactorTypeList FactorTypeList;
+    typedef typename Parent::FreeFactorTypeList FreeFactorTypeList;
     typedef typename Parent::FreeDimIndexTypeList FreeDimIndexTypeList;
     typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
     typedef typename Parent::MultiIndex MultiIndex;
@@ -178,8 +178,7 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList_,DimIndexTypeLis
 
         // check for aliasing (where source and destination memory overlap)
         if (CHECK_FOR_ALIASING_ && right_operand.uses_tensor(m_object))
-            throw std::invalid_argument("aliased tensor assignment (source and destination memory overlap) -- "
-                                        "see evaluse eval() on RHS or noalias() on LHS of assignment");
+            throw std::invalid_argument("aliased tensor assignment (source and destination memory overlap) -- see eval() and noalias()");
 
         typedef MultiIndexMap_t<FreeDimIndexTypeList,typename RightOperand::FreeDimIndexTypeList> RightOperandIndexMap;
         typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
@@ -212,18 +211,18 @@ struct ExpressionTemplate_Addition_t
     :
     public ExpressionTemplate_i<ExpressionTemplate_Addition_t<LeftOperand,RightOperand,OPERATOR>,
                                 typename LeftOperand::Scalar,
-                                typename LeftOperand::FactorTypeList,
+                                typename LeftOperand::FreeFactorTypeList,
                                 typename LeftOperand::FreeDimIndexTypeList,
                                 EmptyTypeList>
 {
     typedef ExpressionTemplate_i<ExpressionTemplate_Addition_t<LeftOperand,RightOperand,OPERATOR>,
                                  typename LeftOperand::Scalar,
-                                 typename LeftOperand::FactorTypeList,
+                                 typename LeftOperand::FreeFactorTypeList,
                                  typename LeftOperand::FreeDimIndexTypeList,
                                  EmptyTypeList> Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
-    typedef typename Parent::FactorTypeList FactorTypeList;
+    typedef typename Parent::FreeFactorTypeList FreeFactorTypeList;
     typedef typename Parent::FreeDimIndexTypeList FreeDimIndexTypeList;
     typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
     typedef typename Parent::MultiIndex MultiIndex;
@@ -240,7 +239,7 @@ struct ExpressionTemplate_Addition_t
         STATIC_ASSERT_IN_ENUM(LeftOperand::IS_EXPRESSION_TEMPLATE_I, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE_I, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename LeftOperand::FactorTypeList,typename RightOperand::FactorTypeList>::v), OPERANDS_HAVE_SAME_FACTORS),
+        STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename LeftOperand::FreeFactorTypeList,typename RightOperand::FreeFactorTypeList>::v), OPERANDS_HAVE_SAME_FACTORS),
         STATIC_ASSERT_IN_ENUM((AreEqualAsSets_t<typename LeftOperand::FreeDimIndexTypeList,typename RightOperand::FreeDimIndexTypeList>::V), OPERANDS_HAVE_SAME_FREE_INDICES),
         STATIC_ASSERT_IN_ENUM(!ContainsDuplicates_t<typename LeftOperand::FreeDimIndexTypeList>::V, LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
         STATIC_ASSERT_IN_ENUM(!ContainsDuplicates_t<typename RightOperand::FreeDimIndexTypeList>::V, RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
@@ -299,18 +298,18 @@ struct ExpressionTemplate_ScalarMultiplication_t
     :
     public ExpressionTemplate_i<ExpressionTemplate_ScalarMultiplication_t<Operand,Scalar_,OPERATOR>,
                                 typename Operand::Scalar,
-                                typename Operand::FactorTypeList,
+                                typename Operand::FreeFactorTypeList,
                                 typename Operand::FreeDimIndexTypeList,
                                 typename Operand::UsedDimIndexTypeList>
 {
     typedef ExpressionTemplate_i<ExpressionTemplate_ScalarMultiplication_t<Operand,Scalar_,OPERATOR>,
                                  typename Operand::Scalar,
-                                 typename Operand::FactorTypeList,
+                                 typename Operand::FreeFactorTypeList,
                                  typename Operand::FreeDimIndexTypeList,
                                  typename Operand::UsedDimIndexTypeList> Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
-    typedef typename Parent::FactorTypeList FactorTypeList;
+    typedef typename Parent::FreeFactorTypeList FreeFactorTypeList;
     typedef typename Parent::FreeDimIndexTypeList FreeDimIndexTypeList;
     typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
     typedef typename Parent::MultiIndex MultiIndex;
@@ -373,18 +372,18 @@ struct ExpressionTemplate_Multiplication_t
     :
     public ExpressionTemplate_i<ExpressionTemplate_Multiplication_t<LeftOperand,RightOperand>,
                                 typename LeftOperand::Scalar,
-                                typename FactorTypeListOfMultiplication_t<LeftOperand,RightOperand>::T,
+                                typename FreeFactorTypeListOfMultiplication_t<LeftOperand,RightOperand>::T,
                                 typename FreeDimIndexTypeListOfMultiplication_t<LeftOperand,RightOperand>::T,
                                 typename UsedDimIndexTypeListOfMultiplication_t<LeftOperand,RightOperand>::T>
 {
     typedef ExpressionTemplate_i<ExpressionTemplate_Multiplication_t<LeftOperand,RightOperand>,
                                  typename LeftOperand::Scalar,
-                                 typename FactorTypeListOfMultiplication_t<LeftOperand,RightOperand>::T,
+                                 typename FreeFactorTypeListOfMultiplication_t<LeftOperand,RightOperand>::T,
                                  typename FreeDimIndexTypeListOfMultiplication_t<LeftOperand,RightOperand>::T,
                                  typename UsedDimIndexTypeListOfMultiplication_t<LeftOperand,RightOperand>::T> Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
-    typedef typename Parent::FactorTypeList FactorTypeList;
+    typedef typename Parent::FreeFactorTypeList FreeFactorTypeList;
     typedef typename Parent::FreeDimIndexTypeList FreeDimIndexTypeList;
     typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
     typedef typename Parent::MultiIndex MultiIndex;
@@ -459,6 +458,7 @@ struct ExpressionTemplate_IndexBundle_t
                                                ExpressionTemplate_IndexBundle_t<Operand,BundleDimIndexTypeList,ResultingDimIndexType> > Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
+    typedef typename Parent::FreeFactorTypeList FreeFactorTypeList;
     typedef typename Parent::FreeDimIndexTypeList FreeDimIndexTypeList;
     typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
     typedef typename Parent::MultiIndex MultiIndex;
@@ -513,6 +513,7 @@ struct ExpressionTemplate_IndexSplit_t
                                                ExpressionTemplate_IndexSplit_t<Operand,SourceDimIndexType,SplitDimIndexTypeList> > Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
+    typedef typename Parent::FreeFactorTypeList FreeFactorTypeList;
     typedef typename Parent::FreeDimIndexTypeList FreeDimIndexTypeList;
     typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
     typedef typename Parent::MultiIndex MultiIndex;

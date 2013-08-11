@@ -40,7 +40,7 @@ struct ExpressionTemplate_Eval_t;
 //   template <typename OtherTensor> bool uses_tensor (OtherTensor const &) const // used in checking for aliasing
 template <typename Derived_, 
           typename Scalar_,
-          typename FactorTypeList_,
+          typename FreeFactorTypeList_,
           typename FreeDimIndexTypeList_,
           typename UsedDimIndexTypeList_>
 struct ExpressionTemplate_i // _i is for "compile-time interface"
@@ -56,7 +56,7 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     typedef Derived_ Derived;
     // these typedefs make the Derived-specified typedefs available at the baseclass level,
     typedef Scalar_ Scalar;
-    typedef FactorTypeList_ FactorTypeList;
+    typedef FreeFactorTypeList_ FreeFactorTypeList;
     typedef FreeDimIndexTypeList_ FreeDimIndexTypeList;
     typedef UsedDimIndexTypeList_ UsedDimIndexTypeList;
     typedef MultiIndex_t<FreeDimIndexTypeList> MultiIndex;
@@ -117,8 +117,8 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
 // it's just more convenient to write specializations for particular numbers of free indices
 
 // specialization for 1 index
-template <typename Derived, typename Scalar, typename FactorTypeList, typename FreeDimIndex1, typename UsedDimIndexTypeList>
-std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scalar,FactorTypeList,TypeList_t<FreeDimIndex1>,UsedDimIndexTypeList> const &e)
+template <typename Derived, typename Scalar, typename FreeFactorTypeList, typename FreeDimIndex1, typename UsedDimIndexTypeList>
+std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scalar,FreeFactorTypeList,TypeList_t<FreeDimIndex1>,UsedDimIndexTypeList> const &e)
 {
     // determine the max size that a component takes up
     Uint32 max_component_width = 0;
@@ -141,8 +141,8 @@ std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scala
 }
 
 // specialization for 2 indices
-template <typename Derived, typename Scalar, typename FactorTypeList, typename FreeDimIndex1, typename FreeDimIndex2, typename UsedDimIndexTypeList>
-std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scalar,FactorTypeList,TypeList_t<FreeDimIndex1,TypeList_t<FreeDimIndex2> >,UsedDimIndexTypeList> const &e)
+template <typename Derived, typename Scalar, typename FreeFactorTypeList, typename FreeDimIndex1, typename FreeDimIndex2, typename UsedDimIndexTypeList>
+std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scalar,FreeFactorTypeList,TypeList_t<FreeDimIndex1,TypeList_t<FreeDimIndex2> >,UsedDimIndexTypeList> const &e)
 {
     // determine the max size that a component takes up
     Uint32 max_component_width = 0;
@@ -181,8 +181,8 @@ std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scala
 }
 
 // specialization for 3 indices
-template <typename Derived, typename Scalar, typename FactorTypeList, typename FreeDimIndex1, typename FreeDimIndex2, typename FreeDimIndex3, typename UsedDimIndexTypeList>
-std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scalar,FactorTypeList,TypeList_t<FreeDimIndex1,TypeList_t<FreeDimIndex2,TypeList_t<FreeDimIndex3> > >,UsedDimIndexTypeList> const &e)
+template <typename Derived, typename Scalar, typename FreeFactorTypeList, typename FreeDimIndex1, typename FreeDimIndex2, typename FreeDimIndex3, typename UsedDimIndexTypeList>
+std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scalar,FreeFactorTypeList,TypeList_t<FreeDimIndex1,TypeList_t<FreeDimIndex2,TypeList_t<FreeDimIndex3> > >,UsedDimIndexTypeList> const &e)
 {
     // determine the max size that a component takes up
     Uint32 max_component_width = 0;

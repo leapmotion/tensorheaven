@@ -20,7 +20,7 @@ namespace Tenh {
 // this file contains template metaprograms which assist in the construction and evaluation of expression templates
 
 // for this to work correctly on DimIndex_t types, the dimensions must be correct (i.e. the 
-// primal/dual vector space checking must already be done)
+// primal/dual vector space checking must already be done).  TODO: redesign-away this caveat
 template <typename IndexTypeList>
 struct SummedIndexTypeList_t
 {
@@ -28,12 +28,60 @@ struct SummedIndexTypeList_t
 };
 
 // for this to work correctly on DimIndex_t types, the dimensions must be correct (i.e. the 
-// primal/dual vector space checking must already be done)
+// primal/dual vector space checking must already be done).  TODO: redesign-away this caveat
 template <typename IndexTypeList>
 struct FreeIndexTypeList_t
 {
     typedef typename ElementsHavingMultiplicity_t<IndexTypeList,1>::T T;
 };
+
+template <typename FreeIndexTypeList>
+struct IndexIsFree_t
+{
+    enum { STATIC_ASSERT_IN_ENUM(IsATypeList_t<FreeIndexTypeList>::V, MUST_BE_TYPELIST) };
+
+    template <typename T>
+    struct Eval_t
+    {
+        enum 
+        {
+            STATIC_ASSERT_IN_ENUM(IsATypeList_t<T>::V, MUST_BE_TYPELIST),
+            STATIC_ASSERT_IN_ENUM(T::LENGTH == 2, LENGTH_MUST_BE_EXACTLY_2)
+        };
+        typedef typename T::HeadType Factor;
+        typedef typename T::BodyTypeList::HeadType Index;
+        static bool const V = FreeIndexTypeList::template Contains_t<Index>::V;
+    };
+};
+
+template <typename Unzipped>
+struct FreeFactorTypeListHelper_t
+{
+    typedef typename Unzipped::HeadType T;
+};
+
+template <>
+struct FreeFactorTypeListHelper_t<EmptyTypeList>
+{
+    typedef EmptyTypeList T;
+};
+
+// for this to work correctly on DimIndex_t types, the dimensions must be correct (i.e. the 
+// primal/dual vector space checking must already be done).  TODO: redesign-away this caveat
+template <typename FactorTypeList, typename IndexTypeList>
+struct FreeFactorTypeList_t
+{
+private:
+    typedef typename Zip_t<TypeList_t<FactorTypeList,TypeList_t<IndexTypeList> > >::T FactorAndIndexPairTypeList;
+    typedef typename FreeIndexTypeList_t<IndexTypeList>::T FreeIndexTypeList;
+    typedef typename ElementsOfTypeListSatisfyingPredicate_t<FactorAndIndexPairTypeList,IndexIsFree_t<FreeIndexTypeList> >::T FreeFactorAndIndexPairTypeList;
+    typedef typename Unzip_t<FreeFactorAndIndexPairTypeList>::T Unzipped;
+    enum { STATIC_ASSERT_IN_ENUM((Unzipped::LENGTH == 0 || Unzipped::LENGTH == 2), LENGTH_MUST_BE_EXACTLY_0_OR_2) };
+public:
+    // each pair in FreeFactorAndIndexPairTypeList is a (factor, index) TypeList_t
+    typedef typename FreeFactorTypeListHelper_t<Unzipped>::T T;
+};
+
 /*
 template <typename HeadType>
 typename HeadType::Owner::Scalar summation_component_factor (MultiIndex_t<TypeList_t<HeadType> > const &s)
@@ -183,8 +231,8 @@ template <typename LeftOperand, typename RightOperand, typename FreeDimIndexType
 struct BinarySummation_t
 {
 private:
-    typedef typename ConcatenationOfTypeLists_t<typename LeftOperand::FactorTypeList,
-                                                typename RightOperand::FactorTypeList>::T FactorTypeList;
+    typedef typename ConcatenationOfTypeLists_t<typename LeftOperand::FreeFactorTypeList,
+                                                typename RightOperand::FreeFactorTypeList>::T FactorTypeList;
     typedef typename ConcatenationOfTypeLists_t<typename LeftOperand::FreeDimIndexTypeList,
                                                 typename RightOperand::FreeDimIndexTypeList>::T DimIndexTypeList;
     typedef typename AbstractIndicesOfDimIndexTypeList_t<DimIndexTypeList>::T AbstractIndexTypeList;
@@ -299,72 +347,16 @@ public:
             SummedDimIndexTypeList>::T>::T T;
 };
 
-template <typename FreeDimIndexTypeList>
-struct IndexIsFree_t
-{
-    enum { STATIC_ASSERT_IN_ENUM(IsATypeList_t<FreeDimIndexTypeList>::V, MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES) };
-
-    template <typename T>
-    struct Eval_t
-    {
-        enum 
-        {
-            STATIC_ASSERT_IN_ENUM(IsATypeList_t<T>::V, MUST_BE_TYPELIST),
-            STATIC_ASSERT_IN_ENUM(T::LENGTH == 2, LENGTH_MUST_BE_EXACTLY_2)
-        };
-        typedef typename T::HeadType Factor;
-        typedef typename T::BodyTypeList::HeadType Index;
-        static bool const V = FreeDimIndexTypeList::template Contains_t<Index>::V;
-    };
-};
-
-template <typename Unzipped>
-struct FactorTypeListOfMultiplicationHelper_t
-{
-    typedef typename Unzipped::HeadType T;
-};
-
-template <>
-struct FactorTypeListOfMultiplicationHelper_t<EmptyTypeList>
-{
-    typedef EmptyTypeList T;
-};
-
 template <typename LeftOperand, typename RightOperand>
-struct FactorTypeListOfMultiplication_t
+struct FreeFactorTypeListOfMultiplication_t
 {
 private:
-    typedef typename ConcatenationOfTypeLists_t<typename LeftOperand::FactorTypeList,
-                                                typename RightOperand::FactorTypeList>::T CombinedFactorTypeList;
+    typedef typename ConcatenationOfTypeLists_t<typename LeftOperand::FreeFactorTypeList,
+                                                typename RightOperand::FreeFactorTypeList>::T CombinedFactorTypeList;
     typedef typename ConcatenationOfTypeLists_t<typename LeftOperand::FreeDimIndexTypeList,
                                                 typename RightOperand::FreeDimIndexTypeList>::T CombinedDimIndexTypeList;
-    typedef typename Zip_t<TypeList_t<CombinedFactorTypeList,TypeList_t<CombinedDimIndexTypeList> > >::T CombinedFactorAndDimIndexPairTypeList;
-    typedef typename FreeDimIndexTypeListOfMultiplication_t<LeftOperand,RightOperand>::T FreeDimIndexTypeList;
-    typedef typename ElementsOfTypeListSatisfyingPredicate_t<CombinedFactorAndDimIndexPairTypeList,IndexIsFree_t<FreeDimIndexTypeList> >::T FreeFactorAndDimIndexPairTypeList;
-    typedef typename Unzip_t<FreeFactorAndDimIndexPairTypeList>::T Unzipped;
-    enum { STATIC_ASSERT_IN_ENUM((Unzipped::LENGTH == 0 || Unzipped::LENGTH == 2), LENGTH_MUST_BE_EXACTLY_0_OR_2) };
 public:
-    // each pair in FreeFactorAndIndexPairTypeList is a (factor, index) TypeList_t
-    typedef typename FactorTypeListOfMultiplicationHelper_t<Unzipped>::T T;
-};
-
-
-template <typename LeftOperand, typename RightOperand>
-struct SummedFactorTypeListOfMultiplication_t
-{
-private:
-    typedef typename ConcatenationOfTypeLists_t<typename LeftOperand::FactorTypeList,
-                                                typename RightOperand::FactorTypeList>::T CombinedFactorTypeList;
-    typedef typename ConcatenationOfTypeLists_t<typename LeftOperand::FreeDimIndexTypeList,
-                                                typename RightOperand::FreeDimIndexTypeList>::T CombinedDimIndexTypeList;
-    typedef typename Zip_t<TypeList_t<CombinedFactorTypeList,TypeList_t<CombinedDimIndexTypeList> > >::T CombinedFactorAndDimIndexPairTypeList;
-    typedef typename FreeDimIndexTypeListOfMultiplication_t<LeftOperand,RightOperand>::T FreeDimIndexTypeList;
-    typedef typename ElementsOfTypeListSatisfyingPredicate_t<CombinedFactorAndDimIndexPairTypeList,NegationOfPredicate_t<IndexIsFree_t<FreeDimIndexTypeList> > >::T FreeFactorAndDimIndexPairTypeList;
-    typedef typename Unzip_t<FreeFactorAndDimIndexPairTypeList>::T Unzipped;
-    enum { STATIC_ASSERT_IN_ENUM((Unzipped::LENGTH == 0 || Unzipped::LENGTH == 2), LENGTH_MUST_BE_EXACTLY_0_OR_2) };
-public:
-    // each pair in FreeFactorAndIndexPairTypeList is a (factor, index) TypeList_t
-    typedef typename FactorTypeListOfMultiplicationHelper_t<Unzipped>::T T;
+    typedef typename FreeFactorTypeList_t<CombinedFactorTypeList,CombinedDimIndexTypeList>::T T;
 };
 
 
@@ -440,6 +432,22 @@ struct IndexSplitter_t
     typedef typename Operand::Scalar Scalar;
     // replace SourceDimIndexType with MultiIndex_t<SplitDimIndexTypeList> in the index type list
     static Uint32 const SOURCE_INDEX_TYPE_INDEX = FirstMatchingIn_t<typename Operand::FreeDimIndexTypeList,SourceDimIndexType>::INDEX;
+    typedef typename Operand::FactorTypeList::template El_t<SOURCE_INDEX_TYPE_INDEX>::T SourceFactor;
+
+    enum
+    {
+        // TODO: assert that SourceFactor can actually be split (can be embedded into a tensor space)
+        STATIC_ASSERT_IN_ENUM((SourceFactor::FactorTypeList::LENGTH == SplitDimIndexTypeList::LENGTH), MUST_HAVE_EQUAL_LENGTHS)
+    };
+
+
+    typedef typename ConcatenationOfTypeLists_t<
+        typename Operand::FactorTypeList::template LeadingTypeList_t<SOURCE_INDEX_TYPE_INDEX>::T,
+        typename ConcatenationOfTypeLists_t<
+            typename SourceFactor::FactorTypeList,
+            typename Operand::FactorTypeList::template TrailingTypeList_t<SOURCE_INDEX_TYPE_INDEX+1>::T
+            >::T
+        >::T FactorTypeList;
     typedef typename ConcatenationOfTypeLists_t<
         typename Operand::FreeDimIndexTypeList::template LeadingTypeList_t<SOURCE_INDEX_TYPE_INDEX>::T,
         typename ConcatenationOfTypeLists_t<

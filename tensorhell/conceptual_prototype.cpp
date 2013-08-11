@@ -555,6 +555,7 @@ int main (int argc, char **argv)
         f[E::Dual::MultiIndex(2,1,1,CHECK_RANGE)] = 4.0f;
         std::cout << FORMAT_VALUE(f) << '\n';
         std::cout << FORMAT_VALUE(f(i|j|k)*e(i|j|k)) << '\n';
+        std::cout << FORMAT_VALUE(f(i|j|k)*e(i|k|j)) << '\n';
         std::cout << FORMAT_VALUE(f(i)*e(i)) << '\n';
 
         std::cout << FORMAT_VALUE(e(i).eval()) << '\n';

@@ -24,7 +24,7 @@ struct ExpressionTemplate_Eval_t
     :
     public ExpressionTemplate_i<ExpressionTemplate_Eval_t<Operand>,
                                 typename Operand::Scalar,
-                                typename Operand::FactorTypeList,
+                                typename Operand::FreeFactorTypeList,
                                 typename Operand::FreeDimIndexTypeList,
                                 typename Operand::UsedDimIndexTypeList>
 {
@@ -35,12 +35,12 @@ struct ExpressionTemplate_Eval_t
 
     typedef ExpressionTemplate_i<ExpressionTemplate_Eval_t<Operand>,
                                  typename Operand::Scalar,
-                                 typename Operand::FactorTypeList,
+                                 typename Operand::FreeFactorTypeList,
                                  typename Operand::FreeDimIndexTypeList,
                                  typename Operand::UsedDimIndexTypeList> Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
-    typedef typename Parent::FactorTypeList FactorTypeList;
+    typedef typename Parent::FreeFactorTypeList FreeFactorTypeList;
     typedef typename Parent::FreeDimIndexTypeList FreeDimIndexTypeList;
     typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
     typedef typename Parent::MultiIndex MultiIndex;
@@ -96,7 +96,7 @@ private:
         }
     }
 
-    typedef ImplementationOf_t<Scalar,TensorProductOfBasedVectorSpaces_c<FactorTypeList> > Tensor;
+    typedef ImplementationOf_t<Scalar,TensorProductOfBasedVectorSpaces_c<FreeFactorTypeList> > Tensor;
 
     Operand const &m_operand;
     mutable bool m_eval_is_cached;
@@ -104,14 +104,14 @@ private:
 };
 
 // definitions of the squared_norm and norm methods of ExpressionTemplate_i had to wait until ExpressionTemplate_Eval_t was defined.
-template <typename Derived, typename Scalar, typename FactorTypeList, typename FreeIndexTypeList, typename UsedIndexTypeList>
-typename AssociatedFloatingPointType_t<Scalar>::T ExpressionTemplate_i<Derived,Scalar,FactorTypeList,FreeIndexTypeList,UsedIndexTypeList>::squared_norm () const
+template <typename Derived, typename Scalar, typename FreeFactorTypeList, typename FreeIndexTypeList, typename UsedIndexTypeList>
+typename AssociatedFloatingPointType_t<Scalar>::T ExpressionTemplate_i<Derived,Scalar,FreeFactorTypeList,FreeIndexTypeList,UsedIndexTypeList>::squared_norm () const
 {
     return eval().squared_norm();
 }
 
-template <typename Derived, typename Scalar, typename FactorTypeList, typename FreeIndexTypeList, typename UsedIndexTypeList>
-typename AssociatedFloatingPointType_t<Scalar>::T ExpressionTemplate_i<Derived,Scalar,FactorTypeList,FreeIndexTypeList,UsedIndexTypeList>::norm () const
+template <typename Derived, typename Scalar, typename FreeFactorTypeList, typename FreeIndexTypeList, typename UsedIndexTypeList>
+typename AssociatedFloatingPointType_t<Scalar>::T ExpressionTemplate_i<Derived,Scalar,FreeFactorTypeList,FreeIndexTypeList,UsedIndexTypeList>::norm () const
 {
     return eval().norm();
 }
