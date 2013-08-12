@@ -58,12 +58,6 @@ random TODOs:
 - see if it's possible to do strong range check guarantees for indices (Index_t) -- this would probably
   require a "for each" construct which would best be accomplished with lambda expressions
 - rename source files to use capitalized names (e.g. NaturalPairing.hpp) (?)
-- it would probably be a good idea to make separate Vector_i and VectorSpace_i interfaces, and Tensor_i and TensorSpace_i
-  interfaces -- VectorSpace_i and TensorSpace_i essentially just encode mathematical information and have no "implementation",
-  whereas Vector_i and Tensor_i represent actual elements of a vector or tensor space.  then Vector_i and Tensor_i
-  would take template parameters which are of types VectorSpace_i and TensorSpace_i respectively.
-  this seems necessary in order to implement vector and tensor "constants", which don't represent a vector space,
-  but actually a single element in a vector space.
 - move "private" utility functions/metafunctions into the "Tenh::NonPublic" namespace so that they're not in the
   "Tenh" namespace, for at least a little bit of non-public interface hiding.
 - make a nonpublic directory and put all NonPublic code in there (and actually put appropriate stuff in NonPublic namespace)
@@ -159,7 +153,9 @@ different multi-indexing schemes
 handling more general symmetries
 - each "linear" symmetry is an inclusion of a linear subspace into a more general type
 - any type hierarchy can be encoded this way -- e.g. including Tensor2Simple into Tensor2
-- "split" would be used to "use" the inclusions, going to more general types
+- "split" would be used to "use" the inclusions, going to more general types.
+  a split is a more specific type of linear inclusion, where each component of the split corresponds
+  to exactly one component of the space that is split.
 - "bundle" would be used to "reassert" the symmetries, if you know that the expression has that symmetry.
   would this work for simple tensors?  there would be a nontrivial calculation to assign to a simple tensor.
 
@@ -274,7 +270,8 @@ Notes for conceptual layer and refactor
   It might make sense to prohibit non-simple tensor product bases, opting for explicit embeddings
   instead (which is [probably] computationally equivalent and better yet, makes it more clear that
   extra computation is necessary in the tensor expressions themselves).  In this case, BasedTensorProduct
-  might be downgraded to BasedVectorSpace.
+  might be downgraded to BasedVectorSpace.  Or probably better, BasedTensorProduct would be implemented 
+  using the Vector_i interface, and not the EmbeddableAsTensor_i or Tensor_i interfaces.
 - Idea for handling the split operation -- don't bother with multi-indices for any sort of tensor
   power with symmetry, and only do multi-indices for TensorProductOfBasedVectorSpaces_c.  Then use
   explicit embeddings (which are easy to explicitly specify via C++ code in indexed expressions, and 
@@ -309,6 +306,10 @@ Notes for conceptual layer and refactor
   like EmbeddableAsTensor_i, that is somewhere between Vector_i and Tensor_i, and where multi-indexing
   (to create expression templates) calls split.
 - TODO: reverse order of template arguments in ImplementationOf_t (put Scalar last)
+- TODO: refactor all the AbstractIndex/DimIndex/Factor juggling to use some standard form, like
+  (AbstractIndex,Factor) pairs, from which the AbstractIndex, Factor, or DimIndex values can be
+  extracted.  This will clean up tons of shitty metaprogram code.
+  Or maybe use TypedIndex_t after all (it would inherit DimIndex_t and contain the factor info)
 
 Notes for [probable] upgrade to C++11
 - "Template typedefs" are possible through "alias declarations" in C++11:

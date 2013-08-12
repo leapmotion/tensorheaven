@@ -438,24 +438,24 @@ private:
 // bundling multiple separate indices into a single vector index (downcasting)
 // ////////////////////////////////////////////////////////////////////////////
 
-template <typename Operand, typename BundleDimIndexTypeList, typename ResultingDimIndexType>
+template <typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType>
 struct ExpressionTemplate_IndexBundle_t
     :
-    public ExpressionTemplate_IndexedObject_t<IndexBundle_t<Operand,BundleDimIndexTypeList,ResultingDimIndexType>,
-                                              NullType, // TODO: real code
-                                              typename IndexBundle_t<Operand,BundleDimIndexTypeList,ResultingDimIndexType>::DimIndexTypeList,
-                                              typename SummedIndexTypeList_t<typename IndexBundle_t<Operand,BundleDimIndexTypeList,ResultingDimIndexType>::DimIndexTypeList>::T,
+    public ExpressionTemplate_IndexedObject_t<IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType>,
+                                              typename IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType>::FactorTypeList,
+                                              typename IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType>::DimIndexTypeList,
+                                              typename SummedIndexTypeList_t<typename IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType>::DimIndexTypeList>::T,
                                               FORCE_CONST,
                                               CHECK_FOR_ALIASING, // irrelevant value
-                                              ExpressionTemplate_IndexBundle_t<Operand,BundleDimIndexTypeList,ResultingDimIndexType> >
+                                              ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType> >
 {
-    typedef ExpressionTemplate_IndexedObject_t<IndexBundle_t<Operand,BundleDimIndexTypeList,ResultingDimIndexType>,
-                                               NullType, // TODO: real code
-                                               typename IndexBundle_t<Operand,BundleDimIndexTypeList,ResultingDimIndexType>::DimIndexTypeList,
-                                               typename SummedIndexTypeList_t<typename IndexBundle_t<Operand,BundleDimIndexTypeList,ResultingDimIndexType>::DimIndexTypeList>::T,
+    typedef ExpressionTemplate_IndexedObject_t<IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType>,
+                                               typename IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType>::FactorTypeList,
+                                               typename IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType>::DimIndexTypeList,
+                                               typename SummedIndexTypeList_t<typename IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType>::DimIndexTypeList>::T,
                                                FORCE_CONST,
                                                CHECK_FOR_ALIASING, // irrelevant value
-                                               ExpressionTemplate_IndexBundle_t<Operand,BundleDimIndexTypeList,ResultingDimIndexType> > Parent;
+                                               ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType> > Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
     typedef typename Parent::FreeFactorTypeList FreeFactorTypeList;
@@ -467,7 +467,7 @@ struct ExpressionTemplate_IndexBundle_t
 
 private:
 
-    typedef IndexBundle_t<Operand,BundleDimIndexTypeList,ResultingDimIndexType> IndexBundle;
+    typedef IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType> IndexBundle;
 
 public:
 

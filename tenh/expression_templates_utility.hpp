@@ -362,40 +362,109 @@ public:
 };
 
 
-template <typename BundleDimIndexTypeList, typename ResultingDimIndexType>
+
+template <typename AbstractIndexTypeList, typename FactorTypeList, typename ExtractionAbstractIndexTypeList>
+struct ExtractFactorsForAbstractIndices_t
+{
+private:
+    enum 
+    { 
+        STATIC_ASSERT_IN_ENUM((Occurrence_t<AbstractIndexTypeList,typename ExtractionAbstractIndexTypeList::HeadType>::COUNT == 1), MUST_OCCUR_EXACTLY_ONCE),
+        STATIC_ASSERT_IN_ENUM((IsASubsetOf_t<ExtractionAbstractIndexTypeList,AbstractIndexTypeList>::V), MUST_BE_SUBSET_OF) 
+    };
+    static Uint32 const INDEX = FirstMatchingIn_t<AbstractIndexTypeList,typename ExtractionAbstractIndexTypeList::HeadType>::INDEX;
+public:
+    typedef TypeList_t<typename FactorTypeList::template El_t<INDEX>::T,
+                       typename ExtractFactorsForAbstractIndices_t<AbstractIndexTypeList,
+                                                                   FactorTypeList,
+                                                                   typename ExtractionAbstractIndexTypeList::BodyTypeList>::T> T;
+};
+
+template <typename AbstractIndexTypeList, typename FactorTypeList>
+struct ExtractFactorsForAbstractIndices_t<AbstractIndexTypeList,FactorTypeList,EmptyTypeList>
+{
+    typedef EmptyTypeList T;
+};
+
+// TODO: Scalar will go away once the bundle map is moved into the conceptual layer.
+template <typename Scalar, typename BundleDimIndexTypeList, typename ResultingFactorType, typename ResultingDimIndexType>
 struct BundleIndexMap_t
 {
     typedef MultiIndex_t<BundleDimIndexTypeList> (*T) (ResultingDimIndexType const &);
     static T const V;
 };
 
-template <typename BundleDimIndexTypeList, typename ResultingDimIndexType>
-typename BundleIndexMap_t<BundleDimIndexTypeList,ResultingDimIndexType>::T const BundleIndexMap_t<BundleDimIndexTypeList,ResultingDimIndexType>::V = ResultingDimIndexType::Owner::Derived::template bundle_index_map<BundleDimIndexTypeList,ResultingDimIndexType>;
+template <typename Scalar, typename BundleDimIndexTypeList, typename ResultingFactorType, typename ResultingDimIndexType>
+typename BundleIndexMap_t<Scalar,BundleDimIndexTypeList,ResultingFactorType,ResultingDimIndexType>::T const BundleIndexMap_t<Scalar,BundleDimIndexTypeList,ResultingFactorType,ResultingDimIndexType>::V = 
+    ImplementationOf_t<Scalar,ResultingFactorType>::template bundle_index_map<BundleDimIndexTypeList,ResultingDimIndexType>;
 
 // not an expression template, but just something that handles the bundled indices
-template <typename Operand, typename BundleDimIndexTypeList, typename ResultingDimIndexType>
+template <typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType>
 struct IndexBundle_t
 {
+    typedef typename AbstractIndicesOfDimIndexTypeList_t<typename Operand::FreeDimIndexTypeList>::T OperandFreeAbstractIndexTypeList;
+
     enum
     {
-        STATIC_ASSERT_IN_ENUM((IsASubsetOf_t<BundleDimIndexTypeList,typename Operand::FreeDimIndexTypeList>::V), BUNDLE_INDICES_MUST_BE_FREE),
-        STATIC_ASSERT_IN_ENUM((!HasNontrivialIntersectionAsSets_t<BundleDimIndexTypeList,TypeList_t<ResultingDimIndexType> >::V), BUNDLE_AND_RESULTING_MUST_BE_DISTINCT),
+        STATIC_ASSERT_IN_ENUM(IsAnAbstractIndex_c<ResultingAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX),
+        STATIC_ASSERT_IN_ENUM((IsASubsetOf_t<BundleAbstractIndexTypeList,OperandFreeAbstractIndexTypeList>::V), BUNDLE_INDICES_MUST_BE_FREE),
+        STATIC_ASSERT_IN_ENUM((!BundleAbstractIndexTypeList::template Contains_t<ResultingAbstractIndexType>::V), BUNDLE_AND_RESULTING_MUST_BE_DISTINCT),
         STATIC_ASSERT_IN_ENUM(Operand::IS_EXPRESSION_TEMPLATE_I, OPERAND_IS_EXPRESSION_TEMPLATE)
+        // TODO: check that the factor types specified by BundleAbstractIndexTypeList can actually be
+        // bundled into ResultingFactorType
     };
 
-    typedef typename Operand::Scalar Scalar;
-    // ResultingIndexType comes last in IndexTypeList
+    // if Operand's free indices are i|j|k|l|m|n, the bundle indices are i|k|l, and the resulting
+    // index is P, then the transformation is
+    //      i|j|k|l|m|n --> j|m|n|i|k|l --> j|m|n|P
+    // the first transformation being putting the bundle indices at the back (preserving their order),
+    // and the second one transforming them into the bundled index.  the component access goes backward
+    // in this diagram (components are accessed via the indices j|m|n|P, the bundle map is applied to
+    // P to get i|k|l, and then j|m|n|i|k|l is transformed to i|j|k|l|m|n to get the component from
+    // Operand).
+
+    typedef typename DimIndexTypeListOf_t<typename Operand::FreeFactorTypeList,
+                                          OperandFreeAbstractIndexTypeList>::T OperandFreeDimIndexTypeList;
+    typedef typename ExtractFactorsForAbstractIndices_t<OperandFreeAbstractIndexTypeList,
+                                                        typename Operand::FreeFactorTypeList,
+                                                        BundleAbstractIndexTypeList>::T BundleFactorTypeList;
+    typedef typename DimIndexTypeListOf_t<BundleFactorTypeList,
+                                          BundleAbstractIndexTypeList>::T BundleDimIndexTypeList;
+    typedef DimIndex_t<ResultingAbstractIndexType::SYMBOL,
+                       ResultingFactorType::DIM> ResultingDimIndexType;
+
+    // zip the stuff so that the transformations can act on both the DimIndex_t and factor lists
+    typedef typename Zip_t<TypeList_t<OperandFreeDimIndexTypeList,
+                           TypeList_t<typename Operand::FreeFactorTypeList> > >::T OperandFreeDimIndexAndFactorTypeList;
+    typedef TypeList_t<ResultingDimIndexType,TypeList_t<ResultingFactorType> > ResultingDimIndexAndFactorType;
+    typedef typename Zip_t<TypeList_t<BundleDimIndexTypeList,
+                           TypeList_t<BundleFactorTypeList> > >::T BundleDimIndexAndFactorTypeList;
+
+    // ResultingDimIndexAndFactorType comes last.  DimIndexAndFactorTypeList may have summed indices
     typedef typename SetSubtraction_t<
-        typename ConcatenationOfTypeLists_t<typename Operand::FreeDimIndexTypeList,TypeList_t<ResultingDimIndexType> >::T,
-        BundleDimIndexTypeList>::T DimIndexTypeList;
-    // this seems like it should be the same as Operand::FreeDimIndexTypeList, but it has
-    // the indices in BundleIndexTypeList coming last.
+        typename ConcatenationOfTypeLists_t<OperandFreeDimIndexAndFactorTypeList,
+                                            TypeList_t<ResultingDimIndexAndFactorType> >::T,
+        BundleDimIndexAndFactorTypeList>::T DimIndexAndFactorTypeList;
+    // this seems like it should be the same as OperandFreeDimIndexAndFactorTypeList, but it has
+    // the indices in BundleDimIndexAndFactorTypeList coming last.
     typedef typename ConcatenationOfTypeLists_t<
-        typename SetSubtraction_t<typename Operand::FreeDimIndexTypeList,BundleDimIndexTypeList>::T,
-        BundleDimIndexTypeList>::T UnpackedDimIndexTypeList;
-    typedef typename ConcatenationOfTypeLists_t<typename Operand::UsedDimIndexTypeList,BundleDimIndexTypeList>::T UsedDimIndexTypeList;
+        typename SetSubtraction_t<OperandFreeDimIndexAndFactorTypeList,BundleDimIndexAndFactorTypeList>::T,
+        BundleDimIndexAndFactorTypeList>::T UnpackedDimIndexAndFactorTypeList;
+
+    // unzip the stuff
+    typedef typename Unzip_t<DimIndexAndFactorTypeList>::T DimIndexAndFactorTypeList_Unzipped;
+    typedef typename Unzip_t<UnpackedDimIndexAndFactorTypeList>::T UnpackedDimIndexAndFactorTypeList_Unzipped;
+    typedef typename DimIndexAndFactorTypeList_Unzipped::BodyTypeList::HeadType FactorTypeList;
+    typedef typename DimIndexAndFactorTypeList_Unzipped::HeadType DimIndexTypeList;
+    typedef typename UnpackedDimIndexAndFactorTypeList_Unzipped::HeadType UnpackedDimIndexTypeList;
+
+    // finally, define the multi-index and bundle index map.
     typedef MultiIndex_t<DimIndexTypeList> MultiIndex;
-    typedef typename BundleIndexMap_t<BundleDimIndexTypeList,ResultingDimIndexType>::T BundleIndexMap;
+    typedef typename Operand::Scalar Scalar;
+    typedef BundleIndexMap_t<Scalar,
+                             BundleDimIndexTypeList,
+                             ResultingFactorType,
+                             ResultingDimIndexType> BundleIndexMap;
 
     IndexBundle_t (Operand const &operand) : m_operand(operand) { }
 
@@ -405,7 +474,6 @@ struct IndexBundle_t
         // use MultiIndexMap_t to place the indices in the correct order.
         typedef MultiIndexMap_t<UnpackedDimIndexTypeList,typename Operand::FreeDimIndexTypeList> OperandIndexMap;
         static typename OperandIndexMap::EvalMapType const operand_index_map = OperandIndexMap::eval;
-        typedef BundleIndexMap_t<BundleDimIndexTypeList,ResultingDimIndexType> BundleIndexMap;
         static typename BundleIndexMap::T const bundle_index_map = BundleIndexMap::V;
         // |= is concatenation of MultiIndex_t instances
         return m_operand[operand_index_map(m.template leading_list<MultiIndex::LENGTH-1>() |=

@@ -19,7 +19,7 @@ namespace Tenh {
 // compile-time interface for expression templates
 // ////////////////////////////////////////////////////////////////////////////
 
-template <typename Operand, typename BundleIndexTypeList, typename ResultingIndexType>
+template <typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType>
 struct ExpressionTemplate_IndexBundle_t;
 
 template <typename Operand, typename SourceIndexType, typename SplitIndexTypeList>
@@ -86,16 +86,20 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     // method for "bundling" separate abstract indices into a single abstract index
     // of a more specific type (e.g. a 2-tensor, a fully symmetric 3-tensor, etc)
     // (m(j|i)*a(j|k)*m(k|l)).bundle(i|l,Q) -- bundle i,l into Q
-    template <typename AbstractIndexHeadType, typename AbstractIndexBodyTypeList, typename ResultingAbstractIndexType>
-    ExpressionTemplate_IndexBundle_t<Derived,TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList>,ResultingAbstractIndexType> bundle (
+    template <typename AbstractIndexHeadType, typename AbstractIndexBodyTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType>
+    ExpressionTemplate_IndexBundle_t<Derived,TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList>,ResultingFactorType,ResultingAbstractIndexType> bundle (
         TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> const &,
+        ResultingFactorType const &,
         ResultingAbstractIndexType const &) const
     {
         // make sure that ResultingAbstractIndexType actually is one
         STATIC_ASSERT(IsAnAbstractIndex_c<ResultingAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX);
         // make sure that the index type list actually contains AbstractIndex_c types
         STATIC_ASSERT((EachTypeIsAnAbstractIndex_c<TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> >::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
-        return ExpressionTemplate_IndexBundle_t<Derived,TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList>,ResultingAbstractIndexType>(as_derived());
+        // make sure that ResultingFactorType is the correct conceptual type
+        // TODO: there is probably a stronger type check (a type which is embeddable into a tensor space)
+        STATIC_ASSERT(IsABasedVectorSpace_c<ResultingFactorType>::V, MUST_BE_BASED_VECTOR_SPACE);
+        return ExpressionTemplate_IndexBundle_t<Derived,TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList>,ResultingFactorType,ResultingAbstractIndexType>(as_derived());
     }
     // method for "splitting" a tensor index into a separate indices.
     // a(P|Q).split(P,i|j).split(Q,k|l) -- split the tensor indices P and Q into the pairs i,j and k,l

@@ -564,6 +564,14 @@ int main (int argc, char **argv)
         AbstractIndex_c<'l'> l;
         std::cout << FORMAT_VALUE(e(i).split(i,j|k|l)) << '\n';
 
+
+        AbstractIndex_c<'P'> P;
+        typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedY::Dual,TypeList_t<BasedY::Dual> > > PartOfH;
+        typedef ImplementationOf_t<float,PartOfH> G;
+        std::cout << FORMAT_VALUE(e(i|j|k).bundle(j|k,PartOfH(),P)) << '\n';
+        std::cout << FORMAT_VALUE(f(i|j|k).bundle(j|k,PartOfH::Dual(),P)) << '\n';
+        std::cout << FORMAT_VALUE(e(i|j|k).bundle(j|k,PartOfH(),P) * f(i|j|k).bundle(j|k,PartOfH::Dual(),P)) << '\n';
+
         std::cout << '\n' << '\n';
     }
 

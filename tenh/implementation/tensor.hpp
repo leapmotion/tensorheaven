@@ -34,7 +34,6 @@ struct ImplementationOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeL
     typedef typename Parent_Tensor_i::Scalar Scalar;
     typedef typename Parent_Tensor_i::BasedVectorSpace BasedVectorSpace;
     using Parent_Tensor_i::DIM;
-    typedef typename Parent_Tensor_i::Basis Basis;
     typedef typename Parent_Tensor_i::ComponentIndex ComponentIndex;
 
     typedef typename Parent_Tensor_i::TensorProductOfBasedVectorSpaces TensorProductOfBasedVectorSpaces;
@@ -48,29 +47,13 @@ struct ImplementationOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeL
     ImplementationOf_t (WithoutInitialization const &w) : Parent_Array_t(w) { }
     ImplementationOf_t (Scalar fill_with) : Parent_Array_t(fill_with) { }
 
-    // TODO: do later
-    // template <typename BundleIndexTypeList, typename BundledIndex>
-    // static MultiIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)
-    // {
-    //     typedef typename BundleIndexTypeList::template El_t<0>::T Index1;
-    //     typedef typename BundleIndexTypeList::template El_t<1>::T Index2;
-    //     // this is just to check that there is a valid conversion to the requested MultiIndex type.
-    //     // it doesn't actually produce any side-effects, and should be optimized out.
-    //     {
-    //         STATIC_ASSERT((BundleIndexTypeList::LENGTH == 2), CAN_ONLY_BUNDLE_TWO_INDICES);
-    //         Index1 i1;
-    //         Index2 i2;
-    //         typename Factor1::Index f1(i1);
-    //         typename Factor2::Index f2(i2);
-    //         // check that the parameter BundleIndex type is compatible with Index
-    //         Index i(b);
-    //     }
-
-    //     Uint32 row;
-    //     Uint32 col;
-    //     contiguous_index_to_rowcol_index(b.value(), row, col);
-    //     return MultiIndex_t<BundleIndexTypeList>(Index1(row, DONT_CHECK_RANGE), Index2(col, DONT_CHECK_RANGE));
-    // }
+    template <typename BundleIndexTypeList, typename BundledIndex>
+    static MultiIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)
+    {
+        STATIC_ASSERT(IsADimIndex_t<BundledIndex>::V, MUST_BE_COMPONENT_INDEX);
+        // this constructor breaks the vector index apart into a row-major multi-index
+        return MultiIndex_t<BundleIndexTypeList>(b);
+    }
 
     using Parent_Array_t::operator[];
     using Parent_Array_t::data_size_in_bytes;

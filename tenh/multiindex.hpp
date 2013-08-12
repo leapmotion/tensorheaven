@@ -69,6 +69,13 @@ struct MultiIndex_t : List_t<IndexTypeList_>
         Parent(leading_multi_index)
     { }
 
+    // for converting a vector index into a multi-index via row-major ordering (most significant is head).
+    MultiIndex_t (ComponentIndex_t<COMPONENT_COUNT> const &i)
+        :
+        Parent(HeadIndexType(i.value() / BodyMultiIndex::COMPONENT_COUNT),
+               BodyMultiIndex(ComponentIndex_t<BodyMultiIndex::COMPONENT_COUNT>(i.value() % BodyMultiIndex::COMPONENT_COUNT)))
+    { }
+
     bool operator == (MultiIndex_t const &m) const { return this->head() == m.head() && body() == m.body(); }
     bool operator != (MultiIndex_t const &m) const { return this->head() != m.head() || body() != m.body(); }
     bool operator < (MultiIndex_t const &m) const { return this->head() < m.head() && body() < m.body(); }
