@@ -561,6 +561,9 @@ int main (int argc, char **argv)
         std::cout << FORMAT_VALUE(e(i).eval()) << '\n';
         std::cout << FORMAT_VALUE(e(i|j|k).eval()) << '\n';
 
+        AbstractIndex_c<'l'> l;
+        std::cout << FORMAT_VALUE(e(i).split(i,j|k|l)) << '\n';
+
         std::cout << '\n' << '\n';
     }
 

@@ -164,10 +164,11 @@ struct ImplementationOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeL
         operator[](vector_index_of(m)) = s / (Factor1::scalar_factor_for_component(i1) * Factor2::scalar_factor_for_component(i2));
     }
     */
-    using Parent_Tensor_i::component_is_immutable_zero;
-    using Parent_Tensor_i::scalar_factor_for_component;
-    using Parent_Tensor_i::vector_index_of;
+    // using Parent_Tensor_i::component_is_immutable_zero;
+    // using Parent_Tensor_i::scalar_factor_for_component;
+    // using Parent_Tensor_i::vector_index_of;
     // all components are stored in memory (in the array m), and have scalar factor 1
+    // TODO: this should probably go into the conceptual layer
     static bool component_is_immutable_zero (MultiIndex const &m) { return false; }
     static Scalar scalar_factor_for_component (MultiIndex const &m) { return Scalar(1); }
     static ComponentIndex vector_index_of (MultiIndex const &m) { return ComponentIndex(m.value(), DONT_CHECK_RANGE); }

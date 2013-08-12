@@ -11,13 +11,15 @@
 #include "tenh/componentindex.hpp"
 #include "tenh/conceptual/abstractindex.hpp"
 #include "tenh/dimindex.hpp"
-#include "tenh/innerproduct.hpp"
+// #include "tenh/innerproduct.hpp"
 #include "tenh/meta/typelist.hpp"
 #include "tenh/multiindex.hpp"
 
 namespace Tenh {
 
 // this file contains template metaprograms which assist in the construction and evaluation of expression templates
+
+template <typename Scalar, typename Space> struct ImplementationOf_t;
 
 // for this to work correctly on DimIndex_t types, the dimensions must be correct (i.e. the 
 // primal/dual vector space checking must already be done).  TODO: redesign-away this caveat
@@ -419,64 +421,72 @@ private:
 };
 
 // not an expression template, but just something that handles the split indices
-template <typename Operand, typename SourceDimIndexType, typename SplitDimIndexTypeList>
+template <typename Operand, typename SourceAbstractIndexType, typename SplitAbstractIndexTypeList>
 struct IndexSplitter_t
 {
+    typedef typename AbstractIndicesOfDimIndexTypeList_t<typename Operand::FreeDimIndexTypeList>::T OperandFreeAbstractIndexTypeList;
+
     enum
     {
-        STATIC_ASSERT_IN_ENUM((Operand::FreeDimIndexTypeList::template Contains_t<SourceDimIndexType>::V), SOURCE_INDEX_MUST_BE_FREE),
-        STATIC_ASSERT_IN_ENUM((!HasNontrivialIntersectionAsSets_t<TypeList_t<SourceDimIndexType>,SplitDimIndexTypeList>::V), SOURCE_AND_SPLIT_MUST_BE_DISTINCT),
+        STATIC_ASSERT_IN_ENUM(IsAnAbstractIndex_c<SourceAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX),
+        STATIC_ASSERT_IN_ENUM((OperandFreeAbstractIndexTypeList::template Contains_t<SourceAbstractIndexType>::V), SOURCE_INDEX_MUST_BE_FREE),
+        STATIC_ASSERT_IN_ENUM((!HasNontrivialIntersectionAsSets_t<TypeList_t<SourceAbstractIndexType>,SplitAbstractIndexTypeList>::V), SOURCE_AND_SPLIT_MUST_BE_DISTINCT),
         STATIC_ASSERT_IN_ENUM(Operand::IS_EXPRESSION_TEMPLATE_I, OPERAND_IS_EXPRESSION_TEMPLATE)
     };
 
     typedef typename Operand::Scalar Scalar;
-    // replace SourceDimIndexType with MultiIndex_t<SplitDimIndexTypeList> in the index type list
-    static Uint32 const SOURCE_INDEX_TYPE_INDEX = FirstMatchingIn_t<typename Operand::FreeDimIndexTypeList,SourceDimIndexType>::INDEX;
-    typedef typename Operand::FactorTypeList::template El_t<SOURCE_INDEX_TYPE_INDEX>::T SourceFactor;
+    // we must replace SourceAbstractIndexType with MultiIndex_t<SplitAbstractIndexTypeList> in the index type list
+    static Uint32 const SOURCE_INDEX_TYPE_INDEX = FirstMatchingIn_t<OperandFreeAbstractIndexTypeList,SourceAbstractIndexType>::INDEX;
+    typedef typename Operand::FreeFactorTypeList::template El_t<SOURCE_INDEX_TYPE_INDEX>::T SourceFactor;
 
     enum
     {
         // TODO: assert that SourceFactor can actually be split (can be embedded into a tensor space)
-        STATIC_ASSERT_IN_ENUM((SourceFactor::FactorTypeList::LENGTH == SplitDimIndexTypeList::LENGTH), MUST_HAVE_EQUAL_LENGTHS)
+        STATIC_ASSERT_IN_ENUM__UNIQUE((SourceFactor::FactorTypeList::LENGTH == SplitAbstractIndexTypeList::LENGTH), MUST_HAVE_EQUAL_LENGTHS, FREEFACTORTYPELIST)
     };
 
-
     typedef typename ConcatenationOfTypeLists_t<
-        typename Operand::FactorTypeList::template LeadingTypeList_t<SOURCE_INDEX_TYPE_INDEX>::T,
+        typename Operand::FreeFactorTypeList::template LeadingTypeList_t<SOURCE_INDEX_TYPE_INDEX>::T,
         typename ConcatenationOfTypeLists_t<
             typename SourceFactor::FactorTypeList,
-            typename Operand::FactorTypeList::template TrailingTypeList_t<SOURCE_INDEX_TYPE_INDEX+1>::T
+            typename Operand::FreeFactorTypeList::template TrailingTypeList_t<SOURCE_INDEX_TYPE_INDEX+1>::T
             >::T
         >::T FactorTypeList;
     typedef typename ConcatenationOfTypeLists_t<
         typename Operand::FreeDimIndexTypeList::template LeadingTypeList_t<SOURCE_INDEX_TYPE_INDEX>::T,
         typename ConcatenationOfTypeLists_t<
-            SplitDimIndexTypeList,
+            SplitAbstractIndexTypeList,
             typename Operand::FreeDimIndexTypeList::template TrailingTypeList_t<SOURCE_INDEX_TYPE_INDEX+1>::T
             >::T
-        >::T DimIndexTypeList;
-    typedef typename ConcatenationOfTypeLists_t<typename Operand::UsedDimIndexTypeList,SplitDimIndexTypeList>::T UsedDimIndexTypeList;
+        >::T AbstractIndexTypeList;
+    typedef typename DimIndexTypeListOf_t<FactorTypeList,AbstractIndexTypeList>::T DimIndexTypeList;
+    typedef typename ConcatenationOfTypeLists_t<typename Operand::UsedDimIndexTypeList,SplitAbstractIndexTypeList>::T UsedDimIndexTypeList;
     typedef MultiIndex_t<DimIndexTypeList> MultiIndex;
+
+    enum
+    {
+        STATIC_ASSERT_IN_ENUM__UNIQUE((FactorTypeList::LENGTH == DimIndexTypeList::LENGTH), MUST_HAVE_EQUAL_LENGTHS, FACTORTYPELIST)
+    };
 
     IndexSplitter_t (Operand const &operand) : m_operand(operand) { }
 
     Scalar operator [] (MultiIndex const &m) const
     {
-        assert(false && "TODO: real code");
-        /*
-        TODO START HERE -- not super sure how to handle this
-        typedef typename SourceDimIndexType::Owner::Derived SourceIndexOwnerTensor;
-        typename SourceIndexOwnerTensor::MultiIndex s(m.template range<SOURCE_INDEX_TYPE_INDEX,SOURCE_INDEX_TYPE_INDEX+SplitDimIndexTypeList::LENGTH>());
-        if (SourceIndexOwnerTensor::component_is_immutable_zero(s))
+        typedef typename DimIndexTypeListOf_t<typename SourceFactor::FactorTypeList,
+                                              SplitAbstractIndexTypeList>::T SourceFactorDimIndexTypeList;
+        typedef ComponentIndex_t<SourceFactor::DIM> SourceFactorComponentIndex;
+        typedef MultiIndex_t<SourceFactorDimIndexTypeList> SourceFactorMultiIndex;
+        typedef ImplementationOf_t<Scalar,SourceFactor> ImplementationOfSourceFactor;
+
+        SourceFactorMultiIndex s(m.template range<SOURCE_INDEX_TYPE_INDEX,SOURCE_INDEX_TYPE_INDEX+SplitAbstractIndexTypeList::LENGTH>());
+        if (ImplementationOfSourceFactor::component_is_immutable_zero(s))
             return Scalar(0);
 
-        SourceDimIndexType i(SourceIndexOwnerTensor::vector_index_of(s));
-        // this replaces the SplitDimIndexTypeList portion with SourceDimIndexType
+        SourceFactorComponentIndex i(ImplementationOfSourceFactor::vector_index_of(s));
+        // this replaces the SplitAbstractIndexTypeList portion with SourceAbstractIndexType
         typename Operand::MultiIndex c_rebundled(m.template leading_list<SOURCE_INDEX_TYPE_INDEX>() |=
-                                                 (i >>= m.template trailing_list<SOURCE_INDEX_TYPE_INDEX+SplitDimIndexTypeList::LENGTH>()));
-        return SourceIndexOwnerTensor::scalar_factor_for_component(s) * m_operand[c_rebundled];
-        */
-        return Scalar(0);
+                                                 (i >>= m.template trailing_list<SOURCE_INDEX_TYPE_INDEX+SplitAbstractIndexTypeList::LENGTH>()));
+        return ImplementationOfSourceFactor::scalar_factor_for_component(s) * m_operand[c_rebundled];
     }
 
     template <typename OtherTensor>

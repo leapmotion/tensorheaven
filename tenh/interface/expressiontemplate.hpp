@@ -91,8 +91,10 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
         TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> const &,
         ResultingAbstractIndexType const &) const
     {
+        // make sure that ResultingAbstractIndexType actually is one
+        STATIC_ASSERT(IsAnAbstractIndex_c<ResultingAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX);
         // make sure that the index type list actually contains AbstractIndex_c types
-        STATIC_ASSERT((EachTypeIsAnAbstractIndex_c<TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> >::V), EACH_TYPE_IS_ABSTRACT_INDEX);
+        STATIC_ASSERT((EachTypeIsAnAbstractIndex_c<TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> >::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
         return ExpressionTemplate_IndexBundle_t<Derived,TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList>,ResultingAbstractIndexType>(as_derived());
     }
     // method for "splitting" a tensor index into a separate indices.
@@ -103,8 +105,10 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
         SourceAbstractIndexType const &,
         TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> const &) const
     {
+        // make sure that SourceAbstractIndexType actually is one
+        STATIC_ASSERT(IsAnAbstractIndex_c<SourceAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX);
         // make sure that the index type list actually contains AbstractIndex_c types
-        STATIC_ASSERT((EachTypeIsAnAbstractIndex_c<TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> >::V), EACH_TYPE_IS_ABSTRACT_INDEX);
+        STATIC_ASSERT((EachTypeIsAnAbstractIndex_c<TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> >::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
         return ExpressionTemplate_IndexSplit_t<Derived,SourceAbstractIndexType,TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> >(as_derived());
     }
     // method for doing an intermediate evaluation of an expression template to avoid aliasing

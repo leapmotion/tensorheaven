@@ -28,6 +28,9 @@ struct DimIndex_t
     static Uint32 const DIM = Parent_ComponentIndex_t::COMPONENT_COUNT;
     using Parent_AbstractIndex_c::SYMBOL;
 
+    DimIndex_t () : Parent_ComponentIndex_t(), Parent_AbstractIndex_c() { }
+    DimIndex_t (ComponentIndex_t<DIM> const &i) : Parent_ComponentIndex_t(i), Parent_AbstractIndex_c() { }
+
     static std::string type_as_string () { return std::string("DimIndex_t<'") + SYMBOL + "'," + AS_STRING(DIM) + '>'; }
 };
 

@@ -134,9 +134,9 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
             CHECK_FOR_ALIASING>(as_derived());
     }
 
-    using Parent_Vector_i::component_is_immutable_zero;
-    using Parent_Vector_i::scalar_factor_for_component;
-    using Parent_Vector_i::vector_index_of;
+    // using Parent_Vector_i::component_is_immutable_zero;
+    // using Parent_Vector_i::scalar_factor_for_component;
+    // using Parent_Vector_i::vector_index_of;
 
     static std::string type_as_string ()
     {

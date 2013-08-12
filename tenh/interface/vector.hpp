@@ -132,12 +132,12 @@ struct Vector_i
 
     // NOTE: these are sort of part of the Tensor_i interface, but need Vector_i's cooperation.
     // if the return value for a particular MultiIndex is false, then that component is understood to be zero.
-    static bool component_is_immutable_zero (ComponentIndex const &i) { return false; }
-    static bool component_is_immutable_zero (MultiIndex const &m) { return false; }
-    static Scalar scalar_factor_for_component (ComponentIndex const &m) { return Scalar(1); }
-    static Scalar scalar_factor_for_component (MultiIndex const &m) { return Scalar(1); }
-    static ComponentIndex vector_index_of (ComponentIndex const &i) { return i; }
-    static ComponentIndex vector_index_of (MultiIndex const &m) { return m.head(); }
+    // static bool component_is_immutable_zero (ComponentIndex const &i) { return false; }
+    // static bool component_is_immutable_zero (MultiIndex const &m) { return false; }
+    // static Scalar scalar_factor_for_component (ComponentIndex const &m) { return Scalar(1); }
+    // static Scalar scalar_factor_for_component (MultiIndex const &m) { return Scalar(1); }
+    // static ComponentIndex vector_index_of (ComponentIndex const &i) { return i; }
+    // static ComponentIndex vector_index_of (MultiIndex const &m) { return m.head(); }
 
     static std::string type_as_string ()
     {

@@ -465,7 +465,11 @@ struct ExpressionTemplate_IndexBundle_t
     using Parent::IS_EXPRESSION_TEMPLATE_I;
     typedef typename Parent::SummedDimIndexTypeList SummedDimIndexTypeList;
 
+private:
+
     typedef IndexBundle_t<Operand,BundleDimIndexTypeList,ResultingDimIndexType> IndexBundle;
+
+public:
 
     ExpressionTemplate_IndexBundle_t (Operand const &operand) : Parent(m_index_bundle), m_index_bundle(operand) { }
 
@@ -493,24 +497,29 @@ private:
 // splitting a single vector index into a multiple separate indices (upcasting)
 // ////////////////////////////////////////////////////////////////////////////
 
-template <typename Operand, typename SourceDimIndexType, typename SplitDimIndexTypeList>
+template <typename Operand, typename SourceAbstractIndexType, typename SplitAbstractIndexTypeList>
 struct ExpressionTemplate_IndexSplit_t
     :
-    public ExpressionTemplate_IndexedObject_t<IndexSplitter_t<Operand,SourceDimIndexType,SplitDimIndexTypeList>,
-                                              NullType, // TODO: real code
-                                              typename IndexSplitter_t<Operand,SourceDimIndexType,SplitDimIndexTypeList>::DimIndexTypeList,
-                                              typename SummedIndexTypeList_t<typename IndexSplitter_t<Operand,SourceDimIndexType,SplitDimIndexTypeList>::DimIndexTypeList>::T,
+    public ExpressionTemplate_IndexedObject_t<IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList>,
+                                              typename IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList>::FactorTypeList,
+                                              typename IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList>::DimIndexTypeList,
+                                              typename SummedIndexTypeList_t<typename IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList>::DimIndexTypeList>::T,
                                               FORCE_CONST,
                                               CHECK_FOR_ALIASING, // irrelevant value
-                                              ExpressionTemplate_IndexSplit_t<Operand,SourceDimIndexType,SplitDimIndexTypeList> >
+                                              ExpressionTemplate_IndexSplit_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList> >
 {
-    typedef ExpressionTemplate_IndexedObject_t<IndexSplitter_t<Operand,SourceDimIndexType,SplitDimIndexTypeList>,
-                                               NullType, // TODO: real code
-                                               typename IndexSplitter_t<Operand,SourceDimIndexType,SplitDimIndexTypeList>::DimIndexTypeList,
-                                               typename SummedIndexTypeList_t<typename IndexSplitter_t<Operand,SourceDimIndexType,SplitDimIndexTypeList>::DimIndexTypeList>::T,
+    enum
+    {
+        STATIC_ASSERT_IN_ENUM(IsAnAbstractIndex_c<SourceAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX),
+    };
+
+    typedef ExpressionTemplate_IndexedObject_t<IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList>,
+                                               typename IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList>::FactorTypeList,
+                                               typename IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList>::DimIndexTypeList,
+                                               typename SummedIndexTypeList_t<typename IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList>::DimIndexTypeList>::T,
                                                FORCE_CONST,
                                                CHECK_FOR_ALIASING, // irrelevant value
-                                               ExpressionTemplate_IndexSplit_t<Operand,SourceDimIndexType,SplitDimIndexTypeList> > Parent;
+                                               ExpressionTemplate_IndexSplit_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList> > Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
     typedef typename Parent::FreeFactorTypeList FreeFactorTypeList;
@@ -520,7 +529,11 @@ struct ExpressionTemplate_IndexSplit_t
     using Parent::IS_EXPRESSION_TEMPLATE_I;
     typedef typename Parent::SummedDimIndexTypeList SummedDimIndexTypeList;
 
-    typedef IndexSplitter_t<Operand,SourceDimIndexType,SplitDimIndexTypeList> IndexSplitter;
+private:
+
+    typedef IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList> IndexSplitter;
+
+public:
 
     ExpressionTemplate_IndexSplit_t (Operand const &operand) : Parent(m_index_splitter), m_index_splitter(operand) { }
 
