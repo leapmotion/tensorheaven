@@ -60,7 +60,7 @@ int main (int argc, char **argv)
         typedef VectorSpace::Dual DualVectorSpace;
         typedef DualVectorSpace::Dual DualDualVectorSpace;
         std::cout << "VectorSpace = "  << TypeStringOf_t<VectorSpace>::eval() << '\n'
-                  << "DualVectorSpace = " << TypeStringOf_t<DualVectorSpace>::eval() << '\n' 
+                  << "DualVectorSpace = " << TypeStringOf_t<DualVectorSpace>::eval() << '\n'
                   << "DualOf_c<VectorSpace>::T = " << TypeStringOf_t<DualOf_c<VectorSpace>::T>::eval() << '\n'
                   << "DualDualVectorSpace = " << TypeStringOf_t<DualDualVectorSpace>::eval() << '\n' << '\n';
         // make sure the vector space is reflexive (self-double-dual)
@@ -79,10 +79,10 @@ int main (int argc, char **argv)
         typedef BasedVectorSpace::Dual DualBasedVectorSpace;
         typedef DualBasedVectorSpace::Dual DualDualBasedVectorSpace;
         std::cout << "BasedVectorSpace = "  << TypeStringOf_t<BasedVectorSpace>::eval() << '\n'
-                  // << "BasedVectorSpace::Index = " << TypeStringOf_t<BasedVectorSpace::Index>::eval() << '\n'  
-                  // << "BasedVectorSpace::Index::Dual = " << TypeStringOf_t<BasedVectorSpace::Index::Dual>::eval() << '\n'  
-                  // << "BasedVectorSpace::Dual::Index = " << TypeStringOf_t<BasedVectorSpace::Dual::Index>::eval() << '\n'  
-                  << "DualBasedVectorSpace = " << TypeStringOf_t<DualBasedVectorSpace>::eval() << '\n' 
+                  // << "BasedVectorSpace::Index = " << TypeStringOf_t<BasedVectorSpace::Index>::eval() << '\n'
+                  // << "BasedVectorSpace::Index::Dual = " << TypeStringOf_t<BasedVectorSpace::Index::Dual>::eval() << '\n'
+                  // << "BasedVectorSpace::Dual::Index = " << TypeStringOf_t<BasedVectorSpace::Dual::Index>::eval() << '\n'
+                  << "DualBasedVectorSpace = " << TypeStringOf_t<DualBasedVectorSpace>::eval() << '\n'
                   << "DualOf_c<BasedVectorSpace>::T = " << TypeStringOf_t<DualOf_c<BasedVectorSpace>::T>::eval() << '\n'
                   << "DualDualBasedVectorSpace = " << TypeStringOf_t<DualDualBasedVectorSpace>::eval() << '\n' << '\n';
         // make sure the vector space is reflexive (self-double-dual)
@@ -102,7 +102,7 @@ int main (int argc, char **argv)
         typedef TensorProduct::Dual DualTensorProduct;
         typedef DualTensorProduct::Dual DualDualTensorProduct;
         std::cout << "TensorProduct = "  << TypeStringOf_t<TensorProduct>::eval() << '\n'
-                  << "DualTensorProduct = " << TypeStringOf_t<DualTensorProduct>::eval() << '\n' 
+                  << "DualTensorProduct = " << TypeStringOf_t<DualTensorProduct>::eval() << '\n'
                   << "DualOf_c<TensorProduct>::T = " << TypeStringOf_t<DualOf_c<TensorProduct>::T>::eval() << '\n'
                   << "DualDualTensorProduct = " << TypeStringOf_t<DualDualTensorProduct>::eval() << '\n' << '\n';
         // make sure the tensor product is reflexive (self-double-dual)
@@ -239,7 +239,7 @@ int main (int argc, char **argv)
         typedef TensorPower::Dual DualTensorPower;
         typedef DualTensorPower::Dual DualDualTensorPower;
         std::cout << "TensorPower = "  << TypeStringOf_t<TensorPower>::eval() << '\n'
-                  << "DualTensorPower = " << TypeStringOf_t<DualTensorPower>::eval() << '\n' 
+                  << "DualTensorPower = " << TypeStringOf_t<DualTensorPower>::eval() << '\n'
                   << "DualOf_c<TensorPower>::T = " << TypeStringOf_t<DualOf_c<TensorPower>::T>::eval() << '\n'
                   << "DualDualTensorPower = " << TypeStringOf_t<DualDualTensorPower>::eval() << '\n' << '\n';
         // make sure the tensor power is reflexive (self-double-dual)
@@ -352,7 +352,7 @@ int main (int argc, char **argv)
         typedef SymmetricPower::Dual DualSymmetricPower;
         typedef DualSymmetricPower::Dual DualDualSymmetricPower;
         std::cout << "SymmetricPower = "  << TypeStringOf_t<SymmetricPower>::eval() << '\n'
-                  << "DualSymmetricPower = " << TypeStringOf_t<DualSymmetricPower>::eval() << '\n' 
+                  << "DualSymmetricPower = " << TypeStringOf_t<DualSymmetricPower>::eval() << '\n'
                   << "DualOf_c<SymmetricPower>::T = " << TypeStringOf_t<DualOf_c<SymmetricPower>::T>::eval() << '\n'
                   << "DualDualSymmetricPower = " << TypeStringOf_t<DualDualSymmetricPower>::eval() << '\n' << '\n';
         // make sure the tensor power is reflexive (self-double-dual)

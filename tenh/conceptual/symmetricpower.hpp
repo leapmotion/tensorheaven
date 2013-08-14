@@ -38,9 +38,6 @@ template <typename Factor, Uint32 ORDER> struct IsASymmetricPower_c<SymmetricPow
 // TODO: real dimension calculation
 template <typename Factor_, Uint32 ORDER_>
 struct SymmetricPowerOfVectorSpaces_c
-    : 
-    public SymmetricPower_c<Factor_,ORDER_>,
-    public VectorSpace_c<typename Factor_::Field,42,SymmetricPower_c<typename Factor_::Id,ORDER_> >
 {
     typedef SymmetricPower_c<Factor_,ORDER_> Parent_SymmetricPower;
     typedef VectorSpace_c<typename Factor_::Field,42,SymmetricPower_c<typename Factor_::Id,ORDER_> > Parent_VectorSpace;
@@ -51,9 +48,9 @@ struct SymmetricPowerOfVectorSpaces_c
     };
 
     typedef typename Parent_SymmetricPower::FactorTypeList FactorTypeList;
-    using Parent_SymmetricPower::ORDER;
+    static Uint32 const ORDER = Parent_SymmetricPower::ORDER;
     typedef typename Parent_VectorSpace::Field Field;
-    using Parent_VectorSpace::DIM;
+    static Uint32 const DIM = Parent_VectorSpace::DIM;
     typedef typename Parent_VectorSpace::Id Id;
     typedef typename DualOf_c<SymmetricPowerOfVectorSpaces_c>::T Dual; // the dual is not the symmetric power of Factor::Dual
     typedef Factor_ Factor;
@@ -74,9 +71,6 @@ template <typename Factor, Uint32 ORDER> struct IsASymmetricPowerOfVectorSpaces_
 // Factor_ must be a Basis_c type
 template <typename Factor_, Uint32 ORDER_>
 struct SymmetricPowerOfBases_c
-    : 
-    public SymmetricPower_c<Factor_,ORDER_>,
-    public Basis_c<SymmetricPower_c<Factor_,ORDER_> >
 {
     typedef SymmetricPower_c<Factor_,ORDER_> Parent_SymmetricPower;
     typedef Basis_c<SymmetricPower_c<Factor_,ORDER_> > Parent_Basis;
@@ -87,7 +81,7 @@ struct SymmetricPowerOfBases_c
     };
 
     //typedef typename Parent_SymmetricPower::FactorTypeList FactorTypeList;
-    using Parent_SymmetricPower::ORDER;
+    static Uint32 const ORDER = Parent_SymmetricPower::ORDER;
     typedef typename Parent_Basis::Id Id;
     typedef typename DualOf_c<SymmetricPowerOfBases_c>::T Dual; // the dual is not the symmetric power of Factor::Dual
     typedef Factor_ Factor;
@@ -109,9 +103,6 @@ template <typename Factor, Uint32 ORDER> struct IsASymmetricPowerOfBases_c<Symme
 // TODO: figure out if this struct is necessary
 template <typename SymmetricPowerOfVectorSpaces, typename Basis_>
 struct BasedSymmetricPowerOfVectorSpaces_c
-    :
-    public SymmetricPowerOfVectorSpaces,
-    public BasedSymmetricProductOfVectorSpaces_c<SymmetricPowerOfVectorSpaces,Basis_>
 {
     typedef SymmetricPowerOfVectorSpaces Parent_SymmetricPowerOfVectorSpaces;
     typedef BasedSymmetricProductOfVectorSpaces_c<SymmetricPowerOfVectorSpaces,Basis_> Parent_BasedSymmetricProductOfVectorSpaces;
@@ -123,9 +114,9 @@ struct BasedSymmetricPowerOfVectorSpaces_c
     };
 
     //typedef typename Parent_SymmetricPowerOfVectorSpaces::FactorTypeList FactorTypeList;
-    using Parent_SymmetricPowerOfVectorSpaces::ORDER;
+    static Uint32 const ORDER = Parent_SymmetricPowerOfVectorSpaces::ORDER;
     typedef typename Parent_BasedSymmetricProductOfVectorSpaces::Field Field;
-    using Parent_BasedSymmetricProductOfVectorSpaces::DIM;
+    static Uint32 const DIM = Parent_BasedSymmetricProductOfVectorSpaces::DIM;
     typedef typename Parent_BasedSymmetricProductOfVectorSpaces::Id Id;
     typedef typename Parent_BasedSymmetricProductOfVectorSpaces::Basis Basis;
     typedef typename DualOf_c<BasedSymmetricPowerOfVectorSpaces_c>::T Dual; // relies on the template specialization below
@@ -156,13 +147,9 @@ struct DualOf_c<BasedSymmetricPowerOfVectorSpaces_c<SymmetricPowerOfVectorSpaces
 // Factor_ must be a BasedVectorSpace_c type
 template <typename Factor_, Uint32 ORDER_>
 struct SymmetricPowerOfBasedVectorSpaces_c
-    : 
-    public SymmetricPowerOfVectorSpaces_c<typename Factor_::VectorSpace,ORDER_>,
-    public BasedVectorSpace_c<SymmetricPowerOfVectorSpaces_c<typename Factor_::VectorSpace,ORDER_>,
-                              SymmetricPowerOfBases_c<typename Factor_::Basis,ORDER_> >
 {
-    typedef SymmetricPowerOfVectorSpaces_c<typename Factor_::VectorSpace,ORDER_> Parent_SymmetricPowerOfVectorSpaces;
-    typedef BasedVectorSpace_c<SymmetricPowerOfVectorSpaces_c<typename Factor_::VectorSpace,ORDER_>,
+    typedef SymmetricPowerOfVectorSpaces_c<typename Factor_::As_VectorSpace,ORDER_> Parent_SymmetricPowerOfVectorSpaces;
+    typedef BasedVectorSpace_c<SymmetricPowerOfVectorSpaces_c<typename Factor_::As_VectorSpace,ORDER_>,
                                SymmetricPowerOfBases_c<typename Factor_::Basis,ORDER_> > Parent_BasedVectorSpace;
 
     enum
@@ -171,9 +158,9 @@ struct SymmetricPowerOfBasedVectorSpaces_c
     };
 
     typedef typename Parent_SymmetricPowerOfVectorSpaces::FactorTypeList FactorTypeList;
-    using Parent_SymmetricPowerOfVectorSpaces::ORDER;
+    static Uint32 const ORDER = Parent_SymmetricPowerOfVectorSpaces::ORDER;
     typedef typename Parent_BasedVectorSpace::Field Field;
-    using Parent_BasedVectorSpace::DIM;
+    static Uint32 const DIM = Parent_BasedVectorSpace::DIM;
     typedef typename Parent_BasedVectorSpace::Id Id;
     typedef typename Parent_BasedVectorSpace::Basis Basis;
     typedef typename DualOf_c<SymmetricPowerOfBasedVectorSpaces_c>::T Dual; // the dual is not the symmetric power of Factor::Dual

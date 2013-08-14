@@ -22,8 +22,8 @@ namespace Tenh {
 template <typename Id_>
 struct Basis_c
 {
-	typedef Id_ Id;
-	typedef typename DualOf_c<Basis_c>::T Dual; // relies on the template specialization below
+    typedef Id_ Id;
+    typedef typename DualOf_c<Basis_c>::T Dual; // relies on the template specialization below
 
     static std::string type_as_string ()
     {

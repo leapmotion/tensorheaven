@@ -18,19 +18,19 @@ struct VectorSpace_c
 {
     enum { STATIC_ASSERT_IN_ENUM(IsAField_c<Field_>::V, MUST_BE_FIELD) };
 
-	typedef Field_ Field;
-	static Uint32 const DIM = DIM_;
-	typedef Id_ Id;
+    typedef Field_ Field;
+    static Uint32 const DIM = DIM_;
+    typedef Id_ Id;
     typedef typename DualOf_c<VectorSpace_c>::T Dual; // relies on the template specialization below
 
     static std::string type_as_string ()
     {
-        return "VectorSpace_c<" + TypeStringOf_t<Field>::eval() + ',' 
+        return "VectorSpace_c<" + TypeStringOf_t<Field>::eval() + ','
                                 + AS_STRING(DIM) + ',' + TypeStringOf_t<Id>::eval() + '>';
     }
 };
 
-// NOTE: unfortunately the template type inference system will not recognize subclasses 
+// NOTE: unfortunately the template type inference system will not recognize subclasses
 // of VectorSpace_c for use in the template specialization, so one must be provided for
 // each subclass of VectorSpace_c.
 template <typename T> struct IsAVectorSpace_c { static bool const V = false; };
@@ -45,22 +45,24 @@ struct DualOf_c<VectorSpace_c<Field,DIM,Id> >
 
 template <typename VectorSpace_, typename Basis_>
 struct BasedVectorSpace_c
-    :
-    public VectorSpace_ // NOTE: must template-specialize IsAVectorSpace_c<BasedVectorSpace_c<...> >
 {
-	enum { STATIC_ASSERT_IN_ENUM(IsAVectorSpace_c<VectorSpace_>::V, MUST_BE_VECTOR_SPACE),
-	       STATIC_ASSERT_IN_ENUM(IsABasis_c<Basis_>::V, MUST_BE_BASIS) };
+    typedef VectorSpace_ As_VectorSpace;
 
-	typedef VectorSpace_ VectorSpace;
-	typedef typename VectorSpace::Field Field;
-	using VectorSpace::DIM;
-	typedef typename VectorSpace::Id Id;
+    enum
+    {
+        STATIC_ASSERT_IN_ENUM(IsAVectorSpace_c<As_VectorSpace>::V, MUST_BE_VECTOR_SPACE),
+        STATIC_ASSERT_IN_ENUM(IsABasis_c<Basis_>::V, MUST_BE_BASIS)
+    };
+
+    typedef typename As_VectorSpace::Field Field;
+    static Uint32 const DIM = As_VectorSpace::DIM;
+    typedef typename As_VectorSpace::Id Id;
     typedef typename DualOf_c<BasedVectorSpace_c>::T Dual; // relies on the template specialization below
     typedef Basis_ Basis;
 
     static std::string type_as_string ()
     {
-        return "BasedVectorSpace_c<" + TypeStringOf_t<VectorSpace>::eval() + ',' + TypeStringOf_t<Basis>::eval() + '>';
+        return "BasedVectorSpace_c<" + TypeStringOf_t<As_VectorSpace>::eval() + ',' + TypeStringOf_t<Basis>::eval() + '>';
     }
 };
 

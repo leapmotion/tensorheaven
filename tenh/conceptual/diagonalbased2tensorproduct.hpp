@@ -12,17 +12,16 @@
 
 namespace Tenh {
 
+// TODO: this should probably actually come from EmbeddableInTensorProductOfBasedVectorSpaces_c
 template <typename Factor1_, typename Factor2_>
 struct Diagonal2TensorProductOfBasedVectorSpaces_c
-    :
-    public TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,TypeList_t<Factor2_> > >
 {
     typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,TypeList_t<Factor2_> > > Parent_TensorProductOfBasedVectorSpaces;
 
     typedef typename Parent_TensorProductOfBasedVectorSpaces::FactorTypeList FactorTypeList;
-    using Parent_TensorProductOfBasedVectorSpaces::ORDER;
+    static Uint32 const ORDER = Parent_TensorProductOfBasedVectorSpaces::ORDER;
     typedef typename Parent_TensorProductOfBasedVectorSpaces::Field Field;
-    using Parent_TensorProductOfBasedVectorSpaces::DIM;
+    static Uint32 const DIM = Parent_TensorProductOfBasedVectorSpaces::DIM;
     typedef typename Parent_TensorProductOfBasedVectorSpaces::Id Id;
     typedef typename Parent_TensorProductOfBasedVectorSpaces::Basis Basis;
     typedef typename DualOf_c<Diagonal2TensorProductOfBasedVectorSpaces_c>::T Dual; // relies on the template specialization below

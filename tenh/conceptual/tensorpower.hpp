@@ -27,13 +27,11 @@ struct TypeListWithMultiplicity_t<Type,0>
 // generic tensor power of formal symbols (e.g. identifiers, builtin C++ types, etc)
 template <typename Factor_, Uint32 ORDER_>
 struct TensorPower_c
-    :
-    TensorProduct_c<typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T>
 {
-    typedef TensorProduct_c<typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T> Parent_TensorProduct;
+    typedef TensorProduct_c<typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T> As_TensorProduct;
 
-    typedef typename Parent_TensorProduct::FactorTypeList FactorTypeList;
-    using Parent_TensorProduct::ORDER;
+    typedef typename As_TensorProduct::FactorTypeList FactorTypeList;
+    static Uint32 const ORDER = As_TensorProduct::ORDER;
     typedef typename DualOf_c<TensorPower_c>::T Dual; // relies on the template specialization below
     typedef Factor_ Factor;
 
@@ -59,23 +57,23 @@ struct DualOf_c<TensorPower_c<Factor,ORDER> >
 // FactorTypeList_ must be a TypeList_t of VectorSpace_c types
 template <typename Factor_, Uint32 ORDER_>
 struct TensorPowerOfVectorSpaces_c
-    : 
-    public TensorPower_c<Factor_,ORDER_>,
-    public TensorProductOfVectorSpaces_c<typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T>
 {
-    typedef TensorPower_c<Factor_,ORDER_> Parent_TensorPower;
-    typedef TensorProductOfVectorSpaces_c<typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T> Parent_TensorProductOfVectorSpaces;
+    typedef TensorPower_c<Factor_,ORDER_> As_TensorPower;
+    typedef TensorProductOfVectorSpaces_c<typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T> As_TensorProductOfVectorSpaces;
+    typedef typename As_TensorProductOfVectorSpaces::As_TensorProduct As_TensorProduct;
 
     enum
     {
         STATIC_ASSERT_IN_ENUM(IsAVectorSpace_c<Factor_>::V, MUST_BE_VECTOR_SPACE),
     };
 
-    typedef typename Parent_TensorPower::FactorTypeList FactorTypeList;
-    using Parent_TensorPower::ORDER;
-    typedef typename Parent_TensorProductOfVectorSpaces::Field Field;
-    using Parent_TensorProductOfVectorSpaces::DIM;
-    typedef typename Parent_TensorProductOfVectorSpaces::Id Id;
+    typedef typename As_TensorProductOfVectorSpaces::As_VectorSpace As_VectorSpace;
+
+    typedef typename As_TensorPower::FactorTypeList FactorTypeList;
+    static Uint32 const ORDER = As_TensorPower::ORDER;
+    typedef typename As_TensorProductOfVectorSpaces::Field Field;
+    static Uint32 const DIM = As_TensorProductOfVectorSpaces::DIM;
+    typedef typename As_TensorProductOfVectorSpaces::Id Id;
     typedef typename DualOf_c<TensorPowerOfVectorSpaces_c>::T Dual; // relies on the template specialization below
     typedef Factor_ Factor;
 
@@ -103,21 +101,18 @@ struct DualOf_c<TensorPowerOfVectorSpaces_c<Factor,ORDER> >
 // Factor_ must be a Basis_c type
 template <typename Factor_, Uint32 ORDER_>
 struct TensorPowerOfBases_c
-    : 
-    public TensorPower_c<Factor_,ORDER_>,
-    public Basis_c<TensorPower_c<Factor_,ORDER_> >
 {
-    typedef TensorPower_c<Factor_,ORDER_> Parent_TensorPower;
-    typedef Basis_c<TensorPower_c<Factor_,ORDER_> > Parent_Basis;
+    typedef TensorPower_c<Factor_,ORDER_> As_TensorPower;
+    typedef Basis_c<TensorPower_c<Factor_,ORDER_> > As_Basis;
 
     enum
     {
         STATIC_ASSERT_IN_ENUM(IsABasis_c<Factor_>::V, MUST_BE_BASIS)
     };
 
-    typedef typename Parent_TensorPower::FactorTypeList FactorTypeList;
-    using Parent_TensorPower::ORDER;
-    typedef typename Parent_Basis::Id Id;
+    typedef typename As_TensorPower::FactorTypeList FactorTypeList;
+    static Uint32 const ORDER = As_TensorPower::ORDER;
+    typedef typename As_Basis::Id Id;
     typedef typename DualOf_c<TensorPowerOfBases_c>::T Dual; // relies on the template specialization below
     typedef Factor_ Factor;
 
@@ -144,12 +139,11 @@ struct DualOf_c<TensorPowerOfBases_c<Factor,ORDER> >
 
 template <typename TensorPowerOfVectorSpaces, typename Basis_>
 struct BasedTensorPowerOfVectorSpaces_c
-    :
-    public TensorPowerOfVectorSpaces,
-    public BasedTensorProductOfVectorSpaces_c<TensorPowerOfVectorSpaces,Basis_>
 {
-    typedef TensorPowerOfVectorSpaces Parent_TensorPowerOfVectorSpaces;
-    typedef BasedTensorProductOfVectorSpaces_c<TensorPowerOfVectorSpaces,Basis_> Parent_BasedTensorProductOfVectorSpaces;
+    typedef TensorPowerOfVectorSpaces As_TensorPowerOfVectorSpaces;
+    typedef BasedTensorProductOfVectorSpaces_c<TensorPowerOfVectorSpaces,Basis_> As_BasedTensorProductOfVectorSpaces;
+    typedef typename As_TensorPowerOfVectorSpaces::As_TensorProductOfVectorSpaces As_TensorProductOfVectorSpaces;
+    typedef typename As_TensorPowerOfVectorSpaces::As_TensorProduct As_TensorProduct;
 
     enum
     {
@@ -157,12 +151,12 @@ struct BasedTensorPowerOfVectorSpaces_c
         STATIC_ASSERT_IN_ENUM(IsABasis_c<Basis_>::V, MUST_BE_BASIS),
     };
 
-    typedef typename Parent_TensorPowerOfVectorSpaces::FactorTypeList FactorTypeList;
-    using Parent_TensorPowerOfVectorSpaces::ORDER;
-    typedef typename Parent_BasedTensorProductOfVectorSpaces::Field Field;
-    using Parent_BasedTensorProductOfVectorSpaces::DIM;
-    typedef typename Parent_BasedTensorProductOfVectorSpaces::Id Id;
-    typedef typename Parent_BasedTensorProductOfVectorSpaces::Basis Basis;
+    typedef typename As_TensorPowerOfVectorSpaces::FactorTypeList FactorTypeList;
+    static Uint32 const ORDER = As_TensorPowerOfVectorSpaces::ORDER;
+    typedef typename As_BasedTensorProductOfVectorSpaces::Field Field;
+    static Uint32 const DIM = As_BasedTensorProductOfVectorSpaces::DIM;
+    typedef typename As_BasedTensorProductOfVectorSpaces::Id Id;
+    typedef typename As_BasedTensorProductOfVectorSpaces::Basis Basis;
     typedef typename DualOf_c<BasedTensorPowerOfVectorSpaces_c>::T Dual; // relies on the template specialization below
 
     static std::string type_as_string ()
@@ -193,26 +187,22 @@ struct DualOf_c<BasedTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces,Basis
 // Factor_ must be a BasedVectorSpace_c type
 template <typename Factor_, Uint32 ORDER_>
 struct TensorPowerOfBasedVectorSpaces_c
-    : 
-    public TensorPowerOfVectorSpaces_c<typename Factor_::VectorSpace,ORDER_>,
-    public BasedTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces_c<typename Factor_::VectorSpace,ORDER_>,
-                                            TensorPowerOfBases_c<typename Factor_::Basis,ORDER_> >
 {
-    typedef TensorPowerOfVectorSpaces_c<typename Factor_::VectorSpace,ORDER_> Parent_TensorPowerOfVectorSpaces;
-    typedef BasedTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces_c<typename Factor_::VectorSpace,ORDER_>,
-                                             TensorPowerOfBases_c<typename Factor_::Basis,ORDER_> > Parent_BasedTensorPowerOfVectorSpaces;
+    typedef TensorPowerOfVectorSpaces_c<typename Factor_::As_VectorSpace,ORDER_> As_TensorPowerOfVectorSpaces;
+    typedef BasedTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces_c<typename Factor_::As_VectorSpace,ORDER_>,
+                                             TensorPowerOfBases_c<typename Factor_::Basis,ORDER_> > As_BasedTensorPowerOfVectorSpaces;
 
     enum
     {
         STATIC_ASSERT_IN_ENUM(IsABasedVectorSpace_c<Factor_>::V, MUST_BE_BASED_VECTOR_SPACE),
     };
 
-    typedef typename Parent_TensorPowerOfVectorSpaces::FactorTypeList FactorTypeList;
-    using Parent_TensorPowerOfVectorSpaces::ORDER;
-    typedef typename Parent_BasedTensorPowerOfVectorSpaces::Field Field;
-    using Parent_BasedTensorPowerOfVectorSpaces::DIM;
-    typedef typename Parent_BasedTensorPowerOfVectorSpaces::Id Id;
-    typedef typename Parent_BasedTensorPowerOfVectorSpaces::Basis Basis;
+    typedef typename As_TensorPowerOfVectorSpaces::FactorTypeList FactorTypeList;
+    static Uint32 const ORDER = As_TensorPowerOfVectorSpaces::ORDER;
+    typedef typename As_BasedTensorPowerOfVectorSpaces::Field Field;
+    static Uint32 const DIM = As_BasedTensorPowerOfVectorSpaces::DIM;
+    typedef typename As_BasedTensorPowerOfVectorSpaces::Id Id;
+    typedef typename As_BasedTensorPowerOfVectorSpaces::Basis Basis;
     typedef typename DualOf_c<TensorPowerOfBasedVectorSpaces_c>::T Dual; // relies on the template specialization below
     typedef Factor_ Factor;
 

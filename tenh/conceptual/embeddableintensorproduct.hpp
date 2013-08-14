@@ -30,8 +30,8 @@ struct EmbeddableInTensorProductOfVectorSpaces_c
 template <typename T> struct IsEmbeddableInTensorProductOfVectorSpaces_c { static bool const V = false; };
 template <typename TensorProductOfVectorSpaces> struct IsEmbeddableInTensorProductOfVectorSpaces_c<EmbeddableInTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces> > { static bool const V = true; };
 
-// NOTE: because the class of embeddable-in-tensor-products-of-vector-spaces includes nonlinear 
-// spaces such as the space of simple tensors, there is no general notion of Dual here.  That 
+// NOTE: because the class of embeddable-in-tensor-products-of-vector-spaces includes nonlinear
+// spaces such as the space of simple tensors, there is no general notion of Dual here.  That
 // could only be had if the embeddable was a vector space.
 
 
@@ -40,8 +40,6 @@ template <typename TensorProductOfVectorSpaces> struct IsEmbeddableInTensorProdu
 // like diagonal 2-tensor product of based vector spaces.
 template <typename TensorProductOfBasedVectorSpaces_>
 struct EmbeddableInTensorProductOfBasedVectorSpaces_c
-    : 
-    public EmbeddableInTensorProductOfVectorSpaces_c<TensorProductOfBasedVectorSpaces_>
 {
     typedef EmbeddableInTensorProductOfVectorSpaces_c<TensorProductOfBasedVectorSpaces_> Parent_EmbeddableInTensorProduct;
 
