@@ -35,13 +35,13 @@ template <typename FactorTypeList> struct IsATensorProduct_c<TensorProduct_c<Fac
 template <typename FactorTypeList>
 struct DualOf_c<TensorProduct_c<FactorTypeList> >
 {
-    typedef TensorProduct_c<typename DualsOfTypeList_t<FactorTypeList>::T> T;
+    typedef TensorProduct_c<typename DualOf_c<FactorTypeList>::T> T;
 };
 
 template <typename FactorTypeList>
 struct AllFactorsAreVectorSpaces_t
 {
-    static bool const V = IsAVectorSpace_c<typename FactorTypeList::HeadType>::V && 
+    static bool const V = IsAVectorSpace_c<typename FactorTypeList::HeadType>::V &&
                           AllFactorsAreVectorSpaces_t<typename FactorTypeList::BodyTypeList>::V;
 };
 
@@ -54,7 +54,7 @@ struct AllFactorsAreVectorSpaces_t<EmptyTypeList>
 template <typename FactorTypeList>
 struct AllFactorsAreBases_t
 {
-    static bool const V = IsABasis_c<typename FactorTypeList::HeadType>::V && 
+    static bool const V = IsABasis_c<typename FactorTypeList::HeadType>::V &&
                           AllFactorsAreBases_t<typename FactorTypeList::BodyTypeList>::V;
 };
 
@@ -90,7 +90,7 @@ struct ProductOfDimensions_t
 {
     enum { STATIC_ASSERT_IN_ENUM(IsAVectorSpace_c<typename FactorTypeList::HeadType>::V, MUST_BE_VECTOR_SPACE) };
 
-    static Uint32 const V = FactorTypeList::HeadType::DIM * 
+    static Uint32 const V = FactorTypeList::HeadType::DIM *
                             ProductOfDimensions_t<typename FactorTypeList::BodyTypeList>::V;
 };
 
@@ -116,7 +116,7 @@ struct IdsOfTypeList_t<EmptyTypeList>
 // FactorTypeList_ must be a TypeList_t of VectorSpace_c types
 template <typename FactorTypeList_>
 struct TensorProductOfVectorSpaces_c
-    : 
+    :
     public TensorProduct_c<FactorTypeList_>,
     public VectorSpace_c<typename FactorTypeList_::HeadType::Field,
                          ProductOfDimensions_t<FactorTypeList_>::V,
@@ -155,7 +155,7 @@ template <typename FactorTypeList> struct IsATensorProductOfVectorSpaces_c<Tenso
 template <typename FactorTypeList>
 struct DualOf_c<TensorProductOfVectorSpaces_c<FactorTypeList> >
 {
-    typedef TensorProductOfVectorSpaces_c<typename DualsOfTypeList_t<FactorTypeList>::T> T;
+    typedef TensorProductOfVectorSpaces_c<typename DualOf_c<FactorTypeList>::T> T;
 };
 
 
@@ -164,7 +164,7 @@ struct DualOf_c<TensorProductOfVectorSpaces_c<FactorTypeList> >
 // FactorTypeList_ must be a TypeList_t of Basis_c types
 template <typename FactorTypeList_>
 struct TensorProductOfBases_c
-    : 
+    :
     public TensorProduct_c<FactorTypeList_>,
     public Basis_c<TensorProduct_c<typename IdsOfTypeList_t<FactorTypeList_>::T> >
 {
@@ -196,7 +196,7 @@ template <typename FactorTypeList> struct IsATensorProductOfBases_c<TensorProduc
 template <typename FactorTypeList>
 struct DualOf_c<TensorProductOfBases_c<FactorTypeList> >
 {
-    typedef TensorProductOfBases_c<typename DualsOfTypeList_t<FactorTypeList>::T> T;
+    typedef TensorProductOfBases_c<typename DualOf_c<FactorTypeList>::T> T;
 };
 
 
@@ -250,7 +250,7 @@ struct DualOf_c<BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces,B
 template <typename FactorTypeList>
 struct AllFactorsAreBasedVectorSpaces_t
 {
-    static bool const V = IsABasedVectorSpace_c<typename FactorTypeList::HeadType>::V && 
+    static bool const V = IsABasedVectorSpace_c<typename FactorTypeList::HeadType>::V &&
                           AllFactorsAreBasedVectorSpaces_t<typename FactorTypeList::BodyTypeList>::V;
 };
 
@@ -289,7 +289,7 @@ struct BasesOfTypeList_t<EmptyTypeList>
 // FactorTypeList_ must be a TypeList_t of BasedVectorSpace_c types
 template <typename FactorTypeList_>
 struct TensorProductOfBasedVectorSpaces_c
-    : 
+    :
     public TensorProductOfVectorSpaces_c<typename VectorSpacesOfTypeList_t<FactorTypeList_>::T>,
     public BasedVectorSpace_c<TensorProductOfVectorSpaces_c<typename VectorSpacesOfTypeList_t<FactorTypeList_>::T>,
                               TensorProductOfBases_c<typename BasesOfTypeList_t<FactorTypeList_>::T> >
@@ -329,7 +329,7 @@ template <typename FactorTypeList> struct IsATensorProductOfBasedVectorSpaces_c<
 template <typename FactorTypeList>
 struct DualOf_c<TensorProductOfBasedVectorSpaces_c<FactorTypeList> >
 {
-    typedef TensorProductOfBasedVectorSpaces_c<typename DualsOfTypeList_t<FactorTypeList>::T> T;
+    typedef TensorProductOfBasedVectorSpaces_c<typename DualOf_c<FactorTypeList>::T> T;
 };
 
 } // end of namespace Tenh

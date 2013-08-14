@@ -39,15 +39,15 @@ struct DualOf_c<Dual_c<Primal> >
 	typedef Primal T;
 };
 
-template <typename TypeList>
-struct DualsOfTypeList_t
+// template specialization to take dual of each element in a TypeList_t
+template <typename HeadType, typename BodyTypeList>
+struct DualOf_c<TypeList_t<HeadType,BodyTypeList> >
 {
-    typedef TypeList_t<typename DualOf_c<typename TypeList::HeadType>::T,
-                       typename DualsOfTypeList_t<typename TypeList::BodyTypeList>::T> T;
+    typedef TypeList_t<typename DualOf_c<HeadType>::T,typename DualOf_c<BodyTypeList>::T> T;
 };
 
 template <>
-struct DualsOfTypeList_t<EmptyTypeList>
+struct DualOf_c<EmptyTypeList>
 {
     typedef EmptyTypeList T;
 };
