@@ -36,7 +36,7 @@ struct FactorComponentIndexTypeList_t<EmptyTypeList>
     typedef EmptyTypeList T;
 };
 
-// compile-time interface for a tensor product class.  TensorProductOfBasedVectorSpaces_
+// compile-time interface for a non-symmetric tensor product class.  TensorProductOfBasedVectorSpaces_
 // should be a TensorProductOfBasedVectorSpaces_c type.
 template <typename Derived_, typename Scalar_, typename TensorProductOfBasedVectorSpaces_>
 struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_>
@@ -133,14 +133,14 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
             CHECK_FOR_ALIASING>(as_derived());
     }
 
-    // using Parent_Vector_i::component_is_immutable_zero;
-    // using Parent_Vector_i::scalar_factor_for_component;
-    // using Parent_Vector_i::vector_index_of;
+    static bool component_is_immutable_zero (MultiIndex const &m) { return false; }
+    static Scalar scalar_factor_for_component (MultiIndex const &m) { return Scalar(1); }
+    static ComponentIndex vector_index_of (MultiIndex const &m) { return ComponentIndex(m.value(), DONT_CHECK_RANGE); }
 
     static std::string type_as_string ()
     {
-        return "Tensor_i<" + TypeStringOf_t<Derived>::eval() + ',' 
-                           + TypeStringOf_t<Scalar>::eval() + ',' 
+        return "Tensor_i<" + TypeStringOf_t<Derived>::eval() + ','
+                           + TypeStringOf_t<Scalar>::eval() + ','
                            + TypeStringOf_t<TensorProductOfBasedVectorSpaces>::eval() + '>';
     }
 };

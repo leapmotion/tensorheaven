@@ -41,11 +41,11 @@ template <typename TensorProductOfVectorSpaces> struct IsEmbeddableInTensorProdu
 template <typename TensorProductOfBasedVectorSpaces_>
 struct EmbeddableInTensorProductOfBasedVectorSpaces_c
 {
-    typedef EmbeddableInTensorProductOfVectorSpaces_c<TensorProductOfBasedVectorSpaces_> Parent_EmbeddableInTensorProduct;
+    typedef EmbeddableInTensorProductOfVectorSpaces_c<TensorProductOfBasedVectorSpaces_> As_EmbeddableInTensorProduct;
 
     enum { STATIC_ASSERT_IN_ENUM(IsATensorProductOfBasedVectorSpaces_c<TensorProductOfBasedVectorSpaces_>::V, MUST_BE_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES) };
 
-    typedef typename Parent_EmbeddableInTensorProduct::TensorProductOfVectorSpaces TensorProductOfVectorSpaces;
+    typedef typename As_EmbeddableInTensorProduct::TensorProductOfVectorSpaces TensorProductOfVectorSpaces;
     typedef TensorProductOfBasedVectorSpaces_ TensorProductOfBasedVectorSpaces;
 
     static std::string type_as_string ()

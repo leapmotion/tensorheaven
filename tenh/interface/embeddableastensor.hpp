@@ -18,6 +18,7 @@ namespace Tenh {
 
 // compile-time interface for a symmetric tensor type -- e.g. exterior/symmetric product.
 // EmbeddableAsTensor_ should be a EmbeddableAsTensor_c type.
+// TODO: technically, this should be LinearlyEmbeddableAsTensor_i
 template <typename Derived_, typename Scalar_, typename EmbeddableInTensorProductOfBasedVectorSpaces_>
 struct EmbeddableAsTensor_i : public Vector_i<Derived_,Scalar_,EmbeddableAsTensor_>
 {
@@ -44,15 +45,12 @@ struct EmbeddableAsTensor_i : public Vector_i<Derived_,Scalar_,EmbeddableAsTenso
     static Uint32 const DEGREE = FactorTypeList::LENGTH;
     // static bool const IS_EMBEDDABLE_AS_TENSOR_I = true; // TODO: deprecate this in favor of IsEmbeddableAsTensor_i<...>
 
-    // TODO: could put canonical as_factorX conversions here
-
     static Uint32 degree () { return DEGREE; }
 
     using Parent_Vector_i::dim;
     using Parent_Vector_i::as_derived;
     using Parent_Vector_i::operator[];
-    Scalar operator [] (MultiIndex const &m) const { return as_derived().Derived::operator[](m); }
-    Scalar operator [] (MultiIndex const &m) { return as_derived().Derived::operator[](m); }
+    // you have to split before multi-index accessing
 
     using Parent_Vector_i::operator();
     // this provides the "split" operation without needing an intermediate temporary index,
@@ -68,14 +66,14 @@ struct EmbeddableAsTensor_i : public Vector_i<Derived_,Scalar_,EmbeddableAsTenso
     }
     // can't directly multi-index this object -- use split instead.
 
-    // using Parent_Vector_i::component_is_immutable_zero;
-    // using Parent_Vector_i::scalar_factor_for_component;
-    // using Parent_Vector_i::vector_index_of;
+    static bool component_is_immutable_zero (MultiIndex const &m) { return as_derived().component_is_immutable_zero(m); }
+    static Scalar scalar_factor_for_component (MultiIndex const &m) { return as_derived().scalar_factor_for_component(m); }
+    static ComponentIndex vector_index_of (MultiIndex const &m) { return as_derived().vector_index_of(m); }
 
     static std::string type_as_string ()
     {
-        return "EmbeddableAsTensor_i<" + TypeStringOf_t<Derived>::eval() + ',' 
-                                       + TypeStringOf_t<Scalar>::eval() + ',' 
+        return "EmbeddableAsTensor_i<" + TypeStringOf_t<Derived>::eval() + ','
+                                       + TypeStringOf_t<Scalar>::eval() + ','
                                        + TypeStringOf_t<EmbeddableInTensorProductOfBasedVectorSpace>::eval() + '>';
     }
 };
