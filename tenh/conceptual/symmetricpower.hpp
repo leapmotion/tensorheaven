@@ -39,19 +39,19 @@ template <typename Factor, Uint32 ORDER> struct IsASymmetricPower_c<SymmetricPow
 template <typename Factor_, Uint32 ORDER_>
 struct SymmetricPowerOfVectorSpaces_c
 {
-    typedef SymmetricPower_c<Factor_,ORDER_> Parent_SymmetricPower;
-    typedef VectorSpace_c<typename Factor_::Field,42,SymmetricPower_c<typename Factor_::Id,ORDER_> > Parent_VectorSpace;
+    typedef SymmetricPower_c<Factor_,ORDER_> As_SymmetricPower;
+    typedef VectorSpace_c<typename Factor_::Field,42,SymmetricPower_c<typename Factor_::Id,ORDER_> > As_VectorSpace;
 
     enum
     {
         STATIC_ASSERT_IN_ENUM(IsAVectorSpace_c<Factor_>::V, MUST_BE_VECTOR_SPACE),
     };
 
-    typedef typename Parent_SymmetricPower::FactorTypeList FactorTypeList;
-    static Uint32 const ORDER = Parent_SymmetricPower::ORDER;
-    typedef typename Parent_VectorSpace::Field Field;
-    static Uint32 const DIM = Parent_VectorSpace::DIM;
-    typedef typename Parent_VectorSpace::Id Id;
+    typedef typename As_SymmetricPower::FactorTypeList FactorTypeList;
+    static Uint32 const ORDER = As_SymmetricPower::ORDER;
+    typedef typename As_VectorSpace::Field Field;
+    static Uint32 const DIM = As_VectorSpace::DIM;
+    typedef typename As_VectorSpace::Id Id;
     typedef typename DualOf_c<SymmetricPowerOfVectorSpaces_c>::T Dual; // the dual is not the symmetric power of Factor::Dual
     typedef Factor_ Factor;
 
@@ -72,17 +72,17 @@ template <typename Factor, Uint32 ORDER> struct IsASymmetricPowerOfVectorSpaces_
 template <typename Factor_, Uint32 ORDER_>
 struct SymmetricPowerOfBases_c
 {
-    typedef SymmetricPower_c<Factor_,ORDER_> Parent_SymmetricPower;
-    typedef Basis_c<SymmetricPower_c<Factor_,ORDER_> > Parent_Basis;
+    typedef SymmetricPower_c<Factor_,ORDER_> As_SymmetricPower;
+    typedef Basis_c<SymmetricPower_c<Factor_,ORDER_> > As_Basis;
 
     enum
     {
         STATIC_ASSERT_IN_ENUM(IsABasis_c<Factor_>::V, MUST_BE_BASIS)
     };
 
-    //typedef typename Parent_SymmetricPower::FactorTypeList FactorTypeList;
-    static Uint32 const ORDER = Parent_SymmetricPower::ORDER;
-    typedef typename Parent_Basis::Id Id;
+    //typedef typename As_SymmetricPower::FactorTypeList FactorTypeList;
+    static Uint32 const ORDER = As_SymmetricPower::ORDER;
+    typedef typename As_Basis::Id Id;
     typedef typename DualOf_c<SymmetricPowerOfBases_c>::T Dual; // the dual is not the symmetric power of Factor::Dual
     typedef Factor_ Factor;
 
@@ -104,8 +104,8 @@ template <typename Factor, Uint32 ORDER> struct IsASymmetricPowerOfBases_c<Symme
 template <typename SymmetricPowerOfVectorSpaces, typename Basis_>
 struct BasedSymmetricPowerOfVectorSpaces_c
 {
-    typedef SymmetricPowerOfVectorSpaces Parent_SymmetricPowerOfVectorSpaces;
-    typedef BasedSymmetricProductOfVectorSpaces_c<SymmetricPowerOfVectorSpaces,Basis_> Parent_BasedSymmetricProductOfVectorSpaces;
+    typedef SymmetricPowerOfVectorSpaces As_SymmetricPowerOfVectorSpaces;
+    typedef BasedSymmetricProductOfVectorSpaces_c<SymmetricPowerOfVectorSpaces,Basis_> As_BasedSymmetricProductOfVectorSpaces;
 
     enum
     {
@@ -113,12 +113,12 @@ struct BasedSymmetricPowerOfVectorSpaces_c
         STATIC_ASSERT_IN_ENUM(IsABasis_c<Basis_>::V, MUST_BE_BASIS),
     };
 
-    //typedef typename Parent_SymmetricPowerOfVectorSpaces::FactorTypeList FactorTypeList;
-    static Uint32 const ORDER = Parent_SymmetricPowerOfVectorSpaces::ORDER;
-    typedef typename Parent_BasedSymmetricProductOfVectorSpaces::Field Field;
-    static Uint32 const DIM = Parent_BasedSymmetricProductOfVectorSpaces::DIM;
-    typedef typename Parent_BasedSymmetricProductOfVectorSpaces::Id Id;
-    typedef typename Parent_BasedSymmetricProductOfVectorSpaces::Basis Basis;
+    //typedef typename As_SymmetricPowerOfVectorSpaces::FactorTypeList FactorTypeList;
+    static Uint32 const ORDER = As_SymmetricPowerOfVectorSpaces::ORDER;
+    typedef typename As_BasedSymmetricProductOfVectorSpaces::Field Field;
+    static Uint32 const DIM = As_BasedSymmetricProductOfVectorSpaces::DIM;
+    typedef typename As_BasedSymmetricProductOfVectorSpaces::Id Id;
+    typedef typename As_BasedSymmetricProductOfVectorSpaces::Basis Basis;
     typedef typename DualOf_c<BasedSymmetricPowerOfVectorSpaces_c>::T Dual; // relies on the template specialization below
 
     static std::string type_as_string ()
@@ -148,21 +148,21 @@ struct DualOf_c<BasedSymmetricPowerOfVectorSpaces_c<SymmetricPowerOfVectorSpaces
 template <typename Factor_, Uint32 ORDER_>
 struct SymmetricPowerOfBasedVectorSpaces_c
 {
-    typedef SymmetricPowerOfVectorSpaces_c<typename Factor_::As_VectorSpace,ORDER_> Parent_SymmetricPowerOfVectorSpaces;
+    typedef SymmetricPowerOfVectorSpaces_c<typename Factor_::As_VectorSpace,ORDER_> As_SymmetricPowerOfVectorSpaces;
     typedef BasedVectorSpace_c<SymmetricPowerOfVectorSpaces_c<typename Factor_::As_VectorSpace,ORDER_>,
-                               SymmetricPowerOfBases_c<typename Factor_::Basis,ORDER_> > Parent_BasedVectorSpace;
+                               SymmetricPowerOfBases_c<typename Factor_::Basis,ORDER_> > As_BasedVectorSpace;
 
     enum
     {
         STATIC_ASSERT_IN_ENUM(IsABasedVectorSpace_c<Factor_>::V, MUST_BE_BASED_VECTOR_SPACE),
     };
 
-    typedef typename Parent_SymmetricPowerOfVectorSpaces::FactorTypeList FactorTypeList;
-    static Uint32 const ORDER = Parent_SymmetricPowerOfVectorSpaces::ORDER;
-    typedef typename Parent_BasedVectorSpace::Field Field;
-    static Uint32 const DIM = Parent_BasedVectorSpace::DIM;
-    typedef typename Parent_BasedVectorSpace::Id Id;
-    typedef typename Parent_BasedVectorSpace::Basis Basis;
+    typedef typename As_SymmetricPowerOfVectorSpaces::FactorTypeList FactorTypeList;
+    static Uint32 const ORDER = As_SymmetricPowerOfVectorSpaces::ORDER;
+    typedef typename As_BasedVectorSpace::Field Field;
+    static Uint32 const DIM = As_BasedVectorSpace::DIM;
+    typedef typename As_BasedVectorSpace::Id Id;
+    typedef typename As_BasedVectorSpace::Basis Basis;
     typedef typename DualOf_c<SymmetricPowerOfBasedVectorSpaces_c>::T Dual; // the dual is not the symmetric power of Factor::Dual
     typedef Factor_ Factor;
 
