@@ -13,7 +13,7 @@
 
 namespace Tenh {
 
-// fully symmetric tensor power of formal symbols (e.g. identifiers, builtin C++ types, etc)
+// symmetric power of formal symbols (e.g. identifiers, builtin C++ types, etc)
 template <typename Factor_, Uint32 ORDER_>
 struct SymmetricPower_c
 {

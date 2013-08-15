@@ -1,46 +1,49 @@
 // ///////////////////////////////////////////////////////////////////////////
-// tenh/implementation/tensor.hpp by Victor Dods, created 2013/08/10
+// tenh/implementation/wedge.hpp by Victor Dods, created 2013/08/15
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#ifndef TENH_IMPLEMENTATION_TENSOR_HPP_
-#define TENH_IMPLEMENTATION_TENSOR_HPP_
+#ifndef TENH_IMPLEMENTATION_WEDGE_HPP_
+#define TENH_IMPLEMENTATION_WEDGE_HPP_
 
 #include "tenh/core.hpp"
 
 #include "tenh/array.hpp"
-#include "tenh/conceptual/tensorproduct.hpp"
-#include "tenh/interface/tensor.hpp"
+#include "tenh/conceptual/exteriorpower.hpp"
+#include "tenh/interface/embeddableastensor.hpp"
 
 namespace Tenh {
 
 template <typename Scalar, typename Space> struct ImplementationOf_t;
 
-template <typename Scalar_, typename FactorTypeList_>
-struct ImplementationOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >
+template <typename Scalar_, typename Factor_, Uint32 ORDER_>
+struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORDER_> >
     :
-    public Tensor_i<ImplementationOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >,
-                    Scalar_,
-                    TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >,
+    public EmbeddableAsTensor_i<ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORDER_> >,
+                                Scalar_,
+                                ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORDER_> >,
     // Array_t is privately inherited because it is an implementation detail
-    private Array_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_>::DIM>
+    private Array_t<Scalar_,ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORDER_>::DIM>
 {
-    typedef Tensor_i<ImplementationOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >,
-                     Scalar_,
-                     TensorProductOfBasedVectorSpaces_c<FactorTypeList_> > Parent_Tensor_i;
-    typedef Array_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_>::DIM> Parent_Array_t;
+    typedef EmbeddableAsTensor_iTensor_i<ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORDER_> >,
+                                         Scalar_,
+                                         ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORDER_> > Parent_EmbeddableAsTensor_i;
+    typedef Array_t<Scalar_,ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORDER_>::DIM> Parent_Array_t;
 
-    typedef typename Parent_Tensor_i::Derived Derived;
-    typedef typename Parent_Tensor_i::Scalar Scalar;
-    typedef typename Parent_Tensor_i::BasedVectorSpace BasedVectorSpace;
-    using Parent_Tensor_i::DIM;
-    typedef typename Parent_Tensor_i::ComponentIndex ComponentIndex;
+    typedef typename Parent_EmbeddableAsTensor_i::Derived Derived;
+    typedef typename Parent_EmbeddableAsTensor_i::Scalar Scalar;
+    typedef typename Parent_EmbeddableAsTensor_i::BasedVectorSpace BasedVectorSpace;
+    using Parent_EmbeddableAsTensor_i::DIM;
+    typedef typename Parent_EmbeddableAsTensor_i::ComponentIndex ComponentIndex;
 
-    typedef typename Parent_Tensor_i::TensorProductOfBasedVectorSpaces TensorProductOfBasedVectorSpaces;
-    typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
-    typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
-    using Parent_Tensor_i::DEGREE;
-    using Parent_Tensor_i::IS_TENSOR_I;
+    typedef typename Parent_EmbeddableAsTensor_i::TensorProductOfBasedVectorSpaces TensorProductOfBasedVectorSpaces;
+    typedef typename Parent_EmbeddableAsTensor_i::FactorTypeList FactorTypeList;
+    typedef typename Parent_EmbeddableAsTensor_i::MultiIndex MultiIndex;
+    using Parent_EmbeddableAsTensor_i::DEGREE;
+    using Parent_EmbeddableAsTensor_i::IS_TENSOR_I;
+    static Uint32 const ORDER = ORDER_;
+    typedef Factor_ Factor;
+    typedef ExteriorPowerOfBasedVectorSpaces_c<Factor,ORDER> ExteriorPowerOfBasedVectorSpaces;
 
     typedef typename DualOf_c<ImplementationOf_t>::T Dual; // relies on the template specialization below
 
@@ -53,6 +56,9 @@ struct ImplementationOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeL
     {
         STATIC_ASSERT(IsADimIndex_t<BundledIndex>::V, MUST_BE_COMPONENT_INDEX);
         // this constructor breaks the vector index apart into a row-major multi-index
+
+        // TODO: Ted -- replace this with the vector-index to multi-index code
+
         return MultiIndex_t<BundleIndexTypeList>(b);
     }
 
@@ -76,39 +82,9 @@ struct ImplementationOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeL
     //     MultiIndex x(m);
     //     return operator[](Index(m.value(), DONT_CHECK_RANGE));
     // }
-    template <typename OtherIndexTypeList>
-    Scalar operator [] (MultiIndex_t<OtherIndexTypeList> const &m) const
-    {
-        STATIC_ASSERT(IsATypeList_t<OtherIndexTypeList>::V, MUST_BE_TYPELIST);
-        typedef MultiIndex_t<OtherIndexTypeList> OtherMultiIndex;
-        STATIC_ASSERT((OtherMultiIndex::LENGTH == MultiIndex::LENGTH), MUST_HAVE_EQUAL_LENGTHS);
-        //std::cout << OtherMultiIndex::LENGTH << ", " << MultiIndex::LENGTH << '\n';
-        assert(m.is_not_at_end() && "you used ComponentIndex_t(x, DONT_RANGE_CHECK) inappropriately");
-        // NOTE: this construction is unnecessary to the code, but IS necessary to the compile-time type checking
-        // the compiler should optimize it out anyway.
-        MultiIndex x(m);
-        // m.value() is what does the multi-index-to-vector-index computation
-        return operator[](ComponentIndex(m.value(), DONT_CHECK_RANGE));
-    }
-    template <typename OtherIndexTypeList>
-    Scalar &operator [] (MultiIndex_t<OtherIndexTypeList> const &m)
-    {
-        STATIC_ASSERT(IsATypeList_t<OtherIndexTypeList>::V, MUST_BE_TYPELIST);
-        typedef MultiIndex_t<OtherIndexTypeList> OtherMultiIndex;
-        STATIC_ASSERT((OtherMultiIndex::LENGTH == MultiIndex::LENGTH), MUST_HAVE_EQUAL_LENGTHS);
-        //std::cout << OtherMultiIndex::LENGTH << ", " << MultiIndex::LENGTH << '\n';
-        assert(m.is_not_at_end() && "you used ComponentIndex_t(x, DONT_RANGE_CHECK) inappropriately");
-        // NOTE: this construction is unnecessary to the code, but IS necessary to the compile-time type checking
-        // the compiler should optimize it out anyway.
-        MultiIndex x(m);
-        // m.value() is what does the multi-index-to-vector-index computation
-        return operator[](ComponentIndex(m.value(), DONT_CHECK_RANGE));
-        // std::cout << TypeStringOf_t<OtherMultiIndex>::eval() << ", " << TypeStringOf_t<MultiIndex>::eval() << '\n';
-        // return Scalar(0);
-    }
 
     // these are what provide indexed expressions -- via expression templates
-    using Parent_Tensor_i::operator();
+    using Parent_EmbeddableAsTensor_i::operator();
 
 /*
     // access 2-tensor components
@@ -148,18 +124,20 @@ struct ImplementationOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeL
         operator[](vector_index_of(m)) = s / (Factor1::scalar_factor_for_component(i1) * Factor2::scalar_factor_for_component(i2));
     }
     */
-    // using Parent_Tensor_i::component_is_immutable_zero;
-    // using Parent_Tensor_i::scalar_factor_for_component;
-    // using Parent_Tensor_i::vector_index_of;
+    // using Parent_EmbeddableAsTensor_i::component_is_immutable_zero;
+    // using Parent_EmbeddableAsTensor_i::scalar_factor_for_component;
+    // using Parent_EmbeddableAsTensor_i::vector_index_of;
     // all components are stored in memory (in the array m), and have scalar factor 1
     // TODO: this should probably go into the conceptual layer
+
+    // TODO: Ted -- here is where the other stuff goes
     static bool component_is_immutable_zero (MultiIndex const &m) { return false; }
     static Scalar scalar_factor_for_component (MultiIndex const &m) { return Scalar(1); }
     static ComponentIndex vector_index_of (MultiIndex const &m) { return ComponentIndex(m.value(), DONT_CHECK_RANGE); }
 
     static std::string type_as_string ()
     {
-        return "ImplementationOf_t<" + TypeStringOf_t<Scalar>::eval() + ',' + TypeStringOf_t<TensorProductOfBasedVectorSpaces>::eval() + '>';
+        return "ImplementationOf_t<" + TypeStringOf_t<Scalar>::eval() + ',' + TypeStringOf_t<ExteriorPowerOfBasedVectorSpaces>::eval() + '>';
     }
 
 private:
@@ -176,4 +154,4 @@ struct DualOf_c<ImplementationOf_t<Scalar,TensorProductOfBasedVectorSpaces_c<Fac
 
 } // end of namespace Tenh
 
-#endif // TENH_IMPLEMENTATION_TENSOR_HPP_
+#endif // TENH_IMPLEMENTATION_WEDGE_HPP_

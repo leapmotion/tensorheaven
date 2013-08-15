@@ -40,6 +40,7 @@ struct ImplementationOf_t<Scalar_,BasedVectorSpace_c<VectorSpace_,Basis_> >
     typedef typename DualOf_c<ImplementationOf_t>::T Dual; // relies on the template specialization below
 
     explicit ImplementationOf_t (WithoutInitialization const &w) : Parent_Array_t(w) { }
+    // probably only useful for zero element
     explicit ImplementationOf_t (Scalar fill_with) : Parent_Array_t(fill_with) { }
     ImplementationOf_t (Scalar x0, Scalar x1) : Parent_Array_t(x0, x1) { }
     ImplementationOf_t (Scalar x0, Scalar x1, Scalar x2) : Parent_Array_t(x0, x1, x2) { }
