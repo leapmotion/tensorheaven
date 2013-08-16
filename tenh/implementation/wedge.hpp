@@ -9,6 +9,7 @@
 #include "tenh/core.hpp"
 
 #include "tenh/array.hpp"
+#include "tenh/mathutil.hpp"
 #include "tenh/conceptual/exteriorpower.hpp"
 #include "tenh/interface/embeddableastensor.hpp"
 
@@ -58,10 +59,7 @@ struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORD
     {
         STATIC_ASSERT(IsADimIndex_t<BundledIndex>::V, MUST_BE_COMPONENT_INDEX);
         // this constructor breaks the vector index apart into a row-major multi-index
-
-        // TODO: Ted -- replace this with the vector-index to multi-index code
-
-        return MultiIndex_t<BundleIndexTypeList>(b);
+        return compute_bundle_index<BundleIndexTypeList, BundledIndex, ORDER>(b);
     }
 
     using Parent_Array_t::operator[];
@@ -134,8 +132,10 @@ struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORD
 
     // TODO: Ted -- here is where the other stuff goes
     static bool component_is_immutable_zero (MultiIndex const &m) { return false; }
-    static Scalar scalar_factor_for_component (MultiIndex const &m) { return Scalar(1); }
-    static ComponentIndex vector_index_of (MultiIndex const &m) { return ComponentIndex(m.value(), DONT_CHECK_RANGE); }
+    static Scalar scalar_factor_for_component (MultiIndex const &m) { return Scalar(1/Factorial_t<ORDER>::V); }
+    static ComponentIndex vector_index_of (MultiIndex const &m) {
+      // TODO: Sort m descending!
+      return ComponentIndex(compute_vector_index(m), DONT_CHECK_RANGE); }
 
     static std::string type_as_string ()
     {
@@ -146,6 +146,33 @@ private:
 
     // this has no definition, and is designed to generate a compiler error if used (use the one accepting WithoutInitialization instead).
     ImplementationOf_t ();
+
+    template <typename BundleIndexTypeList, typename BundledIndex, Uint32 ORD>
+    static MultiIndex_t<BundleIndexTypeList> compute_bundle_index (BundledIndex const &b)
+    {
+        if (BundleIndexTypeList::LENGTH == 1)
+        {
+            return MultiIndex_t<BundleIndexTypeList>(index_of_greatest_triangular_number_less_than(b.value(),ORD));
+        }
+        else
+        {
+            return MultiIndex_t<BundleIndexTypeList>(index_of_greatest_triangular_number_less_than(b.value(),ORD), bundle_index_map<BundleIndexTypeList::BodyType, BundledIndex,ORD-1>(b.value() - binomial_coefficient(index_of_greatest_triangular_number_less_than(b.value(),ORD), ORD)));
+        }
+    }
+
+    template<typename T>
+    static Uint32 compute_vector_index (T const &m)
+    {
+      if (T::LENGTH > 1)
+      {
+        return compute_vector_index(m.body()) + binomial_coefficient(m.head().value(),T::LENGTH);
+      }
+      else
+      {
+        return m.head().value();
+      }
+    }
+
 };
 
 template <typename Scalar, typename Factor, Uint32 ORDER>
