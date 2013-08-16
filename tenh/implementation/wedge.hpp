@@ -132,10 +132,10 @@ struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORD
 
     // TODO: Ted -- here is where the other stuff goes
     static bool component_is_immutable_zero (MultiIndex const &m) { return false; }
-    static Scalar scalar_factor_for_component (MultiIndex const &m) { return Scalar(1/Factorial_t<ORDER>::V); }
+    static Scalar scalar_factor_for_component (MultiIndex const &m) { return Scalar(1)/Scalar(Factorial_t<ORDER>::V); }
     static ComponentIndex vector_index_of (MultiIndex const &m) {
-      // TODO: Sort m descending!
-      return ComponentIndex(compute_vector_index(m), DONT_CHECK_RANGE); }
+        sort<MultiIndex,std::greater<Uint32> >(m);
+        return ComponentIndex(compute_vector_index(m), DONT_CHECK_RANGE); }
 
     static std::string type_as_string ()
     {
