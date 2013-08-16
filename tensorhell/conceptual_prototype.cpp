@@ -589,6 +589,23 @@ int main (int argc, char **argv)
 
         Wedge w(0);
         std::cout << FORMAT_VALUE(w) << '\n';
+
+        std::cout << '\n' << '\n';
+    }
+
+    {
+        typedef ComponentIndex_t<5> C;
+        typedef UniformTypeListOfLength_t<C,3>::T IndexTypeList;
+        typedef MultiIndex_t<IndexTypeList> MultiIndex;
+
+        MultiIndex m; // default constructor uses default constructor of each component
+        m.el<0>() = C(3);
+        m.el<1>() = C(1);
+        m.el<2>() = C(4);
+        std::cout << FORMAT_VALUE(m) << '\n';
+        sort<IndexTypeList,std::less<Uint32> >(m);
+        std::cout << "after sort: " << FORMAT_VALUE(m) << '\n';
+
     }
 
     std::cout << '\n' << '\n';

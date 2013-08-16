@@ -76,6 +76,12 @@ struct EachTypeIsAComponentIndex_t<EmptyTypeList>
     operator bool () const { return V; }
 };
 
+template <Uint32 COMPONENT_COUNT>
+std::ostream &operator << (std::ostream &out, ComponentIndex_t<COMPONENT_COUNT> const &c)
+{
+    return out << c.value();
+}
+
 } // end of namespace Tenh
 
 #endif // TENH_COMPONENTINDEX_HPP_

@@ -10,6 +10,8 @@
 
 #include "tenh/core.hpp"
 
+#include <algorithm>
+
 #include "tenh/componentindex.hpp"
 #include "tenh/list.hpp"
 #include "tenh/meta/typelist_utility.hpp"
@@ -42,19 +44,19 @@ struct MultiIndex_t : List_t<IndexTypeList_>
         :
         Parent(HeadIndexType(i0, check_range), BodyMultiIndex(i1, check_range))
     {
-        STATIC_ASSERT((Parent::LENGTH == 2),LENGTH_DOES_NOT_MATCH_ARGUMENT_COUNT);
+        STATIC_ASSERT((Parent::LENGTH == 2), LENGTH_DOES_NOT_MATCH_ARGUMENT_COUNT);
     }
     MultiIndex_t (Uint32 i0, Uint32 i1, Uint32 i2, bool check_range = CHECK_RANGE)
         :
         Parent(HeadIndexType(i0, check_range), BodyMultiIndex(i1, i2, check_range))
     {
-        STATIC_ASSERT((Parent::LENGTH == 3),LENGTH_DOES_NOT_MATCH_ARGUMENT_COUNT);
+        STATIC_ASSERT((Parent::LENGTH == 3), LENGTH_DOES_NOT_MATCH_ARGUMENT_COUNT);
     }
     MultiIndex_t (Uint32 i0, Uint32 i1, Uint32 i2, Uint32 i3, bool check_range = CHECK_RANGE)
         :
         Parent(HeadIndexType(i0, check_range), BodyMultiIndex(i1, i2, i3, check_range))
     {
-        STATIC_ASSERT((Parent::LENGTH == 4),LENGTH_DOES_NOT_MATCH_ARGUMENT_COUNT);
+        STATIC_ASSERT((Parent::LENGTH == 4), LENGTH_DOES_NOT_MATCH_ARGUMENT_COUNT);
     }
 
     MultiIndex_t (MultiIndex_t<EmptyTypeList> const &) { } // default construction
@@ -412,6 +414,27 @@ inline MultiIndex_t<typename ConcatenationOfTypeLists_t<LeadingTypeList,Trailing
 
 
 
+
+// in-place sort of a uniform MultiIndex_t -- the default type for Compare should be std::less<Uint32>
+template <typename IndexTypeList, typename Compare>
+void sort (MultiIndex_t<IndexTypeList> &m)
+{
+    typedef MultiIndex_t<IndexTypeList> MultiIndex;
+    STATIC_ASSERT(TypeListIsUniform_t<IndexTypeList>::V, ALL_TYPES_IN_TYPELIST_MUST_BE_THE_SAME);
+    // run-time check that the memory is actually layed out contiguously, which is necessary for the reinterpret_cast to work.
+    assert(m.is_layed_out_contiguously_in_memory());
+    Uint32 *starting_pointer = reinterpret_cast<Uint32*>(&m.head());
+    std::sort(starting_pointer, starting_pointer + m.LENGTH, Compare());
+}
+
+// functional sort of a uniform MultiIndex_t -- the default type for Compare should be std::less<Uint32>
+template <typename IndexTypeList, typename Compare>
+MultiIndex_t<IndexTypeList> sorted (MultiIndex_t<IndexTypeList> const &m)
+{
+    MultiIndex_t<IndexTypeList> retval(m);
+    sort<IndexTypeList,Compare>(retval);
+    return retval;
+}
 
 
 

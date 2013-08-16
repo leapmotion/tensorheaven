@@ -509,6 +509,30 @@ struct UniformTypeListOfLength_t<Type,0>
     typedef EmptyTypeList T;
 };
 
+
+
+template <typename TypeList> struct TypeListIsUniform_t;
+
+// V is true iff each type in the typelist is the same
+template <typename HeadType, typename BodyTypeList>
+struct TypeListIsUniform_t<TypeList_t<HeadType,BodyTypeList> >
+{
+    static bool const V = Lvd::Meta::TypesAreEqual<HeadType,typename BodyTypeList::HeadType>::v &&
+                          TypeListIsUniform_t<BodyTypeList>::V;
+};
+
+template <typename HeadType>
+struct TypeListIsUniform_t<TypeList_t<HeadType> >
+{
+    static bool const V = true;
+};
+
+template <>
+struct TypeListIsUniform_t<EmptyTypeList>
+{
+    static bool const V = true;
+};
+
 } // end of namespace Tenh
 
 #endif // TENH_META_TYPELIST_UTILITY_HPP_

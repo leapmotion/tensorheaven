@@ -143,6 +143,11 @@ struct List_t
         return ListHelper_t<TypeList,INDEX>::trailing_list(*this);
     };
 
+    bool is_layed_out_contiguously_in_memory () const
+    {
+        return reinterpret_cast<Uint8 const *>(&m_head) + sizeof(HeadType) == reinterpret_cast<Uint8 const *>(&m_body.head());
+    }
+
     void print (std::ostream &out, bool print_parens = true) const
     {
         if (print_parens)
@@ -270,6 +275,8 @@ struct List_t<EmptyTypeList>
         STATIC_ASSERT((INDEX <= LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END);
         return ListHelper_t<TypeList,INDEX>::trailing_list(*this);
     };
+
+    bool is_layed_out_contiguously_in_memory () const { return true; } // there are no elements; vacuously true
 
     void print (std::ostream &out, bool print_parens = true) const
     {
@@ -407,6 +414,8 @@ struct List_t<TypeList_t<HeadType_> >
         STATIC_ASSERT((INDEX <= LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END);
         return ListHelper_t<TypeList,INDEX>::trailing_list(*this);
     };
+
+    bool is_layed_out_contiguously_in_memory () const { return true; } // there is only one element; trivially true
 
     void print (std::ostream &out, bool print_parens = true) const
     {
@@ -558,6 +567,8 @@ inline List_t<typename ConcatenationOfTypeLists_t<LeadingTypeList,TrailingTypeLi
         leading_list.head(),
         (leading_list.body() |= trailing_list));
 }
+
+
 
 /*
 // the operator associativity for <<= is semantically wrong for this operation
