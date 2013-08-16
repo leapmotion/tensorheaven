@@ -591,6 +591,13 @@ int main (int argc, char **argv)
         std::cout << FORMAT_VALUE(w) << '\n';
 
         std::cout << '\n' << '\n';
+
+        Wedge::ComponentIndex i(14);
+        std::cout << FORMAT_VALUE(i) << '\n';
+        Wedge::MultiIndex m = Wedge::bundle_index_map<Wedge::MultiIndex::IndexTypeList, Wedge::ComponentIndex>(i);
+        std::cout << FORMAT_VALUE(m) << '\n';
+        Wedge::ComponentIndex j = Wedge::vector_index_of(m);
+        std::cout << FORMAT_VALUE(j) << '\n';
     }
 
     {

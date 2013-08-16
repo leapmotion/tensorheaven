@@ -57,9 +57,9 @@ struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORD
     template <typename BundleIndexTypeList, typename BundledIndex>
     static MultiIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)
     {
-        STATIC_ASSERT(IsADimIndex_t<BundledIndex>::V, MUST_BE_COMPONENT_INDEX);
+        //STATIC_ASSERT(IsADimIndex_t<BundledIndex>::V, MUST_BE_COMPONENT_INDEX);
         // this constructor breaks the vector index apart into a row-major multi-index
-        return compute_bundle_index<BundleIndexTypeList, BundledIndex, ORDER>(b);
+        return BundleIndexComputer_t<BundleIndexTypeList, BundledIndex, ORDER>::compute(b);
     }
 
     using Parent_Array_t::operator[];
@@ -133,8 +133,8 @@ struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORD
     static bool component_is_immutable_zero (MultiIndex const &m) { return multi_index_multiplicity(m) == 1; }
     static Scalar scalar_factor_for_component (MultiIndex const &m) { return Scalar(1)/Scalar(Factorial_t<ORDER>::V); }
     static ComponentIndex vector_index_of (MultiIndex const &m) {
-        sort<MultiIndex,std::greater<Uint32> >(m);
-        return ComponentIndex(compute_vector_index(m), DONT_CHECK_RANGE); }
+        MultiIndex n = sorted<typename MultiIndex::IndexTypeList,std::greater<Uint32> >(m);
+        return ComponentIndex(VectorIndexComputer_t<MultiIndex>::compute(n), DONT_CHECK_RANGE); }
 
     static std::string type_as_string ()
     {
@@ -147,31 +147,51 @@ private:
     ImplementationOf_t ();
 
     template <typename BundleIndexTypeList, typename BundledIndex, Uint32 ORD>
-    static MultiIndex_t<BundleIndexTypeList> compute_bundle_index (BundledIndex const &b)
-    {
-        if (BundleIndexTypeList::LENGTH == 1)
-        {
-            return MultiIndex_t<BundleIndexTypeList>(index_of_greatest_triangular_number_less_than(b.value(),ORD));
-        }
-        else
-        {
-            return MultiIndex_t<BundleIndexTypeList>(index_of_greatest_triangular_number_less_than(b.value(),ORD), bundle_index_map<BundleIndexTypeList::BodyType, BundledIndex,ORD-1>(b.value() - binomial_coefficient(index_of_greatest_triangular_number_less_than(b.value(),ORD), ORD)));
-        }
-    }
+    struct BundleIndexComputer_t;
 
-    template<typename T>
-    static Uint32 compute_vector_index (T const &m)
-    {
-      if (T::LENGTH > 1)
-      {
-        return compute_vector_index(m.body()) + binomial_coefficient(m.head().value(),T::LENGTH);
-      }
-      else
-      {
-        return m.head().value();
-      }
-    }
+    template<typename T, typename I = int>
+    struct VectorIndexComputer_t;
 
+};
+
+template <typename Scalar_, typename Factor_, Uint32 ORDER_>
+template <typename BundleIndexTypeList, typename BundledIndex, Uint32 ORD>
+struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORDER_> >::BundleIndexComputer_t
+{
+    static MultiIndex_t<BundleIndexTypeList> compute (BundledIndex const &b)
+    {
+        return MultiIndex_t<BundleIndexTypeList>(typename BundleIndexTypeList::HeadType(index_of_greatest_triangular_number_less_than(b.value(),ORD)), BundleIndexComputer_t<typename BundleIndexTypeList::BodyTypeList, BundledIndex, ORD-1>::compute(BundledIndex(b.value() - binomial_coefficient(index_of_greatest_triangular_number_less_than(b.value(),ORD), ORD), DONT_CHECK_RANGE)));
+    }
+};
+
+template <typename Scalar_, typename Factor_, Uint32 ORDER_>
+template <typename FactorType, typename BundledIndex, Uint32 ORD>
+struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORDER_> >::BundleIndexComputer_t<TypeList_t<FactorType>, BundledIndex, ORD>
+{
+    static MultiIndex_t<TypeList_t<FactorType> > compute (BundledIndex const &b)
+    {
+        return MultiIndex_t<TypeList_t<FactorType> >(FactorType(index_of_greatest_triangular_number_less_than(b.value(),ORD)));
+    }
+};
+
+template <typename Scalar_, typename Factor_, Uint32 ORDER_>
+template <typename T, typename I>
+struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORDER_> >::VectorIndexComputer_t
+{
+    static Uint32 compute (T const &m)
+    {
+        return VectorIndexComputer_t<typename T::BodyMultiIndex>::compute(m.body()) + binomial_coefficient(m.head().value(),T::LENGTH);
+    }
+};
+
+template <typename Scalar_, typename Factor_, Uint32 ORDER_>
+template <typename I>
+struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORDER_> >::VectorIndexComputer_t<MultiIndex_t<EmptyTypeList>, I>
+{
+    static Uint32 compute (MultiIndex_t<EmptyTypeList> const &m)
+    {
+        return 0;
+    }
 };
 
 template <typename Scalar, typename Factor, Uint32 ORDER>
