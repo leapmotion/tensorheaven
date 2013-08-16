@@ -104,6 +104,27 @@ struct MultiIndex_t : List_t<IndexTypeList_>
     BodyMultiIndex const &body () const { return *static_cast<BodyMultiIndex const *>(&Parent::body()); }
     BodyMultiIndex &body () { return *static_cast<BodyMultiIndex *>(&Parent::body()); }
 
+    // if IndexTypeList is uniform (meaning all its types are the same), then this provides
+    // run-time access to the ith index.
+    HeadIndexType const &index (Uint32 i, bool check_range = CHECK_RANGE) const
+    {
+        STATIC_ASSERT(TypeListIsUniform_t<IndexTypeList>::V, ALL_TYPES_IN_TYPELIST_MUST_BE_THE_SAME);
+        assert(this->is_layed_out_contiguously_in_memory());
+        if (check_range && i >= LENGTH)
+            throw std::out_of_range("index argument was out of range");
+        HeadIndexType const *multi_index_as_array = &this->head();
+        return multi_index_as_array[i];
+    }
+    HeadIndexType &index (Uint32 i, bool check_range = CHECK_RANGE)
+    {
+        STATIC_ASSERT(TypeListIsUniform_t<IndexTypeList>::V, ALL_TYPES_IN_TYPELIST_MUST_BE_THE_SAME);
+        assert(this->is_layed_out_contiguously_in_memory());
+        if (check_range && i >= LENGTH)
+            throw std::out_of_range("index argument was out of range");
+        HeadIndexType *multi_index_as_array = &this->head();
+        return multi_index_as_array[i];
+    }
+
     // TODO: rename to RangeMultiIndex_t
 
     // slighty hacky way to use List_t's existing functionality -- NOTE: this only
@@ -228,6 +249,27 @@ struct MultiIndex_t<TypeList_t<HeadIndexType> > : public List_t<TypeList_t<HeadI
     // List_t<IndexTypeList> and has no members.
     BodyMultiIndex const &body () const { return *static_cast<BodyMultiIndex const *>(&Parent::body()); }
     BodyMultiIndex &body () { return *static_cast<BodyMultiIndex *>(&Parent::body()); }
+
+    // if IndexTypeList is uniform (meaning all its types are the same), then this provides
+    // run-time access to the ith index.
+    HeadIndexType const &index (Uint32 i, bool check_range = CHECK_RANGE) const
+    {
+        STATIC_ASSERT(TypeListIsUniform_t<IndexTypeList>::V, ALL_TYPES_IN_TYPELIST_MUST_BE_THE_SAME);
+        assert(this->is_layed_out_contiguously_in_memory());
+        if (check_range && i >= LENGTH)
+            throw std::out_of_range("index argument was out of range");
+        HeadIndexType const *multi_index_as_array = &this->head();
+        return multi_index_as_array[i];
+    }
+    HeadIndexType &index (Uint32 i, bool check_range = CHECK_RANGE)
+    {
+        STATIC_ASSERT(TypeListIsUniform_t<IndexTypeList>::V, ALL_TYPES_IN_TYPELIST_MUST_BE_THE_SAME);
+        assert(this->is_layed_out_contiguously_in_memory());
+        if (check_range && i >= LENGTH)
+            throw std::out_of_range("index argument was out of range");
+        HeadIndexType *multi_index_as_array = &this->head();
+        return multi_index_as_array[i];
+    }
 
     // type conversion operator -- because this MultiIndex_t only has one component,
     // it can be canonically identified as its component type.

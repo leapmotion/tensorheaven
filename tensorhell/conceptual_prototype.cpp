@@ -601,11 +601,23 @@ int main (int argc, char **argv)
         MultiIndex m; // default constructor uses default constructor of each component
         m.el<0>() = C(3);
         m.el<1>() = C(1);
-        m.el<2>() = C(4);
+        //m.el<2>() = C(4);
+        m.index(2) = C(4);
         std::cout << FORMAT_VALUE(m) << '\n';
         sort<IndexTypeList,std::less<Uint32> >(m);
         std::cout << "after sort: " << FORMAT_VALUE(m) << '\n';
+    }
 
+    {
+        typedef ComponentIndex_t<5> C;
+        typedef UniformTypeListOfLength_t<C,1>::T IndexTypeList;
+        typedef MultiIndex_t<IndexTypeList> MultiIndex;
+
+        MultiIndex m; // default constructor uses default constructor of each component
+        m.index(0) = C(4);
+        std::cout << FORMAT_VALUE(m) << '\n';
+        sort<IndexTypeList,std::less<Uint32> >(m);
+        std::cout << "after sort: " << FORMAT_VALUE(m) << '\n';
     }
 
     std::cout << '\n' << '\n';
