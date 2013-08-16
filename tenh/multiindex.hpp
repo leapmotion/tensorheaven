@@ -514,6 +514,21 @@ struct MultiIndexMap_t<DomainIndexTypeList,TypeList_t<CodomainIndexType> >
     }
 };
 
+template <typename MultiIndex>
+Uint32 multi_index_multiplicity (MultiIndex const &m, Uint32 count = 1)
+{
+    STATIC_ASSERT(TypeListIsUniform_t<typename MultiIndex::IndexTypeList>::V, ALL_TYPES_IN_TYPELIST_MUST_BE_THE_SAME);
+
+    if (MultiIndex::LENGTH <= 1)
+    {
+        return count;
+    }
+    else
+    {
+        return count * ((m.head() == m.body().head()) ? multiplicity_internal(m.body(),count + 1) : multiplicity_internal(m.body(),1));
+    }
+}
+
 } // end of namespace Tenh
 
 #endif // TENH_MULTIINDEX_HPP_
