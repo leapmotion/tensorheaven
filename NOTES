@@ -82,6 +82,7 @@ random TODOs:
   * Blah_m<...> for meta-programmingy things like type lists and related metafunctions
   * Blah_f<...> for meta-functions which "return" a type T
 - add "operator std::string ()" to TypeStringOf_t (?), so that "TypeStringOf_t<Foo>()" can be used
+- rename List_t::body() to List_t::body_list(), since the body list type is BodyList
 
 features necessary for version 0.5:
 x euclidean embedding (using short-term zero-dimensional hack (?))
@@ -336,6 +337,8 @@ Notes for [probable] upgrade to C++11
   gain experience using them before settling on a design/best practice.
 - Tons of the metaprogramming uses static const variables -- these can be changed to use constexpr.
 - Static asserts with error strings will be awesome (no more making enums for the error messages).
+- Use nullptr
+- Change private constructors to use the new " = delete" notation added in C++11.
 
 
 Notes/Reflections on the development of a really really template-heavy math library

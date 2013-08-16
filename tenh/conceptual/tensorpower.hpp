@@ -9,6 +9,7 @@
 #include "tenh/core.hpp"
 
 #include "tenh/conceptual/tensorproduct.hpp"
+#include "tenh/meta/typelist_utility.hpp"
 
 namespace Tenh {
 
@@ -184,20 +185,23 @@ struct DualOf_c<BasedTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces,Basis
 };
 
 
+
 // Factor_ must be a BasedVectorSpace_c type
 template <typename Factor_, Uint32 ORDER_>
 struct TensorPowerOfBasedVectorSpaces_c
 {
-    typedef TensorPowerOfVectorSpaces_c<typename Factor_::As_VectorSpace,ORDER_> As_TensorPowerOfVectorSpaces;
-    typedef BasedTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces_c<typename Factor_::As_VectorSpace,ORDER_>,
-                                             TensorPowerOfBases_c<typename Factor_::Basis,ORDER_> > As_BasedTensorPowerOfVectorSpaces;
-
     enum
     {
         STATIC_ASSERT_IN_ENUM(IsABasedVectorSpace_c<Factor_>::V, MUST_BE_BASED_VECTOR_SPACE),
     };
 
-    typedef typename As_TensorPowerOfVectorSpaces::FactorTypeList FactorTypeList;
+    typedef TensorProductOfVectorSpaces_c<typename UniformTypeListOfLength_t<typename Factor_::As_VectorSpace,ORDER_>::T> As_TensorProductOfVectorSpaces;
+    typedef TensorProductOfBasedVectorSpaces_c<typename UniformTypeListOfLength_t<Factor_,ORDER_>::T> As_TensorProductOfBasedVectorSpaces;
+    typedef TensorPowerOfVectorSpaces_c<typename Factor_::As_VectorSpace,ORDER_> As_TensorPowerOfVectorSpaces;
+    typedef BasedTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces_c<typename Factor_::As_VectorSpace,ORDER_>,
+                                             TensorPowerOfBases_c<typename Factor_::Basis,ORDER_> > As_BasedTensorPowerOfVectorSpaces;
+
+    typedef typename As_TensorProductOfBasedVectorSpaces::FactorTypeList FactorTypeList;
     static Uint32 const ORDER = As_TensorPowerOfVectorSpaces::ORDER;
     typedef typename As_BasedTensorPowerOfVectorSpaces::Field Field;
     static Uint32 const DIM = As_BasedTensorPowerOfVectorSpaces::DIM;

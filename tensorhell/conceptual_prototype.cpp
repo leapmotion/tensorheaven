@@ -6,6 +6,7 @@
 #include "tenh/array.hpp"
 #include "tenh/conceptual/basis.hpp"
 #include "tenh/conceptual/diagonalbased2tensorproduct.hpp"
+#include "tenh/conceptual/exteriorpower.hpp"
 #include "tenh/conceptual/symmetricpower.hpp"
 #include "tenh/conceptual/tensorpower.hpp"
 #include "tenh/conceptual/tensorproduct.hpp"
@@ -14,6 +15,7 @@
 #include "tenh/expressiontemplate_eval.hpp"
 #include "tenh/implementation/tensor.hpp"
 #include "tenh/implementation/vector.hpp"
+#include "tenh/implementation/wedge.hpp"
 
 struct X
 {
@@ -574,6 +576,22 @@ int main (int argc, char **argv)
 
         std::cout << '\n' << '\n';
     }
+
+    {
+        typedef VectorSpace_c<RealField,7,X> VSX;
+        typedef Basis_c<X> B;
+        typedef BasedVectorSpace_c<VSX,B> BasedX;
+
+        STATIC_ASSERT(IsABasedVectorSpace_c<BasedX>::V, MUST_BE_BASED_VECTOR_SPACE);
+
+        typedef ExteriorPowerOfBasedVectorSpaces_c<BasedX,3> Wedge3_BasedX;
+        typedef ImplementationOf_t<float,Wedge3_BasedX> Wedge;
+
+        Wedge w(0);
+        std::cout << FORMAT_VALUE(w) << '\n';
+    }
+
+    std::cout << '\n' << '\n';
 
     return 0;
 }

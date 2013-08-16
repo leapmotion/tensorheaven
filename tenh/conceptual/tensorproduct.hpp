@@ -283,14 +283,14 @@ struct BasesOfTypeList_t<EmptyTypeList>
 template <typename FactorTypeList_>
 struct TensorProductOfBasedVectorSpaces_c
 {
-    typedef TensorProductOfVectorSpaces_c<typename VectorSpacesOfTypeList_t<FactorTypeList_>::T> As_TensorProductOfVectorSpaces;
-    typedef BasedTensorProductOfVectorSpaces_c<As_TensorProductOfVectorSpaces,
-                                               TensorProductOfBases_c<typename BasesOfTypeList_t<FactorTypeList_>::T> > As_BasedTensorProductOfVectorSpaces;
-
     enum
     {
         STATIC_ASSERT_IN_ENUM(AllFactorsAreBasedVectorSpaces_t<FactorTypeList_>::V, ALL_FACTORS_MUST_BE_BASED_VECTOR_SPACES),
     };
+
+    typedef TensorProductOfVectorSpaces_c<typename VectorSpacesOfTypeList_t<FactorTypeList_>::T> As_TensorProductOfVectorSpaces;
+    typedef BasedTensorProductOfVectorSpaces_c<As_TensorProductOfVectorSpaces,
+                                               TensorProductOfBases_c<typename BasesOfTypeList_t<FactorTypeList_>::T> > As_BasedTensorProductOfVectorSpaces;
 
     typedef typename As_TensorProductOfVectorSpaces::As_TensorProduct As_TensorProduct;
     typedef typename As_BasedTensorProductOfVectorSpaces::As_BasedVectorSpace As_BasedVectorSpace;

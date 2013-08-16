@@ -8,6 +8,8 @@
 
 #include "tenh/core.hpp"
 
+#include <ostream>
+
 #include "tenh/componentindex.hpp"
 #include "tenh/conceptual/embeddableintensorproduct.hpp"
 #include "tenh/conceptual/tensorproduct.hpp"
@@ -20,7 +22,7 @@ namespace Tenh {
 // EmbeddableAsTensor_ should be a EmbeddableAsTensor_c type.
 // TODO: technically, this should be LinearlyEmbeddableAsTensor_i
 template <typename Derived_, typename Scalar_, typename EmbeddableInTensorProductOfBasedVectorSpaces_>
-struct EmbeddableAsTensor_i : public Vector_i<Derived_,Scalar_,EmbeddableAsTensor_>
+struct EmbeddableAsTensor_i : public Vector_i<Derived_,Scalar_,EmbeddableInTensorProductOfBasedVectorSpaces_>
 {
     enum
     {
@@ -55,14 +57,22 @@ struct EmbeddableAsTensor_i : public Vector_i<Derived_,Scalar_,EmbeddableAsTenso
     using Parent_Vector_i::operator();
     // this provides the "split" operation without needing an intermediate temporary index,
     // since this object will be frequently split.
+    // TODO: could the C++11 infer the return type?  this return type is annoying
     template <typename AbstractIndexHeadType, typename AbstractIndexBodyTypeList>
-    ExpressionTemplate_IndexSplit_t<Derived,SourceAbstractIndexType,TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> > split (
+    ExpressionTemplate_IndexSplit_t<ExpressionTemplate_IndexedObject_t<Parent_Vector_i,
+                                                                       TypeList_t<BasedVectorSpace>,
+                                                                       TypeList_t<DimIndex_t<'~',DIM> >,
+                                                                       EmptyTypeList,
+                                                                       FORCE_CONST,
+                                                                       CHECK_FOR_ALIASING>,
+                                    AbstractIndex_c<'~'>,
+                                    TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> > split (
         TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> const &abstract_multiindex) const
     {
         // make sure that the index type list actually contains AbstractIndex_c types
         STATIC_ASSERT((EachTypeIsAnAbstractIndex_c<TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> >::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
         AbstractIndex_c<'~'> dummy_index;
-        operator()(dummy_index).split(dummy_index, abstract_multiindex);
+        return operator()(dummy_index).split(dummy_index, abstract_multiindex);
     }
     // can't directly multi-index this object -- use split instead.
 
@@ -74,9 +84,15 @@ struct EmbeddableAsTensor_i : public Vector_i<Derived_,Scalar_,EmbeddableAsTenso
     {
         return "EmbeddableAsTensor_i<" + TypeStringOf_t<Derived>::eval() + ','
                                        + TypeStringOf_t<Scalar>::eval() + ','
-                                       + TypeStringOf_t<EmbeddableInTensorProductOfBasedVectorSpace>::eval() + '>';
+                                       + TypeStringOf_t<EmbeddableInTensorProductOfBasedVectorSpaces>::eval() + '>';
     }
 };
+
+template <typename Derived, typename Scalar, typename EmbeddableInTensorProductOfBasedVectorSpaces>
+std::ostream &operator << (std::ostream &out, EmbeddableAsTensor_i<Derived,Scalar,EmbeddableInTensorProductOfBasedVectorSpaces> const &e)
+{
+    return out << *static_cast<Vector_i<Derived,Scalar,EmbeddableInTensorProductOfBasedVectorSpaces> const *>(&e);
+}
 
 } // end of namespace Tenh
 

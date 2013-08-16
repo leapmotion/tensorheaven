@@ -16,6 +16,7 @@ namespace Tenh {
 
 template <typename Scalar, typename Space> struct ImplementationOf_t;
 
+// Factor_ should be a BasedVectorSpace_c type
 template <typename Scalar_, typename Factor_, Uint32 ORDER_>
 struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORDER_> >
     :
@@ -25,9 +26,11 @@ struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORD
     // Array_t is privately inherited because it is an implementation detail
     private Array_t<Scalar_,ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORDER_>::DIM>
 {
-    typedef EmbeddableAsTensor_iTensor_i<ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORDER_> >,
-                                         Scalar_,
-                                         ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORDER_> > Parent_EmbeddableAsTensor_i;
+    enum { STATIC_ASSERT_IN_ENUM(IsABasedVectorSpace_c<Factor_>::V, MUST_BE_BASED_VECTOR_SPACE) };
+
+    typedef EmbeddableAsTensor_i<ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORDER_> >,
+                                 Scalar_,
+                                 ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORDER_> > Parent_EmbeddableAsTensor_i;
     typedef Array_t<Scalar_,ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORDER_>::DIM> Parent_Array_t;
 
     typedef typename Parent_EmbeddableAsTensor_i::Derived Derived;
@@ -40,7 +43,6 @@ struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORD
     typedef typename Parent_EmbeddableAsTensor_i::FactorTypeList FactorTypeList;
     typedef typename Parent_EmbeddableAsTensor_i::MultiIndex MultiIndex;
     using Parent_EmbeddableAsTensor_i::DEGREE;
-    using Parent_EmbeddableAsTensor_i::IS_TENSOR_I;
     static Uint32 const ORDER = ORDER_;
     typedef Factor_ Factor;
     typedef ExteriorPowerOfBasedVectorSpaces_c<Factor,ORDER> ExteriorPowerOfBasedVectorSpaces;
@@ -146,10 +148,10 @@ private:
     ImplementationOf_t ();
 };
 
-template <typename Scalar, typename FactorTypeList>
-struct DualOf_c<ImplementationOf_t<Scalar,TensorProductOfBasedVectorSpaces_c<FactorTypeList> > >
+template <typename Scalar, typename Factor, Uint32 ORDER>
+struct DualOf_c<ImplementationOf_t<Scalar,ExteriorPowerOfBasedVectorSpaces_c<Factor,ORDER> > >
 {
-    typedef ImplementationOf_t<Scalar,typename TensorProductOfBasedVectorSpaces_c<FactorTypeList>::Dual> T;
+    typedef ImplementationOf_t<Scalar,typename DualOf_c<ExteriorPowerOfBasedVectorSpaces_c<Factor,ORDER> >::T> T;
 };
 
 } // end of namespace Tenh

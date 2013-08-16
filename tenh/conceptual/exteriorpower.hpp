@@ -8,6 +8,7 @@
 
 #include "tenh/core.hpp"
 
+#include "tenh/conceptual/embeddableintensorproduct.hpp"
 #include "tenh/conceptual/tensorpower.hpp" // for TypeListWithMultiplicity_t and probably nothing else
 #include "tenh/conceptual/vectorspace.hpp"
 
@@ -64,8 +65,8 @@ struct ExteriorPowerOfVectorSpaces_c
 template <typename Factor, Uint32 ORDER> struct IsAnExteriorPower_c<ExteriorPowerOfVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
 template <typename Factor, Uint32 ORDER> struct IsAVectorSpace_c<ExteriorPowerOfVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
 
-template <typename T> struct IsAExteriorPowerOfVectorSpaces_c { static bool const V = false; };
-template <typename Factor, Uint32 ORDER> struct IsAExteriorPowerOfVectorSpaces_c<ExteriorPowerOfVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
+template <typename T> struct IsAnExteriorPowerOfVectorSpaces_c { static bool const V = false; };
+template <typename Factor, Uint32 ORDER> struct IsAnExteriorPowerOfVectorSpaces_c<ExteriorPowerOfVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
 
 
 // Factor_ must be a Basis_c type
@@ -99,38 +100,37 @@ template <typename T> struct IsAnExteriorPowerOfBases_c { static bool const V = 
 template <typename Factor, Uint32 ORDER> struct IsAnExteriorPowerOfBases_c<ExteriorPowerOfBases_c<Factor,ORDER> > { static bool const V = true; };
 
 
-/*
-// TODO: figure out if this struct is necessary
 template <typename ExteriorPowerOfVectorSpaces, typename Basis_>
 struct BasedExteriorPowerOfVectorSpaces_c
 {
     typedef ExteriorPowerOfVectorSpaces As_ExteriorPowerOfVectorSpaces;
-    typedef BasedExteriorProductOfVectorSpaces_c<ExteriorPowerOfVectorSpaces,Basis_> As_BasedExteriorProductOfVectorSpaces;
+    typedef BasedVectorSpace_c<ExteriorPowerOfVectorSpaces,Basis_> As_BasedVectorSpace;
+//     typedef BasedExteriorProductOfVectorSpaces_c<ExteriorPowerOfVectorSpaces,Basis_> As_BasedExteriorProductOfVectorSpaces;
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM(IsAExteriorPowerOfVectorSpaces_c<ExteriorPowerOfVectorSpaces>::V, MUST_BE_EXTERIOR_POWER_OF_VECTOR_SPACES),
+        STATIC_ASSERT_IN_ENUM(IsAnExteriorPowerOfVectorSpaces_c<ExteriorPowerOfVectorSpaces>::V, MUST_BE_EXTERIOR_POWER_OF_VECTOR_SPACES),
         STATIC_ASSERT_IN_ENUM(IsABasis_c<Basis_>::V, MUST_BE_BASIS),
     };
 
     //typedef typename As_ExteriorPowerOfVectorSpaces::FactorTypeList FactorTypeList;
     static Uint32 const ORDER = As_ExteriorPowerOfVectorSpaces::ORDER;
-    typedef typename As_BasedExteriorProductOfVectorSpaces::Field Field;
-    static Uint32 const DIM = As_BasedExteriorProductOfVectorSpaces::DIM;
-    typedef typename As_BasedExteriorProductOfVectorSpaces::Id Id;
-    typedef typename As_BasedExteriorProductOfVectorSpaces::Basis Basis;
+    typedef typename As_BasedVectorSpace::Field Field;
+    static Uint32 const DIM = As_BasedVectorSpace::DIM;
+    typedef typename As_BasedVectorSpace::Id Id;
+    typedef typename As_BasedVectorSpace::Basis Basis;
     typedef typename DualOf_c<BasedExteriorPowerOfVectorSpaces_c>::T Dual; // relies on the template specialization below
 
     static std::string type_as_string ()
     {
         return "BasedExteriorPowerOfVectorSpaces_c<" + TypeStringOf_t<ExteriorPowerOfVectorSpaces>::eval() + ','
-                                                      + TypeStringOf_t<Basis>::eval() + '>';
+                                                     + TypeStringOf_t<Basis>::eval() + '>';
     }
 };
 
 template <typename ExteriorPowerOfVectorSpaces, typename Basis> struct IsAVectorSpace_c<BasedExteriorPowerOfVectorSpaces_c<ExteriorPowerOfVectorSpaces,Basis> > { static bool const V = true; };
 template <typename ExteriorPowerOfVectorSpaces, typename Basis> struct IsABasedVectorSpace_c<BasedExteriorPowerOfVectorSpaces_c<ExteriorPowerOfVectorSpaces,Basis> > { static bool const V = true; };
-template <typename ExteriorPowerOfVectorSpaces, typename Basis> struct IsABasedExteriorProductOfVectorSpaces_c<BasedExteriorPowerOfVectorSpaces_c<ExteriorPowerOfVectorSpaces,Basis> > { static bool const V = true; };
+template <typename ExteriorPowerOfVectorSpaces, typename Basis> struct IsAnExteriorPowerOfVectorSpaces_c<BasedExteriorPowerOfVectorSpaces_c<ExteriorPowerOfVectorSpaces,Basis> > { static bool const V = true; };
 
 template <typename T> struct IsABasedExteriorPowerOfVectorSpaces_c { static bool const V = false; };
 template <typename ExteriorPowerOfVectorSpaces, typename Basis> struct IsABasedExteriorPowerOfVectorSpaces_c<BasedExteriorPowerOfVectorSpaces_c<ExteriorPowerOfVectorSpaces,Basis> > { static bool const V = true; };
@@ -138,33 +138,33 @@ template <typename ExteriorPowerOfVectorSpaces, typename Basis> struct IsABasedE
 template <typename ExteriorPowerOfVectorSpaces, typename Basis>
 struct DualOf_c<BasedExteriorPowerOfVectorSpaces_c<ExteriorPowerOfVectorSpaces,Basis> >
 {
-    // NOTE: not really sure how to define this, because the dual of a exterior power isn't really
-    // the exterior power of the dual (this requires a particular identification)
-    typedef BasedTensorPowerOfVectorSpaces_c<typename DualOf_c<TensorPowerOfVectorSpaces>::T,typename DualOf_c<Basis>::T> T;
+    typedef BasedExteriorPowerOfVectorSpaces_c<typename DualOf_c<ExteriorPowerOfVectorSpaces>::T,typename DualOf_c<Basis>::T> T;
 };
-*/
+
+
 
 // Factor_ must be a BasedVectorSpace_c type
 template <typename Factor_, Uint32 ORDER_>
 struct ExteriorPowerOfBasedVectorSpaces_c
 {
+    enum { STATIC_ASSERT_IN_ENUM(IsABasedVectorSpace_c<Factor_>::V, MUST_BE_BASED_VECTOR_SPACE), };
+
     typedef ExteriorPowerOfVectorSpaces_c<typename Factor_::As_VectorSpace,ORDER_> As_ExteriorPowerOfVectorSpaces;
     typedef BasedVectorSpace_c<ExteriorPowerOfVectorSpaces_c<typename Factor_::As_VectorSpace,ORDER_>,
                                ExteriorPowerOfBases_c<typename Factor_::Basis,ORDER_> > As_BasedVectorSpace;
-    typedef EmbeddableInTensorProductOfBasedVectorSpaces_c<typename TensorPowerOfBasedVectorSpaces_c<Factor_,ORDER_> > As_EmbeddableInTensorProductOfBasedVectorSpaces;
+    typedef EmbeddableInTensorProductOfBasedVectorSpaces_c<TensorPowerOfBasedVectorSpaces_c<Factor_,ORDER_> > As_EmbeddableInTensorProductOfBasedVectorSpaces;
 
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IsABasedVectorSpace_c<Factor_>::V, MUST_BE_BASED_VECTOR_SPACE),
-    };
+    typedef typename As_EmbeddableInTensorProductOfBasedVectorSpaces::FactorTypeList FactorTypeList;
 
-    typedef typename As_ExteriorPowerOfVectorSpaces::FactorTypeList FactorTypeList;
+    enum { STATIC_ASSERT_IN_ENUM(AllFactorsAreBasedVectorSpaces_t<FactorTypeList>::V, ALL_FACTORS_MUST_BE_BASED_VECTOR_SPACES) };
+
+    typedef TensorProductOfBasedVectorSpaces_c<FactorTypeList> TensorProductOfBasedVectorSpaces;
     static Uint32 const ORDER = As_ExteriorPowerOfVectorSpaces::ORDER;
     typedef typename As_BasedVectorSpace::Field Field;
     static Uint32 const DIM = As_BasedVectorSpace::DIM;
     typedef typename As_BasedVectorSpace::Id Id;
     typedef typename As_BasedVectorSpace::Basis Basis;
-    typedef typename DualOf_c<ExteriorPowerOfBasedVectorSpaces_c>::T Dual; // the dual is not the exterior power of Factor::Dual
+    typedef typename DualOf_c<ExteriorPowerOfBasedVectorSpaces_c>::T Dual; // relies on the template specialization below
     typedef Factor_ Factor;
 
     static std::string type_as_string ()
@@ -175,12 +175,19 @@ struct ExteriorPowerOfBasedVectorSpaces_c
 
 template <typename Factor, Uint32 ORDER> struct IsAVectorSpace_c<ExteriorPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
 template <typename Factor, Uint32 ORDER> struct IsAnExteriorPower_c<ExteriorPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
-template <typename Factor, Uint32 ORDER> struct IsAExteriorPowerOfVectorSpaces_c<ExteriorPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
+template <typename Factor, Uint32 ORDER> struct IsAnExteriorPowerOfVectorSpaces_c<ExteriorPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
 template <typename Factor, Uint32 ORDER> struct IsABasedVectorSpace_c<ExteriorPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
 template <typename Factor, Uint32 ORDER> struct IsEmbeddableInTensorProductOfBasedVectorSpaces_c<ExteriorPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
 
-template <typename T> struct IsAExteriorPowerOfBasedVectorSpaces_c { static bool const V = false; };
-template <typename Factor, Uint32 ORDER> struct IsAExteriorPowerOfBasedVectorSpaces_c<ExteriorPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
+template <typename T> struct IsAnExteriorPowerOfBasedVectorSpaces_c { static bool const V = false; };
+template <typename Factor, Uint32 ORDER> struct IsAnExteriorPowerOfBasedVectorSpaces_c<ExteriorPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
+
+template <typename Factor, Uint32 ORDER>
+struct DualOf_c<ExteriorPowerOfBasedVectorSpaces_c<Factor,ORDER> >
+{
+    typedef BasedExteriorPowerOfVectorSpaces_c<typename DualOf_c<ExteriorPowerOfVectorSpaces_c<typename Factor::As_VectorSpace,ORDER> >::T,
+                                               typename DualOf_c<typename ExteriorPowerOfBasedVectorSpaces_c<Factor,ORDER>::Basis>::T> T;
+};
 
 } // end of namespace Tenh
 

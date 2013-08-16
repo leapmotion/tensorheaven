@@ -18,6 +18,8 @@ struct VectorSpace_c
 {
     enum { STATIC_ASSERT_IN_ENUM(IsAField_c<Field_>::V, MUST_BE_FIELD) };
 
+    typedef VectorSpace_c As_VectorSpace;
+
     typedef Field_ Field;
     static Uint32 const DIM = DIM_;
     typedef Id_ Id;
