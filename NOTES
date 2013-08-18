@@ -61,19 +61,10 @@ random TODOs:
 - move "private" utility functions/metafunctions into the "Tenh::NonPublic" namespace so that they're not in the
   "Tenh" namespace, for at least a little bit of non-public interface hiding.
 - make a nonpublic directory and put all NonPublic code in there (and actually put appropriate stuff in NonPublic namespace)
-- allow 0-dimensional vector spaces (otherwise certain induced types (e.g. antisymmetric 2-tensors) will cause static asserts)
 - make a wrapper for creating analogous Eigen::Matrix types which handles the retarded issue with
   Eigen::Matrix<Scalar,N,1,RowMajor> not working because it's a column vector (even though the memory would
   be layed out identically).
-- use -Wno-tautological-compare for clang builds
 - is it possible to specify the default value for Derived directly?
-- make various tensor types check the IS_XYZ values for their template parameters
-- see if some sort of static_cast can be used to detect if a type inherts a class, and use this to replace
-  IS_EXPRESSION_TEMPLATE, IS_TENSOR2_T, etc.  Or failing that, use some template metafunction for this.
-- in relaxing the C++-driven type checking in preference to static-assert-driven type checking, could make all
-  indices used in indexed expressions "weakly typed", except for bundled indices (e.g. the index p in
-  t(i|j).bundle(i|j,p) -- it is necessary to know the type of p for this to be a well-defined bundle).  all
-  other index types can be inferred from their use in the expression.
 - decide on template metaprogramming naming convention.  something along the lines of
   * Blah_t<...> for types that actually implement stuff and have significant runtime code (is there
     something better than _t ?)
@@ -138,6 +129,12 @@ x no_alias method for avoiding the run-time check against aliased expression tem
 x Euclidean embeddings for vector and tensor types for when an inner-product-compatible representation is needed.
 x Basis identifier for each vector space, giving an additional feature to distinguish vector types with,
   for added correctness, which is particularly useful for the Euclidean embedding stuff.
+x allow 0-dimensional vector spaces (this was done via -Wno-tautological-compare)
+x relaxed the C++-driven type checking in preference to static-assert-driven type checking, made all
+  indices used in indexed expressions "weakly typed", except for bundled indices (e.g. the index p in
+  t(i|j).bundle(i|j,p) -- it is necessary to know the type of p for this to be a well-defined bundle).  all
+  other index types can be inferred from their use in the expression.
+x strongly-typed vector spaces, and only natural pairings thereof allowed.
 
 ---------------------------
 
