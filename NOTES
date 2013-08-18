@@ -319,11 +319,40 @@ Notes for conceptual layer and refactor
       static Uint32 const ORDER = T::ORDER;
       // etc
 
-      enum { STATIC_ASSERT_IN_ENUM(EachTypeIsVectorSpace_c<FactorTypeList>, MUST_BE_TYPELIST_OF_VECTOR_SPACES) };
-  };
-  Hopefully this would cause an error if any of the members/typedefs were missing.  The static asserts would certainly work.
+      static bool const V = true; // used for instantiating/using this check in an static assert
 
-Notes for [probable] upgrade to C++11
+      enum 
+      { 
+          STATIC_ASSERT_IN_ENUM(Check_VectorSpace_c<T>::V, MUST_BE_VECTOR_SPACE)
+          STATIC_ASSERT_IN_ENUM(EachTypeIsVectorSpace_c<FactorTypeList>, MUST_BE_TYPELIST_OF_VECTOR_SPACES) 
+      };
+  };
+  Hopefully this would cause an error if any of the members/typedefs were missing (TODO: Write
+  some compile-time positive and negative tests to this effect).  The static asserts would certainly
+  work.
+
+
+Features necessary for "version 1.0"
+- implementation of diagonal 2-tensors (of based vector spaces)
+- implementation of the optimization for contraction with diagonal 2-tensors (necessary so 
+  that we can implement inner products and other similar bilinear forms efficiently)
+- refactoring the Eigen interop code to be strongly typed
+- do more assembler code inspection for each of the compilers we use (GCC, Clang, MSVC) to
+  make sure that it's generating code that's as efficient as we expect it to be (this is 
+  really important)
+- refactoring the unit tests to account for the strongly-typed refactor in general
+- writing unit tests for the new code (general symmetric and antisymmetric N-tensors)
+- possibly providing operator overloads to do non-indexed-expression vector/matrix math like
+  Eigen does (so this library could be used by "laymen" without using abstract index notation)
+- regularize/clean up the template code naming scheme
+- generating documentation (Doxygen comments for the code, Doxygen-generated high-level
+  documentation, and LaTeX writeups of the abstract math)
+- translating LVD code (Victor's legacy metaprogramming lib) into "native Tensor Heaven" code
+  (important for legal purposes)
+- Talking to Tom about officially licensing the LVD unit test code (important for legal purposes)
+
+
+Notes for [probable] upgrade to C++11 (to happen after "version 1.0" is reached)
 - "Template typedefs" are possible through "alias declarations" in C++11:
 
     C++11 added alias declarations, which are generalization of typedef, allowing templates:

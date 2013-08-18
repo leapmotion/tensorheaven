@@ -644,6 +644,8 @@ int main (int argc, char **argv)
         std::cout << FORMAT_VALUE(m) << '\n';
         sort<IndexTypeList,std::less<Uint32> >(m);
         std::cout << "after sort: " << FORMAT_VALUE(m) << '\n';
+
+        std::cout << '\n' << '\n';
     }
 
     {
