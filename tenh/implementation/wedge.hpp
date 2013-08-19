@@ -130,7 +130,7 @@ struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORD
     // all components are stored in memory (in the array m), and have scalar factor 1
     // TODO: this should probably go into the conceptual layer
 
-    static bool component_is_immutable_zero (MultiIndex const &m) { return multi_index_multiplicity(m) == 1; }
+    static bool component_is_immutable_zero (MultiIndex const &m) { return MultiIndexMultiplicity_t<MultiIndex>::eval(sorted<typename MultiIndex::IndexTypeList,std::greater<Uint32> >(m)) != 1; }
     static Scalar scalar_factor_for_component (MultiIndex const &m) { return Scalar(1)/Scalar(Factorial_t<ORDER>::V); }
     static ComponentIndex vector_index_of (MultiIndex const &m) {
         MultiIndex n = sorted<typename MultiIndex::IndexTypeList,std::greater<Uint32> >(m);
