@@ -22,7 +22,13 @@ Uint32 factorial(Uint32 x)
 template<Uint32 X>
 struct Factorial_t
 {
-    static const Uint32 V = (X > 0) ? Factorial_t<X-1>::V * X : 1;
+    static const Uint32 V = Factorial_t<X-1>::V * X;
+};
+
+template<>
+struct Factorial_t<0>
+{
+    static const Uint32 V = 1;
 };
 
 Uint32 binomial_coefficient(Uint32 n, Uint32 k)
@@ -33,7 +39,13 @@ Uint32 binomial_coefficient(Uint32 n, Uint32 k)
 template<Uint32 N, Uint32 K>
 struct BinomialCoefficient_t
 {
-    static const Uint32 V = (K == 0) ? 1 : BinomialCoefficient_t<N,K-1>::V * (N - K + 1) / K;
+    static const Uint32 V = BinomialCoefficient_t<N,K-1>::V * (N - K + 1) / K;
+};
+
+template<Uint32 N>
+struct BinomialCoefficient_t<N,0>
+{
+    static const Uint32 V = 1 ;
 };
 
 Uint32 index_of_greatest_triangular_number_less_than(Uint32 x, Uint32 d, Uint32 iteration = 0)
