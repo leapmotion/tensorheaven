@@ -578,7 +578,7 @@ int main (int argc, char **argv)
     }
 
     {
-        typedef VectorSpace_c<RealField,7,X> VSX;
+        typedef VectorSpace_c<RealField,5,X> VSX;
         typedef Basis_c<X> B;
         typedef BasedVectorSpace_c<VSX,B> BasedX;
 
@@ -588,16 +588,47 @@ int main (int argc, char **argv)
         typedef ImplementationOf_t<float,Wedge3_BasedX> Wedge;
 
         Wedge w(0);
+        w[Wedge::ComponentIndex(0, CHECK_RANGE)] = -30;
+        w[Wedge::ComponentIndex(1, CHECK_RANGE)] = -24;
+        w[Wedge::ComponentIndex(2, CHECK_RANGE)] = -18;
+        w[Wedge::ComponentIndex(3, CHECK_RANGE)] = -12;
+        w[Wedge::ComponentIndex(4, CHECK_RANGE)] = -6;
+        w[Wedge::ComponentIndex(5, CHECK_RANGE)] = 6;
+        w[Wedge::ComponentIndex(6, CHECK_RANGE)] = 12;
+        w[Wedge::ComponentIndex(7, CHECK_RANGE)] = 18;
+        w[Wedge::ComponentIndex(8, CHECK_RANGE)] = 24;
+        w[Wedge::ComponentIndex(9, CHECK_RANGE)] = 30;
+
         std::cout << FORMAT_VALUE(w) << '\n';
+
+        {
+            AbstractIndex_c<'i'> i;
+            AbstractIndex_c<'j'> j;
+            AbstractIndex_c<'k'> k;
+            AbstractIndex_c<'l'> l;
+            std::cout << FORMAT_VALUE(w(i).split(i,j|k|l)) << '\n';
+        }
 
         std::cout << '\n' << '\n';
 
-        Wedge::ComponentIndex i(14);
+        std::cout << "Round-trip convert from ComponentIndex\n";
+        Wedge::ComponentIndex i(9);
         std::cout << FORMAT_VALUE(i) << '\n';
         Wedge::MultiIndex m = Wedge::bundle_index_map<Wedge::MultiIndex::IndexTypeList, Wedge::ComponentIndex>(i);
         std::cout << FORMAT_VALUE(m) << '\n';
         Wedge::ComponentIndex j = Wedge::vector_index_of(m);
-        std::cout << FORMAT_VALUE(j) << '\n';
+        std::cout << FORMAT_VALUE(j) << "\n\n";
+
+        std::cout << "Round-trip convert from MultiIndex\n";
+        Wedge::MultiIndex n(4, 0, 3, CHECK_RANGE);
+        std::cout << FORMAT_VALUE(n) << '\n';
+        i = Wedge::vector_index_of(n);
+        std::cout << FORMAT_VALUE(i) << '\n';
+        n = Wedge::bundle_index_map<Wedge::MultiIndex::IndexTypeList, Wedge::ComponentIndex>(i);
+        std::cout << FORMAT_VALUE(n) << '\n';
+        i = Wedge::vector_index_of(n);
+        std::cout << FORMAT_VALUE(i) << "\n\n";
+        n = Wedge::bundle_index_map<Wedge::MultiIndex::IndexTypeList, Wedge::ComponentIndex>(i);
     }
 
     {
