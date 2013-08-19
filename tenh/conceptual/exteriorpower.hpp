@@ -11,6 +11,7 @@
 #include "tenh/conceptual/embeddableintensorproduct.hpp"
 #include "tenh/conceptual/tensorpower.hpp" // for TypeListWithMultiplicity_t and probably nothing else
 #include "tenh/conceptual/vectorspace.hpp"
+#include "tenh/mathutil.hpp"
 
 namespace Tenh {
 
@@ -36,12 +37,11 @@ template <typename Factor, Uint32 ORDER> struct IsAnExteriorPower_c<ExteriorPowe
 
 
 // FactorTypeList_ must be a TypeList_t of VectorSpace_c types
-// TODO: real dimension calculation
 template <typename Factor_, Uint32 ORDER_>
 struct ExteriorPowerOfVectorSpaces_c
 {
     typedef ExteriorPower_c<Factor_,ORDER_> As_ExteriorPower;
-    typedef VectorSpace_c<typename Factor_::Field,42,ExteriorPower_c<typename Factor_::Id,ORDER_> > As_VectorSpace;
+    typedef VectorSpace_c<typename Factor_::Field,BinomialCoefficient_t<Factor_::DIM, ORDER_>::V,ExteriorPower_c<typename Factor_::Id,ORDER_> > As_VectorSpace;
 
     enum
     {
