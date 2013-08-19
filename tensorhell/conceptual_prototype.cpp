@@ -588,16 +588,16 @@ int main (int argc, char **argv)
         typedef ImplementationOf_t<float,Wedge3_BasedX> Wedge;
 
         Wedge w(0);
-        w[Wedge::ComponentIndex(0, CHECK_RANGE)] = -30;
-        w[Wedge::ComponentIndex(1, CHECK_RANGE)] = -24;
-        w[Wedge::ComponentIndex(2, CHECK_RANGE)] = -18;
-        w[Wedge::ComponentIndex(3, CHECK_RANGE)] = -12;
-        w[Wedge::ComponentIndex(4, CHECK_RANGE)] = -6;
-        w[Wedge::ComponentIndex(5, CHECK_RANGE)] = 6;
-        w[Wedge::ComponentIndex(6, CHECK_RANGE)] = 12;
-        w[Wedge::ComponentIndex(7, CHECK_RANGE)] = 18;
-        w[Wedge::ComponentIndex(8, CHECK_RANGE)] = 24;
-        w[Wedge::ComponentIndex(9, CHECK_RANGE)] = 30;
+        w[Wedge::ComponentIndex(0, CHECK_RANGE)] = 6;
+        w[Wedge::ComponentIndex(1, CHECK_RANGE)] = 12;
+        w[Wedge::ComponentIndex(2, CHECK_RANGE)] = 18;
+        w[Wedge::ComponentIndex(3, CHECK_RANGE)] = 24;
+        w[Wedge::ComponentIndex(4, CHECK_RANGE)] = 30;
+        w[Wedge::ComponentIndex(5, CHECK_RANGE)] = 36;
+        w[Wedge::ComponentIndex(6, CHECK_RANGE)] = 42;
+        w[Wedge::ComponentIndex(7, CHECK_RANGE)] = 48;
+        w[Wedge::ComponentIndex(8, CHECK_RANGE)] = 54;
+        w[Wedge::ComponentIndex(9, CHECK_RANGE)] = 60;
 
         std::cout << FORMAT_VALUE(w) << '\n';
 
