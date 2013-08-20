@@ -667,7 +667,7 @@ int main (int argc, char **argv)
         std::cout << '\n' << '\n';
 
         std::cout << "Round-trip convert from ComponentIndex\n";
-        Sym::ComponentIndex i(7);
+        Sym::ComponentIndex i(7, CHECK_RANGE);
         std::cout << FORMAT_VALUE(i) << '\n';
         Sym::MultiIndex m = Sym::bundle_index_map<Sym::MultiIndex::IndexTypeList, Sym::ComponentIndex>(i);
         std::cout << FORMAT_VALUE(m) << '\n';
