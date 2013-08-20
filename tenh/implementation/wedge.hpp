@@ -76,7 +76,7 @@ struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORD
 
     static bool component_is_immutable_zero (MultiIndex const &m) { return MultiIndexMultiplicity_t<MultiIndex>::eval(sorted<typename MultiIndex::IndexTypeList,std::greater<Uint32> >(m)) != 1; }
     // TODO: This needs to be -1^sign(m)/ORDER!.
-    static Scalar scalar_factor_for_component (MultiIndex const &m) { return Scalar(1)/Scalar(Factorial_t<ORDER>::V); }
+    static Scalar scalar_factor_for_component (MultiIndex const &m) { return SignComputer_t<MultiIndex>::compute(m)/Scalar(Factorial_t<ORDER>::V); }
     static ComponentIndex vector_index_of (MultiIndex const &m)
     {
         MultiIndex n = sorted<typename MultiIndex::IndexTypeList,std::greater<Uint32> >(m);
@@ -98,6 +98,9 @@ private:
 
     template<typename T, typename I = int>
     struct VectorIndexComputer_t;
+
+    template<typename T, typename I = int>
+    struct SignComputer_t;
 };
 
 template <typename Scalar_, typename Factor_, Uint32 ORDER_>
@@ -137,6 +140,35 @@ struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORD
     static Uint32 compute (MultiIndex_t<EmptyTypeList> const &m)
     {
         return 0;
+    }
+};
+
+template <typename Scalar_, typename Factor_, Uint32 ORDER_>
+template <typename T, typename I>
+struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORDER_> >::SignComputer_t
+{
+    static Scalar_ compute (T const &m)
+    {
+        Scalar_ sign(1);
+        for (int i = 0; i < T::LENGTH; ++i)
+        {
+            if (m.head().value() > m.index(i).value())
+            {
+                sign *= Scalar_(-1);
+            }
+        }
+
+        return SignComputer_t<typename T::BodyMultiIndex>::compute(m.body()) * sign ;
+    }
+};
+
+template <typename Scalar_, typename Factor_, Uint32 ORDER_>
+template <typename I>
+struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORDER_> >::SignComputer_t<MultiIndex_t<EmptyTypeList>, I>
+{
+    static Scalar_ compute (MultiIndex_t<EmptyTypeList> const &m)
+    {
+        return Scalar_(1);
     }
 };
 
