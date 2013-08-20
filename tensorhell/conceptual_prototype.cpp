@@ -643,16 +643,16 @@ int main (int argc, char **argv)
         typedef ImplementationOf_t<float,Sym3_BasedX> Sym;
 
         Sym w(0);
-        w[Sym::ComponentIndex(0, CHECK_RANGE)] = 6;
-        w[Sym::ComponentIndex(1, CHECK_RANGE)] = 12;
-        w[Sym::ComponentIndex(2, CHECK_RANGE)] = 18;
-        w[Sym::ComponentIndex(3, CHECK_RANGE)] = 24;
-        w[Sym::ComponentIndex(4, CHECK_RANGE)] = 30;
+        w[Sym::ComponentIndex(0, CHECK_RANGE)] = 1;
+        w[Sym::ComponentIndex(1, CHECK_RANGE)] = 6;
+        w[Sym::ComponentIndex(2, CHECK_RANGE)] = 9;
+        w[Sym::ComponentIndex(3, CHECK_RANGE)] = 4;
+        w[Sym::ComponentIndex(4, CHECK_RANGE)] = 15;
         w[Sym::ComponentIndex(5, CHECK_RANGE)] = 36;
-        w[Sym::ComponentIndex(6, CHECK_RANGE)] = 42;
-        w[Sym::ComponentIndex(7, CHECK_RANGE)] = 48;
-        w[Sym::ComponentIndex(8, CHECK_RANGE)] = 54;
-        w[Sym::ComponentIndex(9, CHECK_RANGE)] = 60;
+        w[Sym::ComponentIndex(6, CHECK_RANGE)] = 21;
+        w[Sym::ComponentIndex(7, CHECK_RANGE)] = 24;
+        w[Sym::ComponentIndex(8, CHECK_RANGE)] = 27;
+        w[Sym::ComponentIndex(9, CHECK_RANGE)] = 10;
 
         std::cout << FORMAT_VALUE(w) << '\n';
 
