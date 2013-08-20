@@ -662,6 +662,7 @@ int main (int argc, char **argv)
             AbstractIndex_c<'k'> k;
             AbstractIndex_c<'l'> l;
             std::cout << FORMAT_VALUE(w(i).split(i,j|k|l)) << '\n';
+            //std::cout << FORMAT_VALUE(w.split(j|k|l)) << '\n'; // this doesn't currently work.
         }
 
         std::cout << '\n' << '\n';
@@ -713,9 +714,21 @@ int main (int argc, char **argv)
         std::cout << FORMAT_VALUE(m) << '\n';
         sort<IndexTypeList,std::less<Uint32> >(m);
         std::cout << "after sort: " << FORMAT_VALUE(m) << '\n';
+
+        std::cout << '\n' << '\n';
     }
 
-    std::cout << '\n' << '\n';
+    {
+        // testing 0-dimensional vector spaces
+        typedef VectorSpace_c<RealField,0,X> VSX;
+        typedef Basis_c<X> BasisX;
+        typedef BasedVectorSpace_c<VSX,BasisX> BasedX;
+        typedef ImplementationOf_t<float,BasedX> Vector;
+        Vector v(0.0f);
+        std::cout << FORMAT_VALUE(v) << '\n';
+
+        std::cout << '\n' << '\n';
+    }
 
     return 0;
 }

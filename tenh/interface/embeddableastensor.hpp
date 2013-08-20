@@ -58,6 +58,7 @@ struct EmbeddableAsTensor_i : public Vector_i<Derived_,Scalar_,EmbeddableInTenso
     // this provides the "split" operation without needing an intermediate temporary index,
     // since this object will be frequently split.
     // TODO: could the C++11 infer the return type?  this return type is annoying
+    // NOTE: this doesn't currently work, though it should be equivalent to code that does work.
     template <typename AbstractIndexHeadType, typename AbstractIndexBodyTypeList>
     ExpressionTemplate_IndexSplit_t<ExpressionTemplate_IndexedObject_t<Parent_Vector_i,
                                                                        TypeList_t<BasedVectorSpace>,
@@ -72,7 +73,7 @@ struct EmbeddableAsTensor_i : public Vector_i<Derived_,Scalar_,EmbeddableInTenso
         // make sure that the index type list actually contains AbstractIndex_c types
         STATIC_ASSERT((EachTypeIsAnAbstractIndex_c<TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> >::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
         AbstractIndex_c<'~'> dummy_index;
-        return operator()(dummy_index).split(dummy_index, abstract_multiindex);
+        return Parent_Vector_i::operator()(dummy_index).split(dummy_index, abstract_multiindex);
     }
     // can't directly multi-index this object -- use split instead.
 
