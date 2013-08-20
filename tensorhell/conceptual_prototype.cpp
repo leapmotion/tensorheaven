@@ -586,6 +586,9 @@ int main (int argc, char **argv)
         STATIC_ASSERT(IsABasedVectorSpace_c<BasedX>::V, MUST_BE_BASED_VECTOR_SPACE);
 
         typedef ExteriorPowerOfBasedVectorSpaces_c<BasedX,3> Wedge3_BasedX;
+        typedef ExteriorPowerOfBasedVectorSpaces_c<BasedX,2> Wedge2_BasedX;
+        typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedX, TypeList_t<BasedX> > > T2_BasedX;
+
         typedef ImplementationOf_t<float,Wedge3_BasedX> Wedge;
 
         Wedge w(0);
@@ -607,7 +610,10 @@ int main (int argc, char **argv)
             AbstractIndex_c<'j'> j;
             AbstractIndex_c<'k'> k;
             AbstractIndex_c<'l'> l;
+            AbstractIndex_c<'p'> p;
             std::cout << FORMAT_VALUE(w(i).split(i,j|k|l)) << '\n';
+            std::cout << FORMAT_VALUE(w(i).split(i,j|k|l).bundle(j|l,Wedge2_BasedX(),p)) << '\n';
+            std::cout << FORMAT_VALUE(w(i).split(i,j|k|l).bundle(j|l,T2_BasedX(),p)) << '\n';
         }
 
         std::cout << '\n' << '\n';
@@ -640,6 +646,9 @@ int main (int argc, char **argv)
         STATIC_ASSERT(IsABasedVectorSpace_c<BasedX>::V, MUST_BE_BASED_VECTOR_SPACE);
 
         typedef SymmetricPowerOfBasedVectorSpaces_c<BasedX,3> Sym3_BasedX;
+        typedef SymmetricPowerOfBasedVectorSpaces_c<BasedX,2> Sym2_BasedX;
+        typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedX, TypeList_t<BasedX> > > T2_BasedX;
+
         typedef ImplementationOf_t<float,Sym3_BasedX> Sym;
 
         Sym w(0);
@@ -661,8 +670,11 @@ int main (int argc, char **argv)
             AbstractIndex_c<'j'> j;
             AbstractIndex_c<'k'> k;
             AbstractIndex_c<'l'> l;
+            AbstractIndex_c<'p'> p;
             std::cout << FORMAT_VALUE(w(i).split(i,j|k|l)) << '\n';
             //std::cout << FORMAT_VALUE(w.split(j|k|l)) << '\n'; // this doesn't currently work.
+            std::cout << FORMAT_VALUE(w(i).split(i,j|k|l).bundle(j|l,Sym2_BasedX(),p)) << '\n';
+            std::cout << FORMAT_VALUE(w(i).split(i,j|k|l).bundle(j|l,T2_BasedX(),p)) << '\n';
         }
 
         std::cout << '\n' << '\n';
