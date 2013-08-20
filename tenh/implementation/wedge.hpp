@@ -150,7 +150,7 @@ struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORD
     static Scalar_ compute (T const &m)
     {
         Scalar_ sign(1);
-        for (int i = 0; i < T::LENGTH; ++i)
+        for (Uint32 i = 0; i < T::LENGTH; ++i)
         {
             if (m.head().value() > m.index(i).value())
             {
