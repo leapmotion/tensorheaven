@@ -7,6 +7,7 @@
 #define TENH_CONCEPTUAL_SYMMETRICPOWER_HPP_
 
 #include "tenh/core.hpp"
+#include "tenh/mathutil.hpp"
 
 #include "tenh/conceptual/tensorpower.hpp" // for TypeListWithMultiplicity_t and probably nothing else
 #include "tenh/conceptual/vectorspace.hpp"
@@ -35,12 +36,11 @@ template <typename Factor, Uint32 ORDER> struct IsASymmetricPower_c<SymmetricPow
 
 
 // FactorTypeList_ must be a TypeList_t of VectorSpace_c types
-// TODO: real dimension calculation
 template <typename Factor_, Uint32 ORDER_>
 struct SymmetricPowerOfVectorSpaces_c
 {
     typedef SymmetricPower_c<Factor_,ORDER_> As_SymmetricPower;
-    typedef VectorSpace_c<typename Factor_::Field,42,SymmetricPower_c<typename Factor_::Id,ORDER_> > As_VectorSpace;
+    typedef VectorSpace_c<typename Factor_::Field,BinomialCoefficient_t<Factor_::DIM + ORDER_ - 1, ORDER_>::V,SymmetricPower_c<typename Factor_::Id,ORDER_> > As_VectorSpace;
 
     enum
     {
@@ -151,13 +151,13 @@ struct SymmetricPowerOfBasedVectorSpaces_c
     typedef SymmetricPowerOfVectorSpaces_c<typename Factor_::As_VectorSpace,ORDER_> As_SymmetricPowerOfVectorSpaces;
     typedef BasedVectorSpace_c<SymmetricPowerOfVectorSpaces_c<typename Factor_::As_VectorSpace,ORDER_>,
                                SymmetricPowerOfBases_c<typename Factor_::Basis,ORDER_> > As_BasedVectorSpace;
+    typedef EmbeddableInTensorProductOfBasedVectorSpaces_c<TensorPowerOfBasedVectorSpaces_c<Factor_, ORDER_> > As_EmbeddableInTensorProductOfBasedVectorSpaces;
 
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IsABasedVectorSpace_c<Factor_>::V, MUST_BE_BASED_VECTOR_SPACE),
-    };
+    typedef typename As_EmbeddableInTensorProductOfBasedVectorSpaces::FactorTypeList FactorTypeList;
 
-    typedef typename As_SymmetricPowerOfVectorSpaces::FactorTypeList FactorTypeList;
+    enum { STATIC_ASSERT_IN_ENUM(AllFactorsAreBasedVectorSpaces_t<FactorTypeList>::V, ALL_FACTORS_MUST_BE_BASED_VECTOR_SPACES) };
+
+    typedef TensorProductOfBasedVectorSpaces_c<FactorTypeList> TensorProductOfBasedVectorSpaces;
     static Uint32 const ORDER = As_SymmetricPowerOfVectorSpaces::ORDER;
     typedef typename As_BasedVectorSpace::Field Field;
     static Uint32 const DIM = As_BasedVectorSpace::DIM;
@@ -176,6 +176,7 @@ template <typename Factor, Uint32 ORDER> struct IsAVectorSpace_c<SymmetricPowerO
 template <typename Factor, Uint32 ORDER> struct IsASymmetricPower_c<SymmetricPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
 template <typename Factor, Uint32 ORDER> struct IsASymmetricPowerOfVectorSpaces_c<SymmetricPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
 template <typename Factor, Uint32 ORDER> struct IsABasedVectorSpace_c<SymmetricPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
+template <typename Factor, Uint32 ORDER> struct IsEmbeddableInTensorProductOfBasedVectorSpaces_c<SymmetricPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
 
 template <typename T> struct IsASymmetricPowerOfBasedVectorSpaces_c { static bool const V = false; };
 template <typename Factor, Uint32 ORDER> struct IsASymmetricPowerOfBasedVectorSpaces_c<SymmetricPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };

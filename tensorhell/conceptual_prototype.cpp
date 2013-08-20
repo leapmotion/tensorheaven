@@ -16,6 +16,7 @@
 #include "tenh/implementation/tensor.hpp"
 #include "tenh/implementation/vector.hpp"
 #include "tenh/implementation/wedge.hpp"
+#include "tenh/implementation/vee.hpp"
 
 struct X
 {
@@ -629,6 +630,60 @@ int main (int argc, char **argv)
         i = Wedge::vector_index_of(n);
         std::cout << FORMAT_VALUE(i) << "\n\n";
         n = Wedge::bundle_index_map<Wedge::MultiIndex::IndexTypeList, Wedge::ComponentIndex>(i);
+    }
+
+    {
+        typedef VectorSpace_c<RealField,3,X> VSX;
+        typedef Basis_c<X> B;
+        typedef BasedVectorSpace_c<VSX,B> BasedX;
+
+        STATIC_ASSERT(IsABasedVectorSpace_c<BasedX>::V, MUST_BE_BASED_VECTOR_SPACE);
+
+        typedef SymmetricPowerOfBasedVectorSpaces_c<BasedX,3> Sym3_BasedX;
+        typedef ImplementationOf_t<float,Sym3_BasedX> Sym;
+
+        Sym w(0);
+        w[Sym::ComponentIndex(0, CHECK_RANGE)] = 6;
+        w[Sym::ComponentIndex(1, CHECK_RANGE)] = 12;
+        w[Sym::ComponentIndex(2, CHECK_RANGE)] = 18;
+        w[Sym::ComponentIndex(3, CHECK_RANGE)] = 24;
+        w[Sym::ComponentIndex(4, CHECK_RANGE)] = 30;
+        w[Sym::ComponentIndex(5, CHECK_RANGE)] = 36;
+        w[Sym::ComponentIndex(6, CHECK_RANGE)] = 42;
+        w[Sym::ComponentIndex(7, CHECK_RANGE)] = 48;
+        w[Sym::ComponentIndex(8, CHECK_RANGE)] = 54;
+        w[Sym::ComponentIndex(9, CHECK_RANGE)] = 60;
+
+        std::cout << FORMAT_VALUE(w) << '\n';
+
+        {
+            AbstractIndex_c<'i'> i;
+            AbstractIndex_c<'j'> j;
+            AbstractIndex_c<'k'> k;
+            AbstractIndex_c<'l'> l;
+            std::cout << FORMAT_VALUE(w(i).split(i,j|k|l)) << '\n';
+        }
+
+        std::cout << '\n' << '\n';
+
+        std::cout << "Round-trip convert from ComponentIndex\n";
+        Sym::ComponentIndex i(7);
+        std::cout << FORMAT_VALUE(i) << '\n';
+        Sym::MultiIndex m = Sym::bundle_index_map<Sym::MultiIndex::IndexTypeList, Sym::ComponentIndex>(i);
+        std::cout << FORMAT_VALUE(m) << '\n';
+        Sym::ComponentIndex j = Sym::vector_index_of(m);
+        std::cout << FORMAT_VALUE(j) << "\n\n";
+
+        std::cout << "Round-trip convert from MultiIndex\n";
+        Sym::MultiIndex n(1, 0, 2, CHECK_RANGE);
+        std::cout << FORMAT_VALUE(n) << '\n';
+        i = Sym::vector_index_of(n);
+        std::cout << FORMAT_VALUE(i) << '\n';
+        n = Sym::bundle_index_map<Sym::MultiIndex::IndexTypeList, Sym::ComponentIndex>(i);
+        std::cout << FORMAT_VALUE(n) << '\n';
+        i = Sym::vector_index_of(n);
+        std::cout << FORMAT_VALUE(i) << "\n\n";
+        n = Sym::bundle_index_map<Sym::MultiIndex::IndexTypeList, Sym::ComponentIndex>(i);
     }
 
     {
