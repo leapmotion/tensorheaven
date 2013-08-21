@@ -13,6 +13,11 @@
 #include "tenh/componentindex.hpp"
 #include "tenh/meta/typestringof.hpp"
 
+#ifdef __clang_version__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wtautological-compare"
+#endif // __clang_version__
+
 namespace Tenh {
 
 // fixed-length array of a given component type, which must be a POD type
@@ -63,6 +68,10 @@ private:
 
 template <typename T> struct IsAnArray_t { static bool const V = false; };
 template <typename Component, Uint32 COMPONENT_COUNT> struct IsAnArray_t<Array_t<Component,COMPONENT_COUNT> > { static bool const V = true; };
+
+#ifdef __clang_version__
+#pragma GCC diagnostic pop
+#endif // __clang_version__
 
 } // end of namespace Tenh
 

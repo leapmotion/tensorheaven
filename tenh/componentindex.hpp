@@ -12,6 +12,11 @@
 
 #include "tenh/meta/typestringof.hpp"
 
+#ifdef __clang_version__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wtautological-compare"
+#endif // __clang_version__
+
 namespace Tenh {
 
 // for use in operator [] for evaluation of array components.
@@ -81,6 +86,10 @@ std::ostream &operator << (std::ostream &out, ComponentIndex_t<COMPONENT_COUNT> 
 {
     return out << c.value();
 }
+
+#ifdef __clang_version__
+#pragma GCC diagnostic pop
+#endif // __clang_version__
 
 } // end of namespace Tenh
 
