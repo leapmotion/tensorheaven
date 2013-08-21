@@ -41,10 +41,10 @@ struct ImplementationOf_t<Scalar_,BasedVectorSpace_c<VectorSpace_,Basis_> >
 
     explicit ImplementationOf_t (WithoutInitialization const &w) : Parent_Array_t(w) { }
     // probably only useful for zero element (because this is basis-dependent)
-    explicit ImplementationOf_t (Scalar fill_with) : Parent_Array_t(fill_with) { }
-    ImplementationOf_t (Scalar x0, Scalar x1) : Parent_Array_t(x0, x1) { }
-    ImplementationOf_t (Scalar x0, Scalar x1, Scalar x2) : Parent_Array_t(x0, x1, x2) { }
-    ImplementationOf_t (Scalar x0, Scalar x1, Scalar x2, Scalar x3) : Parent_Array_t(x0, x1, x2, x3) { }
+    explicit ImplementationOf_t (Scalar const &fill_with) : Parent_Array_t(fill_with) { }
+    ImplementationOf_t (Scalar const &x0, Scalar const &x1) : Parent_Array_t(x0, x1) { }
+    ImplementationOf_t (Scalar const &x0, Scalar const &x1, Scalar const &x2) : Parent_Array_t(x0, x1, x2) { }
+    ImplementationOf_t (Scalar const &x0, Scalar const &x1, Scalar const &x2, Scalar const &x3) : Parent_Array_t(x0, x1, x2, x3) { }
 
     using Parent_Vector_i::as_derived;
     using Parent_Array_t::operator[];

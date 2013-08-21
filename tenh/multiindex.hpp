@@ -39,7 +39,7 @@ struct MultiIndex_t : List_t<IndexTypeList_>
 
     MultiIndex_t () { } // default constructor initializes to "first" component
     MultiIndex_t (HeadIndexType const &head, BodyMultiIndex const &body) : Parent(head, body) { }
-    // tuple-like initializers
+    // tuple-like initializers for raw Uint32
     MultiIndex_t (Uint32 i0, Uint32 i1, bool check_range = CHECK_RANGE) // TODO: replace with IndexTypeList::HeadType i0, IndexTypeList::BodyTypeList::HeadType i1 ?
         :
         Parent(HeadIndexType(i0, check_range), BodyMultiIndex(i1, check_range))
@@ -57,6 +57,14 @@ struct MultiIndex_t : List_t<IndexTypeList_>
         Parent(HeadIndexType(i0, check_range), BodyMultiIndex(i1, i2, i3, check_range))
     {
         STATIC_ASSERT((Parent::LENGTH == 4), LENGTH_DOES_NOT_MATCH_ARGUMENT_COUNT);
+    }
+    // can really only provide tuple-like initializer for 2-multi-indices, due to the lack
+    // of a guarantee that BodyMultiIndex has more than a head index type.
+    MultiIndex_t (HeadIndexType const &i0, typename BodyMultiIndex::HeadIndexType const &i1)
+        :
+        Parent(i0, BodyMultiIndex(i1))
+    {
+        STATIC_ASSERT((Parent::LENGTH == 2), LENGTH_DOES_NOT_MATCH_ARGUMENT_COUNT);
     }
 
     MultiIndex_t (MultiIndex_t<EmptyTypeList> const &) { } // default construction
@@ -202,15 +210,16 @@ struct MultiIndex_t : List_t<IndexTypeList_>
 };
 
 // template specializations for the IndexTypeList list corner cases
-template <typename HeadIndexType>
-struct MultiIndex_t<TypeList_t<HeadIndexType> > : public List_t<TypeList_t<HeadIndexType> >
+template <typename HeadIndexType_>
+struct MultiIndex_t<TypeList_t<HeadIndexType_> > : public List_t<TypeList_t<HeadIndexType_> >
 {
     enum
     {
-        STATIC_ASSERT_IN_ENUM(IsAComponentIndex_t<HeadIndexType>::V, MUST_BE_INDEX)
+        STATIC_ASSERT_IN_ENUM(IsAComponentIndex_t<HeadIndexType_>::V, MUST_BE_INDEX)
     };
 
-    typedef List_t<TypeList_t<HeadIndexType> > Parent;
+    typedef List_t<TypeList_t<HeadIndexType_> > Parent;
+    typedef HeadIndexType_ HeadIndexType;
     using Parent::LENGTH;
     typedef TypeList_t<HeadIndexType> IndexTypeList;
     typedef typename IndexTypeList::BodyTypeList BodyIndexTypeList;

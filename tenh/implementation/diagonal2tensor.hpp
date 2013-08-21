@@ -58,7 +58,10 @@ struct ImplementationOf_t<Scalar_,Diagonal2TensorProductOfBasedVectorSpaces_c<Fa
     // probably only useful for zero element (because this is basis-dependent), though
     // this would also give any scalar matrix, including the identity matrix (though you
     // would really want to TODO: implement Scalar2TensorProductOfBasedVectorSpaces_c)
-    explicit ImplementationOf_t (Scalar fill_with) : Parent_Array_t(fill_with) { }
+    explicit ImplementationOf_t (Scalar const &fill_with) : Parent_Array_t(fill_with) { }
+    ImplementationOf_t (Scalar const &x0, Scalar const &x1) : Parent_Array_t(x0, x1) { }
+    ImplementationOf_t (Scalar const &x0, Scalar const &x1, Scalar const &x2) : Parent_Array_t(x0, x1, x2) { }
+    ImplementationOf_t (Scalar const &x0, Scalar const &x1, Scalar const &x2, Scalar const &x3) : Parent_Array_t(x0, x1, x2, x3) { }
 
     template <typename BundleIndexTypeList, typename BundledIndex>
     static MultiIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)

@@ -52,7 +52,7 @@ struct ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpaces_c<Factor_,OR
 
     explicit ImplementationOf_t (WithoutInitialization const &w) : Parent_Array_t(w) { }
     // probably only useful for zero element (because this is basis-dependent)
-    explicit ImplementationOf_t (Scalar fill_with) : Parent_Array_t(fill_with) { }
+    explicit ImplementationOf_t (Scalar const &fill_with) : Parent_Array_t(fill_with) { }
 
     template <typename BundleIndexTypeList, typename BundledIndex>
     static MultiIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)

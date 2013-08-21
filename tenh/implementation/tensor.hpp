@@ -46,7 +46,8 @@ struct ImplementationOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeL
 
     explicit ImplementationOf_t (WithoutInitialization const &w) : Parent_Array_t(w) { }
     // probably only useful for zero element (because this is basis-dependent)
-    explicit ImplementationOf_t (Scalar fill_with) : Parent_Array_t(fill_with) { }
+    explicit ImplementationOf_t (Scalar const &fill_with) : Parent_Array_t(fill_with) { }
+    // TODO: decide if there should be constructors that take a number of initializing Scalar arguments
 
     template <typename BundleIndexTypeList, typename BundledIndex>
     static MultiIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)

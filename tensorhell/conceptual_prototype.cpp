@@ -744,18 +744,39 @@ int main (int argc, char **argv)
     }
 
     {
-        typedef VectorSpace_c<RealField,3,X> VSX;
+        typedef VectorSpace_c<RealField,4,X> VSX;
         typedef Basis_c<X> BasisX;
         typedef BasedVectorSpace_c<VSX,BasisX> BasedX;
-        typedef Diagonal2TensorProductOfBasedVectorSpaces_c<BasedX,BasedX> Diag;
+        typedef Diagonal2TensorProductOfBasedVectorSpaces_c<BasedX::Dual,BasedX::Dual> Diag;
         typedef ImplementationOf_t<float,Diag> D;
-        D d(1.0f);
+        D d(2.0f, 1.0f, -3.0f, 5.0f);
         std::cout << FORMAT_VALUE(d) << '\n';
 
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
         AbstractIndex_c<'k'> k;
         std::cout << FORMAT_VALUE(d(i).split(i,j|k)) << '\n';
+
+        typedef ImplementationOf_t<float,BasedX> V;
+        V u(1.0f, 2.0f, 10.0f, -2.0f);
+        std::cout << FORMAT_VALUE(u) << '\n';
+        std::cout << FORMAT_VALUE(u(j) * d(i).split(i,j|k) * u(k)) << '\n';
+
+        // do computation by hand to check it
+        float total = 0.0f;
+        for (ComponentIndex_t<VSX::DIM> it; it.is_not_at_end(); ++it)
+            total += u[it] * d(i).split(i,j|k)[D::MultiIndex(it,it)] * u[it];
+        std::cout << "computation done by hand: " << total << '\n';
+
+        V v(-1.0f, -1.0f, 2.0f, 2.0f);
+        std::cout << FORMAT_VALUE(v) << '\n';
+        std::cout << FORMAT_VALUE(u(j) * d(i).split(i,j|k) * v(k)) << '\n';
+
+        // do computation by hand to check it
+        total = 0.0f;
+        for (ComponentIndex_t<VSX::DIM> it; it.is_not_at_end(); ++it)
+            total += u[it] * d(i).split(i,j|k)[D::MultiIndex(it,it)] * v[it];
+        std::cout << "computation done by hand: " << total << '\n';
 
         std::cout << '\n' << '\n';
     }
