@@ -10,6 +10,65 @@
 using namespace std;
 using namespace Tenh;
 
+
+
+
+namespace Tenh {
+
+template <typename T> struct IsMap_t { static bool const V = false; };
+
+// a map having empty domain -- evaluating this map will produce a compile error
+struct EmptyMap
+{
+    typedef EmptyTypeList DomainElementTypeList;
+    typedef EmptyTypeList CodomainElementTypeList;
+};
+
+// recursive definition of Map_t
+template <typename DomainElement, typename CodomainElement, typename RestOfMap = EmptyMap>
+struct Map_t
+{
+private:
+    enum { _ = Lvd::Meta::Assert<IsMap_t<RestOfMap>::V>::v };
+
+    typedef TypeList_t<DomainElement,TypeList_t<CodomainElement> > DomainCodomainElementPair;
+    typedef TypeList_t<DomainCodomainElementPair,
+                       typename RestOfMap::DomainCodomainElementPairTypeList> DomainCodomainElementPairTypeList;
+    typedef typename Unzip_t<DomainCodomainElementPairTypeList>::T UnzippedDomainCodomainElementPairTypeList;
+public:
+    typedef typename UnzippedDomainCodomainElementPairTypeList::HeadType DomainElementTypeList;
+    typedef typename UnzippedDomainCodomainElementPairTypeList::BodyTypeList::HeadType CodomainElementTypeList;
+    // make sure that DomainElementTypeList contains no duplicates (necessary for the map to be well-defined)
+    enum { __ = Lvd::Meta::Assert<(ElementsHavingMultiplicity_t<DomainElementTypeList,1>::T::LENGTH == DomainElementTypeList::LENGTH)>::v };
+};
+
+// one of the base cases
+template <typename DomainElement, typename CodomainElement>
+struct Map_t<DomainElement,CodomainElement,EmptyMap>
+{
+    typedef TypeList_t<TypeList_t<DomainElement,TypeList_t<CodomainElement> > > DomainCodomainElementPairTypeList;
+    typedef TypeList_t<DomainElement> DomainElementTypeList;
+    typedef TypeList_t<CodomainElement> CodomainElementTypeList;
+};
+
+template <typename DomainElement, typename CodomainElement, typename RestOfMap> struct IsMap_t<Map_t<DomainElement,CodomainElement,RestOfMap> > { static bool const V = true; };
+template <> struct IsMap_t<EmptyMap> { static bool const V = true; };
+
+template <typename Map, typename InputDomainElement>
+struct EvalMap_t
+{
+private:
+    enum { _ = Lvd::Meta::Assert<IsMap_t<Map>::V>::v && Lvd::Meta::Assert<(Map::DomainElementTypeList::LENGTH > 0)>::v };
+    static Uint32 const INDEX_OF_INPUT_DOMAIN_ELEMENT = FirstMatchingIn_t<typename Map::DomainElementTypeList,InputDomainElement>::INDEX;
+public:
+    typedef typename Map::CodomainElementTypeList::template El_t<INDEX_OF_INPUT_DOMAIN_ELEMENT>::T T;
+};
+
+} // end of namespace Tenh
+
+
+
+
 /*
 The point of this prototype is to test out a design for "concepts" which implement
 a hierarchy of mathematical structures.  For example, a Ring has an additive Group
@@ -121,6 +180,7 @@ template <typename Identity_, typename Operation_, bool IS_ABELIAN_>
 struct Monoid_c
 {
     typedef EmptyTypeList ParentTypeList;
+    typedef EmptyTypeList DisambiguationMap;
 
     typedef Identity_ Identity;
     typedef Operation_ Operation;
@@ -412,6 +472,33 @@ int main (int argc, char **argv)
         // typedef UniqueGroupStructureOf_f<Ring>::T::Identity MultiplicativeIdentity;
         typedef AS_GROUP(Ring)::Identity MultiplicativeIdentity;
         cout << FORMAT_VALUE(TypeStringOf_t<MultiplicativeIdentity>::eval()) << '\n';
+        cout << '\n';
+    }
+
+    // testing Map_t
+    {
+        {
+            // typedef EvalMap_t<EmptyMap,int>::T ThisShouldCauseACompileError;
+        }
+
+        {
+            typedef Map_t<int,float> SimpleMap;
+            typedef EvalMap_t<SimpleMap,int>::T ShouldBe_float;
+            cout << FORMAT_VALUE(TypeStringOf_t<ShouldBe_float>::eval()) << '\n';
+            Lvd::Meta::Assert<(Lvd::Meta::TypesAreEqual<ShouldBe_float,float>::v)>();
+            // typedef EvalMap_t<SimpleMap,bool>::T ThisShouldCauseACompileError;
+        }
+
+        {
+            typedef Map_t<int,float,Map_t<char,double> > TwoElementMap;
+            typedef EvalMap_t<TwoElementMap,int>::T ShouldBe_float;
+            typedef EvalMap_t<TwoElementMap,char>::T ShouldBe_double;
+            cout << FORMAT_VALUE(TypeStringOf_t<ShouldBe_float>::eval()) << '\n';
+            cout << FORMAT_VALUE(TypeStringOf_t<ShouldBe_double>::eval()) << '\n';
+            Lvd::Meta::Assert<(Lvd::Meta::TypesAreEqual<ShouldBe_float,float>::v)>();
+            Lvd::Meta::Assert<(Lvd::Meta::TypesAreEqual<ShouldBe_double,double>::v)>();
+            // typedef EvalMap_t<TwoElementMap,bool>::T ThisShouldCauseACompileError;
+        }
     }
 
     return 0;
