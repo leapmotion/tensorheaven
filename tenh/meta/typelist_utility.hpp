@@ -323,6 +323,25 @@ struct HasNontrivialIntersectionAsSets_t<EmptyTypeList,TypeListB>
 
 
 
+
+template <typename TypeListA, typename TypeListB>
+struct IntersectionAsSets_t 
+{
+private:
+    typedef typename IntersectionAsSets_t<typename TypeListA::BodyTypeList,TypeListB>::T RecursionTypeList;
+public:
+    typedef typename Lvd::Meta::If<TypeListB::template Contains_t<typename TypeListA::HeadType>::V,
+                                   TypeList_t<typename TypeListA::HeadType,RecursionTypeList>,
+                                   RecursionTypeList>::T T;
+};
+
+template <typename TypeListB>
+struct IntersectionAsSets_t<EmptyTypeList,TypeListB>
+{
+    typedef EmptyTypeList T;
+};
+
+
 // renders the subtraction of TypeListB from TypeListA, as sets
 template <typename TypeListA, typename TypeListB>
 struct SetSubtraction_t

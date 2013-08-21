@@ -22,6 +22,8 @@ struct EmptyMap
 {
     typedef EmptyTypeList DomainElementTypeList;
     typedef EmptyTypeList CodomainElementTypeList;
+
+    static std::string type_as_string () { return "EmptyMap"; }
 };
 
 // recursive definition of Map_t
@@ -32,23 +34,41 @@ private:
     enum { _ = Lvd::Meta::Assert<IsMap_t<RestOfMap>::V>::v };
 
     typedef TypeList_t<DomainElement,TypeList_t<CodomainElement> > DomainCodomainElementPair;
+public:
     typedef TypeList_t<DomainCodomainElementPair,
                        typename RestOfMap::DomainCodomainElementPairTypeList> DomainCodomainElementPairTypeList;
+private:
     typedef typename Unzip_t<DomainCodomainElementPairTypeList>::T UnzippedDomainCodomainElementPairTypeList;
 public:
     typedef typename UnzippedDomainCodomainElementPairTypeList::HeadType DomainElementTypeList;
     typedef typename UnzippedDomainCodomainElementPairTypeList::BodyTypeList::HeadType CodomainElementTypeList;
     // make sure that DomainElementTypeList contains no duplicates (necessary for the map to be well-defined)
     enum { __ = Lvd::Meta::Assert<(ElementsHavingMultiplicity_t<DomainElementTypeList,1>::T::LENGTH == DomainElementTypeList::LENGTH)>::v };
+
+    static std::string type_as_string () { return "Map_t( " + domain_codomain_element_pairs_as_string() + " )"; }
+    static std::string domain_codomain_element_pairs_as_string ()
+    {
+        std::string retval('(' + TypeStringOf_t<DomainElement>::eval() + " |-> " + TypeStringOf_t<CodomainElement>::eval() + ')');
+        if (RestOfMap::DomainCodomainElementPairTypeList::LENGTH > 0)
+            retval += ", " + RestOfMap::domain_codomain_element_pairs_as_string();
+        return retval;
+    }
 };
 
 // one of the base cases
 template <typename DomainElement, typename CodomainElement>
 struct Map_t<DomainElement,CodomainElement,EmptyMap>
 {
-    typedef TypeList_t<TypeList_t<DomainElement,TypeList_t<CodomainElement> > > DomainCodomainElementPairTypeList;
+    typedef TypeList_t<DomainElement,TypeList_t<CodomainElement> > DomainCodomainElementPair;
+    typedef TypeList_t<DomainCodomainElementPair> DomainCodomainElementPairTypeList;
     typedef TypeList_t<DomainElement> DomainElementTypeList;
     typedef TypeList_t<CodomainElement> CodomainElementTypeList;
+
+    static std::string type_as_string () { return "Map_t( " + domain_codomain_element_pairs_as_string() + " )"; }
+    static std::string domain_codomain_element_pairs_as_string ()
+    {
+        return '(' + TypeStringOf_t<DomainElement>::eval() + " |-> " + TypeStringOf_t<CodomainElement>::eval() + ')';
+    }
 };
 
 template <typename DomainElement, typename CodomainElement, typename RestOfMap> struct IsMap_t<Map_t<DomainElement,CodomainElement,RestOfMap> > { static bool const V = true; };
@@ -62,6 +82,85 @@ private:
     static Uint32 const INDEX_OF_INPUT_DOMAIN_ELEMENT = FirstMatchingIn_t<typename Map::DomainElementTypeList,InputDomainElement>::INDEX;
 public:
     typedef typename Map::CodomainElementTypeList::template El_t<INDEX_OF_INPUT_DOMAIN_ELEMENT>::T T;
+};
+
+
+// construct a Map_t from an ordered domain element type list and a
+// corresponding ordered codomain element type list.
+template <typename DomainElementTypeList, typename CodomainElementTypeList, typename RestOfMap = EmptyMap>
+struct MapConstructor_t
+{
+    enum { _ = Lvd::Meta::Assert<(DomainElementTypeList::LENGTH == CodomainElementTypeList::LENGTH)>::v };
+    typedef Map_t<typename DomainElementTypeList::HeadType,
+                  typename CodomainElementTypeList::HeadType,
+                  typename MapConstructor_t<typename DomainElementTypeList::BodyTypeList,
+                                            typename CodomainElementTypeList::BodyTypeList,
+                                            RestOfMap>::T> T;
+};
+
+template <typename RestOfMap>
+struct MapConstructor_t<EmptyTypeList,EmptyTypeList,RestOfMap>
+{
+    typedef RestOfMap T;
+};
+
+
+
+template <typename Map, typename CandidateDomainElement>
+struct MapDomainContains_t
+{
+    static bool const V = Map::DomainElementTypeList::template Contains_t<CandidateDomainElement>::V;
+};
+
+
+// creates a new TypeList_t with Map applied to each element
+template <typename Map, typename TypeList>
+struct EvalMapOnTypeList_t
+{
+    typedef TypeList_t<typename EvalMap_t<Map,typename TypeList::HeadType>::T,
+                       typename EvalMapOnTypeList_t<Map,typename TypeList::BodyTypeList>::T> T;
+};
+
+template <typename Map>
+struct EvalMapOnTypeList_t<Map,EmptyTypeList>
+{
+    typedef EmptyTypeList T;
+};
+
+
+// induces a new Map_t defined on the union of the given maps' domains.
+// maps having intesecting domains must act identically on the intersections.
+template <typename MapTypeList>
+struct MapUnion_t
+{
+private:
+    enum { _ = Lvd::Meta::Assert<IsATypeList_t<MapTypeList>::V>::v };
+    typedef typename MapTypeList::HeadType HeadMapType;
+    typedef typename MapUnion_t<typename MapTypeList::BodyTypeList>::T MapUnionOfBodyTypeList;
+    typedef typename IntersectionAsSets_t<typename HeadMapType::DomainElementTypeList,
+                                          typename MapUnionOfBodyTypeList::DomainElementTypeList>::T DomainIntersectionTypeList;
+    typedef typename EvalMapOnTypeList_t<HeadMapType,DomainIntersectionTypeList>::T HeadMapEvaluation;
+    typedef typename EvalMapOnTypeList_t<MapUnionOfBodyTypeList,DomainIntersectionTypeList>::T MapUnionOfBodyTypeListEvaluation;
+    // ensure that the maps act identically on the domains' intersection.
+    enum { __ = Lvd::Meta::Assert<(Lvd::Meta::TypesAreEqual<HeadMapEvaluation,MapUnionOfBodyTypeListEvaluation>::v)>::v };
+
+    typedef typename SetSubtraction_t<typename HeadMapType::DomainElementTypeList,DomainIntersectionTypeList>::T HeadMapTypeOnlyDomain;
+    typedef typename EvalMapOnTypeList_t<HeadMapType,HeadMapTypeOnlyDomain>::T HeadMapTypeOnlyDomainEvaluation;
+public:
+    typedef typename MapConstructor_t<HeadMapTypeOnlyDomain,HeadMapTypeOnlyDomainEvaluation,MapUnionOfBodyTypeList>::T T;
+};
+
+template <typename HeadMapType>
+struct MapUnion_t<TypeList_t<HeadMapType> >
+{
+    enum { _ = Lvd::Meta::Assert<IsMap_t<HeadMapType>::V>::v };
+    typedef HeadMapType T;
+};
+
+template <>
+struct MapUnion_t<EmptyTypeList>
+{
+    typedef EmptyMap T;
 };
 
 } // end of namespace Tenh
@@ -478,19 +577,27 @@ int main (int argc, char **argv)
     // testing Map_t
     {
         {
+            cout << FORMAT_VALUE(TypeStringOf_t<EmptyMap>::eval()) << '\n';
             // typedef EvalMap_t<EmptyMap,int>::T ThisShouldCauseACompileError;
         }
 
         {
             typedef Map_t<int,float> SimpleMap;
+            cout << FORMAT_VALUE(TypeStringOf_t<SimpleMap>::eval()) << '\n';
+
             typedef EvalMap_t<SimpleMap,int>::T ShouldBe_float;
             cout << FORMAT_VALUE(TypeStringOf_t<ShouldBe_float>::eval()) << '\n';
             Lvd::Meta::Assert<(Lvd::Meta::TypesAreEqual<ShouldBe_float,float>::v)>();
             // typedef EvalMap_t<SimpleMap,bool>::T ThisShouldCauseACompileError;
+
+            cout << FORMAT_VALUE((MapDomainContains_t<SimpleMap,int>::V)) << '\n';
+            cout << FORMAT_VALUE((MapDomainContains_t<SimpleMap,int>::V)) << '\n';
         }
 
         {
             typedef Map_t<int,float,Map_t<char,double> > TwoElementMap;
+            cout << FORMAT_VALUE(TypeStringOf_t<TwoElementMap>::eval()) << '\n';
+
             typedef EvalMap_t<TwoElementMap,int>::T ShouldBe_float;
             typedef EvalMap_t<TwoElementMap,char>::T ShouldBe_double;
             cout << FORMAT_VALUE(TypeStringOf_t<ShouldBe_float>::eval()) << '\n';
@@ -498,6 +605,38 @@ int main (int argc, char **argv)
             Lvd::Meta::Assert<(Lvd::Meta::TypesAreEqual<ShouldBe_float,float>::v)>();
             Lvd::Meta::Assert<(Lvd::Meta::TypesAreEqual<ShouldBe_double,double>::v)>();
             // typedef EvalMap_t<TwoElementMap,bool>::T ThisShouldCauseACompileError;
+            cout << '\n';
+        }
+
+        {
+            cout << "testing MapConstructor_t\n";
+            typedef Map_t<int,float> Map;
+            cout << FORMAT_VALUE(TypeStringOf_t<Map>::eval()) << '\n';
+            cout << FORMAT_VALUE((TypeStringOf_t<MapConstructor_t<EmptyTypeList,EmptyTypeList,EmptyMap>::T>::eval())) << '\n';
+            cout << FORMAT_VALUE((TypeStringOf_t<MapConstructor_t<EmptyTypeList,EmptyTypeList,Map>::T>::eval())) << '\n';
+
+            typedef TypeList_t<char,TypeList_t<bool> > Domain;
+            typedef TypeList_t<float,TypeList_t<double> > Codomain;
+            cout << FORMAT_VALUE(TypeStringOf_t<Domain>::eval()) << '\n';
+            cout << FORMAT_VALUE(TypeStringOf_t<Codomain>::eval()) << '\n';
+            cout << FORMAT_VALUE((TypeStringOf_t<MapConstructor_t<Domain,Codomain,EmptyMap>::T>::eval())) << '\n';
+            cout << FORMAT_VALUE((TypeStringOf_t<MapConstructor_t<Domain,Codomain,Map>::T>::eval())) << '\n';
+            cout << '\n';
+        }
+
+        {
+            cout << "testing MapUnion_t\n";
+            typedef MapUnion_t<EmptyTypeList>::T M;
+            cout << FORMAT_VALUE(TypeStringOf_t<M>::eval()) << '\n';
+            typedef Map_t<int,float,Map_t<bool,char> > Map1;
+            typedef Map_t<int,float,Map_t<char,double> > Map2;
+            typedef Map_t<int,double,Map_t<char,double> > Map3;
+            cout << FORMAT_VALUE(TypeStringOf_t<Map1>::eval()) << '\n';
+            cout << FORMAT_VALUE(TypeStringOf_t<Map2>::eval()) << '\n';
+            cout << FORMAT_VALUE(TypeStringOf_t<MapUnion_t<TypeList_t<Map1> >::T>::eval()) << '\n';
+            cout << FORMAT_VALUE((TypeStringOf_t<MapUnion_t<TypeList_t<Map1,TypeList_t<Map2> > >::T>::eval())) << '\n';
+            // typedef MapUnion_t<TypeList_t<Map1,TypeList_t<Map3> > >::T ThisShouldCauseACompileError;
+            cout << '\n';
         }
     }
 
