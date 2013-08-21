@@ -13,10 +13,11 @@
 #include "tenh/conceptual/vectorspace.hpp"
 #include "tenh/conceptual/dual.hpp"
 #include "tenh/expressiontemplate_eval.hpp"
+#include "tenh/implementation/diagonal2tensor.hpp"
 #include "tenh/implementation/tensor.hpp"
 #include "tenh/implementation/vector.hpp"
-#include "tenh/implementation/wedge.hpp"
 #include "tenh/implementation/vee.hpp"
+#include "tenh/implementation/wedge.hpp"
 
 struct X
 {
@@ -738,6 +739,23 @@ int main (int argc, char **argv)
         typedef ImplementationOf_t<float,BasedX> Vector;
         Vector v(0.0f);
         std::cout << FORMAT_VALUE(v) << '\n';
+
+        std::cout << '\n' << '\n';
+    }
+
+    {
+        typedef VectorSpace_c<RealField,3,X> VSX;
+        typedef Basis_c<X> BasisX;
+        typedef BasedVectorSpace_c<VSX,BasisX> BasedX;
+        typedef Diagonal2TensorProductOfBasedVectorSpaces_c<BasedX,BasedX> Diag;
+        typedef ImplementationOf_t<float,Diag> D;
+        D d(1.0f);
+        std::cout << FORMAT_VALUE(d) << '\n';
+
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        AbstractIndex_c<'k'> k;
+        std::cout << FORMAT_VALUE(d(i).split(i,j|k)) << '\n';
 
         std::cout << '\n' << '\n';
     }
