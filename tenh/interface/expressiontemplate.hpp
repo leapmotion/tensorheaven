@@ -12,6 +12,7 @@
 #include "tenh/multiindex.hpp"
 #include "tenh/conceptual/abstractindex.hpp"
 #include "tenh/meta/typelist.hpp"
+#include "tenh/print_multiindexable.hpp"
 
 namespace Tenh {
 
@@ -122,121 +123,22 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     }
 };
 
-// it's just more convenient to write specializations for particular numbers of free indices
-
-// specialization for 1 index
-template <typename Derived, typename Scalar, typename FreeFactorTypeList, typename FreeDimIndex1, typename UsedDimIndexTypeList>
-std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scalar,FreeFactorTypeList,TypeList_t<FreeDimIndex1>,UsedDimIndexTypeList> const &e)
+// will print any order expression template in a nice-looking justified way.  if the order is greater
+// than 1, this will print newlines, notably including the first character.
+template <typename Derived, 
+          typename Scalar,
+          typename FreeFactorTypeList,
+          typename FreeDimIndexTypeList,
+          typename UsedDimIndexTypeList>
+std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scalar,FreeFactorTypeList,FreeDimIndexTypeList,UsedDimIndexTypeList> const &e)
 {
-    // determine the max size that a component takes up
-    Uint32 max_component_width = 0;
-    for (typename Derived::MultiIndex m; m.is_not_at_end(); ++m)
-    {
-        std::ostringstream sout;
-        sout << e[m];
-        if (sout.str().length() > max_component_width)
-            max_component_width = sout.str().length();
-    }
-
-    out << "[ ";
-    for (typename Derived::MultiIndex m; m.is_not_at_end(); ++m)
-    {
-        out.setf(std::ios_base::right);
-        out.width(max_component_width);
-        out << e[m] << ' ';
-    }
-    return out << "](" << FreeDimIndex1::SYMBOL << ')';
-}
-
-// specialization for 2 indices
-template <typename Derived, typename Scalar, typename FreeFactorTypeList, typename FreeDimIndex1, typename FreeDimIndex2, typename UsedDimIndexTypeList>
-std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scalar,FreeFactorTypeList,TypeList_t<FreeDimIndex1,TypeList_t<FreeDimIndex2> >,UsedDimIndexTypeList> const &e)
-{
-    // determine the max size that a component takes up
-    Uint32 max_component_width = 0;
-    for (typename Derived::MultiIndex m; m.is_not_at_end(); ++m)
-    {
-        std::ostringstream sout;
-        sout << e[m];
-        if (sout.str().length() > max_component_width)
-            max_component_width = sout.str().length();
-    }
-
-    typename Derived::MultiIndex m;
-    if (m.is_at_end())
-        return out << "\n[[ ]]\n";
-
-    out << "\n[";
-    for (FreeDimIndex1 i; i.is_not_at_end(); ++i)
-    {
-        if (i.value() != 0)
-            out << ' ';
-        out << "[ ";
-        for (FreeDimIndex2 j; j.is_not_at_end(); ++j)
-        {
-            out.setf(std::ios_base::right);
-            out.width(max_component_width);
-            out << e[m] << ' ';
-            ++m;
-        }
-        out << ']';
-        FreeDimIndex1 next(i);
-        ++next;
-        if (next.is_not_at_end())
-            out << '\n';
-    }
-    return out << "](" << FreeDimIndex1::SYMBOL << ',' << FreeDimIndex2::SYMBOL << ")\n";
-}
-
-// specialization for 3 indices
-template <typename Derived, typename Scalar, typename FreeFactorTypeList, typename FreeDimIndex1, typename FreeDimIndex2, typename FreeDimIndex3, typename UsedDimIndexTypeList>
-std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scalar,FreeFactorTypeList,TypeList_t<FreeDimIndex1,TypeList_t<FreeDimIndex2,TypeList_t<FreeDimIndex3> > >,UsedDimIndexTypeList> const &e)
-{
-    // determine the max size that a component takes up
-    Uint32 max_component_width = 0;
-    for (typename Derived::MultiIndex m; m.is_not_at_end(); ++m)
-    {
-        std::ostringstream sout;
-        sout << e[m];
-        if (sout.str().length() > max_component_width)
-            max_component_width = sout.str().length();
-    }
-
-    typename Derived::MultiIndex m;
-    if (m.is_at_end())
-        return out << "\n[[[ ]]]\n";
-
-    out << "\n[";
-    for (FreeDimIndex1 i; i.is_not_at_end(); ++i)
-    {
-        if (i.value() != 0)
-            out << ' ';
-        out << '[';
-        for (FreeDimIndex2 j; j.is_not_at_end(); ++j)
-        {
-            if (j.value() != 0)
-                out << "  ";
-            out << "[ ";
-            for (FreeDimIndex3 k; k.is_not_at_end(); ++k)
-            {
-                out.setf(std::ios_base::right);
-                out.width(max_component_width);
-                out << e[m] << ' ';
-                ++m;
-            }
-            out << ']';
-            FreeDimIndex2 next(j);
-            ++next;
-            if (next.is_not_at_end())
-                out << '\n';
-        }
-        out << ']';
-        FreeDimIndex1 next(i);
-        ++next;
-        if (next.is_not_at_end())
-            out << "\n\n";
-    }
-    return out << "](" << FreeDimIndex1::SYMBOL << ',' << FreeDimIndex2::SYMBOL << ',' << FreeDimIndex3::SYMBOL << ")\n";
+    typedef ExpressionTemplate_i<Derived,Scalar,FreeFactorTypeList,FreeDimIndexTypeList,UsedDimIndexTypeList> ExpressionTemplate;
+    print_multiindexable(out, e, FreeDimIndexTypeList());
+    typedef typename AbstractIndicesOfDimIndexTypeList_t<FreeDimIndexTypeList>::T AbstractIndexTypeList;
+    // print the abstract index symbols
+    if (AbstractIndexTypeList::LENGTH > 0)
+        out << '(' << symbol_string_of_abstract_index_type_list(AbstractIndexTypeList()) << ')';
+    return out;
 }
 
 } // end of namespace Tenh

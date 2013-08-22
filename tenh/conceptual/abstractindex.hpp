@@ -65,6 +65,19 @@ typename ConcatenationOfTypeLists_t<TypeList_t<HeadType,BodyTypeList>,TypeList_t
     return typename ConcatenationOfTypeLists_t<TypeList_t<HeadType,BodyTypeList>,TypeList_t<AbstractIndex_c<SYMBOL> > >::T();
 }
 
+template <char HEAD_SYMBOL, typename BodyAbstractIndexTypeList>
+std::string symbol_string_of_abstract_index_type_list (TypeList_t<AbstractIndex_c<HEAD_SYMBOL>,BodyAbstractIndexTypeList> const &)
+{
+    return HEAD_SYMBOL + ((BodyAbstractIndexTypeList::LENGTH > 0) ? 
+                          '|' + symbol_string_of_abstract_index_type_list(BodyAbstractIndexTypeList()) : 
+                          std::string());
+}
+
+std::string symbol_string_of_abstract_index_type_list (EmptyTypeList)
+{
+    return std::string();
+}
+
 } // end of namespace Tenh
 
 #endif // TENH_CONCEPTUAL_ABSTRACTINDEX_HPP_

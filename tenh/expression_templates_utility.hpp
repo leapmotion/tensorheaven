@@ -98,20 +98,6 @@ typename HeadType::Owner::Scalar summation_component_factor (MultiIndex_t<TypeLi
 }
 */
 
-template <typename DimIndexTypeList>
-struct AbstractIndicesOfDimIndexTypeList_t
-{
-    enum { STATIC_ASSERT_IN_ENUM(EachTypeIsADimIndex_t<DimIndexTypeList>::V, MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES) };
-    typedef TypeList_t<AbstractIndex_c<DimIndexTypeList::HeadType::SYMBOL>,
-                       typename AbstractIndicesOfDimIndexTypeList_t<typename DimIndexTypeList::BodyTypeList>::T> T;
-};
-
-template <>
-struct AbstractIndicesOfDimIndexTypeList_t<EmptyTypeList>
-{
-    typedef EmptyTypeList T;
-};
-
 template <typename AbstractIndexTypeList, typename SummedAbstractIndexTypeList, typename AbstractIndex>
 struct SummedAbstractIndexPairElementIndices_t
 {

@@ -14,6 +14,7 @@
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/expression_templates.hpp"
 #include "tenh/interface/vector.hpp"
+#include "tenh/print_multiindexable.hpp"
 
 namespace Tenh {
 
@@ -151,61 +152,8 @@ template <typename Derived, typename Scalar, typename TensorProductOfBasedVector
 std::ostream &operator << (std::ostream &out, Tensor_i<Derived,Scalar,TensorProductOfBasedVectorSpaces> const &t)
 {
     typedef Tensor_i<Derived,Scalar,TensorProductOfBasedVectorSpaces> Tensor;
-    typedef typename Tensor::MultiIndex MultiIndex;
-    static Uint32 const COMPONENT_COUNT_OF_LAST_INDEX = MultiIndex::IndexTypeList::template El_t<MultiIndex::LENGTH-1>::T::COMPONENT_COUNT;
-
-    // find the maximum component length, as printed in an ostream, so that 
-    // the actual output can be nicely justified and look awesome.
-    Uint32 max_component_width = 0;
-    for (typename Tensor::ComponentIndex i; i.is_not_at_end(); ++i)
-    {
-        std::ostringstream sout;
-        sout << t[i];
-        if (sout.str().length() > max_component_width)
-            max_component_width = sout.str().length();
-    }
-
-    if (MultiIndex::LENGTH > 1)
-        out << '\n';
-    for (Uint32 j = 0; j < MultiIndex::LENGTH; ++j)
-        out << "[ ";
-    bool first_line = true;
-    for (MultiIndex m; m.is_not_at_end(); ++m)
-    {
-        Uint32 c = trailing_zero_count(m);
-        if (c > 0 && !first_line)
-        {
-            for (Uint32 j = 0; j < c; ++j)
-                out << " ]";
-            for (Uint32 j = 0; j < c; ++j)
-                out << '\n';
-            for (Uint32 j = 0; j < m.length()-c; ++j)
-                out << "  ";
-            for (Uint32 j = 0; j < c; ++j)
-                out << "[ ";
-        }
-
-        out.setf(std::ios_base::right);
-        out.width(max_component_width);
-        out << t[m];
-
-// this is to allow 0 and 1 dimensional factors to work
-#ifdef __clang_version__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wtautological-compare"
-#endif // __clang_version__
-
-        if (m.value_of_index(m.length()-1) < COMPONENT_COUNT_OF_LAST_INDEX-1)
-            out << ' ';
-
-#ifdef __clang_version__
-#pragma GCC diagnostic pop
-#endif // __clang_version__
-
-        first_line = false;
-    }
-    for (Uint32 j = 0; j < MultiIndex::LENGTH; ++j)
-        out << " ]";
+    typedef typename Tensor::MultiIndex::IndexTypeList IndexTypeList;
+    print_multiindexable(out, t, IndexTypeList());
     return out;
 }
 
