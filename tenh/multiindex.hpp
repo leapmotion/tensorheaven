@@ -132,6 +132,24 @@ struct MultiIndex_t : List_t<IndexTypeList_>
         HeadIndexType *multi_index_as_array = &this->head();
         return multi_index_as_array[i];
     }
+    // if IndexTypeList is non-uniform (meaning not all its types are the same), then this provides
+    // run-time access to the ith index in a weakly-typed way (via the Uint32-typed value())
+    Uint32 value_of_index (Uint32 i, bool check_range = CHECK_RANGE) const
+    {
+        assert(this->is_layed_out_contiguously_in_memory());
+        if (check_range && i >= LENGTH)
+            throw std::out_of_range("index argument was out of range");
+        Uint32 const *multi_index_as_array = reinterpret_cast<Uint32 const *>(&this->head());
+        return multi_index_as_array[i];
+    }
+    Uint32 value_of_index (Uint32 i, bool check_range = CHECK_RANGE)
+    {
+        assert(this->is_layed_out_contiguously_in_memory());
+        if (check_range && i >= LENGTH)
+            throw std::out_of_range("index argument was out of range");
+        Uint32 const *multi_index_as_array = reinterpret_cast<Uint32 const *>(&this->head());
+        return multi_index_as_array[i];
+    }
 
     // TODO: rename to RangeMultiIndex_t
 
@@ -279,6 +297,24 @@ struct MultiIndex_t<TypeList_t<HeadIndexType_> > : public List_t<TypeList_t<Head
         HeadIndexType *multi_index_as_array = &this->head();
         return multi_index_as_array[i];
     }
+    // if IndexTypeList is non-uniform (meaning not all its types are the same), then this provides
+    // run-time access to the ith index in a weakly-typed way (via the Uint32-typed value())
+    Uint32 value_of_index (Uint32 i, bool check_range = CHECK_RANGE) const
+    {
+        assert(this->is_layed_out_contiguously_in_memory());
+        if (check_range && i >= LENGTH)
+            throw std::out_of_range("index argument was out of range");
+        Uint32 const *multi_index_as_array = reinterpret_cast<Uint32 const *>(&this->head());
+        return multi_index_as_array[i];
+    }
+    Uint32 value_of_index (Uint32 i, bool check_range = CHECK_RANGE)
+    {
+        assert(this->is_layed_out_contiguously_in_memory());
+        if (check_range && i >= LENGTH)
+            throw std::out_of_range("index argument was out of range");
+        Uint32 const *multi_index_as_array = reinterpret_cast<Uint32 const *>(&this->head());
+        return multi_index_as_array[i];
+    }
 
     // type conversion operator -- because this MultiIndex_t only has one component,
     // it can be canonically identified as its component type.
@@ -379,6 +415,7 @@ struct MultiIndex_t<EmptyTypeList> : public List_t<EmptyTypeList>
 
     bool is_at_end () const { return true; }
     bool is_not_at_end () const { return false; }
+    Uint32 value () const { return 0; } // vacuous value
     void operator ++ () { } // no-op
     void reset () { } // no-op
 
@@ -542,6 +579,20 @@ struct MultiIndexMultiplicity_t<MultiIndex_t<TypeList_t<IndexType, EmptyTypeList
         return count;
     }
 };
+
+
+template <typename IndexTypeList>
+Uint32 trailing_zero_count (MultiIndex_t<IndexTypeList> const &m)
+{
+    if (IndexTypeList::LENGTH == 0)
+        return 0;
+
+    for (Uint32 i = 0; i < m.length(); ++i)
+        if (m.value_of_index(m.length() - i - 1) != 0)
+            return i;
+
+    return m.length();
+}
 
 } // end of namespace Tenh
 

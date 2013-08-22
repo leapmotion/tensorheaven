@@ -145,138 +145,69 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
     }
 };
 
-// TODO: figure out the maximum width any particular element takes up (or do this by column)
-// and use iomanip::setw to do really nice formatting that isn't the hackyness of using tabs.
-
-// specialization for 1-tensors
-template <typename Derived, typename Scalar, typename Factor1>
-std::ostream &operator << (std::ostream &out, Tensor_i<Derived,Scalar,TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1> > > const &t)
+// will print any order tensor in a nice-looking justified way.  if the order is greater
+// than 1, this will print newlines, notably including the first character.
+template <typename Derived, typename Scalar, typename TensorProductOfBasedVectorSpaces>
+std::ostream &operator << (std::ostream &out, Tensor_i<Derived,Scalar,TensorProductOfBasedVectorSpaces> const &t)
 {
-    typedef Tensor_i<Derived,Scalar,TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1> > > Tensor;
+    typedef Tensor_i<Derived,Scalar,TensorProductOfBasedVectorSpaces> Tensor;
+    typedef typename Tensor::MultiIndex MultiIndex;
+    static Uint32 const COMPONENT_COUNT_OF_LAST_INDEX = MultiIndex::IndexTypeList::template El_t<MultiIndex::LENGTH-1>::T::COMPONENT_COUNT;
 
-    // determine the max size that a component takes up
+    // find the maximum component length, as printed in an ostream, so that 
+    // the actual output can be nicely justified and look awesome.
     Uint32 max_component_width = 0;
-    for (typename Tensor::MultiIndex m; m.is_not_at_end(); ++m)
+    for (typename Tensor::ComponentIndex i; i.is_not_at_end(); ++i)
     {
         std::ostringstream sout;
-        sout << t[m];
+        sout << t[i];
         if (sout.str().length() > max_component_width)
             max_component_width = sout.str().length();
     }
 
-    out << "[ ";
-    for (typename Tensor::MultiIndex m; m.is_not_at_end(); ++m)
+    if (MultiIndex::LENGTH > 1)
+        out << '\n';
+    for (Uint32 j = 0; j < MultiIndex::LENGTH; ++j)
+        out << "[ ";
+    bool first_line = true;
+    for (MultiIndex m; m.is_not_at_end(); ++m)
     {
+        Uint32 c = trailing_zero_count(m);
+        if (c > 0 && !first_line)
+        {
+            for (Uint32 j = 0; j < c; ++j)
+                out << " ]";
+            for (Uint32 j = 0; j < c; ++j)
+                out << '\n';
+            for (Uint32 j = 0; j < m.length()-c; ++j)
+                out << "  ";
+            for (Uint32 j = 0; j < c; ++j)
+                out << "[ ";
+        }
+
         out.setf(std::ios_base::right);
         out.width(max_component_width);
-        out << t[m] << ' ';
-    }
-    return out << ']';
-}
+        out << t[m];
 
-// specialization for 2-tensors
-template <typename Derived, typename Scalar, typename Factor1, typename Factor2>
-std::ostream &operator << (std::ostream &out, Tensor_i<Derived,Scalar,TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1,TypeList_t<Factor2> > > > const &t)
-{
-    typedef Tensor_i<Derived,Scalar,TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1,TypeList_t<Factor2> > > > Tensor;
+// this is to allow 0 and 1 dimensional factors to work
+#ifdef __clang_version__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wtautological-compare"
+#endif // __clang_version__
 
-    // determine the max size that a component takes up
-    Uint32 max_component_width = 0;
-    for (typename Tensor::MultiIndex m; m.is_not_at_end(); ++m)
-    {
-        std::ostringstream sout;
-        sout << t[m];
-        if (sout.str().length() > max_component_width)
-            max_component_width = sout.str().length();
-    }
-
-    typename Tensor::MultiIndex m;
-    if (m.is_at_end())
-        return out << "\n[[ ]]\n";
-
-    typedef ComponentIndex_t<Factor1::DIM> Factor1ComponentIndex;
-    typedef ComponentIndex_t<Factor2::DIM> Factor2ComponentIndex;
-
-    out << "\n[";
-    for (Factor1ComponentIndex i; i.is_not_at_end(); ++i)
-    {
-        if (i.value() != 0)
+        if (m.value_of_index(m.length()-1) < COMPONENT_COUNT_OF_LAST_INDEX-1)
             out << ' ';
-        out << "[ ";
-        for (Factor2ComponentIndex j; j.is_not_at_end(); ++j)
-        {
-            out.setf(std::ios_base::right);
-            out.width(max_component_width);
-            out << t[m] << ' ';
-            ++m;
-        }
-        out << ']';
-        Factor1ComponentIndex next(i);
-        ++next;
-        if (next.is_not_at_end())
-            out << '\n';
+
+#ifdef __clang_version__
+#pragma GCC diagnostic pop
+#endif // __clang_version__
+
+        first_line = false;
     }
-    return out << "]\n";
+    for (Uint32 j = 0; j < MultiIndex::LENGTH; ++j)
+        out << " ]";
+    return out;
 }
-
-// specialization for 3-tensors
-template <typename Derived, typename Scalar, typename Factor1, typename Factor2, typename Factor3>
-std::ostream &operator << (std::ostream &out, Tensor_i<Derived,Scalar,TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1,TypeList_t<Factor2,TypeList_t<Factor3> > > > > const &t)
-{
-    typedef Tensor_i<Derived,Scalar,TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1,TypeList_t<Factor2,TypeList_t<Factor3> > > > > Tensor;
-
-    // determine the max size that a component takes up
-    Uint32 max_component_width = 0;
-    for (typename Tensor::MultiIndex m; m.is_not_at_end(); ++m)
-    {
-        std::ostringstream sout;
-        sout << t[m];
-        if (sout.str().length() > max_component_width)
-            max_component_width = sout.str().length();
-    }
-
-    typename Tensor::MultiIndex m;
-    if (m.is_at_end())
-        return out << "\n[[[ ]]]\n";
-
-    typedef ComponentIndex_t<Factor1::DIM> Factor1ComponentIndex;
-    typedef ComponentIndex_t<Factor2::DIM> Factor2ComponentIndex;
-    typedef ComponentIndex_t<Factor3::DIM> Factor3ComponentIndex;
-
-    out << "\n[";
-    for (Factor1ComponentIndex i; i.is_not_at_end(); ++i)
-    {
-        if (i.value() != 0)
-            out << ' ';
-        out << '[';
-        for (Factor2ComponentIndex j; j.is_not_at_end(); ++j)
-        {
-            if (j.value() != 0)
-                out << "  ";
-            out << "[ ";
-            for (Factor3ComponentIndex k; k.is_not_at_end(); ++k)
-            {
-                out.setf(std::ios_base::right);
-                out.width(max_component_width);
-                out << t[m] << ' ';
-                ++m;
-            }
-            out << ']';
-            Factor2ComponentIndex next(j);
-            ++next;
-            if (next.is_not_at_end())
-                out << '\n';
-        }
-        out << ']';
-        Factor1ComponentIndex next(i);
-        ++next;
-        if (next.is_not_at_end())
-            out << "\n\n";
-    }
-    return out << "]\n";
-}
-
-// TODO: implement recursive operator << for arbitrary degree tensors
 
 } // end of namespace Tenh
 

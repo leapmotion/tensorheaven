@@ -13,11 +13,6 @@
 #include "tenh/componentindex.hpp"
 #include "tenh/meta/typestringof.hpp"
 
-#ifdef __clang_version__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wtautological-compare"
-#endif // __clang_version__
-
 namespace Tenh {
 
 // fixed-length array of a given component type, which must be a POD type
@@ -29,8 +24,19 @@ struct Array_t
     static Uint32 const COMPONENT_COUNT = COMPONENT_COUNT_;
     typedef ComponentIndex_t<COMPONENT_COUNT> ComponentIndex;
 
+// this is to allow 0-component arrays to work (necessary for 0-dimensional vectors)
+#ifdef __clang_version__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wtautological-compare"
+#endif // __clang_version__
+
     explicit Array_t (WithoutInitialization const &) { }
     explicit Array_t (Component const &fill_with) { for (Uint32 i = 0; i < COMPONENT_COUNT; ++i) m_component[i] = fill_with; }
+
+#ifdef __clang_version__
+#pragma GCC diagnostic pop
+#endif // __clang_version__
+
     Array_t (Component const &x0, Component const &x1) { STATIC_ASSERT((COMPONENT_COUNT == 2),COMPONENT_COUNT_DOES_NOT_MATCH_ARGUMENT_COUNT); m_component[0] = x0; m_component[1] = x1; }
     Array_t (Component const &x0, Component const &x1, Component const &x2) { STATIC_ASSERT((COMPONENT_COUNT == 3),COMPONENT_COUNT_DOES_NOT_MATCH_ARGUMENT_COUNT); m_component[0] = x0; m_component[1] = x1; m_component[2] = x2; }
     Array_t (Component const &x0, Component const &x1, Component const &x2, Component const &x3) { STATIC_ASSERT((COMPONENT_COUNT == 4),COMPONENT_COUNT_DOES_NOT_MATCH_ARGUMENT_COUNT); m_component[0] = x0; m_component[1] = x1; m_component[2] = x2; m_component[3] = x3; }
@@ -68,10 +74,6 @@ private:
 
 template <typename T> struct IsAnArray_t { static bool const V = false; };
 template <typename Component, Uint32 COMPONENT_COUNT> struct IsAnArray_t<Array_t<Component,COMPONENT_COUNT> > { static bool const V = true; };
-
-#ifdef __clang_version__
-#pragma GCC diagnostic pop
-#endif // __clang_version__
 
 } // end of namespace Tenh
 

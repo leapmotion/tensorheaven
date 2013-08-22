@@ -39,9 +39,20 @@ namespace Tenh {
 
 } // end of namespace Tenh
 
-
-
 using namespace Tenh;
+
+template <typename BasedVectorSpace, Uint32 ORDER>
+void test_tensor_printing (std::ostream &out)
+{
+    typedef TensorPowerOfBasedVectorSpaces_c<BasedVectorSpace,ORDER> TPow;
+    typedef typename TPow::As_TensorProductOfBasedVectorSpaces TProd;
+    typedef ImplementationOf_t<float,TProd> T;
+    T t(Static<WithoutInitialization>::SINGLETON);
+    for (typename T::ComponentIndex i; i.is_not_at_end(); ++i)
+        t[i] = i.value();
+
+    out << FORMAT_VALUE(t) << '\n';
+}
 
 int main (int argc, char **argv)
 {
@@ -779,6 +790,39 @@ int main (int argc, char **argv)
         std::cout << "computation done by hand: " << total << '\n';
 
         std::cout << '\n' << '\n';
+    }
+
+    {
+        typedef VectorSpace_c<RealField,0,X> VSX;
+        typedef Basis_c<X> BasisX;
+        typedef BasedVectorSpace_c<VSX,BasisX> BasedX;
+        test_tensor_printing<BasedX,1>(std::cout);
+        test_tensor_printing<BasedX,2>(std::cout);
+        test_tensor_printing<BasedX,3>(std::cout);
+        test_tensor_printing<BasedX,4>(std::cout);
+        std::cout << '\n';
+    }
+
+    {
+        typedef VectorSpace_c<RealField,1,X> VSX;
+        typedef Basis_c<X> BasisX;
+        typedef BasedVectorSpace_c<VSX,BasisX> BasedX;
+        test_tensor_printing<BasedX,1>(std::cout);
+        test_tensor_printing<BasedX,2>(std::cout);
+        test_tensor_printing<BasedX,3>(std::cout);
+        test_tensor_printing<BasedX,4>(std::cout);
+        std::cout << '\n';
+    }
+
+    {
+        typedef VectorSpace_c<RealField,3,X> VSX;
+        typedef Basis_c<X> BasisX;
+        typedef BasedVectorSpace_c<VSX,BasisX> BasedX;
+        test_tensor_printing<BasedX,1>(std::cout);
+        test_tensor_printing<BasedX,2>(std::cout);
+        test_tensor_printing<BasedX,3>(std::cout);
+        test_tensor_printing<BasedX,4>(std::cout);
+        std::cout << '\n';
     }
 
     return 0;

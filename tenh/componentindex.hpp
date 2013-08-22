@@ -12,11 +12,6 @@
 
 #include "tenh/meta/typestringof.hpp"
 
-#ifdef __clang_version__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wtautological-compare"
-#endif // __clang_version__
-
 namespace Tenh {
 
 // for use in operator [] for evaluation of array components.
@@ -24,6 +19,12 @@ template <Uint32 COMPONENT_COUNT_>
 struct ComponentIndex_t
 {
     static Uint32 const COMPONENT_COUNT = COMPONENT_COUNT_;
+
+// this to allow 0-component component-indexing to work (necessary for 0-dimensional vectors)
+#ifdef __clang_version__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wtautological-compare"
+#endif // __clang_version__
 
     // default is to initialize to start of iteration
     ComponentIndex_t () : m(0) { }
@@ -50,6 +51,10 @@ struct ComponentIndex_t
     Uint32 value () const { return m; } // for the specific memory addressing scheme that Vector_t uses
     void operator ++ () { ++m; }
     void reset () { m = 0; }
+
+#ifdef __clang_version__
+#pragma GCC diagnostic pop
+#endif // __clang_version__
 
     static std::string type_as_string () { return "ComponentIndex_t<" + AS_STRING(COMPONENT_COUNT) + '>'; }
 
@@ -86,10 +91,6 @@ std::ostream &operator << (std::ostream &out, ComponentIndex_t<COMPONENT_COUNT> 
 {
     return out << c.value();
 }
-
-#ifdef __clang_version__
-#pragma GCC diagnostic pop
-#endif // __clang_version__
 
 } // end of namespace Tenh
 
