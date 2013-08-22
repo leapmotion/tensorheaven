@@ -16,6 +16,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-g -O3 -DNDEBUG")
 set(CMAKE_CXX_FLAGS_ASMEXAM "-g0 -O3 -save-temps -DNDEBUG")
 
 # temp tests
+add_executable(algebraic_expression_prototype algebraic_expression_prototype.cpp)
 add_executable(asm_exam asm_exam.cpp asm_exam_separate_functions.cpp)
 add_executable(conceptual_inheritance_prototype conceptual_inheritance_prototype.cpp)
 add_executable(conceptual_prototype conceptual_prototype.cpp)
