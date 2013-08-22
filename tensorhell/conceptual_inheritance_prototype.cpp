@@ -185,6 +185,9 @@ there needs to be a way to specify which one should be used.  Probably by some
 labeling scheme on each structure.
 */
 
+// for creating domain types for StructureDisambiguationMap
+#define MAKE_ID_STRUCT(Name) struct Name { static std::string type_as_string () { return #Name; } }
+
 // a Concept is a struct that has a ParentTypeList (which is a TypeList_t)
 template <typename T> struct IsConcept_f { static bool const V = false; };
 
@@ -228,6 +231,51 @@ struct AncestorsSatisfyingPredicate_f
 {
     typedef typename ElementsOfTypeListSatisfyingPredicate_t<typename AncestorsOf_f<Concept>::T,Predicate>::T T;
 };
+
+
+template <typename ParentTypeList>
+struct StructureDisambiguationMapsOf_Recursive_f;
+
+// "structure disambiguation maps" of Concept include Concept's StructureDisambiguationMap
+template <typename Concept>
+struct StructureDisambiguationMapsOf_f
+{
+    enum { _ = Lvd::Meta::Assert<IsConcept_f<Concept>::V>::v };
+    typedef TypeList_t<typename Concept::StructureDisambiguationMap,
+                       typename StructureDisambiguationMapsOf_Recursive_f<typename Concept::ParentTypeList>::T> T;
+};
+
+template <typename ParentTypeList>
+struct StructureDisambiguationMapsOf_Recursive_f
+{
+    // depth-first traversal of the ancestor tree
+    enum { _ = Lvd::Meta::Assert<IsConcept_f<typename ParentTypeList::HeadType>::V>::v };
+    typedef typename ConcatenationOfTypeLists_t<typename StructureDisambiguationMapsOf_f<typename ParentTypeList::HeadType>::T,
+                                                typename StructureDisambiguationMapsOf_Recursive_f<typename ParentTypeList::BodyTypeList>::T>::T T;
+};
+
+template <typename HeadType>
+struct StructureDisambiguationMapsOf_Recursive_f<TypeList_t<HeadType> >
+{
+    // depth-first traversal of the ancestor tree
+    typedef typename StructureDisambiguationMapsOf_f<HeadType>::T T;
+};
+
+template <>
+struct StructureDisambiguationMapsOf_Recursive_f<EmptyTypeList>
+{
+    // depth-first traversal of the ancestor tree
+    typedef EmptyTypeList T;
+};
+
+
+template <typename Concept>
+struct TotalStructureDisambiguationMapOf_f
+{
+    typedef typename MapUnion_t<typename StructureDisambiguationMapsOf_f<Concept>::T>::T T;
+};
+
+
 
 // for recursively retrieving various conceptual structures
 
@@ -279,7 +327,7 @@ template <typename Identity_, typename Operation_, bool IS_ABELIAN_>
 struct Monoid_c
 {
     typedef EmptyTypeList ParentTypeList;
-    typedef EmptyTypeList DisambiguationMap;
+    typedef EmptyMap StructureDisambiguationMap;
 
     typedef Identity_ Identity;
     typedef Operation_ Operation;
@@ -317,6 +365,7 @@ private:
     typedef Monoid_c<Identity_,Operation_,IS_ABELIAN_> As_Monoid;
 public:
     typedef TypeList_t<As_Monoid> ParentTypeList;
+    typedef EmptyMap StructureDisambiguationMap;
 
     typedef Identity_ Identity;
     typedef Operation_ Operation;
@@ -349,6 +398,9 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Group);
 
 // Ring_c
 
+MAKE_ID_STRUCT(AdditiveMonoid);
+MAKE_ID_STRUCT(MultiplicativeMonoid);
+
 template <typename AdditiveIdentity_, 
           typename Addition_, 
           typename AdditiveInversion_, 
@@ -362,6 +414,8 @@ private:
     typedef Monoid_c<MultiplicativeIdentity_,Multiplication_,IS_COMMUTATIVE_> As_MultiplicativeMonoid;
 public:
     typedef TypeList_t<As_AdditiveGroup,TypeList_t<As_MultiplicativeMonoid> > ParentTypeList;
+    typedef Map_t<AdditiveMonoid,typename AS_MONOID(As_AdditiveGroup),
+            Map_t<MultiplicativeMonoid,As_MultiplicativeMonoid> > StructureDisambiguationMap;
 
     typedef AdditiveIdentity_ AdditiveIdentity;
     typedef Addition_ Addition;
@@ -408,6 +462,9 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Ring);
 
 // Field_c
 
+MAKE_ID_STRUCT(AdditiveGroup);
+MAKE_ID_STRUCT(MultiplicativeGroup);
+
 template <typename AdditiveIdentity_, 
           typename Addition_, 
           typename AdditiveInversion_, 
@@ -417,10 +474,12 @@ template <typename AdditiveIdentity_,
 struct Field_c
 {
 private:
-    typedef Group_c<AdditiveIdentity_,Addition_,AdditiveInversion_,true> As_AdditiveGroup;
+    typedef Ring_c<AdditiveIdentity_,Addition_,AdditiveInversion_,MultiplicativeIdentity_,Multiplication_,true> As_Ring;
     typedef Group_c<MultiplicativeIdentity_,Multiplication_,MultiplicativeInverse_,true> As_MultiplicativeGroup;
 public:
-    typedef TypeList_t<As_AdditiveGroup,TypeList_t<As_MultiplicativeGroup> > ParentTypeList;
+    typedef TypeList_t<As_Ring,TypeList_t<As_MultiplicativeGroup> > ParentTypeList;
+    typedef Map_t<AdditiveGroup,typename AS_GROUP(As_Ring),
+            Map_t<MultiplicativeGroup,As_MultiplicativeGroup> > StructureDisambiguationMap;
 
     typedef AdditiveIdentity_ AdditiveIdentity;
     typedef Addition_ Addition;
@@ -466,8 +525,6 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Field);
 #define AS_FIELD(Concept) UniqueFieldStructureOf_f<Concept>::T
 
 // main function section
-
-#define MAKE_ID_STRUCT(Name) struct Name { static std::string type_as_string () { return #Name; } }
 
 MAKE_ID_STRUCT(Zero);
 MAKE_ID_STRUCT(ZeroMatrix);
@@ -571,6 +628,24 @@ int main (int argc, char **argv)
         // typedef UniqueGroupStructureOf_f<Ring>::T::Identity MultiplicativeIdentity;
         typedef AS_GROUP(Ring)::Identity MultiplicativeIdentity;
         cout << FORMAT_VALUE(TypeStringOf_t<MultiplicativeIdentity>::eval()) << '\n';
+        cout << '\n';
+    }
+
+    {
+        cout << "testing StructureDisambiguationMapsOf_f\n";
+        cout << FORMAT_VALUE(TypeStringOf_t<StructureDisambiguationMapsOf_f<Monoid>::T>::eval()) << '\n';
+        cout << FORMAT_VALUE(TypeStringOf_t<StructureDisambiguationMapsOf_f<Group>::T>::eval()) << '\n';
+        cout << FORMAT_VALUE(TypeStringOf_t<StructureDisambiguationMapsOf_f<Ring>::T>::eval()) << '\n';
+        cout << FORMAT_VALUE(TypeStringOf_t<StructureDisambiguationMapsOf_f<Field>::T>::eval()) << '\n';
+        cout << '\n';
+    }
+
+    {
+        cout << "testing TotalStructureDisambiguationMapOf_f\n";
+        cout << FORMAT_VALUE(TypeStringOf_t<TotalStructureDisambiguationMapOf_f<Monoid>::T>::eval()) << '\n';
+        cout << FORMAT_VALUE(TypeStringOf_t<TotalStructureDisambiguationMapOf_f<Group>::T>::eval()) << '\n';
+        cout << FORMAT_VALUE(TypeStringOf_t<TotalStructureDisambiguationMapOf_f<Ring>::T>::eval()) << '\n';
+        cout << FORMAT_VALUE(TypeStringOf_t<TotalStructureDisambiguationMapOf_f<Field>::T>::eval()) << '\n';
         cout << '\n';
     }
 
