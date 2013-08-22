@@ -12,6 +12,37 @@
 #include "tenh/meta/typelist_utility.hpp"
 #include "tenh/meta/typestringof.hpp"
 
+// This header defines helper meta functions fo defining and using conceptual inheritence in mathematical code.
+// Here is an example object template for the concept Concept Example, which has a Parent Concept structure.
+/*
+template <typename Parameter_>
+struct ConceptExample_c
+{
+private:
+    typedef ParentConcept_c<Parameter_> As_ParentConcept;
+public:
+    typedef TypeList_t<As_ParentConcept> ParentTypeList;
+
+    // ...
+};
+
+template <typename Parameter_>
+struct IsConcept_f<ConceptExample_c<Parameter_> >
+{ static bool const V = true; };
+
+template <typename T> struct IsConceptExample_f { static bool const V = false; };
+
+template <typename Parameter_>
+struct IsConceptExample_f<ConceptExample_c<Parameter_> >
+{ static bool const V = true; };
+
+DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(ConceptExample);
+// special convenience macros
+#define IS_CONCEPT_EXAMPLE_UNIQUELY(Concept) HasUniqueConceptExampleStructure_f<Concept>::V
+#define AS_CONCEPT_EXAMPLE(Concept) UniqueConceptExampleStructureOf_f<Concept>::T
+
+*/
+
 namespace Tenh {
 // a Concept is a struct that has a ParentTypeList (which is a TypeList_t)
 template <typename T> struct IsConcept_f { static bool const V = false; };
