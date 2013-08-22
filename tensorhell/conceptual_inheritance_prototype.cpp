@@ -188,6 +188,8 @@ labeling scheme on each structure.
 // for creating domain types for StructureDisambiguationMap
 #define MAKE_ID_STRUCT(Name) struct Name { static std::string type_as_string () { return #Name; } }
 
+#define AS_NAMED_STRUCTURE(Concept,StructureName) EvalMap_t<TotalStructureDisambiguationMapOf_f<Concept>::T,StructureName>::T
+
 // a Concept is a struct that has a ParentTypeList (which is a TypeList_t)
 template <typename T> struct IsConcept_f { static bool const V = false; };
 
@@ -711,6 +713,19 @@ int main (int argc, char **argv)
             cout << FORMAT_VALUE(TypeStringOf_t<MapUnion_t<TypeList_t<Map1> >::T>::eval()) << '\n';
             cout << FORMAT_VALUE((TypeStringOf_t<MapUnion_t<TypeList_t<Map1,TypeList_t<Map2> > >::T>::eval())) << '\n';
             // typedef MapUnion_t<TypeList_t<Map1,TypeList_t<Map3> > >::T ThisShouldCauseACompileError;
+            cout << '\n';
+        }
+
+        {
+            cout << "testing AS_NAMED_STRUCTURE\n";
+            cout << FORMAT_VALUE(TypeStringOf_t<AS_NAMED_STRUCTURE(Ring,AdditiveMonoid)>::eval()) << '\n';
+            cout << FORMAT_VALUE(TypeStringOf_t<AS_NAMED_STRUCTURE(Ring,MultiplicativeMonoid)>::eval()) << '\n';
+            cout << '\n';
+
+            cout << FORMAT_VALUE(TypeStringOf_t<AS_NAMED_STRUCTURE(Field,AdditiveMonoid)>::eval()) << '\n';
+            cout << FORMAT_VALUE(TypeStringOf_t<AS_NAMED_STRUCTURE(Field,MultiplicativeMonoid)>::eval()) << '\n';
+            cout << FORMAT_VALUE(TypeStringOf_t<AS_NAMED_STRUCTURE(Field,AdditiveGroup)>::eval()) << '\n';
+            cout << FORMAT_VALUE(TypeStringOf_t<AS_NAMED_STRUCTURE(Field,MultiplicativeGroup)>::eval()) << '\n';
             cout << '\n';
         }
     }
