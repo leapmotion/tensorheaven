@@ -8,8 +8,7 @@ NOTES
   and contraction_prototype.cpp), but the "real" tests are in the standard/ subdirectory.  the CMakeLists.txt file
   in the tensorhell/ subdirectory will build all of these.  the executable name for the "real" tests is "test".
 - the "actual" tensor lib prototype code is in test/contraction_prototype.cpp
-- some prototype code for strongly-typed vectors (which distinguish prime/dual spaces and "named" spaces)
-  is in tensorhell/strongly_typed_vector_prototype.cpp
+- the prototype code which uses "strongly typed" tensor math is in conceptual_prototype.cpp
 
 current goals:
 - more frontends for Eigen functionality -- LDLT, QR, linear solve, etc
@@ -135,6 +134,9 @@ x relaxed the C++-driven type checking in preference to static-assert-driven typ
   t(i|j).bundle(i|j,p) -- it is necessary to know the type of p for this to be a well-defined bundle).  all
   other index types can be inferred from their use in the expression.
 x strongly-typed vector spaces, and only natural pairings thereof allowed.
+x exterior powers -- i.e. wedges.
+x symmetric powers -- e.g. "vee"s.
+x diagonal 2-tensor products of based vector spaces
 
 ---------------------------
 
@@ -156,89 +158,6 @@ handling more general symmetries
   to exactly one component of the space that is split.
 - "bundle" would be used to "reassert" the symmetries, if you know that the expression has that symmetry.
   would this work for simple tensors?  there would be a nontrivial calculation to assign to a simple tensor.
-
-categorical/conceptual design ideas
-- use _c for "category" or "conceptual"
-- Field_c<Id>
-  * Field_c<Real_c>
-  * Field_c<Complex_c>
-  * Field_c<F2_c>
-  * etc (quaternions could be used, as a skew-field, and maybe SkewField_c<Id> could be a thing
-    this should be able to check the validity of a Scalar type (e.g. float, double, int, bool)
-    for a field (so Real_c could use float or double, but not int, whereas F2_c could use int but
-    not float or double).
-  * Module_c, Ring_c (?)
-
-- VectorSpace_c<Field,DIM,Id>
-  * Id is just a "name" for the particular type (so that vector spaces can be distinguished
-    by more than just their field and dimension), e.g. struct Device3Space { }; or
-    struct Screen2Space { };
-- Basis_c<VS,Id>
-  * A strongly typed "tag" to denote a basis
-
-- Dual_c<X>
-  * X could be a VectorSpace_c or a Basis_c
-- TensorProduct_c<X1,X2,...,Xn>
-  * Xi could be a VectorSpace_c or a Basis_c
-  * maybe support taking tensor products of BasedVectorSpace_c ?
-  * if it is "overloaded" like this, then maybe use TensorProductOf_c<X1,...,Xn> as a template
-    typedef (i.e. used via the typedef TensorProductOf_c<...>::T, which returns a
-    TensorProduct_c<V1,...,Vn> or TensorProduct_c<Basis1,...,Basisn> or
-    BasedTensorProduct_c<BVS1,...,BVSn>)
-  * if it is overloaded, it would probably make sense to make separate templates
-    TensorProductOfVectorSpaces_c, TensorProductOfBases_c, etc.
-- TensorPower_c<X,ORDER>
-  * X could be a VectorSpace_c or a Basis_c
-- ExteriorPower_c<X,ORDER>
-  * X could be a VectorSpace_c or a Basis_c
-- SymmetricPower_c<X,ORDER>
-  * X could be a VectorSpace_c or a Basis_c
-- TODO: Young Tableaux
-- Scalar2TensorProduct_c<X>
-  * The 1-dimensional space of all scaling endomorphisms of X
-  * should have a conversion to TensorProduct_c<X,Dual_c<X> >
-
-- BasedVectorSpace_c<VectorSpace,Basis>
-  * is really just a way to specify a vector space with a choice of basis
-- BasedTensorProduct_c<TensorProduct,Basis>
-  * a choice of tensor product and basis for each factor
-  * e.g. BasedTensorProduct_c<TensorProduct_c<V1,V2>,TensorProduct_c<Basis1,Basis2> >
-- BasedTensorPower_c<TensorPower,Basis>
-  * a choice of tensor power and basis for said power
-- BasedExteriorPower_c<ExteriorPower,Basis>
-  * a choice of exterior power and basis for said power
-- BasedSymmetricPower_c<SymmetricPower,Basis>
-  * a choice of symmetric power and basis for said power
-- TODO: Based Young Tableaux
-- ScalarBased2TensorProduct<X,Basis>
-  * is this necessary?
-  * should have a conversion to DiagonalBased2TensorProduct_c.
-- DiagonalBased2TensorProduct_c<VS1,VS2,Basis1,Basis2>
-  * guarantees that the based representation of the tensors in this space have the form
-  \lambda^{i}_{j}, where \lambda^{i}_{j} = 0 if i != j, and i and j are are indices for
-  (VS1,Basis1) and (VS2,Basis2) respectively.
-- Would it make sense to have a "diagonal" based tensor product of arbitrary order?  where
-  the indices i and j become multiindices?
-- LowerTriangularBased2TensorProduct_c<VS1,VS2,Basis1,Basis2>
-  * similar to Diagonal2BasedTensorProduct_c, only with assuming that the matrix is lower triangular
-- More along the same lines, such as StrictlyLowerTriangularBased2TensorProduct_c,
-  UpperTriangularBased2TensorProduct_c, etc.
-
-While Dual_c<TensorPower_c<Basis_c<V,Id>,N> > is the same as TensorPower_c<Dual_c<Basis_c<V,Id> >,N>,
-Dual_c<ExteriorPower_c<Basis_c<V,Id>,N> > is different than ExteriorPower_c<Dual_c<Basis_c<V,Id> >,N>
-due to a discrepancy in the multiplities (the pairing is off by a factor of N!).
-
-- Vector_i<Scalar,VectorSpaceAndBasis>
-  * is the compile-time interface for a type that will be an instance of a vector
-  * this is where the expression-template-generating code goes (via operator())
-- Tensor_i<Scalar,TensorProductAndBasis>
-  * is the compile-time interface for a type that will be an instance of a tensor
-  * this is where the expression-template-generating code goes (via operator())
-
-- Vector_t<Scalar,DIM,BasedVectorSpace = BasedVectorSpace_c<EuclideanInnerProductSpace<Scalar,DIM>,StandardBasis> >
-  * actual implementation of a strongly typed vector (whose default values make it weakly typed)
-- Tensor_t<Scalar,BasedTensorProduct>
-  * actual implementation of a strongly typed tensor (no default values, as that wouldn't make sense)
 
 Notes for conceptual layer and refactor
 - In order to incorporate the order-of-operations and diagonal 2-tensor contraction optimizations,
@@ -262,47 +181,23 @@ Notes for conceptual layer and refactor
   for swaps in rows, and zero is returned for repetitions in the rows.
 - Grey (gray?) coding scheme would be desired for generating non-symmetric multi-indices for
   when iterating through components for e.g. the bundle operation.
-- Think about difference between BasedTensorProduct (which may have basis elements which are non-simple,
-  thereby complicating the component access for the split operation) and TensorProductOfBasedVectorSpaces
-  (whose basis elements are all simple, and therefore give a simple operation for the split operation).
-  It might make sense to prohibit non-simple tensor product bases, opting for explicit embeddings
-  instead (which is [probably] computationally equivalent and better yet, makes it more clear that
-  extra computation is necessary in the tensor expressions themselves).  In this case, BasedTensorProduct
-  might be downgraded to BasedVectorSpace.  Or probably better, BasedTensorProduct would be implemented
-  using the Vector_i interface, and not the EmbeddableAsTensor_i or Tensor_i interfaces.
-- Idea for handling the split operation -- don't bother with multi-indices for any sort of tensor
-  power with symmetry, and only do multi-indices for TensorProductOfBasedVectorSpaces_c.  Then use
-  explicit embeddings (which are easy to explicitly specify via C++ code in indexed expressions, and
-  they would almost always use diagonal 2-tensors (NOTE: this part about "diagonal" is not true, but
-  you would almost always have a sparse matrix)) to embed the symmetric thing in the non-symmetric
-  space, in which the contractions are actually done.  This way, the choice of "projection" embedding
-  or "scalar multiple of projection" can be made clearly and explicitly, instead of through some weird
-  choice of template type.  Another advantage to this approach is that "smaller" splits can be done --
+- BasedTensorProductOfVectorSpaces should be EmbeddableInTensorProductOf[Based?]VectorSpaces,
+  since basis elements may be non-simple tensors, which would require full 2-tensors to perform
+  the embedding.  It's possible that certain BasedTensorProductOfVectorSpaces could embed more
+  directly into TensorProductOfBasedVectorSpaces, e.g. each basis element is a scalar multiple
+  of a source element, or at most the sum of two such elements, and doesn't require the full
+  generality of a general linear embedding.
+- An advantage of the "embeddable in tensor product" idea is that "smaller" splits can be done --
   e.g. splitting "S^4 V" into "S^2 V \otimes S^2 V" or into "V \otimes S^3 V", and this might be a
   crucial feature, as it really enriches the type system without adding too much library-template-driven
   code (the embeddings would be neatly packaged bits of code that could be user-specified also).
 - Possible idea for efficient contraction of tensors having different symmetries -- express their
   contraction as a linear map (a 2-tensor), then contract this with the outer product of the operands.
-- Use ImplementationOf_t<ConceptualType> to instantiate vectors and tensors?  This would be something like
-    ImplementationOf_t<R4> x; // a 4-vector
-  or
-    ImplementationOf_t<BasedTensorPower_c<R3,2> > y; // a 2-tensor over R^3.
-  or
-    ImplementationOf_t<BasedTensorPower_c<R3,0> > r; // a scalar (or convertible to one)
-  or
-    ImplementationOf_t<BasedTensorPower_c<R4,1> > z; // same as x.
-- Changing over to AbstractIndex_c<char SYMBOL> should be done -- the "bundle" operation would then
-  need to specify the bundling type explicitly (which is probably a good thing).  This may simplify
-  a bunch of code, and ease the honey-bucket approach to compile-time checking.
+  This would really depend on the compiler-specific optimizations that are found in assembler code
+  investigations.
 - Could make Vector_i not be an indexable object, but rather require usage of tensors to provide this.
   This would probably collapse some library code, but could make instantiating a vector more annoying
   for the user.
-- ImplementationOf_t<WhateverSymmetricTensorType> should not inherit Tensor_i, but rather Vector_i,
-  because you shouldn't be able to multi-index them directly -- use split instead.  On the other hand,
-  this would make certain operations (like accessing a particular component of a symmetric tensor) non-
-  intuitive and clunky.  Actually, instead of Vector_i, maybe make a third interface called something
-  like EmbeddableAsTensor_i, that is somewhere between Vector_i and Tensor_i, and where multi-indexing
-  (to create expression templates) calls split.
 - TODO: reverse order of template arguments in ImplementationOf_t (put Scalar last)
 - TODO: refactor all the AbstractIndex/DimIndex/Factor juggling to use some standard form, like
   (AbstractIndex,Factor) pairs, from which the AbstractIndex, Factor, or DimIndex values can be
@@ -330,7 +225,7 @@ Notes for conceptual layer and refactor
 
 
 Features necessary for "version 1.0"
-- implementation of diagonal 2-tensors (of based vector spaces)
+x implementation of diagonal 2-tensors (of based vector spaces)
 - implementation of the optimization for contraction with diagonal 2-tensors (necessary so 
   that we can implement inner products and other similar bilinear forms efficiently)
 - refactoring the Eigen interop code to be strongly typed

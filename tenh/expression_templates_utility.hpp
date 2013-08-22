@@ -167,8 +167,6 @@ struct AssertThatAllSummationsAreNaturalPairings_t<FactorTypeList,AbstractIndexT
     static bool const V = true; // so this can be used in STATIC_ASSERT_IN_ENUM
 };
 
-// TODO: think about how UnarySummation_t and BinarySummation_t could be combined (if it makes sense to do it)
-
 // this is designed to handle trace-type expression templates, such as u(i,i) or v(i,j,i)
 // technically SummedDimIndexTypeList is a redundant argument (as it is derivable from TensorDimIndexTypeList),
 // but it is necessary so that a template specialization can be made for when it is EmptyTypeList.
