@@ -35,16 +35,16 @@ struct DimIndex_t
     static std::string type_as_string () { return std::string("DimIndex_t<'") + SYMBOL + "'," + AS_STRING(DIM) + '>'; }
 };
 
-template <typename T> struct IsADimIndex_t { static bool const V = false; };
-template <char SYMBOL, Uint32 DIM> struct IsADimIndex_t<DimIndex_t<SYMBOL,DIM> > { static bool const V = true; };
+template <typename T> struct IsADimIndex_f { static bool const V = false; };
+template <char SYMBOL, Uint32 DIM> struct IsADimIndex_f<DimIndex_t<SYMBOL,DIM> > { static bool const V = true; };
 
 template <char SYMBOL, Uint32 DIM> struct IsAComponentIndex_t<DimIndex_t<SYMBOL,DIM> > { static bool const V = true; };
-template <char SYMBOL, Uint32 DIM> struct IsAnAbstractIndex_c<DimIndex_t<SYMBOL,DIM> > { static bool const V = true; };
+template <char SYMBOL, Uint32 DIM> struct IsAbstractIndex_f<DimIndex_t<SYMBOL,DIM> > { static bool const V = true; };
 
 template <typename DimIndexTypeList>
 struct Parent_ComponentIndex_TypeListOf_t
 {
-    enum { STATIC_ASSERT_IN_ENUM(IsADimIndex_t<typename DimIndexTypeList::HeadType>::V, MUST_BE_DIM_INDEX) };
+    enum { STATIC_ASSERT_IN_ENUM(IsADimIndex_f<typename DimIndexTypeList::HeadType>::V, MUST_BE_DIM_INDEX) };
     typedef TypeList_t<typename DimIndexTypeList::HeadType::Parent_Index,
                        typename Parent_ComponentIndex_TypeListOf_t<typename DimIndexTypeList::BodyTypeList>::T> T;
 };
@@ -58,31 +58,31 @@ struct Parent_ComponentIndex_TypeListOf_t<EmptyTypeList>
 template <typename FactorTypeList, typename AbstractIndexTypeList>
 struct DimIndexTypeListOf_t
 {
-    enum 
-    { 
+    enum
+    {
         STATIC_ASSERT_IN_ENUM((FactorTypeList::LENGTH == AbstractIndexTypeList::LENGTH), MUST_HAVE_EQUAL_LENGTHS),
-        STATIC_ASSERT_IN_ENUM(IsABasedVectorSpace_c<typename FactorTypeList::HeadType>::V, MUST_BE_BASED_VECTOR_SPACE)
+        STATIC_ASSERT_IN_ENUM(HasBasedVectorSpaceStructure_f<typename FactorTypeList::HeadType>::V, MUST_BE_BASED_VECTOR_SPACE)
     };
     typedef TypeList_t<DimIndex_t<AbstractIndexTypeList::HeadType::SYMBOL,FactorTypeList::HeadType::DIM>,
                        typename DimIndexTypeListOf_t<typename FactorTypeList::BodyTypeList,
-                                                     typename AbstractIndexTypeList::BodyTypeList>::T> T; 
+                                                     typename AbstractIndexTypeList::BodyTypeList>::T> T;
 };
 
 template <>
 struct DimIndexTypeListOf_t<EmptyTypeList,EmptyTypeList>
 {
-    typedef EmptyTypeList T; 
+    typedef EmptyTypeList T;
 };
 
 template <typename TypeList>
-struct EachTypeIsADimIndex_t
+struct EachTypeIsADimIndex_f
 {
-    static bool const V = IsADimIndex_t<typename TypeList::HeadType>::V &&
-                          EachTypeIsADimIndex_t<typename TypeList::BodyTypeList>::V;
+    static bool const V = IsADimIndex_f<typename TypeList::HeadType>::V &&
+                          EachTypeIsADimIndex_f<typename TypeList::BodyTypeList>::V;
 };
 
 template <>
-struct EachTypeIsADimIndex_t<EmptyTypeList>
+struct EachTypeIsADimIndex_f<EmptyTypeList>
 {
     static bool const V = true;
 };

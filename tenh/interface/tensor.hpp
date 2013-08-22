@@ -45,7 +45,7 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
     {
         STATIC_ASSERT_IN_ENUM((!Lvd::Meta::TypesAreEqual<Derived_,NullType>::v), DERIVED_MUST_NOT_BE_NULL_TYPE),
         //STATIC_ASSERT_IN_ENUM((FactorTypeList_::LENGTH > 0), MUST_BE_NONEMPTY) // NOTE: deprecate this, since 0-order tensors should be allowed
-        STATIC_ASSERT_IN_ENUM(IsATensorProductOfBasedVectorSpaces_c<TensorProductOfBasedVectorSpaces_>::V, MUST_BE_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES)
+        STATIC_ASSERT_IN_ENUM(HasTensorProductOfBasedVectorSpacesStructure_f<TensorProductOfBasedVectorSpaces_>::V, MUST_BE_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES)
     };
 
     typedef Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_> Parent_Vector_i;
@@ -90,7 +90,7 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
         CHECK_FOR_ALIASING> operator () (TypeList_t<AbstractIndexTypeListHeadType,AbstractIndexTypeListBodyTypeList> const &) const
     {
         typedef TypeList_t<AbstractIndexTypeListHeadType,AbstractIndexTypeListBodyTypeList> ArgumentAbstractIndexTypeList;
-        STATIC_ASSERT(EachTypeIsAnAbstractIndex_c<ArgumentAbstractIndexTypeList>::V, EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
+        STATIC_ASSERT(EachTypeIsAnAbstractIndex_f<ArgumentAbstractIndexTypeList>::V, EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
         STATIC_ASSERT((ArgumentAbstractIndexTypeList::LENGTH == DEGREE), ARGUMENT_LENGTH_MUST_EQUAL_DEGREE);
         return ExpressionTemplate_IndexedObject_t<
             Derived, // have to use Derived instead of Tensor_i, so that the return-a-reference operator[] is used
@@ -118,7 +118,7 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
         CHECK_FOR_ALIASING> operator () (TypeList_t<AbstractIndexTypeListHeadType,AbstractIndexTypeListBodyTypeList> const &)
     {
         typedef TypeList_t<AbstractIndexTypeListHeadType,AbstractIndexTypeListBodyTypeList> ArgumentAbstractIndexTypeList;
-        STATIC_ASSERT(EachTypeIsAnAbstractIndex_c<ArgumentAbstractIndexTypeList>::V, EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
+        STATIC_ASSERT(EachTypeIsAnAbstractIndex_f<ArgumentAbstractIndexTypeList>::V, EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
         STATIC_ASSERT((ArgumentAbstractIndexTypeList::LENGTH == DEGREE), ARGUMENT_LENGTH_MUST_EQUAL_DEGREE);
         return ExpressionTemplate_IndexedObject_t<
             Derived, // have to use Derived instead of Tensor_i, so that the return-a-reference operator[] is used

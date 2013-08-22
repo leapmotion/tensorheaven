@@ -28,7 +28,7 @@ struct EmbeddableAsTensor_i : public Vector_i<Derived_,Scalar_,EmbeddableInTenso
     {
         STATIC_ASSERT_IN_ENUM((!Lvd::Meta::TypesAreEqual<Derived_,NullType>::v), DERIVED_MUST_NOT_BE_NULL_TYPE),
         //STATIC_ASSERT_IN_ENUM((FactorTypeList_::LENGTH > 0), MUST_BE_NONEMPTY) // NOTE: deprecate this, since 0-order tensors should be allowed
-        STATIC_ASSERT_IN_ENUM(IsEmbeddableInTensorProductOfBasedVectorSpaces_c<EmbeddableInTensorProductOfBasedVectorSpaces_>::V, MUST_BE_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES)
+        STATIC_ASSERT_IN_ENUM(HasEmbeddableInTensorProductOfBasedVectorSpacesStructure_f<EmbeddableInTensorProductOfBasedVectorSpaces_>::V, MUST_BE_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES)
     };
 
     typedef Vector_i<Derived_,Scalar_,EmbeddableInTensorProductOfBasedVectorSpaces_> Parent_Vector_i;
@@ -71,7 +71,7 @@ struct EmbeddableAsTensor_i : public Vector_i<Derived_,Scalar_,EmbeddableInTenso
         TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> const &abstract_multiindex) const
     {
         // make sure that the index type list actually contains AbstractIndex_c types
-        STATIC_ASSERT((EachTypeIsAnAbstractIndex_c<TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> >::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
+        STATIC_ASSERT((EachTypeIsAnAbstractIndex_f<TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> >::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
         AbstractIndex_c<'~'> dummy_index;
         return Parent_Vector_i::operator()(dummy_index).split(dummy_index, abstract_multiindex);
     }

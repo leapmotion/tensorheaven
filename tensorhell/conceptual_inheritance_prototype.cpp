@@ -134,13 +134,13 @@ struct Monoid_c
     }
 };
 
-template <typename Identity, typename Operation, bool IS_ABELIAN> 
+template <typename Identity, typename Operation, bool IS_ABELIAN>
 struct IsConcept_f<Monoid_c<Identity,Operation,IS_ABELIAN> >
 { static bool const V = true; };
 
 template <typename T> struct IsMonoid_f { static bool const V = false; };
 
-template <typename Identity, typename Operation, bool IS_ABELIAN> 
+template <typename Identity, typename Operation, bool IS_ABELIAN>
 struct IsMonoid_f<Monoid_c<Identity,Operation,IS_ABELIAN> >
 { static bool const V = true; };
 
@@ -173,13 +173,13 @@ public:
     }
 };
 
-template <typename Identity, typename Operation, typename Inversion, bool IS_ABELIAN> 
+template <typename Identity, typename Operation, typename Inversion, bool IS_ABELIAN>
 struct IsConcept_f<Group_c<Identity,Operation,Inversion,IS_ABELIAN> >
 { static bool const V = true; };
 
 template <typename T> struct IsGroup_f { static bool const V = false; };
 
-template <typename Identity, typename Operation, typename Inversion, bool IS_ABELIAN> 
+template <typename Identity, typename Operation, typename Inversion, bool IS_ABELIAN>
 struct IsGroup_f<Group_c<Identity,Operation,Inversion,IS_ABELIAN> >
 { static bool const V = true; };
 
@@ -190,11 +190,11 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Group);
 
 // Ring_c
 
-template <typename AdditiveIdentity_, 
-          typename Addition_, 
-          typename AdditiveInversion_, 
-          typename MultiplicativeIdentity_, 
-          typename Multiplication_, 
+template <typename AdditiveIdentity_,
+          typename Addition_,
+          typename AdditiveInversion_,
+          typename MultiplicativeIdentity_,
+          typename Multiplication_,
           bool IS_COMMUTATIVE_>
 struct Ring_c
 {
@@ -206,7 +206,7 @@ public:
 
     typedef AdditiveIdentity_ AdditiveIdentity;
     typedef Addition_ Addition;
-    typedef AdditiveInversion_ AdditiveInversion; 
+    typedef AdditiveInversion_ AdditiveInversion;
     typedef MultiplicativeIdentity_ MultiplicativeIdentity;
     typedef Multiplication_ Multiplication;
     static bool const IS_COMMUTATIVE = IS_COMMUTATIVE_;
@@ -222,22 +222,22 @@ public:
     }
 };
 
-template <typename AdditiveIdentity, 
-          typename Addition, 
-          typename AdditiveInversion, 
-          typename MultiplicativeIdentity, 
-          typename Multiplication, 
+template <typename AdditiveIdentity,
+          typename Addition,
+          typename AdditiveInversion,
+          typename MultiplicativeIdentity,
+          typename Multiplication,
           bool IS_COMMUTATIVE>
 struct IsConcept_f<Ring_c<AdditiveIdentity,Addition,AdditiveInversion,MultiplicativeIdentity,Multiplication,IS_COMMUTATIVE> >
 { static bool const V = true; };
 
 template <typename T> struct IsRing_f { static bool const V = false; };
 
-template <typename AdditiveIdentity, 
-          typename Addition, 
-          typename AdditiveInversion, 
-          typename MultiplicativeIdentity, 
-          typename Multiplication, 
+template <typename AdditiveIdentity,
+          typename Addition,
+          typename AdditiveInversion,
+          typename MultiplicativeIdentity,
+          typename Multiplication,
           bool IS_COMMUTATIVE>
 struct IsRing_f<Ring_c<AdditiveIdentity,Addition,AdditiveInversion,MultiplicativeIdentity,Multiplication,IS_COMMUTATIVE> >
 { static bool const V = true; };
@@ -249,10 +249,10 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Ring);
 
 // Field_c
 
-template <typename AdditiveIdentity_, 
-          typename Addition_, 
-          typename AdditiveInversion_, 
-          typename MultiplicativeIdentity_, 
+template <typename AdditiveIdentity_,
+          typename Addition_,
+          typename AdditiveInversion_,
+          typename MultiplicativeIdentity_,
           typename Multiplication_,
           typename MultiplicativeInverse_>
 struct Field_c
@@ -265,7 +265,7 @@ public:
 
     typedef AdditiveIdentity_ AdditiveIdentity;
     typedef Addition_ Addition;
-    typedef AdditiveInversion_ AdditiveInversion; 
+    typedef AdditiveInversion_ AdditiveInversion;
     typedef MultiplicativeIdentity_ MultiplicativeIdentity;
     typedef Multiplication_ Multiplication;
     typedef MultiplicativeInverse_ MultiplicativeInverse;
@@ -281,10 +281,10 @@ public:
     }
 };
 
-template <typename AdditiveIdentity, 
-          typename Addition, 
-          typename AdditiveInversion, 
-          typename MultiplicativeIdentity, 
+template <typename AdditiveIdentity,
+          typename Addition,
+          typename AdditiveInversion,
+          typename MultiplicativeIdentity,
           typename Multiplication,
           typename MultiplicativeInverse>
 struct IsConcept_f<Field_c<AdditiveIdentity,Addition,AdditiveInversion,MultiplicativeIdentity,Multiplication,MultiplicativeInverse> >
@@ -292,10 +292,10 @@ struct IsConcept_f<Field_c<AdditiveIdentity,Addition,AdditiveInversion,Multiplic
 
 template <typename T> struct IsField_f { static bool const V = false; };
 
-template <typename AdditiveIdentity, 
-          typename Addition, 
-          typename AdditiveInversion, 
-          typename MultiplicativeIdentity, 
+template <typename AdditiveIdentity,
+          typename Addition,
+          typename AdditiveInversion,
+          typename MultiplicativeIdentity,
           typename Multiplication,
           typename MultiplicativeInverse>
 struct IsField_f<Field_c<AdditiveIdentity,Addition,AdditiveInversion,MultiplicativeIdentity,Multiplication,MultiplicativeInverse> >

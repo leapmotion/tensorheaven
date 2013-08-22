@@ -51,7 +51,7 @@ struct ImplementationOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeL
     template <typename BundleIndexTypeList, typename BundledIndex>
     static MultiIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)
     {
-        STATIC_ASSERT(IsADimIndex_t<BundledIndex>::V, MUST_BE_COMPONENT_INDEX);
+        STATIC_ASSERT(IsADimIndex_f<BundledIndex>::V, MUST_BE_COMPONENT_INDEX);
         // this constructor breaks the vector index apart into a row-major multi-index
         return MultiIndex_t<BundleIndexTypeList>(b);
     }

@@ -27,7 +27,7 @@ struct ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpaces_c<Factor_,OR
     // Array_t is privately inherited because it is an implementation detail
     private Array_t<Scalar_,SymmetricPowerOfBasedVectorSpaces_c<Factor_,ORDER_>::DIM>
 {
-    enum { STATIC_ASSERT_IN_ENUM(IsABasedVectorSpace_c<Factor_>::V, MUST_BE_BASED_VECTOR_SPACE) };
+    enum { STATIC_ASSERT_IN_ENUM(HasBasedVectorSpaceStructure_f<Factor_>::V, MUST_BE_BASED_VECTOR_SPACE) };
 
     typedef EmbeddableAsTensor_i<ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpaces_c<Factor_,ORDER_> >,
                                  Scalar_,
@@ -57,7 +57,7 @@ struct ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpaces_c<Factor_,OR
     template <typename BundleIndexTypeList, typename BundledIndex>
     static MultiIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)
     {
-        //STATIC_ASSERT(IsADimIndex_t<BundledIndex>::V, MUST_BE_COMPONENT_INDEX);
+        //STATIC_ASSERT(IsADimIndex_f<BundledIndex>::V, MUST_BE_COMPONENT_INDEX);
         // this constructor breaks the vector index apart into a row-major multi-index
         return BundleIndexComputer_t<BundleIndexTypeList, BundledIndex, ORDER>::compute(b);
     }

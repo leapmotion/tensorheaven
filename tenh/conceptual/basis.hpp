@@ -8,6 +8,7 @@
 
 #include "tenh/core.hpp"
 
+#include "tenh/conceptual/concept.hpp"
 #include "tenh/conceptual/dual.hpp"
 #include "tenh/meta/static_assert.hpp"
 
@@ -22,6 +23,8 @@ namespace Tenh {
 template <typename Id_>
 struct Basis_c
 {
+    typedef EmptyTypeList ParentTypeList;
+
     typedef Id_ Id;
     typedef typename DualOf_c<Basis_c>::T Dual; // relies on the template specialization below
 
@@ -31,8 +34,17 @@ struct Basis_c
     }
 };
 
-template <typename T> struct IsABasis_c { static bool const V = false; };
-template <typename Id> struct IsABasis_c<Basis_c<Id> > { static bool const V = true; };
+template <typename Id_>
+struct IsConcept_f<Basis_c<Id_> >
+{ static bool const V = true; };
+
+template <typename T> struct IsBasis_f { static bool const V = false; };
+template <typename Id> struct IsBasis_f<Basis_c<Id> > { static bool const V = true; };
+
+DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Basis);
+// special convenience macros
+#define IS_BASIS_UNIQUELY(Concept) HasUniqueBasisStructure_f<Concept>::V
+#define AS_BASIS(Concept) UniqueBasisStructureOf_f<Concept>::T
 
 template <typename Id>
 struct DualOf_c<Basis_c<Id> >

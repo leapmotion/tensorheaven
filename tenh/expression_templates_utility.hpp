@@ -21,7 +21,7 @@ namespace Tenh {
 
 template <typename Scalar, typename Space> struct ImplementationOf_t;
 
-// for this to work correctly on DimIndex_t types, the dimensions must be correct (i.e. the 
+// for this to work correctly on DimIndex_t types, the dimensions must be correct (i.e. the
 // primal/dual vector space checking must already be done).  TODO: redesign-away this caveat
 template <typename IndexTypeList>
 struct SummedIndexTypeList_t
@@ -29,7 +29,7 @@ struct SummedIndexTypeList_t
     typedef typename ElementsHavingMultiplicity_t<IndexTypeList,2>::T T;
 };
 
-// for this to work correctly on DimIndex_t types, the dimensions must be correct (i.e. the 
+// for this to work correctly on DimIndex_t types, the dimensions must be correct (i.e. the
 // primal/dual vector space checking must already be done).  TODO: redesign-away this caveat
 template <typename IndexTypeList>
 struct FreeIndexTypeList_t
@@ -45,7 +45,7 @@ struct IndexIsFree_t
     template <typename T>
     struct Eval_t
     {
-        enum 
+        enum
         {
             STATIC_ASSERT_IN_ENUM(IsATypeList_t<T>::V, MUST_BE_TYPELIST),
             STATIC_ASSERT_IN_ENUM(T::LENGTH == 2, LENGTH_MUST_BE_EXACTLY_2)
@@ -68,7 +68,7 @@ struct FreeFactorTypeListHelper_t<EmptyTypeList>
     typedef EmptyTypeList T;
 };
 
-// for this to work correctly on DimIndex_t types, the dimensions must be correct (i.e. the 
+// for this to work correctly on DimIndex_t types, the dimensions must be correct (i.e. the
 // primal/dual vector space checking must already be done).  TODO: redesign-away this caveat
 template <typename FactorTypeList, typename IndexTypeList>
 struct FreeFactorTypeList_t
@@ -101,7 +101,7 @@ typename HeadType::Owner::Scalar summation_component_factor (MultiIndex_t<TypeLi
 template <typename DimIndexTypeList>
 struct AbstractIndicesOfDimIndexTypeList_t
 {
-    enum { STATIC_ASSERT_IN_ENUM(EachTypeIsADimIndex_t<DimIndexTypeList>::V, MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES) };
+    enum { STATIC_ASSERT_IN_ENUM(EachTypeIsADimIndex_f<DimIndexTypeList>::V, MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES) };
     typedef TypeList_t<AbstractIndex_c<DimIndexTypeList::HeadType::SYMBOL>,
                        typename AbstractIndicesOfDimIndexTypeList_t<typename DimIndexTypeList::BodyTypeList>::T> T;
 };
@@ -115,9 +115,9 @@ struct AbstractIndicesOfDimIndexTypeList_t<EmptyTypeList>
 template <typename AbstractIndexTypeList, typename SummedAbstractIndexTypeList, typename AbstractIndex>
 struct SummedAbstractIndexPairElementIndices_t
 {
-    enum 
-    { 
-        STATIC_ASSERT_IN_ENUM(IsAnAbstractIndex_c<AbstractIndex>::V, MUST_BE_ABSTRACT_INDEX),
+    enum
+    {
+        STATIC_ASSERT_IN_ENUM(IsAbstractIndex_f<AbstractIndex>::V, MUST_BE_ABSTRACT_INDEX),
         STATIC_ASSERT_IN_ENUM((Occurrence_t<AbstractIndexTypeList,AbstractIndex>::COUNT == 2), MUST_OCCUR_EXACTLY_TWICE)
     };
     static Uint32 const FIRST = FirstMatchingIn_t<AbstractIndexTypeList,AbstractIndex>::INDEX;
@@ -129,7 +129,7 @@ template <typename FirstFactor, typename SecondFactor>
 struct AssertThatSummationIsNaturalPairing_t
 {
     enum { STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<FirstFactor,typename SecondFactor::Dual>::v), SUMMATION_MUST_BE_NATURAL_PAIRING) };
-    static bool const V = true; 
+    static bool const V = true;
 };
 
 template <typename FactorTypeList, typename AbstractIndexTypeList, typename SummedAbstractIndexTypeList, typename AbstractIndex>
@@ -141,8 +141,8 @@ struct FactorsOfSummation_t
     enum
     {
         STATIC_ASSERT_IN_ENUM((FactorTypeList::LENGTH == AbstractIndexTypeList::LENGTH), MUST_HAVE_EQUAL_LENGTHS),
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IsABasedVectorSpace_c<FirstFactor>::V, MUST_BE_BASED_VECTOR_SPACE, FIRSTFACTOR),
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IsABasedVectorSpace_c<SecondFactor>::V, MUST_BE_BASED_VECTOR_SPACE, SECONDFACTOR)
+        STATIC_ASSERT_IN_ENUM__UNIQUE(HasBasedVectorSpaceStructure_f<FirstFactor>::V, MUST_BE_BASED_VECTOR_SPACE, FIRSTFACTOR),
+        STATIC_ASSERT_IN_ENUM__UNIQUE(HasBasedVectorSpaceStructure_f<SecondFactor>::V, MUST_BE_BASED_VECTOR_SPACE, SECONDFACTOR)
     };
 };
 
@@ -290,7 +290,7 @@ struct BinarySummation_t<LeftOperand,RightOperand,FreeDimIndexTypeList,EmptyType
         STATIC_ASSERT_IN_ENUM(LeftOperand::IS_EXPRESSION_TEMPLATE_I, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE_I, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM(EachTypeIsADimIndex_t<FreeDimIndexTypeList>::V, MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES)
+        STATIC_ASSERT_IN_ENUM(EachTypeIsADimIndex_f<FreeDimIndexTypeList>::V, MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES)
         // no summation, so no need to check naturality of pairings
     };
 
@@ -367,10 +367,10 @@ template <typename AbstractIndexTypeList, typename FactorTypeList, typename Extr
 struct ExtractFactorsForAbstractIndices_t
 {
 private:
-    enum 
-    { 
+    enum
+    {
         STATIC_ASSERT_IN_ENUM((Occurrence_t<AbstractIndexTypeList,typename ExtractionAbstractIndexTypeList::HeadType>::COUNT == 1), MUST_OCCUR_EXACTLY_ONCE),
-        STATIC_ASSERT_IN_ENUM((IsASubsetOf_t<ExtractionAbstractIndexTypeList,AbstractIndexTypeList>::V), MUST_BE_SUBSET_OF) 
+        STATIC_ASSERT_IN_ENUM((IsASubsetOf_t<ExtractionAbstractIndexTypeList,AbstractIndexTypeList>::V), MUST_BE_SUBSET_OF)
     };
     static Uint32 const INDEX = FirstMatchingIn_t<AbstractIndexTypeList,typename ExtractionAbstractIndexTypeList::HeadType>::INDEX;
 public:
@@ -395,7 +395,7 @@ struct BundleIndexMap_t
 };
 
 template <typename Scalar, typename BundleDimIndexTypeList, typename ResultingFactorType, typename ResultingDimIndexType>
-typename BundleIndexMap_t<Scalar,BundleDimIndexTypeList,ResultingFactorType,ResultingDimIndexType>::T const BundleIndexMap_t<Scalar,BundleDimIndexTypeList,ResultingFactorType,ResultingDimIndexType>::V = 
+typename BundleIndexMap_t<Scalar,BundleDimIndexTypeList,ResultingFactorType,ResultingDimIndexType>::T const BundleIndexMap_t<Scalar,BundleDimIndexTypeList,ResultingFactorType,ResultingDimIndexType>::V =
     ImplementationOf_t<Scalar,ResultingFactorType>::template bundle_index_map<BundleDimIndexTypeList,ResultingDimIndexType>;
 
 // not an expression template, but just something that handles the bundled indices
@@ -406,7 +406,7 @@ struct IndexBundle_t
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM(IsAnAbstractIndex_c<ResultingAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX),
+        STATIC_ASSERT_IN_ENUM(IsAbstractIndex_f<ResultingAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX),
         STATIC_ASSERT_IN_ENUM((IsASubsetOf_t<BundleAbstractIndexTypeList,OperandFreeAbstractIndexTypeList>::V), BUNDLE_INDICES_MUST_BE_FREE),
         STATIC_ASSERT_IN_ENUM((!BundleAbstractIndexTypeList::template Contains_t<ResultingAbstractIndexType>::V), BUNDLE_AND_RESULTING_MUST_BE_DISTINCT),
         STATIC_ASSERT_IN_ENUM(Operand::IS_EXPRESSION_TEMPLATE_I, OPERAND_IS_EXPRESSION_TEMPLATE)
@@ -496,7 +496,7 @@ struct IndexSplitter_t
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM(IsAnAbstractIndex_c<SourceAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX),
+        STATIC_ASSERT_IN_ENUM(IsAbstractIndex_f<SourceAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX),
         STATIC_ASSERT_IN_ENUM((OperandFreeAbstractIndexTypeList::template Contains_t<SourceAbstractIndexType>::V), SOURCE_INDEX_MUST_BE_FREE),
         STATIC_ASSERT_IN_ENUM((!HasNontrivialIntersectionAsSets_t<TypeList_t<SourceAbstractIndexType>,SplitAbstractIndexTypeList>::V), SOURCE_AND_SPLIT_MUST_BE_DISTINCT),
         STATIC_ASSERT_IN_ENUM(Operand::IS_EXPRESSION_TEMPLATE_I, OPERAND_IS_EXPRESSION_TEMPLATE)

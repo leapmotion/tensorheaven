@@ -19,7 +19,7 @@ struct VectorSpace_c
 {
     typedef EmptyTypeList ParentTypeList;
 
-    enum { STATIC_ASSERT_IN_ENUM(IsAField_c<Field_>::V, MUST_BE_FIELD) };
+    enum { STATIC_ASSERT_IN_ENUM(HasFieldStructure_f<Field_>::V, MUST_BE_FIELD) };
 
     typedef Field_ Field;
     static Uint32 const DIM = DIM_;
@@ -33,15 +33,12 @@ struct VectorSpace_c
     }
 };
 
-// NOTE: unfortunately the template type inference system will not recognize subclasses
-// of VectorSpace_c for use in the template specialization, so one must be provided for
-// each subclass of VectorSpace_c.
 template <typename Field_, Uint32 DIM_, typename Id_>
 struct IsConcept_f<VectorSpace_c<Field_, DIM_, Id_> >
 { static bool const V = true; };
 
-template <typename T> struct IsAVectorSpace_f { static bool const V = false; };
-template <typename Field, Uint32 DIM, typename Id> struct IsAVectorSpace_f<VectorSpace_c<Field,DIM,Id> > { static bool const V = true; };
+template <typename T> struct IsVectorSpace_f { static bool const V = false; };
+template <typename Field, Uint32 DIM, typename Id> struct IsVectorSpace_f<VectorSpace_c<Field,DIM,Id> > { static bool const V = true; };
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(VectorSpace);
 // special convenience macros
@@ -59,14 +56,13 @@ struct BasedVectorSpace_c
 {
 private:
     typedef VectorSpace_ As_VectorSpace;
-
 public:
     typedef TypeList_t<As_VectorSpace> ParentTypeList;
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM(IsAVectorSpace_c<As_VectorSpace>::V, MUST_BE_VECTOR_SPACE),
-        STATIC_ASSERT_IN_ENUM(IsABasis_c<Basis_>::V, MUST_BE_BASIS)
+        STATIC_ASSERT_IN_ENUM(HasVectorSpaceStructure_f<As_VectorSpace>::V, MUST_BE_VECTOR_SPACE),
+        STATIC_ASSERT_IN_ENUM(HasBasisStructure_f<Basis_>::V, MUST_BE_BASIS)
     };
 
     typedef typename As_VectorSpace::Field Field;
@@ -85,8 +81,8 @@ template <typename VectorSpace_, typename Basis_>
 struct IsConcept_f<BasedVectorSpace_c<VectorSpace_, Basis_> >
 { static bool const V = true; };
 
-template <typename T> struct IsABasedVectorSpace_f { static bool const V = false; };
-template <typename VectorSpace, typename Basis> struct IsABasedVectorSpace_f<BasedVectorSpace_c<VectorSpace,Basis> > { static bool const V = true; };
+template <typename T> struct IsBasedVectorSpace_f { static bool const V = false; };
+template <typename VectorSpace, typename Basis> struct IsBasedVectorSpace_f<BasedVectorSpace_c<VectorSpace,Basis> > { static bool const V = true; };
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(BasedVectorSpace);
 // special convenience macros

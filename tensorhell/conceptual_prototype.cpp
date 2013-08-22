@@ -72,7 +72,7 @@ int main (int argc, char **argv)
         // make sure that VectorSpace::Dual and DualOf_c<VectorSpace>::T are the same
         assert((Lvd::Meta::TypesAreEqual<DualVectorSpace,DualOf_c<VectorSpace>::T>::v));
         // make sure VectorSpace is actually a VectorSpace
-        assert(IsAVectorSpace_c<VectorSpace>::V);
+        assert(HasVectorSpaceStructure_f<VectorSpace>::V);
     }
 
     {
@@ -96,8 +96,8 @@ int main (int argc, char **argv)
         // make sure that BasedVectorSpace::Dual::Index and BasedVectorSpace::Dual::Index are the same
         // assert((Lvd::Meta::TypesAreEqual<BasedVectorSpace::Dual::Index,BasedVectorSpace::Index::Dual>::v));
         // make sure BasedVectorSpace is actually a VectorSpace_c and a BasedVectorSpace_c
-        assert(IsAVectorSpace_c<BasedVectorSpace>::V);
-        assert(IsABasedVectorSpace_c<BasedVectorSpace>::V);
+        assert(HasVectorSpaceStructure_f<BasedVectorSpace>::V);
+        assert(HasBasedVectorSpaceStructure_f<BasedVectorSpace>::V);
     }
 
     {
@@ -159,26 +159,26 @@ int main (int argc, char **argv)
         typedef BasedVectorSpace_c<X3,BX> BasedX;
         typedef BasedVectorSpace_c<Y4,BY> BasedY;
         typedef BasedVectorSpace_c<Z5,BZ> BasedZ;
-        assert(IsABasedVectorSpace_c<BasedX>::V);
-        assert(IsABasedVectorSpace_c<BasedY>::V);
-        assert(IsABasedVectorSpace_c<BasedZ>::V);
+        assert(HasBasedVectorSpaceStructure_f<BasedX>::V);
+        assert(HasBasedVectorSpaceStructure_f<BasedY>::V);
+        assert(HasBasedVectorSpaceStructure_f<BasedZ>::V);
 
         typedef TensorProductOfVectorSpaces_c<TypeList_t<X3,TypeList_t<Y4,TypeList_t<Z5> > > > TVS;
-        assert(IsAVectorSpace_c<TVS>::V);
-        assert(IsATensorProduct_c<TVS>::V);
-        assert(IsATensorProductOfVectorSpaces_c<TVS>::V);
+        assert(HasVectorSpaceStructure_f<TVS>::V);
+        assert(HasTensorProductStructure_f<TVS>::V);
+        assert(HasTensorProductOfVectorSpacesStructure_f<TVS>::V);
 
         typedef TensorProductOfBases_c<TypeList_t<BX,TypeList_t<BY,TypeList_t<BZ> > > > TB;
-        assert(IsABasis_c<TB>::V);
-        assert(IsATensorProduct_c<TB>::V);
+        assert(HasBasisStructure_f<TB>::V);
+        assert(HasTensorProductStructure_f<TB>::V);
 
         {
             typedef BasedTensorProductOfVectorSpaces_c<TVS,TB> T;
-            assert(IsATensorProduct_c<T>::V);
-            assert(IsAVectorSpace_c<T>::V);
-            assert(IsABasedVectorSpace_c<T>::V);
-            assert(IsATensorProductOfVectorSpaces_c<T>::V);
-            assert(IsABasedTensorProductOfVectorSpaces_c<T>::V);
+            assert(HasTensorProductStructure_f<T>::V);
+            assert(HasVectorSpaceStructure_f<T>::V);
+            assert(HasBasedVectorSpaceStructure_f<T>::V);
+            assert(HasTensorProductOfVectorSpacesStructure_f<T>::V);
+            assert(HasBasedTensorProductOfVectorSpacesStructure_f<T>::V);
 
             typedef T::Dual DualT;
             typedef DualT::Dual DualDualT;
@@ -194,12 +194,12 @@ int main (int argc, char **argv)
 
         {
             typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedX,TypeList_t<BasedY,TypeList_t<BasedZ> > > > T;
-            assert(IsATensorProduct_c<T>::V);
-            assert(IsAVectorSpace_c<T>::V);
-            assert(IsABasedVectorSpace_c<T>::V);
-            assert(IsATensorProductOfVectorSpaces_c<T>::V);
-            assert(IsABasedTensorProductOfVectorSpaces_c<T>::V);
-            assert(IsATensorProductOfBasedVectorSpaces_c<T>::V);
+            assert(HasTensorProductStructure_f<T>::V);
+            assert(HasVectorSpaceStructure_f<T>::V);
+            assert(HasBasedVectorSpaceStructure_f<T>::V);
+            assert(HasTensorProductOfVectorSpacesStructure_f<T>::V);
+            assert(HasBasedTensorProductOfVectorSpacesStructure_f<T>::V);
+            assert(HasTensorProductOfBasedVectorSpacesStructure_f<T>::V);
 
             typedef T::Dual DualT;
             typedef DualT::Dual DualDualT;
@@ -215,13 +215,13 @@ int main (int argc, char **argv)
 
         {
             typedef Diagonal2TensorProductOfBasedVectorSpaces_c<BasedX,BasedY> T;
-            assert(IsATensorProduct_c<T>::V);
-            assert(IsAVectorSpace_c<T>::V);
-            assert(IsABasedVectorSpace_c<T>::V);
-            assert(IsATensorProductOfVectorSpaces_c<T>::V);
-            assert(IsABasedTensorProductOfVectorSpaces_c<T>::V);
-            assert(IsATensorProductOfBasedVectorSpaces_c<T>::V);
-            assert(IsADiagonal2TensorProductOfBasedVectorSpaces_c<T>::V);
+//            assert(HasTensorProductStructure_f<T>::V); I don't think this is true.
+            assert(HasVectorSpaceStructure_f<T>::V);
+            assert(HasBasedVectorSpaceStructure_f<T>::V);
+//            assert(HasTensorProductOfVectorSpacesStructure_f<T>::V);
+//            assert(HasBasedTensorProductOfVectorSpacesStructure_f<T>::V);
+//            assert(HasTensorProductOfBasedVectorSpacesStructure_f<T>::V);
+            assert(HasDiagonal2TensorProductOfBasedVectorSpacesStructure_f<T>::V);
 
             typedef T::Dual DualT;
             typedef DualT::Dual DualDualT;
@@ -286,30 +286,30 @@ int main (int argc, char **argv)
         typedef VectorSpace_c<RealField,5,X> X5;
         typedef Basis_c<X> BX;
         typedef BasedVectorSpace_c<X5,BX> BasedX;
-        assert(IsABasedVectorSpace_c<BasedX>::V);
+        assert(HasBasedVectorSpaceStructure_f<BasedX>::V);
 
         typedef TensorPowerOfVectorSpaces_c<X5,3> TVS;
-        assert(IsAVectorSpace_c<TVS>::V);
-        assert(IsATensorProduct_c<TVS>::V);
-        assert(IsATensorProductOfVectorSpaces_c<TVS>::V);
-        assert(IsATensorPower_c<TVS>::V);
-        assert(IsATensorPowerOfVectorSpaces_c<TVS>::V);
+        assert(HasVectorSpaceStructure_f<TVS>::V);
+        assert(HasTensorProductStructure_f<TVS>::V);
+        assert(HasTensorProductOfVectorSpacesStructure_f<TVS>::V);
+        assert(HasTensorPowerStructure_f<TVS>::V);
+        assert(HasTensorPowerOfVectorSpacesStructure_f<TVS>::V);
 
         typedef TensorPowerOfBases_c<BX,3> TB;
-        assert(IsABasis_c<TB>::V);
-        assert(IsATensorProduct_c<TB>::V);
-        assert(IsATensorPower_c<TB>::V);
+        assert(HasBasisStructure_f<TB>::V);
+        assert(HasTensorProductStructure_f<TB>::V);
+        assert(HasTensorPowerStructure_f<TB>::V);
 
         {
             typedef BasedTensorPowerOfVectorSpaces_c<TVS,TB> T;
-            assert(IsATensorProduct_c<T>::V);
-            assert(IsATensorPower_c<T>::V);
-            assert(IsAVectorSpace_c<T>::V);
-            assert(IsABasedVectorSpace_c<T>::V);
-            assert(IsATensorProductOfVectorSpaces_c<T>::V);
-            assert(IsATensorPowerOfVectorSpaces_c<T>::V);
-            assert(IsABasedTensorProductOfVectorSpaces_c<T>::V);
-            assert(IsABasedTensorPowerOfVectorSpaces_c<T>::V);
+            assert(HasTensorProductStructure_f<T>::V);
+            assert(HasTensorPowerStructure_f<T>::V);
+            assert(HasVectorSpaceStructure_f<T>::V);
+            assert(HasBasedVectorSpaceStructure_f<T>::V);
+            assert(HasTensorProductOfVectorSpacesStructure_f<T>::V);
+            assert(HasTensorPowerOfVectorSpacesStructure_f<T>::V);
+            assert(HasBasedTensorProductOfVectorSpacesStructure_f<T>::V);
+            assert(HasBasedTensorPowerOfVectorSpacesStructure_f<T>::V);
 
             typedef T::Dual DualT;
             typedef DualT::Dual DualDualT;
@@ -325,16 +325,16 @@ int main (int argc, char **argv)
 
         {
             typedef TensorPowerOfBasedVectorSpaces_c<BasedX,3> T;
-            assert(IsATensorProduct_c<T>::V);
-            assert(IsATensorPower_c<T>::V);
-            assert(IsAVectorSpace_c<T>::V);
-            assert(IsABasedVectorSpace_c<T>::V);
-            assert(IsATensorProductOfVectorSpaces_c<T>::V);
-            assert(IsATensorPowerOfVectorSpaces_c<T>::V);
-            assert(IsABasedTensorProductOfVectorSpaces_c<T>::V);
-            assert(IsABasedTensorPowerOfVectorSpaces_c<T>::V);
-            assert(IsATensorProductOfBasedVectorSpaces_c<T>::V);
-            assert(IsATensorPowerOfBasedVectorSpaces_c<T>::V);
+            assert(HasTensorProductStructure_f<T>::V);
+            assert(HasTensorPowerStructure_f<T>::V);
+            assert(HasVectorSpaceStructure_f<T>::V);
+            assert(HasBasedVectorSpaceStructure_f<T>::V);
+            assert(HasTensorProductOfVectorSpacesStructure_f<T>::V);
+            assert(HasTensorPowerOfVectorSpacesStructure_f<T>::V);
+            assert(HasBasedTensorProductOfVectorSpacesStructure_f<T>::V);
+            assert(HasBasedTensorPowerOfVectorSpacesStructure_f<T>::V);
+            assert(HasTensorProductOfBasedVectorSpacesStructure_f<T>::V);
+            assert(HasTensorPowerOfBasedVectorSpacesStructure_f<T>::V);
 
             typedef T::Dual DualT;
             typedef DualT::Dual DualDualT;
@@ -399,24 +399,24 @@ int main (int argc, char **argv)
         typedef VectorSpace_c<RealField,5,X> X5;
         typedef Basis_c<X> BX;
         typedef BasedVectorSpace_c<X5,BX> BasedX;
-        assert(IsABasedVectorSpace_c<BasedX>::V);
+        assert(HasBasedVectorSpaceStructure_f<BasedX>::V);
 
         typedef SymmetricPowerOfVectorSpaces_c<X5,3> TVS;
-        assert(IsAVectorSpace_c<TVS>::V);
-        assert(IsASymmetricPower_c<TVS>::V);
-        assert(IsASymmetricPowerOfVectorSpaces_c<TVS>::V);
+        assert(HasVectorSpaceStructure_f<TVS>::V);
+        assert(HasSymmetricPowerStructure_f<TVS>::V);
+        assert(HasSymmetricPowerOfVectorSpacesStructure_f<TVS>::V);
 
         typedef SymmetricPowerOfBases_c<BX,3> TB;
-        assert(IsABasis_c<TB>::V);
-        assert(IsASymmetricPower_c<TB>::V);
+        assert(HasBasisStructure_f<TB>::V);
+        assert(HasSymmetricPowerStructure_f<TB>::V);
 /*
         {
             typedef BasedSymmetricPowerOfVectorSpaces_c<TVS,TB> T;
-            assert(IsASymmetricPower_c<T>::V);
-            assert(IsAVectorSpace_c<T>::V);
-            assert(IsABasedVectorSpace_c<T>::V);
-            assert(IsASymmetricPowerOfVectorSpaces_c<T>::V);
-            assert(IsABasedSymmetricPowerOfVectorSpaces_c<T>::V);
+            assert(HasSymmetricPowerStructure_f<T>::V);
+            assert(HasVectorSpaceStructure_f<T>::V);
+            assert(HasBasedVectorSpaceStructure_f<T>::V);
+            assert(HasSymmetricPowerOfVectorSpacesStructure_f<T>::V);
+            assert(HasBasedSymmetricPowerOfVectorSpacesStructure_f<T>::V);
 
             typedef T::Dual DualT;
             typedef DualT::Dual DualDualT;
@@ -432,11 +432,11 @@ int main (int argc, char **argv)
 */
         {
             typedef SymmetricPowerOfBasedVectorSpaces_c<BasedX,3> T;
-            assert(IsASymmetricPower_c<T>::V);
-            assert(IsAVectorSpace_c<T>::V);
-            assert(IsABasedVectorSpace_c<T>::V);
-            assert(IsASymmetricPowerOfVectorSpaces_c<T>::V);
-            assert(IsASymmetricPowerOfBasedVectorSpaces_c<T>::V);
+            assert(HasSymmetricPowerStructure_f<T>::V);
+            assert(HasVectorSpaceStructure_f<T>::V);
+            assert(HasBasedVectorSpaceStructure_f<T>::V);
+            assert(HasSymmetricPowerOfVectorSpacesStructure_f<T>::V);
+            assert(HasSymmetricPowerOfBasedVectorSpacesStructure_f<T>::V);
 
             typedef T::Dual DualT;
             typedef DualT::Dual DualDualT;
@@ -584,7 +584,7 @@ int main (int argc, char **argv)
         typedef Basis_c<X> B;
         typedef BasedVectorSpace_c<VSX,B> BasedX;
 
-        STATIC_ASSERT(IsABasedVectorSpace_c<BasedX>::V, MUST_BE_BASED_VECTOR_SPACE);
+        STATIC_ASSERT(HasBasedVectorSpaceStructure_f<BasedX>::V, MUST_BE_BASED_VECTOR_SPACE);
 
         typedef ExteriorPowerOfBasedVectorSpaces_c<BasedX,3> Wedge3_BasedX;
         typedef ExteriorPowerOfBasedVectorSpaces_c<BasedX,2> Wedge2_BasedX;
@@ -644,7 +644,7 @@ int main (int argc, char **argv)
         typedef Basis_c<X> B;
         typedef BasedVectorSpace_c<VSX,B> BasedX;
 
-        STATIC_ASSERT(IsABasedVectorSpace_c<BasedX>::V, MUST_BE_BASED_VECTOR_SPACE);
+        STATIC_ASSERT(HasBasedVectorSpaceStructure_f<BasedX>::V, MUST_BE_BASED_VECTOR_SPACE);
 
         typedef SymmetricPowerOfBasedVectorSpaces_c<BasedX,3> Sym3_BasedX;
         typedef SymmetricPowerOfBasedVectorSpaces_c<BasedX,2> Sym2_BasedX;
