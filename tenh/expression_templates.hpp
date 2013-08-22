@@ -51,8 +51,8 @@ struct ExpressionTemplate_IndexedObject_t
     enum
     {
         // TODO: assert that FactorTypeList is a TypeList of BasedVectorSpace_c types.
-        STATIC_ASSERT_IN_ENUM__UNIQUE(EachTypeIsADimIndex_t<DimIndexTypeList>::V, MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, DIMINDEXTYPELIST),
-        STATIC_ASSERT_IN_ENUM__UNIQUE(EachTypeIsADimIndex_t<SummedDimIndexTypeList_>::V, MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, SUMMEDDIMINDEXTYPELIST)
+        STATIC_ASSERT_IN_ENUM__UNIQUE(EachTypeIsADimIndex_f<DimIndexTypeList>::V, MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, DIMINDEXTYPELIST),
+        STATIC_ASSERT_IN_ENUM__UNIQUE(EachTypeIsADimIndex_f<SummedDimIndexTypeList_>::V, MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, SUMMEDDIMINDEXTYPELIST)
     };
 
     typedef ExpressionTemplate_i<typename DerivedType_t<Derived_,
@@ -104,10 +104,10 @@ private:
 };
 
 // this is the "non-const" version of an indexed tensor expression (it has no summed indices, so it makes sense to assign to it)
-template <typename Object, 
-          typename FactorTypeList, 
-          typename DimIndexTypeList, 
-          bool CHECK_FOR_ALIASING_, 
+template <typename Object,
+          typename FactorTypeList,
+          typename DimIndexTypeList,
+          bool CHECK_FOR_ALIASING_,
           typename Derived_>
 struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING_,Derived_>
     :
@@ -510,7 +510,7 @@ struct ExpressionTemplate_IndexSplit_t
 {
     enum
     {
-        STATIC_ASSERT_IN_ENUM(IsAnAbstractIndex_c<SourceAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX),
+        STATIC_ASSERT_IN_ENUM(IsAbstractIndex_f<SourceAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX),
     };
 
     typedef ExpressionTemplate_IndexedObject_t<IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList>,

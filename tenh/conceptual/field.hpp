@@ -8,12 +8,15 @@
 
 #include "tenh/core.hpp"
 
+#include "tenh/conceptual/concept.hpp"
+
 namespace Tenh {
 
 // TODO: can Field_c be deprecated, in favor of just using IsAField_c with custom typedefs?
 template <typename Id_>
 struct Field_c
 {
+    typedef EmptyTypeList ParentTypeList;
 	typedef Id_ Id;
 
     static std::string type_as_string ()
@@ -22,8 +25,17 @@ struct Field_c
     }
 };
 
-template <typename T> struct IsAField_c { static bool const V = false; };
-template <typename Id> struct IsAField_c<Field_c<Id> > { static bool const V = true; };
+template <typename Id_>
+struct IsConcept_f<Field_c<Id_> >
+{ static bool const V = true; };
+
+template <typename T> struct IsField_f { static bool const V = false; };
+template <typename Id> struct IsField_f<Field_c<Id> > { static bool const V = true; };
+
+DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Field);
+// special convenience macros
+#define IS_FIELD_UNIQUELY(Concept) HasUniqueFieldStructure_f<Concept>::V
+#define AS_FIELD(Concept) UniqueFieldStructureOf_f<Concept>::T
 
 // // used for checking if a given C++ type is an acceptable representation for the field
 // template <typename ScalarRepresentation, typename Field> struct IsAValidScalarRepresentationForField { static bool const V = false; };

@@ -30,7 +30,7 @@ struct Vector_i
     enum
     {
         STATIC_ASSERT_IN_ENUM((!Lvd::Meta::TypesAreEqual<Derived_,NullType>::v), DERIVED_MUST_NOT_BE_NULL_TYPE),
-        STATIC_ASSERT_IN_ENUM(IsABasedVectorSpace_c<BasedVectorSpace_>::V, MUST_BE_BASED_VECTOR_SPACE)
+        STATIC_ASSERT_IN_ENUM(HasBasedVectorSpaceStructure_f<BasedVectorSpace_>::V, MUST_BE_BASED_VECTOR_SPACE)
     };
 
     typedef Derived_ Derived;

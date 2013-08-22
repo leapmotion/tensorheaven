@@ -28,8 +28,8 @@ struct ImplementationOf_t<Scalar_,Diagonal2TensorProductOfBasedVectorSpaces_c<Fa
 {
     enum
     {
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IsABasedVectorSpace_c<Factor1_>::V, MUST_BE_BASED_VECTOR_SPACE, FACTOR1),
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IsABasedVectorSpace_c<Factor2_>::V, MUST_BE_BASED_VECTOR_SPACE, FACTOR2)
+        STATIC_ASSERT_IN_ENUM__UNIQUE(HasBasedVectorSpaceStructure_f<Factor1_>::V, MUST_BE_BASED_VECTOR_SPACE, FACTOR1),
+        STATIC_ASSERT_IN_ENUM__UNIQUE(HasBasedVectorSpaceStructure_f<Factor2_>::V, MUST_BE_BASED_VECTOR_SPACE, FACTOR2)
     };
 
     typedef EmbeddableAsTensor_i<ImplementationOf_t<Scalar_,Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >,
@@ -66,13 +66,13 @@ struct ImplementationOf_t<Scalar_,Diagonal2TensorProductOfBasedVectorSpaces_c<Fa
     template <typename BundleIndexTypeList, typename BundledIndex>
     static MultiIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)
     {
-        STATIC_ASSERT(IsADimIndex_t<BundledIndex>::V, MUST_BE_DIM_INDEX);
+        STATIC_ASSERT(IsADimIndex_f<BundledIndex>::V, MUST_BE_DIM_INDEX);
         STATIC_ASSERT(BundleIndexTypeList::LENGTH == 2, LENGTH_MUST_BE_EXACTLY_2);
         typedef MultiIndex_t<BundleIndexTypeList> MultiIndex;
         typedef typename BundleIndexTypeList::HeadType Index1;
         typedef typename BundleIndexTypeList::BodyTypeList::HeadType Index2;
-        STATIC_ASSERT(IsADimIndex_t<Index1>::V, MUST_BE_DIM_INDEX);
-        STATIC_ASSERT(IsADimIndex_t<Index2>::V, MUST_BE_DIM_INDEX);
+        STATIC_ASSERT(IsADimIndex_f<Index1>::V, MUST_BE_DIM_INDEX);
+        STATIC_ASSERT(IsADimIndex_f<Index2>::V, MUST_BE_DIM_INDEX);
         STATIC_ASSERT(Index1::COMPONENT_COUNT == Factor1::DIM, DIMENSIONS_MUST_MATCH);
         STATIC_ASSERT(Index2::COMPONENT_COUNT == Factor2::DIM, DIMENSIONS_MUST_MATCH);
         Uint32 b_value = b.value();

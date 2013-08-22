@@ -27,20 +27,20 @@ struct AbstractIndex_c
     static std::string type_as_string () { return std::string("AbstractIndex_c<'") + SYMBOL + "'>"; }
 };
 
-template <typename T> struct IsAnAbstractIndex_c { static bool const V = false; };
-template <char SYMBOL> struct IsAnAbstractIndex_c<AbstractIndex_c<SYMBOL> > { static bool const V = true; };
+template <typename T> struct IsAbstractIndex_f { static bool const V = false; };
+template <char SYMBOL> struct IsAbstractIndex_f<AbstractIndex_c<SYMBOL> > { static bool const V = true; };
 
 template <typename TypeList>
-struct EachTypeIsAnAbstractIndex_c
+struct EachTypeIsAnAbstractIndex_f
 {
-    static bool const V = IsAnAbstractIndex_c<typename TypeList::HeadType>::V &&
-                          EachTypeIsAnAbstractIndex_c<typename TypeList::BodyTypeList>::V;
+    static bool const V = IsAbstractIndex_f<typename TypeList::HeadType>::V &&
+                          EachTypeIsAnAbstractIndex_f<typename TypeList::BodyTypeList>::V;
     operator bool () const { return V; }
 };
 
 // vacuously true
 template <>
-struct EachTypeIsAnAbstractIndex_c<EmptyTypeList>
+struct EachTypeIsAnAbstractIndex_f<EmptyTypeList>
 {
     static bool const V = true;
     operator bool () const { return V; }
@@ -60,7 +60,7 @@ typename ConcatenationOfTypeLists_t<TypeList_t<HeadType,BodyTypeList>,TypeList_t
     TypeList_t<HeadType,BodyTypeList> const &,
     AbstractIndex_c<SYMBOL> const &)
 {
-    STATIC_ASSERT((EachTypeIsAnAbstractIndex_c<TypeList_t<HeadType,BodyTypeList> >::V), EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
+    STATIC_ASSERT((EachTypeIsAnAbstractIndex_f<TypeList_t<HeadType,BodyTypeList> >::V), EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
     // appending to a TypeList_t is a nontrivial operation, hence the use of ConcatenationOfTypeLists_t
     return typename ConcatenationOfTypeLists_t<TypeList_t<HeadType,BodyTypeList>,TypeList_t<AbstractIndex_c<SYMBOL> > >::T();
 }

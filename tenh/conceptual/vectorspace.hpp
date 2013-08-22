@@ -8,6 +8,7 @@
 
 #include "tenh/core.hpp"
 
+#include "tenh/conceptual/concept.hpp"
 #include "tenh/conceptual/dual.hpp"
 #include "tenh/conceptual/field.hpp"
 
@@ -16,9 +17,9 @@ namespace Tenh {
 template <typename Field_, Uint32 DIM_, typename Id_>
 struct VectorSpace_c
 {
-    enum { STATIC_ASSERT_IN_ENUM(IsAField_c<Field_>::V, MUST_BE_FIELD) };
+    typedef EmptyTypeList ParentTypeList;
 
-    typedef VectorSpace_c As_VectorSpace;
+    enum { STATIC_ASSERT_IN_ENUM(HasFieldStructure_f<Field_>::V, MUST_BE_FIELD) };
 
     typedef Field_ Field;
     static Uint32 const DIM = DIM_;
@@ -32,11 +33,17 @@ struct VectorSpace_c
     }
 };
 
-// NOTE: unfortunately the template type inference system will not recognize subclasses
-// of VectorSpace_c for use in the template specialization, so one must be provided for
-// each subclass of VectorSpace_c.
-template <typename T> struct IsAVectorSpace_c { static bool const V = false; };
-template <typename Field, Uint32 DIM, typename Id> struct IsAVectorSpace_c<VectorSpace_c<Field,DIM,Id> > { static bool const V = true; };
+template <typename Field_, Uint32 DIM_, typename Id_>
+struct IsConcept_f<VectorSpace_c<Field_, DIM_, Id_> >
+{ static bool const V = true; };
+
+template <typename T> struct IsVectorSpace_f { static bool const V = false; };
+template <typename Field, Uint32 DIM, typename Id> struct IsVectorSpace_f<VectorSpace_c<Field,DIM,Id> > { static bool const V = true; };
+
+DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(VectorSpace);
+// special convenience macros
+#define IS_VECTOR_SPACE_UNIQUELY(Concept) HasUniqueVectorSpaceStructure_f<Concept>::V
+#define AS_VECTOR_SPACE(Concept) UniqueVectorSpaceStructureOf_f<Concept>::T
 
 template <typename Field, Uint32 DIM, typename Id>
 struct DualOf_c<VectorSpace_c<Field,DIM,Id> >
@@ -44,16 +51,18 @@ struct DualOf_c<VectorSpace_c<Field,DIM,Id> >
     typedef VectorSpace_c<Field,DIM,typename DualOf_c<Id>::T> T;
 };
 
-
 template <typename VectorSpace_, typename Basis_>
 struct BasedVectorSpace_c
 {
+private:
     typedef VectorSpace_ As_VectorSpace;
+public:
+    typedef TypeList_t<As_VectorSpace> ParentTypeList;
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM(IsAVectorSpace_c<As_VectorSpace>::V, MUST_BE_VECTOR_SPACE),
-        STATIC_ASSERT_IN_ENUM(IsABasis_c<Basis_>::V, MUST_BE_BASIS)
+        STATIC_ASSERT_IN_ENUM(HasVectorSpaceStructure_f<As_VectorSpace>::V, MUST_BE_VECTOR_SPACE),
+        STATIC_ASSERT_IN_ENUM(HasBasisStructure_f<Basis_>::V, MUST_BE_BASIS)
     };
 
     typedef typename As_VectorSpace::Field Field;
@@ -68,11 +77,17 @@ struct BasedVectorSpace_c
     }
 };
 
-// this is a necessary kludge because C++ doesn't recognize BasedVectorSpace_c as a VectorSpace_c in IsAVectorSpace_c
-template <typename VectorSpace, typename Basis> struct IsAVectorSpace_c<BasedVectorSpace_c<VectorSpace,Basis> > { static bool const V = true; };
+template <typename VectorSpace_, typename Basis_>
+struct IsConcept_f<BasedVectorSpace_c<VectorSpace_, Basis_> >
+{ static bool const V = true; };
 
-template <typename T> struct IsABasedVectorSpace_c { static bool const V = false; };
-template <typename VectorSpace, typename Basis> struct IsABasedVectorSpace_c<BasedVectorSpace_c<VectorSpace,Basis> > { static bool const V = true; };
+template <typename T> struct IsBasedVectorSpace_f { static bool const V = false; };
+template <typename VectorSpace, typename Basis> struct IsBasedVectorSpace_f<BasedVectorSpace_c<VectorSpace,Basis> > { static bool const V = true; };
+
+DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(BasedVectorSpace);
+// special convenience macros
+#define IS_BASED_VECTOR_SPACE_UNIQUELY(Concept) HasUniqueBasedVectorSpaceStructure_f<Concept>::V
+#define AS_BASED_VECTOR_SPACE(Concept) UniqueBasedVectorSpaceStructureOf_f<Concept>::T
 
 template <typename VectorSpace, typename Basis>
 struct DualOf_c<BasedVectorSpace_c<VectorSpace,Basis> >

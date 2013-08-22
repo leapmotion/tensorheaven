@@ -8,6 +8,7 @@
 
 #include "tenh/core.hpp"
 
+#include "tenh/conceptual/concept.hpp"
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/meta/typelist_utility.hpp"
 
@@ -29,7 +30,10 @@ struct TypeListWithMultiplicity_t<Type,0>
 template <typename Factor_, Uint32 ORDER_>
 struct TensorPower_c
 {
+private:
     typedef TensorProduct_c<typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T> As_TensorProduct;
+public:
+    typedef TypeList_t<As_TensorProduct> ParentTypeList;
 
     typedef typename As_TensorProduct::FactorTypeList FactorTypeList;
     static Uint32 const ORDER = As_TensorProduct::ORDER;
@@ -42,10 +46,17 @@ struct TensorPower_c
     }
 };
 
-template <typename Factor, Uint32 ORDER> struct IsATensorProduct_c<TensorPower_c<Factor,ORDER> > { static bool const V = true; };
+template <typename Factor_, Uint32 ORDER_>
+struct IsConcept_f<TensorPower_c<Factor_, ORDER_> >
+{ static bool const V = true; };
 
-template <typename T> struct IsATensorPower_c { static bool const V = false; };
-template <typename Factor, Uint32 ORDER> struct IsATensorPower_c<TensorPower_c<Factor,ORDER> > { static bool const V = true; };
+template <typename T> struct IsTensorPower_f { static bool const V = false; };
+template <typename Factor, Uint32 ORDER> struct IsTensorPower_f<TensorPower_c<Factor,ORDER> > { static bool const V = true; };
+
+DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(TensorPower);
+// special convenience macros
+#define IS_TENSOR_POWER_UNIQUELY(Concept) HasUniqueTensorPowerStructure_f<Concept>::V
+#define AS_TENSOR_POWER(Concept) UniqueTensorPowerStructureOf_f<Concept>::T
 
 // the dual of a tensor power is naturally identified as the tensor power of the dual.
 template <typename Factor, Uint32 ORDER>
@@ -59,16 +70,16 @@ struct DualOf_c<TensorPower_c<Factor,ORDER> >
 template <typename Factor_, Uint32 ORDER_>
 struct TensorPowerOfVectorSpaces_c
 {
+private:
     typedef TensorPower_c<Factor_,ORDER_> As_TensorPower;
     typedef TensorProductOfVectorSpaces_c<typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T> As_TensorProductOfVectorSpaces;
-    typedef typename As_TensorProductOfVectorSpaces::As_TensorProduct As_TensorProduct;
+public:
+    typedef TypeList_t<As_TensorPower, TypeList_t<As_TensorProductOfVectorSpaces> > ParentTypeList;
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM(IsAVectorSpace_c<Factor_>::V, MUST_BE_VECTOR_SPACE),
+        STATIC_ASSERT_IN_ENUM(HasVectorSpaceStructure_f<Factor_>::V, MUST_BE_VECTOR_SPACE),
     };
-
-    typedef typename As_TensorProductOfVectorSpaces::As_VectorSpace As_VectorSpace;
 
     typedef typename As_TensorPower::FactorTypeList FactorTypeList;
     static Uint32 const ORDER = As_TensorPower::ORDER;
@@ -84,13 +95,17 @@ struct TensorPowerOfVectorSpaces_c
     }
 };
 
-template <typename Factor, Uint32 ORDER> struct IsATensorProduct_c<TensorPowerOfVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
-template <typename Factor, Uint32 ORDER> struct IsATensorPower_c<TensorPowerOfVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
-template <typename Factor, Uint32 ORDER> struct IsAVectorSpace_c<TensorPowerOfVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
-template <typename Factor, Uint32 ORDER> struct IsATensorProductOfVectorSpaces_c<TensorPowerOfVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
+template<typename Factor_, Uint32 ORDER_>
+struct IsConcept_f<TensorPowerOfVectorSpaces_c<Factor_, ORDER_> >
+{ static bool const V = true; };
 
-template <typename T> struct IsATensorPowerOfVectorSpaces_c { static bool const V = false; };
-template <typename Factor, Uint32 ORDER> struct IsATensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
+template <typename T> struct IsTensorPowerOfVectorSpaces_f { static bool const V = false; };
+template <typename Factor, Uint32 ORDER> struct IsTensorPowerOfVectorSpaces_f<TensorPowerOfVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
+
+DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(TensorPowerOfVectorSpaces);
+// special convenience macros
+#define IS_TENSOR_POWER_OF_VECTOR_SPACES_UNIQUELY(Concept) HasUniqueTensorPowerOfVectorSpacesStructure_f<Concept>::V
+#define AS_TENSOR_POWER_OF_VECTOR_SPACES(Concept) UniqueTensorPowerOfVectorSpacesStructureOf_f<Concept>::T
 
 template <typename Factor, Uint32 ORDER>
 struct DualOf_c<TensorPowerOfVectorSpaces_c<Factor,ORDER> >
@@ -103,12 +118,15 @@ struct DualOf_c<TensorPowerOfVectorSpaces_c<Factor,ORDER> >
 template <typename Factor_, Uint32 ORDER_>
 struct TensorPowerOfBases_c
 {
+private:
     typedef TensorPower_c<Factor_,ORDER_> As_TensorPower;
     typedef Basis_c<TensorPower_c<Factor_,ORDER_> > As_Basis;
+public:
+    typedef TypeList_t<As_TensorPower, TypeList_t<As_Basis> > ParentTypeList;
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM(IsABasis_c<Factor_>::V, MUST_BE_BASIS)
+        STATIC_ASSERT_IN_ENUM(HasBasisStructure_f<Factor_>::V, MUST_BE_BASIS)
     };
 
     typedef typename As_TensorPower::FactorTypeList FactorTypeList;
@@ -123,12 +141,17 @@ struct TensorPowerOfBases_c
     }
 };
 
-template <typename Factor, Uint32 ORDER> struct IsATensorProduct_c<TensorPowerOfBases_c<Factor,ORDER> > { static bool const V = true; };
-template <typename Factor, Uint32 ORDER> struct IsATensorPower_c<TensorPowerOfBases_c<Factor,ORDER> > { static bool const V = true; };
-template <typename Factor, Uint32 ORDER> struct IsABasis_c<TensorPowerOfBases_c<Factor,ORDER> > { static bool const V = true; };
+template <typename Factor_, Uint32 ORDER_>
+struct IsConcept_f<TensorPowerOfBases_c<Factor_, ORDER_> >
+{ static bool const V = true; };
 
-template <typename T> struct IsATensorPowerOfBases_c { static bool const V = false; };
-template <typename Factor, Uint32 ORDER> struct IsATensorPowerOfBases_c<TensorPowerOfBases_c<Factor,ORDER> > { static bool const V = true; };
+template <typename T> struct IsTensorPowerOfBases_f { static bool const V = false; };
+template <typename Factor, Uint32 ORDER> struct IsTensorPowerOfBases_f<TensorPowerOfBases_c<Factor,ORDER> > { static bool const V = true; };
+
+DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(TensorPowerOfBases);
+// special convenience macros
+#define IS_TENSOR_POWER_OF_BASES_UNIQUELY(Concept) HasUniqueTensorPowerOfBasesStructure_f<Concept>::V
+#define AS_TENSOR_POWER_OF_BASES(Concept) UniqueTensorPowerOfBasesStructureOf_f<Concept>::T
 
 template <typename Factor, Uint32 ORDER>
 struct DualOf_c<TensorPowerOfBases_c<Factor,ORDER> >
@@ -137,19 +160,19 @@ struct DualOf_c<TensorPowerOfBases_c<Factor,ORDER> >
 };
 
 
-
 template <typename TensorPowerOfVectorSpaces, typename Basis_>
 struct BasedTensorPowerOfVectorSpaces_c
 {
+private:
     typedef TensorPowerOfVectorSpaces As_TensorPowerOfVectorSpaces;
     typedef BasedTensorProductOfVectorSpaces_c<TensorPowerOfVectorSpaces,Basis_> As_BasedTensorProductOfVectorSpaces;
-    typedef typename As_TensorPowerOfVectorSpaces::As_TensorProductOfVectorSpaces As_TensorProductOfVectorSpaces;
-    typedef typename As_TensorPowerOfVectorSpaces::As_TensorProduct As_TensorProduct;
+public:
+    typedef TypeList_t<As_TensorPowerOfVectorSpaces, TypeList_t<As_BasedTensorProductOfVectorSpaces> > ParentTypeList;
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM(IsATensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces>::V, MUST_BE_TENSOR_POWER_OF_VECTOR_SPACES),
-        STATIC_ASSERT_IN_ENUM(IsABasis_c<Basis_>::V, MUST_BE_BASIS),
+        STATIC_ASSERT_IN_ENUM(HasTensorPowerOfVectorSpacesStructure_f<TensorPowerOfVectorSpaces>::V, MUST_BE_TENSOR_POWER_OF_VECTOR_SPACES),
+        STATIC_ASSERT_IN_ENUM(HasBasisStructure_f<Basis_>::V, MUST_BE_BASIS),
     };
 
     typedef typename As_TensorPowerOfVectorSpaces::FactorTypeList FactorTypeList;
@@ -167,16 +190,17 @@ struct BasedTensorPowerOfVectorSpaces_c
     }
 };
 
-template <typename TensorPowerOfVectorSpaces, typename Basis> struct IsAVectorSpace_c<BasedTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces,Basis> > { static bool const V = true; };
-template <typename TensorPowerOfVectorSpaces, typename Basis> struct IsATensorProduct_c<BasedTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces,Basis> > { static bool const V = true; };
-template <typename TensorPowerOfVectorSpaces, typename Basis> struct IsATensorPower_c<BasedTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces,Basis> > { static bool const V = true; };
-template <typename TensorPowerOfVectorSpaces, typename Basis> struct IsATensorProductOfVectorSpaces_c<BasedTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces,Basis> > { static bool const V = true; };
-template <typename TensorPowerOfVectorSpaces, typename Basis> struct IsATensorPowerOfVectorSpaces_c<BasedTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces,Basis> > { static bool const V = true; };
-template <typename TensorPowerOfVectorSpaces, typename Basis> struct IsABasedVectorSpace_c<BasedTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces,Basis> > { static bool const V = true; };
-template <typename TensorPowerOfVectorSpaces, typename Basis> struct IsABasedTensorProductOfVectorSpaces_c<BasedTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces,Basis> > { static bool const V = true; };
+template <typename TensorPowerOfVectorSpaces, typename Basis_>
+struct IsConcept_f<BasedTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces, Basis_> >
+{ static bool const V = true; };
 
-template <typename T> struct IsABasedTensorPowerOfVectorSpaces_c { static bool const V = false; };
-template <typename TensorPowerOfVectorSpaces, typename Basis> struct IsABasedTensorPowerOfVectorSpaces_c<BasedTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces,Basis> > { static bool const V = true; };
+template <typename T> struct IsBasedTensorPowerOfVectorSpaces_f { static bool const V = false; };
+template <typename TensorPowerOfVectorSpaces, typename Basis> struct IsBasedTensorPowerOfVectorSpaces_f<BasedTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces,Basis> > { static bool const V = true; };
+
+DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(BasedTensorPowerOfVectorSpaces);
+// special convenience macros
+#define IS_BASED_TENSOR_POWER_OF_VECTOR_SPACES_UNIQUELY(Concept) HasUniqueBasedTensorPowerOfVectorSpacesStructure_f<Concept>::V
+#define AS_BASED_TENSOR_POWER_OF_VECTOR_SPACES(Concept) UniqueBasedTensorPowerOfVectorSpacesStructureOf_f<Concept>::T
 
 template <typename TensorPowerOfVectorSpaces, typename Basis>
 struct DualOf_c<BasedTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces,Basis> >
@@ -185,21 +209,25 @@ struct DualOf_c<BasedTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces,Basis
 };
 
 
-
+// TODO: Consider what the ParentTypeList should actually be here.
 // Factor_ must be a BasedVectorSpace_c type
 template <typename Factor_, Uint32 ORDER_>
 struct TensorPowerOfBasedVectorSpaces_c
 {
+private:
+    typedef TensorProductOfVectorSpaces_c<typename UniformTypeListOfLength_t<typename AS_VECTOR_SPACE(Factor_),ORDER_>::T> As_TensorProductOfVectorSpaces;
+    typedef TensorProductOfBasedVectorSpaces_c<typename UniformTypeListOfLength_t<Factor_,ORDER_>::T> As_TensorProductOfBasedVectorSpaces;
+    typedef TensorPowerOfVectorSpaces_c<typename AS_VECTOR_SPACE(Factor_),ORDER_> As_TensorPowerOfVectorSpaces;
+    typedef BasedTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces_c<typename AS_VECTOR_SPACE(Factor_),ORDER_>,
+                                             TensorPowerOfBases_c<typename Factor_::Basis,ORDER_> > As_BasedTensorPowerOfVectorSpaces;
+public:
+    typedef TypeList_t<As_BasedTensorPowerOfVectorSpaces, TypeList_t<As_TensorProductOfBasedVectorSpaces> > ParentTypeList;
+
     enum
     {
-        STATIC_ASSERT_IN_ENUM(IsABasedVectorSpace_c<Factor_>::V, MUST_BE_BASED_VECTOR_SPACE),
+        STATIC_ASSERT_IN_ENUM(HasBasedVectorSpaceStructure_f<Factor_>::V, MUST_BE_BASED_VECTOR_SPACE),
     };
 
-    typedef TensorProductOfVectorSpaces_c<typename UniformTypeListOfLength_t<typename Factor_::As_VectorSpace,ORDER_>::T> As_TensorProductOfVectorSpaces;
-    typedef TensorProductOfBasedVectorSpaces_c<typename UniformTypeListOfLength_t<Factor_,ORDER_>::T> As_TensorProductOfBasedVectorSpaces;
-    typedef TensorPowerOfVectorSpaces_c<typename Factor_::As_VectorSpace,ORDER_> As_TensorPowerOfVectorSpaces;
-    typedef BasedTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces_c<typename Factor_::As_VectorSpace,ORDER_>,
-                                             TensorPowerOfBases_c<typename Factor_::Basis,ORDER_> > As_BasedTensorPowerOfVectorSpaces;
 
     typedef typename As_TensorProductOfBasedVectorSpaces::FactorTypeList FactorTypeList;
     static Uint32 const ORDER = As_TensorPowerOfVectorSpaces::ORDER;
@@ -216,18 +244,17 @@ struct TensorPowerOfBasedVectorSpaces_c
     }
 };
 
-template <typename Factor, Uint32 ORDER> struct IsAVectorSpace_c<TensorPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
-template <typename Factor, Uint32 ORDER> struct IsATensorProduct_c<TensorPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
-template <typename Factor, Uint32 ORDER> struct IsATensorPower_c<TensorPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
-template <typename Factor, Uint32 ORDER> struct IsATensorProductOfVectorSpaces_c<TensorPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
-template <typename Factor, Uint32 ORDER> struct IsATensorPowerOfVectorSpaces_c<TensorPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
-template <typename Factor, Uint32 ORDER> struct IsABasedVectorSpace_c<TensorPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
-template <typename Factor, Uint32 ORDER> struct IsABasedTensorProductOfVectorSpaces_c<TensorPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
-template <typename Factor, Uint32 ORDER> struct IsABasedTensorPowerOfVectorSpaces_c<TensorPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
-template <typename Factor, Uint32 ORDER> struct IsATensorProductOfBasedVectorSpaces_c<TensorPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
+template <typename Factor_, Uint32 ORDER_>
+struct IsConcept_f<TensorPowerOfBasedVectorSpaces_c<Factor_, ORDER_> >
+{ static bool const V = true; };
 
-template <typename T> struct IsATensorPowerOfBasedVectorSpaces_c { static bool const V = false; };
-template <typename Factor, Uint32 ORDER> struct IsATensorPowerOfBasedVectorSpaces_c<TensorPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
+template <typename T> struct IsTensorPowerOfBasedVectorSpaces_f { static bool const V = false; };
+template <typename Factor, Uint32 ORDER> struct IsTensorPowerOfBasedVectorSpaces_f<TensorPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
+
+DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(TensorPowerOfBasedVectorSpaces);
+// special convenience macros
+#define IS_TENSOR_POWER_OF_BASED_VECTOR_SPACES_UNIQUELY(Concept) HasUniqueTensorPowerOfBasedVectorSpacesStructure_f<Concept>::V
+#define AS_TENSOR_POWER_OF_BASED_VECTOR_SPACES(Concept) UniqueTensorPowerOfBasedVectorSpacesStructureOf_f<Concept>::T
 
 template <typename Factor, Uint32 ORDER>
 struct DualOf_c<TensorPowerOfBasedVectorSpaces_c<Factor,ORDER> >

@@ -9,6 +9,7 @@
 #include "tenh/core.hpp"
 #include "tenh/mathutil.hpp"
 
+#include "tenh/conceptual/concept.hpp"
 #include "tenh/conceptual/tensorpower.hpp" // for TypeListWithMultiplicity_t and probably nothing else
 #include "tenh/conceptual/vectorspace.hpp"
 
@@ -18,6 +19,8 @@ namespace Tenh {
 template <typename Factor_, Uint32 ORDER_>
 struct SymmetricPower_c
 {
+    typedef EmptyTypeList ParentTypeList;
+
     static Uint32 const ORDER = ORDER_;
     typedef Factor_ Factor;
     typedef typename TypeListWithMultiplicity_t<Factor,ORDER>::T FactorTypeList;
@@ -29,22 +32,32 @@ struct SymmetricPower_c
     }
 };
 
-template <typename T> struct IsASymmetricPower_c { static bool const V = false; };
-template <typename Factor, Uint32 ORDER> struct IsASymmetricPower_c<SymmetricPower_c<Factor,ORDER> > { static bool const V = true; };
+template <typename Factor_, Uint32 ORDER_>
+struct IsConcept_f<SymmetricPower_c<Factor_, ORDER_> >
+{ static bool const V = true; };
 
+template <typename T> struct IsSymmetricPower_f { static bool const V = false; };
+template <typename Factor, Uint32 ORDER> struct IsSymmetricPower_f<SymmetricPower_c<Factor,ORDER> > { static bool const V = true; };
 
+DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(SymmetricPower);
+// special convenience macros
+#define IS_SYMMETRIC_POWER_UNIQUELY(Concept) HasUniqueSymmetricPowerStructure_f<Concept>::V
+#define AS_SYMMETRIC_POWER(Concept) UniqueSymmetricPowerStructureOf_f<Concept>::T
 
 
 // FactorTypeList_ must be a TypeList_t of VectorSpace_c types
 template <typename Factor_, Uint32 ORDER_>
 struct SymmetricPowerOfVectorSpaces_c
 {
+private:
     typedef SymmetricPower_c<Factor_,ORDER_> As_SymmetricPower;
     typedef VectorSpace_c<typename Factor_::Field,BinomialCoefficient_t<Factor_::DIM + ORDER_ - 1, ORDER_>::V,SymmetricPower_c<typename Factor_::Id,ORDER_> > As_VectorSpace;
+public:
+    typedef TypeList_t<As_SymmetricPower, TypeList_t<As_VectorSpace> > ParentTypeList;
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM(IsAVectorSpace_c<Factor_>::V, MUST_BE_VECTOR_SPACE),
+        STATIC_ASSERT_IN_ENUM(HasVectorSpaceStructure_f<Factor_>::V, MUST_BE_VECTOR_SPACE),
     };
 
     typedef typename As_SymmetricPower::FactorTypeList FactorTypeList;
@@ -61,23 +74,32 @@ struct SymmetricPowerOfVectorSpaces_c
     }
 };
 
-template <typename Factor, Uint32 ORDER> struct IsASymmetricPower_c<SymmetricPowerOfVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
-template <typename Factor, Uint32 ORDER> struct IsAVectorSpace_c<SymmetricPowerOfVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
+template <typename Factor_, Uint32 ORDER_>
+struct IsConcept_f<SymmetricPowerOfVectorSpaces_c<Factor_, ORDER_> >
+{ static bool const V = true; };
 
-template <typename T> struct IsASymmetricPowerOfVectorSpaces_c { static bool const V = false; };
-template <typename Factor, Uint32 ORDER> struct IsASymmetricPowerOfVectorSpaces_c<SymmetricPowerOfVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
+template <typename T> struct IsSymmetricPowerOfVectorSpaces_f { static bool const V = false; };
+template <typename Factor, Uint32 ORDER> struct IsSymmetricPowerOfVectorSpaces_f<SymmetricPowerOfVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
+
+DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(SymmetricPowerOfVectorSpaces);
+// special convenience macros
+#define IS_SYMMETRIC_POWER_OF_VECTOR_SPACES_UNIQUELY(Concept) HasUniqueSymmetricPowerOfVectorSpacesStructure_f<Concept>::V
+#define AS_SYMMETRIC_POWER_OF_VECTOR_SPACES(Concept) UniqueSymmetricPowerOfVectorSpacesStructureOf_f<Concept>::T
 
 
 // Factor_ must be a Basis_c type
 template <typename Factor_, Uint32 ORDER_>
 struct SymmetricPowerOfBases_c
 {
+private:
     typedef SymmetricPower_c<Factor_,ORDER_> As_SymmetricPower;
     typedef Basis_c<SymmetricPower_c<Factor_,ORDER_> > As_Basis;
+public:
+    typedef TypeList_t<As_SymmetricPower, TypeList_t<As_Basis> > ParentTypeList;
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM(IsABasis_c<Factor_>::V, MUST_BE_BASIS)
+        STATIC_ASSERT_IN_ENUM(HasBasisStructure_f<Factor_>::V, MUST_BE_BASIS)
     };
 
     //typedef typename As_SymmetricPower::FactorTypeList FactorTypeList;
@@ -92,11 +114,17 @@ struct SymmetricPowerOfBases_c
     }
 };
 
-template <typename Factor, Uint32 ORDER> struct IsASymmetricPower_c<SymmetricPowerOfBases_c<Factor,ORDER> > { static bool const V = true; };
-template <typename Factor, Uint32 ORDER> struct IsABasis_c<SymmetricPowerOfBases_c<Factor,ORDER> > { static bool const V = true; };
+template <typename Factor_, Uint32 ORDER_>
+struct IsConcept_f<SymmetricPowerOfBases_c<Factor_, ORDER_> >
+{ static bool const V = true; };
 
-template <typename T> struct IsASymmetricPowerOfBases_c { static bool const V = false; };
-template <typename Factor, Uint32 ORDER> struct IsASymmetricPowerOfBases_c<SymmetricPowerOfBases_c<Factor,ORDER> > { static bool const V = true; };
+template <typename T> struct IsSymmetricPowerOfBases_f { static bool const V = false; };
+template <typename Factor, Uint32 ORDER> struct IsSymmetricPowerOfBases_f<SymmetricPowerOfBases_c<Factor,ORDER> > { static bool const V = true; };
+
+DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(SymmetricPowerOfBases);
+// special convenience macros
+#define IS_SYMMETRIC_POWER_OF_BASES_UNIQUELY(Concept) HasUniqueSymmetricPowerOfBasesStructure_f<Concept>::V
+#define AS_SYMMETRIC_POWER_OF_BASES(Concept) UniqueSymmetricPowerOfBasesStructureOf_f<Concept>::T
 
 
 /*
@@ -104,13 +132,16 @@ template <typename Factor, Uint32 ORDER> struct IsASymmetricPowerOfBases_c<Symme
 template <typename SymmetricPowerOfVectorSpaces, typename Basis_>
 struct BasedSymmetricPowerOfVectorSpaces_c
 {
+private:
     typedef SymmetricPowerOfVectorSpaces As_SymmetricPowerOfVectorSpaces;
     typedef BasedSymmetricProductOfVectorSpaces_c<SymmetricPowerOfVectorSpaces,Basis_> As_BasedSymmetricProductOfVectorSpaces;
+public:
+    typedef TypeList_t<As_SymmetricPowerOfVectorSpaces, TypeList_t<As_BasedSymmetricProductOfVectorSpaces> > ParentTypeList;
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM(IsASymmetricPowerOfVectorSpaces_c<SymmetricPowerOfVectorSpaces>::V, MUST_BE_SYMMETRIC_POWER_OF_VECTOR_SPACES),
-        STATIC_ASSERT_IN_ENUM(IsABasis_c<Basis_>::V, MUST_BE_BASIS),
+        STATIC_ASSERT_IN_ENUM(HasSymmetricPowerOfVectorSpacesStructure_f<SymmetricPowerOfVectorSpaces>::V, MUST_BE_SYMMETRIC_POWER_OF_VECTOR_SPACES),
+        STATIC_ASSERT_IN_ENUM(HasBasisStructure_f<Basis_>::V, MUST_BE_BASIS),
     };
 
     //typedef typename As_SymmetricPowerOfVectorSpaces::FactorTypeList FactorTypeList;
@@ -128,12 +159,17 @@ struct BasedSymmetricPowerOfVectorSpaces_c
     }
 };
 
-template <typename SymmetricPowerOfVectorSpaces, typename Basis> struct IsAVectorSpace_c<BasedSymmetricPowerOfVectorSpaces_c<SymmetricPowerOfVectorSpaces,Basis> > { static bool const V = true; };
-template <typename SymmetricPowerOfVectorSpaces, typename Basis> struct IsABasedVectorSpace_c<BasedSymmetricPowerOfVectorSpaces_c<SymmetricPowerOfVectorSpaces,Basis> > { static bool const V = true; };
-template <typename SymmetricPowerOfVectorSpaces, typename Basis> struct IsABasedSymmetricProductOfVectorSpaces_c<BasedSymmetricPowerOfVectorSpaces_c<SymmetricPowerOfVectorSpaces,Basis> > { static bool const V = true; };
+template <typename SymmetricPowerOfVectorSpaces, typename Basis_>
+struct IsConcept_f<BasedSymmetricPowerOfVectorSpaces_c<SymmetricPowerOfVectorSpaces, Basis_> >
+{ static bool const V = true; };
 
-template <typename T> struct IsABasedSymmetricPowerOfVectorSpaces_c { static bool const V = false; };
-template <typename SymmetricPowerOfVectorSpaces, typename Basis> struct IsABasedSymmetricPowerOfVectorSpaces_c<BasedSymmetricPowerOfVectorSpaces_c<SymmetricPowerOfVectorSpaces,Basis> > { static bool const V = true; };
+template <typename T> struct IsBasedSymmetricPowerOfVectorSpaces_f { static bool const V = false; };
+template <typename SymmetricPowerOfVectorSpaces, typename Basis> struct IsBasedSymmetricPowerOfVectorSpaces_f<BasedSymmetricPowerOfVectorSpaces_c<SymmetricPowerOfVectorSpaces,Basis> > { static bool const V = true; };
+
+DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(BasedSymmetricPowerOfVectorSpaces);
+// special convenience macros
+#define IS_BASED_SYMMETRIC_POWER_OF_VECTOR_SPACES_UNIQUELY(Concept) HasUniqueBasedSymmetricPowerOfVectorSpacesStructure_f<Concept>::V
+#define AS_BASED_SYMMETRIC_POWER_OF_VECTOR_SPACES(Concept) UniqueBasedSymmetricPowerOfVectorSpacesStructureOf_f<Concept>::T
 
 template <typename SymmetricPowerOfVectorSpaces, typename Basis>
 struct DualOf_c<BasedSymmetricPowerOfVectorSpaces_c<SymmetricPowerOfVectorSpaces,Basis> >
@@ -148,14 +184,17 @@ struct DualOf_c<BasedSymmetricPowerOfVectorSpaces_c<SymmetricPowerOfVectorSpaces
 template <typename Factor_, Uint32 ORDER_>
 struct SymmetricPowerOfBasedVectorSpaces_c
 {
-    typedef SymmetricPowerOfVectorSpaces_c<typename Factor_::As_VectorSpace,ORDER_> As_SymmetricPowerOfVectorSpaces;
-    typedef BasedVectorSpace_c<SymmetricPowerOfVectorSpaces_c<typename Factor_::As_VectorSpace,ORDER_>,
+private:
+    typedef SymmetricPowerOfVectorSpaces_c<typename AS_VECTOR_SPACE(Factor_),ORDER_> As_SymmetricPowerOfVectorSpaces;
+    typedef BasedVectorSpace_c<SymmetricPowerOfVectorSpaces_c<typename AS_VECTOR_SPACE(Factor_),ORDER_>,
                                SymmetricPowerOfBases_c<typename Factor_::Basis,ORDER_> > As_BasedVectorSpace;
     typedef EmbeddableInTensorProductOfBasedVectorSpaces_c<TensorPowerOfBasedVectorSpaces_c<Factor_, ORDER_> > As_EmbeddableInTensorProductOfBasedVectorSpaces;
+public:
+    typedef TypeList_t<As_SymmetricPowerOfVectorSpaces, TypeList_t<As_BasedVectorSpace, TypeList_t<As_EmbeddableInTensorProductOfBasedVectorSpaces> > > ParentTypeList;
 
     typedef typename As_EmbeddableInTensorProductOfBasedVectorSpaces::FactorTypeList FactorTypeList;
 
-    enum { STATIC_ASSERT_IN_ENUM(AllFactorsAreBasedVectorSpaces_t<FactorTypeList>::V, ALL_FACTORS_MUST_BE_BASED_VECTOR_SPACES) };
+    enum { STATIC_ASSERT_IN_ENUM(AllFactorsAreBasedVectorSpaces_f<FactorTypeList>::V, ALL_FACTORS_MUST_BE_BASED_VECTOR_SPACES) };
 
     typedef TensorProductOfBasedVectorSpaces_c<FactorTypeList> TensorProductOfBasedVectorSpaces;
     static Uint32 const ORDER = As_SymmetricPowerOfVectorSpaces::ORDER;
@@ -172,14 +211,17 @@ struct SymmetricPowerOfBasedVectorSpaces_c
     }
 };
 
-template <typename Factor, Uint32 ORDER> struct IsAVectorSpace_c<SymmetricPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
-template <typename Factor, Uint32 ORDER> struct IsASymmetricPower_c<SymmetricPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
-template <typename Factor, Uint32 ORDER> struct IsASymmetricPowerOfVectorSpaces_c<SymmetricPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
-template <typename Factor, Uint32 ORDER> struct IsABasedVectorSpace_c<SymmetricPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
-template <typename Factor, Uint32 ORDER> struct IsEmbeddableInTensorProductOfBasedVectorSpaces_c<SymmetricPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
+template <typename Factor_, Uint32 ORDER_>
+struct IsConcept_f<SymmetricPowerOfBasedVectorSpaces_c<Factor_, ORDER_> >
+{ static bool const V = true; };
 
-template <typename T> struct IsASymmetricPowerOfBasedVectorSpaces_c { static bool const V = false; };
-template <typename Factor, Uint32 ORDER> struct IsASymmetricPowerOfBasedVectorSpaces_c<SymmetricPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
+template <typename T> struct IsSymmetricPowerOfBasedVectorSpaces_f { static bool const V = false; };
+template <typename Factor, Uint32 ORDER> struct IsSymmetricPowerOfBasedVectorSpaces_f<SymmetricPowerOfBasedVectorSpaces_c<Factor,ORDER> > { static bool const V = true; };
+
+DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(SymmetricPowerOfBasedVectorSpaces);
+// special convenience macros
+#define IS_SYMMETRIC_POWER_OF_BASED_VECTOR_SPACES_UNIQUELY(Concept) HasUniqueSymmetricPowerOfBasedVectorSpacesStructure_f<Concept>::V
+#define AS_SYMMETRIC_POWER_OF_BASED_VECTOR_SPACES(Concept) UniqueSymmetricPowerOfBasedVectorSpacesStructureOf_f<Concept>::T
 
 } // end of namespace Tenh
 

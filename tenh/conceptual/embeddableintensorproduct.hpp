@@ -8,6 +8,7 @@
 
 #include "tenh/core.hpp"
 
+#include "tenh/conceptual/concept.hpp"
 #include "tenh/conceptual/tensorproduct.hpp"
 
 namespace Tenh {
@@ -17,7 +18,9 @@ namespace Tenh {
 template <typename TensorProductOfVectorSpaces_>
 struct EmbeddableInTensorProductOfVectorSpaces_c
 {
-    enum { STATIC_ASSERT_IN_ENUM(IsATensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_>::V, MUST_BE_TENSOR_PRODUCT_OF_VECTOR_SPACES) };
+    typedef EmptyTypeList ParentTypeList;
+
+    enum { STATIC_ASSERT_IN_ENUM(HasTensorProductOfVectorSpacesStructure_f<TensorProductOfVectorSpaces_>::V, MUST_BE_TENSOR_PRODUCT_OF_VECTOR_SPACES) };
 
     typedef TensorProductOfVectorSpaces_ TensorProductOfVectorSpaces;
 
@@ -27,8 +30,17 @@ struct EmbeddableInTensorProductOfVectorSpaces_c
     }
 };
 
-template <typename T> struct IsEmbeddableInTensorProductOfVectorSpaces_c { static bool const V = false; };
-template <typename TensorProductOfVectorSpaces> struct IsEmbeddableInTensorProductOfVectorSpaces_c<EmbeddableInTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces> > { static bool const V = true; };
+template <typename TensorProductOfVectorSpaces_>
+struct IsConcept_f<EmbeddableInTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_> >
+{ static bool const V = true; };
+
+template <typename T> struct IsEmbeddableInTensorProductOfVectorSpaces_f { static bool const V = false; };
+template <typename TensorProductOfVectorSpaces> struct IsEmbeddableInTensorProductOfVectorSpaces_f<EmbeddableInTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces> > { static bool const V = true; };
+
+DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(EmbeddableInTensorProductOfVectorSpaces);
+// special convenience macros
+#define IS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_VECTOR_SPACES_UNIQUELY(Concept) HasUniqueEmbeddableInTensorProductOfVectorSpacesStructure_f<Concept>::V
+#define AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_VECTOR_SPACES(Concept) UniqueEmbeddableInTensorProductOfVectorSpacesStructureOf_f<Concept>::T
 
 // NOTE: because the class of embeddable-in-tensor-products-of-vector-spaces includes nonlinear
 // spaces such as the space of simple tensors, there is no general notion of Dual here.  That
@@ -41,9 +53,13 @@ template <typename TensorProductOfVectorSpaces> struct IsEmbeddableInTensorProdu
 template <typename TensorProductOfBasedVectorSpaces_>
 struct EmbeddableInTensorProductOfBasedVectorSpaces_c
 {
-    enum { STATIC_ASSERT_IN_ENUM(IsATensorProductOfBasedVectorSpaces_c<TensorProductOfBasedVectorSpaces_>::V, MUST_BE_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES) };
-
+private:
     typedef EmbeddableInTensorProductOfVectorSpaces_c<TensorProductOfBasedVectorSpaces_> As_EmbeddableInTensorProductOfVectorSpaces;
+public:
+    typedef TypeList_t<As_EmbeddableInTensorProductOfVectorSpaces> ParentTypeList;
+
+    enum { STATIC_ASSERT_IN_ENUM(HasTensorProductOfBasedVectorSpacesStructure_f<TensorProductOfBasedVectorSpaces_>::V, MUST_BE_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES) };
+
 
     typedef typename As_EmbeddableInTensorProductOfVectorSpaces::TensorProductOfVectorSpaces TensorProductOfVectorSpaces;
     typedef TensorProductOfBasedVectorSpaces_ TensorProductOfBasedVectorSpaces;
@@ -57,11 +73,17 @@ struct EmbeddableInTensorProductOfBasedVectorSpaces_c
     }
 };
 
-template <typename TensorProductOfBasedVectorSpaces> struct IsEmbeddableInTensorProductOfVectorSpaces_c<EmbeddableInTensorProductOfBasedVectorSpaces_c<TensorProductOfBasedVectorSpaces> > { static bool const V = true; };
+template <typename TensorProductOfBasedVectorSpaces_>
+struct IsConcept_f<EmbeddableInTensorProductOfBasedVectorSpaces_c<TensorProductOfBasedVectorSpaces_> >
+{ static bool const V = true; };
 
-template <typename T> struct IsEmbeddableInTensorProductOfBasedVectorSpaces_c { static bool const V = false; };
-template <typename TensorProductOfBasedVectorSpaces> struct IsEmbeddableInTensorProductOfBasedVectorSpaces_c<EmbeddableInTensorProductOfBasedVectorSpaces_c<TensorProductOfBasedVectorSpaces> > { static bool const V = true; };
+template <typename T> struct IsEmbeddableInTensorProductOfBasedVectorSpaces_f { static bool const V = false; };
+template <typename TensorProductOfBasedVectorSpaces> struct IsEmbeddableInTensorProductOfBasedVectorSpaces_f<EmbeddableInTensorProductOfBasedVectorSpaces_c<TensorProductOfBasedVectorSpaces> > { static bool const V = true; };
 
+DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(EmbeddableInTensorProductOfBasedVectorSpaces);
+// special convenience macros
+#define IS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES_UNIQUELY(Concept) HasUniqueEmbeddableInTensorProductOfBasedVectorSpacesStructure_f<Concept>::V
+#define AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(Concept) UniqueEmbeddableInTensorProductOfBasedVectorSpacesStructureOf_f<Concept>::T
 
 // TODO (?): LinearlyEmbeddableInTensorProductOfVectorSpaces_c -- this may possibly have a naturally induced Dual
 
