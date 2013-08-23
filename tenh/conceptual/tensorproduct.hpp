@@ -153,7 +153,6 @@ public:
 
 
     typedef FactorTypeList_ FactorTypeList;
-    static Uint32 const ORDER = As_TensorProduct::ORDER;
     typedef typename As_VectorSpace::Field Field;
     static Uint32 const DIM = As_VectorSpace::DIM;
     typedef typename As_VectorSpace::Id Id;
@@ -200,7 +199,6 @@ public:
     typedef TypeList_t<As_TensorProduct, TypeList_t<As_Basis> > ParentTypeList;
 
     typedef FactorTypeList_ FactorTypeList;
-    static Uint32 const ORDER = As_TensorProduct::ORDER;
     typedef typename As_Basis::Id Id;
     typedef typename DualOf_f<TensorProductOfBases_c>::T Dual; // relies on the template specialization below
 
@@ -246,7 +244,6 @@ public:
     typedef TypeList_t<As_TensorProductOfVectorSpaces, TypeList_t<As_BasedVectorSpace> > ParentTypeList;
 
     typedef typename As_TensorProductOfVectorSpaces::FactorTypeList FactorTypeList;
-    static Uint32 const ORDER = As_TensorProductOfVectorSpaces::ORDER;
     typedef typename As_BasedVectorSpace::Field Field;
     static Uint32 const DIM = As_BasedVectorSpace::DIM;
     typedef typename As_BasedVectorSpace::Id Id;
@@ -338,7 +335,6 @@ public:
     typedef TypeList_t<As_BasedTensorProductOfVectorSpaces> ParentTypeList;
 
     typedef FactorTypeList_ FactorTypeList;
-    static Uint32 const ORDER = As_BasedTensorProductOfVectorSpaces::ORDER;
     typedef typename As_BasedTensorProductOfVectorSpaces::Field Field;
     static Uint32 const DIM = As_BasedTensorProductOfVectorSpaces::DIM;
     typedef typename As_BasedTensorProductOfVectorSpaces::Id Id;

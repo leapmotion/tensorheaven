@@ -43,10 +43,9 @@ struct ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpaces_c<Factor_,OR
     typedef typename Parent_EmbeddableAsTensor_i::TensorProductOfBasedVectorSpaces TensorProductOfBasedVectorSpaces;
     typedef typename Parent_EmbeddableAsTensor_i::FactorTypeList FactorTypeList;
     typedef typename Parent_EmbeddableAsTensor_i::MultiIndex MultiIndex;
-    using Parent_EmbeddableAsTensor_i::ORDER;
     static Uint32 const ORDER = ORDER_;
     typedef Factor_ Factor;
-    typedef SymmetricPowerOfBasedVectorSpaces_c<Factor,ORDER> SymmetricPowerOfBasedVectorSpaces;
+    typedef SymmetricPowerOfBasedVectorSpaces_c<Factor,ORDER_> SymmetricPowerOfBasedVectorSpaces;
 
     typedef typename DualOf_f<ImplementationOf_t>::T Dual; // relies on the template specialization below
 
@@ -59,7 +58,7 @@ struct ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpaces_c<Factor_,OR
     {
         //STATIC_ASSERT(IsADimIndex_f<BundledIndex>::V, MUST_BE_COMPONENT_INDEX);
         // this constructor breaks the vector index apart into a row-major multi-index
-        return BundleIndexComputer_t<BundleIndexTypeList, BundledIndex, ORDER>::compute(b);
+        return BundleIndexComputer_t<BundleIndexTypeList, BundledIndex, ORDER_>::compute(b);
     }
 
     using Parent_Array_t::operator[];

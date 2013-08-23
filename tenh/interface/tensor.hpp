@@ -45,8 +45,8 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
     enum
     {
         STATIC_ASSERT_IN_ENUM((!Lvd::Meta::TypesAreEqual<Derived_,NullType>::v), DERIVED_MUST_NOT_BE_NULL_TYPE),
-        //STATIC_ASSERT_IN_ENUM((FactorTypeList_::LENGTH > 0), MUST_BE_NONEMPTY) // NOTE: deprecate this, since 0-order tensors should be allowed
-        STATIC_ASSERT_IN_ENUM(HasTensorProductOfBasedVectorSpacesStructure_f<TensorProductOfBasedVectorSpaces_>::V, MUST_BE_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES)
+        //STATIC_ASSERT_IN_ENUM((FactorTypeList_::LENGTH > 0), MUST_BE_NONEMPTY) // TODO: deprecate this, since 0-order tensors should be allowed
+        STATIC_ASSERT_IN_ENUM(IS_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES_UNIQUELY(TensorProductOfBasedVectorSpaces_), MUST_BE_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES)
     };
 
     typedef Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_> Parent_Vector_i;
@@ -61,7 +61,7 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
     typedef MultiIndex_t<typename FactorComponentIndexTypeList_t<FactorTypeList>::T> MultiIndex;
     // this is not the "fully expanded" order, but the number of [what you could think of
     // as "parenthesized"] factors that formed this tensor product type.
-    static Uint32 const ORDER = FactorTypeList::LENGTH;
+    static Uint32 const ORDER = AS_TENSOR_PRODUCT(TensorProductOfBasedVectorSpaces_)::ORDER;
     static bool const IS_TENSOR_I = true; // TODO: deprecate this in favor of IsATensor_i<...>
 
     // TODO: could put canonical as_factorX conversions here

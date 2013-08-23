@@ -43,7 +43,6 @@ struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORD
     typedef typename Parent_EmbeddableAsTensor_i::TensorProductOfBasedVectorSpaces TensorProductOfBasedVectorSpaces;
     typedef typename Parent_EmbeddableAsTensor_i::FactorTypeList FactorTypeList;
     typedef typename Parent_EmbeddableAsTensor_i::MultiIndex MultiIndex;
-    using Parent_EmbeddableAsTensor_i::ORDER;
     static Uint32 const ORDER = ORDER_;
     typedef Factor_ Factor;
     typedef ExteriorPowerOfBasedVectorSpaces_c<Factor,ORDER> ExteriorPowerOfBasedVectorSpaces;

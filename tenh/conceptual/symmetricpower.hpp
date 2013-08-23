@@ -29,7 +29,7 @@ struct SymmetricPower_c
 
     static std::string type_as_string ()
     {
-        return "SymmetricPower_c<" + TypeStringOf_t<Factor>::eval() + ',' + AS_STRING(ORDER) + '>';
+        return "SymmetricPower_c<" + TypeStringOf_t<Factor>::eval() + ',' + AS_STRING(ORDER_) + '>';
     }
 };
 
@@ -61,7 +61,6 @@ public:
             TypeList_t<As_EmbeddableInTensorPowerOfVectorSpaces> > > ParentTypeList;
 
     typedef typename As_SymmetricPower::FactorTypeList FactorTypeList;
-    static Uint32 const ORDER = As_SymmetricPower::ORDER;
     typedef typename As_VectorSpace::Field Field;
     static Uint32 const DIM = As_VectorSpace::DIM;
     typedef typename As_VectorSpace::Id Id;
@@ -70,7 +69,7 @@ public:
 
     static std::string type_as_string ()
     {
-        return "SymmetricPowerOfVectorSpaces_c<" + TypeStringOf_t<Factor>::eval() + ',' + AS_STRING(ORDER) + '>';
+        return "SymmetricPowerOfVectorSpaces_c<" + TypeStringOf_t<Factor>::eval() + ',' + AS_STRING(ORDER_) + '>';
     }
 };
 
@@ -99,14 +98,13 @@ public:
     typedef TypeList_t<As_SymmetricPower,
             TypeList_t<As_Basis> > ParentTypeList;
 
-    static Uint32 const ORDER = As_SymmetricPower::ORDER;
     typedef typename As_Basis::Id Id;
     typedef typename DualOf_f<SymmetricPowerOfBases_c>::T Dual; // the dual is not the symmetric power of Factor::Dual
     typedef Factor_ Factor;
 
     static std::string type_as_string ()
     {
-        return "SymmetricPowerOfBases_c<" + TypeStringOf_t<Factor>::eval() + ',' + AS_STRING(ORDER) + '>';
+        return "SymmetricPowerOfBases_c<" + TypeStringOf_t<Factor>::eval() + ',' + AS_STRING(ORDER_) + '>';
     }
 };
 
@@ -138,7 +136,6 @@ public:
     typedef TypeList_t<As_SymmetricPowerOfVectorSpaces,
             TypeList_t<As_BasedVectorSpace> > ParentTypeList;
 
-    static Uint32 const ORDER = As_SymmetricPowerOfVectorSpaces::ORDER;
     typedef typename As_BasedVectorSpace::Field Field;
     static Uint32 const DIM = As_BasedVectorSpace::DIM;
     typedef typename As_BasedVectorSpace::Id Id;
@@ -184,9 +181,7 @@ public:
     typedef TypeList_t<As_BasedSymmetricPowerOfVectorSpaces,
             TypeList_t<As_EmbeddableInTensorPowerOfBasedVectorSpaces> > ParentTypeList;
 
-    typedef typename AS_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(typename As_EmbeddableInTensorPowerOfBasedVectorSpaces::TensorPowerOfBasedVectorSpaces) TensorProductOfBasedVectorSpaces;
     typedef typename As_EmbeddableInTensorPowerOfBasedVectorSpaces::FactorTypeList FactorTypeList;
-    static Uint32 const ORDER = As_BasedSymmetricPowerOfVectorSpaces::ORDER;
     typedef typename As_BasedSymmetricPowerOfVectorSpaces::Field Field;
     static Uint32 const DIM = As_BasedSymmetricPowerOfVectorSpaces::DIM;
     typedef typename As_BasedSymmetricPowerOfVectorSpaces::Id Id;

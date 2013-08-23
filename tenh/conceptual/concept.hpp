@@ -133,7 +133,11 @@ struct Is##ConceptName##_p \
 template <typename Concept> struct ConceptName##StructuresOf_f { typedef typename ConceptualStructuresOf_f<Concept,Is##ConceptName##_p>::T T; }; \
 template <typename Concept> struct Has##ConceptName##Structure_f { static bool const V = HasConceptualStructure_f<Concept,Is##ConceptName##_p>::V; }; \
 template <typename Concept> struct HasUnique##ConceptName##Structure_f { static bool const V = HasUniqueConceptualStructure_f<Concept,Is##ConceptName##_p>::V; }; \
-template <typename Concept> struct Unique##ConceptName##StructureOf_f { typedef typename UniqueConceptualStructureOf_f<Concept,Is##ConceptName##_p>::T T; }
+template <typename Concept> struct Unique##ConceptName##StructureOf_f \
+{ \
+    enum { STATIC_ASSERT_IN_ENUM(HasUnique##ConceptName##Structure_f<Concept>::V, MUST_HAVE_UNIQUE_CONCEPTUAL_STRUCTURE) }; \
+    typedef typename UniqueConceptualStructureOf_f<Concept,Is##ConceptName##_p>::T T; \
+}
 } // end of namespace Tenh
 
 #endif // TENH_CONCEPTUAL_CONCEPT_HPP_

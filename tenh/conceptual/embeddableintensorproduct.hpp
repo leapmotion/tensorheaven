@@ -25,6 +25,7 @@ public:
     typedef EmptyTypeList ParentTypeList;
 
     typedef TensorProductOfVectorSpaces_ TensorProductOfVectorSpaces;
+    static Uint32 const ORDER = AS_TENSOR_PRODUCT(TensorProductOfVectorSpaces)::ORDER;
 
     static std::string type_as_string ()
     {
@@ -57,13 +58,12 @@ struct EmbeddableInTensorProductOfBasedVectorSpaces_c
 {
 private:
     enum { STATIC_ASSERT_IN_ENUM(IS_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES_UNIQUELY(TensorProductOfBasedVectorSpaces_), MUST_BE_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES) };
-    typedef EmbeddableInTensorProductOfVectorSpaces_c<TensorProductOfBasedVectorSpaces_> As_EmbeddableInTensorProductOfVectorSpaces;
+    typedef EmbeddableInTensorProductOfVectorSpaces_c<typename AS_TENSOR_PRODUCT_OF_VECTOR_SPACES(TensorProductOfBasedVectorSpaces_)> As_EmbeddableInTensorProductOfVectorSpaces;
 public:
     typedef TypeList_t<As_EmbeddableInTensorProductOfVectorSpaces> ParentTypeList;
 
     typedef typename As_EmbeddableInTensorProductOfVectorSpaces::TensorProductOfVectorSpaces TensorProductOfVectorSpaces;
     typedef TensorProductOfBasedVectorSpaces_ TensorProductOfBasedVectorSpaces;
-    static Uint32 const ORDER = TensorProductOfBasedVectorSpaces::ORDER;
     typedef typename TensorProductOfBasedVectorSpaces::FactorTypeList FactorTypeList;
     // TODO: other typedefs/values?
 

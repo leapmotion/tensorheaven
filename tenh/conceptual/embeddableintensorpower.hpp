@@ -23,7 +23,7 @@ struct EmbeddableInTensorPowerOfVectorSpaces_c
 private:
     // TODO: Figure out why this is failing.
 //    enum { STATIC_ASSERT_IN_ENUM(IS_TENSOR_POWER_OF_VECTOR_SPACES_UNIQUELY(TensorPowerOfVectorSpaces_), MUST_BE_TENSOR_POWER_OF_VECTOR_SPACES) };
-    typedef EmbeddableInTensorProductOfVectorSpaces_c<TensorPowerOfVectorSpaces_> As_EmbeddableInTensorProductOfVectorSpaces;
+    typedef EmbeddableInTensorProductOfVectorSpaces_c<typename AS_TENSOR_PRODUCT_OF_VECTOR_SPACES(TensorPowerOfVectorSpaces_)> As_EmbeddableInTensorProductOfVectorSpaces;
 public:
     typedef TypeList_t<As_EmbeddableInTensorProductOfVectorSpaces> ParentTypeList;
 
@@ -60,21 +60,20 @@ struct EmbeddableInTensorPowerOfBasedVectorSpaces_c
 {
 private:
     enum { STATIC_ASSERT_IN_ENUM(IS_TENSOR_POWER_OF_BASED_VECTOR_SPACES_UNIQUELY(TensorPowerOfBasedVectorSpaces_), MUST_BE_TENSOR_POWER_OF_BASED_VECTOR_SPACES) };
-    typedef EmbeddableInTensorPowerOfVectorSpaces_c<TensorPowerOfBasedVectorSpaces_> As_EmbeddableInTensorPowerOfVectorSpaces;
-    typedef EmbeddableInTensorProductOfBasedVectorSpaces_c<TensorPowerOfBasedVectorSpaces_> As_EmbeddableInTensorProductOfBasedVectorSpaces;
+    typedef EmbeddableInTensorPowerOfVectorSpaces_c<typename AS_TENSOR_POWER_OF_VECTOR_SPACES(TensorPowerOfBasedVectorSpaces_)> As_EmbeddableInTensorPowerOfVectorSpaces;
+    typedef EmbeddableInTensorProductOfBasedVectorSpaces_c<typename AS_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(TensorPowerOfBasedVectorSpaces_)> As_EmbeddableInTensorProductOfBasedVectorSpaces;
 public:
     typedef TypeList_t<As_EmbeddableInTensorPowerOfVectorSpaces,
             TypeList_t<As_EmbeddableInTensorProductOfBasedVectorSpaces> > ParentTypeList;
 
     typedef typename As_EmbeddableInTensorPowerOfVectorSpaces::TensorPowerOfVectorSpaces TensorPowerOfVectorSpaces;
     typedef TensorPowerOfBasedVectorSpaces_ TensorPowerOfBasedVectorSpaces;
-    static Uint32 const ORDER = TensorPowerOfBasedVectorSpaces::ORDER;
     typedef typename TensorPowerOfBasedVectorSpaces::FactorTypeList FactorTypeList;
     // TODO: other typedefs/values?
 
     static std::string type_as_string ()
     {
-        return "EmbeddableInTensorPowerOfBasedVectorSpaces_c<" + TypeStringOf_t<TensorPowerOfBasedVectorSpaces>::eval() + '>';
+        return "EmbeddableInTensorPowerOfBasedVectorSpaces_c<" + TypeStringOf_t<TensorPowerOfBasedVectorSpaces_>::eval() + '>';
     }
 };
 

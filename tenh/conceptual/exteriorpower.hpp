@@ -29,7 +29,7 @@ struct ExteriorPower_c
 
     static std::string type_as_string ()
     {
-        return "ExteriorPower_c<" + TypeStringOf_t<Factor>::eval() + ',' + AS_STRING(ORDER) + '>';
+        return "ExteriorPower_c<" + TypeStringOf_t<Factor>::eval() + ',' + AS_STRING(ORDER_) + '>';
     }
 };
 
@@ -61,7 +61,6 @@ public:
             TypeList_t<As_EmbeddableInTensorPowerOfVectorSpaces> > > ParentTypeList;
 
     typedef typename As_ExteriorPower::FactorTypeList FactorTypeList;
-    static Uint32 const ORDER = As_ExteriorPower::ORDER;
     typedef typename As_VectorSpace::Field Field;
     static Uint32 const DIM = As_VectorSpace::DIM;
     typedef typename As_VectorSpace::Id Id;
@@ -70,7 +69,7 @@ public:
 
     static std::string type_as_string ()
     {
-        return "ExteriorPowerOfVectorSpaces_c<" + TypeStringOf_t<Factor>::eval() + ',' + AS_STRING(ORDER) + '>';
+        return "ExteriorPowerOfVectorSpaces_c<" + TypeStringOf_t<Factor>::eval() + ',' + AS_STRING(ORDER_) + '>';
     }
 };
 
@@ -98,7 +97,6 @@ private:
 public:
     typedef TypeList_t<As_ExteriorPower, TypeList_t<As_Basis> > ParentTypeList;
 
-    static Uint32 const ORDER = As_ExteriorPower::ORDER;
     typedef typename As_Basis::Id Id;
     typedef typename DualOf_f<ExteriorPowerOfBases_c>::T Dual; // the dual is not the exterior power of Factor::Dual
     typedef Factor_ Factor;
@@ -136,7 +134,6 @@ private:
 public:
     typedef TypeList_t<As_ExteriorPowerOfVectorSpaces, TypeList_t<As_BasedVectorSpace> > ParentTypeList;
 
-    static Uint32 const ORDER = As_ExteriorPowerOfVectorSpaces::ORDER;
     typedef typename As_BasedVectorSpace::Field Field;
     static Uint32 const DIM = As_BasedVectorSpace::DIM;
     typedef typename As_BasedVectorSpace::Id Id;
@@ -180,12 +177,11 @@ private:
     typedef EmbeddableInTensorPowerOfBasedVectorSpaces_c<TensorPowerOfBasedVectorSpaces_c<Factor_,ORDER_> > As_EmbeddableInTensorPowerOfBasedVectorSpaces;
 public:
     typedef TypeList_t<As_BasedExteriorPowerOfVectorSpaces,
-            TypeList_t<As_EmbeddableInTensorPowerOfBasedVectorSpaces> > ParentTypeList;
+             TypeList_t<As_EmbeddableInTensorPowerOfBasedVectorSpaces> > ParentTypeList;
+    // TODO: Why the fuck is this broken?????????
 
     typedef typename As_EmbeddableInTensorPowerOfBasedVectorSpaces::FactorTypeList FactorTypeList;
 
-    typedef TensorProductOfBasedVectorSpaces_c<FactorTypeList> TensorProductOfBasedVectorSpaces;
-    static Uint32 const ORDER = As_BasedExteriorPowerOfVectorSpaces::ORDER;
     typedef typename As_BasedExteriorPowerOfVectorSpaces::Field Field;
     static Uint32 const DIM = As_BasedExteriorPowerOfVectorSpaces::DIM;
     typedef typename As_BasedExteriorPowerOfVectorSpaces::Id Id;
@@ -195,7 +191,7 @@ public:
 
     static std::string type_as_string ()
     {
-        return "ExteriorProductOfBasedVectorSpaces_c<" + TypeStringOf_t<Factor_>::eval() + ',' + AS_STRING(ORDER_) + '>';
+        return "ExteriorPowerOfBasedVectorSpaces_c<" + TypeStringOf_t<Factor_>::eval() + ',' + AS_STRING(ORDER_) + '>';
     }
 };
 
@@ -211,11 +207,11 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(ExteriorPowerOfBasedVectorSpaces);
 #define IS_EXTERIOR_POWER_OF_BASED_VECTOR_SPACES_UNIQUELY(Concept) HasUniqueExteriorPowerOfBasedVectorSpacesStructure_f<Concept>::V
 #define AS_EXTERIOR_POWER_OF_BASED_VECTOR_SPACES(Concept) UniqueExteriorPowerOfBasedVectorSpacesStructureOf_f<Concept>::T
 
-template <typename Factor, Uint32 ORDER>
-struct DualOf_f<ExteriorPowerOfBasedVectorSpaces_c<Factor,ORDER> >
+template <typename Factor_, Uint32 ORDER_>
+struct DualOf_f<ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORDER_> >
 {
-    typedef BasedExteriorPowerOfVectorSpaces_c<typename DualOf_f<ExteriorPowerOfVectorSpaces_c<typename AS_VECTOR_SPACE(Factor),ORDER> >::T,
-                                               typename DualOf_f<typename ExteriorPowerOfBasedVectorSpaces_c<Factor,ORDER>::Basis>::T> T;
+    typedef BasedExteriorPowerOfVectorSpaces_c<typename DualOf_f<ExteriorPowerOfVectorSpaces_c<Factor_,ORDER_> >::T,
+                                               typename DualOf_f<typename ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORDER_>::Basis>::T> T;
 };
 
 } // end of namespace Tenh

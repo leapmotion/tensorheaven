@@ -77,6 +77,7 @@ random TODOs:
   values index from the end of the array.  this should probably not include vector/tensor indexing.
 - Add _ to the end of all template parameters
 - Tensor power of vector space, NOT SPACES.
+- Make references to Parameter within template classes reference Parameter_ where possible.
 
 features necessary for version 0.5:
 x euclidean embedding (using short-term zero-dimensional hack (?))

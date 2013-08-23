@@ -24,13 +24,12 @@ public:
     typedef TypeList_t<As_TensorProduct> ParentTypeList;
 
     typedef typename As_TensorProduct::FactorTypeList FactorTypeList;
-    static Uint32 const ORDER = As_TensorProduct::ORDER;
     typedef typename DualOf_f<TensorPower_c>::T Dual; // relies on the template specialization below
     typedef Factor_ Factor;
 
     static std::string type_as_string ()
     {
-        return "TensorPower_c<" + TypeStringOf_t<Factor>::eval() + ',' + AS_STRING(ORDER) + '>';
+        return "TensorPower_c<" + TypeStringOf_t<Factor>::eval() + ',' + AS_STRING(ORDER_) + '>';
     }
 };
 
@@ -66,7 +65,6 @@ public:
     typedef TypeList_t<As_TensorPower, TypeList_t<As_TensorProductOfVectorSpaces> > ParentTypeList;
 
     typedef typename As_TensorPower::FactorTypeList FactorTypeList;
-    static Uint32 const ORDER = As_TensorPower::ORDER;
     typedef typename As_TensorProductOfVectorSpaces::Field Field;
     static Uint32 const DIM = As_TensorProductOfVectorSpaces::DIM;
     typedef typename As_TensorProductOfVectorSpaces::Id Id;
@@ -75,7 +73,7 @@ public:
 
     static std::string type_as_string ()
     {
-        return "TensorPowerOfVectorSpaces_c<" + TypeStringOf_t<Factor>::eval() + ',' + AS_STRING(ORDER) + '>';
+        return "TensorPowerOfVectorSpaces_c<" + TypeStringOf_t<Factor>::eval() + ',' + AS_STRING(ORDER_) + '>';
     }
 };
 
@@ -105,19 +103,18 @@ struct TensorPowerOfBases_c
 private:
     enum { STATIC_ASSERT_IN_ENUM(IS_BASIS_UNIQUELY(Factor_), MUST_BE_BASIS) };
     typedef TensorPower_c<Factor_,ORDER_> As_TensorPower;
-    typedef Basis_c<TensorPower_c<Factor_,ORDER_> > As_Basis;
+    typedef TensorProductOfBases_c<typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T > As_TensorPowerOfBases;
 public:
-    typedef TypeList_t<As_TensorPower, TypeList_t<As_Basis> > ParentTypeList;
+    typedef TypeList_t<As_TensorPower, TypeList_t<As_TensorPowerOfBases> > ParentTypeList;
 
     typedef typename As_TensorPower::FactorTypeList FactorTypeList;
-    static Uint32 const ORDER = As_TensorPower::ORDER;
-    typedef typename As_Basis::Id Id;
+    typedef typename As_TensorPowerOfBases::Id Id;
     typedef typename DualOf_f<TensorPowerOfBases_c>::T Dual; // relies on the template specialization below
     typedef Factor_ Factor;
 
     static std::string type_as_string ()
     {
-        return "TensorPowerOfBases_c<" + TypeStringOf_t<Factor>::eval() + ',' + AS_STRING(ORDER) + '>';
+        return "TensorPowerOfBases_c<" + TypeStringOf_t<Factor>::eval() + ',' + AS_STRING(ORDER_) + '>';
     }
 };
 
@@ -156,7 +153,6 @@ public:
             TypeList_t<As_BasedTensorProductOfVectorSpaces> > ParentTypeList;
 
     typedef typename As_TensorPowerOfVectorSpaces::FactorTypeList FactorTypeList;
-    static Uint32 const ORDER = As_TensorPowerOfVectorSpaces::ORDER;
     typedef typename As_BasedTensorProductOfVectorSpaces::Field Field;
     static Uint32 const DIM = As_BasedTensorProductOfVectorSpaces::DIM;
     typedef typename As_BasedTensorProductOfVectorSpaces::Id Id;
@@ -205,7 +201,6 @@ public:
             TypeList_t<As_TensorProductOfBasedVectorSpaces> > ParentTypeList;
 
     typedef typename As_TensorProductOfBasedVectorSpaces::FactorTypeList FactorTypeList;
-    static Uint32 const ORDER = As_BasedTensorPowerOfVectorSpaces::ORDER;
     typedef typename As_BasedTensorPowerOfVectorSpaces::Field Field;
     static Uint32 const DIM = As_BasedTensorPowerOfVectorSpaces::DIM;
     typedef typename As_BasedTensorPowerOfVectorSpaces::Id Id;
@@ -215,7 +210,7 @@ public:
 
     static std::string type_as_string ()
     {
-        return "TensorProductOfBasedVectorSpaces_c<" + TypeStringOf_t<FactorTypeList>::eval() + '>';
+        return "TensorPowerOfBasedVectorSpaces_c<" + TypeStringOf_t<Factor_>::eval() + ',' + AS_STRING(ORDER_) + '>';
     }
 };
 
