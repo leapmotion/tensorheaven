@@ -20,7 +20,6 @@ struct Basis_c
     typedef EmptyTypeList ParentTypeList;
 
     typedef Id_ Id;
-    typedef typename DualOf_f<Basis_c>::T Dual; // relies on the template specialization below
 
     static std::string type_as_string ()
     {

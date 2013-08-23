@@ -114,7 +114,7 @@ struct SummedAbstractIndexPairElementIndices_t
 template <typename FirstFactor, typename SecondFactor>
 struct AssertThatSummationIsNaturalPairing_t
 {
-    enum { STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<FirstFactor,typename SecondFactor::Dual>::v), SUMMATION_MUST_BE_NATURAL_PAIRING) };
+    enum { STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<FirstFactor,typename DualOf_f<SecondFactor>::T>::v), SUMMATION_MUST_BE_NATURAL_PAIRING) };
     static bool const V = true;
 };
 

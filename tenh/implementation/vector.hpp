@@ -67,7 +67,7 @@ private:
 template <typename Scalar, typename VectorSpace, typename Basis>
 struct DualOf_f<ImplementationOf_t<Scalar,BasedVectorSpace_c<VectorSpace,Basis> > >
 {
-    typedef ImplementationOf_t<Scalar,typename BasedVectorSpace_c<VectorSpace,Basis>::Dual> T;
+    typedef ImplementationOf_t<Scalar,typename DualOf_f<BasedVectorSpace_c<VectorSpace,Basis> >::T> T;
 };
 
 } // end of namespace Tenh

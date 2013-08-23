@@ -135,7 +135,7 @@ private:
 template <typename Scalar, typename FactorTypeList>
 struct DualOf_f<ImplementationOf_t<Scalar,TensorProductOfBasedVectorSpaces_c<FactorTypeList> > >
 {
-    typedef ImplementationOf_t<Scalar,typename TensorProductOfBasedVectorSpaces_c<FactorTypeList>::Dual> T;
+    typedef ImplementationOf_t<Scalar,typename DualOf_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList> >::T> T;
 };
 
 } // end of namespace Tenh

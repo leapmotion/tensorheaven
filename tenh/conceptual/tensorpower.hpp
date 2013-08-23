@@ -24,7 +24,6 @@ public:
     typedef TypeList_t<As_TensorProduct> ParentTypeList;
 
     typedef typename As_TensorProduct::FactorTypeList FactorTypeList;
-    typedef typename DualOf_f<TensorPower_c>::T Dual; // relies on the template specialization below
     typedef Factor_ Factor;
 
     static std::string type_as_string ()
@@ -68,7 +67,6 @@ public:
     typedef typename As_TensorProductOfVectorSpaces::Field Field;
     static Uint32 const DIM = As_TensorProductOfVectorSpaces::DIM;
     typedef typename As_TensorProductOfVectorSpaces::Id Id;
-    typedef typename DualOf_f<TensorPowerOfVectorSpaces_c>::T Dual; // relies on the template specialization below
     typedef Factor_ Factor;
 
     static std::string type_as_string ()
@@ -109,7 +107,6 @@ public:
 
     typedef typename As_TensorPower::FactorTypeList FactorTypeList;
     typedef typename As_TensorPowerOfBases::Id Id;
-    typedef typename DualOf_f<TensorPowerOfBases_c>::T Dual; // relies on the template specialization below
     typedef Factor_ Factor;
 
     static std::string type_as_string ()
@@ -157,7 +154,6 @@ public:
     static Uint32 const DIM = As_BasedTensorProductOfVectorSpaces::DIM;
     typedef typename As_BasedTensorProductOfVectorSpaces::Id Id;
     typedef typename As_BasedTensorProductOfVectorSpaces::Basis Basis;
-    typedef typename DualOf_f<BasedTensorPowerOfVectorSpaces_c>::T Dual; // relies on the template specialization below
 
     static std::string type_as_string ()
     {
@@ -205,7 +201,6 @@ public:
     static Uint32 const DIM = As_BasedTensorPowerOfVectorSpaces::DIM;
     typedef typename As_BasedTensorPowerOfVectorSpaces::Id Id;
     typedef typename As_BasedTensorPowerOfVectorSpaces::Basis Basis;
-    typedef typename DualOf_f<TensorPowerOfBasedVectorSpaces_c>::T Dual; // relies on the template specialization below
     typedef Factor_ Factor;
 
     static std::string type_as_string ()

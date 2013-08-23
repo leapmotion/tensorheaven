@@ -24,7 +24,6 @@ struct Diagonal2TensorProduct_c
     typedef Factor1_ Factor1;
     typedef Factor2_ Factor2;
     typedef TypeList_t<Factor1,TypeList_t<Factor2> > FactorTypeList;
-    typedef typename DualOf_f<Diagonal2TensorProduct_c>::T Dual; // the dual is not the diagonal 2-tensor product of the factors
 
     static std::string type_as_string ()
     {
@@ -64,7 +63,6 @@ public:
 
     static Uint32 const ORDER = 2;
     typedef typename As_Basis::Id Id;
-    typedef typename DualOf_f<Diagonal2TensorProductOfBases_c>::T Dual; // the dual is not the diagonal 2-tensor product the factors
     typedef Factor1_ Factor1;
     typedef Factor2_ Factor2;
 
@@ -119,7 +117,6 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Diagonal2TensorProductOfBases);
 //     typedef typename As_VectorSpace::Field Field;
 //     static Uint32 const DIM = As_VectorSpace::DIM;
 //     typedef typename As_VectorSpace::Id Id;
-//     typedef typename DualOf_f<Diagonal2TensorProductOfVectorSpaces_c>::T Dual; // the dual is not the diagonal 2-tensor product the factors
 //
 //     static std::string type_as_string ()
 //     {
@@ -175,7 +172,6 @@ public:
     static Uint32 const DIM = As_BasedVectorSpace::DIM;
     typedef typename As_BasedVectorSpace::Id Id;
     typedef typename As_BasedVectorSpace::Basis Basis;
-    typedef typename DualOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c>::T Dual; // relies on the template specialization below
     typedef Factor1_ Factor1;
     typedef Factor2_ Factor2;
 

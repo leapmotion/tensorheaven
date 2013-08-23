@@ -25,7 +25,6 @@ struct ExteriorPower_c
     static Uint32 const ORDER = ORDER_;
     typedef Factor_ Factor;
     typedef typename TypeListWithMultiplicity_t<Factor,ORDER>::T FactorTypeList;
-    typedef typename DualOf_f<ExteriorPower_c>::T Dual; // the dual is not the exterior power of Factor::Dual
 
     static std::string type_as_string ()
     {
@@ -64,7 +63,6 @@ public:
     typedef typename As_VectorSpace::Field Field;
     static Uint32 const DIM = As_VectorSpace::DIM;
     typedef typename As_VectorSpace::Id Id;
-    typedef typename DualOf_f<ExteriorPowerOfVectorSpaces_c>::T Dual; // the dual is not the exterior power of Factor::Dual
     typedef Factor_ Factor;
 
     static std::string type_as_string ()
@@ -98,7 +96,6 @@ public:
     typedef TypeList_t<As_ExteriorPower, TypeList_t<As_Basis> > ParentTypeList;
 
     typedef typename As_Basis::Id Id;
-    typedef typename DualOf_f<ExteriorPowerOfBases_c>::T Dual; // the dual is not the exterior power of Factor::Dual
     typedef Factor_ Factor;
 
     static std::string type_as_string ()
@@ -138,7 +135,6 @@ public:
     static Uint32 const DIM = As_BasedVectorSpace::DIM;
     typedef typename As_BasedVectorSpace::Id Id;
     typedef typename As_BasedVectorSpace::Basis Basis;
-    typedef typename DualOf_f<BasedExteriorPowerOfVectorSpaces_c>::T Dual; // relies on the template specialization below
 
     static std::string type_as_string ()
     {
@@ -186,7 +182,6 @@ public:
     static Uint32 const DIM = As_BasedExteriorPowerOfVectorSpaces::DIM;
     typedef typename As_BasedExteriorPowerOfVectorSpaces::Id Id;
     typedef typename As_BasedExteriorPowerOfVectorSpaces::Basis Basis;
-    typedef typename DualOf_f<ExteriorPowerOfBasedVectorSpaces_c>::T Dual; // relies on the template specialization below
     typedef Factor_ Factor;
 
     static std::string type_as_string ()

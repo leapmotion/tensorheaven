@@ -25,11 +25,10 @@ struct SymmetricPower_c
     static Uint32 const ORDER = ORDER_;
     typedef Factor_ Factor;
     typedef typename TypeListWithMultiplicity_t<Factor,ORDER>::T FactorTypeList;
-    typedef typename DualOf_f<SymmetricPower_c>::T Dual; // the dual is not the symmetric power of Factor::Dual
 
     static std::string type_as_string ()
     {
-        return "SymmetricPower_c<" + TypeStringOf_t<Factor_>::eval() + ',' + AS_STRING(ORDER_) + '>';
+        return "SymmetricPower_c<" + TypeStringOf_t<Factor>::eval() + ',' + AS_STRING(ORDER) + '>';
     }
 };
 
@@ -61,15 +60,15 @@ public:
             TypeList_t<As_EmbeddableInTensorPowerOfVectorSpaces> > > ParentTypeList;
 
     typedef typename As_SymmetricPower::FactorTypeList FactorTypeList;
+    static Uint32 const ORDER = As_SymmetricPower::ORDER;
     typedef typename As_VectorSpace::Field Field;
     static Uint32 const DIM = As_VectorSpace::DIM;
     typedef typename As_VectorSpace::Id Id;
-    typedef typename DualOf_f<SymmetricPowerOfVectorSpaces_c>::T Dual; // the dual is not the symmetric power of Factor::Dual
     typedef Factor_ Factor;
 
     static std::string type_as_string ()
     {
-        return "SymmetricPowerOfVectorSpaces_c<" + TypeStringOf_t<Factor_>::eval() + ',' + AS_STRING(ORDER_) + '>';
+        return "SymmetricPowerOfVectorSpaces_c<" + TypeStringOf_t<Factor>::eval() + ',' + AS_STRING(ORDER) + '>';
     }
 };
 
@@ -98,13 +97,13 @@ public:
     typedef TypeList_t<As_SymmetricPower,
             TypeList_t<As_Basis> > ParentTypeList;
 
+    static Uint32 const ORDER = As_SymmetricPower::ORDER;
     typedef typename As_Basis::Id Id;
-    typedef typename DualOf_f<SymmetricPowerOfBases_c>::T Dual; // the dual is not the symmetric power of Factor::Dual
     typedef Factor_ Factor;
 
     static std::string type_as_string ()
     {
-        return "SymmetricPowerOfBases_c<" + TypeStringOf_t<Factor_>::eval() + ',' + AS_STRING(ORDER_) + '>';
+        return "SymmetricPowerOfBases_c<" + TypeStringOf_t<Factor>::eval() + ',' + AS_STRING(ORDER) + '>';
     }
 };
 
@@ -136,16 +135,16 @@ public:
     typedef TypeList_t<As_SymmetricPowerOfVectorSpaces,
             TypeList_t<As_BasedVectorSpace> > ParentTypeList;
 
+    static Uint32 const ORDER = As_SymmetricPowerOfVectorSpaces::ORDER;
     typedef typename As_BasedVectorSpace::Field Field;
     static Uint32 const DIM = As_BasedVectorSpace::DIM;
     typedef typename As_BasedVectorSpace::Id Id;
     typedef typename As_BasedVectorSpace::Basis Basis;
-    typedef typename DualOf_f<BasedSymmetricPowerOfVectorSpaces_c>::T Dual; // relies on the template specialization below
 
     static std::string type_as_string ()
     {
         return "BasedSymmetricPowerOfVectorSpaces_c<" + TypeStringOf_t<SymmetricPowerOfVectorSpaces_>::eval() + ','
-                                                      + TypeStringOf_t<Basis_>::eval() + '>';
+                                                     + TypeStringOf_t<Basis_>::eval() + '>';
     }
 };
 
@@ -181,17 +180,18 @@ public:
     typedef TypeList_t<As_BasedSymmetricPowerOfVectorSpaces,
             TypeList_t<As_EmbeddableInTensorPowerOfBasedVectorSpaces> > ParentTypeList;
 
+    typedef typename AS_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(typename As_EmbeddableInTensorPowerOfBasedVectorSpaces::TensorPowerOfBasedVectorSpaces) TensorProductOfBasedVectorSpaces;
     typedef typename As_EmbeddableInTensorPowerOfBasedVectorSpaces::FactorTypeList FactorTypeList;
+    static Uint32 const ORDER = As_BasedSymmetricPowerOfVectorSpaces::ORDER;
     typedef typename As_BasedSymmetricPowerOfVectorSpaces::Field Field;
     static Uint32 const DIM = As_BasedSymmetricPowerOfVectorSpaces::DIM;
     typedef typename As_BasedSymmetricPowerOfVectorSpaces::Id Id;
     typedef typename As_BasedSymmetricPowerOfVectorSpaces::Basis Basis;
-    typedef typename DualOf_f<SymmetricPowerOfBasedVectorSpaces_c>::T Dual; // the dual is not the symmetric power of Factor::Dual
     typedef Factor_ Factor;
 
     static std::string type_as_string ()
     {
-        return "SymmetricProductOfBasedVectorSpaces_c<" + TypeStringOf_t<Factor_>::eval() + ',' + AS_STRING(ORDER_) + '>';
+        return "SymmetricPowerOfBasedVectorSpaces_c<" + TypeStringOf_t<Factor_>::eval() + ',' + AS_STRING(ORDER_) + '>';
     }
 };
 

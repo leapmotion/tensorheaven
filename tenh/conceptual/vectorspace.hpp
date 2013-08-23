@@ -24,7 +24,6 @@ struct VectorSpace_c
     typedef typename AS_FIELD(Field_) Field;
     static Uint32 const DIM = DIM_;
     typedef Id_ Id;
-    typedef typename DualOf_f<VectorSpace_c>::T Dual; // relies on the template specialization below
 
     static std::string type_as_string ()
     {
@@ -52,6 +51,7 @@ struct DualOf_f<VectorSpace_c<Field,DIM,Id> >
 };
 
 
+// TODO: should these forgetful functors be here?
 template <typename VectorSpace_, typename Basis_>
 struct BasedVectorSpace_c
 {
@@ -70,7 +70,6 @@ public:
     typedef typename As_VectorSpace::Field Field;
     static Uint32 const DIM = As_VectorSpace::DIM;
     typedef typename As_VectorSpace::Id Id;
-    typedef typename DualOf_f<BasedVectorSpace_c>::T Dual; // relies on the template specialization below
     typedef typename AS_BASIS(Basis_) Basis;
 
     static std::string type_as_string ()
@@ -94,7 +93,7 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(BasedVectorSpace);
 template <typename VectorSpace, typename Basis>
 struct DualOf_f<BasedVectorSpace_c<VectorSpace,Basis> >
 {
-    typedef BasedVectorSpace_c<typename VectorSpace::Dual,typename Basis::Dual> T;
+    typedef BasedVectorSpace_c<typename DualOf_f<VectorSpace>::T,typename DualOf_f<Basis>::T> T;
 };
 
 } // end of namespace Tenh

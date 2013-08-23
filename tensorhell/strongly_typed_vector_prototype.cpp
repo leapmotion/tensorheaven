@@ -37,8 +37,8 @@ static WithoutInitialization const WITHOUT_INITIALIZATION = WithoutInitializatio
 
 template <typename PrimalTypeID_> struct Dual_TypeID_t { };
 
-template <typename TypeID_> struct ReflexiveDualOf_t { typedef Dual_TypeID_t<TypeID_> TypeID; };
-template <typename TypeID_> struct ReflexiveDualOf_t<Dual_TypeID_t<TypeID_> > { typedef TypeID_ TypeID; }; // specialization
+template <typename TypeID_> struct ReflexiveDualOf_f { typedef Dual_TypeID_t<TypeID_> TypeID; };
+template <typename TypeID_> struct ReflexiveDualOf_f<Dual_TypeID_t<TypeID_> > { typedef TypeID_ TypeID; }; // specialization
 
 // TODO: make index type -- vectors are indexed with a single int, while tensors are generally indexed by tuples
 // the index type should specify the dimension, so that a vector's DIM template argument is replaced by its index type
@@ -83,10 +83,10 @@ typedef SymmetricTensor_t<W,W> B;
 typedef Tensor_t<A,B> C;
 
 C c;
-C::Dual c_
-B::Dual b_;
-W::Dual w_;
-U::Dual u_;
+DualOf_f<C>::T c_
+DualOf_f<B>::T b_;
+DualOf_f<W>::T w_;
+DualOf_f<U>::T u_;
 
 want the following in-line (adjacent) contractions to work:
 
@@ -248,7 +248,7 @@ struct Vector_t
     typedef Scalar_ Scalar;
     static Uint32 const DIM = DIM_;
     typedef TypeID_ TypeID;
-    typedef Vector_t<Scalar,DIM,typename ReflexiveDualOf_t<TypeID_>::TypeID> Dual;
+    typedef Vector_t<Scalar,DIM,typename ReflexiveDualOf_f<TypeID_>::TypeID> Dual;
 
     static Vector_t const ZERO;
 
@@ -280,7 +280,7 @@ template <typename Scalar_, Uint32 DIM_, typename TypeID_>
 Vector_t<Scalar_,DIM_,TypeID_> const Vector_t<Scalar_,DIM_,TypeID_>::ZERO(0);
 
 template <typename Scalar_, Uint32 DIM_, typename TypeID_>
-Scalar_ operator * (Vector_t<Scalar_,DIM_,TypeID_> const &v, typename Vector_t<Scalar_,DIM_,TypeID_>::Dual const &d)
+Scalar_ operator * (Vector_t<Scalar_,DIM_,TypeID_> const &v, typename DualOf_f<Vector_t<Scalar_,DIM_,TypeID_> >::T const &d)
 {
     Scalar_ retval(v[0]*d[0]);
     for (Uint32 i = 1; i < DIM_; ++i)
@@ -330,7 +330,7 @@ struct Tensor_t : public Vector_t<typename Factor1_::Scalar,
 }; // end of struct Tensor_t<>
 
 template <typename Factor1_, typename Factor2_>
-Factor1_ operator * (Tensor_t<Factor1_,Factor2_> const &t, typename Factor2_::Dual const &d)
+Factor1_ operator * (Tensor_t<Factor1_,Factor2_> const &t, typename DualOf_f<Factor2_>::T const &d)
 {
     Factor1_ retval(WITHOUT_INITIALIZATION);
     for (Uint32 j = 0; j < Factor1_::DIM; ++j)
@@ -372,19 +372,19 @@ struct R3 { };
 int main (int argc, char **argv)
 {
     typedef Vector_t<float,3,R3> Float3;
-    typedef Tensor_t<Float3,Float3::Dual> Float3x3;
+    typedef Tensor_t<Float3,DualOf_f<Float3>::T> Float3x3;
 
     Float3 v(1,2,3);
     std::cout << "v = " << v << '\n';
     std::cout << v[0] << ", " << v[1] << ", " << v[2] << '\n';
 
-    Float3::Dual d(4,5,6);
+    DualOf_f<Float3>::T d(4,5,6);
     std::cout << "d = " << d << '\n';
 
     std::cout << "v*d = " << v*d << '\n';
 
     std::cout << "Float3::ZERO = " << Float3::ZERO << '\n';
-    std::cout << "Float3::Dual::ZERO = " << Float3::Dual::ZERO << '\n';
+    std::cout << "DualOf_f<Float3>::T::ZERO = " << DualOf_f<Float3>::T::ZERO << '\n';
 
     Float3x3 const &z = *reinterpret_cast<Float3x3 const *>(&Float3x3::ZERO);
     std::cout << "Float3x3::ZERO = " << z << '\n';

@@ -28,7 +28,6 @@ public:
 
     typedef FactorTypeList_ FactorTypeList;
     static Uint32 const ORDER = FactorTypeList::LENGTH;
-    typedef typename DualOf_f<TensorProduct_c>::T Dual; // relies on the template specialization below
 
     static std::string type_as_string ()
     {
@@ -156,7 +155,6 @@ public:
     typedef typename As_VectorSpace::Field Field;
     static Uint32 const DIM = As_VectorSpace::DIM;
     typedef typename As_VectorSpace::Id Id;
-    typedef typename DualOf_f<TensorProductOfVectorSpaces_c>::T Dual; // relies on the template specialization below
 
     static std::string type_as_string ()
     {
@@ -200,7 +198,6 @@ public:
 
     typedef FactorTypeList_ FactorTypeList;
     typedef typename As_Basis::Id Id;
-    typedef typename DualOf_f<TensorProductOfBases_c>::T Dual; // relies on the template specialization below
 
     static std::string type_as_string ()
     {
@@ -248,7 +245,6 @@ public:
     static Uint32 const DIM = As_BasedVectorSpace::DIM;
     typedef typename As_BasedVectorSpace::Id Id;
     typedef Basis_ Basis;
-    typedef typename DualOf_f<BasedTensorProductOfVectorSpaces_c>::T Dual; // relies on the template specialization below
 
     static std::string type_as_string ()
     {
@@ -339,7 +335,6 @@ public:
     static Uint32 const DIM = As_BasedTensorProductOfVectorSpaces::DIM;
     typedef typename As_BasedTensorProductOfVectorSpaces::Id Id;
     typedef typename As_BasedTensorProductOfVectorSpaces::Basis Basis;
-    typedef typename DualOf_f<TensorProductOfBasedVectorSpaces_c>::T Dual; // relies on the template specialization below
 
     static std::string type_as_string ()
     {
