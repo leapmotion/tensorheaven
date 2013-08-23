@@ -20,11 +20,15 @@ namespace Tenh {
 template <typename FactorTypeList_>
 struct TensorProduct_c
 {
+private:
+    enum { STATIC_ASSERT_IN_ENUM(IsATypeList_t<FactorTypeList_>::V, MUST_BE_TYPELIST) };
+
+public:
     typedef EmptyTypeList ParentTypeList;
 
     typedef FactorTypeList_ FactorTypeList;
     static Uint32 const ORDER = FactorTypeList::LENGTH;
-    typedef typename DualOf_c<TensorProduct_c>::T Dual; // relies on the template specialization below
+    typedef typename DualOf_f<TensorProduct_c>::T Dual; // relies on the template specialization below
 
     static std::string type_as_string ()
     {
@@ -45,12 +49,12 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(TensorProduct);
 #define AS_TENSOR_PRODUCT(Concept) UniqueTensorProductStructureOf_f<Concept>::T
 
 template <typename FactorTypeList>
-struct DualOf_c<TensorProduct_c<FactorTypeList> >
+struct DualOf_f<TensorProduct_c<FactorTypeList> >
 {
-    typedef TensorProduct_c<typename DualOf_c<FactorTypeList>::T> T;
+    typedef TensorProduct_c<typename DualOf_f<FactorTypeList>::T> T;
 };
 
-
+// TODO: Replace with predicate-based thing
 template <typename FactorTypeList>
 struct AllFactorsAreVectorSpaces_f
 {
@@ -101,9 +105,9 @@ struct AllFactorsHaveTheSameField_f<EmptyTypeList>
 template <typename FactorTypeList>
 struct ProductOfDimensions_t
 {
-    enum { STATIC_ASSERT_IN_ENUM(HasVectorSpaceStructure_f<typename FactorTypeList::HeadType>::V, MUST_BE_VECTOR_SPACE) };
+    enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(typename FactorTypeList::HeadType), MUST_BE_VECTOR_SPACE) };
 
-    static Uint32 const V = FactorTypeList::HeadType::DIM *
+    static Uint32 const V = AS_VECTOR_SPACE(typename FactorTypeList::HeadType)::DIM *
                             ProductOfDimensions_t<typename FactorTypeList::BodyTypeList>::V;
 };
 
@@ -127,11 +131,19 @@ struct IdsOfTypeList_t<EmptyTypeList>
 };
 
 
+// TODO: get rid of the DIM and ORDER here.
 // FactorTypeList_ must be a TypeList_t of VectorSpace_c types
 template <typename FactorTypeList_>
 struct TensorProductOfVectorSpaces_c
 {
 private:
+    enum
+    {
+        STATIC_ASSERT_IN_ENUM(IsATypeList_t<FactorTypeList_>::V, MUST_BE_TYPELIST),
+        STATIC_ASSERT_IN_ENUM(AllFactorsAreVectorSpaces_f<FactorTypeList_>::V, ALL_FACTORS_MUST_BE_VECTOR_SPACES),
+        STATIC_ASSERT_IN_ENUM(AllFactorsHaveTheSameField_f<FactorTypeList_>::V, ALL_FACTORS_MUST_HAVE_SAME_FIELD)
+    };
+
     typedef TensorProduct_c<FactorTypeList_> As_TensorProduct;
     typedef VectorSpace_c<typename FactorTypeList_::HeadType::Field,
                           ProductOfDimensions_t<FactorTypeList_>::V,
@@ -139,18 +151,13 @@ private:
 public:
     typedef TypeList_t<As_TensorProduct, TypeList_t<As_VectorSpace> > ParentTypeList;
 
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(AllFactorsAreVectorSpaces_f<FactorTypeList_>::V, ALL_FACTORS_MUST_BE_VECTOR_SPACES),
-        STATIC_ASSERT_IN_ENUM(AllFactorsHaveTheSameField_f<FactorTypeList_>::V, ALL_FACTORS_MUST_HAVE_SAME_FIELD)
-    };
 
-    typedef typename As_TensorProduct::FactorTypeList FactorTypeList;
+    typedef FactorTypeList_ FactorTypeList;
     static Uint32 const ORDER = As_TensorProduct::ORDER;
     typedef typename As_VectorSpace::Field Field;
     static Uint32 const DIM = As_VectorSpace::DIM;
     typedef typename As_VectorSpace::Id Id;
-    typedef typename DualOf_c<TensorProductOfVectorSpaces_c>::T Dual; // relies on the template specialization below
+    typedef typename DualOf_f<TensorProductOfVectorSpaces_c>::T Dual; // relies on the template specialization below
 
     static std::string type_as_string ()
     {
@@ -171,9 +178,9 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(TensorProductOfVectorSpaces);
 #define AS_TENSOR_PRODUCT_OF_VECTOR_SPACES(Concept) UniqueTensorProductOfVectorSpacesStructureOf_f<Concept>::T
 
 template <typename FactorTypeList>
-struct DualOf_c<TensorProductOfVectorSpaces_c<FactorTypeList> >
+struct DualOf_f<TensorProductOfVectorSpaces_c<FactorTypeList> >
 {
-    typedef TensorProductOfVectorSpaces_c<typename DualOf_c<FactorTypeList>::T> T;
+    typedef TensorProductOfVectorSpaces_c<typename DualOf_f<FactorTypeList>::T> T;
 };
 
 
@@ -182,20 +189,20 @@ template <typename FactorTypeList_>
 struct TensorProductOfBases_c
 {
 private:
+    enum
+    {
+        STATIC_ASSERT_IN_ENUM(IsATypeList_t<FactorTypeList_>::V, MUST_BE_TYPELIST),
+        STATIC_ASSERT_IN_ENUM(AllFactorsAreBases_f<FactorTypeList_>::V, ALL_FACTORS_MUST_BE_BASES)
+    };
     typedef TensorProduct_c<FactorTypeList_> As_TensorProduct;
     typedef Basis_c<TensorProduct_c<typename IdsOfTypeList_t<FactorTypeList_>::T> > As_Basis;
 public:
     typedef TypeList_t<As_TensorProduct, TypeList_t<As_Basis> > ParentTypeList;
 
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(AllFactorsAreBases_f<FactorTypeList_>::V, ALL_FACTORS_MUST_BE_BASES)
-    };
-
-    typedef typename As_TensorProduct::FactorTypeList FactorTypeList;
+    typedef FactorTypeList_ FactorTypeList;
     static Uint32 const ORDER = As_TensorProduct::ORDER;
     typedef typename As_Basis::Id Id;
-    typedef typename DualOf_c<TensorProductOfBases_c>::T Dual; // relies on the template specialization below
+    typedef typename DualOf_f<TensorProductOfBases_c>::T Dual; // relies on the template specialization below
 
     static std::string type_as_string ()
     {
@@ -216,49 +223,49 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(TensorProductOfBases);
 #define AS_TENSOR_PRODUCT_OF_BASES(Concept) UniqueTensorProductOfBasesStructureOf_f<Concept>::T
 
 template <typename FactorTypeList>
-struct DualOf_c<TensorProductOfBases_c<FactorTypeList> >
+struct DualOf_f<TensorProductOfBases_c<FactorTypeList> >
 {
-    typedef TensorProductOfBases_c<typename DualOf_c<FactorTypeList>::T> T;
+    typedef TensorProductOfBases_c<typename DualOf_f<FactorTypeList>::T> T;
 };
 
 
 // TODO: this should be an EmbeddableInTensorProductOfVectorSpaces
-template <typename TensorProductOfVectorSpaces, typename Basis_>
+template <typename TensorProductOfVectorSpaces_, typename Basis_>
 struct BasedTensorProductOfVectorSpaces_c
 {
 private:
-    typedef TensorProductOfVectorSpaces As_TensorProductOfVectorSpaces;
-    typedef BasedVectorSpace_c<TensorProductOfVectorSpaces,Basis_> As_BasedVectorSpace;
-public:
-    typedef TypeList_t<As_TensorProductOfVectorSpaces, TypeList_t<As_BasedVectorSpace> > ParentTypeList;
-
     enum
     {
-        STATIC_ASSERT_IN_ENUM(HasTensorProductOfVectorSpacesStructure_f<TensorProductOfVectorSpaces>::V, MUST_BE_TENSOR_PRODUCT_OF_VECTOR_SPACES),
-        STATIC_ASSERT_IN_ENUM(HasBasisStructure_f<Basis_>::V, MUST_BE_BASIS),
+        STATIC_ASSERT_IN_ENUM(IS_TENSOR_PRODUCT_OF_VECTOR_SPACES_UNIQUELY(TensorProductOfVectorSpaces_), MUST_BE_TENSOR_PRODUCT_OF_VECTOR_SPACES),
+        STATIC_ASSERT_IN_ENUM(IS_BASIS_UNIQUELY(Basis_), MUST_BE_BASIS),
     };
+
+    typedef typename AS_TENSOR_PRODUCT_OF_VECTOR_SPACES(TensorProductOfVectorSpaces_) As_TensorProductOfVectorSpaces;
+    typedef BasedVectorSpace_c<TensorProductOfVectorSpaces_,Basis_> As_BasedVectorSpace;
+public:
+    typedef TypeList_t<As_TensorProductOfVectorSpaces, TypeList_t<As_BasedVectorSpace> > ParentTypeList;
 
     typedef typename As_TensorProductOfVectorSpaces::FactorTypeList FactorTypeList;
     static Uint32 const ORDER = As_TensorProductOfVectorSpaces::ORDER;
     typedef typename As_BasedVectorSpace::Field Field;
     static Uint32 const DIM = As_BasedVectorSpace::DIM;
     typedef typename As_BasedVectorSpace::Id Id;
-    typedef typename As_BasedVectorSpace::Basis Basis;
-    typedef typename DualOf_c<BasedTensorProductOfVectorSpaces_c>::T Dual; // relies on the template specialization below
+    typedef Basis_ Basis;
+    typedef typename DualOf_f<BasedTensorProductOfVectorSpaces_c>::T Dual; // relies on the template specialization below
 
     static std::string type_as_string ()
     {
-        return "BasedTensorProductOfVectorSpaces_c<" + TypeStringOf_t<TensorProductOfVectorSpaces>::eval() + ','
+        return "BasedTensorProductOfVectorSpaces_c<" + TypeStringOf_t<TensorProductOfVectorSpaces_>::eval() + ','
                                                      + TypeStringOf_t<Basis>::eval() + '>';
     }
 };
 
-template <typename TensorProductOfVectorSpaces, typename Basis_>
-struct IsConcept_f<BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces, Basis_> >
+template <typename TensorProductOfVectorSpaces_, typename Basis_>
+struct IsConcept_f<BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_, Basis_> >
 { static bool const V = true; };
 
 template <typename T> struct IsBasedTensorProductOfVectorSpaces_f { static bool const V = false; };
-template <typename TensorProductOfVectorSpaces, typename Basis> struct IsBasedTensorProductOfVectorSpaces_f<BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces,Basis> > { static bool const V = true; };
+template <typename TensorProductOfVectorSpaces_, typename Basis_> struct IsBasedTensorProductOfVectorSpaces_f<BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_,Basis_> > { static bool const V = true; };
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(BasedTensorProductOfVectorSpaces);
 // special convenience macros
@@ -266,12 +273,13 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(BasedTensorProductOfVectorSpaces);
 #define AS_BASED_TENSOR_PRODUCT_OF_VECTOR_SPACES(Concept) UniqueBasedTensorProductOfVectorSpacesStructureOf_f<Concept>::T
 
 template <typename TensorProductOfVectorSpaces, typename Basis>
-struct DualOf_c<BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces,Basis> >
+struct DualOf_f<BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces,Basis> >
 {
-    typedef BasedTensorProductOfVectorSpaces_c<typename DualOf_c<TensorProductOfVectorSpaces>::T,typename DualOf_c<Basis>::T> T;
+    typedef BasedTensorProductOfVectorSpaces_c<typename DualOf_f<TensorProductOfVectorSpaces>::T,typename DualOf_f<Basis>::T> T;
 };
 
 
+// TODO: Predicate thingy
 template <typename FactorTypeList>
 struct AllFactorsAreBasedVectorSpaces_f
 {
@@ -285,6 +293,7 @@ struct AllFactorsAreBasedVectorSpaces_f<EmptyTypeList>
     static bool const V = true;
 };
 
+// TODO: Replace with some sort of map function.
 template <typename TypeList>
 struct VectorSpacesOfTypeList_t
 {
@@ -301,7 +310,7 @@ struct VectorSpacesOfTypeList_t<EmptyTypeList>
 template <typename TypeList>
 struct BasesOfTypeList_t
 {
-    typedef TypeList_t<typename TypeList::HeadType::Basis,
+    typedef TypeList_t<typename AS_BASED_VECTOR_SPACE(typename TypeList::HeadType)::Basis,
                        typename BasesOfTypeList_t<typename TypeList::BodyTypeList>::T> T;
 };
 
@@ -311,29 +320,30 @@ struct BasesOfTypeList_t<EmptyTypeList>
     typedef EmptyTypeList T;
 };
 
+
 // FactorTypeList_ must be a TypeList_t of BasedVectorSpace_c types
 template <typename FactorTypeList_>
 struct TensorProductOfBasedVectorSpaces_c
 {
 private:
-    typedef TensorProductOfVectorSpaces_c<typename VectorSpacesOfTypeList_t<FactorTypeList_>::T> As_TensorProductOfVectorSpaces;
-    typedef BasedTensorProductOfVectorSpaces_c<As_TensorProductOfVectorSpaces,
-                                               TensorProductOfBases_c<typename BasesOfTypeList_t<FactorTypeList_>::T> > As_BasedTensorProductOfVectorSpaces;
-public:
-    typedef TypeList_t<As_TensorProductOfVectorSpaces, TypeList_t<As_BasedTensorProductOfVectorSpaces> > ParentTypeList;
-
     enum
     {
+        STATIC_ASSERT_IN_ENUM(IsATypeList_t<FactorTypeList_>::V, MUST_BE_TYPELIST),
         STATIC_ASSERT_IN_ENUM(AllFactorsAreBasedVectorSpaces_f<FactorTypeList_>::V, ALL_FACTORS_MUST_BE_BASED_VECTOR_SPACES),
     };
 
+    typedef BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_c<FactorTypeList_>,
+                                               TensorProductOfBases_c<typename BasesOfTypeList_t<FactorTypeList_>::T> > As_BasedTensorProductOfVectorSpaces;
+public:
+    typedef TypeList_t<As_BasedTensorProductOfVectorSpaces> ParentTypeList;
+
     typedef FactorTypeList_ FactorTypeList;
-    static Uint32 const ORDER = As_TensorProductOfVectorSpaces::ORDER;
-    typedef typename As_TensorProductOfVectorSpaces::Field Field;
-    static Uint32 const DIM = As_TensorProductOfVectorSpaces::DIM;
+    static Uint32 const ORDER = As_BasedTensorProductOfVectorSpaces::ORDER;
+    typedef typename As_BasedTensorProductOfVectorSpaces::Field Field;
+    static Uint32 const DIM = As_BasedTensorProductOfVectorSpaces::DIM;
     typedef typename As_BasedTensorProductOfVectorSpaces::Id Id;
     typedef typename As_BasedTensorProductOfVectorSpaces::Basis Basis;
-    typedef typename DualOf_c<TensorProductOfBasedVectorSpaces_c>::T Dual; // relies on the template specialization below
+    typedef typename DualOf_f<TensorProductOfBasedVectorSpaces_c>::T Dual; // relies on the template specialization below
 
     static std::string type_as_string ()
     {
@@ -354,9 +364,9 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(TensorProductOfBasedVectorSpaces);
 #define AS_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(Concept) UniqueTensorProductOfBasedVectorSpacesStructureOf_f<Concept>::T
 
 template <typename FactorTypeList>
-struct DualOf_c<TensorProductOfBasedVectorSpaces_c<FactorTypeList> >
+struct DualOf_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList> >
 {
-    typedef TensorProductOfBasedVectorSpaces_c<typename DualOf_c<FactorTypeList>::T> T;
+    typedef TensorProductOfBasedVectorSpaces_c<typename DualOf_f<FactorTypeList>::T> T;
 };
 
 } // end of namespace Tenh

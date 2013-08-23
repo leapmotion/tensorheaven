@@ -19,12 +19,12 @@ struct VectorSpace_c
 {
     typedef EmptyTypeList ParentTypeList;
 
-    enum { STATIC_ASSERT_IN_ENUM(HasFieldStructure_f<Field_>::V, MUST_BE_FIELD) };
+    enum { STATIC_ASSERT_IN_ENUM(HasUniqueFieldStructure_f<Field_>::V, MUST_BE_FIELD) };
 
-    typedef Field_ Field;
+    typedef typename AS_FIELD(Field_) Field;
     static Uint32 const DIM = DIM_;
     typedef Id_ Id;
-    typedef typename DualOf_c<VectorSpace_c>::T Dual; // relies on the template specialization below
+    typedef typename DualOf_f<VectorSpace_c>::T Dual; // relies on the template specialization below
 
     static std::string type_as_string ()
     {
@@ -46,30 +46,32 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(VectorSpace);
 #define AS_VECTOR_SPACE(Concept) UniqueVectorSpaceStructureOf_f<Concept>::T
 
 template <typename Field, Uint32 DIM, typename Id>
-struct DualOf_c<VectorSpace_c<Field,DIM,Id> >
+struct DualOf_f<VectorSpace_c<Field,DIM,Id> >
 {
-    typedef VectorSpace_c<Field,DIM,typename DualOf_c<Id>::T> T;
+    typedef VectorSpace_c<Field,DIM,typename DualOf_f<Id>::T> T;
 };
+
 
 template <typename VectorSpace_, typename Basis_>
 struct BasedVectorSpace_c
 {
 private:
-    typedef VectorSpace_ As_VectorSpace;
+    enum
+    {
+        STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(VectorSpace_), MUST_BE_VECTOR_SPACE),
+        STATIC_ASSERT_IN_ENUM(IS_BASIS_UNIQUELY(Basis_), MUST_BE_BASIS)
+    };
+
+    typedef typename AS_VECTOR_SPACE(VectorSpace_) As_VectorSpace;
 public:
     typedef TypeList_t<As_VectorSpace> ParentTypeList;
 
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(HasVectorSpaceStructure_f<As_VectorSpace>::V, MUST_BE_VECTOR_SPACE),
-        STATIC_ASSERT_IN_ENUM(HasBasisStructure_f<Basis_>::V, MUST_BE_BASIS)
-    };
 
     typedef typename As_VectorSpace::Field Field;
     static Uint32 const DIM = As_VectorSpace::DIM;
     typedef typename As_VectorSpace::Id Id;
-    typedef typename DualOf_c<BasedVectorSpace_c>::T Dual; // relies on the template specialization below
-    typedef Basis_ Basis;
+    typedef typename DualOf_f<BasedVectorSpace_c>::T Dual; // relies on the template specialization below
+    typedef typename AS_BASIS(Basis_) Basis;
 
     static std::string type_as_string ()
     {
@@ -90,7 +92,7 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(BasedVectorSpace);
 #define AS_BASED_VECTOR_SPACE(Concept) UniqueBasedVectorSpaceStructureOf_f<Concept>::T
 
 template <typename VectorSpace, typename Basis>
-struct DualOf_c<BasedVectorSpace_c<VectorSpace,Basis> >
+struct DualOf_f<BasedVectorSpace_c<VectorSpace,Basis> >
 {
     typedef BasedVectorSpace_c<typename VectorSpace::Dual,typename Basis::Dual> T;
 };

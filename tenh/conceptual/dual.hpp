@@ -27,27 +27,27 @@ struct Dual_c
 
 // for taking the dual of a formal symbol (even for things like a float), and it is assumed to be reflexive (self-double-dual)
 template <typename Primal>
-struct DualOf_c
+struct DualOf_f
 {
 	typedef Dual_c<Primal> T;
 };
 
 // here is where the self-double-dualness is implemented (as a template specialization)
 template <typename Primal>
-struct DualOf_c<Dual_c<Primal> >
+struct DualOf_f<Dual_c<Primal> >
 {
 	typedef Primal T;
 };
 
 // template specialization to take dual of each element in a TypeList_t
 template <typename HeadType, typename BodyTypeList>
-struct DualOf_c<TypeList_t<HeadType,BodyTypeList> >
+struct DualOf_f<TypeList_t<HeadType,BodyTypeList> >
 {
-    typedef TypeList_t<typename DualOf_c<HeadType>::T,typename DualOf_c<BodyTypeList>::T> T;
+    typedef TypeList_t<typename DualOf_f<HeadType>::T,typename DualOf_f<BodyTypeList>::T> T;
 };
 
 template <>
-struct DualOf_c<EmptyTypeList>
+struct DualOf_f<EmptyTypeList>
 {
     typedef EmptyTypeList T;
 };

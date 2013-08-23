@@ -17,6 +17,7 @@ template <typename Id_>
 struct Field_c
 {
     typedef EmptyTypeList ParentTypeList;
+
 	typedef Id_ Id;
 
     static std::string type_as_string ()
@@ -42,21 +43,22 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Field);
 
 // TODO: some way of specifying associated representation (e.g. double, complex<double>, bool)
 
-struct Real_c
+struct RealNumbers
 {
     static std::string type_as_string ()
     {
-        return "Real_c";
+        return "RealNumbers";
     }
 };
 
-typedef Field_c<Real_c> RealField;
+typedef Field_c<RealNumbers> RealField;
 // template <> struct IsAValidScalarRepresentationForField<float,RealField> { static bool const V = true; };
 // template <> struct IsAValidScalarRepresentationForField<double,RealField> { static bool const V = true; };
 // // could add one for some arbitrary-precision floating point representation
 
 // TODO: Complex_c, F2_c, etc.
 // TODO: maybe quaternion (skew-field)?
+// TODO: Should ComplexField have a real VectorSpace structure?
 
 } // end of namespace Tenh
 

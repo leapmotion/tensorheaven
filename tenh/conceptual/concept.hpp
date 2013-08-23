@@ -43,7 +43,10 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(ConceptExample);
 
 */
 
+
+// TODO: Integrate disambiguation maps
 namespace Tenh {
+
 // a Concept is a struct that has a ParentTypeList (which is a TypeList_t)
 template <typename T> struct IsConcept_f { static bool const V = false; };
 

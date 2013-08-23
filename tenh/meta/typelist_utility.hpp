@@ -325,7 +325,7 @@ struct HasNontrivialIntersectionAsSets_t<EmptyTypeList,TypeListB>
 
 
 template <typename TypeListA, typename TypeListB>
-struct IntersectionAsSets_t 
+struct IntersectionAsSets_t
 {
 private:
     typedef typename IntersectionAsSets_t<typename TypeListA::BodyTypeList,TypeListB>::T RecursionTypeList;
@@ -550,6 +550,18 @@ template <>
 struct TypeListIsUniform_t<EmptyTypeList>
 {
     static bool const V = true;
+};
+
+template <typename Type, Uint32 MULTIPLICITY>
+struct TypeListWithMultiplicity_t
+{
+    typedef TypeList_t<Type,typename TypeListWithMultiplicity_t<Type,MULTIPLICITY-1>::T> T;
+};
+
+template <typename Type>
+struct TypeListWithMultiplicity_t<Type,0>
+{
+    typedef EmptyTypeList T;
 };
 
 } // end of namespace Tenh

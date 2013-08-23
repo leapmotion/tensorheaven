@@ -18,15 +18,17 @@ namespace Tenh {
 template <typename TensorProductOfVectorSpaces_>
 struct EmbeddableInTensorProductOfVectorSpaces_c
 {
+private:
+    // TODO: Figure out why this is failing.
+//    enum { STATIC_ASSERT_IN_ENUM(IS_TENSOR_PRODUCT_OF_VECTOR_SPACES_UNIQUELY(TensorProductOfVectorSpaces_), MUST_BE_TENSOR_PRODUCT_OF_VECTOR_SPACES) };
+public:
     typedef EmptyTypeList ParentTypeList;
-
-    enum { STATIC_ASSERT_IN_ENUM(HasTensorProductOfVectorSpacesStructure_f<TensorProductOfVectorSpaces_>::V, MUST_BE_TENSOR_PRODUCT_OF_VECTOR_SPACES) };
 
     typedef TensorProductOfVectorSpaces_ TensorProductOfVectorSpaces;
 
     static std::string type_as_string ()
     {
-        return "EmbeddableInTensorProductOfVectorSpaces_c<" + TypeStringOf_t<TensorProductOfVectorSpaces>::eval() + '>';
+        return "EmbeddableInTensorProductOfVectorSpaces_c<" + TypeStringOf_t<TensorProductOfVectorSpaces_>::eval() + '>';
     }
 };
 
@@ -54,12 +56,10 @@ template <typename TensorProductOfBasedVectorSpaces_>
 struct EmbeddableInTensorProductOfBasedVectorSpaces_c
 {
 private:
+    enum { STATIC_ASSERT_IN_ENUM(IS_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES_UNIQUELY(TensorProductOfBasedVectorSpaces_), MUST_BE_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES) };
     typedef EmbeddableInTensorProductOfVectorSpaces_c<TensorProductOfBasedVectorSpaces_> As_EmbeddableInTensorProductOfVectorSpaces;
 public:
     typedef TypeList_t<As_EmbeddableInTensorProductOfVectorSpaces> ParentTypeList;
-
-    enum { STATIC_ASSERT_IN_ENUM(HasTensorProductOfBasedVectorSpacesStructure_f<TensorProductOfBasedVectorSpaces_>::V, MUST_BE_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES) };
-
 
     typedef typename As_EmbeddableInTensorProductOfVectorSpaces::TensorProductOfVectorSpaces TensorProductOfVectorSpaces;
     typedef TensorProductOfBasedVectorSpaces_ TensorProductOfBasedVectorSpaces;

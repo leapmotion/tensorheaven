@@ -90,7 +90,7 @@ struct Vector_i
     Scalar &operator [] (MultiIndex_t<TypeList_t<Index_> > const &m) { return as_derived().Derived::operator[](m.head()); }
 
     // the argument is technically unnecessary, as its value is not used.  however,
-    // this allows the template system to deduce the SYMBOL of the TypedIndex_c, so
+    // this allows the template system to deduce the SYMBOL of the AbstractIndex_c, so
     // it doesn't need to be specified explicitly.
     // in this, an outer product would be
     // AbstractIndex_c<'i'> i;

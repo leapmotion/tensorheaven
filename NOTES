@@ -76,6 +76,9 @@ random TODOs:
 - maybe change array (and array-like) indexing schemes to use signed integers, where negative
   values index from the end of the array.  this should probably not include vector/tensor indexing.
 - replace all the instances of DEGREE with ORDER
+- Add _ to the end of all template parameters
+- Add embeddable in tensor power classes.
+- Tensor power of vector space, NOT SPACES.
 
 features necessary for version 0.5:
 x euclidean embedding (using short-term zero-dimensional hack (?))
@@ -216,10 +219,10 @@ Notes for conceptual layer and refactor
 
       static bool const V = true; // used for instantiating/using this check in an static assert
 
-      enum 
-      { 
+      enum
+      {
           STATIC_ASSERT_IN_ENUM(Check_VectorSpace_c<T>::V, MUST_BE_VECTOR_SPACE)
-          STATIC_ASSERT_IN_ENUM(EachTypeIsVectorSpace_c<FactorTypeList>, MUST_BE_TYPELIST_OF_VECTOR_SPACES) 
+          STATIC_ASSERT_IN_ENUM(EachTypeIsVectorSpace_c<FactorTypeList>, MUST_BE_TYPELIST_OF_VECTOR_SPACES)
       };
   };
   Hopefully this would cause an error if any of the members/typedefs were missing (TODO: Write
@@ -229,11 +232,11 @@ Notes for conceptual layer and refactor
 
 Features necessary for "version 1.0"
 x implementation of diagonal 2-tensors (of based vector spaces)
-- implementation of the optimization for contraction with diagonal 2-tensors (necessary so 
+- implementation of the optimization for contraction with diagonal 2-tensors (necessary so
   that we can implement inner products and other similar bilinear forms efficiently)
 - refactoring the Eigen interop code to be strongly typed
 - do more assembler code inspection for each of the compilers we use (GCC, Clang, MSVC) to
-  make sure that it's generating code that's as efficient as we expect it to be (this is 
+  make sure that it's generating code that's as efficient as we expect it to be (this is
   really important)
 - refactoring the unit tests to account for the strongly-typed refactor in general
 - writing unit tests for the new code (general symmetric and antisymmetric N-tensors)

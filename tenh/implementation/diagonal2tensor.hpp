@@ -52,7 +52,7 @@ struct ImplementationOf_t<Scalar_,Diagonal2TensorProductOfBasedVectorSpaces_c<Fa
     typedef Factor2_ Factor2;
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1,Factor2> Diagonal2TensorProductOfBasedVectorSpaces;
 
-    typedef typename DualOf_c<ImplementationOf_t>::T Dual; // relies on the template specialization below
+    typedef typename DualOf_f<ImplementationOf_t>::T Dual; // relies on the template specialization below
 
     explicit ImplementationOf_t (WithoutInitialization const &w) : Parent_Array_t(w) { }
     // probably only useful for zero element (because this is basis-dependent), though
@@ -107,9 +107,9 @@ private:
 };
 
 template <typename Scalar, typename Factor1, typename Factor2>
-struct DualOf_c<ImplementationOf_t<Scalar,Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1,Factor2> > >
+struct DualOf_f<ImplementationOf_t<Scalar,Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1,Factor2> > >
 {
-    typedef ImplementationOf_t<Scalar,typename DualOf_c<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1,Factor2> >::T> T;
+    typedef ImplementationOf_t<Scalar,typename DualOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1,Factor2> >::T> T;
 };
 
 } // end of namespace Tenh

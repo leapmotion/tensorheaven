@@ -42,7 +42,7 @@ struct ImplementationOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeL
     using Parent_Tensor_i::DEGREE;
     using Parent_Tensor_i::IS_TENSOR_I;
 
-    typedef typename DualOf_c<ImplementationOf_t>::T Dual; // relies on the template specialization below
+    typedef typename DualOf_f<ImplementationOf_t>::T Dual; // relies on the template specialization below
 
     explicit ImplementationOf_t (WithoutInitialization const &w) : Parent_Array_t(w) { }
     // probably only useful for zero element (because this is basis-dependent)
@@ -133,7 +133,7 @@ private:
 };
 
 template <typename Scalar, typename FactorTypeList>
-struct DualOf_c<ImplementationOf_t<Scalar,TensorProductOfBasedVectorSpaces_c<FactorTypeList> > >
+struct DualOf_f<ImplementationOf_t<Scalar,TensorProductOfBasedVectorSpaces_c<FactorTypeList> > >
 {
     typedef ImplementationOf_t<Scalar,typename TensorProductOfBasedVectorSpaces_c<FactorTypeList>::Dual> T;
 };

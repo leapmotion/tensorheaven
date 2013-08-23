@@ -37,7 +37,7 @@ struct ImplementationOf_t<Scalar_,BasedVectorSpace_c<VectorSpace_,Basis_> >
     typedef typename Parent_Vector_i::ComponentIndex ComponentIndex;
     typedef typename Parent_Vector_i::MultiIndex MultiIndex;
 
-    typedef typename DualOf_c<ImplementationOf_t>::T Dual; // relies on the template specialization below
+    typedef typename DualOf_f<ImplementationOf_t>::T Dual; // relies on the template specialization below
 
     explicit ImplementationOf_t (WithoutInitialization const &w) : Parent_Array_t(w) { }
     // probably only useful for zero element (because this is basis-dependent)
@@ -65,7 +65,7 @@ private:
 };
 
 template <typename Scalar, typename VectorSpace, typename Basis>
-struct DualOf_c<ImplementationOf_t<Scalar,BasedVectorSpace_c<VectorSpace,Basis> > >
+struct DualOf_f<ImplementationOf_t<Scalar,BasedVectorSpace_c<VectorSpace,Basis> > >
 {
     typedef ImplementationOf_t<Scalar,typename BasedVectorSpace_c<VectorSpace,Basis>::Dual> T;
 };

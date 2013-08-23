@@ -14,19 +14,13 @@
 
 namespace Tenh {
 
-// TODO: think about if Basis_c needs to exist, or if it could just be
-// a generic identifier.  if it were a generic identifier, this would
-// obviate the need for TensorProductOfBases_c.  if this is done, then
-// IsABasis_c should still exist, and the user would need to specialize
-// IsABasis_c<UserBasisType>, providing "static bool const V = true".
-
 template <typename Id_>
 struct Basis_c
 {
     typedef EmptyTypeList ParentTypeList;
 
     typedef Id_ Id;
-    typedef typename DualOf_c<Basis_c>::T Dual; // relies on the template specialization below
+    typedef typename DualOf_f<Basis_c>::T Dual; // relies on the template specialization below
 
     static std::string type_as_string ()
     {
@@ -47,9 +41,9 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Basis);
 #define AS_BASIS(Concept) UniqueBasisStructureOf_f<Concept>::T
 
 template <typename Id>
-struct DualOf_c<Basis_c<Id> >
+struct DualOf_f<Basis_c<Id> >
 {
-    typedef Basis_c<typename DualOf_c<Id>::T> T;
+    typedef Basis_c<typename DualOf_f<Id>::T> T;
 };
 
 } // end of namespace Tenh

@@ -48,7 +48,7 @@ struct ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpaces_c<Factor_,OR
     typedef Factor_ Factor;
     typedef SymmetricPowerOfBasedVectorSpaces_c<Factor,ORDER> SymmetricPowerOfBasedVectorSpaces;
 
-    typedef typename DualOf_c<ImplementationOf_t>::T Dual; // relies on the template specialization below
+    typedef typename DualOf_f<ImplementationOf_t>::T Dual; // relies on the template specialization below
 
     explicit ImplementationOf_t (WithoutInitialization const &w) : Parent_Array_t(w) { }
     // probably only useful for zero element (because this is basis-dependent)
@@ -140,9 +140,9 @@ struct ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpaces_c<Factor_,OR
 };
 
 template <typename Scalar, typename Factor, Uint32 ORDER>
-struct DualOf_c<ImplementationOf_t<Scalar,SymmetricPowerOfBasedVectorSpaces_c<Factor,ORDER> > >
+struct DualOf_f<ImplementationOf_t<Scalar,SymmetricPowerOfBasedVectorSpaces_c<Factor,ORDER> > >
 {
-    typedef ImplementationOf_t<Scalar,typename DualOf_c<SymmetricPowerOfBasedVectorSpaces_c<Factor,ORDER> >::T> T;
+    typedef ImplementationOf_t<Scalar,typename DualOf_f<SymmetricPowerOfBasedVectorSpaces_c<Factor,ORDER> >::T> T;
 };
 
 } // end of namespace Tenh
