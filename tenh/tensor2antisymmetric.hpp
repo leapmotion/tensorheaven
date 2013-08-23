@@ -59,7 +59,7 @@ struct Tensor2Antisymmetric_t
     typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
     typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
     typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
-    using Parent_Tensor_i::DEGREE;
+    using Parent_Tensor_i::ORDER;
     typedef Factor1_ Factor;
     typedef Factor1_ Factor1;
     typedef Factor2_ Factor2;
@@ -269,7 +269,7 @@ struct EuclideanEmbedding_t<Tensor2Antisymmetric_t<TensorFactor1_,
     typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
     typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
     typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
-    using Parent_Tensor_i::DEGREE;
+    using Parent_Tensor_i::ORDER;
     typedef TensorFactor1_ TensorFactor1;
     typedef TensorFactor2_ TensorFactor2;
     typedef Tensor2Antisymmetric_t<TensorFactor1,
@@ -325,7 +325,7 @@ struct EuclideanEmbeddingInverse_t<Tensor2Antisymmetric_t<TensorFactor1_,
     typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
     typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
     typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
-    using Parent_Tensor_i::DEGREE;
+    using Parent_Tensor_i::ORDER;
     typedef TensorFactor1_ TensorFactor1;
     typedef TensorFactor2_ TensorFactor2;
     typedef Tensor2Antisymmetric_t<TensorFactor1,

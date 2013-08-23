@@ -39,7 +39,7 @@ struct ImplementationOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeL
     typedef typename Parent_Tensor_i::TensorProductOfBasedVectorSpaces TensorProductOfBasedVectorSpaces;
     typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
     typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
-    using Parent_Tensor_i::DEGREE;
+    using Parent_Tensor_i::ORDER;
     using Parent_Tensor_i::IS_TENSOR_I;
 
     typedef typename DualOf_f<ImplementationOf_t>::T Dual; // relies on the template specialization below

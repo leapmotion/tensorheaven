@@ -46,7 +46,7 @@ struct ImplementationOf_t<Scalar_,Diagonal2TensorProductOfBasedVectorSpaces_c<Fa
     typedef typename Parent_EmbeddableAsTensor_i::TensorProductOfBasedVectorSpaces TensorProductOfBasedVectorSpaces;
     typedef typename Parent_EmbeddableAsTensor_i::FactorTypeList FactorTypeList;
     typedef typename Parent_EmbeddableAsTensor_i::MultiIndex MultiIndex;
-    using Parent_EmbeddableAsTensor_i::DEGREE;
+    using Parent_EmbeddableAsTensor_i::ORDER;
     static Uint32 const ORDER = 2;
     typedef Factor1_ Factor1;
     typedef Factor2_ Factor2;

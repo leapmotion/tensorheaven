@@ -57,7 +57,7 @@ struct Tensor2Diagonal_t
     typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
     typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
     typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
-    using Parent_Tensor_i::DEGREE;
+    using Parent_Tensor_i::ORDER;
     typedef Factor1_ Factor1;
     typedef Factor2_ Factor2;
     static bool const IS_TENSOR2DIAGONAL_T = true;
@@ -252,7 +252,7 @@ struct EuclideanEmbedding_t<Tensor2Diagonal_t<TensorFactor1_,
     typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
     typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
     typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
-    using Parent_Tensor_i::DEGREE;
+    using Parent_Tensor_i::ORDER;
     typedef TensorFactor1_ TensorFactor1;
     typedef TensorFactor2_ TensorFactor2;
     typedef Tensor2Diagonal_t<TensorFactor1,
@@ -306,7 +306,7 @@ struct EuclideanEmbeddingInverse_t<Tensor2Diagonal_t<TensorFactor1_,
     typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
     typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
     typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
-    using Parent_Tensor_i::DEGREE;
+    using Parent_Tensor_i::ORDER;
     typedef TensorFactor1_ TensorFactor1;
     typedef TensorFactor2_ TensorFactor2;
     typedef Tensor2Diagonal_t<TensorFactor1,

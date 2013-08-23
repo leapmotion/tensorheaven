@@ -80,7 +80,7 @@ struct EuclideanEmbedding_t<Vector_t<Scalar_,DIM_,StandardEuclideanBasis,Derived
     typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
     typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
     typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
-    using Parent_Tensor_i::DEGREE;
+    using Parent_Tensor_i::ORDER;
     typedef Vector_t<Scalar_,DIM_,StandardEuclideanBasis,Derived_> Vector;
 
     // 1 on the diagonal, 0 otherwise
@@ -118,7 +118,7 @@ struct EuclideanEmbeddingInverse_t<Vector_t<Scalar_,DIM_,StandardEuclideanBasis,
     typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
     typedef typename Parent_Tensor_i::FactorIndexTypeList FactorIndexTypeList;
     typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
-    using Parent_Tensor_i::DEGREE;
+    using Parent_Tensor_i::ORDER;
     typedef Vector_t<Scalar_,DIM_,StandardEuclideanBasis,Derived_> Vector;
 
     // 1 on the diagonal, 0 otherwise

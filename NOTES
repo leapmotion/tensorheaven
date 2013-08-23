@@ -75,9 +75,7 @@ random TODOs:
 - rename List_t::body() to List_t::body_list(), since the body list type is BodyList
 - maybe change array (and array-like) indexing schemes to use signed integers, where negative
   values index from the end of the array.  this should probably not include vector/tensor indexing.
-- replace all the instances of DEGREE with ORDER
 - Add _ to the end of all template parameters
-- Add embeddable in tensor power classes.
 - Tensor power of vector space, NOT SPACES.
 
 features necessary for version 0.5:

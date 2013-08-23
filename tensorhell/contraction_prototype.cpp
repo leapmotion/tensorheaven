@@ -533,7 +533,7 @@ void test_printing_expression_templates ()
 {
     if (FREE_INDEX_COUNT == 1)
     {
-        std::cout << "test_printing_expression_templates<...>() degree 1 expression template, COMPONENT_COUNT1 = " << COMPONENT_COUNT1 << '\n';
+        std::cout << "test_printing_expression_templates<...>() order 1 expression template, COMPONENT_COUNT1 = " << COMPONENT_COUNT1 << '\n';
         typedef Vector_t<float,COMPONENT_COUNT1> Vector;
         Vector v(Static<WithoutInitialization>::SINGLETON);
         for (typename Vector::Index i; i.is_not_at_end(); ++i)
@@ -544,7 +544,7 @@ void test_printing_expression_templates ()
     }
     else if (FREE_INDEX_COUNT == 2)
     {
-        std::cout << "test_printing_expression_templates<...>() degree 2 expression template, COMPONENT_COUNT1 = " << COMPONENT_COUNT1
+        std::cout << "test_printing_expression_templates<...>() order 2 expression template, COMPONENT_COUNT1 = " << COMPONENT_COUNT1
                                                                                         << ", COMPONENT_COUNT2 = " << COMPONENT_COUNT2 << '\n';
         typedef Vector_t<float,COMPONENT_COUNT1> Factor1;
         typedef Vector_t<float,COMPONENT_COUNT2> Factor2;
@@ -559,7 +559,7 @@ void test_printing_expression_templates ()
     }
     else if (FREE_INDEX_COUNT == 3)
     {
-        std::cout << "test_printing_expression_templates<...>() degree 3 expression template, COMPONENT_COUNT1 = " << COMPONENT_COUNT1
+        std::cout << "test_printing_expression_templates<...>() order 3 expression template, COMPONENT_COUNT1 = " << COMPONENT_COUNT1
                                                                                         << ", COMPONENT_COUNT2 = " << COMPONENT_COUNT2
                                                                                         << ", COMPONENT_COUNT3 = " << COMPONENT_COUNT3 << '\n';
         typedef Vector_t<float,COMPONENT_COUNT1> Factor1;
@@ -1491,7 +1491,7 @@ int main (int argc, char **argv)
         test_scalar_multiplication_and_division<4,1>();
         test_scalar_multiplication_and_division<4,4>();
 
-        // testing printing expression templates of various degrees
+        // testing printing expression templates of various orders
         test_printing_expression_templates<1,1,1,1>();
         test_printing_expression_templates<1,5,1,1>();
         test_printing_expression_templates<1,20,1,1>();

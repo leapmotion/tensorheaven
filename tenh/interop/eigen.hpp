@@ -37,7 +37,7 @@ Eigen::Matrix<typename Tensor2Type::Scalar,Tensor2Type::Factor1::DIM,Tensor2Type
     euclideanly_embedded_EigenMatrix_from (Tensor2Type const &t)
 {
     STATIC_ASSERT(Tensor2Type::IS_TENSOR_I, TYPE_MUST_BE_A_TENSOR_I);
-    STATIC_ASSERT(Tensor2Type::DEGREE == 2, DEGREE_MUST_BE_TWO);
+    STATIC_ASSERT(Tensor2Type::ORDER == 2, ORDER_MUST_BE_TWO);
     Tensor2_t<typename Tensor2Type::WithStandardEuclideanBasis::Factor1,
               typename Tensor2Type::WithStandardEuclideanBasis::Factor2> euclideanly_embedded_t(Static<WithoutInitialization>::SINGLETON);
     TypedIndex_t<typename Tensor2Type::WithStandardEuclideanBasis::Factor1,'i'> i;
@@ -57,7 +57,7 @@ void euclideanly_embedded_EigenMatrix_to (
     Tensor2Type &t)
 {
     STATIC_ASSERT(Tensor2Type::IS_TENSOR_I, TYPE_MUST_BE_A_TENSOR_I);
-    STATIC_ASSERT(Tensor2Type::DEGREE == 2, DEGREE_MUST_BE_TWO);
+    STATIC_ASSERT(Tensor2Type::ORDER == 2, ORDER_MUST_BE_TWO);
     // TODO: use a memory map instead of a memcpy
     Tensor2_t<typename Tensor2Type::Factor1::WithStandardEuclideanBasis,
               typename Tensor2Type::Factor2::WithStandardEuclideanBasis> euclideanly_embedded_t(Static<WithoutInitialization>::SINGLETON);

@@ -59,14 +59,14 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
     typedef TensorProductOfBasedVectorSpaces_ TensorProductOfBasedVectorSpaces;
     typedef typename TensorProductOfBasedVectorSpaces::FactorTypeList FactorTypeList;
     typedef MultiIndex_t<typename FactorComponentIndexTypeList_t<FactorTypeList>::T> MultiIndex;
-    // this is not the "fully expanded" degree, but the number of [what you could think of
+    // this is not the "fully expanded" order, but the number of [what you could think of
     // as "parenthesized"] factors that formed this tensor product type.
-    static Uint32 const DEGREE = FactorTypeList::LENGTH;
+    static Uint32 const ORDER = FactorTypeList::LENGTH;
     static bool const IS_TENSOR_I = true; // TODO: deprecate this in favor of IsATensor_i<...>
 
     // TODO: could put canonical as_factorX conversions here
 
-    static Uint32 degree () { return DEGREE; }
+    static Uint32 order () { return ORDER; }
 
     using Parent_Vector_i::dim;
     using Parent_Vector_i::as_derived;
@@ -92,7 +92,7 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
     {
         typedef TypeList_t<AbstractIndexTypeListHeadType,AbstractIndexTypeListBodyTypeList> ArgumentAbstractIndexTypeList;
         STATIC_ASSERT(EachTypeIsAnAbstractIndex_f<ArgumentAbstractIndexTypeList>::V, EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
-        STATIC_ASSERT((ArgumentAbstractIndexTypeList::LENGTH == DEGREE), ARGUMENT_LENGTH_MUST_EQUAL_DEGREE);
+        STATIC_ASSERT((ArgumentAbstractIndexTypeList::LENGTH == ORDER), ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
         return ExpressionTemplate_IndexedObject_t<
             Derived, // have to use Derived instead of Tensor_i, so that the return-a-reference operator[] is used
             FactorTypeList,
@@ -120,7 +120,7 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
     {
         typedef TypeList_t<AbstractIndexTypeListHeadType,AbstractIndexTypeListBodyTypeList> ArgumentAbstractIndexTypeList;
         STATIC_ASSERT(EachTypeIsAnAbstractIndex_f<ArgumentAbstractIndexTypeList>::V, EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
-        STATIC_ASSERT((ArgumentAbstractIndexTypeList::LENGTH == DEGREE), ARGUMENT_LENGTH_MUST_EQUAL_DEGREE);
+        STATIC_ASSERT((ArgumentAbstractIndexTypeList::LENGTH == ORDER), ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
         return ExpressionTemplate_IndexedObject_t<
             Derived, // have to use Derived instead of Tensor_i, so that the return-a-reference operator[] is used
             FactorTypeList,
