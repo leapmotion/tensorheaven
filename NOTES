@@ -179,7 +179,12 @@ Notes for conceptual layer and refactor
   based-vector-space and based-tensor-product level.
 - Provide way to specify/override natural pairing on any given space -- use Alt convention by
   default (this gives certain simplifications), but for example the det convention would make
-  use of finite-characteristic fields possible.
+  use of finite-characteristic fields possible.  NOTE: there is somewhat of an overload of the
+  term "natural pairing" here -- the "pure" natural pairing is between a vector space and its
+  dual (this is a canonical, nondegenerate pairing); there are other "natural" (but not necessarily
+  canonical) pairings of e.g. \bigwedge^k V with \bigwedge^k V^* which essentially induces
+  an embedding into the corresponding tensor powers, but there is a choice of a convention here.
+  Probably these should not be called "natural pairings", since there is a choice involved.
 - Indexing scheme for wedges and symmetric products consists of sorting the indices of a multi-index.
   For Young tableaux, this would generalize to imposing sorting constraints on various subsets of
   indices (based on the rows (alternating) and columns (symmetric)).  Negative signs are accumulated
@@ -200,9 +205,6 @@ Notes for conceptual layer and refactor
   contraction as a linear map (a 2-tensor), then contract this with the outer product of the operands.
   This would really depend on the compiler-specific optimizations that are found in assembler code
   investigations.
-- Could make Vector_i not be an indexable object, but rather require usage of tensors to provide this.
-  This would probably collapse some library code, but could make instantiating a vector more annoying
-  for the user.
 - TODO: reverse order of template arguments in ImplementationOf_t (put Scalar last)
 - TODO: refactor all the AbstractIndex/DimIndex/Factor juggling to use some standard form, like
   (AbstractIndex,Factor) pairs, from which the AbstractIndex, Factor, or DimIndex values can be
@@ -228,7 +230,8 @@ Notes for conceptual layer and refactor
   some compile-time positive and negative tests to this effect).  The static asserts would certainly
   work.
 - Implement positive compile-time tests which verify that various diagrams commute
-  (conceptual hierarchy diagram)
+  (conceptual hierarchy diagram).  This will require implementing positive/negative compile
+  tests in cmake or some such other framework.
 - rename *PowerOfVectorSpaces* to *PowerOfVectorSpace* and 
   *PowerOfBasedVectorSpaces* to *PowerOfBasedVectorSpace*
 - make TensorProductOfVectorSpaces_c and TensorPowerOfVectorSpace_c embeddable in the
@@ -241,19 +244,27 @@ Features necessary for "version 1.0"
 x implementation of diagonal 2-tensors (of based vector spaces)
 - implementation of the optimization for contraction with diagonal 2-tensors (necessary so
   that we can implement inner products and other similar bilinear forms efficiently)
-- refactoring the Eigen interop code to be strongly typed
+- implement analog of Eigen's "map" (providing a vector/tensor/ext-pow/sym-pow/everything 
+  implementations which uses some separate, specified block of memory, which could e.g. 
+  coincide with an Eigen::Matrix).  Maybe do this via abstracting some aspects of Array_t 
+  into Array_i, making Array_t inherit Array_i, then making PreallocatedArray_t also inherit 
+  Array_i.  Then the "mapped" versions of each tensor implementation would just flip a
+  switch to use Array_t or PreallocatedArray_t (hopefully it can be this simple).
+- refactoring the Eigen interop code to be strongly typed, ideally using the "map" functionality
 - do more assembler code inspection for each of the compilers we use (GCC, Clang, MSVC) to
   make sure that it's generating code that's as efficient as we expect it to be (this is
-  really important)
+  really important).  record some analysis of each, noting the compiler versions for each
 - refactoring the unit tests to account for the strongly-typed refactor in general
 - writing unit tests for the new code (general symmetric and antisymmetric N-tensors)
 - possibly providing operator overloads to do non-indexed-expression vector/matrix math like
   Eigen does (so this library could be used by "laymen" without using abstract index notation)
-- regularize/clean up the template code naming scheme
+- regularize/clean up the template code naming scheme (suffixes _t, _c, _f, _m, _i, etc)
 - generating documentation (Doxygen comments for the code, Doxygen-generated high-level
-  documentation, and LaTeX writeups of the abstract math)
-- translating LVD code (Victor's legacy metaprogramming lib) into "native Tensor Heaven" code
-  (important for legal purposes)
+  documentation, and LaTeX writeups of the abstract math), and probably most critically,
+  tutorials, examples, and some intro material to get people into tensor math who only
+  know about matrices/vectors.
+- translating LVD code in tenh/meta/lvd.hpp (Victor's legacy metaprogramming lib) into 
+  "native Tensor Heaven" code (important for legal purposes)
 - Talking to Tom about officially licensing the LVD unit test code (important for legal purposes)
 
 
@@ -269,10 +280,12 @@ Notes for [probable] upgrade to C++11 (to happen after "version 1.0" is reached)
 - All the TypeList_t stuff (which is deeply interwoven into Tensor Heaven) could be refactored
   to use variadic templates, though it would probably be good to do a bunch of experiments and
   gain experience using them before settling on a design/best practice.
-- Tons of the metaprogramming uses static const variables -- these can be changed to use constexpr.
+- Tons of the metaprogramming uses static const variables -- these can be changed to use constexpr,
+  though it looks like lack of MSVC support will hold this one back for a long time.
 - Static asserts with error strings will be awesome (no more making enums for the error messages).
 - Use nullptr
 - Change private constructors to use the new " = delete" notation added in C++11.
+- Move semantics for move constructors for various memory-containing structures (e.g. vectors)
 
 
 Notes/Reflections on the development of a really really template-heavy math library
@@ -302,3 +315,7 @@ Notes/Reflections on the development of a really really template-heavy math libr
   * When possible and when it makes sense (such as in unit tests where there are many test cases),
     break code that uses templates up into many separate source files, so that parallel computation
     can be used to speed things along.
+- TODO: once conceptual inheritance stuff is done, write up some notes on this and about the
+  conceptual layer in general.  Should probably look into prior art on implementing C++ concepts
+  (boost?).
+
