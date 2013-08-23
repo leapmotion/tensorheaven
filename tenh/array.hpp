@@ -10,19 +10,20 @@
 
 #include "tenh/core.hpp"
 
-#include "tenh/componentindex.hpp"
-#include "tenh/meta/typestringof.hpp"
+#include "tenh/interface/array.hpp"
 
 namespace Tenh {
 
 // fixed-length array of a given component type, which must be a POD type
 // (the data_size_in_bytes and data_pointer methods require this).
 template <typename Component_, Uint32 COMPONENT_COUNT_>
-struct Array_t
+struct Array_t : public Array_i<Array_t<Component_,COMPONENT_COUNT_>,Component_,COMPONENT_COUNT_>
 {
-    typedef Component_ Component;
-    static Uint32 const COMPONENT_COUNT = COMPONENT_COUNT_;
-    typedef ComponentIndex_t<COMPONENT_COUNT> ComponentIndex;
+    typedef Array_i<Array_t<Component_,COMPONENT_COUNT_>,Component_,COMPONENT_COUNT_> Parent_Array_i;
+
+    typedef typename Parent_Array_i::Component Component;
+    using Parent_Array_i::COMPONENT_COUNT;
+    typedef typename Parent_Array_i::ComponentIndex ComponentIndex;
 
 // this is to allow 0-component arrays to work (necessary for 0-dimensional vectors)
 #ifdef __clang_version__
@@ -43,17 +44,16 @@ struct Array_t
 
     Component const &operator [] (ComponentIndex const &i) const
     {
-        assert(i.is_not_at_end() && "you used Index_t(x, DONT_RANGE_CHECK) inappropriately");
+        assert(i.is_not_at_end() && "you used ComponentIndex_t(x, DONT_RANGE_CHECK) inappropriately");
         return m_component[i.value()];
     }
     Component &operator [] (ComponentIndex const &i)
     {
-        assert(i.is_not_at_end() && "you used Index_t(x, DONT_RANGE_CHECK) inappropriately");
+        assert(i.is_not_at_end() && "you used ComponentIndex_t(x, DONT_RANGE_CHECK) inappropriately");
         return m_component[i.value()];
     }
 
     // access to the raw data
-    Uint32 data_size_in_bytes () const { return COMPONENT_COUNT*sizeof(Component); }
     Component const *data_pointer () const { return &m_component[0]; }
     Component *data_pointer () { return &m_component[0]; }
 
@@ -72,8 +72,10 @@ private:
     Array_t ();
 };
 
-template <typename T> struct IsAnArray_t { static bool const V = false; };
-template <typename Component, Uint32 COMPONENT_COUNT> struct IsAnArray_t<Array_t<Component,COMPONENT_COUNT> > { static bool const V = true; };
+template <typename T> struct IsArray_t { static bool const V = false; };
+template <typename Component, Uint32 COMPONENT_COUNT> struct IsArray_t<Array_t<Component,COMPONENT_COUNT> > { static bool const V = true; };
+
+template <typename Component, Uint32 COMPONENT_COUNT> struct IsArray_i<Array_t<Component,COMPONENT_COUNT> > { static bool const V = true; };
 
 } // end of namespace Tenh
 

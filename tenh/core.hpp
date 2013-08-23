@@ -72,6 +72,15 @@ T sqr (T const &t)
 static bool const CHECK_RANGE = true;
 static bool const DONT_CHECK_RANGE = false;
 
+// these are used in constructors for determining if a pointer check should be done.
+// the default check parameter value should be CHECK_POINTER, which is more expensive,
+// but if you know what you're doing, you can pass in DONT_CHECK_POINTER to avoid the
+// pointer check and gain efficiency (e.g. if you know for a fact that the pointer is
+// non-NULL).  this is a compromise between completely correct program behavior and
+// program efficiency.
+static bool const CHECK_POINTER = true;
+static bool const DONT_CHECK_POINTER = false;
+
 // used in the curiously recurring template pattern, where the derived type is passed
 // to parent classes as a template parameter, so that the baseclass can access the
 // derived type's methods.  will "return" (as a typedef for T) Derived if Derived
