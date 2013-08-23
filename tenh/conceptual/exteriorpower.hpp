@@ -29,7 +29,7 @@ struct ExteriorPower_c
 
     static std::string type_as_string ()
     {
-        return "ExteriorPower_c<" + TypeStringOf_t<Factor>::eval() + ',' + AS_STRING(ORDER_) + '>';
+        return "ExteriorPower_c<" + TypeStringOf_t<Factor_>::eval() + ',' + AS_STRING(ORDER_) + '>';
     }
 };
 
@@ -69,7 +69,7 @@ public:
 
     static std::string type_as_string ()
     {
-        return "ExteriorPowerOfVectorSpaces_c<" + TypeStringOf_t<Factor>::eval() + ',' + AS_STRING(ORDER_) + '>';
+        return "ExteriorPowerOfVectorSpaces_c<" + TypeStringOf_t<Factor_>::eval() + ',' + AS_STRING(ORDER_) + '>';
     }
 };
 

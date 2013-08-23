@@ -69,7 +69,7 @@ public:
 
     static std::string type_as_string ()
     {
-        return "EmbeddableInTensorProductOfBasedVectorSpaces_c<" + TypeStringOf_t<TensorProductOfBasedVectorSpaces>::eval() + '>';
+        return "EmbeddableInTensorProductOfBasedVectorSpaces_c<" + TypeStringOf_t<TensorProductOfBasedVectorSpaces_>::eval() + '>';
     }
 };
 

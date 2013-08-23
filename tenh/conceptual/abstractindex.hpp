@@ -26,7 +26,7 @@ struct AbstractIndex_c
 
 //    AbstractIndex_c () { }
 
-    static std::string type_as_string () { return std::string("AbstractIndex_c<'") + SYMBOL + "'>"; }
+    static std::string type_as_string () { return std::string("AbstractIndex_c<'") + SYMBOL_ + "'>"; }
 };
 
 template <char SYMBOL_>

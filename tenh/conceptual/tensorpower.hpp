@@ -29,7 +29,7 @@ public:
 
     static std::string type_as_string ()
     {
-        return "TensorPower_c<" + TypeStringOf_t<Factor>::eval() + ',' + AS_STRING(ORDER_) + '>';
+        return "TensorPower_c<" + TypeStringOf_t<Factor_>::eval() + ',' + AS_STRING(ORDER_) + '>';
     }
 };
 
@@ -73,7 +73,7 @@ public:
 
     static std::string type_as_string ()
     {
-        return "TensorPowerOfVectorSpaces_c<" + TypeStringOf_t<Factor>::eval() + ',' + AS_STRING(ORDER_) + '>';
+        return "TensorPowerOfVectorSpaces_c<" + TypeStringOf_t<Factor_>::eval() + ',' + AS_STRING(ORDER_) + '>';
     }
 };
 
@@ -114,7 +114,7 @@ public:
 
     static std::string type_as_string ()
     {
-        return "TensorPowerOfBases_c<" + TypeStringOf_t<Factor>::eval() + ',' + AS_STRING(ORDER_) + '>';
+        return "TensorPowerOfBases_c<" + TypeStringOf_t<Factor_>::eval() + ',' + AS_STRING(ORDER_) + '>';
     }
 };
 

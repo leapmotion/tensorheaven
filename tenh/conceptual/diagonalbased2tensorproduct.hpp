@@ -28,7 +28,7 @@ struct Diagonal2TensorProduct_c
 
     static std::string type_as_string ()
     {
-        return "Diagonal2TensorProduct_c<" + TypeStringOf_t<Factor1>::eval() + ',' + TypeStringOf_t<Factor2>::eval() + '>';
+        return "Diagonal2TensorProduct_c<" + TypeStringOf_t<Factor1_>::eval() + ',' + TypeStringOf_t<Factor2_>::eval() + '>';
     }
 };
 
@@ -70,7 +70,7 @@ public:
 
     static std::string type_as_string ()
     {
-        return "Diagonal2TensorProduct_c<" + TypeStringOf_t<Factor1>::eval() + ',' + TypeStringOf_t<Factor2>::eval() + '>';
+        return "Diagonal2TensorProductOfBases_c<" + TypeStringOf_t<Factor1_>::eval() + ',' + TypeStringOf_t<Factor2_>::eval() + '>';
     }
 };
 
@@ -123,7 +123,7 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Diagonal2TensorProductOfBases);
 //
 //     static std::string type_as_string ()
 //     {
-//         return "Diagonal2TensorProductOfVectorSpaces_c<" + TypeStringOf_t<Factor1>::eval() + ',' + TypeStringOf_t<Factor2>::eval() + '>';
+//         return "Diagonal2TensorProductOfVectorSpaces_c<" + TypeStringOf_t<Factor1_>::eval() + ',' + TypeStringOf_t<Factor2_>::eval() + '>';
 //     }
 // };
 //

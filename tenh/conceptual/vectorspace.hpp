@@ -19,7 +19,7 @@ struct VectorSpace_c
 {
     typedef EmptyTypeList ParentTypeList;
 
-    enum { STATIC_ASSERT_IN_ENUM(HasUniqueFieldStructure_f<Field_>::V, MUST_BE_FIELD) };
+    enum { STATIC_ASSERT_IN_ENUM(IS_FIELD_UNIQUELY(Field_), MUST_BE_FIELD) };
 
     typedef typename AS_FIELD(Field_) Field;
     static Uint32 const DIM = DIM_;
@@ -28,8 +28,8 @@ struct VectorSpace_c
 
     static std::string type_as_string ()
     {
-        return "VectorSpace_c<" + TypeStringOf_t<Field>::eval() + ','
-                                + AS_STRING(DIM) + ',' + TypeStringOf_t<Id>::eval() + '>';
+        return "VectorSpace_c<" + TypeStringOf_t<Field_>::eval() + ','
+                                + AS_STRING(DIM_) + ',' + TypeStringOf_t<Id_>::eval() + '>';
     }
 };
 
@@ -75,7 +75,7 @@ public:
 
     static std::string type_as_string ()
     {
-        return "BasedVectorSpace_c<" + TypeStringOf_t<As_VectorSpace>::eval() + ',' + TypeStringOf_t<Basis>::eval() + '>';
+        return "BasedVectorSpace_c<" + TypeStringOf_t<VectorSpace_>::eval() + ',' + TypeStringOf_t<Basis_>::eval() + '>';
     }
 };
 

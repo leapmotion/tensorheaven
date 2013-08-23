@@ -32,7 +32,7 @@ public:
 
     static std::string type_as_string ()
     {
-        return "TensorProduct_c<" + TypeStringOf_t<FactorTypeList>::eval() + '>';
+        return "TensorProduct_c<" + TypeStringOf_t<FactorTypeList_>::eval() + '>';
     }
 };
 
@@ -160,7 +160,7 @@ public:
 
     static std::string type_as_string ()
     {
-        return "TensorProductOfVectorSpaces_c<" + TypeStringOf_t<FactorTypeList>::eval() + '>';
+        return "TensorProductOfVectorSpaces_c<" + TypeStringOf_t<FactorTypeList_>::eval() + '>';
     }
 };
 
@@ -204,7 +204,7 @@ public:
 
     static std::string type_as_string ()
     {
-        return "TensorProductOfBases_c<" + TypeStringOf_t<FactorTypeList>::eval() + '>';
+        return "TensorProductOfBases_c<" + TypeStringOf_t<FactorTypeList_>::eval() + '>';
     }
 };
 
@@ -253,7 +253,7 @@ public:
     static std::string type_as_string ()
     {
         return "BasedTensorProductOfVectorSpaces_c<" + TypeStringOf_t<TensorProductOfVectorSpaces_>::eval() + ','
-                                                     + TypeStringOf_t<Basis>::eval() + '>';
+                                                     + TypeStringOf_t<Basis_>::eval() + '>';
     }
 };
 
@@ -343,7 +343,7 @@ public:
 
     static std::string type_as_string ()
     {
-        return "TensorProductOfBasedVectorSpaces_c<" + TypeStringOf_t<FactorTypeList>::eval() + '>';
+        return "TensorProductOfBasedVectorSpaces_c<" + TypeStringOf_t<FactorTypeList_>::eval() + '>';
     }
 };
 

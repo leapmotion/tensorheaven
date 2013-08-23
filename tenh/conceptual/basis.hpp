@@ -24,7 +24,7 @@ struct Basis_c
 
     static std::string type_as_string ()
     {
-        return "Basis_c<" + TypeStringOf_t<Id>::eval() + '>';
+        return "Basis_c<" + TypeStringOf_t<Id_>::eval() + '>';
     }
 };
 
