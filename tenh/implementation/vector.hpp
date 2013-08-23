@@ -48,8 +48,8 @@ struct ImplementationOf_t<Scalar_,BasedVectorSpace_c<VectorSpace_,Basis_> >
 
     using Parent_Vector_i::as_derived;
     using Parent_Array_t::operator[];
-    using Parent_Array_t::data_size_in_bytes;
-    using Parent_Array_t::data_pointer;
+    using Parent_Array_t::allocation_size_in_bytes;
+    using Parent_Array_t::pointer_to_allocation;
 
     static std::string type_as_string ()
     {

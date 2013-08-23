@@ -15,7 +15,7 @@
 namespace Tenh {
 
 // fixed-length array of a given component type, which must be a POD type
-// (the data_size_in_bytes and data_pointer methods require this).  this
+// (the allocation_size_in_bytes and pointer_to_allocation methods require this).  this
 // implementation of Array_i is a "map" to preexisting memory -- it just
 // puts an Array_i interface on existing memory.
 template <typename Component_, Uint32 COMPONENT_COUNT_>
@@ -105,8 +105,8 @@ struct PreallocatedArray_t
     }
 
     // access to the raw data
-    Component const *data_pointer () const { return m_pointer_to_allocation; }
-    Component *data_pointer () { return m_pointer_to_allocation; }
+    Component const *pointer_to_allocation () const { return m_pointer_to_allocation; }
+    Component *pointer_to_allocation () { return m_pointer_to_allocation; }
 
     static std::string type_as_string ()
     {

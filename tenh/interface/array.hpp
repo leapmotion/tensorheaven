@@ -29,7 +29,7 @@ struct Array_i
     typedef ComponentIndex_t<COMPONENT_COUNT> ComponentIndex;
 
 // protected:
-    
+
 //     explicit Array_i (WithoutInitialization const &) { }
 //     explicit Array_i () { }
 
@@ -39,9 +39,9 @@ struct Array_i
     Component &operator [] (ComponentIndex const &i) { return as_derived().Derived::operator[](i); }
 
     // access to the raw data (WARNING: if Component isn't a POD type, then this isn't "everything")
-    Uint32 data_size_in_bytes () const { return COMPONENT_COUNT*sizeof(Component); }
-    Component const *data_pointer () const { return as_derived().Derived::data_pointer(); }
-    Component *data_pointer () { return as_derived().Derived::data_pointer(); }
+    Uint32 allocation_size_in_bytes () const { return COMPONENT_COUNT*sizeof(Component); }
+    Component const *pointer_to_allocation () const { return as_derived().Derived::pointer_to_allocation(); }
+    Component *pointer_to_allocation () { return as_derived().Derived::pointer_to_allocation(); }
 
     // accessor as Derived type
     Derived const &as_derived () const { return *static_cast<Derived const *>(this); }
@@ -50,7 +50,7 @@ struct Array_i
     static std::string type_as_string ()
     {
         return "Array_i<" + TypeStringOf_t<Derived>::eval() + ','
-                          + TypeStringOf_t<Component>::eval() + ',' 
+                          + TypeStringOf_t<Component>::eval() + ','
                           + AS_STRING(COMPONENT_COUNT) + '>';
     }
 };

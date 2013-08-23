@@ -104,8 +104,8 @@ struct Tensor2Symmetric_t
     // TODO: because the strict lower triangle is indexed contiguously first, there is an easy type coercion (projection) to lower triangular
 
     using Parent_Array_t::operator[];
-    using Parent_Array_t::data_size_in_bytes;
-    using Parent_Array_t::data_pointer;
+    using Parent_Array_t::allocation_size_in_bytes;
+    using Parent_Array_t::pointer_to_allocation;
 
     // using two indices in a Tensor2Symmetric_t is breaking apart the Index type and using it
     // as a general tensor -- this is where the fancy indexing scheme happens.

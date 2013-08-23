@@ -58,8 +58,8 @@ struct ImplementationOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeL
     }
 
     using Parent_Array_t::operator[];
-    using Parent_Array_t::data_size_in_bytes;
-    using Parent_Array_t::data_pointer;
+    using Parent_Array_t::allocation_size_in_bytes;
+    using Parent_Array_t::pointer_to_allocation;
 
     template <typename OtherIndexTypeList>
     Scalar operator [] (MultiIndex_t<OtherIndexTypeList> const &m) const

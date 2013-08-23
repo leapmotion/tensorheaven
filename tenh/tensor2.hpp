@@ -115,8 +115,8 @@ struct Tensor2_t
     }
 
     using Parent_Array_t::operator[];
-    using Parent_Array_t::data_size_in_bytes;
-    using Parent_Array_t::data_pointer;
+    using Parent_Array_t::allocation_size_in_bytes;
+    using Parent_Array_t::pointer_to_allocation;
 
     // Index1 could be Factor1::Index or Factor1::MultiIndex (checked by its use in the other functions)
     // Index2 could be Factor2::Index or Factor2::MultiIndex (checked by its use in the other functions)

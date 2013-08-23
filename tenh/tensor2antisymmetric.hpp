@@ -101,8 +101,8 @@ struct Tensor2Antisymmetric_t
     // TODO: because the diagonal is always zero, there is an easy type coercion to Tensor2Diagonal_t
 
     using Parent_Array_t::operator[];
-    using Parent_Array_t::data_size_in_bytes;
-    using Parent_Array_t::data_pointer;
+    using Parent_Array_t::allocation_size_in_bytes;
+    using Parent_Array_t::pointer_to_allocation;
 
     // using two indices in a Tensor2Antisymmetric_t is breaking apart the Index type and using it
     // as a general tensor -- this is where the fancy indexing scheme happens.

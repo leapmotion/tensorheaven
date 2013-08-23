@@ -15,7 +15,7 @@
 namespace Tenh {
 
 // fixed-length array of a given component type, which must be a POD type
-// (the data_size_in_bytes and data_pointer methods require this).
+// (the allocation_size_in_bytes and pointer_to_allocation methods require this).
 template <typename Component_, Uint32 COMPONENT_COUNT_>
 struct Array_t : public Array_i<Array_t<Component_,COMPONENT_COUNT_>,Component_,COMPONENT_COUNT_>
 {
@@ -54,8 +54,8 @@ struct Array_t : public Array_i<Array_t<Component_,COMPONENT_COUNT_>,Component_,
     }
 
     // access to the raw data
-    Component const *data_pointer () const { return &m_component[0]; }
-    Component *data_pointer () { return &m_component[0]; }
+    Component const *pointer_to_allocation () const { return &m_component[0]; }
+    Component *pointer_to_allocation () { return &m_component[0]; }
 
     static std::string type_as_string ()
     {

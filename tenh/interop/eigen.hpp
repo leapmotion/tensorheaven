@@ -20,7 +20,7 @@ Eigen::Map<Eigen::Matrix<typename Factor1::Scalar,Factor1::DIM,Factor2::DIM,Eige
     EigenMap_of_Tensor2 (Tensor2_t<Factor1,Factor2,Basis,Derived> const &t)
 {
     return Eigen::Map<Eigen::Matrix<typename Factor1::Scalar,Factor1::DIM,Factor2::DIM,Eigen::RowMajor> const>
-        (t.data_pointer());
+        (t.pointer_to_allocation());
 }
 
 template <typename Factor1, typename Factor2, typename Basis, typename Derived>
@@ -28,7 +28,7 @@ Eigen::Map<Eigen::Matrix<typename Factor1::Scalar,Factor1::DIM,Factor2::DIM,Eige
     EigenMap_of_Tensor2 (Tensor2_t<Factor1,Factor2,Basis,Derived> &t)
 {
     return Eigen::Map<Eigen::Matrix<typename Factor1::Scalar,Factor1::DIM,Factor2::DIM,Eigen::RowMajor> >
-        (t.data_pointer());
+        (t.pointer_to_allocation());
 }
 
 // TODO: if there was a Tensor2_t "map" (like Eigen::Map), then this could be made more efficient
@@ -61,7 +61,7 @@ void euclideanly_embedded_EigenMatrix_to (
     // TODO: use a memory map instead of a memcpy
     Tensor2_t<typename Tensor2Type::Factor1::WithStandardEuclideanBasis,
               typename Tensor2Type::Factor2::WithStandardEuclideanBasis> euclideanly_embedded_t(Static<WithoutInitialization>::SINGLETON);
-    memcpy(euclideanly_embedded_t.data_pointer(), &m(0,0), euclideanly_embedded_t.data_size_in_bytes());
+    memcpy(euclideanly_embedded_t.pointer_to_allocation(), &m(0,0), euclideanly_embedded_t.allocation_size_in_bytes());
     TypedIndex_t<typename Tensor2Type::Factor1::WithStandardEuclideanBasis,'i'> i;
     TypedIndex_t<typename Tensor2Type::Factor2::WithStandardEuclideanBasis,'j'> j;
     TypedIndex_t<typename Tensor2Type::WithStandardEuclideanBasis,'p'> p;
@@ -111,7 +111,7 @@ void invert_tensor2 (Tensor2Type const &t, InverseTensor2Type &t_inverse)
     typedef Eigen::Matrix<typename Tensor2Type::Scalar,Tensor2Type::Factor2::DIM,Tensor2Type::Factor1::DIM,Eigen::RowMajor> EigenMatrixInverse;
     EigenMatrixInverse temp2(EigenMap_of_Tensor2(blown_up_t).inverse());
     T_inv blown_up_t_inverse(Static<WithoutInitialization>::SINGLETON);
-    memcpy(blown_up_t_inverse.data_pointer(), &temp2(0,0), blown_up_t_inverse.data_size_in_bytes());
+    memcpy(blown_up_t_inverse.pointer_to_allocation(), &temp2(0,0), blown_up_t_inverse.allocation_size_in_bytes());
     TypedIndex_t<InverseTensor2Type,'p'> p;
     t_inverse(p).no_alias() = (blown_up_t_inverse(j|i)).bundle(j|i,p);
 }

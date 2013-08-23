@@ -46,7 +46,7 @@ struct ImplementationOf_t<Scalar_,Diagonal2TensorProductOfBasedVectorSpaces_c<Fa
     typedef typename Parent_EmbeddableAsTensor_i::TensorProductOfBasedVectorSpaces TensorProductOfBasedVectorSpaces;
     typedef typename Parent_EmbeddableAsTensor_i::FactorTypeList FactorTypeList;
     typedef typename Parent_EmbeddableAsTensor_i::MultiIndex MultiIndex;
-    using Parent_EmbeddableAsTensor_i::ORDER;
+    //using Parent_EmbeddableAsTensor_i::ORDER;
     static Uint32 const ORDER = 2;
     typedef Factor1_ Factor1;
     typedef Factor2_ Factor2;
@@ -80,8 +80,8 @@ struct ImplementationOf_t<Scalar_,Diagonal2TensorProductOfBasedVectorSpaces_c<Fa
     }
 
     using Parent_Array_t::operator[];
-    using Parent_Array_t::data_size_in_bytes;
-    using Parent_Array_t::data_pointer;
+    using Parent_Array_t::allocation_size_in_bytes;
+    using Parent_Array_t::pointer_to_allocation;
 
     // TODO (maybe): Scalar &operator [] (MultiIndex const &) -- writeable access to components,
     // which would need to throw if the multi-index corresponds to an immutable zero.  there is
