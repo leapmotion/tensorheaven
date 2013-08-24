@@ -22,7 +22,7 @@ struct VectorSpace_c
     enum { STATIC_ASSERT_IN_ENUM(IS_FIELD_UNIQUELY(Field_), MUST_BE_FIELD) };
 
     typedef typename AS_FIELD(Field_) Field;
-    static Uint32 const DIM = DIM_;
+    static Uint32 const DIMENSION = DIM_;
     typedef Id_ Id;
 
     static std::string type_as_string ()
@@ -68,7 +68,6 @@ public:
 
 
     typedef typename As_VectorSpace::Field Field;
-    static Uint32 const DIM = As_VectorSpace::DIM;
     typedef typename As_VectorSpace::Id Id;
     typedef typename AS_BASIS(Basis_) Basis;
 

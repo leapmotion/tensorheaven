@@ -151,7 +151,7 @@ private:
         STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename AS_VECTOR_SPACE(Factor1_)::Field,typename AS_VECTOR_SPACE(Factor2_)::Field>::v), ALL_FACTORS_MUST_HAVE_SAME_FIELD),
     };
     typedef VectorSpace_c<typename Factor1_::Field,
-                          (Factor1_::DIM < Factor2_::DIM) ? Factor1_::DIM : Factor2_::DIM,
+                          (AS_VECTOR_SPACE(Factor1_)::DIMENSION < AS_VECTOR_SPACE(Factor2_)::DIMENSION) ? AS_VECTOR_SPACE(Factor1_)::DIMENSION : AS_VECTOR_SPACE(Factor2_)::DIMENSION,
                           Diagonal2TensorProduct_c<Factor1_,Factor2_> > UnderlyingVectorSpace;
 
     typedef BasedVectorSpace_c<UnderlyingVectorSpace,
@@ -169,7 +169,6 @@ public:
     typedef TensorProductOfBasedVectorSpaces_c<FactorTypeList> TensorProductOfBasedVectorSpaces;
     static Uint32 const ORDER = 2;
     typedef typename As_BasedVectorSpace::Field Field;
-    static Uint32 const DIM = As_BasedVectorSpace::DIM;
     typedef typename As_BasedVectorSpace::Id Id;
     typedef typename As_BasedVectorSpace::Basis Basis;
     typedef Factor1_ Factor1;

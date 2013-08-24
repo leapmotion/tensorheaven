@@ -30,13 +30,13 @@ struct Vector_i
     enum
     {
         STATIC_ASSERT_IN_ENUM((!Lvd::Meta::TypesAreEqual<Derived_,NullType>::v), DERIVED_MUST_NOT_BE_NULL_TYPE),
-        STATIC_ASSERT_IN_ENUM(HasBasedVectorSpaceStructure_f<BasedVectorSpace_>::V, MUST_BE_BASED_VECTOR_SPACE)
+        STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(BasedVectorSpace_), MUST_BE_BASED_VECTOR_SPACE)
     };
 
     typedef Derived_ Derived;
     typedef Scalar_ Scalar;
     typedef BasedVectorSpace_ BasedVectorSpace;
-    static Uint32 const DIM = BasedVectorSpace::DIM;
+    static Uint32 const DIM = AS_VECTOR_SPACE(BasedVectorSpace)::DIMENSION;
 
     typedef ComponentIndex_t<DIM> ComponentIndex;
     typedef MultiIndex_t<TypeList_t<ComponentIndex> > MultiIndex;

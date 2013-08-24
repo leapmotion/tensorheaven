@@ -775,7 +775,7 @@ int main (int argc, char **argv)
 
         // do computation by hand to check it
         float total = 0.0f;
-        for (ComponentIndex_t<VSX::DIM> it; it.is_not_at_end(); ++it)
+        for (ComponentIndex_t<VSX::DIMENSION> it; it.is_not_at_end(); ++it)
             total += u[it] * d(i).split(i,j|k)[D::MultiIndex(it,it)] * u[it];
         std::cout << "computation done by hand: " << total << '\n';
 
@@ -785,7 +785,7 @@ int main (int argc, char **argv)
 
         // do computation by hand to check it
         total = 0.0f;
-        for (ComponentIndex_t<VSX::DIM> it; it.is_not_at_end(); ++it)
+        for (ComponentIndex_t<VSX::DIMENSION> it; it.is_not_at_end(); ++it)
             total += u[it] * d(i).split(i,j|k)[D::MultiIndex(it,it)] * v[it];
         std::cout << "computation done by hand: " << total << '\n';
 

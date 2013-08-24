@@ -65,7 +65,6 @@ public:
 
     typedef typename As_TensorPower::FactorTypeList FactorTypeList;
     typedef typename As_TensorProductOfVectorSpaces::Field Field;
-    static Uint32 const DIM = As_TensorProductOfVectorSpaces::DIM;
     typedef typename As_TensorProductOfVectorSpaces::Id Id;
     typedef Factor_ Factor;
 
@@ -151,7 +150,6 @@ public:
 
     typedef typename As_TensorPowerOfVectorSpaces::FactorTypeList FactorTypeList;
     typedef typename As_BasedTensorProductOfVectorSpaces::Field Field;
-    static Uint32 const DIM = As_BasedTensorProductOfVectorSpaces::DIM;
     typedef typename As_BasedTensorProductOfVectorSpaces::Id Id;
     typedef typename As_BasedTensorProductOfVectorSpaces::Basis Basis;
 
@@ -198,7 +196,6 @@ public:
 
     typedef typename As_TensorProductOfBasedVectorSpaces::FactorTypeList FactorTypeList;
     typedef typename As_BasedTensorPowerOfVectorSpaces::Field Field;
-    static Uint32 const DIM = As_BasedTensorPowerOfVectorSpaces::DIM;
     typedef typename As_BasedTensorPowerOfVectorSpaces::Id Id;
     typedef typename As_BasedTensorPowerOfVectorSpaces::Basis Basis;
     typedef Factor_ Factor;

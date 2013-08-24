@@ -23,12 +23,12 @@ struct ImplementationOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeL
                     Scalar_,
                     TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >,
     // Array_t is privately inherited because it is an implementation detail
-    private Array_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_>::DIM>
+    private Array_t<Scalar_,UniqueVectorSpaceStructureOf_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >::T::DIMENSION>
 {
     typedef Tensor_i<ImplementationOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >,
                      Scalar_,
                      TensorProductOfBasedVectorSpaces_c<FactorTypeList_> > Parent_Tensor_i;
-    typedef Array_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_>::DIM> Parent_Array_t;
+    typedef Array_t<Scalar_,UniqueVectorSpaceStructureOf_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >::T::DIMENSION> Parent_Array_t;
 
     typedef typename Parent_Tensor_i::Derived Derived;
     typedef typename Parent_Tensor_i::Scalar Scalar;

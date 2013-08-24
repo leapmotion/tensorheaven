@@ -52,7 +52,7 @@ struct SymmetricPowerOfVectorSpaces_c
 private:
     enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_VECTOR_SPACE), };
     typedef SymmetricPower_c<Factor_,ORDER_> As_SymmetricPower;
-    typedef VectorSpace_c<typename Factor_::Field,BinomialCoefficient_t<Factor_::DIM + ORDER_ - 1, ORDER_>::V,SymmetricPower_c<typename Factor_::Id,ORDER_> > As_VectorSpace;
+    typedef VectorSpace_c<typename Factor_::Field,BinomialCoefficient_t<AS_VECTOR_SPACE(Factor_)::DIMENSION + ORDER_ - 1, ORDER_>::V,SymmetricPower_c<typename Factor_::Id,ORDER_> > As_VectorSpace;
     typedef EmbeddableInTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces_c<Factor_, ORDER_> > As_EmbeddableInTensorPowerOfVectorSpaces;
 public:
     typedef TypeList_t<As_SymmetricPower,
@@ -62,7 +62,6 @@ public:
     typedef typename As_SymmetricPower::FactorTypeList FactorTypeList;
     static Uint32 const ORDER = As_SymmetricPower::ORDER;
     typedef typename As_VectorSpace::Field Field;
-    static Uint32 const DIM = As_VectorSpace::DIM;
     typedef typename As_VectorSpace::Id Id;
     typedef Factor_ Factor;
 
@@ -137,7 +136,6 @@ public:
 
     static Uint32 const ORDER = As_SymmetricPowerOfVectorSpaces::ORDER;
     typedef typename As_BasedVectorSpace::Field Field;
-    static Uint32 const DIM = As_BasedVectorSpace::DIM;
     typedef typename As_BasedVectorSpace::Id Id;
     typedef typename As_BasedVectorSpace::Basis Basis;
 
@@ -184,7 +182,6 @@ public:
     typedef typename As_EmbeddableInTensorPowerOfBasedVectorSpaces::FactorTypeList FactorTypeList;
     static Uint32 const ORDER = As_BasedSymmetricPowerOfVectorSpaces::ORDER;
     typedef typename As_BasedSymmetricPowerOfVectorSpaces::Field Field;
-    static Uint32 const DIM = As_BasedSymmetricPowerOfVectorSpaces::DIM;
     typedef typename As_BasedSymmetricPowerOfVectorSpaces::Id Id;
     typedef typename As_BasedSymmetricPowerOfVectorSpaces::Basis Basis;
     typedef Factor_ Factor;

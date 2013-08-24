@@ -106,7 +106,7 @@ struct ProductOfDimensions_t
 {
     enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(typename FactorTypeList::HeadType), MUST_BE_VECTOR_SPACE) };
 
-    static Uint32 const V = AS_VECTOR_SPACE(typename FactorTypeList::HeadType)::DIM *
+    static Uint32 const V = AS_VECTOR_SPACE(typename FactorTypeList::HeadType)::DIMENSION *
                             ProductOfDimensions_t<typename FactorTypeList::BodyTypeList>::V;
 };
 
@@ -130,7 +130,6 @@ struct IdsOfTypeList_t<EmptyTypeList>
 };
 
 
-// TODO: get rid of the DIM and ORDER here.
 // FactorTypeList_ must be a TypeList_t of VectorSpace_c types
 template <typename FactorTypeList_>
 struct TensorProductOfVectorSpaces_c
@@ -153,7 +152,6 @@ public:
 
     typedef FactorTypeList_ FactorTypeList;
     typedef typename As_VectorSpace::Field Field;
-    static Uint32 const DIM = As_VectorSpace::DIM;
     typedef typename As_VectorSpace::Id Id;
 
     static std::string type_as_string ()
@@ -242,7 +240,6 @@ public:
 
     typedef typename As_TensorProductOfVectorSpaces::FactorTypeList FactorTypeList;
     typedef typename As_BasedVectorSpace::Field Field;
-    static Uint32 const DIM = As_BasedVectorSpace::DIM;
     typedef typename As_BasedVectorSpace::Id Id;
     typedef Basis_ Basis;
 
@@ -332,7 +329,6 @@ public:
 
     typedef FactorTypeList_ FactorTypeList;
     typedef typename As_BasedTensorProductOfVectorSpaces::Field Field;
-    static Uint32 const DIM = As_BasedTensorProductOfVectorSpaces::DIM;
     typedef typename As_BasedTensorProductOfVectorSpaces::Id Id;
     typedef typename As_BasedTensorProductOfVectorSpaces::Basis Basis;
 

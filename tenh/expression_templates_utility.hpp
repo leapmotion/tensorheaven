@@ -415,7 +415,7 @@ struct IndexBundle_t
     typedef typename DimIndexTypeListOf_t<BundleFactorTypeList,
                                           BundleAbstractIndexTypeList>::T BundleDimIndexTypeList;
     typedef DimIndex_t<ResultingAbstractIndexType::SYMBOL,
-                       ResultingFactorType::DIM> ResultingDimIndexType;
+                       AS_VECTOR_SPACE(ResultingFactorType)::DIMENSION> ResultingDimIndexType;
 
     // zip the stuff so that the transformations can act on both the DimIndex_t and factor lists
     typedef typename Zip_t<TypeList_t<OperandFreeDimIndexTypeList,
@@ -526,7 +526,7 @@ struct IndexSplitter_t
     {
         typedef typename DimIndexTypeListOf_t<typename SourceFactor::FactorTypeList,
                                               SplitAbstractIndexTypeList>::T SourceFactorDimIndexTypeList;
-        typedef ComponentIndex_t<SourceFactor::DIM> SourceFactorComponentIndex;
+        typedef ComponentIndex_t<AS_VECTOR_SPACE(SourceFactor)::DIMENSION> SourceFactorComponentIndex;
         typedef MultiIndex_t<SourceFactorDimIndexTypeList> SourceFactorMultiIndex;
         typedef ImplementationOf_t<Scalar,SourceFactor> ImplementationOfSourceFactor;
 

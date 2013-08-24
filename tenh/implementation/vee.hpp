@@ -25,14 +25,14 @@ struct ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpaces_c<Factor_,OR
                                 Scalar_,
                                 SymmetricPowerOfBasedVectorSpaces_c<Factor_,ORDER_> >,
     // Array_t is privately inherited because it is an implementation detail
-    private Array_t<Scalar_,SymmetricPowerOfBasedVectorSpaces_c<Factor_,ORDER_>::DIM>
+    private Array_t<Scalar_,UniqueVectorSpaceStructureOf_f<SymmetricPowerOfBasedVectorSpaces_c<Factor_,ORDER_> >::T::DIMENSION>
 {
     enum { STATIC_ASSERT_IN_ENUM(HasBasedVectorSpaceStructure_f<Factor_>::V, MUST_BE_BASED_VECTOR_SPACE) };
 
     typedef EmbeddableAsTensor_i<ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpaces_c<Factor_,ORDER_> >,
                                  Scalar_,
                                  SymmetricPowerOfBasedVectorSpaces_c<Factor_,ORDER_> > Parent_EmbeddableAsTensor_i;
-    typedef Array_t<Scalar_,SymmetricPowerOfBasedVectorSpaces_c<Factor_,ORDER_>::DIM> Parent_Array_t;
+    typedef Array_t<Scalar_,UniqueVectorSpaceStructureOf_f<SymmetricPowerOfBasedVectorSpaces_c<Factor_,ORDER_> >::T::DIMENSION> Parent_Array_t;
 
     typedef typename Parent_EmbeddableAsTensor_i::Derived Derived;
     typedef typename Parent_EmbeddableAsTensor_i::Scalar Scalar;

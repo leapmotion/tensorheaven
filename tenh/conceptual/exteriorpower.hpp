@@ -52,7 +52,7 @@ struct ExteriorPowerOfVectorSpaces_c
 private:
     enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_VECTOR_SPACE), };
     typedef ExteriorPower_c<Factor_,ORDER_> As_ExteriorPower;
-    typedef VectorSpace_c<typename Factor_::Field,BinomialCoefficient_t<Factor_::DIM, ORDER_>::V,ExteriorPower_c<typename Factor_::Id,ORDER_> > As_VectorSpace;
+    typedef VectorSpace_c<typename Factor_::Field,BinomialCoefficient_t<AS_VECTOR_SPACE(Factor_)::DIMENSION, ORDER_>::V,ExteriorPower_c<typename Factor_::Id,ORDER_> > As_VectorSpace;
     typedef EmbeddableInTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces_c<Factor_,ORDER_> > As_EmbeddableInTensorPowerOfVectorSpaces;
 public:
     typedef TypeList_t<As_ExteriorPower,
@@ -61,7 +61,6 @@ public:
 
     typedef typename As_ExteriorPower::FactorTypeList FactorTypeList;
     typedef typename As_VectorSpace::Field Field;
-    static Uint32 const DIM = As_VectorSpace::DIM;
     typedef typename As_VectorSpace::Id Id;
     typedef Factor_ Factor;
 
@@ -132,7 +131,6 @@ public:
     typedef TypeList_t<As_ExteriorPowerOfVectorSpaces, TypeList_t<As_BasedVectorSpace> > ParentTypeList;
 
     typedef typename As_BasedVectorSpace::Field Field;
-    static Uint32 const DIM = As_BasedVectorSpace::DIM;
     typedef typename As_BasedVectorSpace::Id Id;
     typedef typename As_BasedVectorSpace::Basis Basis;
 
@@ -179,7 +177,6 @@ public:
     typedef typename As_EmbeddableInTensorPowerOfBasedVectorSpaces::FactorTypeList FactorTypeList;
 
     typedef typename As_BasedExteriorPowerOfVectorSpaces::Field Field;
-    static Uint32 const DIM = As_BasedExteriorPowerOfVectorSpaces::DIM;
     typedef typename As_BasedExteriorPowerOfVectorSpaces::Id Id;
     typedef typename As_BasedExteriorPowerOfVectorSpaces::Basis Basis;
     typedef Factor_ Factor;
