@@ -319,3 +319,58 @@ Notes/Reflections on the development of a really really template-heavy math libr
   conceptual layer in general.  Should probably look into prior art on implementing C++ concepts
   (boost?).
 
+
+Notes from Tensor Heaven future planning
+- Projects which will use Tensor Heaven
+  * Generalized elephantoid reconstruction for more-robust fingertips
+    ~ Using valley points to get additional info
+  * Multivariate polynomials (c.f. Kevin's polynomial class); will use fully symmetric tensors
+  * Higher order SVD (implement in C++ with Tenh, then use some C++-to-Matlab layer interface
+    library to provide this facility in Matlab for David's use)
+  * General cumulants (also uses fully symmetric tensors)
+  * Manifold geometry
+    ~ sheaf theory (maps from manifolds to tensors)
+    ~ Young tableaux (for Riemannian curvature tensor)
+    ~ exterior calculus (uses alternating tensors)
+  * Linear algebra "frontend" for Tensor Heaven -- no indexed expressions; use "Hom" formalism
+    so that effectively nothing above a 2-tensor is ever used.  The type system will be traversed
+    by explicit notation.
+
+    E.g. if R \in W \otimes V^*  and  w \in V \otimes V, then
+
+      R*w
+
+    should be a 1-slot in-line contraction having resulting type W \otimes V, and
+
+      TensorPower<2>(R)*w
+
+    has type W \otimes W, and TensorPower<2>(R) \in Hom(V \otimes V, W \otimes W).
+
+    The C++ operator* will compute an unambiguous in-line contraction (think box diagrams
+    with lines connecting the contracted boxes).
+  * Tensor calculus library with pullback formalism.
+- Features necessary for project use
+  * Inner products
+  * Induced inner products
+  * Euclidean embedding
+  * Induced euclidean embedding
+  * Eigen interop
+  * More assembler code investigation
+- Documentation
+  * High level abstract math documents (e.g. linear algebraic category theory)
+  * Journal articles
+    ~ Conceptual layer, conceptual inheritance
+    ~ Tensor type theory (navigating the type system, e.g. parenthesizing tensor products
+      to get various naturally isomorphic types)
+  * Doxygen documentation
+    ~ High level "how this works" and "here is the structure of the library" docs
+    ~ Class-level documentation of classes, methods, functions, members, etc.
+  * Tutorials/examples which can be involved/related to unit tests
+  * Code-level documentation of algorithms (non-Doxygen comments)
+- Licensing
+  * I (we) would like to see it released open-source for general use, and then license
+    it for commercial use.  This is something to talk to legal about.
+  * Open source would imply that outside programmers could/would submit patches.
+    Because of the commercial licensing, we would have to have them give up the rights
+    to the source code changes.
+
