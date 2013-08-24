@@ -78,6 +78,9 @@ random TODOs:
 - Add _ to the end of all template parameters
 - Tensor power of vector space, NOT SPACES.
 - Make references to Parameter within template classes reference Parameter_ where possible.
+- The non-conceptual IsBlah_f metafunctions should really be called InheritsBlah_f, since these
+  are overloaded to reflect the class inheritance structure.  This is to be contrasted with the
+  conceptual layer, where IsBlah_f<T>::V is true if and only if T actually is exactly a Blah type.
 
 features necessary for version 0.5:
 x euclidean embedding (using short-term zero-dimensional hack (?))
