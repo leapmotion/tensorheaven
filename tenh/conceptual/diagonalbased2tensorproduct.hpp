@@ -157,12 +157,13 @@ private:
     typedef BasedVectorSpace_c<UnderlyingVectorSpace,
                                Diagonal2TensorProductOfBases_c<typename AS_BASED_VECTOR_SPACE(Factor1_)::Basis,
                                                                typename AS_BASED_VECTOR_SPACE(Factor2_)::Basis> > As_BasedVectorSpace;
-    typedef EmbeddableInTensorProductOfBasedVectorSpaces_c<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,TypeList_t<Factor2_> > > > As_EmbeddableInTensorProductOfBasedVectorSpaces;
+    typedef TypeList_t<Factor1_,TypeList_t<Factor2_> > FactorTypeList_TODO_RENAME;
+    typedef EmbeddableInTensorProductOfBasedVectorSpaces_c<TensorProductOfBasedVectorSpaces_c<FactorTypeList_TODO_RENAME>,TensorProductOfVectorSpaces_c<FactorTypeList_TODO_RENAME> > As_EmbeddableInTensorProductOfBasedVectorSpaces;
 public:
     typedef TypeList_t<As_BasedVectorSpace,
             TypeList_t<As_EmbeddableInTensorProductOfBasedVectorSpaces> > ParentTypeList;
 
-    typedef typename As_EmbeddableInTensorProductOfBasedVectorSpaces::FactorTypeList FactorTypeList;
+    typedef typename As_EmbeddableInTensorProductOfBasedVectorSpaces::TensorProductOfBasedVectorSpaces::FactorTypeList FactorTypeList;
 
     enum { STATIC_ASSERT_IN_ENUM(AllFactorsAreBasedVectorSpaces_f<FactorTypeList>::V, ALL_FACTORS_MUST_BE_BASED_VECTOR_SPACES) };
 
@@ -181,13 +182,13 @@ public:
 };
 
 template <typename Factor1_, typename Factor2_>
-struct IsConcept_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_, Factor2_> >
+struct IsConcept_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >
 { static bool const V = true; };
 
 template <typename T> struct IsDiagonal2TensorProductOfBasedVectorSpaces_f { static bool const V = false; };
 
 template <typename Factor1_, typename Factor2_>
-struct IsDiagonal2TensorProductOfBasedVectorSpaces_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_, Factor2_> >
+struct IsDiagonal2TensorProductOfBasedVectorSpaces_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >
 { static bool const V = true; };
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Diagonal2TensorProductOfBasedVectorSpaces);

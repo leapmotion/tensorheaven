@@ -11,6 +11,7 @@
 #include "tenh/meta/typelist_utility.hpp"
 #include "tenh/conceptual/concept.hpp"
 #include "tenh/conceptual/embeddableintensorpower.hpp"
+#include "tenh/conceptual/tensorpower.hpp"
 #include "tenh/conceptual/vectorspace.hpp"
 #include "tenh/mathutil.hpp"
 
@@ -53,7 +54,9 @@ private:
     enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_VECTOR_SPACE), };
     typedef ExteriorPower_c<Factor_,ORDER_> As_ExteriorPower;
     typedef VectorSpace_c<typename Factor_::Field,BinomialCoefficient_t<AS_VECTOR_SPACE(Factor_)::DIMENSION, ORDER_>::V,ExteriorPower_c<typename Factor_::Id,ORDER_> > As_VectorSpace;
-    typedef EmbeddableInTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces_c<Factor_,ORDER_> > As_EmbeddableInTensorPowerOfVectorSpaces;
+    typedef typename TensorPower_c<Factor_,ORDER_>::FactorTypeList FactorTypeList_TODO_RENAME;
+    typedef EmbeddableInTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces_c<Factor_,ORDER_>,
+                                                    TensorProductOfVectorSpaces_c<FactorTypeList_TODO_RENAME> > As_EmbeddableInTensorPowerOfVectorSpaces;
 public:
     typedef TypeList_t<As_ExteriorPower,
             TypeList_t<As_VectorSpace,
@@ -71,7 +74,7 @@ public:
 };
 
 template <typename Factor_, Uint32 ORDER_>
-struct IsConcept_f<ExteriorPowerOfVectorSpaces_c<Factor_, ORDER_> >
+struct IsConcept_f<ExteriorPowerOfVectorSpaces_c<Factor_,ORDER_> >
 { static bool const V = true; };
 
 template <typename T> struct IsExteriorPowerOfVectorSpaces_f { static bool const V = false; };
@@ -167,14 +170,17 @@ struct ExteriorPowerOfBasedVectorSpaces_c
 {
 private:
     enum { STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_BASED_VECTOR_SPACE), };
-    typedef BasedExteriorPowerOfVectorSpaces_c<ExteriorPowerOfVectorSpaces_c<Factor_,ORDER_>,ExteriorPowerOfBases_c<typename AS_BASED_VECTOR_SPACE(Factor_)::Basis, ORDER_> > As_BasedExteriorPowerOfVectorSpaces;
-    typedef EmbeddableInTensorPowerOfBasedVectorSpaces_c<TensorPowerOfBasedVectorSpaces_c<Factor_,ORDER_> > As_EmbeddableInTensorPowerOfBasedVectorSpaces;
+    typedef BasedExteriorPowerOfVectorSpaces_c<ExteriorPowerOfVectorSpaces_c<Factor_,ORDER_>,ExteriorPowerOfBases_c<typename AS_BASED_VECTOR_SPACE(Factor_)::Basis,ORDER_> > As_BasedExteriorPowerOfVectorSpaces;
+    typedef typename TensorPower_c<Factor_,ORDER_>::FactorTypeList FactorTypeList_TODO_RENAME;
+    typedef EmbeddableInTensorPowerOfBasedVectorSpaces_c<TensorPowerOfBasedVectorSpaces_c<Factor_,ORDER_>,
+                                                         TensorPowerOfVectorSpaces_c<Factor_,ORDER_>,
+                                                         TensorProductOfBasedVectorSpaces_c<FactorTypeList_TODO_RENAME>,
+                                                         TensorProductOfVectorSpaces_c<FactorTypeList_TODO_RENAME> > As_EmbeddableInTensorPowerOfBasedVectorSpaces;
 public:
     typedef TypeList_t<As_BasedExteriorPowerOfVectorSpaces,
-             TypeList_t<As_EmbeddableInTensorPowerOfBasedVectorSpaces> > ParentTypeList;
-    // TODO: Why the fuck is this broken?????????
+            TypeList_t<As_EmbeddableInTensorPowerOfBasedVectorSpaces> > ParentTypeList;
 
-    typedef typename As_EmbeddableInTensorPowerOfBasedVectorSpaces::FactorTypeList FactorTypeList;
+    typedef typename AS_TENSOR_PRODUCT(typename As_EmbeddableInTensorPowerOfBasedVectorSpaces::TensorPowerOfBasedVectorSpaces)::FactorTypeList FactorTypeList;
 
     typedef typename As_BasedExteriorPowerOfVectorSpaces::Field Field;
     typedef typename As_BasedExteriorPowerOfVectorSpaces::Id Id;

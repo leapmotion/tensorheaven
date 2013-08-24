@@ -9,6 +9,7 @@
 #include "tenh/core.hpp"
 
 #include "tenh/conceptual/concept.hpp"
+#include "tenh/conceptual/embeddableintensorproduct.hpp"
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/meta/typelist_utility.hpp"
 
@@ -60,8 +61,13 @@ private:
     enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_VECTOR_SPACE), };
     typedef TensorPower_c<Factor_,ORDER_> As_TensorPower;
     typedef TensorProductOfVectorSpaces_c<typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T> As_TensorProductOfVectorSpaces;
+    typedef typename As_TensorPower::FactorTypeList FactorTypeList_TODO_RENAME;
+    typedef EmbeddableInTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces_c,
+                                                    TensorProductOfVectorSpaces_c<FactorTypeList_TODO_RENAME> > As_EmbeddableInTensorPowerOfVectorSpaces;
 public:
-    typedef TypeList_t<As_TensorPower, TypeList_t<As_TensorProductOfVectorSpaces> > ParentTypeList;
+    typedef TypeList_t<As_TensorPower,
+            TypeList_t<As_TensorProductOfVectorSpaces,
+            TypeList_t<As_EmbeddableInTensorPowerOfVectorSpaces> > > ParentTypeList;
 
     typedef typename As_TensorPower::FactorTypeList FactorTypeList;
     typedef typename As_TensorProductOfVectorSpaces::Field Field;
@@ -190,9 +196,15 @@ private:
     typedef TensorProductOfBasedVectorSpaces_c<typename UniformTypeListOfLength_t<Factor_,ORDER_>::T> As_TensorProductOfBasedVectorSpaces;
     typedef BasedTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces_c<Factor_,ORDER_>,
                                              TensorPowerOfBases_c<typename Factor_::Basis,ORDER_> > As_BasedTensorPowerOfVectorSpaces;
+    typedef typename TensorPower_c<Factor_,ORDER_>::FactorTypeList FactorTypeList_TODO_RENAME;
+    typedef EmbeddableInTensorPowerOfBasedVectorSpaces_c<TensorPowerOfBasedVectorSpaces_c,
+                                                         TensorPowerOfVectorSpaces_c<Factor_,ORDER_>,
+                                                         TensorProductOfBasedVectorSpaces_c<FactorTypeList_TODO_RENAME>,
+                                                         TensorProductOfVectorSpaces_c<FactorTypeList_TODO_RENAME> > As_EmbeddableInTensorPowerOfBasedVectorSpaces;
 public:
     typedef TypeList_t<As_BasedTensorPowerOfVectorSpaces,
-            TypeList_t<As_TensorProductOfBasedVectorSpaces> > ParentTypeList;
+            TypeList_t<As_TensorProductOfBasedVectorSpaces,
+            TypeList_t<As_EmbeddableInTensorPowerOfBasedVectorSpaces> > > ParentTypeList;
 
     typedef typename As_TensorProductOfBasedVectorSpaces::FactorTypeList FactorTypeList;
     typedef typename As_BasedTensorPowerOfVectorSpaces::Field Field;
