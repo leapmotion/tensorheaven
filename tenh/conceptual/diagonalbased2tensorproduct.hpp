@@ -20,10 +20,8 @@ struct Diagonal2TensorProduct_c
 {
     typedef EmptyTypeList ParentTypeList;
 
-    static Uint32 const ORDER = 2;
     typedef Factor1_ Factor1;
     typedef Factor2_ Factor2;
-    typedef TypeList_t<Factor1,TypeList_t<Factor2> > FactorTypeList;
 
     static std::string type_as_string ()
     {
@@ -112,7 +110,6 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Diagonal2TensorProductOfBases);
 //
 //     typedef typename As_Diagonal2TensorProduct::Factor1 Factor1;
 //     typedef typename As_Diagonal2TensorProduct::Factor2 Factor2;
-//     typedef typename As_Diagonal2TensorProduct::FactorTypeList FactorTypeList;
 //
 //     typedef typename As_VectorSpace::Field Field;
 //     static Uint32 const DIM = As_VectorSpace::DIM;
@@ -150,28 +147,23 @@ private:
         STATIC_ASSERT_IN_ENUM__UNIQUE(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor2_), MUST_BE_BASED_VECTOR_SPACE, FACTOR2),
         STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename AS_VECTOR_SPACE(Factor1_)::Field,typename AS_VECTOR_SPACE(Factor2_)::Field>::v), ALL_FACTORS_MUST_HAVE_SAME_FIELD),
     };
+    typedef TypeList_t<Factor1_,TypeList_t<Factor2_> > FactorTypeList;
+
     typedef VectorSpace_c<typename Factor1_::Field,
-                          (AS_VECTOR_SPACE(Factor1_)::DIMENSION < AS_VECTOR_SPACE(Factor2_)::DIMENSION) ? AS_VECTOR_SPACE(Factor1_)::DIMENSION : AS_VECTOR_SPACE(Factor2_)::DIMENSION,
+                          (AS_VECTOR_SPACE(Factor1_)::DIMENSION < AS_VECTOR_SPACE(Factor2_)::DIMENSION) ?
+                              AS_VECTOR_SPACE(Factor1_)::DIMENSION : AS_VECTOR_SPACE(Factor2_)::DIMENSION,
                           Diagonal2TensorProduct_c<Factor1_,Factor2_> > UnderlyingVectorSpace;
 
     typedef BasedVectorSpace_c<UnderlyingVectorSpace,
                                Diagonal2TensorProductOfBases_c<typename AS_BASED_VECTOR_SPACE(Factor1_)::Basis,
                                                                typename AS_BASED_VECTOR_SPACE(Factor2_)::Basis> > As_BasedVectorSpace;
-    typedef TypeList_t<Factor1_,TypeList_t<Factor2_> > FactorTypeList_TODO_RENAME;
-    typedef EmbeddableInTensorProductOfBasedVectorSpaces_c<TensorProductOfBasedVectorSpaces_c<FactorTypeList_TODO_RENAME>,TensorProductOfVectorSpaces_c<FactorTypeList_TODO_RENAME> > As_EmbeddableInTensorProductOfBasedVectorSpaces;
+    typedef EmbeddableInTensorProductOfBasedVectorSpaces_c<TensorProductOfBasedVectorSpaces_c<FactorTypeList>,
+                                                            TensorProductOfVectorSpaces_c<FactorTypeList> > As_EmbeddableInTensorProductOfBasedVectorSpaces;
 public:
     typedef TypeList_t<As_BasedVectorSpace,
             TypeList_t<As_EmbeddableInTensorProductOfBasedVectorSpaces> > ParentTypeList;
 
-    typedef typename As_EmbeddableInTensorProductOfBasedVectorSpaces::TensorProductOfBasedVectorSpaces::FactorTypeList FactorTypeList;
-
-    enum { STATIC_ASSERT_IN_ENUM(AllFactorsAreBasedVectorSpaces_f<FactorTypeList>::V, ALL_FACTORS_MUST_BE_BASED_VECTOR_SPACES) };
-
-    typedef TensorProductOfBasedVectorSpaces_c<FactorTypeList> TensorProductOfBasedVectorSpaces;
-    static Uint32 const ORDER = 2;
-    typedef typename As_BasedVectorSpace::Field Field;
     typedef typename As_BasedVectorSpace::Id Id;
-    typedef typename As_BasedVectorSpace::Basis Basis;
     typedef Factor1_ Factor1;
     typedef Factor2_ Factor2;
 

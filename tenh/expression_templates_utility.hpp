@@ -494,13 +494,13 @@ struct IndexSplitter_t
     enum
     {
         // TODO: assert that SourceFactor can actually be split (can be embedded into a tensor space)
-        STATIC_ASSERT_IN_ENUM__UNIQUE((SourceFactor::FactorTypeList::LENGTH == SplitAbstractIndexTypeList::LENGTH), MUST_HAVE_EQUAL_LENGTHS, FREEFACTORTYPELIST)
+        STATIC_ASSERT_IN_ENUM__UNIQUE((AS_TENSOR_PRODUCT(typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_VECTOR_SPACES(SourceFactor)::TensorProductOfVectorSpaces)::FactorTypeList::LENGTH == SplitAbstractIndexTypeList::LENGTH), MUST_HAVE_EQUAL_LENGTHS, FREEFACTORTYPELIST)
     };
 
     typedef typename ConcatenationOfTypeLists_t<
         typename Operand::FreeFactorTypeList::template LeadingTypeList_t<SOURCE_INDEX_TYPE_INDEX>::T,
         typename ConcatenationOfTypeLists_t<
-            typename SourceFactor::FactorTypeList,
+            typename AS_TENSOR_PRODUCT(typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_VECTOR_SPACES(SourceFactor)::TensorProductOfVectorSpaces)::FactorTypeList,
             typename Operand::FreeFactorTypeList::template TrailingTypeList_t<SOURCE_INDEX_TYPE_INDEX+1>::T
             >::T
         >::T FactorTypeList;
@@ -524,7 +524,7 @@ struct IndexSplitter_t
 
     Scalar operator [] (MultiIndex const &m) const
     {
-        typedef typename DimIndexTypeListOf_t<typename SourceFactor::FactorTypeList,
+        typedef typename DimIndexTypeListOf_t<typename AS_TENSOR_PRODUCT(typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_VECTOR_SPACES(SourceFactor)::TensorProductOfVectorSpaces)::FactorTypeList,
                                               SplitAbstractIndexTypeList>::T SourceFactorDimIndexTypeList;
         typedef ComponentIndex_t<AS_VECTOR_SPACE(SourceFactor)::DIMENSION> SourceFactorComponentIndex;
         typedef MultiIndex_t<SourceFactorDimIndexTypeList> SourceFactorMultiIndex;

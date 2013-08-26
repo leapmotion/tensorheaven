@@ -41,25 +41,25 @@ struct IsConcept_f<TensorProduct_c<FactorTypeList_> >
 { static bool const V = true; };
 
 template <typename T> struct IsTensorProduct_f { static bool const V = false; };
-template <typename FactorTypeList> struct IsTensorProduct_f<TensorProduct_c<FactorTypeList> > { static bool const V = true; };
+template <typename FactorTypeList_> struct IsTensorProduct_f<TensorProduct_c<FactorTypeList_> > { static bool const V = true; };
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(TensorProduct);
 // special convenience macros
 #define IS_TENSOR_PRODUCT_UNIQUELY(Concept) HasUniqueTensorProductStructure_f<Concept>::V
 #define AS_TENSOR_PRODUCT(Concept) UniqueTensorProductStructureOf_f<Concept>::T
 
-template <typename FactorTypeList>
-struct DualOf_f<TensorProduct_c<FactorTypeList> >
+template <typename FactorTypeList_>
+struct DualOf_f<TensorProduct_c<FactorTypeList_> >
 {
-    typedef TensorProduct_c<typename DualOf_f<FactorTypeList>::T> T;
+    typedef TensorProduct_c<typename DualOf_f<FactorTypeList_>::T> T;
 };
 
 // TODO: Replace with predicate-based thing
-template <typename FactorTypeList>
+template <typename FactorTypeList_>
 struct AllFactorsAreVectorSpaces_f
 {
-    static bool const V = HasVectorSpaceStructure_f<typename FactorTypeList::HeadType>::V &&
-                          AllFactorsAreVectorSpaces_f<typename FactorTypeList::BodyTypeList>::V;
+    static bool const V = HasVectorSpaceStructure_f<typename FactorTypeList_::HeadType>::V &&
+                          AllFactorsAreVectorSpaces_f<typename FactorTypeList_::BodyTypeList>::V;
 };
 
 template <>
@@ -68,11 +68,11 @@ struct AllFactorsAreVectorSpaces_f<EmptyTypeList>
     static bool const V = true;
 };
 
-template <typename FactorTypeList>
+template <typename FactorTypeList_>
 struct AllFactorsAreBases_f
 {
-    static bool const V = HasBasisStructure_f<typename FactorTypeList::HeadType>::V &&
-                          AllFactorsAreBases_f<typename FactorTypeList::BodyTypeList>::V;
+    static bool const V = HasBasisStructure_f<typename FactorTypeList_::HeadType>::V &&
+                          AllFactorsAreBases_f<typename FactorTypeList_::BodyTypeList>::V;
 };
 
 template <>
@@ -81,11 +81,11 @@ struct AllFactorsAreBases_f<EmptyTypeList>
     static bool const V = true;
 };
 
-template <typename FactorTypeList>
+template <typename FactorTypeList_>
 struct AllFactorsHaveTheSameField_f
 {
-    typedef typename FactorTypeList::HeadType HeadType;
-    typedef typename FactorTypeList::BodyTypeList BodyTypeList;
+    typedef typename FactorTypeList_::HeadType HeadType;
+    typedef typename FactorTypeList_::BodyTypeList BodyTypeList;
     static bool const V = Lvd::Meta::TypesAreEqual<typename HeadType::Field,typename BodyTypeList::HeadType::Field>::v &&
                           AllFactorsHaveTheSameField_f<BodyTypeList>::V;
 };
@@ -102,13 +102,13 @@ struct AllFactorsHaveTheSameField_f<EmptyTypeList>
     static bool const V = true;
 };
 
-template <typename FactorTypeList>
+template <typename FactorTypeList_>
 struct ProductOfDimensions_t
 {
-    enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(typename FactorTypeList::HeadType), MUST_BE_VECTOR_SPACE) };
+    enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(typename FactorTypeList_::HeadType), MUST_BE_VECTOR_SPACE) };
 
-    static Uint32 const V = AS_VECTOR_SPACE(typename FactorTypeList::HeadType)::DIMENSION *
-                            ProductOfDimensions_t<typename FactorTypeList::BodyTypeList>::V;
+    static Uint32 const V = AS_VECTOR_SPACE(typename FactorTypeList_::HeadType)::DIMENSION *
+                            ProductOfDimensions_t<typename FactorTypeList_::BodyTypeList>::V;
 };
 
 template <>
@@ -144,7 +144,7 @@ private:
     };
 
     typedef TensorProduct_c<FactorTypeList_> As_TensorProduct;
-    typedef VectorSpace_c<typename FactorTypeList_::HeadType::Field,
+    typedef VectorSpace_c<typename AS_VECTOR_SPACE(typename FactorTypeList_::HeadType)::Field,
                           ProductOfDimensions_t<FactorTypeList_>::V,
                           TensorProduct_c<typename IdsOfTypeList_t<FactorTypeList_>::T> > As_VectorSpace;
     typedef EmbeddableInTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_c> As_EmbeddableInTensorProductOfVectorSpaces;
@@ -153,8 +153,6 @@ public:
             TypeList_t<As_VectorSpace,
             TypeList_t<As_EmbeddableInTensorProductOfVectorSpaces> > > ParentTypeList;
 
-    typedef FactorTypeList_ FactorTypeList;
-    typedef typename As_VectorSpace::Field Field;
     typedef typename As_VectorSpace::Id Id;
 
     static std::string type_as_string ()
@@ -168,17 +166,17 @@ struct IsConcept_f<TensorProductOfVectorSpaces_c<FactorTypeList_> >
 { static bool const V = true; };
 
 template <typename T> struct IsTensorProductOfVectorSpaces_f { static bool const V = false; };
-template <typename FactorTypeList> struct IsTensorProductOfVectorSpaces_f<TensorProductOfVectorSpaces_c<FactorTypeList> > { static bool const V = true; };
+template <typename FactorTypeList_> struct IsTensorProductOfVectorSpaces_f<TensorProductOfVectorSpaces_c<FactorTypeList_> > { static bool const V = true; };
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(TensorProductOfVectorSpaces);
 // special convenience macros
 #define IS_TENSOR_PRODUCT_OF_VECTOR_SPACES_UNIQUELY(Concept) HasUniqueTensorProductOfVectorSpacesStructure_f<Concept>::V
 #define AS_TENSOR_PRODUCT_OF_VECTOR_SPACES(Concept) UniqueTensorProductOfVectorSpacesStructureOf_f<Concept>::T
 
-template <typename FactorTypeList>
-struct DualOf_f<TensorProductOfVectorSpaces_c<FactorTypeList> >
+template <typename FactorTypeList_>
+struct DualOf_f<TensorProductOfVectorSpaces_c<FactorTypeList_> >
 {
-    typedef TensorProductOfVectorSpaces_c<typename DualOf_f<FactorTypeList>::T> T;
+    typedef TensorProductOfVectorSpaces_c<typename DualOf_f<FactorTypeList_>::T> T;
 };
 
 
@@ -197,7 +195,6 @@ private:
 public:
     typedef TypeList_t<As_TensorProduct, TypeList_t<As_Basis> > ParentTypeList;
 
-    typedef FactorTypeList_ FactorTypeList;
     typedef typename As_Basis::Id Id;
 
     static std::string type_as_string ()
@@ -211,17 +208,17 @@ struct IsConcept_f<TensorProductOfBases_c<FactorTypeList_> >
 { static bool const V = true; };
 
 template <typename T> struct IsTensorProductOfBases_f { static bool const V = false; };
-template <typename FactorTypeList> struct IsTensorProductOfBases_f<TensorProductOfBases_c<FactorTypeList> > { static bool const V = true; };
+template <typename FactorTypeList_> struct IsTensorProductOfBases_f<TensorProductOfBases_c<FactorTypeList_> > { static bool const V = true; };
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(TensorProductOfBases);
 // special convenience macros
 #define IS_TENSOR_PRODUCT_OF_BASES_UNIQUELY(Concept) HasUniqueTensorProductOfBasesStructure_f<Concept>::V
 #define AS_TENSOR_PRODUCT_OF_BASES(Concept) UniqueTensorProductOfBasesStructureOf_f<Concept>::T
 
-template <typename FactorTypeList>
-struct DualOf_f<TensorProductOfBases_c<FactorTypeList> >
+template <typename FactorTypeList_>
+struct DualOf_f<TensorProductOfBases_c<FactorTypeList_> >
 {
-    typedef TensorProductOfBases_c<typename DualOf_f<FactorTypeList>::T> T;
+    typedef TensorProductOfBases_c<typename DualOf_f<FactorTypeList_>::T> T;
 };
 
 
@@ -241,10 +238,7 @@ private:
 public:
     typedef TypeList_t<As_TensorProductOfVectorSpaces, TypeList_t<As_BasedVectorSpace> > ParentTypeList;
 
-    typedef typename As_TensorProductOfVectorSpaces::FactorTypeList FactorTypeList;
-    typedef typename As_BasedVectorSpace::Field Field;
     typedef typename As_BasedVectorSpace::Id Id;
-    typedef Basis_ Basis;
 
     static std::string type_as_string ()
     {
@@ -273,11 +267,11 @@ struct DualOf_f<BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces,B
 
 
 // TODO: Predicate thingy
-template <typename FactorTypeList>
+template <typename FactorTypeList_>
 struct AllFactorsAreBasedVectorSpaces_f
 {
-    static bool const V = HasBasedVectorSpaceStructure_f<typename FactorTypeList::HeadType>::V &&
-                          AllFactorsAreBasedVectorSpaces_f<typename FactorTypeList::BodyTypeList>::V;
+    static bool const V = HasBasedVectorSpaceStructure_f<typename FactorTypeList_::HeadType>::V &&
+                          AllFactorsAreBasedVectorSpaces_f<typename FactorTypeList_::BodyTypeList>::V;
 };
 
 template <>
@@ -332,10 +326,7 @@ public:
     typedef TypeList_t<As_BasedTensorProductOfVectorSpaces,
             TypeList_t<As_EmbeddableInTensorProductOfBasedVectorSpaces> > ParentTypeList;
 
-    typedef FactorTypeList_ FactorTypeList;
-    typedef typename As_BasedTensorProductOfVectorSpaces::Field Field;
     typedef typename As_BasedTensorProductOfVectorSpaces::Id Id;
-    typedef typename As_BasedTensorProductOfVectorSpaces::Basis Basis;
 
     static std::string type_as_string ()
     {
@@ -348,17 +339,17 @@ struct IsConcept_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >
 { static bool const V = true; };
 
 template <typename T> struct IsTensorProductOfBasedVectorSpaces_f { static bool const V = false; };
-template <typename FactorTypeList> struct IsTensorProductOfBasedVectorSpaces_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList> > { static bool const V = true; };
+template <typename FactorTypeList_> struct IsTensorProductOfBasedVectorSpaces_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_> > { static bool const V = true; };
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(TensorProductOfBasedVectorSpaces);
 // special convenience macros
 #define IS_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES_UNIQUELY(Concept) HasUniqueTensorProductOfBasedVectorSpacesStructure_f<Concept>::V
 #define AS_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(Concept) UniqueTensorProductOfBasedVectorSpacesStructureOf_f<Concept>::T
 
-template <typename FactorTypeList>
-struct DualOf_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList> >
+template <typename FactorTypeList_>
+struct DualOf_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >
 {
-    typedef TensorProductOfBasedVectorSpaces_c<typename DualOf_f<FactorTypeList>::T> T;
+    typedef TensorProductOfBasedVectorSpaces_c<typename DualOf_f<FactorTypeList_>::T> T;
 };
 
 } // end of namespace Tenh

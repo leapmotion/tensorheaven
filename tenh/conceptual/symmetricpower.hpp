@@ -24,7 +24,7 @@ struct SymmetricPower_c
 
     static Uint32 const ORDER = ORDER_;
     typedef Factor_ Factor;
-    typedef typename TypeListWithMultiplicity_t<Factor,ORDER>::T FactorTypeList;
+    typedef typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T FactorTypeList;
 
     static std::string type_as_string ()
     {
@@ -45,7 +45,6 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(SymmetricPower);
 #define AS_SYMMETRIC_POWER(Concept) UniqueSymmetricPowerStructureOf_f<Concept>::T
 
 
-// FactorTypeList_ must be a TypeList_t of VectorSpace_c types
 template <typename Factor_, Uint32 ORDER_>
 struct SymmetricPowerOfVectorSpaces_c
 {
@@ -53,23 +52,20 @@ private:
     enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_VECTOR_SPACE), };
     typedef SymmetricPower_c<Factor_,ORDER_> As_SymmetricPower;
     typedef VectorSpace_c<typename Factor_::Field,BinomialCoefficient_t<AS_VECTOR_SPACE(Factor_)::DIMENSION + ORDER_ - 1, ORDER_>::V,SymmetricPower_c<typename Factor_::Id,ORDER_> > As_VectorSpace;
-    typedef typename TensorPower_c<Factor_,ORDER_>::FactorTypeList FactorTypeList_TODO_RENAME;
+    typedef typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T FactorTypeList;
     typedef EmbeddableInTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces_c<Factor_,ORDER_>,
-                                                    TensorProductOfVectorSpaces_c<FactorTypeList_TODO_RENAME> > As_EmbeddableInTensorPowerOfVectorSpaces;
+                                                    TensorProductOfVectorSpaces_c<FactorTypeList> > As_EmbeddableInTensorPowerOfVectorSpaces;
 public:
     typedef TypeList_t<As_SymmetricPower,
             TypeList_t<As_VectorSpace,
             TypeList_t<As_EmbeddableInTensorPowerOfVectorSpaces> > > ParentTypeList;
 
-    typedef typename As_SymmetricPower::FactorTypeList FactorTypeList;
-    static Uint32 const ORDER = As_SymmetricPower::ORDER;
-    typedef typename As_VectorSpace::Field Field;
     typedef typename As_VectorSpace::Id Id;
     typedef Factor_ Factor;
 
     static std::string type_as_string ()
     {
-        return "SymmetricPowerOfVectorSpaces_c<" + TypeStringOf_t<Factor>::eval() + ',' + AS_STRING(ORDER) + '>';
+        return "SymmetricPowerOfVectorSpaces_c<" + TypeStringOf_t<Factor>::eval() + ',' + AS_STRING(ORDER_) + '>';
     }
 };
 
@@ -136,10 +132,7 @@ public:
     typedef TypeList_t<As_SymmetricPowerOfVectorSpaces,
             TypeList_t<As_BasedVectorSpace> > ParentTypeList;
 
-    static Uint32 const ORDER = As_SymmetricPowerOfVectorSpaces::ORDER;
-    typedef typename As_BasedVectorSpace::Field Field;
     typedef typename As_BasedVectorSpace::Id Id;
-    typedef typename As_BasedVectorSpace::Basis Basis;
 
     static std::string type_as_string ()
     {
@@ -175,21 +168,16 @@ struct SymmetricPowerOfBasedVectorSpaces_c
 private:
     enum { STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_BASED_VECTOR_SPACE) };
     typedef BasedSymmetricPowerOfVectorSpaces_c<SymmetricPowerOfVectorSpaces_c<Factor_,ORDER_>, SymmetricPowerOfBases_c<typename AS_BASED_VECTOR_SPACE(Factor_)::Basis, ORDER_> > As_BasedSymmetricPowerOfVectorSpaces;
-    typedef typename TensorPower_c<Factor_,ORDER_>::FactorTypeList FactorTypeList_TODO_RENAME;
+    typedef typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T FactorTypeList;
     typedef EmbeddableInTensorPowerOfBasedVectorSpaces_c<TensorPowerOfBasedVectorSpaces_c<Factor_,ORDER_>,
                                                          TensorPowerOfVectorSpaces_c<Factor_,ORDER_>,
-                                                         TensorProductOfBasedVectorSpaces_c<FactorTypeList_TODO_RENAME>,
-                                                         TensorProductOfVectorSpaces_c<FactorTypeList_TODO_RENAME> > As_EmbeddableInTensorPowerOfBasedVectorSpaces;
+                                                         TensorProductOfBasedVectorSpaces_c<FactorTypeList>,
+                                                         TensorProductOfVectorSpaces_c<FactorTypeList> > As_EmbeddableInTensorPowerOfBasedVectorSpaces;
 public:
     typedef TypeList_t<As_BasedSymmetricPowerOfVectorSpaces,
             TypeList_t<As_EmbeddableInTensorPowerOfBasedVectorSpaces> > ParentTypeList;
 
-    typedef typename AS_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(typename As_EmbeddableInTensorPowerOfBasedVectorSpaces::TensorPowerOfBasedVectorSpaces) TensorProductOfBasedVectorSpaces;
-    typedef typename AS_TENSOR_PRODUCT(TensorProductOfBasedVectorSpaces)::FactorTypeList FactorTypeList;
-    static Uint32 const ORDER = As_BasedSymmetricPowerOfVectorSpaces::ORDER;
-    typedef typename As_BasedSymmetricPowerOfVectorSpaces::Field Field;
     typedef typename As_BasedSymmetricPowerOfVectorSpaces::Id Id;
-    typedef typename As_BasedSymmetricPowerOfVectorSpaces::Basis Basis;
     typedef Factor_ Factor;
 
     static std::string type_as_string ()

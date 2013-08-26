@@ -24,7 +24,6 @@ private:
 public:
     typedef TypeList_t<As_TensorProduct> ParentTypeList;
 
-    typedef typename As_TensorProduct::FactorTypeList FactorTypeList;
     typedef Factor_ Factor;
 
     static std::string type_as_string ()
@@ -53,7 +52,6 @@ struct DualOf_f<TensorPower_c<Factor,ORDER> >
 };
 
 
-// FactorTypeList_ must be a TypeList_t of VectorSpace_c types
 template <typename Factor_, Uint32 ORDER_>
 struct TensorPowerOfVectorSpaces_c
 {
@@ -61,16 +59,14 @@ private:
     enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_VECTOR_SPACE), };
     typedef TensorPower_c<Factor_,ORDER_> As_TensorPower;
     typedef TensorProductOfVectorSpaces_c<typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T> As_TensorProductOfVectorSpaces;
-    typedef typename As_TensorPower::FactorTypeList FactorTypeList_TODO_RENAME;
+    typedef typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T FactorTypeList;
     typedef EmbeddableInTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces_c,
-                                                    TensorProductOfVectorSpaces_c<FactorTypeList_TODO_RENAME> > As_EmbeddableInTensorPowerOfVectorSpaces;
+                                                    TensorProductOfVectorSpaces_c<FactorTypeList> > As_EmbeddableInTensorPowerOfVectorSpaces;
 public:
     typedef TypeList_t<As_TensorPower,
             TypeList_t<As_TensorProductOfVectorSpaces,
             TypeList_t<As_EmbeddableInTensorPowerOfVectorSpaces> > > ParentTypeList;
 
-    typedef typename As_TensorPower::FactorTypeList FactorTypeList;
-    typedef typename As_TensorProductOfVectorSpaces::Field Field;
     typedef typename As_TensorProductOfVectorSpaces::Id Id;
     typedef Factor_ Factor;
 
@@ -110,7 +106,6 @@ private:
 public:
     typedef TypeList_t<As_TensorPower, TypeList_t<As_TensorPowerOfBases> > ParentTypeList;
 
-    typedef typename As_TensorPower::FactorTypeList FactorTypeList;
     typedef typename As_TensorPowerOfBases::Id Id;
     typedef Factor_ Factor;
 
@@ -154,10 +149,7 @@ public:
     typedef TypeList_t<As_TensorPowerOfVectorSpaces,
             TypeList_t<As_BasedTensorProductOfVectorSpaces> > ParentTypeList;
 
-    typedef typename As_TensorPowerOfVectorSpaces::FactorTypeList FactorTypeList;
-    typedef typename As_BasedTensorProductOfVectorSpaces::Field Field;
     typedef typename As_BasedTensorProductOfVectorSpaces::Id Id;
-    typedef typename As_BasedTensorProductOfVectorSpaces::Basis Basis;
 
     static std::string type_as_string ()
     {
@@ -192,24 +184,21 @@ struct TensorPowerOfBasedVectorSpaces_c
 {
 private:
     enum { STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_BASED_VECTOR_SPACE), };
+    typedef typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T FactorTypeList;
 
     typedef TensorProductOfBasedVectorSpaces_c<typename UniformTypeListOfLength_t<Factor_,ORDER_>::T> As_TensorProductOfBasedVectorSpaces;
     typedef BasedTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces_c<Factor_,ORDER_>,
                                              TensorPowerOfBases_c<typename Factor_::Basis,ORDER_> > As_BasedTensorPowerOfVectorSpaces;
-    typedef typename TensorPower_c<Factor_,ORDER_>::FactorTypeList FactorTypeList_TODO_RENAME;
     typedef EmbeddableInTensorPowerOfBasedVectorSpaces_c<TensorPowerOfBasedVectorSpaces_c,
                                                          TensorPowerOfVectorSpaces_c<Factor_,ORDER_>,
-                                                         TensorProductOfBasedVectorSpaces_c<FactorTypeList_TODO_RENAME>,
-                                                         TensorProductOfVectorSpaces_c<FactorTypeList_TODO_RENAME> > As_EmbeddableInTensorPowerOfBasedVectorSpaces;
+                                                         TensorProductOfBasedVectorSpaces_c<FactorTypeList>,
+                                                         TensorProductOfVectorSpaces_c<FactorTypeList> > As_EmbeddableInTensorPowerOfBasedVectorSpaces;
 public:
     typedef TypeList_t<As_BasedTensorPowerOfVectorSpaces,
             TypeList_t<As_TensorProductOfBasedVectorSpaces,
             TypeList_t<As_EmbeddableInTensorPowerOfBasedVectorSpaces> > > ParentTypeList;
 
-    typedef typename As_TensorProductOfBasedVectorSpaces::FactorTypeList FactorTypeList;
-    typedef typename As_BasedTensorPowerOfVectorSpaces::Field Field;
     typedef typename As_BasedTensorPowerOfVectorSpaces::Id Id;
-    typedef typename As_BasedTensorPowerOfVectorSpaces::Basis Basis;
     typedef Factor_ Factor;
 
     static std::string type_as_string ()

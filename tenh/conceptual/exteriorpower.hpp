@@ -25,7 +25,7 @@ struct ExteriorPower_c
 
     static Uint32 const ORDER = ORDER_;
     typedef Factor_ Factor;
-    typedef typename TypeListWithMultiplicity_t<Factor,ORDER>::T FactorTypeList;
+    typedef typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T FactorTypeList;
 
     static std::string type_as_string ()
     {
@@ -46,24 +46,22 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(ExteriorPower);
 #define AS_EXTERIOR_POWER(Concept) UniqueExteriorPowerStructureOf_f<Concept>::T
 
 
-// FactorTypeList_ must be a TypeList_t of VectorSpace_c types
 template <typename Factor_, Uint32 ORDER_>
 struct ExteriorPowerOfVectorSpaces_c
 {
 private:
     enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_VECTOR_SPACE), };
+    typedef typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T FactorTypeList;
+
     typedef ExteriorPower_c<Factor_,ORDER_> As_ExteriorPower;
     typedef VectorSpace_c<typename Factor_::Field,BinomialCoefficient_t<AS_VECTOR_SPACE(Factor_)::DIMENSION, ORDER_>::V,ExteriorPower_c<typename Factor_::Id,ORDER_> > As_VectorSpace;
-    typedef typename TensorPower_c<Factor_,ORDER_>::FactorTypeList FactorTypeList_TODO_RENAME;
     typedef EmbeddableInTensorPowerOfVectorSpaces_c<TensorPowerOfVectorSpaces_c<Factor_,ORDER_>,
-                                                    TensorProductOfVectorSpaces_c<FactorTypeList_TODO_RENAME> > As_EmbeddableInTensorPowerOfVectorSpaces;
+                                                    TensorProductOfVectorSpaces_c<FactorTypeList> > As_EmbeddableInTensorPowerOfVectorSpaces;
 public:
     typedef TypeList_t<As_ExteriorPower,
             TypeList_t<As_VectorSpace,
             TypeList_t<As_EmbeddableInTensorPowerOfVectorSpaces> > > ParentTypeList;
 
-    typedef typename As_ExteriorPower::FactorTypeList FactorTypeList;
-    typedef typename As_VectorSpace::Field Field;
     typedef typename As_VectorSpace::Id Id;
     typedef Factor_ Factor;
 
@@ -133,9 +131,7 @@ private:
 public:
     typedef TypeList_t<As_ExteriorPowerOfVectorSpaces, TypeList_t<As_BasedVectorSpace> > ParentTypeList;
 
-    typedef typename As_BasedVectorSpace::Field Field;
     typedef typename As_BasedVectorSpace::Id Id;
-    typedef typename As_BasedVectorSpace::Basis Basis;
 
     static std::string type_as_string ()
     {
@@ -170,21 +166,18 @@ struct ExteriorPowerOfBasedVectorSpaces_c
 {
 private:
     enum { STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_BASED_VECTOR_SPACE), };
+    typedef typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T FactorTypeList;
+
     typedef BasedExteriorPowerOfVectorSpaces_c<ExteriorPowerOfVectorSpaces_c<Factor_,ORDER_>,ExteriorPowerOfBases_c<typename AS_BASED_VECTOR_SPACE(Factor_)::Basis,ORDER_> > As_BasedExteriorPowerOfVectorSpaces;
-    typedef typename TensorPower_c<Factor_,ORDER_>::FactorTypeList FactorTypeList_TODO_RENAME;
     typedef EmbeddableInTensorPowerOfBasedVectorSpaces_c<TensorPowerOfBasedVectorSpaces_c<Factor_,ORDER_>,
                                                          TensorPowerOfVectorSpaces_c<Factor_,ORDER_>,
-                                                         TensorProductOfBasedVectorSpaces_c<FactorTypeList_TODO_RENAME>,
-                                                         TensorProductOfVectorSpaces_c<FactorTypeList_TODO_RENAME> > As_EmbeddableInTensorPowerOfBasedVectorSpaces;
+                                                         TensorProductOfBasedVectorSpaces_c<FactorTypeList>,
+                                                         TensorProductOfVectorSpaces_c<FactorTypeList> > As_EmbeddableInTensorPowerOfBasedVectorSpaces;
 public:
     typedef TypeList_t<As_BasedExteriorPowerOfVectorSpaces,
             TypeList_t<As_EmbeddableInTensorPowerOfBasedVectorSpaces> > ParentTypeList;
 
-    typedef typename AS_TENSOR_PRODUCT(typename As_EmbeddableInTensorPowerOfBasedVectorSpaces::TensorPowerOfBasedVectorSpaces)::FactorTypeList FactorTypeList;
-
-    typedef typename As_BasedExteriorPowerOfVectorSpaces::Field Field;
     typedef typename As_BasedExteriorPowerOfVectorSpaces::Id Id;
-    typedef typename As_BasedExteriorPowerOfVectorSpaces::Basis Basis;
     typedef Factor_ Factor;
 
     static std::string type_as_string ()
@@ -209,7 +202,7 @@ template <typename Factor_, Uint32 ORDER_>
 struct DualOf_f<ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORDER_> >
 {
     typedef BasedExteriorPowerOfVectorSpaces_c<typename DualOf_f<ExteriorPowerOfVectorSpaces_c<Factor_,ORDER_> >::T,
-                                               typename DualOf_f<typename ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORDER_>::Basis>::T> T;
+                                               typename DualOf_f<typename UniqueBasedVectorSpaceStructureOf_f<ExteriorPowerOfBasedVectorSpaces_c<Factor_,ORDER_> >::T::Basis>::T> T;
 };
 
 } // end of namespace Tenh
