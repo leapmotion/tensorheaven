@@ -564,6 +564,20 @@ struct TypeListWithMultiplicity_t<Type,0>
     typedef EmptyTypeList T;
 };
 
+
+template <typename TypeList, typename Predicate>
+struct EachTypeSatisfies_f
+{
+    enum { STATIC_ASSERT_IN_ENUM(IsATypeList_t<TypeList>::V, MUST_BE_TYPELIST) };
+    static bool const V = Predicate::template Eval_t<typename TypeList::HeadType>::V && EachTypeSatisfies_f<typename TypeList::BodyTypeList,Predicate>::V;
+};
+
+template <typename Predicate>
+struct EachTypeSatisfies_f<EmptyTypeList, Predicate>
+{
+    static bool const V = true;
+};
+
 } // end of namespace Tenh
 
 #endif // TENH_META_TYPELIST_UTILITY_HPP_

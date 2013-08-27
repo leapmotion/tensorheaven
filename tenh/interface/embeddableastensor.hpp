@@ -15,6 +15,7 @@
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/expression_templates.hpp"
 #include "tenh/interface/vector.hpp"
+#include "tenh/meta/typelist_utility.hpp"
 
 namespace Tenh {
 
@@ -72,7 +73,7 @@ struct EmbeddableAsTensor_i : public Vector_i<Derived_,Scalar_,EmbeddableInTenso
         TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> const &abstract_multiindex) const
     {
         // make sure that the index type list actually contains AbstractIndex_c types
-        STATIC_ASSERT((EachTypeIsAnAbstractIndex_f<TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> >::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
+        STATIC_ASSERT((EachTypeSatisfies_f<TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList>, IsAbstractIndex_p>::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
         AbstractIndex_c<'~'> dummy_index;
         return Parent_Vector_i::operator()(dummy_index).split(dummy_index, abstract_multiindex);
     }

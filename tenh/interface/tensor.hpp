@@ -91,7 +91,7 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
         CHECK_FOR_ALIASING> operator () (TypeList_t<AbstractIndexTypeListHeadType,AbstractIndexTypeListBodyTypeList> const &) const
     {
         typedef TypeList_t<AbstractIndexTypeListHeadType,AbstractIndexTypeListBodyTypeList> ArgumentAbstractIndexTypeList;
-        STATIC_ASSERT(EachTypeIsAnAbstractIndex_f<ArgumentAbstractIndexTypeList>::V, EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
+        STATIC_ASSERT((EachTypeSatisfies_f<ArgumentAbstractIndexTypeList, IsAbstractIndex_p>::V), EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
         STATIC_ASSERT((ArgumentAbstractIndexTypeList::LENGTH == ORDER), ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
         return ExpressionTemplate_IndexedObject_t<
             Derived, // have to use Derived instead of Tensor_i, so that the return-a-reference operator[] is used
@@ -119,7 +119,7 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
         CHECK_FOR_ALIASING> operator () (TypeList_t<AbstractIndexTypeListHeadType,AbstractIndexTypeListBodyTypeList> const &)
     {
         typedef TypeList_t<AbstractIndexTypeListHeadType,AbstractIndexTypeListBodyTypeList> ArgumentAbstractIndexTypeList;
-        STATIC_ASSERT(EachTypeIsAnAbstractIndex_f<ArgumentAbstractIndexTypeList>::V, EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
+        STATIC_ASSERT((EachTypeSatisfies_f<ArgumentAbstractIndexTypeList, IsAbstractIndex_p>::V), EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
         STATIC_ASSERT((ArgumentAbstractIndexTypeList::LENGTH == ORDER), ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
         return ExpressionTemplate_IndexedObject_t<
             Derived, // have to use Derived instead of Tensor_i, so that the return-a-reference operator[] is used
