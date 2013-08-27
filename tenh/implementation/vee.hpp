@@ -56,7 +56,7 @@ struct ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpaces_c<Factor_,OR
     template <typename BundleIndexTypeList, typename BundledIndex>
     static MultiIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)
     {
-        //STATIC_ASSERT(IsADimIndex_f<BundledIndex>::V, MUST_BE_COMPONENT_INDEX);
+        //STATIC_ASSERT(IsDimIndex_f<BundledIndex>::V, MUST_BE_COMPONENT_INDEX);
         // this constructor breaks the vector index apart into a row-major multi-index
         return BundleIndexComputer_t<BundleIndexTypeList, BundledIndex, ORDER_>::compute(b);
     }

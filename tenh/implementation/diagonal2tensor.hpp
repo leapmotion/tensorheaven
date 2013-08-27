@@ -65,13 +65,13 @@ struct ImplementationOf_t<Scalar_,Diagonal2TensorProductOfBasedVectorSpaces_c<Fa
     template <typename BundleIndexTypeList, typename BundledIndex>
     static MultiIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)
     {
-        STATIC_ASSERT(IsADimIndex_f<BundledIndex>::V, MUST_BE_DIM_INDEX);
+        STATIC_ASSERT(IsDimIndex_f<BundledIndex>::V, MUST_BE_DIM_INDEX);
         STATIC_ASSERT(BundleIndexTypeList::LENGTH == 2, LENGTH_MUST_BE_EXACTLY_2);
         typedef MultiIndex_t<BundleIndexTypeList> MultiIndex;
         typedef typename BundleIndexTypeList::HeadType Index1;
         typedef typename BundleIndexTypeList::BodyTypeList::HeadType Index2;
-        STATIC_ASSERT(IsADimIndex_f<Index1>::V, MUST_BE_DIM_INDEX);
-        STATIC_ASSERT(IsADimIndex_f<Index2>::V, MUST_BE_DIM_INDEX);
+        STATIC_ASSERT(IsDimIndex_f<Index1>::V, MUST_BE_DIM_INDEX);
+        STATIC_ASSERT(IsDimIndex_f<Index2>::V, MUST_BE_DIM_INDEX);
         STATIC_ASSERT(Index1::COMPONENT_COUNT == AS_VECTOR_SPACE(Factor1_)::DIMENSION, DIMENSIONS_MUST_MATCH);
         STATIC_ASSERT(Index2::COMPONENT_COUNT == AS_VECTOR_SPACE(Factor2_)::DIMENSION, DIMENSIONS_MUST_MATCH);
         Uint32 b_value = b.value();

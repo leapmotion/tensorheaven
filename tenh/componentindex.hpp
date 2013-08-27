@@ -68,22 +68,16 @@ private:
     Uint32 m;
 };
 
-template <typename T> struct IsAComponentIndex_t { static bool const V = false; };
-template <Uint32 COMPONENT_COUNT> struct IsAComponentIndex_t<ComponentIndex_t<COMPONENT_COUNT> > { static bool const V = true; };
+template <typename T> struct IsComponentIndex_f { static bool const V = false; };
+template <Uint32 COMPONENT_COUNT> struct IsComponentIndex_f<ComponentIndex_t<COMPONENT_COUNT> > { static bool const V = true; };
 
-template <typename TypeList>
-struct EachTypeIsAComponentIndex_t
+struct IsComponentIndex_p
 {
-    static bool const V = IsAComponentIndex_t<typename TypeList::HeadType>::V &&
-                          EachTypeIsAComponentIndex_t<typename TypeList::BodyTypeList>::V;
-    operator bool () const { return V; }
-};
-
-template <>
-struct EachTypeIsAComponentIndex_t<EmptyTypeList>
-{
-    static bool const V = true;
-    operator bool () const { return V; }
+    template <typename T>
+    struct Eval_t
+    {
+        static bool const V = IsComponentIndex_f<T>::V;
+    };
 };
 
 template <Uint32 COMPONENT_COUNT>

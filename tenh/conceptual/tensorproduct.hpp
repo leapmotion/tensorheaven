@@ -22,7 +22,7 @@ template <typename FactorTypeList_>
 struct TensorProduct_c
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM(IsATypeList_t<FactorTypeList_>::V, MUST_BE_TYPELIST) };
+    enum { STATIC_ASSERT_IN_ENUM(IsTypeList_f<FactorTypeList_>::V, MUST_BE_TYPELIST) };
 
 public:
     typedef EmptyTypeList ParentTypeList;
@@ -138,7 +138,7 @@ struct TensorProductOfVectorSpaces_c
 private:
     enum
     {
-        STATIC_ASSERT_IN_ENUM(IsATypeList_t<FactorTypeList_>::V, MUST_BE_TYPELIST),
+        STATIC_ASSERT_IN_ENUM(IsTypeList_f<FactorTypeList_>::V, MUST_BE_TYPELIST),
         STATIC_ASSERT_IN_ENUM(AllFactorsAreVectorSpaces_f<FactorTypeList_>::V, ALL_FACTORS_MUST_BE_VECTOR_SPACES),
         STATIC_ASSERT_IN_ENUM(AllFactorsHaveTheSameField_f<FactorTypeList_>::V, ALL_FACTORS_MUST_HAVE_SAME_FIELD)
     };
@@ -187,7 +187,7 @@ struct TensorProductOfBases_c
 private:
     enum
     {
-        STATIC_ASSERT_IN_ENUM(IsATypeList_t<FactorTypeList_>::V, MUST_BE_TYPELIST),
+        STATIC_ASSERT_IN_ENUM(IsTypeList_f<FactorTypeList_>::V, MUST_BE_TYPELIST),
         STATIC_ASSERT_IN_ENUM(AllFactorsAreBases_f<FactorTypeList_>::V, ALL_FACTORS_MUST_BE_BASES)
     };
     typedef TensorProduct_c<FactorTypeList_> As_TensorProduct;
@@ -315,7 +315,7 @@ struct TensorProductOfBasedVectorSpaces_c
 private:
     enum
     {
-        STATIC_ASSERT_IN_ENUM(IsATypeList_t<FactorTypeList_>::V, MUST_BE_TYPELIST),
+        STATIC_ASSERT_IN_ENUM(IsTypeList_f<FactorTypeList_>::V, MUST_BE_TYPELIST),
         STATIC_ASSERT_IN_ENUM(AllFactorsAreBasedVectorSpaces_f<FactorTypeList_>::V, ALL_FACTORS_MUST_BE_BASED_VECTOR_SPACES),
     };
 

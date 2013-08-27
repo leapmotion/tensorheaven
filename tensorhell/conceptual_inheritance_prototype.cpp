@@ -134,7 +134,7 @@ template <typename MapTypeList>
 struct MapUnion_t
 {
 private:
-    enum { _ = Lvd::Meta::Assert<IsATypeList_t<MapTypeList>::V>::v };
+    enum { _ = Lvd::Meta::Assert<IsTypeList_f<MapTypeList>::V>::v };
     typedef typename MapTypeList::HeadType HeadMapType;
     typedef typename MapUnion_t<typename MapTypeList::BodyTypeList>::T MapUnionOfBodyTypeList;
     typedef typename IntersectionAsSets_t<typename HeadMapType::DomainElementTypeList,

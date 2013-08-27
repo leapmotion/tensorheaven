@@ -54,7 +54,7 @@ typename ConcatenationOfTypeLists_t<TypeList_t<HeadType,BodyTypeList>,TypeList_t
     TypeList_t<HeadType,BodyTypeList> const &,
     AbstractIndex_c<SYMBOL> const &)
 {
-    STATIC_ASSERT((EachTypeIsAnAbstractIndex_f<TypeList_t<HeadType,BodyTypeList> >::V), EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
+    STATIC_ASSERT((EachTypeSatisfies_f<TypeList_t<HeadType,BodyTypeList>,IsAbstractIndex_p>::V), EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
     // appending to a TypeList_t is a nontrivial operation, hence the use of ConcatenationOfTypeLists_t
     return typename ConcatenationOfTypeLists_t<TypeList_t<HeadType,BodyTypeList>,TypeList_t<AbstractIndex_c<SYMBOL> > >::T();
 }

@@ -35,16 +35,25 @@ struct DimIndex_t
     static std::string type_as_string () { return std::string("DimIndex_t<'") + SYMBOL + "'," + AS_STRING(DIM) + '>'; }
 };
 
-template <typename T> struct IsADimIndex_f { static bool const V = false; };
-template <char SYMBOL, Uint32 DIM> struct IsADimIndex_f<DimIndex_t<SYMBOL,DIM> > { static bool const V = true; };
+template <typename T> struct IsDimIndex_f { static bool const V = false; };
+template <char SYMBOL, Uint32 DIM> struct IsDimIndex_f<DimIndex_t<SYMBOL,DIM> > { static bool const V = true; };
 
-template <char SYMBOL, Uint32 DIM> struct IsAComponentIndex_t<DimIndex_t<SYMBOL,DIM> > { static bool const V = true; };
+template <char SYMBOL, Uint32 DIM> struct IsComponentIndex_f<DimIndex_t<SYMBOL,DIM> > { static bool const V = true; };
 template <char SYMBOL, Uint32 DIM> struct IsAbstractIndex_f<DimIndex_t<SYMBOL,DIM> > { static bool const V = true; };
+
+struct IsDimIndex_p
+{
+    template <typename T>
+    struct Eval_t
+    {
+        static bool const V = IsDimIndex_f<T>::V;
+    };
+};
 
 template <typename DimIndexTypeList>
 struct Parent_ComponentIndex_TypeListOf_t
 {
-    enum { STATIC_ASSERT_IN_ENUM(IsADimIndex_f<typename DimIndexTypeList::HeadType>::V, MUST_BE_DIM_INDEX) };
+    enum { STATIC_ASSERT_IN_ENUM(IsDimIndex_f<typename DimIndexTypeList::HeadType>::V, MUST_BE_DIM_INDEX) };
     typedef TypeList_t<typename DimIndexTypeList::HeadType::Parent_Index,
                        typename Parent_ComponentIndex_TypeListOf_t<typename DimIndexTypeList::BodyTypeList>::T> T;
 };
@@ -74,24 +83,11 @@ struct DimIndexTypeListOf_t<EmptyTypeList,EmptyTypeList>
     typedef EmptyTypeList T;
 };
 
-template <typename TypeList>
-struct EachTypeIsADimIndex_f
-{
-    static bool const V = IsADimIndex_f<typename TypeList::HeadType>::V &&
-                          EachTypeIsADimIndex_f<typename TypeList::BodyTypeList>::V;
-};
-
-template <>
-struct EachTypeIsADimIndex_f<EmptyTypeList>
-{
-    static bool const V = true;
-};
-
 
 template <typename DimIndexTypeList>
 struct AbstractIndicesOfDimIndexTypeList_t
 {
-    enum { STATIC_ASSERT_IN_ENUM(EachTypeIsADimIndex_f<DimIndexTypeList>::V, MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES) };
+    enum { STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<DimIndexTypeList,IsDimIndex_p>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES) };
     typedef TypeList_t<AbstractIndex_c<DimIndexTypeList::HeadType::SYMBOL>,
                        typename AbstractIndicesOfDimIndexTypeList_t<typename DimIndexTypeList::BodyTypeList>::T> T;
 };

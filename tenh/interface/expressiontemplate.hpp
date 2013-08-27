@@ -50,8 +50,8 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     {
         //DERIVED_MUST_NOT_BE_NULL_TYPE = Lvd::Meta::Assert<!Lvd::Meta::TypesAreEqual<Derived_,NullType>::v>::v
         STATIC_ASSERT_IN_ENUM((!Lvd::Meta::TypesAreEqual<Derived_,NullType>::v), DERIVED_MUST_NOT_BE_NULL_TYPE),
-        STATIC_ASSERT_IN_ENUM__UNIQUE(EachTypeIsADimIndex_f<FreeDimIndexTypeList_>::V, MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, FREEDIMINDEXTYPELIST),
-        STATIC_ASSERT_IN_ENUM__UNIQUE(EachTypeIsADimIndex_f<UsedDimIndexTypeList_>::V, MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, USEDDIMINDEXTYPELIST)
+        STATIC_ASSERT_IN_ENUM__UNIQUE((EachTypeSatisfies_f<FreeDimIndexTypeList_,IsDimIndex_p>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, FREEDIMINDEXTYPELIST),
+        STATIC_ASSERT_IN_ENUM__UNIQUE((EachTypeSatisfies_f<UsedDimIndexTypeList_,IsDimIndex_p>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, USEDDIMINDEXTYPELIST)
     };
 
     typedef Derived_ Derived;

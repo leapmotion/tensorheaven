@@ -40,14 +40,14 @@ struct FreeIndexTypeList_t
 template <typename FreeIndexTypeList>
 struct IndexIsFree_t
 {
-    enum { STATIC_ASSERT_IN_ENUM(IsATypeList_t<FreeIndexTypeList>::V, MUST_BE_TYPELIST) };
+    enum { STATIC_ASSERT_IN_ENUM(IsTypeList_f<FreeIndexTypeList>::V, MUST_BE_TYPELIST) };
 
     template <typename T>
     struct Eval_t
     {
         enum
         {
-            STATIC_ASSERT_IN_ENUM(IsATypeList_t<T>::V, MUST_BE_TYPELIST),
+            STATIC_ASSERT_IN_ENUM(IsTypeList_f<T>::V, MUST_BE_TYPELIST),
             STATIC_ASSERT_IN_ENUM(T::LENGTH == 2, LENGTH_MUST_BE_EXACTLY_2)
         };
         typedef typename T::HeadType Factor;
@@ -274,7 +274,7 @@ struct BinarySummation_t<LeftOperand,RightOperand,FreeDimIndexTypeList,EmptyType
         STATIC_ASSERT_IN_ENUM(LeftOperand::IS_EXPRESSION_TEMPLATE_I, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE_I, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM(EachTypeIsADimIndex_f<FreeDimIndexTypeList>::V, MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES)
+        STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<FreeDimIndexTypeList,IsDimIndex_p>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES)
         // no summation, so no need to check naturality of pairings
     };
 

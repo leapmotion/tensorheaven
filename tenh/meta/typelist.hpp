@@ -138,10 +138,10 @@ struct TypeList_t
 };
 
 
-template <typename T> struct IsATypeList_t { static bool const V = false; };
-template <typename HeadType, typename BodyTypeList> struct IsATypeList_t<TypeList_t<HeadType,BodyTypeList> > { static bool const V = IsATypeList_t<BodyTypeList>::V; };
-template <typename HeadType> struct IsATypeList_t<TypeList_t<HeadType> > { static bool const V = true; };
-template <> struct IsATypeList_t<EmptyTypeList> { static bool const V = true; };
+template <typename T> struct IsTypeList_f { static bool const V = false; };
+template <typename HeadType, typename BodyTypeList> struct IsTypeList_f<TypeList_t<HeadType,BodyTypeList> > { static bool const V = IsTypeList_f<BodyTypeList>::V; };
+template <typename HeadType> struct IsTypeList_f<TypeList_t<HeadType> > { static bool const V = true; };
+template <> struct IsTypeList_f<EmptyTypeList> { static bool const V = true; };
 
 
 } // end of namespace Tenh
