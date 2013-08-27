@@ -41,6 +41,27 @@ namespace Tenh {
 
 using namespace Tenh;
 
+template<typename Vector, typename Scalar, Uint32 ORDER>
+ImplementationOf_t<Scalar,SymmetricPowerOfBasedVectorSpaces_c<Vector,ORDER> > test_vector_power (const ImplementationOf_t<Scalar, Vector> &input)
+{
+//    STATIC_ASSERT(IS_BASED_VECTORSPACE_UNIQUELY(Vector), MUST_BE_BASED_VECTOR_SPACE);
+    typedef ImplementationOf_t<Scalar,SymmetricPowerOfBasedVectorSpaces_c<Vector,ORDER> > Sym;
+    typedef ImplementationOf_t<Scalar, Vector> Vec;
+
+    Sym result(Scalar(1));
+
+    for (typename Sym::ComponentIndex it; it.is_not_at_end(); ++it)
+    {
+        //result[it] = Scalar(1);
+        typename Sym::MultiIndex m = Sym::template bundle_index_map<typename Sym::MultiIndex::IndexTypeList, typename Sym::ComponentIndex>(it);
+        for (Uint32 i = 0; i < Sym::MultiIndex::LENGTH; ++i)
+        {
+            result[it] *= input[typename Vec::ComponentIndex(m.value_of_index(i, DONT_CHECK_RANGE))];
+        }
+    }
+    return result;
+}
+
 template <typename BasedVectorSpace, Uint32 ORDER>
 void test_tensor_printing (std::ostream &out)
 {
@@ -823,6 +844,24 @@ int main (int argc, char **argv)
         test_tensor_printing<BasedX,3>(std::cout);
         test_tensor_printing<BasedX,4>(std::cout);
         std::cout << '\n';
+    }
+
+    {
+        typedef VectorSpace_c<RealField,4,X> VSX;
+        typedef Basis_c<X> BasisX;
+        typedef BasedVectorSpace_c<VSX,BasisX> BasedX;
+        typedef ImplementationOf_t<float,SymmetricPowerOfBasedVectorSpaces_c<BasedX,4> > Sym;
+        typedef ImplementationOf_t<float, BasedX> Vec;
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        AbstractIndex_c<'k'> k;
+        AbstractIndex_c<'l'> l;
+        AbstractIndex_c<'p'> p;
+
+        Vec v(1,2,3,4);
+
+        std::cout << test_vector_power<BasedX, float, 4>(v) << std::endl;
+        std::cout << test_vector_power<BasedX, float, 4>(v)(i).split(i,j|k|l|p) << std::endl;
     }
 
     return 0;
