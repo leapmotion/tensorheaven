@@ -42,10 +42,10 @@ namespace Tenh {
 using namespace Tenh;
 
 template<typename Vector, typename Scalar, Uint32 ORDER>
-ImplementationOf_t<Scalar,SymmetricPowerOfBasedVectorSpaces_c<Vector,ORDER> > test_vector_power (const ImplementationOf_t<Scalar, Vector> &input)
+ImplementationOf_t<Scalar,SymmetricPowerOfBasedVectorSpace_c<Vector,ORDER> > test_vector_power (const ImplementationOf_t<Scalar, Vector> &input)
 {
 //    STATIC_ASSERT(IS_BASED_VECTORSPACE_UNIQUELY(Vector), MUST_BE_BASED_VECTOR_SPACE);
-    typedef ImplementationOf_t<Scalar,SymmetricPowerOfBasedVectorSpaces_c<Vector,ORDER> > Sym;
+    typedef ImplementationOf_t<Scalar,SymmetricPowerOfBasedVectorSpace_c<Vector,ORDER> > Sym;
     typedef ImplementationOf_t<Scalar, Vector> Vec;
 
     Sym result(Scalar(1));
@@ -65,7 +65,7 @@ ImplementationOf_t<Scalar,SymmetricPowerOfBasedVectorSpaces_c<Vector,ORDER> > te
 template <typename BasedVectorSpace, Uint32 ORDER>
 void test_tensor_printing (std::ostream &out)
 {
-    typedef TensorPowerOfBasedVectorSpaces_c<BasedVectorSpace,ORDER> TPow;
+    typedef TensorPowerOfBasedVectorSpace_c<BasedVectorSpace,ORDER> TPow;
     typedef typename AS_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(TPow) TProd;
     typedef ImplementationOf_t<float,TProd> T;
     T t(Static<WithoutInitialization>::SINGLETON);
@@ -286,13 +286,13 @@ int main (int argc, char **argv)
 
     {
         typedef VectorSpace_c<RealField,5,X> X5;
-        typedef TensorPowerOfVectorSpaces_c<X5,3> T;
+        typedef TensorPowerOfVectorSpace_c<X5,3> T;
         typedef DualOf_f<T>::T DualT;
         typedef DualOf_f<DualT>::T DualDualT;
-        std::cout << "TensorPowerOfVectorSpaces = "  << TypeStringOf_t<T>::eval() << '\n'
-                  << "DualTensorPowerOfVectorSpaces = " << TypeStringOf_t<DualT>::eval() << '\n'
-                  << "DualOf_f<TensorPowerOfVectorSpaces>::T = " << TypeStringOf_t<DualOf_f<T>::T>::eval() << '\n'
-                  << "DualDualTensorPowerOfVectorSpaces = " << TypeStringOf_t<DualDualT>::eval() << '\n' << '\n';
+        std::cout << "TensorPowerOfVectorSpace = "  << TypeStringOf_t<T>::eval() << '\n'
+                  << "DualTensorPowerOfVectorSpace = " << TypeStringOf_t<DualT>::eval() << '\n'
+                  << "DualOf_f<TensorPowerOfVectorSpace>::T = " << TypeStringOf_t<DualOf_f<T>::T>::eval() << '\n'
+                  << "DualDualTensorPowerOfVectorSpace = " << TypeStringOf_t<DualDualT>::eval() << '\n' << '\n';
         // make sure the tensor power of vector spaces is reflexive (self-double-dual)
         assert((Lvd::Meta::TypesAreEqual<T,DualDualT>::v));
         // make sure that DualOf_f<T>::T and DualOf_f<T>::T are the same
@@ -301,13 +301,13 @@ int main (int argc, char **argv)
 
     {
         typedef Basis_c<X> BX;
-        typedef TensorPowerOfBases_c<BX,3> T;
+        typedef TensorPowerOfBasis_c<BX,3> T;
         typedef DualOf_f<T>::T DualT;
         typedef DualOf_f<DualT>::T DualDualT;
-        std::cout << "TensorPowerOfBases = "  << TypeStringOf_t<T>::eval() << '\n'
-                  << "DualTensorPowerOfBases = " << TypeStringOf_t<DualT>::eval() << '\n'
-                  << "DualOf_f<TensorPowerOfBases>::T = " << TypeStringOf_t<DualOf_f<T>::T>::eval() << '\n'
-                  << "DualDualTensorPowerOfBases = " << TypeStringOf_t<DualDualT>::eval() << '\n' << '\n';
+        std::cout << "TensorPowerOfBasis = "  << TypeStringOf_t<T>::eval() << '\n'
+                  << "DualTensorPowerOfBasis = " << TypeStringOf_t<DualT>::eval() << '\n'
+                  << "DualOf_f<TensorPowerOfBasis>::T = " << TypeStringOf_t<DualOf_f<T>::T>::eval() << '\n'
+                  << "DualDualTensorPowerOfBasis = " << TypeStringOf_t<DualDualT>::eval() << '\n' << '\n';
         // make sure the tensor power of bases is reflexive (self-double-dual)
         assert((Lvd::Meta::TypesAreEqual<T,DualDualT>::v));
         // make sure that DualOf_f<T>::T and DualOf_f<T>::T are the same
@@ -320,35 +320,35 @@ int main (int argc, char **argv)
         typedef BasedVectorSpace_c<X5,BX> BasedX;
         assert(HasBasedVectorSpaceStructure_f<BasedX>::V);
 
-        typedef TensorPowerOfVectorSpaces_c<X5,3> TVS;
+        typedef TensorPowerOfVectorSpace_c<X5,3> TVS;
         assert(HasVectorSpaceStructure_f<TVS>::V);
         assert(HasTensorProductStructure_f<TVS>::V);
         assert(HasTensorProductOfVectorSpacesStructure_f<TVS>::V);
         assert(HasTensorPowerStructure_f<TVS>::V);
-        assert(HasTensorPowerOfVectorSpacesStructure_f<TVS>::V);
+        assert(HasTensorPowerOfVectorSpaceStructure_f<TVS>::V);
 
-        typedef TensorPowerOfBases_c<BX,3> TB;
+        typedef TensorPowerOfBasis_c<BX,3> TB;
         assert(HasBasisStructure_f<TB>::V);
         assert(HasTensorProductStructure_f<TB>::V);
         assert(HasTensorPowerStructure_f<TB>::V);
 
         {
-            typedef BasedTensorPowerOfVectorSpaces_c<TVS,TB> T;
+            typedef BasedTensorPowerOfVectorSpace_c<TVS,TB> T;
             assert(HasTensorProductStructure_f<T>::V);
             assert(HasTensorPowerStructure_f<T>::V);
             assert(HasVectorSpaceStructure_f<T>::V);
             assert(HasBasedVectorSpaceStructure_f<T>::V);
             assert(HasTensorProductOfVectorSpacesStructure_f<T>::V);
-            assert(HasTensorPowerOfVectorSpacesStructure_f<T>::V);
+            assert(HasTensorPowerOfVectorSpaceStructure_f<T>::V);
             assert(HasBasedTensorProductOfVectorSpacesStructure_f<T>::V);
-            assert(HasBasedTensorPowerOfVectorSpacesStructure_f<T>::V);
+            assert(HasBasedTensorPowerOfVectorSpaceStructure_f<T>::V);
 
             typedef DualOf_f<T>::T DualT;
             typedef DualOf_f<DualT>::T DualDualT;
-            std::cout << "BasedTensorPowerOfVectorSpaces = "  << TypeStringOf_t<T>::eval() << '\n'
-                      << "DualBasedTensorPowerOfVectorSpaces = " << TypeStringOf_t<DualT>::eval() << '\n'
-                      << "DualOf_f<BasedTensorPowerOfVectorSpaces>::T = " << TypeStringOf_t<DualOf_f<T>::T>::eval() << '\n'
-                      << "DualDualBasedTensorPowerOfVectorSpaces = " << TypeStringOf_t<DualDualT>::eval() << '\n' << '\n';
+            std::cout << "BasedTensorPowerOfVectorSpace = "  << TypeStringOf_t<T>::eval() << '\n'
+                      << "DualBasedTensorPowerOfVectorSpace = " << TypeStringOf_t<DualT>::eval() << '\n'
+                      << "DualOf_f<BasedTensorPowerOfVectorSpace>::T = " << TypeStringOf_t<DualOf_f<T>::T>::eval() << '\n'
+                      << "DualDualBasedTensorPowerOfVectorSpace = " << TypeStringOf_t<DualDualT>::eval() << '\n' << '\n';
             // make sure the based tensor power of vector spaces is reflexive (self-double-dual)
             assert((Lvd::Meta::TypesAreEqual<T,DualDualT>::v));
             // make sure that DualOf_f<T>::T and DualOf_f<T>::T are the same
@@ -356,24 +356,24 @@ int main (int argc, char **argv)
         }
 
         {
-            typedef TensorPowerOfBasedVectorSpaces_c<BasedX,3> T;
+            typedef TensorPowerOfBasedVectorSpace_c<BasedX,3> T;
             assert(HasTensorProductStructure_f<T>::V);
             assert(HasTensorPowerStructure_f<T>::V);
             assert(HasVectorSpaceStructure_f<T>::V);
             assert(HasBasedVectorSpaceStructure_f<T>::V);
             assert(HasTensorProductOfVectorSpacesStructure_f<T>::V);
-            assert(HasTensorPowerOfVectorSpacesStructure_f<T>::V);
+            assert(HasTensorPowerOfVectorSpaceStructure_f<T>::V);
             assert(HasBasedTensorProductOfVectorSpacesStructure_f<T>::V);
-            assert(HasBasedTensorPowerOfVectorSpacesStructure_f<T>::V);
+            assert(HasBasedTensorPowerOfVectorSpaceStructure_f<T>::V);
             assert(HasTensorProductOfBasedVectorSpacesStructure_f<T>::V);
-            assert(HasTensorPowerOfBasedVectorSpacesStructure_f<T>::V);
+            assert(HasTensorPowerOfBasedVectorSpaceStructure_f<T>::V);
 
             typedef DualOf_f<T>::T DualT;
             typedef DualOf_f<DualT>::T DualDualT;
-            std::cout << "TensorPowerOfBasedVectorSpaces = "  << TypeStringOf_t<T>::eval() << '\n'
-                      << "DualTensorPowerOfBasedVectorSpaces = " << TypeStringOf_t<DualT>::eval() << '\n'
-                      << "DualOf_f<TensorPowerOfBasedVectorSpaces>::T = " << TypeStringOf_t<DualOf_f<T>::T>::eval() << '\n'
-                      << "DualDualTensorPowerOfBasedVectorSpaces = " << TypeStringOf_t<DualDualT>::eval() << '\n' << '\n';
+            std::cout << "TensorPowerOfBasedVectorSpace = "  << TypeStringOf_t<T>::eval() << '\n'
+                      << "DualTensorPowerOfBasedVectorSpace = " << TypeStringOf_t<DualT>::eval() << '\n'
+                      << "DualOf_f<TensorPowerOfBasedVectorSpace>::T = " << TypeStringOf_t<DualOf_f<T>::T>::eval() << '\n'
+                      << "DualDualTensorPowerOfBasedVectorSpace = " << TypeStringOf_t<DualDualT>::eval() << '\n' << '\n';
             // make sure the tensor power of based vector spaces is reflexive (self-double-dual)
             assert((Lvd::Meta::TypesAreEqual<T,DualDualT>::v));
             // make sure that DualOf_f<T>::T and DualOf_f<T>::T are the same
@@ -399,13 +399,13 @@ int main (int argc, char **argv)
 
     {
         typedef VectorSpace_c<RealField,5,X> X5;
-        typedef SymmetricPowerOfVectorSpaces_c<X5,3> T;
+        typedef SymmetricPowerOfVectorSpace_c<X5,3> T;
         typedef DualOf_f<T>::T DualT;
         typedef DualOf_f<DualT>::T DualDualT;
-        std::cout << "SymmetricPowerOfVectorSpaces = "  << TypeStringOf_t<T>::eval() << '\n'
-                  << "DualSymmetricPowerOfVectorSpaces = " << TypeStringOf_t<DualT>::eval() << '\n'
-                  << "DualOf_f<SymmetricPowerOfVectorSpaces>::T = " << TypeStringOf_t<DualOf_f<T>::T>::eval() << '\n'
-                  << "DualDualSymmetricPowerOfVectorSpaces = " << TypeStringOf_t<DualDualT>::eval() << '\n' << '\n';
+        std::cout << "SymmetricPowerOfVectorSpace = "  << TypeStringOf_t<T>::eval() << '\n'
+                  << "DualSymmetricPowerOfVectorSpace = " << TypeStringOf_t<DualT>::eval() << '\n'
+                  << "DualOf_f<SymmetricPowerOfVectorSpace>::T = " << TypeStringOf_t<DualOf_f<T>::T>::eval() << '\n'
+                  << "DualDualSymmetricPowerOfVectorSpace = " << TypeStringOf_t<DualDualT>::eval() << '\n' << '\n';
         // make sure the tensor power of vector spaces is reflexive (self-double-dual)
         assert((Lvd::Meta::TypesAreEqual<T,DualDualT>::v));
         // make sure that DualOf_f<T>::T and DualOf_f<T>::T are the same
@@ -414,13 +414,13 @@ int main (int argc, char **argv)
 
     {
         typedef Basis_c<X> BX;
-        typedef SymmetricPowerOfBases_c<BX,3> T;
+        typedef SymmetricPowerOfBasis_c<BX,3> T;
         typedef DualOf_f<T>::T DualT;
         typedef DualOf_f<DualT>::T DualDualT;
-        std::cout << "SymmetricPowerOfBases = "  << TypeStringOf_t<T>::eval() << '\n'
-                  << "DualSymmetricPowerOfBases = " << TypeStringOf_t<DualT>::eval() << '\n'
-                  << "DualOf_f<SymmetricPowerOfBases>::T = " << TypeStringOf_t<DualOf_f<T>::T>::eval() << '\n'
-                  << "DualDualSymmetricPowerOfBases = " << TypeStringOf_t<DualDualT>::eval() << '\n' << '\n';
+        std::cout << "SymmetricPowerOfBasis = "  << TypeStringOf_t<T>::eval() << '\n'
+                  << "DualSymmetricPowerOfBasis = " << TypeStringOf_t<DualT>::eval() << '\n'
+                  << "DualOf_f<SymmetricPowerOfBasis>::T = " << TypeStringOf_t<DualOf_f<T>::T>::eval() << '\n'
+                  << "DualDualSymmetricPowerOfBasis = " << TypeStringOf_t<DualDualT>::eval() << '\n' << '\n';
         // make sure the tensor power of bases is reflexive (self-double-dual)
         assert((Lvd::Meta::TypesAreEqual<T,DualDualT>::v));
         // make sure that DualOf_f<T>::T and DualOf_f<T>::T are the same
@@ -433,29 +433,29 @@ int main (int argc, char **argv)
         typedef BasedVectorSpace_c<X5,BX> BasedX;
         assert(HasBasedVectorSpaceStructure_f<BasedX>::V);
 
-        typedef SymmetricPowerOfVectorSpaces_c<X5,3> TVS;
+        typedef SymmetricPowerOfVectorSpace_c<X5,3> TVS;
         assert(HasVectorSpaceStructure_f<TVS>::V);
         assert(HasSymmetricPowerStructure_f<TVS>::V);
-        assert(HasSymmetricPowerOfVectorSpacesStructure_f<TVS>::V);
+        assert(HasSymmetricPowerOfVectorSpaceStructure_f<TVS>::V);
 
-        typedef SymmetricPowerOfBases_c<BX,3> TB;
+        typedef SymmetricPowerOfBasis_c<BX,3> TB;
         assert(HasBasisStructure_f<TB>::V);
         assert(HasSymmetricPowerStructure_f<TB>::V);
 /*
         {
-            typedef BasedSymmetricPowerOfVectorSpaces_c<TVS,TB> T;
+            typedef BasedSymmetricPowerOfVectorSpace_c<TVS,TB> T;
             assert(HasSymmetricPowerStructure_f<T>::V);
             assert(HasVectorSpaceStructure_f<T>::V);
             assert(HasBasedVectorSpaceStructure_f<T>::V);
-            assert(HasSymmetricPowerOfVectorSpacesStructure_f<T>::V);
-            assert(HasBasedSymmetricPowerOfVectorSpacesStructure_f<T>::V);
+            assert(HasSymmetricPowerOfVectorSpaceStructure_f<T>::V);
+            assert(HasBasedSymmetricPowerOfVectorSpaceStructure_f<T>::V);
 
             typedef DualOf_f<T>::T DualT;
             typedef DualOf_f<DualT>::T DualDualT;
-            std::cout << "BasedSymmetricPowerOfVectorSpaces = "  << TypeStringOf_t<T>::eval() << '\n'
-                      << "DualBasedSymmetricPowerOfVectorSpaces = " << TypeStringOf_t<DualT>::eval() << '\n'
-                      << "DualOf_f<BasedSymmetricPowerOfVectorSpaces>::T = " << TypeStringOf_t<DualOf_f<T>::T>::eval() << '\n'
-                      << "DualDualBasedSymmetricPowerOfVectorSpaces = " << TypeStringOf_t<DualDualT>::eval() << '\n' << '\n';
+            std::cout << "BasedSymmetricPowerOfVectorSpace = "  << TypeStringOf_t<T>::eval() << '\n'
+                      << "DualBasedSymmetricPowerOfVectorSpace = " << TypeStringOf_t<DualT>::eval() << '\n'
+                      << "DualOf_f<BasedSymmetricPowerOfVectorSpace>::T = " << TypeStringOf_t<DualOf_f<T>::T>::eval() << '\n'
+                      << "DualDualBasedSymmetricPowerOfVectorSpace = " << TypeStringOf_t<DualDualT>::eval() << '\n' << '\n';
             // make sure the based tensor power of vector spaces is reflexive (self-double-dual)
             assert((Lvd::Meta::TypesAreEqual<T,DualDualT>::v));
             // make sure that DualOf_f<T>::T and DualOf_f<T>::T are the same
@@ -463,19 +463,19 @@ int main (int argc, char **argv)
         }
 */
         {
-            typedef SymmetricPowerOfBasedVectorSpaces_c<BasedX,3> T;
+            typedef SymmetricPowerOfBasedVectorSpace_c<BasedX,3> T;
             assert(HasSymmetricPowerStructure_f<T>::V);
             assert(HasVectorSpaceStructure_f<T>::V);
             assert(HasBasedVectorSpaceStructure_f<T>::V);
-            assert(HasSymmetricPowerOfVectorSpacesStructure_f<T>::V);
-            assert(HasSymmetricPowerOfBasedVectorSpacesStructure_f<T>::V);
+            assert(HasSymmetricPowerOfVectorSpaceStructure_f<T>::V);
+            assert(HasSymmetricPowerOfBasedVectorSpaceStructure_f<T>::V);
 
             typedef DualOf_f<T>::T DualT;
             typedef DualOf_f<DualT>::T DualDualT;
-            std::cout << "SymmetricPowerOfBasedVectorSpaces = "  << TypeStringOf_t<T>::eval() << '\n'
-                      << "DualSymmetricPowerOfBasedVectorSpaces = " << TypeStringOf_t<DualT>::eval() << '\n'
-                      << "DualOf_f<SymmetricPowerOfBasedVectorSpaces>::T = " << TypeStringOf_t<DualOf_f<T>::T>::eval() << '\n'
-                      << "DualDualSymmetricPowerOfBasedVectorSpaces = " << TypeStringOf_t<DualDualT>::eval() << '\n' << '\n';
+            std::cout << "SymmetricPowerOfBasedVectorSpace = "  << TypeStringOf_t<T>::eval() << '\n'
+                      << "DualSymmetricPowerOfBasedVectorSpace = " << TypeStringOf_t<DualT>::eval() << '\n'
+                      << "DualOf_f<SymmetricPowerOfBasedVectorSpace>::T = " << TypeStringOf_t<DualOf_f<T>::T>::eval() << '\n'
+                      << "DualDualSymmetricPowerOfBasedVectorSpace = " << TypeStringOf_t<DualDualT>::eval() << '\n' << '\n';
             // make sure the tensor power of based vector spaces is reflexive (self-double-dual)
             assert((Lvd::Meta::TypesAreEqual<T,DualDualT>::v));
             // make sure that DualOf_f<T>::T and DualOf_f<T>::T are the same
@@ -618,8 +618,8 @@ int main (int argc, char **argv)
 
         STATIC_ASSERT(HasBasedVectorSpaceStructure_f<BasedX>::V, MUST_BE_BASED_VECTOR_SPACE);
 
-        typedef ExteriorPowerOfBasedVectorSpaces_c<BasedX,3> Wedge3_BasedX;
-        typedef ExteriorPowerOfBasedVectorSpaces_c<BasedX,2> Wedge2_BasedX;
+        typedef ExteriorPowerOfBasedVectorSpace_c<BasedX,3> Wedge3_BasedX;
+        typedef ExteriorPowerOfBasedVectorSpace_c<BasedX,2> Wedge2_BasedX;
         typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedX, TypeList_t<BasedX> > > T2_BasedX;
 
         typedef ImplementationOf_t<float,Wedge3_BasedX> Wedge;
@@ -678,8 +678,8 @@ int main (int argc, char **argv)
 
         STATIC_ASSERT(HasBasedVectorSpaceStructure_f<BasedX>::V, MUST_BE_BASED_VECTOR_SPACE);
 
-        typedef SymmetricPowerOfBasedVectorSpaces_c<BasedX,3> Sym3_BasedX;
-        typedef SymmetricPowerOfBasedVectorSpaces_c<BasedX,2> Sym2_BasedX;
+        typedef SymmetricPowerOfBasedVectorSpace_c<BasedX,3> Sym3_BasedX;
+        typedef SymmetricPowerOfBasedVectorSpace_c<BasedX,2> Sym2_BasedX;
         typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedX, TypeList_t<BasedX> > > T2_BasedX;
 
         typedef ImplementationOf_t<float,Sym3_BasedX> Sym;
@@ -850,7 +850,7 @@ int main (int argc, char **argv)
         typedef VectorSpace_c<RealField,4,X> VSX;
         typedef Basis_c<X> BasisX;
         typedef BasedVectorSpace_c<VSX,BasisX> BasedX;
-        typedef ImplementationOf_t<float,SymmetricPowerOfBasedVectorSpaces_c<BasedX,4> > Sym;
+        typedef ImplementationOf_t<float,SymmetricPowerOfBasedVectorSpace_c<BasedX,4> > Sym;
         typedef ImplementationOf_t<float, BasedX> Vec;
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;

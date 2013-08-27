@@ -19,8 +19,8 @@ namespace Tenh {
 // NOTE: because of a problem with recursive definitions, the conceptual structure
 // forgetful functors for tensor products and powers can't be used here, so the
 // template parameters must be "exactly" the requested types.
-template <typename Exactly_TensorPowerOfVectorSpaces_, typename Exactly_TensorProductOfVectorSpaces_>
-struct EmbeddableInTensorPowerOfVectorSpaces_c
+template <typename Exactly_TensorPowerOfVectorSpace_, typename Exactly_TensorProductOfVectorSpaces_>
+struct EmbeddableInTensorPowerOfVectorSpace_c
 {
 private:
     // NOTE: we can't static-assert that the template parameters are the types that they're required to be,
@@ -29,26 +29,26 @@ private:
 public:
     typedef TypeList_t<As_EmbeddableInTensorProductOfVectorSpaces> ParentTypeList;
 
-    typedef Exactly_TensorPowerOfVectorSpaces_ TensorPowerOfVectorSpaces;
+    typedef Exactly_TensorPowerOfVectorSpace_ TensorPowerOfVectorSpace;
 
     static std::string type_as_string ()
     {
-        return "EmbeddableInTensorPowerOfVectorSpaces_c<" + TypeStringOf_t<Exactly_TensorPowerOfVectorSpaces_>::eval() + ','
+        return "EmbeddableInTensorPowerOfVectorSpace_c<" + TypeStringOf_t<Exactly_TensorPowerOfVectorSpace_>::eval() + ','
                                                           + TypeStringOf_t<Exactly_TensorProductOfVectorSpaces_>::eval() + '>';
     }
 };
 
-template <typename Exactly_TensorPowerOfVectorSpaces_, typename Exactly_TensorProductOfVectorSpaces_>
-struct IsConcept_f<EmbeddableInTensorPowerOfVectorSpaces_c<Exactly_TensorPowerOfVectorSpaces_,Exactly_TensorProductOfVectorSpaces_> >
+template <typename Exactly_TensorPowerOfVectorSpace_, typename Exactly_TensorProductOfVectorSpaces_>
+struct IsConcept_f<EmbeddableInTensorPowerOfVectorSpace_c<Exactly_TensorPowerOfVectorSpace_,Exactly_TensorProductOfVectorSpaces_> >
 { static bool const V = true; };
 
-template <typename T> struct IsEmbeddableInTensorPowerOfVectorSpaces_f { static bool const V = false; };
-template <typename Exactly_TensorPowerOfVectorSpaces_, typename Exactly_TensorProductOfVectorSpaces_> struct IsEmbeddableInTensorPowerOfVectorSpaces_f<EmbeddableInTensorPowerOfVectorSpaces_c<Exactly_TensorPowerOfVectorSpaces_,Exactly_TensorProductOfVectorSpaces_> > { static bool const V = true; };
+template <typename T> struct IsEmbeddableInTensorPowerOfVectorSpace_f { static bool const V = false; };
+template <typename Exactly_TensorPowerOfVectorSpace_, typename Exactly_TensorProductOfVectorSpaces_> struct IsEmbeddableInTensorPowerOfVectorSpace_f<EmbeddableInTensorPowerOfVectorSpace_c<Exactly_TensorPowerOfVectorSpace_,Exactly_TensorProductOfVectorSpaces_> > { static bool const V = true; };
 
-DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(EmbeddableInTensorPowerOfVectorSpaces);
+DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(EmbeddableInTensorPowerOfVectorSpace);
 // special convenience macros
-#define IS_EMBEDDABLE_IN_TENSOR_POWER_OF_VECTOR_SPACES_UNIQUELY(Concept) HasUniqueEmbeddableInTensorPowerOfVectorSpacesStructure_f<Concept>::V
-#define AS_EMBEDDABLE_IN_TENSOR_POWER_OF_VECTOR_SPACES(Concept) UniqueEmbeddableInTensorPowerOfVectorSpacesStructureOf_f<Concept>::T
+#define IS_EMBEDDABLE_IN_TENSOR_POWER_OF_VECTOR_SPACES_UNIQUELY(Concept) HasUniqueEmbeddableInTensorPowerOfVectorSpaceStructure_f<Concept>::V
+#define AS_EMBEDDABLE_IN_TENSOR_POWER_OF_VECTOR_SPACES(Concept) UniqueEmbeddableInTensorPowerOfVectorSpaceStructureOf_f<Concept>::T
 
 // NOTE: because the class of embeddable-in-tensor-powers-of-vector-spaces includes nonlinear
 // spaces such as the space of simple tensors, there is no general notion of Dual here.  That
@@ -61,53 +61,53 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(EmbeddableInTensorPowerOfVectorSpaces)
 // NOTE: because of a problem with recursive definitions, the conceptual structure
 // forgetful functors for tensor products and powers can't be used here, so the
 // template parameters must be "exactly" the requested types.
-template <typename Exactly_TensorPowerOfBasedVectorSpaces_,
-          typename Exactly_TensorPowerOfVectorSpaces_,
+template <typename Exactly_TensorPowerOfBasedVectorSpace_,
+          typename Exactly_TensorPowerOfVectorSpace_,
           typename Exactly_TensorProductOfBasedVectorSpaces_,
           typename Exactly_TensorProductOfVectorSpaces_>
-struct EmbeddableInTensorPowerOfBasedVectorSpaces_c
+struct EmbeddableInTensorPowerOfBasedVectorSpace_c
 {
 private:
     // NOTE: we can't static-assert that the template parameters are the types that they're required to be,
     // since the concept hierarchy isn't fully available in this file.
-    typedef EmbeddableInTensorPowerOfVectorSpaces_c<Exactly_TensorPowerOfVectorSpaces_,
-                                                    Exactly_TensorProductOfVectorSpaces_> As_EmbeddableInTensorPowerOfVectorSpaces;
-    typedef EmbeddableInTensorProductOfBasedVectorSpaces_c<Exactly_TensorPowerOfBasedVectorSpaces_,
+    typedef EmbeddableInTensorPowerOfVectorSpace_c<Exactly_TensorPowerOfVectorSpace_,
+                                                    Exactly_TensorProductOfVectorSpaces_> As_EmbeddableInTensorPowerOfVectorSpace;
+    typedef EmbeddableInTensorProductOfBasedVectorSpaces_c<Exactly_TensorPowerOfBasedVectorSpace_,
                                                            Exactly_TensorProductOfVectorSpaces_> As_EmbeddableInTensorProductOfBasedVectorSpaces;
 public:
-    typedef TypeList_t<As_EmbeddableInTensorPowerOfVectorSpaces,
+    typedef TypeList_t<As_EmbeddableInTensorPowerOfVectorSpace,
             TypeList_t<As_EmbeddableInTensorProductOfBasedVectorSpaces> > ParentTypeList;
 
-    typedef Exactly_TensorPowerOfBasedVectorSpaces_ TensorPowerOfBasedVectorSpaces;
+    typedef Exactly_TensorPowerOfBasedVectorSpace_ TensorPowerOfBasedVectorSpace;
 
     static std::string type_as_string ()
     {
-        return "EmbeddableInTensorPowerOfBasedVectorSpaces_c<" + TypeStringOf_t<Exactly_TensorPowerOfBasedVectorSpaces_>::eval() + ','
-                                                               + TypeStringOf_t<Exactly_TensorPowerOfVectorSpaces_>::eval() + ','
+        return "EmbeddableInTensorPowerOfBasedVectorSpace_c<" + TypeStringOf_t<Exactly_TensorPowerOfBasedVectorSpace_>::eval() + ','
+                                                               + TypeStringOf_t<Exactly_TensorPowerOfVectorSpace_>::eval() + ','
                                                                + TypeStringOf_t<Exactly_TensorProductOfBasedVectorSpaces_>::eval() + ','
                                                                + TypeStringOf_t<Exactly_TensorProductOfVectorSpaces_>::eval() + '>';
     }
 };
 
-template <typename Exactly_TensorPowerOfBasedVectorSpaces_,
-          typename Exactly_TensorPowerOfVectorSpaces_,
+template <typename Exactly_TensorPowerOfBasedVectorSpace_,
+          typename Exactly_TensorPowerOfVectorSpace_,
           typename Exactly_TensorProductOfBasedVectorSpaces_,
           typename Exactly_TensorProductOfVectorSpaces_>
-struct IsConcept_f<EmbeddableInTensorPowerOfBasedVectorSpaces_c<Exactly_TensorPowerOfBasedVectorSpaces_,Exactly_TensorPowerOfVectorSpaces_,Exactly_TensorProductOfBasedVectorSpaces_,Exactly_TensorProductOfVectorSpaces_> >
+struct IsConcept_f<EmbeddableInTensorPowerOfBasedVectorSpace_c<Exactly_TensorPowerOfBasedVectorSpace_,Exactly_TensorPowerOfVectorSpace_,Exactly_TensorProductOfBasedVectorSpaces_,Exactly_TensorProductOfVectorSpaces_> >
 { static bool const V = true; };
 
-template <typename T> struct IsEmbeddableInTensorPowerOfBasedVectorSpaces_f { static bool const V = false; };
-template <typename Exactly_TensorPowerOfBasedVectorSpaces_,
-          typename Exactly_TensorPowerOfVectorSpaces_,
+template <typename T> struct IsEmbeddableInTensorPowerOfBasedVectorSpace_f { static bool const V = false; };
+template <typename Exactly_TensorPowerOfBasedVectorSpace_,
+          typename Exactly_TensorPowerOfVectorSpace_,
           typename Exactly_TensorProductOfBasedVectorSpaces_,
-          typename Exactly_TensorProductOfVectorSpaces_> struct IsEmbeddableInTensorPowerOfBasedVectorSpaces_f<EmbeddableInTensorPowerOfBasedVectorSpaces_c<Exactly_TensorPowerOfBasedVectorSpaces_,Exactly_TensorPowerOfVectorSpaces_,Exactly_TensorProductOfBasedVectorSpaces_,Exactly_TensorProductOfVectorSpaces_> > { static bool const V = true; };
+          typename Exactly_TensorProductOfVectorSpaces_> struct IsEmbeddableInTensorPowerOfBasedVectorSpace_f<EmbeddableInTensorPowerOfBasedVectorSpace_c<Exactly_TensorPowerOfBasedVectorSpace_,Exactly_TensorPowerOfVectorSpace_,Exactly_TensorProductOfBasedVectorSpaces_,Exactly_TensorProductOfVectorSpaces_> > { static bool const V = true; };
 
-DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(EmbeddableInTensorPowerOfBasedVectorSpaces);
+DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(EmbeddableInTensorPowerOfBasedVectorSpace);
 // special convenience macros
-#define IS_EMBEDDABLE_IN_TENSOR_POWER_OF_BASED_VECTOR_SPACES_UNIQUELY(Concept) HasUniqueEmbeddableInTensorPowerOfBasedVectorSpacesStructure_f<Concept>::V
-#define AS_EMBEDDABLE_IN_TENSOR_POWER_OF_BASED_VECTOR_SPACES(Concept) UniqueEmbeddableInTensorPowerOfBasedVectorSpacesStructureOf_f<Concept>::T
+#define IS_EMBEDDABLE_IN_TENSOR_POWER_OF_BASED_VECTOR_SPACES_UNIQUELY(Concept) HasUniqueEmbeddableInTensorPowerOfBasedVectorSpaceStructure_f<Concept>::V
+#define AS_EMBEDDABLE_IN_TENSOR_POWER_OF_BASED_VECTOR_SPACES(Concept) UniqueEmbeddableInTensorPowerOfBasedVectorSpaceStructureOf_f<Concept>::T
 
-// TODO (?): LinearlyEmbeddableInTensorPowerOfVectorSpaces_c -- this may possibly have a naturally induced Dual
+// TODO (?): LinearlyEmbeddableInTensorPowerOfVectorSpace_c -- this may possibly have a naturally induced Dual
 
 } // end of namespace Tenh
 
