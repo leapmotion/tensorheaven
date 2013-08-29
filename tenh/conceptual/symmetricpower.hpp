@@ -198,6 +198,13 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(SymmetricPowerOfBasedVectorSpace);
 #define IS_SYMMETRIC_POWER_OF_BASED_VECTOR_SPACES_UNIQUELY(Concept) HasUniqueSymmetricPowerOfBasedVectorSpaceStructure_f<Concept>::V
 #define AS_SYMMETRIC_POWER_OF_BASED_VECTOR_SPACES(Concept) UniqueSymmetricPowerOfBasedVectorSpaceStructureOf_f<Concept>::T
 
+template <typename Factor, Uint32 ORDER>
+struct DualOf_f<SymmetricPowerOfBasedVectorSpace_c<Factor,ORDER> >
+{
+    typedef SymmetricPowerOfBasedVectorSpace_c<typename DualOf_f<Factor>::T,ORDER> T;
+};
+
+
 } // end of namespace Tenh
 
 #endif // TENH_CONCEPTUAL_SYMMETRICPOWER_HPP_

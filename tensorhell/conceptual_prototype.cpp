@@ -19,6 +19,8 @@
 #include "tenh/implementation/vee.hpp"
 #include "tenh/implementation/wedge.hpp"
 
+#include "tenh/applications/polynomial.hpp"
+
 struct X
 {
     static std::string type_as_string () { return "X"; }
@@ -862,6 +864,23 @@ int main (int argc, char **argv)
 
         std::cout << test_vector_power<BasedX, float, 4>(v) << std::endl;
         std::cout << test_vector_power<BasedX, float, 4>(v)(i).split(i,j|k|l|p) << std::endl;
+    }
+
+    {
+        typedef MultivariatePolynomial<2,3,X> PolyType;
+        PolyType::SymDual w(0);
+        MultivariatePolynomial<1,3,X>::SymDual x(1);
+        w[PolyType::SymDual::ComponentIndex(0, CHECK_RANGE)] = 1; // x^2
+        w[PolyType::SymDual::ComponentIndex(1, CHECK_RANGE)] = 0; // xy
+        w[PolyType::SymDual::ComponentIndex(2, CHECK_RANGE)] = 5; // y^2
+        w[PolyType::SymDual::ComponentIndex(3, CHECK_RANGE)] = 2; // xz
+        w[PolyType::SymDual::ComponentIndex(4, CHECK_RANGE)] = 6; // yz
+        w[PolyType::SymDual::ComponentIndex(5, CHECK_RANGE)] = 3; // z^2
+        std::cout << FORMAT_VALUE(w) << std::endl;
+        PolyType roly(w,MultivariatePolynomial<1,3,X>(x,3)), poly;
+        PolyType::Vector v(1,2,3);
+        std::cout << roly.evaluate(v) << std::endl;
+//        std::cout << (poly - roly).evaluate(v) << std::endl;
     }
 
     return 0;
