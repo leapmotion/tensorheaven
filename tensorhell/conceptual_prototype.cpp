@@ -880,7 +880,8 @@ int main (int argc, char **argv)
         PolyType roly(w,MultivariatePolynomial<1,3,X>(x,3)), poly;
         PolyType::Vector v(1,2,3);
         std::cout << roly.evaluate(v) << std::endl;
-//        std::cout << (poly - roly).evaluate(v) << std::endl;
+        std::cout << (poly - roly).evaluate(v) << std::endl;
+        std::cout << (3.0f*roly).evaluate(v) << std::endl;
     }
 
     return 0;
