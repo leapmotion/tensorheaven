@@ -46,8 +46,17 @@ struct MultivariatePolynomial
         return MultivariatePolynomial(term, rhs*m_body);
     }
     MultivariatePolynomial operator- () const { return Scalar_(-1)*(*this); }
+    
+    MultivariatePolynomial add_eq(MultivariatePolynomial const &other) const
+    {
+        Tenh::AbstractIndex_c<'i'> i;
+        SymDual term(Scalar_(0));
+        term(i) = m_term(i) + other.m_term(i);
+        return MultivariatePolynomial(term, m_body.add_eq(other.m_body));   
+    }
+    template<Uint32 Other_Degree> MultivariatePolynomial add(MultivariatePolynomial<Other_Degree, DIMENSION_, Id_, Scalar_> const &other) const { return MultivariatePolynomial(m_term, m_body + other); }
 
-
+private:
     SymDual m_term;
     MultivariatePolynomial<DEGREE_-1,DIMENSION_,Id_,Scalar_> m_body;
 
@@ -68,8 +77,6 @@ struct MultivariatePolynomial
     }
 
     template<Uint32,Uint32,typename,typename> friend struct MultivariatePolynomial;
-    template<Uint32 DEG1,Uint32 DEG2,Uint32 DIM,typename Id,typename Scalar> friend MultivariatePolynomial<(DEG1>DEG2?DEG1:DEG2),DIM,Id,Scalar> operator+ (MultivariatePolynomial<DEG1,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG2,DIM,Id,Scalar> const &rhs);
-    template<Uint32 DEG1,Uint32 DEG2,Uint32 DIM,typename Id,typename Scalar> friend MultivariatePolynomial<(DEG1>DEG2?DEG1:DEG2),DIM,Id,Scalar> operator- (MultivariatePolynomial<DEG1,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG2,DIM,Id,Scalar> const &rhs);
 };
 
 template <Uint32 DIMENSION_, typename Id_, typename Scalar_>
@@ -90,44 +97,40 @@ struct MultivariatePolynomial<0,DIMENSION_,Id_,Scalar_>
 
     MultivariatePolynomial operator- () const { return Scalar_(-1)*(*this); }
     MultivariatePolynomial operator* (Scalar_ const &rhs) const { return MultivariatePolynomial(rhs*m_term); }
+    
+    MultivariatePolynomial add_eq (MultivariatePolynomial const &other) const { return MultivariatePolynomial(m_term + other.m_term); } 
 
-
+private:
     Scalar_ m_term;
 
     template<Uint32,Uint32,typename,typename> friend struct MultivariatePolynomial;
-    template<Uint32 DEG1,Uint32 DEG2,Uint32 DIM,typename Id,typename Scalar> friend MultivariatePolynomial<(DEG1>DEG2?DEG1:DEG2),DIM,Id,Scalar> operator+ (MultivariatePolynomial<DEG1,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG2,DIM,Id,Scalar> const &rhs);
-    template<Uint32 DEG1,Uint32 DEG2,Uint32 DIM,typename Id,typename Scalar> friend MultivariatePolynomial<(DEG1>DEG2?DEG1:DEG2),DIM,Id,Scalar> operator- (MultivariatePolynomial<DEG1,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG2,DIM,Id,Scalar> const &rhs);
 };
 
 
 // Non-member operator overloads
 //    operator+
-template<Uint32 DEG1, Uint32 DEG2,  Uint32 DIM, typename Id, typename Scalar>
+template<bool> struct Adder
+{
+    template<typename T, typename S>
+    static T add (T const &lhs, S const &rhs) { return lhs.add(rhs); }
+};
+
+template<> struct Adder<false>
+{
+    template<typename T, typename S>
+    static S add (T const &lhs, S const &rhs) { return rhs.add(lhs); }
+};
+
+template<Uint32 DEG1, Uint32 DEG2, Uint32 DIM, typename Id, typename Scalar>
 MultivariatePolynomial<(DEG1>DEG2?DEG1:DEG2),DIM,Id,Scalar> operator+ (MultivariatePolynomial<DEG1,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG2,DIM,Id,Scalar> const &rhs)
 {
-    if (DEG1 > DEG2)
-    {
-        return MultivariatePolynomial<(DEG1>DEG2?DEG1:DEG2),DIM,Id,Scalar>(rhs.m_term, lhs + rhs.m_body);
-    }
-    else
-    {
-        return MultivariatePolynomial<(DEG1>DEG2?DEG1:DEG2),DIM,Id,Scalar>(lhs.m_term, lhs.m_body + rhs);
-    }
+    return Adder<(DEG1>DEG2)>::add(lhs,rhs);
 }
 
 template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar>
 MultivariatePolynomial<DEG,DIM,Id,Scalar> operator+ (MultivariatePolynomial<DEG,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG,DIM,Id,Scalar> const &rhs)
 {
-    Tenh::AbstractIndex_c<'i'> i;
-    typename MultivariatePolynomial<DEG,DIM,Id,Scalar>::SymDual term(0);
-    term(i) = lhs.m_term(i) + rhs.m_term(i);
-    return MultivariatePolynomial<DEG,DIM,Id,Scalar>(term, lhs.m_body + rhs.m_body);
-}
-
-template<Uint32 DIM, typename Id, typename Scalar>
-MultivariatePolynomial<0,DIM,Id,Scalar> operator+ (MultivariatePolynomial<0,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<0,DIM,Id,Scalar> const &rhs)
-{
-    return MultivariatePolynomial<0,DIM,Id,Scalar>(lhs.m_term + rhs.m_term);
+    return lhs.add_eq(rhs);
 }
 
 
