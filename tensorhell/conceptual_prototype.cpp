@@ -881,8 +881,10 @@ int main (int argc, char **argv)
         PolyType::Vector v(1,2,3);
         poly = poly + MultivariatePolynomial<1,3,X>(x,3);
         std::cout << roly.evaluate(v) << std::endl;
+        std::cout << poly.evaluate(v) << std::endl;
         std::cout << (poly - roly).evaluate(v) << std::endl;
         std::cout << (3.0f*roly).evaluate(v) << std::endl;
+        std::cout << (roly*poly).evaluate(v) << std::endl;
     }
 
     return 0;

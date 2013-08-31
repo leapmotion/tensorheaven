@@ -29,6 +29,9 @@ struct MultivariatePolynomial
     MultivariatePolynomial() : m_term(Scalar_(0)) {};
     MultivariatePolynomial(SymDual const &leading_term,  MultivariatePolynomial<DEGREE_-1,DIMENSION_,Id_,Scalar_> const &rest)
         : m_term(leading_term), m_body(rest) {};
+    MultivariatePolynomial(SymDual const &leading_term)
+        : m_term(leading_term), m_body() {};
+
     MultivariatePolynomial(MultivariatePolynomial const & other) : m_term(other.m_term), m_body(other.m_body) {};
 
     Scalar_ evaluate (Vector const &at) const
@@ -56,6 +59,19 @@ struct MultivariatePolynomial
     }
     template<Uint32 Other_Degree> MultivariatePolynomial add(MultivariatePolynomial<Other_Degree, DIMENSION_, Id_, Scalar_> const &other) const { return MultivariatePolynomial(m_term, m_body + other); }
 
+    template<Uint32 Term_Degree>
+    MultivariatePolynomial<Term_Degree + DEGREE_,DIMENSION_,Id_,Scalar_> monomial_multiply (Tenh::ImplementationOf_t<Scalar_,Tenh::SymmetricPowerOfBasedVectorSpace_c<typename Tenh::DualOf_f<VectorSpace>::T,Term_Degree> > const &monomial) const
+    {
+        typedef Tenh::SymmetricPowerOfBasedVectorSpace_c<typename Tenh::DualOf_f<VectorSpace>::T,Term_Degree + DEGREE_> ResultingTermType;
+        Tenh::AbstractIndex_c<'i'> i;
+        Tenh::AbstractIndex_c<'j'> j;
+        Tenh::AbstractIndex_c<'k'> k;
+        Tenh::ImplementationOf_t<Scalar_,ResultingTermType> result(Scalar_(0));
+        result(i) = (m_term(j)*monomial(k)).bundle(j|k,ResultingTermType(),i);
+        return MultivariatePolynomial<Term_Degree + DEGREE_, DIMENSION_, Id_, Scalar_>(result) + m_body.template monomial_multiply<Term_Degree>(monomial);
+    }
+
+
 private:
     SymDual m_term;
     MultivariatePolynomial<DEGREE_-1,DIMENSION_,Id_,Scalar_> m_body;
@@ -77,6 +93,8 @@ private:
     }
 
     template<Uint32,Uint32,typename,typename> friend struct MultivariatePolynomial;
+    template<Uint32 DEG1, Uint32 DEG2, Uint32 DIM, typename Id, typename Scalar> friend
+    MultivariatePolynomial<DEG1+DEG2,DIM,Id,Scalar> operator* (MultivariatePolynomial<DEG1,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG2,DIM,Id,Scalar> const &rhs);
 };
 
 template <Uint32 DIMENSION_, typename Id_, typename Scalar_>
@@ -100,10 +118,23 @@ struct MultivariatePolynomial<0,DIMENSION_,Id_,Scalar_>
     
     MultivariatePolynomial add_eq (MultivariatePolynomial const &other) const { return MultivariatePolynomial(m_term + other.m_term); } 
 
+    template<Uint32 Term_Degree>
+    MultivariatePolynomial<Term_Degree, DIMENSION_, Id_, Scalar_> monomial_multiply (Tenh::ImplementationOf_t<Scalar_,Tenh::SymmetricPowerOfBasedVectorSpace_c<typename Tenh::DualOf_f<VectorSpace>::T,Term_Degree> > const &monomial) const
+    {
+        Tenh::AbstractIndex_c<'i'> i;
+        Tenh::ImplementationOf_t<Scalar_,Tenh::SymmetricPowerOfBasedVectorSpace_c<typename Tenh::DualOf_f<VectorSpace>::T,Term_Degree> > term(Scalar_(0));
+        term(i) = m_term*monomial(i);
+        return MultivariatePolynomial<Term_Degree, DIMENSION_, Id_, Scalar_>(term);
+    }
+
 private:
     Scalar_ m_term;
 
     template<Uint32,Uint32,typename,typename> friend struct MultivariatePolynomial;
+    template<Uint32 DEG1, Uint32 DEG2, Uint32 DIM, typename Id, typename Scalar> friend
+    MultivariatePolynomial<DEG1+DEG2,DIM,Id,Scalar> operator* (MultivariatePolynomial<DEG1,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG2,DIM,Id,Scalar> const &rhs);
+    template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar> friend
+    MultivariatePolynomial<DEG,DIM,Id,Scalar> operator* (MultivariatePolynomial<0,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG,DIM,Id,Scalar> const &rhs);
 };
 
 
@@ -142,6 +173,7 @@ MultivariatePolynomial<(DEG1>DEG2?DEG1:DEG2),DIM,Id,Scalar> operator- (Multivari
     return lhs + (-rhs);
 }
 
+
 //    scalar operator*
 template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar>
 MultivariatePolynomial<DEG,DIM,Id,Scalar> operator* (Scalar const &lhs, MultivariatePolynomial<DEG,DIM,Id,Scalar> const &rhs)
@@ -150,5 +182,18 @@ MultivariatePolynomial<DEG,DIM,Id,Scalar> operator* (Scalar const &lhs, Multivar
     return rhs*lhs;
 }
 
+
+//    operator*
+template<Uint32 DEG1, Uint32 DEG2, Uint32 DIM, typename Id, typename Scalar>
+MultivariatePolynomial<DEG1+DEG2,DIM,Id,Scalar> operator* (MultivariatePolynomial<DEG1,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG2,DIM,Id,Scalar> const &rhs)
+{
+    return (rhs.template monomial_multiply<DEG1>(lhs.m_term)) + (lhs.m_body * rhs);
+}
+
+template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar>
+MultivariatePolynomial<DEG,DIM,Id,Scalar> operator* (MultivariatePolynomial<0,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG,DIM,Id,Scalar> const &rhs)
+{
+    return lhs.m_term * rhs;
+}
 
 #endif // TENH_APPLICATIONS_POLYNOMIAL_HPP_
