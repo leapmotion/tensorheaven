@@ -887,6 +887,7 @@ int main (int argc, char **argv)
         std::cout << FORMAT_VALUE(poly.evaluate(v)) << std::endl;
         std::cout << FORMAT_VALUE((poly - roly).evaluate(v)) << std::endl;
         std::cout << FORMAT_VALUE((3.0f*roly).evaluate(v)) << std::endl;
+        std::cout << FORMAT_VALUE(roly*poly) << std::endl;
         std::cout << FORMAT_VALUE((roly*poly).evaluate(v)) << std::endl;
     }
 

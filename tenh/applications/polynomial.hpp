@@ -10,6 +10,7 @@
 
 #include <iostream>
 
+#include "tenh/meta/typelist_utility.hpp"
 #include "tenh/conceptual/symmetricpower.hpp"
 #include "tenh/conceptual/vectorspace.hpp"
 #include "tenh/implementation/vector.hpp"
@@ -216,13 +217,160 @@ MultivariatePolynomial<DEG,DIM,Id,Scalar> operator* (MultivariatePolynomial<0,DI
 
 //    operator<< for ostream
 template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar>
+struct VariableStringComputer
+{
+    static std::string compute(typename MultivariatePolynomial<DEG,DIM,Id,Scalar>::Sym::MultiIndex const &n)
+    {
+        typedef typename MultivariatePolynomial<DEG,DIM,Id,Scalar>::Sym::MultiIndex MultiIndex;
+        MultiIndex m = Tenh::sorted<typename MultiIndex::IndexTypeList,std::less<Uint32> >(n);
+        Uint32 last = m.value_of_index(0, Tenh::DONT_CHECK_RANGE);
+        Uint32 count = 1;
+        std::string result = "x" + AS_STRING(last);
+        for (Uint32 i = 1; i < MultiIndex::LENGTH; ++i)
+        {
+            if (m.value_of_index(i, Tenh::DONT_CHECK_RANGE) == last)
+            {
+                ++count;
+            }
+            else
+            {
+                last = m.value_of_index(i, Tenh::DONT_CHECK_RANGE);
+                if (count != 1)
+                {
+                    result += "^" + AS_STRING(count);
+                }
+                result += "*x" + AS_STRING(last);
+                count = 1;
+            }
+        }
+        if (count != 1)
+        {
+            result += "^" + AS_STRING(count);
+        }
+
+        return result;
+    }
+};
+
+template<Uint32 DEG, typename Id, typename Scalar>
+struct VariableStringComputer<DEG,0,Id,Scalar>
+{
+    static std::string compute(typename MultivariatePolynomial<DEG,0,Id,Scalar>::Sym::MultiIndex const &n)
+    {
+        return "";
+    }
+};
+
+
+template<Uint32 DEG, typename Id, typename Scalar>
+struct VariableStringComputer<DEG,1,Id,Scalar>
+{
+    static std::string compute(typename MultivariatePolynomial<DEG,1,Id,Scalar>::Sym::MultiIndex const &n)
+    {
+        typedef typename MultivariatePolynomial<DEG,1,Id,Scalar>::Sym::MultiIndex MultiIndex;
+        return "x" + ((MultiIndex::LENGTH > 1) ? "^" + AS_STRING(MultiIndex::LENGTH) : "");
+    }
+};
+
+template<Uint32 DEG, typename Id, typename Scalar>
+struct VariableStringComputer<DEG,2,Id,Scalar>
+{
+    static std::string compute(typename MultivariatePolynomial<DEG,2,Id,Scalar>::Sym::MultiIndex const &n)
+    {
+        typedef typename MultivariatePolynomial<DEG,2,Id,Scalar>::Sym::MultiIndex MultiIndex;
+        MultiIndex m = Tenh::sorted<typename MultiIndex::IndexTypeList,std::less<Uint32> >(n);
+        char vars[3] = "xy";
+        Uint32 last = m.value_of_index(0, Tenh::DONT_CHECK_RANGE);
+        Uint32 count = 1;
+        std::string result;
+        result.push_back(vars[last]);
+        for (Uint32 i = 1; i < MultiIndex::LENGTH; ++i)
+        {
+            if (m.value_of_index(i, Tenh::DONT_CHECK_RANGE) == last)
+            {
+                ++count;
+            }
+            else
+            {
+                last = m.value_of_index(i, Tenh::DONT_CHECK_RANGE);
+                if (count != 1)
+                {
+                    result += "^" + AS_STRING(count);
+                }
+                result += "*";
+                result.push_back(vars[last]);
+                count = 1;
+            }
+        }
+        if (count != 1)
+        {
+            result += "^" + AS_STRING(count);
+        }
+
+        return result;
+    }
+};
+
+template<Uint32 DEG, typename Id, typename Scalar>
+struct VariableStringComputer<DEG,3,Id,Scalar>
+{
+    static std::string compute(typename MultivariatePolynomial<DEG,3,Id,Scalar>::Sym::MultiIndex const &n)
+    {
+        typedef typename MultivariatePolynomial<DEG,3,Id,Scalar>::Sym::MultiIndex MultiIndex;
+        MultiIndex m = Tenh::sorted<typename MultiIndex::IndexTypeList,std::less<Uint32> >(n);
+        char vars[4] = "xyz";
+        Uint32 last = m.value_of_index(0, Tenh::DONT_CHECK_RANGE);
+        Uint32 count = 1;
+        std::string result;
+        result.push_back(vars[last]);
+        for (Uint32 i = 1; i < MultiIndex::LENGTH; ++i)
+        {
+            if (m.value_of_index(i, Tenh::DONT_CHECK_RANGE) == last)
+            {
+                ++count;
+            }
+            else
+            {
+                last = m.value_of_index(i, Tenh::DONT_CHECK_RANGE);
+                if (count != 1)
+                {
+                    result += "^" + AS_STRING(count);
+                }
+                result += "*";
+                result.push_back(vars[last]);
+                count = 1;
+            }
+
+        }
+        if (count != 1)
+        {
+            result += "^" + AS_STRING(count);
+        }
+
+        return result;
+    }
+};
+
+template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar>
 std::ostream &operator << (std::ostream &out, MultivariatePolynomial<DEG,DIM,Id,Scalar> const &m)
 {
     typedef typename MultivariatePolynomial<DEG,DIM,Id,Scalar>::Sym::ComponentIndex ComponentIndex;
     typedef typename MultivariatePolynomial<DEG,DIM,Id,Scalar>::Sym::MultiIndex MultiIndex;
     for (ComponentIndex it; it.is_not_at_end(); ++it)
     {
-        out << m.m_term[it] << "*" <<  MultivariatePolynomial<DEG,DIM,Id,Scalar>::Sym::template bundle_index_map<typename MultiIndex::IndexTypeList, ComponentIndex>(it) << " + ";
+        Uint32 coeff = m.m_term[it];
+        if (coeff == 1)
+        {
+            out << VariableStringComputer<DEG,DIM,Id,Scalar>::compute(MultivariatePolynomial<DEG,DIM,Id,Scalar>::Sym::template bundle_index_map<typename MultiIndex::IndexTypeList, ComponentIndex>(it))
+                << " + ";
+        }
+        else if (coeff != 0)
+        {
+            out << coeff
+                << "*"
+                <<  VariableStringComputer<DEG,DIM,Id,Scalar>::compute(MultivariatePolynomial<DEG,DIM,Id,Scalar>::Sym::template bundle_index_map<typename MultiIndex::IndexTypeList, ComponentIndex>(it))
+                << " + ";
+        }
     }
 
     return out << m.m_body;
