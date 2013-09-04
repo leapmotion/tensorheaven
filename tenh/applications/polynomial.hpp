@@ -24,8 +24,9 @@ struct MultivariatePolynomial
     typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIMENSION_,Id_>,Tenh::Basis_c<Id_> > VectorSpace;
     typedef Tenh::ImplementationOf_t<Scalar_, VectorSpace> Vector;
     typedef Tenh::ImplementationOf_t<Scalar_,Tenh::SymmetricPowerOfBasedVectorSpace_c<VectorSpace,DEGREE_> > Sym;
-    typedef typename Tenh::DualOf_f<Sym>::T SymDual;
-    // typedef Tenh::ImplementationOf_t<Scalar_,Tenh::SymmetricPowerOfBasedVectorSpace_c<typename Tenh::DualOf_f<VectorSpace>::T,DEGREE_> > SymDual;
+    // typedef typename Tenh::DualOf_f<Sym>::T SymDual;
+    typedef Tenh::ImplementationOf_t<Scalar_,Tenh::SymmetricPowerOfBasedVectorSpace_c<typename Tenh::DualOf_f<VectorSpace>::T,DEGREE_> > SymDual;
+    typedef Scalar_ Scalar;
 
     MultivariatePolynomial() : m_term(Scalar_(0)) {};
     MultivariatePolynomial(SymDual const &leading_term,  MultivariatePolynomial<DEGREE_-1,DIMENSION_,Id_,Scalar_> const &rest)
@@ -49,7 +50,8 @@ struct MultivariatePolynomial
         term(i) = rhs*m_term(i);
         return MultivariatePolynomial(term, rhs*m_body);
     }
-    MultivariatePolynomial operator- () const { return Scalar_(-1)*(*this); }
+
+    MultivariatePolynomial operator- () const { return (*this)*Scalar_(-1); }
 
     template<Uint32 DEG>
     MultivariatePolynomial<(DEG>DEGREE_?DEG:DEGREE_),DIMENSION_,Id_,Scalar_> operator- (MultivariatePolynomial<DEG,DIMENSION_,Id_,Scalar_> const &rhs)
@@ -63,14 +65,14 @@ private:
     MultivariatePolynomial<DEGREE_-1,DIMENSION_,Id_,Scalar_> m_body;
 
     // Helper members for non-member operators.
-    //    add is for adding a polynomial of lower degree to this polynomial
+    //    add is for adding a polynomial of strictly lower degree to this polynomial
     template<Uint32 Other_Degree> MultivariatePolynomial add(MultivariatePolynomial<Other_Degree, DIMENSION_, Id_, Scalar_> const &other) const { return MultivariatePolynomial(m_term, m_body + other); }
 
     //    add_eq adds a polynomial of the same degree to this polynomial.
     MultivariatePolynomial add_eq(MultivariatePolynomial const &other) const
     {
         Tenh::AbstractIndex_c<'i'> i;
-        SymDual term(Scalar_(0));
+        SymDual term(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
         term(i) = m_term(i) + other.m_term(i);
         return MultivariatePolynomial(term, m_body.add_eq(other.m_body));
     }
@@ -82,9 +84,10 @@ private:
         Tenh::AbstractIndex_c<'i'> i;
         Tenh::AbstractIndex_c<'j'> j;
         Tenh::AbstractIndex_c<'k'> k;
-        Tenh::ImplementationOf_t<Scalar_,ResultingTermType> result(Scalar_(0));
+        Tenh::ImplementationOf_t<Scalar_,ResultingTermType> result(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+        // I know this doesn't work, we need to symmatrize, not bundle.
         result(i) = (m_term(j)*monomial(k)).bundle(j|k,ResultingTermType(),i);
-        return MultivariatePolynomial<Term_Degree + DEGREE_, DIMENSION_, Id_, Scalar_>(result) + m_body.template monomial_multiply<Term_Degree>(monomial);
+        return MultivariatePolynomial<Term_Degree + DEGREE_, DIMENSION_, Id_, Scalar_>(result, m_body.template monomial_multiply<Term_Degree>(monomial));
     }
 
     // This should probably be a function in tensor heaven somewhere.
@@ -128,7 +131,8 @@ struct MultivariatePolynomial<0,DIMENSION_,Id_,Scalar_>
         return m_term;
     }
 
-    MultivariatePolynomial operator- () const { return Scalar_(-1)*(*this); }
+    MultivariatePolynomial operator- () const { return (*this)*Scalar_(-1); }
+
     template<Uint32 DEG>
     MultivariatePolynomial<DEG,DIMENSION_,Id_,Scalar_> operator- (MultivariatePolynomial<DEG,DIMENSION_,Id_,Scalar_> const &rhs)
     {
@@ -167,7 +171,7 @@ private:
 
 // Non-member operator overloads. These exist because they must be partially specalized, or because they cannot be written as member operator overloads.
 //    operator+
-template<bool> struct Adder
+template<bool DEGREE_OF_LHS_IS_GREATER_THAN_DEGREE_OF_RHS> struct Adder
 {
     template<typename T, typename S>
     static T add (T const &lhs, S const &rhs) { return lhs.add(rhs); }

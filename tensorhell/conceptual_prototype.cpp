@@ -915,7 +915,7 @@ int main (int argc, char **argv)
         PolyType::SymDual w(0);
         MultivariatePolynomial<1,2,X>::SymDual x(1);
         w[PolyType::SymDual::ComponentIndex(0, CHECK_RANGE)] = 1; // x^2
-        w[PolyType::SymDual::ComponentIndex(1, CHECK_RANGE)] = 0; // xy
+        w[PolyType::SymDual::ComponentIndex(1, CHECK_RANGE)] = 2; // xy
         w[PolyType::SymDual::ComponentIndex(2, CHECK_RANGE)] = 5; // y^2
         std::cout << FORMAT_VALUE(w) << std::endl;
         PolyType roly(w,MultivariatePolynomial<1,2,X>(x,3)), poly;
