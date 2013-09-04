@@ -37,7 +37,6 @@ struct MultivariatePolynomial
     Scalar_ evaluate (Vector const &at) const
     {
         Tenh::AbstractIndex_c<'i'> i;
-        std::cout << m_term << std::endl;
         return m_term(i)*OuterPowerOf(at)(i) + m_body.evaluate(at);
     }
 
@@ -100,7 +99,6 @@ private:
                 result[it] *= input[typename Vector::ComponentIndex(m.value_of_index(i, Tenh::DONT_CHECK_RANGE))];
             }
         }
-        std::cout << result << std::endl;
         return result;
     }
 
@@ -110,6 +108,8 @@ private:
     MultivariatePolynomial<DEG,DIM,Id,Scalar> operator+ (MultivariatePolynomial<DEG,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG,DIM,Id,Scalar> const &rhs);
     template<Uint32 DEG1, Uint32 DEG2, Uint32 DIM, typename Id, typename Scalar> friend
     MultivariatePolynomial<DEG1+DEG2,DIM,Id,Scalar> operator* (MultivariatePolynomial<DEG1,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG2,DIM,Id,Scalar> const &rhs);
+    template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar> friend
+    std::ostream &operator << (std::ostream &out, MultivariatePolynomial<DEG,DIM,Id,Scalar> const &m);
 };
 
 template <Uint32 DIMENSION_, typename Id_, typename Scalar_>
@@ -124,7 +124,6 @@ struct MultivariatePolynomial<0,DIMENSION_,Id_,Scalar_>
 
     Scalar_ evaluate (Vector const &at) const
     {
-        std::cout << m_term << std::endl;
         return m_term;
     }
 
@@ -160,6 +159,8 @@ private:
     MultivariatePolynomial<DEG1+DEG2,DIM,Id,Scalar> operator* (MultivariatePolynomial<DEG1,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG2,DIM,Id,Scalar> const &rhs);
     template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar> friend
     MultivariatePolynomial<DEG,DIM,Id,Scalar> operator* (MultivariatePolynomial<0,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG,DIM,Id,Scalar> const &rhs);
+    template<Uint32 DIM, typename Id, typename Scalar> friend
+    std::ostream &operator << (std::ostream &out, MultivariatePolynomial<0,DIM,Id,Scalar> const &m);
 };
 
 
@@ -211,5 +212,27 @@ MultivariatePolynomial<DEG,DIM,Id,Scalar> operator* (MultivariatePolynomial<0,DI
 {
     return lhs.m_term * rhs;
 }
+
+
+//    operator<< for ostream
+template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar>
+std::ostream &operator << (std::ostream &out, MultivariatePolynomial<DEG,DIM,Id,Scalar> const &m)
+{
+    typedef typename MultivariatePolynomial<DEG,DIM,Id,Scalar>::Sym::ComponentIndex ComponentIndex;
+    typedef typename MultivariatePolynomial<DEG,DIM,Id,Scalar>::Sym::MultiIndex MultiIndex;
+    for (ComponentIndex it; it.is_not_at_end(); ++it)
+    {
+        out << m.m_term[it] << "*" <<  MultivariatePolynomial<DEG,DIM,Id,Scalar>::Sym::template bundle_index_map<typename MultiIndex::IndexTypeList, ComponentIndex>(it) << " + ";
+    }
+
+    return out << m.m_body;
+}
+
+template<Uint32 DIM, typename Id, typename Scalar>
+std::ostream &operator << (std::ostream &out, MultivariatePolynomial<0,DIM,Id,Scalar> const &m)
+{
+    return out << m.m_term;
+}
+
 
 #endif // TENH_APPLICATIONS_POLYNOMIAL_HPP_

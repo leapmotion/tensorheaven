@@ -878,13 +878,16 @@ int main (int argc, char **argv)
         w[PolyType::SymDual::ComponentIndex(5, CHECK_RANGE)] = 3; // z^2
         std::cout << FORMAT_VALUE(w) << std::endl;
         PolyType roly(w,MultivariatePolynomial<1,3,X>(x,3)), poly;
-        PolyType::Vector v(1,2,3);
         poly = poly + MultivariatePolynomial<1,3,X>(x,3);
-        std::cout << roly.evaluate(v) << std::endl;
-        std::cout << poly.evaluate(v) << std::endl;
-        std::cout << (poly - roly).evaluate(v) << std::endl;
-        std::cout << (3.0f*roly).evaluate(v) << std::endl;
-        std::cout << (roly*poly).evaluate(v) << std::endl;
+        PolyType::Vector v(1,2,3);
+        std::cout << FORMAT_VALUE(roly) << std::endl;
+        std::cout << FORMAT_VALUE(poly) << std::endl;
+        std::cout << FORMAT_VALUE(v) << std::endl;
+        std::cout << FORMAT_VALUE(roly.evaluate(v)) << std::endl;
+        std::cout << FORMAT_VALUE(poly.evaluate(v)) << std::endl;
+        std::cout << FORMAT_VALUE((poly - roly).evaluate(v)) << std::endl;
+        std::cout << FORMAT_VALUE((3.0f*roly).evaluate(v)) << std::endl;
+        std::cout << FORMAT_VALUE((roly*poly).evaluate(v)) << std::endl;
     }
 
     return 0;
