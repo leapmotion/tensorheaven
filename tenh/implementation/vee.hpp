@@ -19,20 +19,20 @@ template <typename Scalar, typename Space> struct ImplementationOf_t;
 
 // Factor_ should be a BasedVectorSpace_c type
 template <typename Scalar_, typename Factor_, Uint32 ORDER_>
-struct ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpaces_c<Factor_,ORDER_> >
+struct ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpace_c<Factor_,ORDER_> >
     :
-    public EmbeddableAsTensor_i<ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpaces_c<Factor_,ORDER_> >,
+    public EmbeddableAsTensor_i<ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpace_c<Factor_,ORDER_> >,
                                 Scalar_,
-                                SymmetricPowerOfBasedVectorSpaces_c<Factor_,ORDER_> >,
+                                SymmetricPowerOfBasedVectorSpace_c<Factor_,ORDER_> >,
     // Array_t is privately inherited because it is an implementation detail
-    private Array_t<Scalar_,SymmetricPowerOfBasedVectorSpaces_c<Factor_,ORDER_>::DIM>
+    private Array_t<Scalar_,UniqueVectorSpaceStructureOf_f<SymmetricPowerOfBasedVectorSpace_c<Factor_,ORDER_> >::T::DIMENSION>
 {
     enum { STATIC_ASSERT_IN_ENUM(HasBasedVectorSpaceStructure_f<Factor_>::V, MUST_BE_BASED_VECTOR_SPACE) };
 
-    typedef EmbeddableAsTensor_i<ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpaces_c<Factor_,ORDER_> >,
+    typedef EmbeddableAsTensor_i<ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpace_c<Factor_,ORDER_> >,
                                  Scalar_,
-                                 SymmetricPowerOfBasedVectorSpaces_c<Factor_,ORDER_> > Parent_EmbeddableAsTensor_i;
-    typedef Array_t<Scalar_,SymmetricPowerOfBasedVectorSpaces_c<Factor_,ORDER_>::DIM> Parent_Array_t;
+                                 SymmetricPowerOfBasedVectorSpace_c<Factor_,ORDER_> > Parent_EmbeddableAsTensor_i;
+    typedef Array_t<Scalar_,UniqueVectorSpaceStructureOf_f<SymmetricPowerOfBasedVectorSpace_c<Factor_,ORDER_> >::T::DIMENSION> Parent_Array_t;
 
     typedef typename Parent_EmbeddableAsTensor_i::Derived Derived;
     typedef typename Parent_EmbeddableAsTensor_i::Scalar Scalar;
@@ -43,10 +43,9 @@ struct ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpaces_c<Factor_,OR
     typedef typename Parent_EmbeddableAsTensor_i::TensorProductOfBasedVectorSpaces TensorProductOfBasedVectorSpaces;
     typedef typename Parent_EmbeddableAsTensor_i::FactorTypeList FactorTypeList;
     typedef typename Parent_EmbeddableAsTensor_i::MultiIndex MultiIndex;
-    //using Parent_EmbeddableAsTensor_i::ORDER;
     static Uint32 const ORDER = ORDER_;
     typedef Factor_ Factor;
-    typedef SymmetricPowerOfBasedVectorSpaces_c<Factor,ORDER> SymmetricPowerOfBasedVectorSpaces;
+    typedef SymmetricPowerOfBasedVectorSpace_c<Factor,ORDER_> SymmetricPowerOfBasedVectorSpace;
 
     typedef typename DualOf_f<ImplementationOf_t>::T Dual; // relies on the template specialization below
 
@@ -57,9 +56,9 @@ struct ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpaces_c<Factor_,OR
     template <typename BundleIndexTypeList, typename BundledIndex>
     static MultiIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)
     {
-        //STATIC_ASSERT(IsADimIndex_f<BundledIndex>::V, MUST_BE_COMPONENT_INDEX);
+        //STATIC_ASSERT(IsDimIndex_f<BundledIndex>::V, MUST_BE_COMPONENT_INDEX);
         // this constructor breaks the vector index apart into a row-major multi-index
-        return BundleIndexComputer_t<BundleIndexTypeList, BundledIndex, ORDER>::compute(b);
+        return BundleIndexComputer_t<BundleIndexTypeList, BundledIndex, ORDER_>::compute(b);
     }
 
     using Parent_Array_t::operator[];
@@ -84,7 +83,7 @@ struct ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpaces_c<Factor_,OR
 
     static std::string type_as_string ()
     {
-        return "ImplementationOf_t<" + TypeStringOf_t<Scalar>::eval() + ',' + TypeStringOf_t<SymmetricPowerOfBasedVectorSpaces>::eval() + '>';
+        return "ImplementationOf_t<" + TypeStringOf_t<Scalar>::eval() + ',' + TypeStringOf_t<SymmetricPowerOfBasedVectorSpace>::eval() + '>';
     }
 
 private:
@@ -101,7 +100,7 @@ private:
 
 template <typename Scalar_, typename Factor_, Uint32 ORDER_>
 template <typename BundleIndexTypeList, typename BundledIndex, Uint32 ORD>
-struct ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpaces_c<Factor_,ORDER_> >::BundleIndexComputer_t
+struct ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpace_c<Factor_,ORDER_> >::BundleIndexComputer_t
 {
     static MultiIndex_t<BundleIndexTypeList> compute (BundledIndex const &b)
     {
@@ -111,7 +110,7 @@ struct ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpaces_c<Factor_,OR
 
 template <typename Scalar_, typename Factor_, Uint32 ORDER_>
 template <typename FactorType, typename BundledIndex, Uint32 ORD>
-struct ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpaces_c<Factor_,ORDER_> >::BundleIndexComputer_t<TypeList_t<FactorType>, BundledIndex, ORD>
+struct ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpace_c<Factor_,ORDER_> >::BundleIndexComputer_t<TypeList_t<FactorType>, BundledIndex, ORD>
 {
     static MultiIndex_t<TypeList_t<FactorType> > compute (BundledIndex const &b)
     {
@@ -121,7 +120,7 @@ struct ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpaces_c<Factor_,OR
 
 template <typename Scalar_, typename Factor_, Uint32 ORDER_>
 template <typename T, typename I>
-struct ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpaces_c<Factor_,ORDER_> >::VectorIndexComputer_t
+struct ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpace_c<Factor_,ORDER_> >::VectorIndexComputer_t
 {
     static Uint32 compute (T const &m)
     {
@@ -131,7 +130,7 @@ struct ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpaces_c<Factor_,OR
 
 template <typename Scalar_, typename Factor_, Uint32 ORDER_>
 template <typename I>
-struct ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpaces_c<Factor_,ORDER_> >::VectorIndexComputer_t<MultiIndex_t<EmptyTypeList>, I>
+struct ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpace_c<Factor_,ORDER_> >::VectorIndexComputer_t<MultiIndex_t<EmptyTypeList>, I>
 {
     static Uint32 compute (MultiIndex_t<EmptyTypeList> const &m)
     {
@@ -140,9 +139,9 @@ struct ImplementationOf_t<Scalar_,SymmetricPowerOfBasedVectorSpaces_c<Factor_,OR
 };
 
 template <typename Scalar, typename Factor, Uint32 ORDER>
-struct DualOf_f<ImplementationOf_t<Scalar,SymmetricPowerOfBasedVectorSpaces_c<Factor,ORDER> > >
+struct DualOf_f<ImplementationOf_t<Scalar,SymmetricPowerOfBasedVectorSpace_c<Factor,ORDER> > >
 {
-    typedef ImplementationOf_t<Scalar,typename DualOf_f<SymmetricPowerOfBasedVectorSpaces_c<Factor,ORDER> >::T> T;
+    typedef ImplementationOf_t<Scalar,typename DualOf_f<SymmetricPowerOfBasedVectorSpace_c<Factor,ORDER> >::T> T;
 };
 
 } // end of namespace Tenh

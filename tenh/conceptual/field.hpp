@@ -22,7 +22,7 @@ struct Field_c
 
     static std::string type_as_string ()
     {
-        return "Field_c<" + TypeStringOf_t<Id>::eval() + '>';
+        return "Field_c<" + TypeStringOf_t<Id_>::eval() + '>';
     }
 };
 

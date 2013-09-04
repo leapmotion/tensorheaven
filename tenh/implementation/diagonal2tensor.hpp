@@ -24,7 +24,7 @@ struct ImplementationOf_t<Scalar_,Diagonal2TensorProductOfBasedVectorSpaces_c<Fa
                                 Scalar_,
                                 Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >,
     // Array_t is privately inherited because it is an implementation detail
-    private Array_t<Scalar_,Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>::DIM>
+    private Array_t<Scalar_,UniqueVectorSpaceStructureOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >::T::DIMENSION>
 {
     enum
     {
@@ -35,7 +35,7 @@ struct ImplementationOf_t<Scalar_,Diagonal2TensorProductOfBasedVectorSpaces_c<Fa
     typedef EmbeddableAsTensor_i<ImplementationOf_t<Scalar_,Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >,
                                 Scalar_,
                                 Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> > Parent_EmbeddableAsTensor_i;
-    typedef Array_t<Scalar_,Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>::DIM> Parent_Array_t;
+    typedef Array_t<Scalar_,UniqueVectorSpaceStructureOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >::T::DIMENSION> Parent_Array_t;
 
     typedef typename Parent_EmbeddableAsTensor_i::Derived Derived;
     typedef typename Parent_EmbeddableAsTensor_i::Scalar Scalar;
@@ -46,7 +46,6 @@ struct ImplementationOf_t<Scalar_,Diagonal2TensorProductOfBasedVectorSpaces_c<Fa
     typedef typename Parent_EmbeddableAsTensor_i::TensorProductOfBasedVectorSpaces TensorProductOfBasedVectorSpaces;
     typedef typename Parent_EmbeddableAsTensor_i::FactorTypeList FactorTypeList;
     typedef typename Parent_EmbeddableAsTensor_i::MultiIndex MultiIndex;
-    //using Parent_EmbeddableAsTensor_i::ORDER;
     static Uint32 const ORDER = 2;
     typedef Factor1_ Factor1;
     typedef Factor2_ Factor2;
@@ -66,15 +65,15 @@ struct ImplementationOf_t<Scalar_,Diagonal2TensorProductOfBasedVectorSpaces_c<Fa
     template <typename BundleIndexTypeList, typename BundledIndex>
     static MultiIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)
     {
-        STATIC_ASSERT(IsADimIndex_f<BundledIndex>::V, MUST_BE_DIM_INDEX);
+        STATIC_ASSERT(IsDimIndex_f<BundledIndex>::V, MUST_BE_DIM_INDEX);
         STATIC_ASSERT(BundleIndexTypeList::LENGTH == 2, LENGTH_MUST_BE_EXACTLY_2);
         typedef MultiIndex_t<BundleIndexTypeList> MultiIndex;
         typedef typename BundleIndexTypeList::HeadType Index1;
         typedef typename BundleIndexTypeList::BodyTypeList::HeadType Index2;
-        STATIC_ASSERT(IsADimIndex_f<Index1>::V, MUST_BE_DIM_INDEX);
-        STATIC_ASSERT(IsADimIndex_f<Index2>::V, MUST_BE_DIM_INDEX);
-        STATIC_ASSERT(Index1::COMPONENT_COUNT == Factor1::DIM, DIMENSIONS_MUST_MATCH);
-        STATIC_ASSERT(Index2::COMPONENT_COUNT == Factor2::DIM, DIMENSIONS_MUST_MATCH);
+        STATIC_ASSERT(IsDimIndex_f<Index1>::V, MUST_BE_DIM_INDEX);
+        STATIC_ASSERT(IsDimIndex_f<Index2>::V, MUST_BE_DIM_INDEX);
+        STATIC_ASSERT(Index1::COMPONENT_COUNT == AS_VECTOR_SPACE(Factor1_)::DIMENSION, DIMENSIONS_MUST_MATCH);
+        STATIC_ASSERT(Index2::COMPONENT_COUNT == AS_VECTOR_SPACE(Factor2_)::DIMENSION, DIMENSIONS_MUST_MATCH);
         Uint32 b_value = b.value();
         return MultiIndex(b_value, b_value, DONT_CHECK_RANGE);
     }

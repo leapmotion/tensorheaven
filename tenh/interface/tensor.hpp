@@ -21,14 +21,14 @@ namespace Tenh {
 template <typename FactorTypeList>
 struct FactorComponentIndexTypeList_t
 {
-    typedef TypeList_t<ComponentIndex_t<FactorTypeList::HeadType::DIM>,
+    typedef TypeList_t<ComponentIndex_t<AS_VECTOR_SPACE(typename FactorTypeList::HeadType)::DIMENSION>,
                        typename FactorComponentIndexTypeList_t<typename FactorTypeList::BodyTypeList>::T> T;
 };
 
 template <typename HeadType>
 struct FactorComponentIndexTypeList_t<TypeList_t<HeadType> >
 {
-    typedef TypeList_t<ComponentIndex_t<HeadType::DIM> > T;
+    typedef TypeList_t<ComponentIndex_t<AS_VECTOR_SPACE(HeadType)::DIMENSION> > T;
 };
 
 template <>
@@ -45,8 +45,8 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
     enum
     {
         STATIC_ASSERT_IN_ENUM((!Lvd::Meta::TypesAreEqual<Derived_,NullType>::v), DERIVED_MUST_NOT_BE_NULL_TYPE),
-        //STATIC_ASSERT_IN_ENUM((FactorTypeList_::LENGTH > 0), MUST_BE_NONEMPTY) // NOTE: deprecate this, since 0-order tensors should be allowed
-        STATIC_ASSERT_IN_ENUM(HasTensorProductOfBasedVectorSpacesStructure_f<TensorProductOfBasedVectorSpaces_>::V, MUST_BE_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES)
+        //STATIC_ASSERT_IN_ENUM((FactorTypeList_::LENGTH > 0), MUST_BE_NONEMPTY) // TODO: deprecate this, since 0-order tensors should be allowed
+        STATIC_ASSERT_IN_ENUM(IS_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES_UNIQUELY(TensorProductOfBasedVectorSpaces_), MUST_BE_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES)
     };
 
     typedef Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_> Parent_Vector_i;
@@ -57,11 +57,11 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
     typedef typename Parent_Vector_i::ComponentIndex ComponentIndex;
 
     typedef TensorProductOfBasedVectorSpaces_ TensorProductOfBasedVectorSpaces;
-    typedef typename TensorProductOfBasedVectorSpaces::FactorTypeList FactorTypeList;
+    typedef typename AS_TENSOR_PRODUCT(TensorProductOfBasedVectorSpaces)::FactorTypeList FactorTypeList;
     typedef MultiIndex_t<typename FactorComponentIndexTypeList_t<FactorTypeList>::T> MultiIndex;
     // this is not the "fully expanded" order, but the number of [what you could think of
     // as "parenthesized"] factors that formed this tensor product type.
-    static Uint32 const ORDER = FactorTypeList::LENGTH;
+    static Uint32 const ORDER = AS_TENSOR_PRODUCT(TensorProductOfBasedVectorSpaces_)::ORDER;
     static bool const IS_TENSOR_I = true; // TODO: deprecate this in favor of IsATensor_i<...>
 
     // TODO: could put canonical as_factorX conversions here
@@ -91,7 +91,7 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
         CHECK_FOR_ALIASING> operator () (TypeList_t<AbstractIndexTypeListHeadType,AbstractIndexTypeListBodyTypeList> const &) const
     {
         typedef TypeList_t<AbstractIndexTypeListHeadType,AbstractIndexTypeListBodyTypeList> ArgumentAbstractIndexTypeList;
-        STATIC_ASSERT(EachTypeIsAnAbstractIndex_f<ArgumentAbstractIndexTypeList>::V, EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
+        STATIC_ASSERT((EachTypeSatisfies_f<ArgumentAbstractIndexTypeList, IsAbstractIndex_p>::V), EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
         STATIC_ASSERT((ArgumentAbstractIndexTypeList::LENGTH == ORDER), ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
         return ExpressionTemplate_IndexedObject_t<
             Derived, // have to use Derived instead of Tensor_i, so that the return-a-reference operator[] is used
@@ -119,7 +119,7 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
         CHECK_FOR_ALIASING> operator () (TypeList_t<AbstractIndexTypeListHeadType,AbstractIndexTypeListBodyTypeList> const &)
     {
         typedef TypeList_t<AbstractIndexTypeListHeadType,AbstractIndexTypeListBodyTypeList> ArgumentAbstractIndexTypeList;
-        STATIC_ASSERT(EachTypeIsAnAbstractIndex_f<ArgumentAbstractIndexTypeList>::V, EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
+        STATIC_ASSERT((EachTypeSatisfies_f<ArgumentAbstractIndexTypeList, IsAbstractIndex_p>::V), EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
         STATIC_ASSERT((ArgumentAbstractIndexTypeList::LENGTH == ORDER), ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
         return ExpressionTemplate_IndexedObject_t<
             Derived, // have to use Derived instead of Tensor_i, so that the return-a-reference operator[] is used

@@ -26,7 +26,7 @@ struct MultiIndex_t : List_t<IndexTypeList_>
     // TODO: assert that each type in the list is an Index_t
     enum
     {
-        STATIC_ASSERT_IN_ENUM(EachTypeIsAComponentIndex_t<IndexTypeList_>::V, EACH_TYPE_MUST_BE_INDEX)
+        STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<IndexTypeList_,IsComponentIndex_p>::V), EACH_TYPE_MUST_BE_INDEX)
     };
 
     typedef List_t<IndexTypeList_> Parent;
@@ -233,7 +233,7 @@ struct MultiIndex_t<TypeList_t<HeadIndexType_> > : public List_t<TypeList_t<Head
 {
     enum
     {
-        STATIC_ASSERT_IN_ENUM(IsAComponentIndex_t<HeadIndexType_>::V, MUST_BE_INDEX)
+        STATIC_ASSERT_IN_ENUM(IsComponentIndex_f<HeadIndexType_>::V, MUST_BE_INDEX)
     };
 
     typedef List_t<TypeList_t<HeadIndexType_> > Parent;

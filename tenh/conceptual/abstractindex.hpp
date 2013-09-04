@@ -24,9 +24,7 @@ struct AbstractIndex_c
 
     static char const SYMBOL = SYMBOL_;
 
-//    AbstractIndex_c () { }
-
-    static std::string type_as_string () { return std::string("AbstractIndex_c<'") + SYMBOL + "'>"; }
+    static std::string type_as_string () { return std::string("AbstractIndex_c<'") + SYMBOL_ + "'>"; }
 };
 
 template <char SYMBOL_>
@@ -41,22 +39,6 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(AbstractIndex);
 #define IS_ABSTRACT_INDEX_UNIQUELY(Concept) HasUniqueAbstractIndexStructure_f<Concept>::V
 #define AS_ABSTRACT_INDEX(Concept) UniqueAbstractIndexStructureOf_f<Concept>::T
 
-// TODO: Replace this with a predicate version.
-template <typename TypeList>
-struct EachTypeIsAnAbstractIndex_f
-{
-    static bool const V = IsAbstractIndex_f<typename TypeList::HeadType>::V &&
-                          EachTypeIsAnAbstractIndex_f<typename TypeList::BodyTypeList>::V;
-    operator bool () const { return V; }
-};
-
-// vacuously true
-template <>
-struct EachTypeIsAnAbstractIndex_f<EmptyTypeList>
-{
-    static bool const V = true;
-    operator bool () const { return V; }
-};
 
 // operator overloads for stringing together type lists of abstract indices.
 template <char SYMBOL1, char SYMBOL2>
@@ -72,7 +54,7 @@ typename ConcatenationOfTypeLists_t<TypeList_t<HeadType,BodyTypeList>,TypeList_t
     TypeList_t<HeadType,BodyTypeList> const &,
     AbstractIndex_c<SYMBOL> const &)
 {
-    STATIC_ASSERT((EachTypeIsAnAbstractIndex_f<TypeList_t<HeadType,BodyTypeList> >::V), EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
+    STATIC_ASSERT((EachTypeSatisfies_f<TypeList_t<HeadType,BodyTypeList>,IsAbstractIndex_p>::V), EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
     // appending to a TypeList_t is a nontrivial operation, hence the use of ConcatenationOfTypeLists_t
     return typename ConcatenationOfTypeLists_t<TypeList_t<HeadType,BodyTypeList>,TypeList_t<AbstractIndex_c<SYMBOL> > >::T();
 }

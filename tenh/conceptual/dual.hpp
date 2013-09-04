@@ -21,7 +21,7 @@ struct Dual_c
 
     static std::string type_as_string ()
     {
-        return "Dual_c<" + TypeStringOf_t<Primal>::eval() + '>';
+        return "Dual_c<" + TypeStringOf_t<Primal_>::eval() + '>';
     }
 };
 

@@ -19,17 +19,16 @@ struct VectorSpace_c
 {
     typedef EmptyTypeList ParentTypeList;
 
-    enum { STATIC_ASSERT_IN_ENUM(HasUniqueFieldStructure_f<Field_>::V, MUST_BE_FIELD) };
+    enum { STATIC_ASSERT_IN_ENUM(IS_FIELD_UNIQUELY(Field_), MUST_BE_FIELD) };
 
     typedef typename AS_FIELD(Field_) Field;
-    static Uint32 const DIM = DIM_;
+    static Uint32 const DIMENSION = DIM_;
     typedef Id_ Id;
-    typedef typename DualOf_f<VectorSpace_c>::T Dual; // relies on the template specialization below
 
     static std::string type_as_string ()
     {
-        return "VectorSpace_c<" + TypeStringOf_t<Field>::eval() + ','
-                                + AS_STRING(DIM) + ',' + TypeStringOf_t<Id>::eval() + '>';
+        return "VectorSpace_c<" + TypeStringOf_t<Field_>::eval() + ','
+                                + AS_STRING(DIM_) + ',' + TypeStringOf_t<Id_>::eval() + '>';
     }
 };
 
@@ -52,6 +51,7 @@ struct DualOf_f<VectorSpace_c<Field,DIM,Id> >
 };
 
 
+// TODO: should these forgetful functors be here?
 template <typename VectorSpace_, typename Basis_>
 struct BasedVectorSpace_c
 {
@@ -68,14 +68,12 @@ public:
 
 
     typedef typename As_VectorSpace::Field Field;
-    static Uint32 const DIM = As_VectorSpace::DIM;
     typedef typename As_VectorSpace::Id Id;
-    typedef typename DualOf_f<BasedVectorSpace_c>::T Dual; // relies on the template specialization below
     typedef typename AS_BASIS(Basis_) Basis;
 
     static std::string type_as_string ()
     {
-        return "BasedVectorSpace_c<" + TypeStringOf_t<As_VectorSpace>::eval() + ',' + TypeStringOf_t<Basis>::eval() + '>';
+        return "BasedVectorSpace_c<" + TypeStringOf_t<VectorSpace_>::eval() + ',' + TypeStringOf_t<Basis_>::eval() + '>';
     }
 };
 
@@ -94,7 +92,7 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(BasedVectorSpace);
 template <typename VectorSpace, typename Basis>
 struct DualOf_f<BasedVectorSpace_c<VectorSpace,Basis> >
 {
-    typedef BasedVectorSpace_c<typename VectorSpace::Dual,typename Basis::Dual> T;
+    typedef BasedVectorSpace_c<typename DualOf_f<VectorSpace>::T,typename DualOf_f<Basis>::T> T;
 };
 
 } // end of namespace Tenh

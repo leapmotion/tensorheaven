@@ -23,12 +23,12 @@ struct ImplementationOf_t<Scalar_,BasedVectorSpace_c<VectorSpace_,Basis_> >
                     Scalar_,
                     BasedVectorSpace_c<VectorSpace_,Basis_> >,
     // Array_t is privately inherited because it is an implementation detail
-    private Array_t<Scalar_,VectorSpace_::DIM>
+    private Array_t<Scalar_,UniqueVectorSpaceStructureOf_f<VectorSpace_>::T::DIMENSION>
 {
     typedef Vector_i<ImplementationOf_t<Scalar_,BasedVectorSpace_c<VectorSpace_,Basis_> >,
                      Scalar_,
                      BasedVectorSpace_c<VectorSpace_,Basis_> > Parent_Vector_i;
-    typedef Array_t<Scalar_,VectorSpace_::DIM> Parent_Array_t;
+    typedef Array_t<Scalar_,AS_VECTOR_SPACE(VectorSpace_)::DIMENSION> Parent_Array_t;
 
     typedef typename Parent_Vector_i::Derived Derived;
     typedef typename Parent_Vector_i::Scalar Scalar;
@@ -67,7 +67,7 @@ private:
 template <typename Scalar, typename VectorSpace, typename Basis>
 struct DualOf_f<ImplementationOf_t<Scalar,BasedVectorSpace_c<VectorSpace,Basis> > >
 {
-    typedef ImplementationOf_t<Scalar,typename BasedVectorSpace_c<VectorSpace,Basis>::Dual> T;
+    typedef ImplementationOf_t<Scalar,typename DualOf_f<BasedVectorSpace_c<VectorSpace,Basis> >::T> T;
 };
 
 } // end of namespace Tenh

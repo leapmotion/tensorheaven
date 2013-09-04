@@ -51,8 +51,8 @@ struct ExpressionTemplate_IndexedObject_t
     enum
     {
         // TODO: assert that FactorTypeList is a TypeList of BasedVectorSpace_c types.
-        STATIC_ASSERT_IN_ENUM__UNIQUE(EachTypeIsADimIndex_f<DimIndexTypeList>::V, MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, DIMINDEXTYPELIST),
-        STATIC_ASSERT_IN_ENUM__UNIQUE(EachTypeIsADimIndex_f<SummedDimIndexTypeList_>::V, MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, SUMMEDDIMINDEXTYPELIST)
+        STATIC_ASSERT_IN_ENUM__UNIQUE((EachTypeSatisfies_f<DimIndexTypeList,IsDimIndex_p>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, DIMINDEXTYPELIST),
+        STATIC_ASSERT_IN_ENUM__UNIQUE((EachTypeSatisfies_f<SummedDimIndexTypeList_,IsDimIndex_p>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, SUMMEDDIMINDEXTYPELIST)
     };
 
     typedef ExpressionTemplate_i<typename DerivedType_t<Derived_,

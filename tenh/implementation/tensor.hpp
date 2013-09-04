@@ -23,12 +23,12 @@ struct ImplementationOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeL
                     Scalar_,
                     TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >,
     // Array_t is privately inherited because it is an implementation detail
-    private Array_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_>::DIM>
+    private Array_t<Scalar_,UniqueVectorSpaceStructureOf_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >::T::DIMENSION>
 {
     typedef Tensor_i<ImplementationOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >,
                      Scalar_,
                      TensorProductOfBasedVectorSpaces_c<FactorTypeList_> > Parent_Tensor_i;
-    typedef Array_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_>::DIM> Parent_Array_t;
+    typedef Array_t<Scalar_,UniqueVectorSpaceStructureOf_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >::T::DIMENSION> Parent_Array_t;
 
     typedef typename Parent_Tensor_i::Derived Derived;
     typedef typename Parent_Tensor_i::Scalar Scalar;
@@ -52,7 +52,7 @@ struct ImplementationOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeL
     template <typename BundleIndexTypeList, typename BundledIndex>
     static MultiIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)
     {
-        STATIC_ASSERT(IsADimIndex_f<BundledIndex>::V, MUST_BE_COMPONENT_INDEX);
+        STATIC_ASSERT(IsDimIndex_f<BundledIndex>::V, MUST_BE_COMPONENT_INDEX);
         // this constructor breaks the vector index apart into a row-major multi-index
         return MultiIndex_t<BundleIndexTypeList>(b);
     }
@@ -64,7 +64,7 @@ struct ImplementationOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeL
     template <typename OtherIndexTypeList>
     Scalar operator [] (MultiIndex_t<OtherIndexTypeList> const &m) const
     {
-        STATIC_ASSERT(IsATypeList_t<OtherIndexTypeList>::V, MUST_BE_TYPELIST);
+        STATIC_ASSERT(IsTypeList_f<OtherIndexTypeList>::V, MUST_BE_TYPELIST);
         typedef MultiIndex_t<OtherIndexTypeList> OtherMultiIndex;
         STATIC_ASSERT((OtherMultiIndex::LENGTH == MultiIndex::LENGTH), MUST_HAVE_EQUAL_LENGTHS);
         //std::cout << OtherMultiIndex::LENGTH << ", " << MultiIndex::LENGTH << '\n';
@@ -78,7 +78,7 @@ struct ImplementationOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeL
     template <typename OtherIndexTypeList>
     Scalar &operator [] (MultiIndex_t<OtherIndexTypeList> const &m)
     {
-        STATIC_ASSERT(IsATypeList_t<OtherIndexTypeList>::V, MUST_BE_TYPELIST);
+        STATIC_ASSERT(IsTypeList_f<OtherIndexTypeList>::V, MUST_BE_TYPELIST);
         typedef MultiIndex_t<OtherIndexTypeList> OtherMultiIndex;
         STATIC_ASSERT((OtherMultiIndex::LENGTH == MultiIndex::LENGTH), MUST_HAVE_EQUAL_LENGTHS);
         //std::cout << OtherMultiIndex::LENGTH << ", " << MultiIndex::LENGTH << '\n';
@@ -135,7 +135,7 @@ private:
 template <typename Scalar, typename FactorTypeList>
 struct DualOf_f<ImplementationOf_t<Scalar,TensorProductOfBasedVectorSpaces_c<FactorTypeList> > >
 {
-    typedef ImplementationOf_t<Scalar,typename TensorProductOfBasedVectorSpaces_c<FactorTypeList>::Dual> T;
+    typedef ImplementationOf_t<Scalar,typename DualOf_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList> >::T> T;
 };
 
 } // end of namespace Tenh

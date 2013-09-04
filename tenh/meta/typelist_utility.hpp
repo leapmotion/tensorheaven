@@ -368,7 +368,7 @@ struct EachTypeListHasEqualLength_t
 private:
     enum
     {
-        STATIC_ASSERT_IN_ENUM(IsATypeList_t<TypeLists>::V, MUST_BE_TYPELIST)
+        STATIC_ASSERT_IN_ENUM(IsTypeList_f<TypeLists>::V, MUST_BE_TYPELIST)
     };
     typedef typename TypeLists::HeadType First;
     typedef typename TypeLists::BodyTypeList::HeadType Second;
@@ -399,9 +399,9 @@ private:
     typedef typename TypeLists::BodyTypeList RestOfTypeLists;
     enum
     {
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IsATypeList_t<TypeLists>::V, MUST_BE_TYPELIST, TYPELISTS),
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IsATypeList_t<FirstTypeList>::V, MUST_BE_TYPELIST, FIRSTTYPELIST),
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IsATypeList_t<RestOfTypeLists>::V, MUST_BE_TYPELIST, RESTOFTYPELISTS),
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IsTypeList_f<TypeLists>::V, MUST_BE_TYPELIST, TYPELISTS),
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IsTypeList_f<FirstTypeList>::V, MUST_BE_TYPELIST, FIRSTTYPELIST),
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IsTypeList_f<RestOfTypeLists>::V, MUST_BE_TYPELIST, RESTOFTYPELISTS),
         STATIC_ASSERT_IN_ENUM(EachTypeListHasEqualLength_t<TypeLists>::V, MUST_HAVE_EQUAL_LENGTHS)
     };
 public:
@@ -415,8 +415,8 @@ private:
     typedef TypeList_t<EmptyTypeList,RestOfTypeLists> TypeLists;
     enum
     {
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IsATypeList_t<TypeLists>::V, MUST_BE_TYPELIST, TYPELISTS),
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IsATypeList_t<RestOfTypeLists>::V, MUST_BE_TYPELIST, RESTOFTYPELISTS),
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IsTypeList_f<TypeLists>::V, MUST_BE_TYPELIST, TYPELISTS),
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IsTypeList_f<RestOfTypeLists>::V, MUST_BE_TYPELIST, RESTOFTYPELISTS),
         STATIC_ASSERT_IN_ENUM(EachTypeListHasEqualLength_t<TypeLists>::V, MUST_HAVE_EQUAL_LENGTHS)
     };
 public:
@@ -439,9 +439,9 @@ private:
     typedef typename TypeLists::BodyTypeList RestOfTypeLists;
     enum
     {
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IsATypeList_t<TypeLists>::V, MUST_BE_TYPELIST, TYPELISTS),
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IsATypeList_t<FirstTypeList>::V, MUST_BE_TYPELIST, FIRSTTYPELIST),
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IsATypeList_t<RestOfTypeLists>::V, MUST_BE_TYPELIST, RESTOFTYPELISTS),
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IsTypeList_f<TypeLists>::V, MUST_BE_TYPELIST, TYPELISTS),
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IsTypeList_f<FirstTypeList>::V, MUST_BE_TYPELIST, FIRSTTYPELIST),
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IsTypeList_f<RestOfTypeLists>::V, MUST_BE_TYPELIST, RESTOFTYPELISTS),
         STATIC_ASSERT_IN_ENUM(EachTypeListHasEqualLength_t<TypeLists>::V, MUST_HAVE_EQUAL_LENGTHS)
     };
 public:
@@ -455,8 +455,8 @@ private:
     typedef TypeList_t<EmptyTypeList,RestOfTypeLists> TypeLists;
     enum
     {
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IsATypeList_t<TypeLists>::V, MUST_BE_TYPELIST, TYPELISTS),
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IsATypeList_t<RestOfTypeLists>::V, MUST_BE_TYPELIST, RESTOFTYPELISTS),
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IsTypeList_f<TypeLists>::V, MUST_BE_TYPELIST, TYPELISTS),
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IsTypeList_f<RestOfTypeLists>::V, MUST_BE_TYPELIST, RESTOFTYPELISTS),
         STATIC_ASSERT_IN_ENUM(EachTypeListHasEqualLength_t<TypeLists>::V, MUST_HAVE_EQUAL_LENGTHS)
     };
 public:
@@ -562,6 +562,20 @@ template <typename Type>
 struct TypeListWithMultiplicity_t<Type,0>
 {
     typedef EmptyTypeList T;
+};
+
+
+template <typename TypeList, typename Predicate>
+struct EachTypeSatisfies_f
+{
+    enum { STATIC_ASSERT_IN_ENUM(IsTypeList_f<TypeList>::V, MUST_BE_TYPELIST) };
+    static bool const V = Predicate::template Eval_t<typename TypeList::HeadType>::V && EachTypeSatisfies_f<typename TypeList::BodyTypeList,Predicate>::V;
+};
+
+template <typename Predicate>
+struct EachTypeSatisfies_f<EmptyTypeList, Predicate>
+{
+    static bool const V = true;
 };
 
 } // end of namespace Tenh

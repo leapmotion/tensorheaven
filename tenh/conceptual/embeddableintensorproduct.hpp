@@ -9,26 +9,26 @@
 #include "tenh/core.hpp"
 
 #include "tenh/conceptual/concept.hpp"
-#include "tenh/conceptual/tensorproduct.hpp"
 
 namespace Tenh {
 
 // something that has a [natural] embedding into a particular tensor product.  e.g.
 // simple tensors, symmetric products, some linear subspace of a tensor product, etc.
-template <typename TensorProductOfVectorSpaces_>
+// NOTE: because of a problem with recursive definitions, the conceptual structure
+// forgetful functors for tensor products and powers can't be used here, so the
+// template parameters must be "exactly" the requested types.
+template <typename Exactly_TensorProductOfVectorSpaces_>
 struct EmbeddableInTensorProductOfVectorSpaces_c
 {
-private:
-    // TODO: Figure out why this is failing.
-//    enum { STATIC_ASSERT_IN_ENUM(IS_TENSOR_PRODUCT_OF_VECTOR_SPACES_UNIQUELY(TensorProductOfVectorSpaces_), MUST_BE_TENSOR_PRODUCT_OF_VECTOR_SPACES) };
-public:
+    // NOTE: we can't static-assert that the template parameters are the types that they're required to be,
+    // since the concept hierarchy isn't fully available in this file.
     typedef EmptyTypeList ParentTypeList;
 
-    typedef TensorProductOfVectorSpaces_ TensorProductOfVectorSpaces;
+    typedef Exactly_TensorProductOfVectorSpaces_ TensorProductOfVectorSpaces;
 
     static std::string type_as_string ()
     {
-        return "EmbeddableInTensorProductOfVectorSpaces_c<" + TypeStringOf_t<TensorProductOfVectorSpaces_>::eval() + '>';
+        return "EmbeddableInTensorProductOfVectorSpaces_c<" + TypeStringOf_t<Exactly_TensorProductOfVectorSpaces_>::eval() + '>';
     }
 };
 
@@ -37,7 +37,7 @@ struct IsConcept_f<EmbeddableInTensorProductOfVectorSpaces_c<TensorProductOfVect
 { static bool const V = true; };
 
 template <typename T> struct IsEmbeddableInTensorProductOfVectorSpaces_f { static bool const V = false; };
-template <typename TensorProductOfVectorSpaces> struct IsEmbeddableInTensorProductOfVectorSpaces_f<EmbeddableInTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces> > { static bool const V = true; };
+template <typename TensorProductOfVectorSpaces_> struct IsEmbeddableInTensorProductOfVectorSpaces_f<EmbeddableInTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_> > { static bool const V = true; };
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(EmbeddableInTensorProductOfVectorSpaces);
 // special convenience macros
@@ -52,33 +52,34 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(EmbeddableInTensorProductOfVectorSpace
 // something that has a [natural] embedding into a particular tensor product of based vector spaces.
 // e.g. everything in the class of embeddable-in-tensor-products-of-vector-spaces, but also things
 // like diagonal 2-tensor product of based vector spaces.
-template <typename TensorProductOfBasedVectorSpaces_>
+// NOTE: because of a problem with recursive definitions, the conceptual structure
+// forgetful functors for tensor products and powers can't be used here, so the
+// template parameters must be "exactly" the requested types.
+template <typename Exactly_TensorProductOfBasedVectorSpaces_, typename Exactly_TensorProductOfVectorSpaces_>
 struct EmbeddableInTensorProductOfBasedVectorSpaces_c
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM(IS_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES_UNIQUELY(TensorProductOfBasedVectorSpaces_), MUST_BE_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES) };
-    typedef EmbeddableInTensorProductOfVectorSpaces_c<TensorProductOfBasedVectorSpaces_> As_EmbeddableInTensorProductOfVectorSpaces;
+    // NOTE: we can't static-assert that the template parameters are the types that they're required to be,
+    // since the concept hierarchy isn't fully available in this file.
+    typedef EmbeddableInTensorProductOfVectorSpaces_c<Exactly_TensorProductOfVectorSpaces_> As_EmbeddableInTensorProductOfVectorSpaces;
 public:
     typedef TypeList_t<As_EmbeddableInTensorProductOfVectorSpaces> ParentTypeList;
 
-    typedef typename As_EmbeddableInTensorProductOfVectorSpaces::TensorProductOfVectorSpaces TensorProductOfVectorSpaces;
-    typedef TensorProductOfBasedVectorSpaces_ TensorProductOfBasedVectorSpaces;
-    static Uint32 const ORDER = TensorProductOfBasedVectorSpaces::ORDER;
-    typedef typename TensorProductOfBasedVectorSpaces::FactorTypeList FactorTypeList;
-    // TODO: other typedefs/values?
+    typedef Exactly_TensorProductOfBasedVectorSpaces_ TensorProductOfBasedVectorSpaces;
 
     static std::string type_as_string ()
     {
-        return "EmbeddableInTensorProductOfBasedVectorSpaces_c<" + TypeStringOf_t<TensorProductOfBasedVectorSpaces>::eval() + '>';
+        return "EmbeddableInTensorProductOfBasedVectorSpaces_c<" + TypeStringOf_t<Exactly_TensorProductOfBasedVectorSpaces_>::eval() + ','
+                                                                 + TypeStringOf_t<Exactly_TensorProductOfVectorSpaces_>::eval() + '>';
     }
 };
 
-template <typename TensorProductOfBasedVectorSpaces_>
-struct IsConcept_f<EmbeddableInTensorProductOfBasedVectorSpaces_c<TensorProductOfBasedVectorSpaces_> >
+template <typename Exactly_TensorProductOfBasedVectorSpaces_, typename Exactly_TensorProductOfVectorSpaces_>
+struct IsConcept_f<EmbeddableInTensorProductOfBasedVectorSpaces_c<Exactly_TensorProductOfBasedVectorSpaces_,Exactly_TensorProductOfVectorSpaces_> >
 { static bool const V = true; };
 
 template <typename T> struct IsEmbeddableInTensorProductOfBasedVectorSpaces_f { static bool const V = false; };
-template <typename TensorProductOfBasedVectorSpaces> struct IsEmbeddableInTensorProductOfBasedVectorSpaces_f<EmbeddableInTensorProductOfBasedVectorSpaces_c<TensorProductOfBasedVectorSpaces> > { static bool const V = true; };
+template <typename Exactly_TensorProductOfBasedVectorSpaces_, typename Exactly_TensorProductOfVectorSpaces_> struct IsEmbeddableInTensorProductOfBasedVectorSpaces_f<EmbeddableInTensorProductOfBasedVectorSpaces_c<Exactly_TensorProductOfBasedVectorSpaces_,Exactly_TensorProductOfVectorSpaces_> > { static bool const V = true; };
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(EmbeddableInTensorProductOfBasedVectorSpaces);
 // special convenience macros

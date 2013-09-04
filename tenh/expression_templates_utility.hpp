@@ -40,14 +40,14 @@ struct FreeIndexTypeList_t
 template <typename FreeIndexTypeList>
 struct IndexIsFree_t
 {
-    enum { STATIC_ASSERT_IN_ENUM(IsATypeList_t<FreeIndexTypeList>::V, MUST_BE_TYPELIST) };
+    enum { STATIC_ASSERT_IN_ENUM(IsTypeList_f<FreeIndexTypeList>::V, MUST_BE_TYPELIST) };
 
     template <typename T>
     struct Eval_t
     {
         enum
         {
-            STATIC_ASSERT_IN_ENUM(IsATypeList_t<T>::V, MUST_BE_TYPELIST),
+            STATIC_ASSERT_IN_ENUM(IsTypeList_f<T>::V, MUST_BE_TYPELIST),
             STATIC_ASSERT_IN_ENUM(T::LENGTH == 2, LENGTH_MUST_BE_EXACTLY_2)
         };
         typedef typename T::HeadType Factor;
@@ -114,7 +114,7 @@ struct SummedAbstractIndexPairElementIndices_t
 template <typename FirstFactor, typename SecondFactor>
 struct AssertThatSummationIsNaturalPairing_t
 {
-    enum { STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<FirstFactor,typename SecondFactor::Dual>::v), SUMMATION_MUST_BE_NATURAL_PAIRING) };
+    enum { STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<FirstFactor,typename DualOf_f<SecondFactor>::T>::v), SUMMATION_MUST_BE_NATURAL_PAIRING) };
     static bool const V = true;
 };
 
@@ -274,7 +274,7 @@ struct BinarySummation_t<LeftOperand,RightOperand,FreeDimIndexTypeList,EmptyType
         STATIC_ASSERT_IN_ENUM(LeftOperand::IS_EXPRESSION_TEMPLATE_I, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE_I, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM(EachTypeIsADimIndex_f<FreeDimIndexTypeList>::V, MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES)
+        STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<FreeDimIndexTypeList,IsDimIndex_p>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES)
         // no summation, so no need to check naturality of pairings
     };
 
@@ -415,7 +415,7 @@ struct IndexBundle_t
     typedef typename DimIndexTypeListOf_t<BundleFactorTypeList,
                                           BundleAbstractIndexTypeList>::T BundleDimIndexTypeList;
     typedef DimIndex_t<ResultingAbstractIndexType::SYMBOL,
-                       ResultingFactorType::DIM> ResultingDimIndexType;
+                       AS_VECTOR_SPACE(ResultingFactorType)::DIMENSION> ResultingDimIndexType;
 
     // zip the stuff so that the transformations can act on both the DimIndex_t and factor lists
     typedef typename Zip_t<TypeList_t<OperandFreeDimIndexTypeList,
@@ -494,13 +494,13 @@ struct IndexSplitter_t
     enum
     {
         // TODO: assert that SourceFactor can actually be split (can be embedded into a tensor space)
-        STATIC_ASSERT_IN_ENUM__UNIQUE((SourceFactor::FactorTypeList::LENGTH == SplitAbstractIndexTypeList::LENGTH), MUST_HAVE_EQUAL_LENGTHS, FREEFACTORTYPELIST)
+        STATIC_ASSERT_IN_ENUM__UNIQUE((AS_TENSOR_PRODUCT(typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_VECTOR_SPACES(SourceFactor)::TensorProductOfVectorSpaces)::FactorTypeList::LENGTH == SplitAbstractIndexTypeList::LENGTH), MUST_HAVE_EQUAL_LENGTHS, FREEFACTORTYPELIST)
     };
 
     typedef typename ConcatenationOfTypeLists_t<
         typename Operand::FreeFactorTypeList::template LeadingTypeList_t<SOURCE_INDEX_TYPE_INDEX>::T,
         typename ConcatenationOfTypeLists_t<
-            typename SourceFactor::FactorTypeList,
+            typename AS_TENSOR_PRODUCT(typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_VECTOR_SPACES(SourceFactor)::TensorProductOfVectorSpaces)::FactorTypeList,
             typename Operand::FreeFactorTypeList::template TrailingTypeList_t<SOURCE_INDEX_TYPE_INDEX+1>::T
             >::T
         >::T FactorTypeList;
@@ -524,9 +524,9 @@ struct IndexSplitter_t
 
     Scalar operator [] (MultiIndex const &m) const
     {
-        typedef typename DimIndexTypeListOf_t<typename SourceFactor::FactorTypeList,
+        typedef typename DimIndexTypeListOf_t<typename AS_TENSOR_PRODUCT(typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_VECTOR_SPACES(SourceFactor)::TensorProductOfVectorSpaces)::FactorTypeList,
                                               SplitAbstractIndexTypeList>::T SourceFactorDimIndexTypeList;
-        typedef ComponentIndex_t<SourceFactor::DIM> SourceFactorComponentIndex;
+        typedef ComponentIndex_t<AS_VECTOR_SPACE(SourceFactor)::DIMENSION> SourceFactorComponentIndex;
         typedef MultiIndex_t<SourceFactorDimIndexTypeList> SourceFactorMultiIndex;
         typedef ImplementationOf_t<Scalar,SourceFactor> ImplementationOfSourceFactor;
 

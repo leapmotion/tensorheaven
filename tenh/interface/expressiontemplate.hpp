@@ -50,8 +50,8 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     {
         //DERIVED_MUST_NOT_BE_NULL_TYPE = Lvd::Meta::Assert<!Lvd::Meta::TypesAreEqual<Derived_,NullType>::v>::v
         STATIC_ASSERT_IN_ENUM((!Lvd::Meta::TypesAreEqual<Derived_,NullType>::v), DERIVED_MUST_NOT_BE_NULL_TYPE),
-        STATIC_ASSERT_IN_ENUM__UNIQUE(EachTypeIsADimIndex_f<FreeDimIndexTypeList_>::V, MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, FREEDIMINDEXTYPELIST),
-        STATIC_ASSERT_IN_ENUM__UNIQUE(EachTypeIsADimIndex_f<UsedDimIndexTypeList_>::V, MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, USEDDIMINDEXTYPELIST)
+        STATIC_ASSERT_IN_ENUM__UNIQUE((EachTypeSatisfies_f<FreeDimIndexTypeList_,IsDimIndex_p>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, FREEDIMINDEXTYPELIST),
+        STATIC_ASSERT_IN_ENUM__UNIQUE((EachTypeSatisfies_f<UsedDimIndexTypeList_,IsDimIndex_p>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, USEDDIMINDEXTYPELIST)
     };
 
     typedef Derived_ Derived;
@@ -96,7 +96,7 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
         // make sure that ResultingAbstractIndexType actually is one
         STATIC_ASSERT(IsAbstractIndex_f<ResultingAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX);
         // make sure that the index type list actually contains AbstractIndex_c types
-        STATIC_ASSERT((EachTypeIsAnAbstractIndex_f<TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> >::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
+        STATIC_ASSERT((EachTypeSatisfies_f<TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList>, IsAbstractIndex_p>::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
         // make sure that ResultingFactorType is the correct conceptual type
         // TODO: there is probably a stronger type check (a type which is embeddable into a tensor space)
         STATIC_ASSERT(HasBasedVectorSpaceStructure_f<ResultingFactorType>::V, MUST_BE_BASED_VECTOR_SPACE);
@@ -113,7 +113,7 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
         // make sure that SourceAbstractIndexType actually is one
         STATIC_ASSERT(IsAbstractIndex_f<SourceAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX);
         // make sure that the index type list actually contains AbstractIndex_c types
-        STATIC_ASSERT((EachTypeIsAnAbstractIndex_f<TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> >::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
+        STATIC_ASSERT((EachTypeSatisfies_f<TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList>, IsAbstractIndex_p>::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
         return ExpressionTemplate_IndexSplit_t<Derived,SourceAbstractIndexType,TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> >(as_derived());
     }
     // method for doing an intermediate evaluation of an expression template to avoid aliasing
@@ -125,7 +125,7 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
 
 // will print any order expression template in a nice-looking justified way.  if the order is greater
 // than 1, this will print newlines, notably including the first character.
-template <typename Derived, 
+template <typename Derived,
           typename Scalar,
           typename FreeFactorTypeList,
           typename FreeDimIndexTypeList,
