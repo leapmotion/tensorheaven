@@ -23,8 +23,8 @@ struct MultivariatePolynomial
     typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIMENSION_,Id_>,Tenh::Basis_c<Id_> > VectorSpace;
     typedef Tenh::ImplementationOf_t<Scalar_, VectorSpace> Vector;
     typedef Tenh::ImplementationOf_t<Scalar_,Tenh::SymmetricPowerOfBasedVectorSpace_c<VectorSpace,DEGREE_> > Sym;
-    // typedef typename Tenh::DualOf_f<Sym>::T SymDual;
-   typedef Tenh::ImplementationOf_t<Scalar_,Tenh::SymmetricPowerOfBasedVectorSpace_c<typename Tenh::DualOf_f<VectorSpace>::T,DEGREE_> > SymDual;
+    typedef typename Tenh::DualOf_f<Sym>::T SymDual;
+    // typedef Tenh::ImplementationOf_t<Scalar_,Tenh::SymmetricPowerOfBasedVectorSpace_c<typename Tenh::DualOf_f<VectorSpace>::T,DEGREE_> > SymDual;
 
     MultivariatePolynomial() : m_term(Scalar_(0)) {};
     MultivariatePolynomial(SymDual const &leading_term,  MultivariatePolynomial<DEGREE_-1,DIMENSION_,Id_,Scalar_> const &rest)
@@ -41,6 +41,7 @@ struct MultivariatePolynomial
         return m_term(i)*OuterPowerOf(at)(i) + m_body.evaluate(at);
     }
 
+    // Member operators
     MultivariatePolynomial operator* (Scalar_ const &rhs) const
     {
         Tenh::AbstractIndex_c<'i'> i;
@@ -49,15 +50,30 @@ struct MultivariatePolynomial
         return MultivariatePolynomial(term, rhs*m_body);
     }
     MultivariatePolynomial operator- () const { return Scalar_(-1)*(*this); }
-    
+
+    template<Uint32 DEG>
+    MultivariatePolynomial<(DEG>DEGREE_?DEG:DEGREE_),DIMENSION_,Id_,Scalar_> operator- (MultivariatePolynomial<DEG,DIMENSION_,Id_,Scalar_> const &rhs)
+    {
+        // Use operator+
+        return *this + (-rhs);
+    }
+
+private:
+    SymDual m_term;
+    MultivariatePolynomial<DEGREE_-1,DIMENSION_,Id_,Scalar_> m_body;
+
+    // Helper members for non-member operators.
+    //    add is for adding a polynomial of lower degree to this polynomial
+    template<Uint32 Other_Degree> MultivariatePolynomial add(MultivariatePolynomial<Other_Degree, DIMENSION_, Id_, Scalar_> const &other) const { return MultivariatePolynomial(m_term, m_body + other); }
+
+    //    add_eq adds a polynomial of the same degree to this polynomial.
     MultivariatePolynomial add_eq(MultivariatePolynomial const &other) const
     {
         Tenh::AbstractIndex_c<'i'> i;
         SymDual term(Scalar_(0));
         term(i) = m_term(i) + other.m_term(i);
-        return MultivariatePolynomial(term, m_body.add_eq(other.m_body));   
+        return MultivariatePolynomial(term, m_body.add_eq(other.m_body));
     }
-    template<Uint32 Other_Degree> MultivariatePolynomial add(MultivariatePolynomial<Other_Degree, DIMENSION_, Id_, Scalar_> const &other) const { return MultivariatePolynomial(m_term, m_body + other); }
 
     template<Uint32 Term_Degree>
     MultivariatePolynomial<Term_Degree + DEGREE_,DIMENSION_,Id_,Scalar_> monomial_multiply (Tenh::ImplementationOf_t<Scalar_,Tenh::SymmetricPowerOfBasedVectorSpace_c<typename Tenh::DualOf_f<VectorSpace>::T,Term_Degree> > const &monomial) const
@@ -71,11 +87,7 @@ struct MultivariatePolynomial
         return MultivariatePolynomial<Term_Degree + DEGREE_, DIMENSION_, Id_, Scalar_>(result) + m_body.template monomial_multiply<Term_Degree>(monomial);
     }
 
-
-private:
-    SymDual m_term;
-    MultivariatePolynomial<DEGREE_-1,DIMENSION_,Id_,Scalar_> m_body;
-
+    // This should probably be a function in tensor heaven somewhere.
     Sym OuterPowerOf (Vector const &input) const
     {
         Sym result(Scalar_(1));
@@ -93,6 +105,9 @@ private:
     }
 
     template<Uint32,Uint32,typename,typename> friend struct MultivariatePolynomial;
+    template<bool> friend struct Adder;
+    template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar> friend
+    MultivariatePolynomial<DEG,DIM,Id,Scalar> operator+ (MultivariatePolynomial<DEG,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG,DIM,Id,Scalar> const &rhs);
     template<Uint32 DEG1, Uint32 DEG2, Uint32 DIM, typename Id, typename Scalar> friend
     MultivariatePolynomial<DEG1+DEG2,DIM,Id,Scalar> operator* (MultivariatePolynomial<DEG1,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG2,DIM,Id,Scalar> const &rhs);
 };
@@ -114,9 +129,19 @@ struct MultivariatePolynomial<0,DIMENSION_,Id_,Scalar_>
     }
 
     MultivariatePolynomial operator- () const { return Scalar_(-1)*(*this); }
+    template<Uint32 DEG>
+    MultivariatePolynomial<DEG,DIMENSION_,Id_,Scalar_> operator- (MultivariatePolynomial<DEG,DIMENSION_,Id_,Scalar_> const &rhs)
+    {
+        // Use operator+
+        return *this + (-rhs);
+    }
     MultivariatePolynomial operator* (Scalar_ const &rhs) const { return MultivariatePolynomial(rhs*m_term); }
-    
-    MultivariatePolynomial add_eq (MultivariatePolynomial const &other) const { return MultivariatePolynomial(m_term + other.m_term); } 
+
+private:
+    Scalar_ m_term;
+
+    //    There is no lower degree possible, so we only need add_eq here.
+    MultivariatePolynomial add_eq (MultivariatePolynomial const &other) const { return MultivariatePolynomial(m_term + other.m_term); }
 
     template<Uint32 Term_Degree>
     MultivariatePolynomial<Term_Degree, DIMENSION_, Id_, Scalar_> monomial_multiply (Tenh::ImplementationOf_t<Scalar_,Tenh::SymmetricPowerOfBasedVectorSpace_c<typename Tenh::DualOf_f<VectorSpace>::T,Term_Degree> > const &monomial) const
@@ -127,10 +152,10 @@ struct MultivariatePolynomial<0,DIMENSION_,Id_,Scalar_>
         return MultivariatePolynomial<Term_Degree, DIMENSION_, Id_, Scalar_>(term);
     }
 
-private:
-    Scalar_ m_term;
-
     template<Uint32,Uint32,typename,typename> friend struct MultivariatePolynomial;
+    template<bool> friend struct Adder;
+    template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar> friend
+    MultivariatePolynomial<DEG,DIM,Id,Scalar> operator+ (MultivariatePolynomial<DEG,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG,DIM,Id,Scalar> const &rhs);
     template<Uint32 DEG1, Uint32 DEG2, Uint32 DIM, typename Id, typename Scalar> friend
     MultivariatePolynomial<DEG1+DEG2,DIM,Id,Scalar> operator* (MultivariatePolynomial<DEG1,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG2,DIM,Id,Scalar> const &rhs);
     template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar> friend
@@ -138,7 +163,7 @@ private:
 };
 
 
-// Non-member operator overloads
+// Non-member operator overloads. These exist because they must be partially specalized, or because they cannot be written as member operator overloads.
 //    operator+
 template<bool> struct Adder
 {
@@ -162,15 +187,6 @@ template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar>
 MultivariatePolynomial<DEG,DIM,Id,Scalar> operator+ (MultivariatePolynomial<DEG,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG,DIM,Id,Scalar> const &rhs)
 {
     return lhs.add_eq(rhs);
-}
-
-
-//    operator-
-template<Uint32 DEG1, Uint32 DEG2,  Uint32 DIM, typename Id, typename Scalar>
-MultivariatePolynomial<(DEG1>DEG2?DEG1:DEG2),DIM,Id,Scalar> operator- (MultivariatePolynomial<DEG1,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG2,DIM,Id,Scalar> const &rhs)
-{
-    // Use operator+
-    return lhs + (-rhs);
 }
 
 
