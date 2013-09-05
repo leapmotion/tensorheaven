@@ -18,6 +18,7 @@
 #include "tenh/implementation/vector.hpp"
 #include "tenh/implementation/vee.hpp"
 #include "tenh/implementation/wedge.hpp"
+#include "tenh/innerproduct.hpp"
 
 struct X
 {
@@ -862,6 +863,30 @@ int main (int argc, char **argv)
 
         std::cout << test_vector_power<BasedX, float, 4>(v) << std::endl;
         std::cout << test_vector_power<BasedX, float, 4>(v)(i).split(i,j|k|l|p) << std::endl;
+        std::cout << '\n';
+    }
+
+    {
+        std::cout << "testing InnerProduct_t\n";
+        typedef VectorSpace_c<RealField,3,X> VSX;
+        typedef BasedVectorSpace_c<VSX,StandardEuclideanBasis> BasedX;
+        InnerProduct_t<BasedX,float> b;
+        AbstractIndex_c<'P'> P;
+        AbstractIndex_c<'Q'> Q;
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        AbstractIndex_c<'k'> k;
+        std::cout << FORMAT_VALUE(b) << '\n';
+        std::cout << FORMAT_VALUE((i|j).type_as_string()) << '\n';
+        std::cout << FORMAT_VALUE(b(P).split(P,i|j)) << '\n' << '\n';
+
+        InnerProduct_t<DualOf_f<BasedX>::T,float> b_inv;
+        std::cout << FORMAT_VALUE(b_inv) << '\n';
+        std::cout << FORMAT_VALUE(b(Q).split(Q,i|j)) << '\n' << '\n';
+
+        std::cout << FORMAT_VALUE(b(P).split(P,i|j) * b_inv(Q).split(Q,j|k)) << '\n' << '\n';
+
+        std::cout << FORMAT_VALUE(b_inv(Q).split(Q,i|j) * b(P).split(P,j|k)) << '\n' << '\n';
     }
 
     return 0;

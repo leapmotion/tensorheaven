@@ -57,26 +57,38 @@ struct EmbeddableAsTensor_i : public Vector_i<Derived_,Scalar_,EmbeddableInTenso
     // you have to split before multi-index accessing
 
     using Parent_Vector_i::operator();
+    // this is to attempt to debug the problem with the real split method below
+//     template <typename AbstractIndexHeadType, typename AbstractIndexBodyTypeList>
+//     void split (
+//         TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> const &abstract_multiindex) const
+//     {
+//         // make sure that the index type list actually contains AbstractIndex_c types
+//         STATIC_ASSERT((EachTypeSatisfies_f<TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList>, IsAbstractIndex_p>::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
+//         AbstractIndex_c<'~'> dummy_index;
+// //         return Parent_Vector_i::operator()(dummy_index).split(dummy_index, abstract_multiindex);
+//         std::cout << FORMAT_VALUE(Parent_Vector_i::operator()(dummy_index).split(dummy_index, abstract_multiindex).type_as_string()) << '\n';
+//     }
     // this provides the "split" operation without needing an intermediate temporary index,
     // since this object will be frequently split.
     // TODO: could the C++11 infer the return type?  this return type is annoying
-    // NOTE: this doesn't currently work, though it should be equivalent to code that does work.
-    template <typename AbstractIndexHeadType, typename AbstractIndexBodyTypeList>
-    ExpressionTemplate_IndexSplit_t<ExpressionTemplate_IndexedObject_t<Parent_Vector_i,
-                                                                       TypeList_t<BasedVectorSpace>,
-                                                                       TypeList_t<DimIndex_t<'~',DIM> >,
-                                                                       EmptyTypeList,
-                                                                       FORCE_CONST,
-                                                                       CHECK_FOR_ALIASING>,
-                                    AbstractIndex_c<'~'>,
-                                    TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> > split (
-        TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> const &abstract_multiindex) const
-    {
-        // make sure that the index type list actually contains AbstractIndex_c types
-        STATIC_ASSERT((EachTypeSatisfies_f<TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList>, IsAbstractIndex_p>::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
-        AbstractIndex_c<'~'> dummy_index;
-        return Parent_Vector_i::operator()(dummy_index).split(dummy_index, abstract_multiindex);
-    }
+    // NOTE: this method causes problems in GCC (really insane template errors that seem to
+    // indicate a bug in GCC), but works in clang.
+//     template <typename AbstractIndexHeadType, typename AbstractIndexBodyTypeList>
+//     ExpressionTemplate_IndexSplit_t<ExpressionTemplate_IndexedObject_t<Parent_Vector_i,
+//                                                                        TypeList_t<BasedVectorSpace>,
+//                                                                        TypeList_t<DimIndex_t<'~',DIM> >,
+//                                                                        EmptyTypeList,
+//                                                                        FORCE_CONST,
+//                                                                        CHECK_FOR_ALIASING>,
+//                                     AbstractIndex_c<'~'>,
+//                                     TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> > split (
+//         TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> const &abstract_multiindex) const
+//     {
+//         // make sure that the index type list actually contains AbstractIndex_c types
+//         STATIC_ASSERT((EachTypeSatisfies_f<TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList>, IsAbstractIndex_p>::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
+//         AbstractIndex_c<'~'> dummy_index;
+//         return Parent_Vector_i::operator()(dummy_index).split(dummy_index, abstract_multiindex);
+//     }
     // can't directly multi-index this object -- use split instead.
 
     static bool component_is_immutable_zero (MultiIndex const &m) { return as_derived().component_is_immutable_zero(m); }
