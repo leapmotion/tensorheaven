@@ -98,6 +98,17 @@ struct ExpressionTemplate_IndexedObject_t
         return Lvd::Meta::TypesAreEqual<OtherTensor,Object>::v && reinterpret_cast<Object const *>(&t) == &m_object;
     }
 
+    static std::string type_as_string ()
+    {
+        return "ExpressionTemplate_IndexedObject_t<" + TypeStringOf_t<Object>::eval() + ','
+                                                     + TypeStringOf_t<FactorTypeList>::eval() + ','
+                                                     + TypeStringOf_t<DimIndexTypeList>::eval() + ','
+                                                     + TypeStringOf_t<SummedDimIndexTypeList_>::eval() + ','
+                                                     + AS_STRING(FORCE_CONST_) + ','
+                                                     + AS_STRING(CHECK_FOR_ALIASING_) + ','
+                                                     + TypeStringOf_t<Derived_>::eval() + '>';
+    }
+
 private:
 
     Object const &m_object;
@@ -196,6 +207,17 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList
         return Lvd::Meta::TypesAreEqual<OtherTensor,Object>::v && reinterpret_cast<Object const *>(&t) == &m_object;
     }
 
+    static std::string type_as_string ()
+    {
+        return "ExpressionTemplate_IndexedObject_t<" + TypeStringOf_t<Object>::eval() + ','
+                                                     + TypeStringOf_t<FactorTypeList>::eval() + ','
+                                                     + TypeStringOf_t<DimIndexTypeList>::eval() + ','
+                                                     + TypeStringOf_t<EmptyTypeList>::eval() + ','
+                                                     + AS_STRING(DONT_FORCE_CONST) + ','
+                                                     + AS_STRING(CHECK_FOR_ALIASING_) + ','
+                                                     + TypeStringOf_t<Derived_>::eval() + '>';
+    }
+
 private:
 
     Object &m_object;
@@ -280,6 +302,13 @@ struct ExpressionTemplate_Addition_t
         return m_left_operand.uses_tensor(t) || m_right_operand.uses_tensor(t);
     }
 
+    static std::string type_as_string ()
+    {
+        return "ExpressionTemplate_Addition_t<" + TypeStringOf_t<LeftOperand>::eval() + ','
+                                                + TypeStringOf_t<RightOperand>::eval() + ','
+                                                + '\'' + AS_STRING(OPERATOR) + '\'' + '>';
+    }
+
 private:
 
     LeftOperand const &m_left_operand;
@@ -348,6 +377,13 @@ struct ExpressionTemplate_ScalarMultiplication_t
     bool uses_tensor (OtherTensor const &t) const
     {
         return m_operand.uses_tensor(t);
+    }
+
+    static std::string type_as_string ()
+    {
+        return "ExpressionTemplate_ScalarMultiplication_t<" + TypeStringOf_t<Operand>::eval() + ','
+                                                            + TypeStringOf_t<Scalar>::eval() + ','
+                                                            + '\'' + AS_STRING(OPERATOR) + '\'' + '>';
     }
 
 private:
@@ -428,6 +464,12 @@ struct ExpressionTemplate_Multiplication_t
         return m_left_operand.uses_tensor(t) || m_right_operand.uses_tensor(t);
     }
 
+    static std::string type_as_string ()
+    {
+        return "ExpressionTemplate_Multiplication_t<" + TypeStringOf_t<LeftOperand>::eval() + ','
+                                                      + TypeStringOf_t<RightOperand>::eval() + '>';
+    }
+
 private:
 
     LeftOperand const &m_left_operand;
@@ -487,6 +529,14 @@ public:
 
     template <typename OtherTensor>
     bool uses_tensor (OtherTensor const &t) const { return m_index_bundle.uses_tensor(t); }
+
+    static std::string type_as_string ()
+    {
+        return "ExpressionTemplate_IndexBundle_t<" + TypeStringOf_t<Operand>::eval() + ','
+                                                   + TypeStringOf_t<BundleAbstractIndexTypeList>::eval() + ','
+                                                   + TypeStringOf_t<ResultingFactorType>::eval() + ','
+                                                   + TypeStringOf_t<ResultingAbstractIndexType>::eval() + '>';
+    }
 
 private:
 
@@ -551,6 +601,13 @@ public:
 
     template <typename OtherTensor>
     bool uses_tensor (OtherTensor const &t) const { return m_index_splitter.uses_tensor(t); }
+
+    static std::string type_as_string ()
+    {
+        return "ExpressionTemplate_IndexSplit_t<" + TypeStringOf_t<Operand>::eval() + ','
+                                                  + TypeStringOf_t<SourceAbstractIndexType>::eval() + ','
+                                                  + TypeStringOf_t<SplitAbstractIndexTypeList>::eval() + '>';
+    }
 
 private:
 
