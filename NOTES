@@ -260,8 +260,9 @@ x implementation of diagonal 2-tensors (of based vector spaces)
   really important).  record some analysis of each, noting the compiler versions for each
 - refactoring the unit tests to account for the strongly-typed refactor in general
 - writing unit tests for the new code (general symmetric and antisymmetric N-tensors)
-- possibly providing operator overloads to do non-indexed-expression vector/matrix math like
-  Eigen does (so this library could be used by "laymen" without using abstract index notation)
+- Gabe's "Linear Operator" ("Hom"?) paradigm -- to do non-indexed-expression vector/matrix
+  math like Eigen does (so this library could be used by "laymen" without using abstract
+  index notation)
 - regularize/clean up the template code naming scheme (suffixes _t, _c, _f, _m, _i, etc)
 - generating documentation (Doxygen comments for the code, Doxygen-generated high-level
   documentation, and LaTeX writeups of the abstract math), and probably most critically,
@@ -270,6 +271,49 @@ x implementation of diagonal 2-tensors (of based vector spaces)
 - translating LVD code in tenh/meta/lvd.hpp (Victor's legacy metaprogramming lib) into
   "native Tensor Heaven" code (important for legal purposes)
 - Talking to Tom about officially licensing the LVD unit test code (important for legal purposes)
+
+
+Notes for Gabe's "Linear Operator" ("Hom"?) paradigm
+- The general idea is to do linear algebra in the "Hom" formalism, without implicitly
+  identifying Hom(V,W) with the tensor product W \otimes V^*.
+- This is accomplished by defining operator* to be composition in the ordinary function
+  sense (composition of vector-producing thing into linear operator), and defining
+  operator% to be tensor product.
+- In particular, because tensor product is fully associative -- i.e.
+
+    (U \otimes V) \otimes W     is canonically isomorphic to     U \otimes (V \otimes W),
+
+  non-parenthesized tensor expressions are well-defined; the above is written as
+
+    U \otimes V \otimes W.
+
+  This allows the well-definition of operator%, which will render the fully unparenthesized
+  tensor product type.
+- Additionally, operator% will act on linear operators in the functorial sense.  E.g. if
+
+    if A \in Hom(V,W) and B \in Hom(X,Y),
+    then A%B \in Hom(V \otimes W, W \otimes Y),
+
+  as in the well-understood category theory of linear algebra.
+- Similarly, symmetric and exterior powers of vectors and linear operators can be taken,
+  and can be implemented in a form such as the following
+
+    if v \in V, then SymmetricPower<4>(v) \in SymmetricPower<4>(V).
+
+  Same for ExteriorPower.  For completeness, TensorPower can also be implemented, and then
+  operator% can be a frontend for TensorPower.  Each of these is a functor on the category
+  of [based] vector spaces.
+- The canonical isomorphism between Hom(V,W) and W \otimes V^* will be available for when
+  fancier tensor operations are desired.  For example, constructing some tensor valued thing,
+  such as of type V \otimes V^* \otimes V^* \otimes V^*, and then using it as an object
+  of any of the following types (which are all mutually distinct).
+
+    Hom(V \otimes V \otimes V, V),
+    Hom(V \otimes V^*, V \otimes V),
+    Hom(V \otimes V^* \otimes V^*, V).
+- A certainly useful (and possibly necessary) feature is to provide an action of the
+  permutation group on tensorial things, so e.g. the transpose (adjoint) of a linear
+  operator can be taken.
 
 
 Notes for [probable] upgrade to C++11 (to happen after "version 1.0" is reached)
