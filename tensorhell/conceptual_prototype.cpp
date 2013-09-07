@@ -619,8 +619,8 @@ int main (int argc, char **argv)
 
         STATIC_ASSERT(HasBasedVectorSpaceStructure_f<BasedX>::V, MUST_BE_BASED_VECTOR_SPACE);
 
-        typedef ExteriorPowerOfBasedVectorSpace_c<BasedX,3> Wedge3_BasedX;
-        typedef ExteriorPowerOfBasedVectorSpace_c<BasedX,2> Wedge2_BasedX;
+        typedef ExteriorPowerOfBasedVectorSpace_c<3,BasedX> Wedge3_BasedX;
+        typedef ExteriorPowerOfBasedVectorSpace_c<2,BasedX> Wedge2_BasedX;
         typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedX, TypeList_t<BasedX> > > T2_BasedX;
 
         typedef ImplementationOf_t<Wedge3_BasedX,float> Wedge;
