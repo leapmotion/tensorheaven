@@ -55,8 +55,8 @@ private:
 
     typedef ExteriorPower_c<Factor_,ORDER_> As_ExteriorPower;
     typedef VectorSpace_c<typename Factor_::Field,BinomialCoefficient_t<AS_VECTOR_SPACE(Factor_)::DIMENSION, ORDER_>::V,ExteriorPower_c<typename Factor_::Id,ORDER_> > As_VectorSpace;
-    typedef EmbeddableInTensorPowerOfVectorSpace_c<TensorPowerOfVectorSpace_c<Factor_,ORDER_>,
-                                                    TensorProductOfVectorSpaces_c<FactorTypeList> > As_EmbeddableInTensorPowerOfVectorSpace;
+    typedef EmbeddableInTensorPowerOfVectorSpace_c<TensorPowerOfVectorSpace_c<ORDER_,Factor_>,
+                                                   TensorProductOfVectorSpaces_c<FactorTypeList> > As_EmbeddableInTensorPowerOfVectorSpace;
 public:
     typedef TypeList_t<As_ExteriorPower,
             TypeList_t<As_VectorSpace,
@@ -169,10 +169,10 @@ private:
     typedef typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T FactorTypeList;
 
     typedef BasedExteriorPowerOfVectorSpace_c<ExteriorPowerOfVectorSpace_c<Factor_,ORDER_>,ExteriorPowerOfBasis_c<typename AS_BASED_VECTOR_SPACE(Factor_)::Basis,ORDER_> > As_BasedExteriorPowerOfVectorSpace;
-    typedef EmbeddableInTensorPowerOfBasedVectorSpace_c<TensorPowerOfBasedVectorSpace_c<Factor_,ORDER_>,
-                                                         TensorPowerOfVectorSpace_c<Factor_,ORDER_>,
-                                                         TensorProductOfBasedVectorSpaces_c<FactorTypeList>,
-                                                         TensorProductOfVectorSpaces_c<FactorTypeList> > As_EmbeddableInTensorPowerOfBasedVectorSpace;
+    typedef EmbeddableInTensorPowerOfBasedVectorSpace_c<TensorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,
+                                                        TensorPowerOfVectorSpace_c<ORDER_,Factor_>,
+                                                        TensorProductOfBasedVectorSpaces_c<FactorTypeList>,
+                                                        TensorProductOfVectorSpaces_c<FactorTypeList> > As_EmbeddableInTensorPowerOfBasedVectorSpace;
 public:
     typedef TypeList_t<As_BasedExteriorPowerOfVectorSpace,
             TypeList_t<As_EmbeddableInTensorPowerOfBasedVectorSpace> > ParentTypeList;

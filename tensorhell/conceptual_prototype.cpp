@@ -66,7 +66,7 @@ ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<Vector,ORDER>,Scalar> test
 template <typename BasedVectorSpace, Uint32 ORDER>
 void test_tensor_printing (std::ostream &out)
 {
-    typedef TensorPowerOfBasedVectorSpace_c<BasedVectorSpace,ORDER> TPow;
+    typedef TensorPowerOfBasedVectorSpace_c<ORDER,BasedVectorSpace> TPow;
     typedef typename AS_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(TPow) TProd;
     typedef ImplementationOf_t<TProd,float> T;
     T t(Static<WithoutInitialization>::SINGLETON);
@@ -272,7 +272,7 @@ int main (int argc, char **argv)
     ////////////////////////////////
 
     {
-        typedef TensorPower_c<X,3> TensorPower;
+        typedef TensorPower_c<3,X> TensorPower;
         typedef DualOf_f<TensorPower>::T DualTensorPower;
         typedef DualOf_f<DualTensorPower>::T DualDualTensorPower;
         std::cout << "TensorPower = "  << TypeStringOf_t<TensorPower>::eval() << '\n'
@@ -287,7 +287,7 @@ int main (int argc, char **argv)
 
     {
         typedef VectorSpace_c<RealField,5,X> X5;
-        typedef TensorPowerOfVectorSpace_c<X5,3> T;
+        typedef TensorPowerOfVectorSpace_c<3,X5> T;
         typedef DualOf_f<T>::T DualT;
         typedef DualOf_f<DualT>::T DualDualT;
         std::cout << "TensorPowerOfVectorSpace = "  << TypeStringOf_t<T>::eval() << '\n'
@@ -302,7 +302,7 @@ int main (int argc, char **argv)
 
     {
         typedef Basis_c<X> BX;
-        typedef TensorPowerOfBasis_c<BX,3> T;
+        typedef TensorPowerOfBasis_c<3,BX> T;
         typedef DualOf_f<T>::T DualT;
         typedef DualOf_f<DualT>::T DualDualT;
         std::cout << "TensorPowerOfBasis = "  << TypeStringOf_t<T>::eval() << '\n'
@@ -321,14 +321,14 @@ int main (int argc, char **argv)
         typedef BasedVectorSpace_c<X5,BX> BasedX;
         assert(HasBasedVectorSpaceStructure_f<BasedX>::V);
 
-        typedef TensorPowerOfVectorSpace_c<X5,3> TVS;
+        typedef TensorPowerOfVectorSpace_c<3,X5> TVS;
         assert(HasVectorSpaceStructure_f<TVS>::V);
         assert(HasTensorProductStructure_f<TVS>::V);
         assert(HasTensorProductOfVectorSpacesStructure_f<TVS>::V);
         assert(HasTensorPowerStructure_f<TVS>::V);
         assert(HasTensorPowerOfVectorSpaceStructure_f<TVS>::V);
 
-        typedef TensorPowerOfBasis_c<BX,3> TB;
+        typedef TensorPowerOfBasis_c<3,BX> TB;
         assert(HasBasisStructure_f<TB>::V);
         assert(HasTensorProductStructure_f<TB>::V);
         assert(HasTensorPowerStructure_f<TB>::V);
@@ -357,7 +357,7 @@ int main (int argc, char **argv)
         }
 
         {
-            typedef TensorPowerOfBasedVectorSpace_c<BasedX,3> T;
+            typedef TensorPowerOfBasedVectorSpace_c<3,BasedX> T;
             assert(HasTensorProductStructure_f<T>::V);
             assert(HasTensorPowerStructure_f<T>::V);
             assert(HasVectorSpaceStructure_f<T>::V);

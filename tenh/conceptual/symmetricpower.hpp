@@ -53,8 +53,8 @@ private:
     typedef SymmetricPower_c<Factor_,ORDER_> As_SymmetricPower;
     typedef VectorSpace_c<typename Factor_::Field,BinomialCoefficient_t<AS_VECTOR_SPACE(Factor_)::DIMENSION + ORDER_ - 1, ORDER_>::V,SymmetricPower_c<typename Factor_::Id,ORDER_> > As_VectorSpace;
     typedef typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T FactorTypeList;
-    typedef EmbeddableInTensorPowerOfVectorSpace_c<TensorPowerOfVectorSpace_c<Factor_,ORDER_>,
-                                                    TensorProductOfVectorSpaces_c<FactorTypeList> > As_EmbeddableInTensorPowerOfVectorSpace;
+    typedef EmbeddableInTensorPowerOfVectorSpace_c<TensorPowerOfVectorSpace_c<ORDER_,Factor_>,
+                                                   TensorProductOfVectorSpaces_c<FactorTypeList> > As_EmbeddableInTensorPowerOfVectorSpace;
 public:
     typedef TypeList_t<As_SymmetricPower,
             TypeList_t<As_VectorSpace,
@@ -169,10 +169,10 @@ private:
     enum { STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_BASED_VECTOR_SPACE) };
     typedef BasedSymmetricPowerOfVectorSpace_c<SymmetricPowerOfVectorSpace_c<Factor_,ORDER_>, SymmetricPowerOfBasis_c<typename AS_BASED_VECTOR_SPACE(Factor_)::Basis, ORDER_> > As_BasedSymmetricPowerOfVectorSpace;
     typedef typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T FactorTypeList;
-    typedef EmbeddableInTensorPowerOfBasedVectorSpace_c<TensorPowerOfBasedVectorSpace_c<Factor_,ORDER_>,
-                                                         TensorPowerOfVectorSpace_c<Factor_,ORDER_>,
-                                                         TensorProductOfBasedVectorSpaces_c<FactorTypeList>,
-                                                         TensorProductOfVectorSpaces_c<FactorTypeList> > As_EmbeddableInTensorPowerOfBasedVectorSpace;
+    typedef EmbeddableInTensorPowerOfBasedVectorSpace_c<TensorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,
+                                                        TensorPowerOfVectorSpace_c<ORDER_,Factor_>,
+                                                        TensorProductOfBasedVectorSpaces_c<FactorTypeList>,
+                                                        TensorProductOfVectorSpaces_c<FactorTypeList> > As_EmbeddableInTensorPowerOfBasedVectorSpace;
 public:
     typedef TypeList_t<As_BasedSymmetricPowerOfVectorSpace,
             TypeList_t<As_EmbeddableInTensorPowerOfBasedVectorSpace> > ParentTypeList;

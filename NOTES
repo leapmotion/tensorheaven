@@ -181,14 +181,6 @@ Notes for conceptual layer and refactor
   expressions should all be tensorial in nature, some of the optimizations depend on the chosen
   basis (e.g. the diagonal based 2-tensor product one), so this should be done at the
   based-vector-space and based-tensor-product level.
-- Provide way to specify/override natural pairing on any given space -- use Alt convention by
-  default (this gives certain simplifications), but for example the det convention would make
-  use of finite-characteristic fields possible.  NOTE: there is somewhat of an overload of the
-  term "natural pairing" here -- the "pure" natural pairing is between a vector space and its
-  dual (this is a canonical, nondegenerate pairing); there are other "natural" (but not necessarily
-  canonical) pairings of e.g. \bigwedge^k V with \bigwedge^k V^* which essentially induces
-  an embedding into the corresponding tensor powers, but there is a choice of a convention here.
-  Probably these should not be called "natural pairings", since there is a choice involved.
 - Indexing scheme for wedges and symmetric products consists of sorting the indices of a multi-index.
   For Young tableaux, this would generalize to imposing sorting constraints on various subsets of
   indices (based on the rows (alternating) and columns (symmetric)).  Negative signs are accumulated
@@ -205,6 +197,8 @@ Notes for conceptual layer and refactor
   e.g. splitting "S^4 V" into "S^2 V \otimes S^2 V" or into "V \otimes S^3 V", and this might be a
   crucial feature, as it really enriches the type system without adding too much library-template-driven
   code (the embeddings would be neatly packaged bits of code that could be user-specified also).
+- The "embeddable in" concept(s) probably need to be generalized to be "embeddable into X", e.g.
+  Diagonal2TensorProductOfBasedVectorSpaces_c<A,A> embeds into SymmetricPower<2,A>.
 - Possible idea for efficient contraction of tensors having different symmetries -- express their
   contraction as a linear map (a 2-tensor), then contract this with the outer product of the operands.
   This would really depend on the compiler-specific optimizations that are found in assembler code

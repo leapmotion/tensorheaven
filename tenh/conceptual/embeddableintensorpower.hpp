@@ -34,7 +34,7 @@ public:
     static std::string type_as_string ()
     {
         return "EmbeddableInTensorPowerOfVectorSpace_c<" + TypeStringOf_t<Exactly_TensorPowerOfVectorSpace_>::eval() + ','
-                                                          + TypeStringOf_t<Exactly_TensorProductOfVectorSpaces_>::eval() + '>';
+                                                         + TypeStringOf_t<Exactly_TensorProductOfVectorSpaces_>::eval() + '>';
     }
 };
 
@@ -71,7 +71,7 @@ private:
     // NOTE: we can't static-assert that the template parameters are the types that they're required to be,
     // since the concept hierarchy isn't fully available in this file.
     typedef EmbeddableInTensorPowerOfVectorSpace_c<Exactly_TensorPowerOfVectorSpace_,
-                                                    Exactly_TensorProductOfVectorSpaces_> As_EmbeddableInTensorPowerOfVectorSpace;
+                                                   Exactly_TensorProductOfVectorSpaces_> As_EmbeddableInTensorPowerOfVectorSpace;
     typedef EmbeddableInTensorProductOfBasedVectorSpaces_c<Exactly_TensorPowerOfBasedVectorSpace_,
                                                            Exactly_TensorProductOfVectorSpaces_> As_EmbeddableInTensorProductOfBasedVectorSpaces;
 public:
@@ -83,9 +83,9 @@ public:
     static std::string type_as_string ()
     {
         return "EmbeddableInTensorPowerOfBasedVectorSpace_c<" + TypeStringOf_t<Exactly_TensorPowerOfBasedVectorSpace_>::eval() + ','
-                                                               + TypeStringOf_t<Exactly_TensorPowerOfVectorSpace_>::eval() + ','
-                                                               + TypeStringOf_t<Exactly_TensorProductOfBasedVectorSpaces_>::eval() + ','
-                                                               + TypeStringOf_t<Exactly_TensorProductOfVectorSpaces_>::eval() + '>';
+                                                              + TypeStringOf_t<Exactly_TensorPowerOfVectorSpace_>::eval() + ','
+                                                              + TypeStringOf_t<Exactly_TensorProductOfBasedVectorSpaces_>::eval() + ','
+                                                              + TypeStringOf_t<Exactly_TensorProductOfVectorSpaces_>::eval() + '>';
     }
 };
 
