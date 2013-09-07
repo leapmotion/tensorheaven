@@ -91,12 +91,12 @@ private:
         if (!m_eval_is_cached)
         {
             // this should populate m_cached_tensor via expression templates
-            m_cached_tensor(FreeDimIndexTypeList()).no_alias() = m_operand; 
+            m_cached_tensor(FreeDimIndexTypeList()).no_alias() = m_operand;
             m_eval_is_cached = true;
         }
     }
 
-    typedef ImplementationOf_t<Scalar,TensorProductOfBasedVectorSpaces_c<FreeFactorTypeList> > Tensor;
+    typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FreeFactorTypeList>,Scalar> Tensor;
 
     Operand const &m_operand;
     mutable bool m_eval_is_cached;

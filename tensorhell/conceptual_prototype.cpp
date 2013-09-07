@@ -42,12 +42,12 @@ namespace Tenh {
 
 using namespace Tenh;
 
-template<typename Vector, typename Scalar, Uint32 ORDER>
-ImplementationOf_t<Scalar,SymmetricPowerOfBasedVectorSpace_c<Vector,ORDER> > test_vector_power (const ImplementationOf_t<Scalar, Vector> &input)
+template<typename Vector, Uint32 ORDER, typename Scalar>
+ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<Vector,ORDER>,Scalar> test_vector_power (const ImplementationOf_t<Vector,Scalar> &input)
 {
 //    STATIC_ASSERT(IS_BASED_VECTORSPACE_UNIQUELY(Vector), MUST_BE_BASED_VECTOR_SPACE);
-    typedef ImplementationOf_t<Scalar,SymmetricPowerOfBasedVectorSpace_c<Vector,ORDER> > Sym;
-    typedef ImplementationOf_t<Scalar, Vector> Vec;
+    typedef ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<Vector,ORDER>,Scalar> Sym;
+    typedef ImplementationOf_t<Vector,Scalar> Vec;
 
     Sym result(Scalar(1));
 
@@ -68,7 +68,7 @@ void test_tensor_printing (std::ostream &out)
 {
     typedef TensorPowerOfBasedVectorSpace_c<BasedVectorSpace,ORDER> TPow;
     typedef typename AS_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(TPow) TProd;
-    typedef ImplementationOf_t<float,TProd> T;
+    typedef ImplementationOf_t<TProd,float> T;
     T t(Static<WithoutInitialization>::SINGLETON);
     for (typename T::ComponentIndex i; i.is_not_at_end(); ++i)
         t[i] = i.value();
@@ -491,7 +491,7 @@ int main (int argc, char **argv)
         typedef Basis_c<X> B;
         typedef BasedVectorSpace_c<VSX,B> BasedX;
 
-        typedef ImplementationOf_t<float,BasedX> V;
+        typedef ImplementationOf_t<BasedX,float> V;
         V v(1.0f, 2.0f, 3.0f);
         V w(8.0f, -2.0f, 6.0f);
         std::cout << TypeStringOf_t<V>::eval() << '\n';
@@ -531,9 +531,9 @@ int main (int argc, char **argv)
         typedef BasedVectorSpace_c<VSY,BY> BasedY;
 
         typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedX,TypeList_t<DualOf_f<BasedY>::T> > > TPBVS;
-        typedef ImplementationOf_t<float,BasedX> U;
-        typedef ImplementationOf_t<float,BasedY> V;
-        typedef ImplementationOf_t<float,TPBVS> T;
+        typedef ImplementationOf_t<BasedX,float> U;
+        typedef ImplementationOf_t<BasedY,float> V;
+        typedef ImplementationOf_t<TPBVS,float> T;
         std::cout << TypeStringOf_t<T>::eval() << '\n';
 
         T t(3.0f);
@@ -560,7 +560,7 @@ int main (int argc, char **argv)
 
 
         typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedX,TypeList_t<DualOf_f<BasedY>::T,TypeList_t<DualOf_f<BasedY>::T> > > > H;
-        typedef ImplementationOf_t<float,H> E;
+        typedef ImplementationOf_t<H,float> E;
         E e(0.0f);
         for (E::ComponentIndex it; it.is_not_at_end(); ++it)
             e[it] = it.value();
@@ -577,7 +577,7 @@ int main (int argc, char **argv)
 //        std::cout << FORMAT_VALUE(e(i|j|j)) << '\n';
 
         typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedY,TypeList_t<DualOf_f<BasedY>::T> > > EndomorphismOfY;
-        typedef ImplementationOf_t<float,EndomorphismOfY> Endo;
+        typedef ImplementationOf_t<EndomorphismOfY,float> Endo;
         Endo A(0.0f);
         A[Endo::MultiIndex(0,0)] = 3.0f;
         A[Endo::MultiIndex(1,1)] = 4.0f;
@@ -604,7 +604,7 @@ int main (int argc, char **argv)
 
         AbstractIndex_c<'P'> P;
         typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<DualOf_f<BasedY>::T,TypeList_t<DualOf_f<BasedY>::T> > > PartOfH;
-        typedef ImplementationOf_t<float,PartOfH> G;
+        typedef ImplementationOf_t<PartOfH,float> G;
         std::cout << FORMAT_VALUE(e(i|j|k).bundle(j|k,PartOfH(),P)) << '\n';
         std::cout << FORMAT_VALUE(f(i|j|k).bundle(j|k,DualOf_f<PartOfH>::T(),P)) << '\n';
         std::cout << FORMAT_VALUE(e(i|j|k).bundle(j|k,PartOfH(),P) * f(i|j|k).bundle(j|k,DualOf_f<PartOfH>::T(),P)) << '\n';
@@ -623,7 +623,7 @@ int main (int argc, char **argv)
         typedef ExteriorPowerOfBasedVectorSpace_c<BasedX,2> Wedge2_BasedX;
         typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedX, TypeList_t<BasedX> > > T2_BasedX;
 
-        typedef ImplementationOf_t<float,Wedge3_BasedX> Wedge;
+        typedef ImplementationOf_t<Wedge3_BasedX,float> Wedge;
 
         Wedge w(0);
         w[Wedge::ComponentIndex(0, CHECK_RANGE)] = 6;
@@ -683,7 +683,7 @@ int main (int argc, char **argv)
         typedef SymmetricPowerOfBasedVectorSpace_c<BasedX,2> Sym2_BasedX;
         typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedX, TypeList_t<BasedX> > > T2_BasedX;
 
-        typedef ImplementationOf_t<float,Sym3_BasedX> Sym;
+        typedef ImplementationOf_t<Sym3_BasedX,float> Sym;
 
         Sym w(0);
         w[Sym::ComponentIndex(0, CHECK_RANGE)] = 1;
@@ -769,7 +769,7 @@ int main (int argc, char **argv)
         typedef VectorSpace_c<RealField,0,X> VSX;
         typedef Basis_c<X> BasisX;
         typedef BasedVectorSpace_c<VSX,BasisX> BasedX;
-        typedef ImplementationOf_t<float,BasedX> Vector;
+        typedef ImplementationOf_t<BasedX,float> Vector;
         Vector v(0.0f);
         std::cout << FORMAT_VALUE(v) << '\n';
 
@@ -781,7 +781,7 @@ int main (int argc, char **argv)
         typedef Basis_c<X> BasisX;
         typedef BasedVectorSpace_c<VSX,BasisX> BasedX;
         typedef Diagonal2TensorProductOfBasedVectorSpaces_c<DualOf_f<BasedX>::T,DualOf_f<BasedX>::T> Diag;
-        typedef ImplementationOf_t<float,Diag> D;
+        typedef ImplementationOf_t<Diag,float> D;
         D d(2.0f, 1.0f, -3.0f, 5.0f);
         std::cout << FORMAT_VALUE(d) << '\n';
 
@@ -790,7 +790,7 @@ int main (int argc, char **argv)
         AbstractIndex_c<'k'> k;
         std::cout << FORMAT_VALUE(d(i).split(i,j|k)) << '\n';
 
-        typedef ImplementationOf_t<float,BasedX> V;
+        typedef ImplementationOf_t<BasedX,float> V;
         V u(1.0f, 2.0f, 10.0f, -2.0f);
         std::cout << FORMAT_VALUE(u) << '\n';
         std::cout << FORMAT_VALUE(u(j) * d(i).split(i,j|k) * u(k)) << '\n';
@@ -851,8 +851,8 @@ int main (int argc, char **argv)
         typedef VectorSpace_c<RealField,4,X> VSX;
         typedef Basis_c<X> BasisX;
         typedef BasedVectorSpace_c<VSX,BasisX> BasedX;
-        typedef ImplementationOf_t<float,SymmetricPowerOfBasedVectorSpace_c<BasedX,4> > Sym;
-        typedef ImplementationOf_t<float, BasedX> Vec;
+        typedef ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<BasedX,4>,float> Sym;
+        typedef ImplementationOf_t<BasedX,float> Vec;
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
         AbstractIndex_c<'k'> k;
@@ -861,8 +861,8 @@ int main (int argc, char **argv)
 
         Vec v(1,2,3,4);
 
-        std::cout << test_vector_power<BasedX, float, 4>(v) << std::endl;
-        std::cout << test_vector_power<BasedX, float, 4>(v)(i).split(i,j|k|l|p) << std::endl;
+        std::cout << test_vector_power<BasedX,4,float>(v) << std::endl;
+        std::cout << test_vector_power<BasedX,4,float>(v)(i).split(i,j|k|l|p) << std::endl;
         std::cout << '\n';
     }
 
@@ -887,6 +887,23 @@ int main (int argc, char **argv)
         std::cout << FORMAT_VALUE(b(P).split(P,i|j) * b_inv(Q).split(Q,j|k)) << '\n' << '\n';
 
         std::cout << FORMAT_VALUE(b_inv(Q).split(Q,i|j) * b(P).split(P,j|k)) << '\n' << '\n';
+
+        typedef ImplementationOf_t<BasedX,float> Vector;
+        Vector v(Static<WithoutInitialization>::SINGLETON);
+        Vector w(Static<WithoutInitialization>::SINGLETON);
+        for (Vector::ComponentIndex idx; idx.is_not_at_end(); ++idx)
+        {
+            v[idx] = idx.value();
+            w[idx] = 2*idx.value() + 8;
+        }
+        std::cout << FORMAT_VALUE(v) << '\n';
+        std::cout << FORMAT_VALUE(w) << '\n';
+        std::cout << FORMAT_VALUE(v(i)*b(P).split(P,i|j)*w(j)) << '\n';
+
+        // uncommenting the following line should cause a compile error regarding natural pairing
+//         std::cout << FORMAT_VALUE(v(i)*w(i)) << '\n';
+
+        std::cout << '\n' << '\n';
     }
 
     return 0;

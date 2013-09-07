@@ -16,13 +16,13 @@
 
 namespace Tenh {
 
-template <typename Scalar, typename Space> struct ImplementationOf_t;
+template <typename Concept_, typename Scalar_> struct ImplementationOf_t;
 
 // Factor_ should be a BasedVectorSpace_c type
-template <typename Scalar_, typename Factor_, Uint32 ORDER_>
-struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpace_c<Factor_,ORDER_> >
+template <typename Factor_, Uint32 ORDER_, typename Scalar_>
+struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<Factor_,ORDER_>,Scalar_>
     :
-    public EmbeddableAsTensor_i<ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpace_c<Factor_,ORDER_> >,
+    public EmbeddableAsTensor_i<ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<Factor_,ORDER_>,Scalar_>,
                                 Scalar_,
                                 ExteriorPowerOfBasedVectorSpace_c<Factor_,ORDER_> >,
     // Array_t is privately inherited because it is an implementation detail
@@ -30,7 +30,7 @@ struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpace_c<Factor_,ORDE
 {
     enum { STATIC_ASSERT_IN_ENUM(HasBasedVectorSpaceStructure_f<Factor_>::V, MUST_BE_BASED_VECTOR_SPACE) };
 
-    typedef EmbeddableAsTensor_i<ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpace_c<Factor_,ORDER_> >,
+    typedef EmbeddableAsTensor_i<ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<Factor_,ORDER_>,Scalar_>,
                                  Scalar_,
                                  ExteriorPowerOfBasedVectorSpace_c<Factor_,ORDER_> > Parent_EmbeddableAsTensor_i;
     typedef Array_t<Scalar_,UniqueVectorSpaceStructureOf_f<ExteriorPowerOfBasedVectorSpace_c<Factor_,ORDER_> >::T::DIMENSION> Parent_Array_t;
@@ -85,7 +85,7 @@ struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpace_c<Factor_,ORDE
 
     static std::string type_as_string ()
     {
-        return "ImplementationOf_t<" + TypeStringOf_t<Scalar>::eval() + ',' + TypeStringOf_t<ExteriorPowerOfBasedVectorSpace>::eval() + '>';
+        return "ImplementationOf_t<" + TypeStringOf_t<ExteriorPowerOfBasedVectorSpace>::eval() + ',' + TypeStringOf_t<Scalar>::eval()  + '>';
     }
 
 private:
@@ -103,9 +103,9 @@ private:
     struct SignComputer_t;
 };
 
-template <typename Scalar_, typename Factor_, Uint32 ORDER_>
+template <typename Factor_, Uint32 ORDER_, typename Scalar_>
 template <typename BundleIndexTypeList, typename BundledIndex, Uint32 ORD>
-struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpace_c<Factor_,ORDER_> >::BundleIndexComputer_t
+struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<Factor_,ORDER_>,Scalar_>::BundleIndexComputer_t
 {
     static MultiIndex_t<BundleIndexTypeList> compute (BundledIndex const &b)
     {
@@ -113,9 +113,9 @@ struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpace_c<Factor_,ORDE
     }
 };
 
-template <typename Scalar_, typename Factor_, Uint32 ORDER_>
+template <typename Factor_, Uint32 ORDER_, typename Scalar_>
 template <typename FactorType, typename BundledIndex, Uint32 ORD>
-struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpace_c<Factor_,ORDER_> >::BundleIndexComputer_t<TypeList_t<FactorType>, BundledIndex, ORD>
+struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<Factor_,ORDER_>,Scalar_>::BundleIndexComputer_t<TypeList_t<FactorType>, BundledIndex, ORD>
 {
     static MultiIndex_t<TypeList_t<FactorType> > compute (BundledIndex const &b)
     {
@@ -123,9 +123,9 @@ struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpace_c<Factor_,ORDE
     }
 };
 
-template <typename Scalar_, typename Factor_, Uint32 ORDER_>
+template <typename Factor_, Uint32 ORDER_, typename Scalar_>
 template <typename T, typename I>
-struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpace_c<Factor_,ORDER_> >::VectorIndexComputer_t
+struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<Factor_,ORDER_>,Scalar_>::VectorIndexComputer_t
 {
     static Uint32 compute (T const &m)
     {
@@ -133,9 +133,9 @@ struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpace_c<Factor_,ORDE
     }
 };
 
-template <typename Scalar_, typename Factor_, Uint32 ORDER_>
+template <typename Factor_, Uint32 ORDER_, typename Scalar_>
 template <typename I>
-struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpace_c<Factor_,ORDER_> >::VectorIndexComputer_t<MultiIndex_t<EmptyTypeList>, I>
+struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<Factor_,ORDER_>,Scalar_>::VectorIndexComputer_t<MultiIndex_t<EmptyTypeList>, I>
 {
     static Uint32 compute (MultiIndex_t<EmptyTypeList> const &m)
     {
@@ -143,9 +143,9 @@ struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpace_c<Factor_,ORDE
     }
 };
 
-template <typename Scalar_, typename Factor_, Uint32 ORDER_>
+template <typename Factor_, Uint32 ORDER_, typename Scalar_>
 template <typename T, typename I>
-struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpace_c<Factor_,ORDER_> >::SignComputer_t
+struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<Factor_,ORDER_>,Scalar_>::SignComputer_t
 {
     static Scalar_ compute (T const &m)
     {
@@ -162,9 +162,9 @@ struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpace_c<Factor_,ORDE
     }
 };
 
-template <typename Scalar_, typename Factor_, Uint32 ORDER_>
+template <typename Factor_, Uint32 ORDER_, typename Scalar_>
 template <typename I>
-struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpace_c<Factor_,ORDER_> >::SignComputer_t<MultiIndex_t<EmptyTypeList>, I>
+struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<Factor_,ORDER_>,Scalar_>::SignComputer_t<MultiIndex_t<EmptyTypeList>, I>
 {
     static Scalar_ compute (MultiIndex_t<EmptyTypeList> const &m)
     {
@@ -172,10 +172,10 @@ struct ImplementationOf_t<Scalar_,ExteriorPowerOfBasedVectorSpace_c<Factor_,ORDE
     }
 };
 
-template <typename Scalar, typename Factor, Uint32 ORDER>
-struct DualOf_f<ImplementationOf_t<Scalar,ExteriorPowerOfBasedVectorSpace_c<Factor,ORDER> > >
+template <typename Factor, Uint32 ORDER, typename Scalar>
+struct DualOf_f<ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<Factor,ORDER>,Scalar> >
 {
-    typedef ImplementationOf_t<Scalar,typename DualOf_f<ExteriorPowerOfBasedVectorSpace_c<Factor,ORDER> >::T> T;
+    typedef ImplementationOf_t<typename DualOf_f<ExteriorPowerOfBasedVectorSpace_c<Factor,ORDER> >::T,Scalar> T;
 };
 
 } // end of namespace Tenh

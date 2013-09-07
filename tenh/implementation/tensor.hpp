@@ -14,18 +14,18 @@
 
 namespace Tenh {
 
-template <typename Scalar, typename Space> struct ImplementationOf_t;
+template <typename Concept_, typename Scalar_> struct ImplementationOf_t;
 
-template <typename Scalar_, typename FactorTypeList_>
-struct ImplementationOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >
+template <typename FactorTypeList_, typename Scalar_>
+struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Scalar_>
     :
-    public Tensor_i<ImplementationOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >,
+    public Tensor_i<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Scalar_>,
                     Scalar_,
                     TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >,
     // Array_t is privately inherited because it is an implementation detail
     private Array_t<Scalar_,UniqueVectorSpaceStructureOf_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >::T::DIMENSION>
 {
-    typedef Tensor_i<ImplementationOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >,
+    typedef Tensor_i<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Scalar_>,
                      Scalar_,
                      TensorProductOfBasedVectorSpaces_c<FactorTypeList_> > Parent_Tensor_i;
     typedef Array_t<Scalar_,UniqueVectorSpaceStructureOf_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >::T::DIMENSION> Parent_Array_t;
@@ -123,7 +123,7 @@ struct ImplementationOf_t<Scalar_,TensorProductOfBasedVectorSpaces_c<FactorTypeL
 
     static std::string type_as_string ()
     {
-        return "ImplementationOf_t<" + TypeStringOf_t<Scalar>::eval() + ',' + TypeStringOf_t<TensorProductOfBasedVectorSpaces>::eval() + '>';
+        return "ImplementationOf_t<" + TypeStringOf_t<TensorProductOfBasedVectorSpaces>::eval() + ',' + TypeStringOf_t<Scalar>::eval() + '>';
     }
 
 private:
@@ -132,10 +132,10 @@ private:
     ImplementationOf_t ();
 };
 
-template <typename Scalar, typename FactorTypeList>
-struct DualOf_f<ImplementationOf_t<Scalar,TensorProductOfBasedVectorSpaces_c<FactorTypeList> > >
+template <typename FactorTypeList, typename Scalar>
+struct DualOf_f<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList>,Scalar> >
 {
-    typedef ImplementationOf_t<Scalar,typename DualOf_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList> >::T> T;
+    typedef ImplementationOf_t<typename DualOf_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList> >::T,Scalar> T;
 };
 
 } // end of namespace Tenh

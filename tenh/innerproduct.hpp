@@ -48,24 +48,24 @@ struct DualOf_f<InnerProduct_t<BasedVectorSpace_,Scalar_> >
 // TODO: could pass in this type as Derived to ImplementationOf_t, so that the
 // EmbeddableAsTensor_i that it inherits correctly uses the operator[] of this
 // type, which can return constant Scalar_(1), instead of storing 1 and using
-// ImplementationOf_t<Scalar_,Diagonal2Tensor...>.  OR, create Diagonal2Tensor_i
+// ImplementationOf_t<Diagonal2Tensor...,Scalar_>.  OR, create Diagonal2Tensor_i
 // interface which inherits EmbeddableAsTensor_i (and eventually create
 // Scalar2Tensor_i) and have this implement Diagonal2Tensor_i.
 template <typename VectorSpace_, typename Scalar_>
 struct InnerProduct_t<BasedVectorSpace_c<VectorSpace_,StandardEuclideanBasis>,Scalar_>
     :
     public ImplementationOf_t<
-                Scalar_,
                 Diagonal2TensorProductOfBasedVectorSpaces_c<
                     typename DualOf_f<BasedVectorSpace_c<VectorSpace_,StandardEuclideanBasis> >::T,
-                    typename DualOf_f<BasedVectorSpace_c<VectorSpace_,StandardEuclideanBasis> >::T> >
+                    typename DualOf_f<BasedVectorSpace_c<VectorSpace_,StandardEuclideanBasis> >::T>,
+                Scalar_>
 {
 private:
     typedef ImplementationOf_t<
-                Scalar_,
                 Diagonal2TensorProductOfBasedVectorSpaces_c<
                     typename DualOf_f<BasedVectorSpace_c<VectorSpace_,StandardEuclideanBasis> >::T,
-                    typename DualOf_f<BasedVectorSpace_c<VectorSpace_,StandardEuclideanBasis> >::T> > Parent;
+                    typename DualOf_f<BasedVectorSpace_c<VectorSpace_,StandardEuclideanBasis> >::T>,
+                Scalar_> Parent;
 public:
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;

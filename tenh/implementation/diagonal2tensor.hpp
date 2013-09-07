@@ -14,13 +14,13 @@
 
 namespace Tenh {
 
-template <typename Scalar, typename Space> struct ImplementationOf_t;
+template <typename Concept_, typename Scalar_> struct ImplementationOf_t;
 
 // Factor_ should be a BasedVectorSpace_c type
-template <typename Scalar_, typename Factor1_, typename Factor2_>
-struct ImplementationOf_t<Scalar_,Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >
+template <typename Factor1_, typename Factor2_, typename Scalar_>
+struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,Scalar_>
     :
-    public EmbeddableAsTensor_i<ImplementationOf_t<Scalar_,Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >,
+    public EmbeddableAsTensor_i<ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,Scalar_>,
                                 Scalar_,
                                 Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >,
     // Array_t is privately inherited because it is an implementation detail
@@ -32,7 +32,7 @@ struct ImplementationOf_t<Scalar_,Diagonal2TensorProductOfBasedVectorSpaces_c<Fa
         STATIC_ASSERT_IN_ENUM__UNIQUE(HasBasedVectorSpaceStructure_f<Factor2_>::V, MUST_BE_BASED_VECTOR_SPACE, FACTOR2)
     };
 
-    typedef EmbeddableAsTensor_i<ImplementationOf_t<Scalar_,Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >,
+    typedef EmbeddableAsTensor_i<ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,Scalar_>,
                                 Scalar_,
                                 Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> > Parent_EmbeddableAsTensor_i;
     typedef Array_t<Scalar_,UniqueVectorSpaceStructureOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >::T::DIMENSION> Parent_Array_t;
@@ -96,7 +96,7 @@ struct ImplementationOf_t<Scalar_,Diagonal2TensorProductOfBasedVectorSpaces_c<Fa
 
     static std::string type_as_string ()
     {
-        return "ImplementationOf_t<" + TypeStringOf_t<Scalar>::eval() + ',' + TypeStringOf_t<Diagonal2TensorProductOfBasedVectorSpaces>::eval() + '>';
+        return "ImplementationOf_t<" + TypeStringOf_t<Diagonal2TensorProductOfBasedVectorSpaces>::eval() + ',' + TypeStringOf_t<Scalar>::eval() + '>';
     }
 
 private:
@@ -105,10 +105,10 @@ private:
     ImplementationOf_t ();
 };
 
-template <typename Scalar, typename Factor1, typename Factor2>
-struct DualOf_f<ImplementationOf_t<Scalar,Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1,Factor2> > >
+template <typename Factor1, typename Factor2, typename Scalar>
+struct DualOf_f<ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1,Factor2>,Scalar> >
 {
-    typedef ImplementationOf_t<Scalar,typename DualOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1,Factor2> >::T> T;
+    typedef ImplementationOf_t<typename DualOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1,Factor2> >::T,Scalar> T;
 };
 
 } // end of namespace Tenh

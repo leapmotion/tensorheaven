@@ -19,7 +19,7 @@ namespace Tenh {
 
 // this file contains template metaprograms which assist in the construction and evaluation of expression templates
 
-template <typename Scalar, typename Space> struct ImplementationOf_t;
+template <typename Concept_, typename Scalar_> struct ImplementationOf_t;
 
 // for this to work correctly on DimIndex_t types, the dimensions must be correct (i.e. the
 // primal/dual vector space checking must already be done).  TODO: redesign-away this caveat
@@ -380,7 +380,7 @@ struct BundleIndexMap_t
 
 template <typename Scalar, typename BundleDimIndexTypeList, typename ResultingFactorType, typename ResultingDimIndexType>
 typename BundleIndexMap_t<Scalar,BundleDimIndexTypeList,ResultingFactorType,ResultingDimIndexType>::T const BundleIndexMap_t<Scalar,BundleDimIndexTypeList,ResultingFactorType,ResultingDimIndexType>::V =
-    ImplementationOf_t<Scalar,ResultingFactorType>::template bundle_index_map<BundleDimIndexTypeList,ResultingDimIndexType>;
+    ImplementationOf_t<ResultingFactorType,Scalar>::template bundle_index_map<BundleDimIndexTypeList,ResultingDimIndexType>;
 
 // not an expression template, but just something that handles the bundled indices
 template <typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType>
@@ -528,7 +528,7 @@ struct IndexSplitter_t
                                               SplitAbstractIndexTypeList>::T SourceFactorDimIndexTypeList;
         typedef ComponentIndex_t<AS_VECTOR_SPACE(SourceFactor)::DIMENSION> SourceFactorComponentIndex;
         typedef MultiIndex_t<SourceFactorDimIndexTypeList> SourceFactorMultiIndex;
-        typedef ImplementationOf_t<Scalar,SourceFactor> ImplementationOfSourceFactor;
+        typedef ImplementationOf_t<SourceFactor,Scalar> ImplementationOfSourceFactor;
 
         SourceFactorMultiIndex s(m.template range<SOURCE_INDEX_TYPE_INDEX,SOURCE_INDEX_TYPE_INDEX+SplitAbstractIndexTypeList::LENGTH>());
         if (ImplementationOfSourceFactor::component_is_immutable_zero(s))

@@ -209,7 +209,6 @@ Notes for conceptual layer and refactor
   contraction as a linear map (a 2-tensor), then contract this with the outer product of the operands.
   This would really depend on the compiler-specific optimizations that are found in assembler code
   investigations.
-- TODO: reverse order of template arguments in ImplementationOf_t (put Scalar last)
 - TODO: refactor all the AbstractIndex/DimIndex/Factor juggling to use some standard form, like
   (AbstractIndex,Factor) pairs, from which the AbstractIndex, Factor, or DimIndex values can be
   extracted.  This will clean up tons of shitty metaprogram code.

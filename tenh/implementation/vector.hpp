@@ -14,18 +14,18 @@
 
 namespace Tenh {
 
-template <typename Scalar, typename Space> struct ImplementationOf_t;
+template <typename Concept_, typename Scalar_> struct ImplementationOf_t;
 
-template <typename Scalar_, typename VectorSpace_, typename Basis_>
-struct ImplementationOf_t<Scalar_,BasedVectorSpace_c<VectorSpace_,Basis_> >
+template <typename VectorSpace_, typename Basis_, typename Scalar_>
+struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_>
     :
-    public Vector_i<ImplementationOf_t<Scalar_,BasedVectorSpace_c<VectorSpace_,Basis_> >,
+    public Vector_i<ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_>,
                     Scalar_,
                     BasedVectorSpace_c<VectorSpace_,Basis_> >,
     // Array_t is privately inherited because it is an implementation detail
     private Array_t<Scalar_,UniqueVectorSpaceStructureOf_f<VectorSpace_>::T::DIMENSION>
 {
-    typedef Vector_i<ImplementationOf_t<Scalar_,BasedVectorSpace_c<VectorSpace_,Basis_> >,
+    typedef Vector_i<ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_>,
                      Scalar_,
                      BasedVectorSpace_c<VectorSpace_,Basis_> > Parent_Vector_i;
     typedef Array_t<Scalar_,AS_VECTOR_SPACE(VectorSpace_)::DIMENSION> Parent_Array_t;
@@ -53,7 +53,7 @@ struct ImplementationOf_t<Scalar_,BasedVectorSpace_c<VectorSpace_,Basis_> >
 
     static std::string type_as_string ()
     {
-        return "ImplementationOf_t<" + TypeStringOf_t<Scalar>::eval() + ',' + TypeStringOf_t<BasedVectorSpace>::eval() + '>';
+        return "ImplementationOf_t<" + TypeStringOf_t<BasedVectorSpace>::eval() + ',' + TypeStringOf_t<Scalar>::eval() + '>';
     }
 
 private:
@@ -64,10 +64,10 @@ private:
     ImplementationOf_t ();
 };
 
-template <typename Scalar, typename VectorSpace, typename Basis>
-struct DualOf_f<ImplementationOf_t<Scalar,BasedVectorSpace_c<VectorSpace,Basis> > >
+template <typename VectorSpace, typename Basis, typename Scalar>
+struct DualOf_f<ImplementationOf_t<BasedVectorSpace_c<VectorSpace,Basis>,Scalar> >
 {
-    typedef ImplementationOf_t<Scalar,typename DualOf_f<BasedVectorSpace_c<VectorSpace,Basis> >::T> T;
+    typedef ImplementationOf_t<typename DualOf_f<BasedVectorSpace_c<VectorSpace,Basis> >::T,Scalar> T;
 };
 
 } // end of namespace Tenh
