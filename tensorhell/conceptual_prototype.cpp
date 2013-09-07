@@ -42,11 +42,11 @@ namespace Tenh {
 
 using namespace Tenh;
 
-template<typename Vector, Uint32 ORDER, typename Scalar>
-ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<Vector,ORDER>,Scalar> test_vector_power (const ImplementationOf_t<Vector,Scalar> &input)
+template<Uint32 ORDER, typename Vector, typename Scalar>
+ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER,Vector>,Scalar> test_vector_power (const ImplementationOf_t<Vector,Scalar> &input)
 {
 //    STATIC_ASSERT(IS_BASED_VECTORSPACE_UNIQUELY(Vector), MUST_BE_BASED_VECTOR_SPACE);
-    typedef ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<Vector,ORDER>,Scalar> Sym;
+    typedef ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER,Vector>,Scalar> Sym;
     typedef ImplementationOf_t<Vector,Scalar> Vec;
 
     Sym result(Scalar(1));
@@ -385,7 +385,7 @@ int main (int argc, char **argv)
     ////////////////////////////////
 
     {
-        typedef SymmetricPower_c<X,3> SymmetricPower;
+        typedef SymmetricPower_c<3,X> SymmetricPower;
         typedef DualOf_f<SymmetricPower>::T DualSymmetricPower;
         typedef DualOf_f<DualSymmetricPower>::T DualDualSymmetricPower;
         std::cout << "SymmetricPower = "  << TypeStringOf_t<SymmetricPower>::eval() << '\n'
@@ -400,7 +400,7 @@ int main (int argc, char **argv)
 
     {
         typedef VectorSpace_c<RealField,5,X> X5;
-        typedef SymmetricPowerOfVectorSpace_c<X5,3> T;
+        typedef SymmetricPowerOfVectorSpace_c<3,X5> T;
         typedef DualOf_f<T>::T DualT;
         typedef DualOf_f<DualT>::T DualDualT;
         std::cout << "SymmetricPowerOfVectorSpace = "  << TypeStringOf_t<T>::eval() << '\n'
@@ -415,7 +415,7 @@ int main (int argc, char **argv)
 
     {
         typedef Basis_c<X> BX;
-        typedef SymmetricPowerOfBasis_c<BX,3> T;
+        typedef SymmetricPowerOfBasis_c<3,BX> T;
         typedef DualOf_f<T>::T DualT;
         typedef DualOf_f<DualT>::T DualDualT;
         std::cout << "SymmetricPowerOfBasis = "  << TypeStringOf_t<T>::eval() << '\n'
@@ -434,12 +434,12 @@ int main (int argc, char **argv)
         typedef BasedVectorSpace_c<X5,BX> BasedX;
         assert(HasBasedVectorSpaceStructure_f<BasedX>::V);
 
-        typedef SymmetricPowerOfVectorSpace_c<X5,3> TVS;
+        typedef SymmetricPowerOfVectorSpace_c<3,X5> TVS;
         assert(HasVectorSpaceStructure_f<TVS>::V);
         assert(HasSymmetricPowerStructure_f<TVS>::V);
         assert(HasSymmetricPowerOfVectorSpaceStructure_f<TVS>::V);
 
-        typedef SymmetricPowerOfBasis_c<BX,3> TB;
+        typedef SymmetricPowerOfBasis_c<3,BX> TB;
         assert(HasBasisStructure_f<TB>::V);
         assert(HasSymmetricPowerStructure_f<TB>::V);
 /*
@@ -464,7 +464,7 @@ int main (int argc, char **argv)
         }
 */
         {
-            typedef SymmetricPowerOfBasedVectorSpace_c<BasedX,3> T;
+            typedef SymmetricPowerOfBasedVectorSpace_c<3,BasedX> T;
             assert(HasSymmetricPowerStructure_f<T>::V);
             assert(HasVectorSpaceStructure_f<T>::V);
             assert(HasBasedVectorSpaceStructure_f<T>::V);
@@ -679,8 +679,8 @@ int main (int argc, char **argv)
 
         STATIC_ASSERT(HasBasedVectorSpaceStructure_f<BasedX>::V, MUST_BE_BASED_VECTOR_SPACE);
 
-        typedef SymmetricPowerOfBasedVectorSpace_c<BasedX,3> Sym3_BasedX;
-        typedef SymmetricPowerOfBasedVectorSpace_c<BasedX,2> Sym2_BasedX;
+        typedef SymmetricPowerOfBasedVectorSpace_c<3,BasedX> Sym3_BasedX;
+        typedef SymmetricPowerOfBasedVectorSpace_c<2,BasedX> Sym2_BasedX;
         typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedX, TypeList_t<BasedX> > > T2_BasedX;
 
         typedef ImplementationOf_t<Sym3_BasedX,float> Sym;
@@ -851,7 +851,7 @@ int main (int argc, char **argv)
         typedef VectorSpace_c<RealField,4,X> VSX;
         typedef Basis_c<X> BasisX;
         typedef BasedVectorSpace_c<VSX,BasisX> BasedX;
-        typedef ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<BasedX,4>,float> Sym;
+        typedef ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<4,BasedX>,float> Sym;
         typedef ImplementationOf_t<BasedX,float> Vec;
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
@@ -861,8 +861,8 @@ int main (int argc, char **argv)
 
         Vec v(1,2,3,4);
 
-        std::cout << test_vector_power<BasedX,4,float>(v) << std::endl;
-        std::cout << test_vector_power<BasedX,4,float>(v)(i).split(i,j|k|l|p) << std::endl;
+        std::cout << test_vector_power<4,BasedX,float>(v) << std::endl;
+        std::cout << test_vector_power<4,BasedX,float>(v)(i).split(i,j|k|l|p) << std::endl;
         std::cout << '\n';
     }
 

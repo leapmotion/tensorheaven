@@ -17,7 +17,7 @@
 namespace Tenh {
 
 // symmetric power of formal symbols (e.g. identifiers, builtin C++ types, etc)
-template <typename Factor_, Uint32 ORDER_>
+template <Uint32 ORDER_, typename Factor_>
 struct SymmetricPower_c
 {
     typedef EmptyTypeList ParentTypeList;
@@ -28,16 +28,16 @@ struct SymmetricPower_c
 
     static std::string type_as_string ()
     {
-        return "SymmetricPower_c<" + TypeStringOf_t<Factor>::eval() + ',' + AS_STRING(ORDER) + '>';
+        return "SymmetricPower_c<" + AS_STRING(ORDER) + ',' + TypeStringOf_t<Factor>::eval() + '>';
     }
 };
 
-template <typename Factor_, Uint32 ORDER_>
-struct IsConcept_f<SymmetricPower_c<Factor_, ORDER_> >
+template <Uint32 ORDER_, typename Factor_>
+struct IsConcept_f<SymmetricPower_c<ORDER_,Factor_> >
 { static bool const V = true; };
 
 template <typename T> struct IsSymmetricPower_f { static bool const V = false; };
-template <typename Factor, Uint32 ORDER> struct IsSymmetricPower_f<SymmetricPower_c<Factor,ORDER> > { static bool const V = true; };
+template <Uint32 ORDER, typename Factor> struct IsSymmetricPower_f<SymmetricPower_c<ORDER,Factor> > { static bool const V = true; };
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(SymmetricPower);
 // special convenience macros
@@ -45,13 +45,13 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(SymmetricPower);
 #define AS_SYMMETRIC_POWER(Concept) UniqueSymmetricPowerStructureOf_f<Concept>::T
 
 
-template <typename Factor_, Uint32 ORDER_>
+template <Uint32 ORDER_, typename Factor_>
 struct SymmetricPowerOfVectorSpace_c
 {
 private:
     enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_VECTOR_SPACE), };
-    typedef SymmetricPower_c<Factor_,ORDER_> As_SymmetricPower;
-    typedef VectorSpace_c<typename Factor_::Field,BinomialCoefficient_t<AS_VECTOR_SPACE(Factor_)::DIMENSION + ORDER_ - 1, ORDER_>::V,SymmetricPower_c<typename Factor_::Id,ORDER_> > As_VectorSpace;
+    typedef SymmetricPower_c<ORDER_,Factor_> As_SymmetricPower;
+    typedef VectorSpace_c<typename Factor_::Field,BinomialCoefficient_t<AS_VECTOR_SPACE(Factor_)::DIMENSION + ORDER_ - 1, ORDER_>::V,SymmetricPower_c<ORDER_,typename Factor_::Id> > As_VectorSpace;
     typedef typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T FactorTypeList;
     typedef EmbeddableInTensorPowerOfVectorSpace_c<TensorPowerOfVectorSpace_c<ORDER_,Factor_>,
                                                    TensorProductOfVectorSpaces_c<FactorTypeList> > As_EmbeddableInTensorPowerOfVectorSpace;
@@ -65,16 +65,16 @@ public:
 
     static std::string type_as_string ()
     {
-        return "SymmetricPowerOfVectorSpace_c<" + TypeStringOf_t<Factor>::eval() + ',' + AS_STRING(ORDER_) + '>';
+        return "SymmetricPowerOfVectorSpace_c<" + AS_STRING(ORDER_) + ',' + TypeStringOf_t<Factor>::eval() + '>';
     }
 };
 
-template <typename Factor_, Uint32 ORDER_>
-struct IsConcept_f<SymmetricPowerOfVectorSpace_c<Factor_, ORDER_> >
+template <Uint32 ORDER_, typename Factor_>
+struct IsConcept_f<SymmetricPowerOfVectorSpace_c<ORDER_,Factor_> >
 { static bool const V = true; };
 
 template <typename T> struct IsSymmetricPowerOfVectorSpace_f { static bool const V = false; };
-template <typename Factor, Uint32 ORDER> struct IsSymmetricPowerOfVectorSpace_f<SymmetricPowerOfVectorSpace_c<Factor,ORDER> > { static bool const V = true; };
+template <Uint32 ORDER, typename Factor> struct IsSymmetricPowerOfVectorSpace_f<SymmetricPowerOfVectorSpace_c<ORDER,Factor> > { static bool const V = true; };
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(SymmetricPowerOfVectorSpace);
 // special convenience macros
@@ -83,13 +83,13 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(SymmetricPowerOfVectorSpace);
 
 
 // Factor_ must be a Basis_c type
-template <typename Factor_, Uint32 ORDER_>
+template <Uint32 ORDER_, typename Factor_>
 struct SymmetricPowerOfBasis_c
 {
 private:
     enum { STATIC_ASSERT_IN_ENUM(IS_BASIS_UNIQUELY(Factor_), MUST_BE_BASIS) };
-    typedef SymmetricPower_c<Factor_,ORDER_> As_SymmetricPower;
-    typedef Basis_c<SymmetricPower_c<Factor_,ORDER_> > As_Basis;
+    typedef SymmetricPower_c<ORDER_,Factor_> As_SymmetricPower;
+    typedef Basis_c<SymmetricPower_c<ORDER_,Factor_> > As_Basis;
 public:
     typedef TypeList_t<As_SymmetricPower,
             TypeList_t<As_Basis> > ParentTypeList;
@@ -100,16 +100,16 @@ public:
 
     static std::string type_as_string ()
     {
-        return "SymmetricPowerOfBasis_c<" + TypeStringOf_t<Factor>::eval() + ',' + AS_STRING(ORDER) + '>';
+        return "SymmetricPowerOfBasis_c<" + AS_STRING(ORDER) + ',' + TypeStringOf_t<Factor>::eval() + '>';
     }
 };
 
-template <typename Factor_, Uint32 ORDER_>
-struct IsConcept_f<SymmetricPowerOfBasis_c<Factor_, ORDER_> >
+template <Uint32 ORDER_, typename Factor_>
+struct IsConcept_f<SymmetricPowerOfBasis_c<ORDER_,Factor_> >
 { static bool const V = true; };
 
 template <typename T> struct IsSymmetricPowerOfBasis_f { static bool const V = false; };
-template <typename Factor, Uint32 ORDER> struct IsSymmetricPowerOfBasis_f<SymmetricPowerOfBasis_c<Factor,ORDER> > { static bool const V = true; };
+template <Uint32 ORDER, typename Factor> struct IsSymmetricPowerOfBasis_f<SymmetricPowerOfBasis_c<ORDER,Factor> > { static bool const V = true; };
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(SymmetricPowerOfBasis);
 // special convenience macros
@@ -162,12 +162,12 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(BasedSymmetricPowerOfVectorSpace);
 
 
 // Factor_ must be a BasedVectorSpace_c type
-template <typename Factor_, Uint32 ORDER_>
+template <Uint32 ORDER_, typename Factor_>
 struct SymmetricPowerOfBasedVectorSpace_c
 {
 private:
     enum { STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_BASED_VECTOR_SPACE) };
-    typedef BasedSymmetricPowerOfVectorSpace_c<SymmetricPowerOfVectorSpace_c<Factor_,ORDER_>, SymmetricPowerOfBasis_c<typename AS_BASED_VECTOR_SPACE(Factor_)::Basis, ORDER_> > As_BasedSymmetricPowerOfVectorSpace;
+    typedef BasedSymmetricPowerOfVectorSpace_c<SymmetricPowerOfVectorSpace_c<ORDER_,Factor_>, SymmetricPowerOfBasis_c<ORDER_,typename AS_BASED_VECTOR_SPACE(Factor_)::Basis> > As_BasedSymmetricPowerOfVectorSpace;
     typedef typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T FactorTypeList;
     typedef EmbeddableInTensorPowerOfBasedVectorSpace_c<TensorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,
                                                         TensorPowerOfVectorSpace_c<ORDER_,Factor_>,
@@ -182,16 +182,16 @@ public:
 
     static std::string type_as_string ()
     {
-        return "SymmetricPowerOfBasedVectorSpace_c<" + TypeStringOf_t<Factor_>::eval() + ',' + AS_STRING(ORDER_) + '>';
+        return "SymmetricPowerOfBasedVectorSpace_c<" + AS_STRING(ORDER_) + ',' + TypeStringOf_t<Factor_>::eval() + '>';
     }
 };
 
-template <typename Factor_, Uint32 ORDER_>
-struct IsConcept_f<SymmetricPowerOfBasedVectorSpace_c<Factor_, ORDER_> >
+template <Uint32 ORDER_, typename Factor_>
+struct IsConcept_f<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> >
 { static bool const V = true; };
 
 template <typename T> struct IsSymmetricPowerOfBasedVectorSpace_f { static bool const V = false; };
-template <typename Factor, Uint32 ORDER> struct IsSymmetricPowerOfBasedVectorSpace_f<SymmetricPowerOfBasedVectorSpace_c<Factor,ORDER> > { static bool const V = true; };
+template <Uint32 ORDER, typename Factor> struct IsSymmetricPowerOfBasedVectorSpace_f<SymmetricPowerOfBasedVectorSpace_c<ORDER,Factor> > { static bool const V = true; };
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(SymmetricPowerOfBasedVectorSpace);
 // special convenience macros
