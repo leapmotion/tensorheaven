@@ -4,6 +4,7 @@
 #include "tenh/core.hpp"
 
 #include "tenh/array.hpp"
+#include "tenh/conceptual/abstractindex.hpp"
 #include "tenh/conceptual/basis.hpp"
 #include "tenh/conceptual/diagonalbased2tensorproduct.hpp"
 #include "tenh/conceptual/exteriorpower.hpp"
@@ -12,13 +13,13 @@
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/conceptual/vectorspace.hpp"
 #include "tenh/conceptual/dual.hpp"
-#include "tenh/expressiontemplate_eval.hpp"
-#include "tenh/implementation/diagonal2tensor.hpp"
+// #include "tenh/expressiontemplate_eval.hpp"
+// #include "tenh/implementation/diagonal2tensor.hpp"
 #include "tenh/implementation/tensor.hpp"
 #include "tenh/implementation/vector.hpp"
-#include "tenh/implementation/vee.hpp"
-#include "tenh/implementation/wedge.hpp"
-#include "tenh/innerproduct.hpp"
+// #include "tenh/implementation/vee.hpp"
+// #include "tenh/implementation/wedge.hpp"
+// #include "tenh/innerproduct.hpp"
 
 struct X
 {
@@ -35,12 +36,84 @@ struct Z
     static std::string type_as_string () { return "Z"; }
 };
 
-namespace Tenh {
-
-
-} // end of namespace Tenh
-
 using namespace Tenh;
+
+int main (int argc, char **argv)
+{
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,Basis_c<X> > BasedX;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,Y>,Basis_c<Y> > BasedY;
+    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedY,TypeList_t<DualOf_f<BasedX>::T> > > YTensorXDual;
+
+    {
+        std::cout << "member array\n";
+        typedef ImplementationOf_t<BasedX,float,USE_MEMBER_ARRAY> V;
+        V v(1.0f, 2.0f, 4.0f);
+        std::cout << FORMAT_VALUE(v) << '\n';
+        std::cout << '\n';
+
+        // the following should cause a compile error regarding USE_PREALLOCATED_ARRAY
+        //float components[3] = {8.0f, 10.0f, 11.0f};
+        //V w(&components[0]);
+    }
+
+    {
+        std::cout << "preallocated array\n";
+        typedef ImplementationOf_t<BasedX,float,USE_PREALLOCATED_ARRAY> V;
+        float components[3] = {8.0f, 10.0f, 11.0f};
+        std::cout << FORMAT_VALUE(components[0]) << ", " << FORMAT_VALUE(components[1]) << ", " << FORMAT_VALUE(components[2]) << '\n';
+        V v(&components[0], CHECK_POINTER); // v must live no longer than components[]
+        std::cout << FORMAT_VALUE(&components[0]) << ", " << FORMAT_VALUE(v.pointer_to_allocation()) << '\n';
+        std::cout << FORMAT_VALUE(&v[V::MultiIndex(0)]) << '\n';
+        std::cout << FORMAT_VALUE(v[V::MultiIndex(0)]) << '\n';
+        std::cout << FORMAT_VALUE(v[V::ComponentIndex(0)]) << ", " << FORMAT_VALUE(v[V::ComponentIndex(1)]) << ", " << FORMAT_VALUE(v[V::ComponentIndex(2)]) << '\n';
+        std::cout << FORMAT_VALUE(v) << '\n';
+        AbstractIndex_c<'i'> i;
+        std::cout << FORMAT_VALUE(v(i)) << '\n';
+        for (V::ComponentIndex j; j.is_not_at_end(); ++j)
+            std::cout << FORMAT_VALUE(v[j]) << '\n';
+
+        // the following should cause a compile error regarding USE_MEMBER_ARRAY
+        //V w(1.0f, 2.0f, 4.0f);
+
+        typedef ImplementationOf_t<BasedY,float,USE_PREALLOCATED_ARRAY> W;
+        W w(&components[1]); // last 2 components, i.e. a linear subspace
+        std::cout << FORMAT_VALUE(w) << '\n';
+        std::cout << '\n';
+    }
+
+    {
+        typedef ImplementationOf_t<BasedX,float,USE_PREALLOCATED_ARRAY> V;
+        typedef ImplementationOf_t<YTensorXDual,float,USE_MEMBER_ARRAY> T;
+        float components[3] = {8.0f, 10.0f, 11.0f};
+        V v(&components[0], CHECK_POINTER); // v must live no longer than components[]
+        T t(2.0f);
+        t[T::MultiIndex(0,1)] = -1.0f;
+        t[T::MultiIndex(1,2)] = 3.0f;
+        std::cout << FORMAT_VALUE(t) << '\n';
+        std::cout << FORMAT_VALUE(v) << '\n';
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        std::cout << FORMAT_VALUE(t(i|j)*v(j)) << '\n';
+
+        std::cout << '\n';
+    }
+
+    {
+        typedef ImplementationOf_t<YTensorXDual,float,USE_MEMBER_ARRAY> T;
+        typedef ImplementationOf_t<YTensorXDual,float,USE_PREALLOCATED_ARRAY> U;
+        T t(2.0f);
+        t[T::MultiIndex(0,1)] = -1.0f;
+        t[T::MultiIndex(1,2)] = 3.0f;
+        U u(t.pointer_to_allocation()); // u must live no longer than t
+        std::cout << FORMAT_VALUE(t) << '\n';
+        std::cout << FORMAT_VALUE(u) << '\n';
+        std::cout << '\n';
+    }
+
+    return 0;
+}
+
+#if 0
 
 template<Uint32 ORDER, typename Vector, typename Scalar>
 ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER,Vector>,Scalar> test_vector_power (const ImplementationOf_t<Vector,Scalar> &input)
@@ -908,3 +981,4 @@ int main (int argc, char **argv)
 
     return 0;
 }
+#endif

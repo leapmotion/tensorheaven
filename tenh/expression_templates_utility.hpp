@@ -11,15 +11,13 @@
 #include "tenh/componentindex.hpp"
 #include "tenh/conceptual/abstractindex.hpp"
 #include "tenh/dimindex.hpp"
-// #include "tenh/innerproduct.hpp"
+#include "tenh/implementation/implementationof.hpp"
 #include "tenh/meta/typelist.hpp"
 #include "tenh/multiindex.hpp"
 
 namespace Tenh {
 
 // this file contains template metaprograms which assist in the construction and evaluation of expression templates
-
-template <typename Concept_, typename Scalar_> struct ImplementationOf_t;
 
 // for this to work correctly on DimIndex_t types, the dimensions must be correct (i.e. the
 // primal/dual vector space checking must already be done).  TODO: redesign-away this caveat
@@ -83,20 +81,6 @@ public:
     // each pair in FreeFactorAndIndexPairTypeList is a (factor, index) TypeList_t
     typedef typename FreeFactorTypeListHelper_t<Unzipped>::T T;
 };
-
-/*
-template <typename HeadType>
-typename HeadType::Owner::Scalar summation_component_factor (MultiIndex_t<TypeList_t<HeadType> > const &s)
-{
-    return InnerProduct_t<typename HeadType::Owner,typename HeadType::Owner::Basis>::component(s.head());
-}
-
-template <typename HeadType, typename BodyTypeList>
-typename HeadType::Owner::Scalar summation_component_factor (MultiIndex_t<TypeList_t<HeadType,BodyTypeList> > const &s)
-{
-    return InnerProduct_t<typename HeadType::Owner,typename HeadType::Owner::Basis>::component(s.head()) * summation_component_factor(s.body());
-}
-*/
 
 template <typename AbstractIndexTypeList, typename SummedAbstractIndexTypeList, typename AbstractIndex>
 struct SummedAbstractIndexPairElementIndices_t
@@ -378,9 +362,10 @@ struct BundleIndexMap_t
     static T const V;
 };
 
+// TODO: the use of USE_MEMBER_ARRAY is somewhat arbitrary -- should this be addressed somehow?
 template <typename Scalar, typename BundleDimIndexTypeList, typename ResultingFactorType, typename ResultingDimIndexType>
 typename BundleIndexMap_t<Scalar,BundleDimIndexTypeList,ResultingFactorType,ResultingDimIndexType>::T const BundleIndexMap_t<Scalar,BundleDimIndexTypeList,ResultingFactorType,ResultingDimIndexType>::V =
-    ImplementationOf_t<ResultingFactorType,Scalar>::template bundle_index_map<BundleDimIndexTypeList,ResultingDimIndexType>;
+    ImplementationOf_t<ResultingFactorType,Scalar,USE_MEMBER_ARRAY>::template bundle_index_map<BundleDimIndexTypeList,ResultingDimIndexType>;
 
 // not an expression template, but just something that handles the bundled indices
 template <typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType>
@@ -528,7 +513,9 @@ struct IndexSplitter_t
                                               SplitAbstractIndexTypeList>::T SourceFactorDimIndexTypeList;
         typedef ComponentIndex_t<AS_VECTOR_SPACE(SourceFactor)::DIMENSION> SourceFactorComponentIndex;
         typedef MultiIndex_t<SourceFactorDimIndexTypeList> SourceFactorMultiIndex;
-        typedef ImplementationOf_t<SourceFactor,Scalar> ImplementationOfSourceFactor;
+        // TODO: the use of USE_MEMBER_ARRAY here is arbitrary because it's just used to access a
+        // static method.  figure out if this is a problem
+        typedef ImplementationOf_t<SourceFactor,Scalar,USE_MEMBER_ARRAY> ImplementationOfSourceFactor;
 
         SourceFactorMultiIndex s(m.template range<SOURCE_INDEX_TYPE_INDEX,SOURCE_INDEX_TYPE_INDEX+SplitAbstractIndexTypeList::LENGTH>());
         if (ImplementationOfSourceFactor::component_is_immutable_zero(s))

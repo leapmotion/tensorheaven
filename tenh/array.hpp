@@ -16,10 +16,20 @@ namespace Tenh {
 
 // fixed-length array of a given component type, which must be a POD type
 // (the allocation_size_in_bytes and pointer_to_allocation methods require this).
-template <typename Component_, Uint32 COMPONENT_COUNT_>
-struct Array_t : public Array_i<Array_t<Component_,COMPONENT_COUNT_>,Component_,COMPONENT_COUNT_>
+template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_ = NullType>
+struct Array_t
+    :
+    public Array_i<typename Lvd::Meta::If<(Lvd::Meta::TypesAreEqual<Derived_,NullType>::v),
+                                          Array_t<Component_,COMPONENT_COUNT_,Derived_>,
+                                          Derived_>::T,
+                   Component_,
+                   COMPONENT_COUNT_>
 {
-    typedef Array_i<Array_t<Component_,COMPONENT_COUNT_>,Component_,COMPONENT_COUNT_> Parent_Array_i;
+    typedef Array_i<typename Lvd::Meta::If<(Lvd::Meta::TypesAreEqual<Derived_,NullType>::v),
+                                          Array_t<Component_,COMPONENT_COUNT_,Derived_>,
+                                          Derived_>::T,
+                    Component_,
+                    COMPONENT_COUNT_> Parent_Array_i;
 
     typedef typename Parent_Array_i::Component Component;
     using Parent_Array_i::COMPONENT_COUNT;
@@ -73,9 +83,9 @@ private:
 };
 
 template <typename T> struct IsArray_t { static bool const V = false; };
-template <typename Component, Uint32 COMPONENT_COUNT> struct IsArray_t<Array_t<Component,COMPONENT_COUNT> > { static bool const V = true; };
+template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_> struct IsArray_t<Array_t<Component_,COMPONENT_COUNT_,Derived_> > { static bool const V = true; };
 
-template <typename Component, Uint32 COMPONENT_COUNT> struct IsArray_i<Array_t<Component,COMPONENT_COUNT> > { static bool const V = true; };
+template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_> struct IsArray_i<Array_t<Component_,COMPONENT_COUNT_,Derived_> > { static bool const V = true; };
 
 } // end of namespace Tenh
 

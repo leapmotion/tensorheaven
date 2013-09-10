@@ -18,16 +18,33 @@ namespace Tenh {
 // (the allocation_size_in_bytes and pointer_to_allocation methods require this).  this
 // implementation of Array_i is a "map" to preexisting memory -- it just
 // puts an Array_i interface on existing memory.
-template <typename Component_, Uint32 COMPONENT_COUNT_>
+template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_ = NullType>
 struct PreallocatedArray_t
     :
-    public Array_i<PreallocatedArray_t<Component_,COMPONENT_COUNT_>,Component_,COMPONENT_COUNT_>
+    public Array_i<typename Lvd::Meta::If<(Lvd::Meta::TypesAreEqual<Derived_,NullType>::v),
+                                          PreallocatedArray_t<Component_,COMPONENT_COUNT_,Derived_>,
+                                          Derived_>::T,
+                   Component_,
+                   COMPONENT_COUNT_>
 {
-    typedef Array_i<PreallocatedArray_t<Component_,COMPONENT_COUNT_>,Component_,COMPONENT_COUNT_> Parent_Array_i;
+    typedef Array_i<typename Lvd::Meta::If<(Lvd::Meta::TypesAreEqual<Derived_,NullType>::v),
+                                           PreallocatedArray_t<Component_,COMPONENT_COUNT_,Derived_>,
+                                           Derived_>::T,
+                    Component_,
+                    COMPONENT_COUNT_> Parent_Array_i;
 
     typedef typename Parent_Array_i::Component Component;
     using Parent_Array_i::COMPONENT_COUNT;
     typedef typename Parent_Array_i::ComponentIndex ComponentIndex;
+
+    explicit PreallocatedArray_t (WithoutInitialization const &) : m_pointer_to_allocation(NULL) { }
+    explicit PreallocatedArray_t (Component *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+        :
+        m_pointer_to_allocation(pointer_to_allocation)
+    {
+        if (check_pointer && m_pointer_to_allocation == NULL)
+            throw std::invalid_argument("invalid pointer_to_allocation argument (must be non-NULL)");
+    }
 
 // this is to allow 0-component arrays to work (necessary for 0-dimensional vectors)
 #ifdef __clang_version__
@@ -35,7 +52,6 @@ struct PreallocatedArray_t
 #pragma GCC diagnostic ignored "-Wtautological-compare"
 #endif // __clang_version__
 
-    explicit PreallocatedArray_t (WithoutInitialization const &) : m_pointer_to_allocation(NULL) { }
     PreallocatedArray_t (Component const &fill_with, Component *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         m_pointer_to_allocation(pointer_to_allocation)
@@ -90,7 +106,6 @@ struct PreallocatedArray_t
     // the existence of this method is a necessary corollary of the WithoutInitialization constructor.
     void set_pointer_to_allocation (Component *pointer_to_allocation) { m_pointer_to_allocation = pointer_to_allocation; }
 
-    // pointer_to_allocation
     Component const &operator [] (ComponentIndex const &i) const
     {
         assert(m_pointer_to_allocation != NULL && "you didn't initialize the pointer_to_allocation value");
@@ -125,9 +140,9 @@ private:
 };
 
 template <typename T> struct IsPreallocatedArray_t { static bool const V = false; };
-template <typename Component, Uint32 COMPONENT_COUNT> struct IsPreallocatedArray_t<PreallocatedArray_t<Component,COMPONENT_COUNT> > { static bool const V = true; };
+template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_> struct IsPreallocatedArray_t<PreallocatedArray_t<Component_,COMPONENT_COUNT_,Derived_> > { static bool const V = true; };
 
-template <typename Component, Uint32 COMPONENT_COUNT> struct IsArray_i<PreallocatedArray_t<Component,COMPONENT_COUNT> > { static bool const V = true; };
+template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_> struct IsArray_i<PreallocatedArray_t<Component_,COMPONENT_COUNT_,Derived_> > { static bool const V = true; };
 
 } // end of namespace Tenh
 

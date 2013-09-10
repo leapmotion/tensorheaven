@@ -28,13 +28,6 @@ struct Array_i
     static Uint32 const COMPONENT_COUNT = COMPONENT_COUNT_;
     typedef ComponentIndex_t<COMPONENT_COUNT> ComponentIndex;
 
-// protected:
-
-//     explicit Array_i (WithoutInitialization const &) { }
-//     explicit Array_i () { }
-
-// public:
-
     Component const &operator [] (ComponentIndex const &i) const { return as_derived().Derived::operator[](i); }
     Component &operator [] (ComponentIndex const &i) { return as_derived().Derived::operator[](i); }
 

@@ -78,6 +78,7 @@ static bool const DONT_CHECK_RANGE = false;
 // pointer check and gain efficiency (e.g. if you know for a fact that the pointer is
 // non-NULL).  this is a compromise between completely correct program behavior and
 // program efficiency.
+// TODO: should these be moved to preallocatedarray.hpp? (if they're only used there)
 static bool const CHECK_POINTER = true;
 static bool const DONT_CHECK_POINTER = false;
 

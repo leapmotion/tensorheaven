@@ -19,6 +19,7 @@ namespace Tenh {
 
 // this is an expression template which caches the evaluation of its operand
 // so that aliasing can be avoided in particular expression template assignments.
+// TODO: should this optionally USE_PREALLOCATED_ARRAY ?
 template <typename Operand>
 struct ExpressionTemplate_Eval_t
     :
@@ -96,7 +97,7 @@ private:
         }
     }
 
-    typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FreeFactorTypeList>,Scalar> Tensor;
+    typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FreeFactorTypeList>,Scalar,USE_MEMBER_ARRAY> Tensor;
 
     Operand const &m_operand;
     mutable bool m_eval_is_cached;
