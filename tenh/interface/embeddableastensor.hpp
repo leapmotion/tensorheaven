@@ -14,6 +14,7 @@
 #include "tenh/conceptual/embeddableintensorproduct.hpp"
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/expression_templates.hpp"
+#include "tenh/interface/tensor.hpp"
 #include "tenh/interface/vector.hpp"
 #include "tenh/meta/typelist_utility.hpp"
 
@@ -23,12 +24,13 @@ namespace Tenh {
 // EmbeddableAsTensor_ should be a EmbeddableAsTensor_c type.
 // TODO: technically, this should be LinearlyEmbeddableAsTensor_i
 template <typename Derived_, typename Scalar_, typename EmbeddableInTensorProductOfBasedVectorSpaces_>
-struct EmbeddableAsTensor_i : public Vector_i<Derived_,Scalar_,EmbeddableInTensorProductOfBasedVectorSpaces_>
+struct EmbeddableAsTensor_i
+    :
+    public Vector_i<Derived_,Scalar_,EmbeddableInTensorProductOfBasedVectorSpaces_>
 {
     enum
     {
         STATIC_ASSERT_IN_ENUM((!Lvd::Meta::TypesAreEqual<Derived_,NullType>::v), DERIVED_MUST_NOT_BE_NULL_TYPE),
-        //STATIC_ASSERT_IN_ENUM((FactorTypeList_::LENGTH > 0), MUST_BE_NONEMPTY) // NOTE: deprecate this, since 0-order tensors should be allowed
         STATIC_ASSERT_IN_ENUM(IS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES_UNIQUELY(EmbeddableInTensorProductOfBasedVectorSpaces_),
                               MUST_BE_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES),
     };

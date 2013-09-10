@@ -70,7 +70,7 @@ random TODOs:
   * Blah_c<...> for the conceptual layer
   * Blah_i<...> for the templatized interface layer (this is somewhere between _c and _i)
   * Blah_m<...> for meta-programmingy things like type lists and related metafunctions
-  * Blah_f<...> for meta-functions which "return" a type T
+  * Blah_f<...> for meta-functions which "return" a type T or a value V
 - add "operator std::string ()" to TypeStringOf_t (?), so that "TypeStringOf_t<Foo>()" can be used
 - rename List_t::body() to List_t::body_list(), since the body list type is BodyList
 - maybe change array (and array-like) indexing schemes to use signed integers, where negative
@@ -82,6 +82,8 @@ random TODOs:
 - The non-conceptual IsBlah_f metafunctions should really be called InheritsBlah_f, since these
   are overloaded to reflect the class inheritance structure.  This is to be contrasted with the
   conceptual layer, where IsBlah_f<T>::V is true if and only if T actually is exactly a Blah type.
+- make a bunch of the typedefs in ImplementationOf_t classes private, and decide which ones
+  to offer publicly, or get rid of.
 
 features necessary for version 0.5:
 x euclidean embedding (using short-term zero-dimensional hack (?))
@@ -235,16 +237,36 @@ Notes for conceptual layer and refactor
   corresponding EmbeddableIn* concepts trivially.
 - make the conceptual use of dimension use the full identifier DIMENSION, and reserve DIM for implementation
 - Make a full pass to remove the unnecessary members/member types from concepts
+- ComponentIndex_t and DimIndex_t should possibly be made conceptual types, they interact with 
+  AbstractIndex_c, and right now DimIndex_t still overrides IsAbstractIndex_f (this is from Ted's 
+  commit ecebc8c4bd3a54b4f83f2ba74871990828f1114d on the cleanup-conceptual-members branch).
+- It might ease things like inducing inner products on tensor products/symmetric powers/etc if
+  there was some decoupled "component supplier" mechanism, so it was much easier to define
+  inner products and so forth without having to define new, heavyweight ImplementationOf_t-like
+  classes.
+- Add ElementOf_c<Concept,Id> (or ElementOf_c<ConcreteCategoryObject,Id> ?) which is essentially
+  a formal symbol for a particular element of an object in a category.  This will be used e.g.
+  in defining an inner product space (which is a vector space and a particular tensor).
+- TODO: think about how to use runtime-specified inner products (lazy initialization?), since
+  probably the inner product implementation type has to be constructed using the default
+  constructor.
+- TODO: augment "bool USE_MEMBER_ARRAY_" template parameter of ImplementationOf_t to be a
+  specifier of the existing two (USE_MEMBER_ARRAY or USE_PREALLOCATED_ARRAY) and an additional
+  option (which could implement Array_i) which uses a static "component generator" function
+  to provide "immutable" ImplemementationOf_t types 
 
 
 Features necessary for "version 1.0"
 x implementation of diagonal 2-tensors (of based vector spaces)
 - implementation of the optimization for contraction with diagonal 2-tensors (necessary so
-  that we can implement inner products and other similar bilinear forms efficiently)
-- implement analog of Eigen's "map" (providing a vector/tensor/ext-pow/sym-pow/everything
-  implementations which uses some separate, specified block of memory, which could e.g.
-  coincide with an Eigen::Matrix).  Maybe do this via abstracting some aspects of Array_t
-  into Array_i, making Array_t inherit Array_i, then making PreallocatedArray_t also inherit
+  that we can implement inner products and other similar bilinear forms efficiently).
+  QUESTION: Is there some reasonable generalization of diagonal 2-tensors to higher order
+  tensors?  The answer to this question would likely be informed by results in higher
+  order SVDs.
+- implement analog of Eigen's "map" (providing a vector/tensor/ext-pow/sym-pow/everything 
+  implementations which uses some separate, specified block of memory, which could e.g. 
+  coincide with an Eigen::Matrix).  Maybe do this via abstracting some aspects of Array_t 
+  into Array_i, making Array_t inherit Array_i, then making PreallocatedArray_t also inherit 
   Array_i.  Then the "mapped" versions of each tensor implementation would just flip a
   switch to use Array_t or PreallocatedArray_t (hopefully it can be this simple).
 - refactoring the Eigen interop code to be strongly typed, ideally using the "map" functionality
@@ -310,6 +332,8 @@ Notes for Gabe's "Linear Operator" ("Hom"?) paradigm
 
 
 Notes for [probable] upgrade to C++11 (to happen after "version 1.0" is reached)
+- TODO: look into C++11 support for embedded (and other) compilers that we might have to
+  deal with in the future.
 - "Template typedefs" are possible through "alias declarations" in C++11:
 
     C++11 added alias declarations, which are generalization of typedef, allowing templates:
@@ -388,7 +412,8 @@ Notes from Tensor Heaven future planning
     has type W \otimes W, and TensorPower<2>(R) \in Hom(V \otimes V, W \otimes W).
 
     The C++ operator* will compute an unambiguous in-line contraction (think box diagrams
-    with lines connecting the contracted boxes).
+    with lines connecting the contracted boxes).  Note that taking the tensor/exterior/symmetric
+    power is a functor on the category of [based] vector spaces.
   * Tensor calculus library with pullback formalism.
 - Features necessary for project use
   * Inner products

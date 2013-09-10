@@ -111,9 +111,7 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,USE_ME
     }
 
     using Parent_Array_i::as_derived;
-    //using Parent_Vector_i::as_derived;
     using Parent_Array_i::operator[];
-
     using Parent_Array_i::allocation_size_in_bytes;
     using Parent_Array_i::pointer_to_allocation;
 

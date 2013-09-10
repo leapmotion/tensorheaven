@@ -8,34 +8,38 @@
 
 #include "tenh/core.hpp"
 
-#include "tenh/array.hpp"
 #include "tenh/conceptual/diagonalbased2tensorproduct.hpp"
+#include "tenh/implementation/implementationof.hpp"
 #include "tenh/interface/embeddableastensor.hpp"
 
 namespace Tenh {
 
-template <typename Concept_, typename Scalar_> struct ImplementationOf_t;
-
 // Factor_ should be a BasedVectorSpace_c type
-template <typename Factor1_, typename Factor2_, typename Scalar_>
-struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,Scalar_>
+template <typename Factor1_, typename Factor2_, typename Scalar_, bool USE_MEMBER_ARRAY_>
+struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,Scalar_,USE_MEMBER_ARRAY_>
     :
-    public EmbeddableAsTensor_i<ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,Scalar_>,
+    public EmbeddableAsTensor_i<ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,Scalar_,USE_MEMBER_ARRAY_>,
                                 Scalar_,
                                 Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >,
-    // Array_t is privately inherited because it is an implementation detail
-    private Array_t<Scalar_,UniqueVectorSpaceStructureOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >::T::DIMENSION>
+    // privately inherited because it is an implementation detail
+    private ArrayStorage_f<Scalar_,
+                           UniqueVectorSpaceStructureOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >::T::DIMENSION,
+                           USE_MEMBER_ARRAY_,
+                           ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,Scalar_,USE_MEMBER_ARRAY_> >::T
 {
     enum
     {
-        STATIC_ASSERT_IN_ENUM__UNIQUE(HasBasedVectorSpaceStructure_f<Factor1_>::V, MUST_BE_BASED_VECTOR_SPACE, FACTOR1),
-        STATIC_ASSERT_IN_ENUM__UNIQUE(HasBasedVectorSpaceStructure_f<Factor2_>::V, MUST_BE_BASED_VECTOR_SPACE, FACTOR2)
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor1_), MUST_BE_BASED_VECTOR_SPACE, FACTOR1),
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor2_), MUST_BE_BASED_VECTOR_SPACE, FACTOR2)
     };
 
-    typedef EmbeddableAsTensor_i<ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,Scalar_>,
-                                Scalar_,
-                                Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> > Parent_EmbeddableAsTensor_i;
-    typedef Array_t<Scalar_,UniqueVectorSpaceStructureOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >::T::DIMENSION> Parent_Array_t;
+    typedef EmbeddableAsTensor_i<ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,Scalar_,USE_MEMBER_ARRAY_>,
+                                 Scalar_,
+                                 Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> > Parent_EmbeddableAsTensor_i;
+    typedef typename ArrayStorage_f<Scalar_,
+                                    UniqueVectorSpaceStructureOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >::T::DIMENSION,
+                                    USE_MEMBER_ARRAY_,
+                                    ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,Scalar_,USE_MEMBER_ARRAY_> >::T Parent_Array_i;
 
     typedef typename Parent_EmbeddableAsTensor_i::Derived Derived;
     typedef typename Parent_EmbeddableAsTensor_i::Scalar Scalar;
@@ -53,14 +57,74 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,F
 
     typedef typename DualOf_f<ImplementationOf_t>::T Dual; // relies on the template specialization below
 
-    explicit ImplementationOf_t (WithoutInitialization const &w) : Parent_Array_t(w) { }
+    explicit ImplementationOf_t (WithoutInitialization const &w) : Parent_Array_i(w) { }
+
+    // only use these if USE_MEMBER_ARRAY is specified
+
     // probably only useful for zero element (because this is basis-dependent), though
     // this would also give any scalar matrix, including the identity matrix (though you
     // would really want to TODO: implement Scalar2TensorProductOfBasedVectorSpaces_c)
-    explicit ImplementationOf_t (Scalar const &fill_with) : Parent_Array_t(fill_with) { }
-    ImplementationOf_t (Scalar const &x0, Scalar const &x1) : Parent_Array_t(x0, x1) { }
-    ImplementationOf_t (Scalar const &x0, Scalar const &x1, Scalar const &x2) : Parent_Array_t(x0, x1, x2) { }
-    ImplementationOf_t (Scalar const &x0, Scalar const &x1, Scalar const &x2, Scalar const &x3) : Parent_Array_t(x0, x1, x2, x3) { }
+    explicit ImplementationOf_t (Scalar const &fill_with)
+        :
+        Parent_Array_i(fill_with)
+    {
+        STATIC_ASSERT(USE_MEMBER_ARRAY_ == USE_MEMBER_ARRAY, MAY_USE_THIS_ONLY_WITH_USE_MEMBER_ARRAY);
+    }
+    ImplementationOf_t (Scalar const &x0, Scalar const &x1)
+        :
+        Parent_Array_i(x0, x1)
+    {
+        STATIC_ASSERT(USE_MEMBER_ARRAY_ == USE_MEMBER_ARRAY, MAY_USE_THIS_ONLY_WITH_USE_MEMBER_ARRAY);
+    }
+    ImplementationOf_t (Scalar const &x0, Scalar const &x1, Scalar const &x2)
+        :
+        Parent_Array_i(x0, x1, x2)
+    {
+        STATIC_ASSERT(USE_MEMBER_ARRAY_ == USE_MEMBER_ARRAY, MAY_USE_THIS_ONLY_WITH_USE_MEMBER_ARRAY);
+    }
+    ImplementationOf_t (Scalar const &x0, Scalar const &x1, Scalar const &x2, Scalar const &x3)
+        :
+        Parent_Array_i(x0, x1, x2, x3)
+    {
+        STATIC_ASSERT(USE_MEMBER_ARRAY_ == USE_MEMBER_ARRAY, MAY_USE_THIS_ONLY_WITH_USE_MEMBER_ARRAY);
+    }
+
+    // only use these if USE_PREALLOCATED_ARRAY is specified
+
+    explicit ImplementationOf_t (Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+        :
+        Parent_Array_i(pointer_to_allocation, check_pointer)
+    {
+        STATIC_ASSERT(USE_MEMBER_ARRAY_ == USE_PREALLOCATED_ARRAY, MAY_USE_THIS_ONLY_WITH_USE_PREALLOCATED_ARRAY);
+    }
+    ImplementationOf_t (Scalar const &fill_with, 
+                        Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+        :
+        Parent_Array_i(fill_with, pointer_to_allocation, check_pointer)
+    {
+        STATIC_ASSERT(USE_MEMBER_ARRAY_ == USE_PREALLOCATED_ARRAY, MAY_USE_THIS_ONLY_WITH_USE_PREALLOCATED_ARRAY);
+    }
+    ImplementationOf_t (Scalar const &x0, Scalar const &x1,
+                        Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+        :
+        Parent_Array_i(x0, x1, pointer_to_allocation, check_pointer)
+    {
+        STATIC_ASSERT(USE_MEMBER_ARRAY_ == USE_PREALLOCATED_ARRAY, MAY_USE_THIS_ONLY_WITH_USE_PREALLOCATED_ARRAY);
+    }
+    ImplementationOf_t (Scalar const &x0, Scalar const &x1, Scalar const &x2,
+                        Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+        :
+        Parent_Array_i(x0, x1, x2, pointer_to_allocation, check_pointer)
+    {
+        STATIC_ASSERT(USE_MEMBER_ARRAY_ == USE_PREALLOCATED_ARRAY, MAY_USE_THIS_ONLY_WITH_USE_PREALLOCATED_ARRAY);
+    }
+    ImplementationOf_t (Scalar const &x0, Scalar const &x1, Scalar const &x2, Scalar const &x3,
+                        Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+        :
+        Parent_Array_i(x0, x1, x2, x3, pointer_to_allocation, check_pointer)
+    {
+        STATIC_ASSERT(USE_MEMBER_ARRAY_ == USE_PREALLOCATED_ARRAY, MAY_USE_THIS_ONLY_WITH_USE_PREALLOCATED_ARRAY);
+    }
 
     template <typename BundleIndexTypeList, typename BundledIndex>
     static MultiIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)
@@ -78,9 +142,10 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,F
         return MultiIndex(b_value, b_value, DONT_CHECK_RANGE);
     }
 
-    using Parent_Array_t::operator[];
-    using Parent_Array_t::allocation_size_in_bytes;
-    using Parent_Array_t::pointer_to_allocation;
+    using Parent_Array_i::as_derived;
+    using Parent_Array_i::operator[];
+    using Parent_Array_i::allocation_size_in_bytes;
+    using Parent_Array_i::pointer_to_allocation;
 
     // TODO (maybe): Scalar &operator [] (MultiIndex const &) -- writeable access to components,
     // which would need to throw if the multi-index corresponds to an immutable zero.  there is
@@ -96,7 +161,9 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,F
 
     static std::string type_as_string ()
     {
-        return "ImplementationOf_t<" + TypeStringOf_t<Diagonal2TensorProductOfBasedVectorSpaces>::eval() + ',' + TypeStringOf_t<Scalar>::eval() + '>';
+        return "ImplementationOf_t<" + TypeStringOf_t<Diagonal2TensorProductOfBasedVectorSpaces>::eval() + ','
+                                     + TypeStringOf_t<Scalar>::eval() + ','
+                                     + AS_STRING(USE_MEMBER_ARRAY_) + '>';
     }
 
 private:
@@ -105,10 +172,10 @@ private:
     ImplementationOf_t ();
 };
 
-template <typename Factor1, typename Factor2, typename Scalar>
-struct DualOf_f<ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1,Factor2>,Scalar> >
+template <typename Factor1_, typename Factor2_, typename Scalar_, bool USE_MEMBER_ARRAY_>
+struct DualOf_f<ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,Scalar_,USE_MEMBER_ARRAY_> >
 {
-    typedef ImplementationOf_t<typename DualOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1,Factor2> >::T,Scalar> T;
+    typedef ImplementationOf_t<typename DualOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >::T,Scalar_,USE_MEMBER_ARRAY_> T;
 };
 
 } // end of namespace Tenh

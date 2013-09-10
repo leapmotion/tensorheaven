@@ -14,7 +14,7 @@
 #include "tenh/conceptual/vectorspace.hpp"
 #include "tenh/conceptual/dual.hpp"
 // #include "tenh/expressiontemplate_eval.hpp"
-// #include "tenh/implementation/diagonal2tensor.hpp"
+#include "tenh/implementation/diagonal2tensor.hpp"
 #include "tenh/implementation/tensor.hpp"
 #include "tenh/implementation/vector.hpp"
 // #include "tenh/implementation/vee.hpp"
@@ -43,6 +43,7 @@ int main (int argc, char **argv)
     typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,Basis_c<X> > BasedX;
     typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,Y>,Basis_c<Y> > BasedY;
     typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedY,TypeList_t<DualOf_f<BasedX>::T> > > YTensorXDual;
+    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<BasedY,DualOf_f<BasedX>::T> Diag_YTensorXDual;
 
     {
         std::cout << "member array\n";
@@ -99,6 +100,23 @@ int main (int argc, char **argv)
     }
 
     {
+        // using default template parameter for USE_MEMBER_ARRAY_
+        typedef ImplementationOf_t<BasedX,float> V;
+        typedef ImplementationOf_t<YTensorXDual,float> T;
+        V v(8.0f, 10.0f, 11.0f);
+        T t(2.0f);
+        t[T::MultiIndex(0,1)] = -1.0f;
+        t[T::MultiIndex(1,2)] = 3.0f;
+        std::cout << FORMAT_VALUE(t) << '\n';
+        std::cout << FORMAT_VALUE(v) << '\n';
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        std::cout << FORMAT_VALUE(t(i|j)*v(j)) << '\n';
+
+        std::cout << '\n';
+    }
+
+    {
         typedef ImplementationOf_t<YTensorXDual,float,USE_MEMBER_ARRAY> T;
         typedef ImplementationOf_t<YTensorXDual,float,USE_PREALLOCATED_ARRAY> U;
         T t(2.0f);
@@ -109,6 +127,24 @@ int main (int argc, char **argv)
         std::cout << FORMAT_VALUE(u) << '\n';
         std::cout << '\n';
     }
+
+    {
+        std::cout << "testing Diagonal2TensorProductOfBasedVectorSpaces_c\n";
+        typedef ImplementationOf_t<BasedX,float,USE_PREALLOCATED_ARRAY> V;
+        typedef ImplementationOf_t<Diag_YTensorXDual,float,USE_MEMBER_ARRAY> T;
+        float components[3] = {8.0f, 10.0f, 11.0f};
+        V v(&components[0], CHECK_POINTER); // v must live no longer than components[]
+        T t(2.0f, -3.0f);
+        std::cout << FORMAT_VALUE(t) << '\n';
+        std::cout << FORMAT_VALUE(v) << '\n';
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        AbstractIndex_c<'P'> P;
+        std::cout << FORMAT_VALUE(t(P).split(P,i|j)*v(j)) << '\n';
+
+        std::cout << '\n';
+    }
+
 
     return 0;
 }
