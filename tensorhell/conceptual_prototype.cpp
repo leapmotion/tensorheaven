@@ -17,8 +17,8 @@
 #include "tenh/implementation/diagonal2tensor.hpp"
 #include "tenh/implementation/tensor.hpp"
 #include "tenh/implementation/vector.hpp"
-// #include "tenh/implementation/vee.hpp"
-// #include "tenh/implementation/wedge.hpp"
+#include "tenh/implementation/vee.hpp"
+#include "tenh/implementation/wedge.hpp"
 // #include "tenh/innerproduct.hpp"
 
 struct X
@@ -42,8 +42,7 @@ int main (int argc, char **argv)
 {
     typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,Basis_c<X> > BasedX;
     typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,Y>,Basis_c<Y> > BasedY;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedY,TypeList_t<DualOf_f<BasedX>::T> > > YTensorXDual;
-    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<BasedY,DualOf_f<BasedX>::T> Diag_YTensorXDual;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Z>,Basis_c<Z> > BasedZ;
 
     {
         std::cout << "member array\n";
@@ -81,6 +80,8 @@ int main (int argc, char **argv)
         std::cout << FORMAT_VALUE(w) << '\n';
         std::cout << '\n';
     }
+
+    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedY,TypeList_t<DualOf_f<BasedX>::T> > > YTensorXDual;
 
     {
         typedef ImplementationOf_t<BasedX,float,USE_PREALLOCATED_ARRAY> V;
@@ -128,6 +129,8 @@ int main (int argc, char **argv)
         std::cout << '\n';
     }
 
+    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<BasedY,DualOf_f<BasedX>::T> Diag_YTensorXDual;
+
     {
         std::cout << "testing Diagonal2TensorProductOfBasedVectorSpaces_c\n";
         typedef ImplementationOf_t<BasedX,float,USE_PREALLOCATED_ARRAY> V;
@@ -145,6 +148,53 @@ int main (int argc, char **argv)
         std::cout << '\n';
     }
 
+    typedef SymmetricPowerOfBasedVectorSpace_c<3,BasedX> Sym;
+
+    {
+        std::cout << "testing SymmetricPowerOfBasedVectorSpace_c\n";
+        typedef ImplementationOf_t<BasedX,float,USE_MEMBER_ARRAY> V;
+        typedef ImplementationOf_t<Sym,float,USE_MEMBER_ARRAY> S;
+        typedef ImplementationOf_t<Sym,float,USE_PREALLOCATED_ARRAY> S_;
+        S s(Static<WithoutInitialization>::SINGLETON);
+        V v(3.0f, 4.0f, 7.0f);
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        AbstractIndex_c<'k'> k;
+        AbstractIndex_c<'P'> P;
+        s(P) = (v(i)*v(j)*v(k)).bundle(i|j|k,Sym(),P);
+        std::cout << FORMAT_VALUE(v) << '\n';
+        std::cout << FORMAT_VALUE(s) << '\n';
+        std::cout << FORMAT_VALUE(s(P).split(P,i|j|k)) << '\n';
+        S_ s_(s.pointer_to_allocation());
+        std::cout << FORMAT_VALUE(s_) << '\n';
+
+        std::cout << '\n';
+    }
+
+    typedef ExteriorPowerOfBasedVectorSpace_c<3,BasedZ> Alt;
+
+    {
+        std::cout << "testing ExteriorPowerOfBasedVectorSpace_c\n";
+        typedef ImplementationOf_t<BasedZ,float,USE_MEMBER_ARRAY> V;
+        typedef ImplementationOf_t<Alt,float,USE_MEMBER_ARRAY> A;
+        typedef ImplementationOf_t<Alt,float,USE_PREALLOCATED_ARRAY> A_;
+        A a(Static<WithoutInitialization>::SINGLETON);
+        V u(3.0f, 4.0f, 7.0f, 0.0f);
+        V v(1.0f, -2.0f, 4.0f, -1.0f);
+        V w(0.0f, 1.0f, 2.0f, 3.0f);
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        AbstractIndex_c<'k'> k;
+        AbstractIndex_c<'P'> P;
+        a(P) = (u(i)*v(j)*w(k) - u(i)*w(j)*v(k) - v(i)*u(j)*w(k) + v(i)*w(j)*u(k) + w(i)*u(j)*v(k) - w(i)*v(j)*u(k)).bundle(i|j|k,Alt(),P);
+        std::cout << FORMAT_VALUE(v) << '\n';
+        std::cout << FORMAT_VALUE(a) << '\n';
+        std::cout << FORMAT_VALUE(a(P).split(P,i|j|k)) << '\n';
+        A_ a_(a.pointer_to_allocation());
+        std::cout << FORMAT_VALUE(a_) << '\n';
+
+        std::cout << '\n';
+    }
 
     return 0;
 }

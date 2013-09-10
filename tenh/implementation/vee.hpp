@@ -8,31 +8,35 @@
 
 #include "tenh/core.hpp"
 
-#include "tenh/array.hpp"
 #include "tenh/mathutil.hpp"
 #include "tenh/conceptual/symmetricpower.hpp"
+#include "tenh/implementation/implementationof.hpp"
 #include "tenh/interface/embeddableastensor.hpp"
 
 namespace Tenh {
 
-template <typename Concept_, typename Scalar_> struct ImplementationOf_t;
-
 // Factor_ should be a BasedVectorSpace_c type
-template <Uint32 ORDER_, typename Factor_, typename Scalar_>
-struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_>
+template <Uint32 ORDER_, typename Factor_, typename Scalar_, bool USE_MEMBER_ARRAY_>
+struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,USE_MEMBER_ARRAY_>
     :
-    public EmbeddableAsTensor_i<ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_>,
+    public EmbeddableAsTensor_i<ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,USE_MEMBER_ARRAY_>,
                                 Scalar_,
                                 SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> >,
-    // Array_t is privately inherited because it is an implementation detail
-    private Array_t<Scalar_,UniqueVectorSpaceStructureOf_f<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> >::T::DIMENSION>
+    // privately inherited because it is an implementation detail
+    private ArrayStorage_f<Scalar_,
+                           UniqueVectorSpaceStructureOf_f<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> >::T::DIMENSION,
+                           USE_MEMBER_ARRAY_,
+                           ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,USE_MEMBER_ARRAY_> >::T
 {
     enum { STATIC_ASSERT_IN_ENUM(HasBasedVectorSpaceStructure_f<Factor_>::V, MUST_BE_BASED_VECTOR_SPACE) };
 
-    typedef EmbeddableAsTensor_i<ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_>,
+    typedef EmbeddableAsTensor_i<ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,USE_MEMBER_ARRAY_>,
                                  Scalar_,
                                  SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> > Parent_EmbeddableAsTensor_i;
-    typedef Array_t<Scalar_,UniqueVectorSpaceStructureOf_f<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> >::T::DIMENSION> Parent_Array_t;
+    typedef typename ArrayStorage_f<Scalar_,
+                                    UniqueVectorSpaceStructureOf_f<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> >::T::DIMENSION,
+                                    USE_MEMBER_ARRAY_,
+                                    ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,USE_MEMBER_ARRAY_> >::T Parent_Array_i;
 
     typedef typename Parent_EmbeddableAsTensor_i::Derived Derived;
     typedef typename Parent_EmbeddableAsTensor_i::Scalar Scalar;
@@ -49,9 +53,33 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
 
     typedef typename DualOf_f<ImplementationOf_t>::T Dual; // relies on the template specialization below
 
-    explicit ImplementationOf_t (WithoutInitialization const &w) : Parent_Array_t(w) { }
+    explicit ImplementationOf_t (WithoutInitialization const &w) : Parent_Array_i(w) { }
+
+    // only use these if USE_MEMBER_ARRAY is specified
+
     // probably only useful for zero element (because this is basis-dependent)
-    explicit ImplementationOf_t (Scalar const &fill_with) : Parent_Array_t(fill_with) { }
+    explicit ImplementationOf_t (Scalar const &fill_with)
+        :
+        Parent_Array_i(fill_with)
+    {
+        STATIC_ASSERT(USE_MEMBER_ARRAY_ == USE_MEMBER_ARRAY, MAY_USE_THIS_ONLY_WITH_USE_MEMBER_ARRAY);
+    }
+
+    // only use these if USE_PREALLOCATED_ARRAY is specified
+
+    explicit ImplementationOf_t (Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+        :
+        Parent_Array_i(pointer_to_allocation, check_pointer)
+    {
+        STATIC_ASSERT(USE_MEMBER_ARRAY_ == USE_PREALLOCATED_ARRAY, MAY_USE_THIS_ONLY_WITH_USE_PREALLOCATED_ARRAY);
+    }
+    ImplementationOf_t (Scalar const &fill_with, 
+                        Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+        :
+        Parent_Array_i(fill_with, pointer_to_allocation, check_pointer)
+    {
+        STATIC_ASSERT(USE_MEMBER_ARRAY_ == USE_PREALLOCATED_ARRAY, MAY_USE_THIS_ONLY_WITH_USE_PREALLOCATED_ARRAY);
+    }
 
     template <typename BundleIndexTypeList, typename BundledIndex>
     static MultiIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)
@@ -61,9 +89,10 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
         return BundleIndexComputer_t<BundleIndexTypeList, BundledIndex, ORDER_>::compute(b);
     }
 
-    using Parent_Array_t::operator[];
-    using Parent_Array_t::allocation_size_in_bytes;
-    using Parent_Array_t::pointer_to_allocation;
+    using Parent_Array_i::as_derived;
+    using Parent_Array_i::operator[];
+    using Parent_Array_i::allocation_size_in_bytes;
+    using Parent_Array_i::pointer_to_allocation;
 
     // TODO (maybe): Scalar &operator [] (MultiIndex const &) -- writeable access to components,
     // which would need to throw if the multi-index corresponds to an immutable zero.  there is
@@ -83,7 +112,9 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
 
     static std::string type_as_string ()
     {
-        return "ImplementationOf_t<" + TypeStringOf_t<SymmetricPowerOfBasedVectorSpace>::eval() + ',' + TypeStringOf_t<Scalar>::eval() + '>';
+        return "ImplementationOf_t<" + TypeStringOf_t<SymmetricPowerOfBasedVectorSpace>::eval() + ',' 
+                                     + TypeStringOf_t<Scalar>::eval() + ','
+                                     + AS_STRING(USE_MEMBER_ARRAY_) + '>';
     }
 
 private:
@@ -98,9 +129,9 @@ private:
     struct VectorIndexComputer_t;
 };
 
-template <Uint32 ORDER_, typename Factor_, typename Scalar_>
+template <Uint32 ORDER_, typename Factor_, typename Scalar_, bool USE_MEMBER_ARRAY_>
 template <typename BundleIndexTypeList, typename BundledIndex, Uint32 ORD>
-struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_>::BundleIndexComputer_t
+struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,USE_MEMBER_ARRAY_>::BundleIndexComputer_t
 {
     static MultiIndex_t<BundleIndexTypeList> compute (BundledIndex const &b)
     {
@@ -108,9 +139,9 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
     }
 };
 
-template <Uint32 ORDER_, typename Factor_, typename Scalar_>
+template <Uint32 ORDER_, typename Factor_, typename Scalar_, bool USE_MEMBER_ARRAY_>
 template <typename FactorType, typename BundledIndex, Uint32 ORD>
-struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_>::BundleIndexComputer_t<TypeList_t<FactorType>, BundledIndex, ORD>
+struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,USE_MEMBER_ARRAY_>::BundleIndexComputer_t<TypeList_t<FactorType>, BundledIndex, ORD>
 {
     static MultiIndex_t<TypeList_t<FactorType> > compute (BundledIndex const &b)
     {
@@ -118,9 +149,9 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
     }
 };
 
-template <Uint32 ORDER_, typename Factor_, typename Scalar_>
+template <Uint32 ORDER_, typename Factor_, typename Scalar_, bool USE_MEMBER_ARRAY_>
 template <typename T, typename I>
-struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_>::VectorIndexComputer_t
+struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,USE_MEMBER_ARRAY_>::VectorIndexComputer_t
 {
     static Uint32 compute (T const &m)
     {
@@ -128,9 +159,9 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
     }
 };
 
-template <Uint32 ORDER_, typename Factor_, typename Scalar_>
+template <Uint32 ORDER_, typename Factor_, typename Scalar_, bool USE_MEMBER_ARRAY_>
 template <typename I>
-struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_>::VectorIndexComputer_t<MultiIndex_t<EmptyTypeList>, I>
+struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,USE_MEMBER_ARRAY_>::VectorIndexComputer_t<MultiIndex_t<EmptyTypeList>, I>
 {
     static Uint32 compute (MultiIndex_t<EmptyTypeList> const &m)
     {
@@ -138,10 +169,10 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
     }
 };
 
-template <Uint32 ORDER, typename Factor, typename Scalar>
-struct DualOf_f<ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER,Factor>,Scalar> >
+template <Uint32 ORDER, typename Factor, typename Scalar, bool USE_MEMBER_ARRAY_>
+struct DualOf_f<ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER,Factor>,Scalar,USE_MEMBER_ARRAY_> >
 {
-    typedef ImplementationOf_t<typename DualOf_f<SymmetricPowerOfBasedVectorSpace_c<ORDER,Factor> >::T,Scalar> T;
+    typedef ImplementationOf_t<typename DualOf_f<SymmetricPowerOfBasedVectorSpace_c<ORDER,Factor> >::T,Scalar,USE_MEMBER_ARRAY_> T;
 };
 
 } // end of namespace Tenh
