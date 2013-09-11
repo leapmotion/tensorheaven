@@ -124,39 +124,14 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
     }
 
     using Parent_Array_i::as_derived;
-    using Parent_Array_i::operator[];
     using Parent_Array_i::allocation_size_in_bytes;
     using Parent_Array_i::pointer_to_allocation;
 
-    template <typename OtherIndexTypeList>
-    Scalar const &operator [] (MultiIndex_t<OtherIndexTypeList> const &m) const
-    {
-        STATIC_ASSERT(IsTypeList_f<OtherIndexTypeList>::V, MUST_BE_TYPELIST);
-        typedef MultiIndex_t<OtherIndexTypeList> OtherMultiIndex;
-        STATIC_ASSERT((OtherMultiIndex::LENGTH == MultiIndex::LENGTH), MUST_HAVE_EQUAL_LENGTHS);
-        //std::cout << OtherMultiIndex::LENGTH << ", " << MultiIndex::LENGTH << '\n';
-        assert(m.is_not_at_end() && "you used ComponentIndex_t(x, DONT_RANGE_CHECK) inappropriately");
-        // NOTE: this construction is unnecessary to the code, but IS necessary to the compile-time type checking
-        // the compiler should optimize it out anyway.
-        MultiIndex x(m);
-        // m.value() is what does the multi-index-to-vector-index computation
-        return operator[](ComponentIndex(m.value(), DONT_CHECK_RANGE));
-    }
-    template <typename OtherIndexTypeList>
-    Scalar &operator [] (MultiIndex_t<OtherIndexTypeList> const &m)
-    {
-        STATIC_ASSERT(IsTypeList_f<OtherIndexTypeList>::V, MUST_BE_TYPELIST);
-        typedef MultiIndex_t<OtherIndexTypeList> OtherMultiIndex;
-        STATIC_ASSERT((OtherMultiIndex::LENGTH == MultiIndex::LENGTH), MUST_HAVE_EQUAL_LENGTHS);
-        //std::cout << OtherMultiIndex::LENGTH << ", " << MultiIndex::LENGTH << '\n';
-        assert(m.is_not_at_end() && "you used ComponentIndex_t(x, DONT_RANGE_CHECK) inappropriately");
-        // NOTE: this construction is unnecessary to the code, but IS necessary to the compile-time type checking
-        // the compiler should optimize it out anyway.
-        MultiIndex x(m);
-        // m.value() is what does the multi-index-to-vector-index computation
-        return operator[](ComponentIndex(m.value(), DONT_CHECK_RANGE));
-    }
+    // can't do "using Parent_Array_i::operator[];" due to overloading ambiguity.
+    Scalar const &operator [] (ComponentIndex const &i) const { return Parent_Array_i::operator[](i); }
+    Scalar &operator [] (ComponentIndex const &i) { return Parent_Array_i::operator[](i); }
 
+    using Parent_Tensor_i::operator[];
     // these are what provide indexed expressions -- via expression templates
     using Parent_Tensor_i::operator();
 

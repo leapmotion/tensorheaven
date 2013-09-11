@@ -71,8 +71,36 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
     using Parent_Vector_i::dim;
     using Parent_Vector_i::as_derived;
     using Parent_Vector_i::operator[];
-    Scalar operator [] (MultiIndex const &m) const { return as_derived().Derived::operator[](m); }
-    Scalar operator [] (MultiIndex const &m) { return as_derived().Derived::operator[](m); }
+    // multi-index component access which is a frontend for the vector-index component access
+    template <typename OtherIndexTypeList>
+    Scalar const &operator [] (MultiIndex_t<OtherIndexTypeList> const &m) const
+    {
+        STATIC_ASSERT(IsTypeList_f<OtherIndexTypeList>::V, MUST_BE_TYPELIST);
+        typedef MultiIndex_t<OtherIndexTypeList> OtherMultiIndex;
+        STATIC_ASSERT((OtherMultiIndex::LENGTH == MultiIndex::LENGTH), MUST_HAVE_EQUAL_LENGTHS);
+        //std::cout << OtherMultiIndex::LENGTH << ", " << MultiIndex::LENGTH << '\n';
+        assert(m.is_not_at_end() && "you used ComponentIndex_t(x, DONT_RANGE_CHECK) inappropriately");
+        // NOTE: this construction is unnecessary to the code, but IS necessary to the compile-time type checking
+        // the compiler should optimize it out anyway.
+        MultiIndex x(m);
+        // m.value() is what does the multi-index-to-vector-index computation
+        return Parent_Vector_i::operator[](ComponentIndex(m.value(), DONT_CHECK_RANGE));
+    }
+    // multi-index component access which is a frontend for the vector-index component access
+    template <typename OtherIndexTypeList>
+    Scalar &operator [] (MultiIndex_t<OtherIndexTypeList> const &m)
+    {
+        STATIC_ASSERT(IsTypeList_f<OtherIndexTypeList>::V, MUST_BE_TYPELIST);
+        typedef MultiIndex_t<OtherIndexTypeList> OtherMultiIndex;
+        STATIC_ASSERT((OtherMultiIndex::LENGTH == MultiIndex::LENGTH), MUST_HAVE_EQUAL_LENGTHS);
+        //std::cout << OtherMultiIndex::LENGTH << ", " << MultiIndex::LENGTH << '\n';
+        assert(m.is_not_at_end() && "you used ComponentIndex_t(x, DONT_RANGE_CHECK) inappropriately");
+        // NOTE: this construction is unnecessary to the code, but IS necessary to the compile-time type checking
+        // the compiler should optimize it out anyway.
+        MultiIndex x(m);
+        // m.value() is what does the multi-index-to-vector-index computation
+        return Parent_Vector_i::operator[](ComponentIndex(m.value(), DONT_CHECK_RANGE));
+    }
 
     using Parent_Vector_i::operator();
     // the two separate head/body template arguments are necessary to disambiguate this method
