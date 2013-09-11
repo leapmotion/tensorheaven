@@ -8,7 +8,7 @@
 
 #include "tenh/core.hpp"
 
-#include "tenh/array.hpp"
+#include "tenh/memoryarray.hpp"
 #include "tenh/preallocatedarray.hpp"
 
 namespace Tenh {
@@ -18,7 +18,7 @@ namespace Tenh {
 // ///////////////////////////////////////////////////////////////////////////
 
 // for use in the USE_MEMBER_ARRAY_ template parameter for ImplementationOf_t
-static bool const USE_MEMBER_ARRAY = true;        // uses Array_t for storage (default)
+static bool const USE_MEMBER_ARRAY = true;        // uses MemoryArray_t for storage (default)
 static bool const USE_PREALLOCATED_ARRAY = false; // uses PreallocatedArray_t for memory access
 
 template <typename Concept_,
@@ -30,18 +30,18 @@ struct ImplementationOf_t;
 // metafunction for deciding which structure to use for component access
 // ///////////////////////////////////////////////////////////////////////////
 
-// a template metafunction for figuring out which type of array to use (Array_t or PreallocatedArray_t)
+// a template metafunction for figuring out which type of array to use (MemoryArray_t or PreallocatedArray_t)
 template <typename Component_,
           Uint32 COMPONENT_COUNT_,
           bool USE_MEMBER_ARRAY_,
           typename Derived_ = NullType>
 struct ArrayStorage_f;
 
-// template specialization for use of Array_t
+// template specialization for use of MemoryArray_t
 template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_>
 struct ArrayStorage_f<Component_,COMPONENT_COUNT_,USE_MEMBER_ARRAY,Derived_>
 {
-    typedef Array_t<Component_,COMPONENT_COUNT_,Derived_> T;
+    typedef MemoryArray_t<Component_,COMPONENT_COUNT_,Derived_> T;
 };
 
 template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_>

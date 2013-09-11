@@ -3,7 +3,6 @@
 
 #include "tenh/core.hpp"
 
-#include "tenh/array.hpp"
 #include "tenh/conceptual/abstractindex.hpp"
 #include "tenh/conceptual/basis.hpp"
 #include "tenh/conceptual/diagonalbased2tensorproduct.hpp"
@@ -14,6 +13,8 @@
 #include "tenh/conceptual/vectorspace.hpp"
 #include "tenh/conceptual/dual.hpp"
 #include "tenh/expressiontemplate_eval.hpp"
+#include "tenh/memoryarray.hpp"
+#include "tenh/immutablearray.hpp"
 #include "tenh/implementation/diagonal2tensor.hpp"
 #include "tenh/implementation/tensor.hpp"
 #include "tenh/implementation/vector.hpp"
@@ -70,6 +71,42 @@ void test_tensor_printing (std::ostream &out)
         t[i] = i.value();
 
     out << FORMAT_VALUE(t) << '\n';
+}
+
+template <typename Scalar_, Uint32 DIM_, Uint32 K_>
+Scalar_ standard_basis_vector_generator (ComponentIndex_t<DIM_> const &i)
+{
+    return i.value() == K_ ? Scalar_(1) : Scalar_(0);
+}
+
+template <typename Scalar_, Uint32 DIM_>
+Scalar_ counting_vector_generator (ComponentIndex_t<DIM_> const &i)
+{
+    return Scalar_(i.value());
+}
+
+template <typename Scalar_, Uint32 DIM_, Uint32 K_>
+void test_immutable_array_0 ()
+{
+    std::cout << "test_immutable_array_0<" + TypeStringOf_t<Scalar_>::eval() + ',' + AS_STRING(DIM_) + ',' + AS_STRING(K_) + ">\n";
+    typedef ImmutableArray_t<Scalar_,DIM_,standard_basis_vector_generator<Scalar_,DIM_,K_> > A;
+    A a;
+    std::cout << FORMAT_VALUE(a.type_as_string()) << '\n';
+    for (typename A::ComponentIndex i; i.is_not_at_end(); ++i)
+        std::cout << FORMAT_VALUE(i) << ", " << FORMAT_VALUE(a[i]) << '\n';
+    std::cout << '\n';
+}
+
+template <typename Scalar_, Uint32 DIM_>
+void test_immutable_array_1 ()
+{
+    std::cout << "test_immutable_array_1<" + TypeStringOf_t<Scalar_>::eval() + ',' + AS_STRING(DIM_) + ">\n";
+    typedef ImmutableArray_t<Scalar_,DIM_,counting_vector_generator<Scalar_,DIM_> > A;
+    A a;
+    std::cout << FORMAT_VALUE(a.type_as_string()) << '\n';
+    for (typename A::ComponentIndex i; i.is_not_at_end(); ++i)
+        std::cout << FORMAT_VALUE(i) << ", " << FORMAT_VALUE(a[i]) << '\n';
+    std::cout << '\n';
 }
 
 int main (int argc, char **argv)
@@ -1059,6 +1096,11 @@ int main (int argc, char **argv)
 
         std::cout << '\n';
     }
+
+    test_immutable_array_0<float,3,0>();
+    test_immutable_array_0<float,3,1>();
+    test_immutable_array_0<float,3,2>();
+    test_immutable_array_1<float,7>();
 
     return 0;
 }

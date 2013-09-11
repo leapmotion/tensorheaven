@@ -14,7 +14,8 @@
 namespace Tenh {
 
 // compile-time interface for fixed-length array of a given component type,
-// layed out contiguously in memory.
+// with no presupposition about how the components are provided (see
+// MemoryArray_i and ImmutableArray_t).
 template <typename Derived_, typename Component_, Uint32 COMPONENT_COUNT_>
 struct Array_i
 {
@@ -30,11 +31,6 @@ struct Array_i
 
     Component const &operator [] (ComponentIndex const &i) const { return as_derived().Derived::operator[](i); }
     Component &operator [] (ComponentIndex const &i) { return as_derived().Derived::operator[](i); }
-
-    // access to the raw data (WARNING: if Component isn't a POD type, then this isn't "everything")
-    Uint32 allocation_size_in_bytes () const { return COMPONENT_COUNT*sizeof(Component); }
-    Component const *pointer_to_allocation () const { return as_derived().Derived::pointer_to_allocation(); }
-    Component *pointer_to_allocation () { return as_derived().Derived::pointer_to_allocation(); }
 
     // accessor as Derived type
     Derived const &as_derived () const { return *static_cast<Derived const *>(this); }
