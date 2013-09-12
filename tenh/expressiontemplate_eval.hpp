@@ -97,7 +97,7 @@ private:
         }
     }
 
-    typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FreeFactorTypeList>,Scalar,USE_MEMBER_ARRAY> Tensor;
+    typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FreeFactorTypeList>,Scalar,UseMemoryArray> Tensor;
 
     Operand const &m_operand;
     mutable bool m_eval_is_cached;

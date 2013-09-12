@@ -362,10 +362,10 @@ struct BundleIndexMap_t
     static T const V;
 };
 
-// TODO: the use of USE_MEMBER_ARRAY is somewhat arbitrary -- should this be addressed somehow?
+// TODO: the use of UseMemoryArray is somewhat arbitrary -- should this be addressed somehow?
 template <typename Scalar, typename BundleDimIndexTypeList, typename ResultingFactorType, typename ResultingDimIndexType>
 typename BundleIndexMap_t<Scalar,BundleDimIndexTypeList,ResultingFactorType,ResultingDimIndexType>::T const BundleIndexMap_t<Scalar,BundleDimIndexTypeList,ResultingFactorType,ResultingDimIndexType>::V =
-    ImplementationOf_t<ResultingFactorType,Scalar,USE_MEMBER_ARRAY>::template bundle_index_map<BundleDimIndexTypeList,ResultingDimIndexType>;
+    ImplementationOf_t<ResultingFactorType,Scalar,UseMemoryArray>::template bundle_index_map<BundleDimIndexTypeList,ResultingDimIndexType>;
 
 // not an expression template, but just something that handles the bundled indices
 template <typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType>
@@ -513,9 +513,9 @@ struct IndexSplitter_t
                                               SplitAbstractIndexTypeList>::T SourceFactorDimIndexTypeList;
         typedef ComponentIndex_t<AS_VECTOR_SPACE(SourceFactor)::DIMENSION> SourceFactorComponentIndex;
         typedef MultiIndex_t<SourceFactorDimIndexTypeList> SourceFactorMultiIndex;
-        // TODO: the use of USE_MEMBER_ARRAY here is arbitrary because it's just used to access a
+        // TODO: the use of UseMemoryArray here is arbitrary because it's just used to access a
         // static method.  figure out if this is a problem
-        typedef ImplementationOf_t<SourceFactor,Scalar,USE_MEMBER_ARRAY> ImplementationOfSourceFactor;
+        typedef ImplementationOf_t<SourceFactor,Scalar,UseMemoryArray> ImplementationOfSourceFactor;
 
         SourceFactorMultiIndex s(m.template range<SOURCE_INDEX_TYPE_INDEX,SOURCE_INDEX_TYPE_INDEX+SplitAbstractIndexTypeList::LENGTH>());
         if (ImplementationOfSourceFactor::component_is_immutable_zero(s))

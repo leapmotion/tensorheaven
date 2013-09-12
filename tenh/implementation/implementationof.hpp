@@ -8,6 +8,7 @@
 
 #include "tenh/core.hpp"
 
+#include "tenh/immutablearray.hpp"
 #include "tenh/memoryarray.hpp"
 #include "tenh/preallocatedarray.hpp"
 
@@ -17,13 +18,37 @@ namespace Tenh {
 // forward declaration of the ImplementationOf_t template and related values
 // ///////////////////////////////////////////////////////////////////////////
 
-// for use in the USE_MEMBER_ARRAY_ template parameter for ImplementationOf_t
-static bool const USE_MEMBER_ARRAY = true;        // uses MemoryArray_t for storage (default)
-static bool const USE_PREALLOCATED_ARRAY = false; // uses PreallocatedArray_t for memory access
+// these are for the UseArrayType parameter in ImplementationOf_t
 
+struct UseMemoryArray { static std::string type_as_string () { return "UseMemoryArray"; } };
+template <> struct DualOf_f<UseMemoryArray> { typedef UseMemoryArray T; };
+
+struct UsePreallocatedArray { static std::string type_as_string () { return "UsePreallocatedArray"; } };
+template <> struct DualOf_f<UsePreallocatedArray> { typedef UsePreallocatedArray T; };
+
+template <typename ComponentGenerator_>
+struct UseImmutableArray
+{
+    enum { STATIC_ASSERT_IN_ENUM(IsComponentGenerator_t<ComponentGenerator_>::V, MUST_BE_COMPONENT_GENERATOR) };
+
+    typedef ComponentGenerator_ ComponentGenerator;
+
+    static std::string type_as_string ()
+    {
+        return "UseImmutableArray<" + TypeStringOf_t<ComponentGenerator_>::eval() + '>';
+    } 
+};
+// use of this will require a template specialization of DualOf_f for ComponentGenerator_
+template <typename ComponentGenerator_>
+struct DualOf_f<UseImmutableArray<ComponentGenerator_> >
+{
+    typedef UseImmutableArray<typename DualOf_f<ComponentGenerator_>::T> T;
+};
+
+// the default is to use 
 template <typename Concept_,
           typename Scalar_,
-          bool USE_MEMBER_ARRAY_ = USE_MEMBER_ARRAY>
+          typename UseArrayType = UseMemoryArray>
 struct ImplementationOf_t;
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -33,21 +58,27 @@ struct ImplementationOf_t;
 // a template metafunction for figuring out which type of array to use (MemoryArray_t or PreallocatedArray_t)
 template <typename Component_,
           Uint32 COMPONENT_COUNT_,
-          bool USE_MEMBER_ARRAY_,
+          typename UseArrayType_,
           typename Derived_ = NullType>
 struct ArrayStorage_f;
 
 // template specialization for use of MemoryArray_t
 template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_>
-struct ArrayStorage_f<Component_,COMPONENT_COUNT_,USE_MEMBER_ARRAY,Derived_>
+struct ArrayStorage_f<Component_,COMPONENT_COUNT_,UseMemoryArray,Derived_>
 {
     typedef MemoryArray_t<Component_,COMPONENT_COUNT_,Derived_> T;
 };
 
 template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_>
-struct ArrayStorage_f<Component_,COMPONENT_COUNT_,USE_PREALLOCATED_ARRAY,Derived_>
+struct ArrayStorage_f<Component_,COMPONENT_COUNT_,UsePreallocatedArray,Derived_>
 {
     typedef PreallocatedArray_t<Component_,COMPONENT_COUNT_,Derived_> T;
+};
+
+template <typename Component_, Uint32 COMPONENT_COUNT_, typename ComponentGenerator_, typename Derived_>
+struct ArrayStorage_f<Component_,COMPONENT_COUNT_,UseImmutableArray<ComponentGenerator_>,Derived_>
+{
+    typedef ImmutableArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_> T;
 };
 
 } // end of namespace Tenh
