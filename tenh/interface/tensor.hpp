@@ -39,8 +39,11 @@ struct FactorComponentIndexTypeList_t<EmptyTypeList>
 
 // compile-time interface for a non-symmetric tensor product class.  TensorProductOfBasedVectorSpaces_
 // should be a TensorProductOfBasedVectorSpaces_c type.
-template <typename Derived_, typename Scalar_, typename TensorProductOfBasedVectorSpaces_>
-struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_>
+template <typename Derived_,
+          typename Scalar_,
+          typename TensorProductOfBasedVectorSpaces_,
+          bool COMPONENTS_ARE_IMMUTABLE_>
+struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_>
 {
     enum
     {
@@ -49,12 +52,15 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
         STATIC_ASSERT_IN_ENUM(IS_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES_UNIQUELY(TensorProductOfBasedVectorSpaces_), MUST_BE_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES)
     };
 
-    typedef Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_> Parent_Vector_i;
+    typedef Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_> Parent_Vector_i;
     typedef typename Parent_Vector_i::Derived Derived;
     typedef typename Parent_Vector_i::Scalar Scalar;
     typedef typename Parent_Vector_i::BasedVectorSpace BasedVectorSpace;
     using Parent_Vector_i::DIM;
     typedef typename Parent_Vector_i::ComponentIndex ComponentIndex;
+    using Parent_Vector_i::COMPONENTS_ARE_IMMUTABLE;
+    typedef typename Parent_Vector_i::ComponentAccessConstReturnType ComponentAccessConstReturnType;
+    typedef typename Parent_Vector_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
 
     typedef TensorProductOfBasedVectorSpaces_ TensorProductOfBasedVectorSpaces;
     typedef typename AS_TENSOR_PRODUCT(TensorProductOfBasedVectorSpaces)::FactorTypeList FactorTypeList;
@@ -73,7 +79,7 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
     using Parent_Vector_i::operator[];
     // multi-index component access which is a frontend for the vector-index component access
     template <typename OtherIndexTypeList>
-    Scalar const &operator [] (MultiIndex_t<OtherIndexTypeList> const &m) const
+    ComponentAccessConstReturnType operator [] (MultiIndex_t<OtherIndexTypeList> const &m) const
     {
         STATIC_ASSERT(IsTypeList_f<OtherIndexTypeList>::V, MUST_BE_TYPELIST);
         typedef MultiIndex_t<OtherIndexTypeList> OtherMultiIndex;
@@ -88,7 +94,7 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
     }
     // multi-index component access which is a frontend for the vector-index component access
     template <typename OtherIndexTypeList>
-    Scalar &operator [] (MultiIndex_t<OtherIndexTypeList> const &m)
+    ComponentAccessNonConstReturnType operator [] (MultiIndex_t<OtherIndexTypeList> const &m)
     {
         STATIC_ASSERT(IsTypeList_f<OtherIndexTypeList>::V, MUST_BE_TYPELIST);
         typedef MultiIndex_t<OtherIndexTypeList> OtherMultiIndex;
@@ -170,16 +176,17 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
     {
         return "Tensor_i<" + TypeStringOf_t<Derived>::eval() + ','
                            + TypeStringOf_t<Scalar>::eval() + ','
-                           + TypeStringOf_t<TensorProductOfBasedVectorSpaces>::eval() + '>';
+                           + TypeStringOf_t<TensorProductOfBasedVectorSpaces>::eval() + ','
+                           + AS_STRING((COMPONENTS_ARE_IMMUTABLE_ ? "IMMUTABLE_COMPONENTS" : "MUTABLE_COMPONENTS")) + '>';
     }
 };
 
 // will print any order tensor in a nice-looking justified way.  if the order is greater
 // than 1, this will print newlines, notably including the first character.
-template <typename Derived, typename Scalar, typename TensorProductOfBasedVectorSpaces>
-std::ostream &operator << (std::ostream &out, Tensor_i<Derived,Scalar,TensorProductOfBasedVectorSpaces> const &t)
+template <typename Derived_, typename Scalar_, typename TensorProductOfBasedVectorSpaces_, bool COMPONENTS_ARE_IMMUTABLE_>
+std::ostream &operator << (std::ostream &out, Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_> const &t)
 {
-    typedef Tensor_i<Derived,Scalar,TensorProductOfBasedVectorSpaces> Tensor;
+    typedef Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_> Tensor;
     typedef typename Tensor::MultiIndex::IndexTypeList IndexTypeList;
     print_multiindexable(out, t, IndexTypeList());
     return out;

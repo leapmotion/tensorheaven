@@ -19,7 +19,8 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
     :
     public Tensor_i<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Scalar_,UseArrayType_>,
                     Scalar_,
-                    TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >,
+                    TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,
+                    ComponentsAreImmutable_f<UseArrayType_>::V>,
     // privately inherited because it is an implementation detail
     private ArrayStorage_f<Scalar_,
                            AS_VECTOR_SPACE(TensorProductOfBasedVectorSpaces_c<FactorTypeList_>)::DIMENSION,
@@ -28,7 +29,8 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
 {
     typedef Tensor_i<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Scalar_,UseArrayType_>,
                      Scalar_,
-                     TensorProductOfBasedVectorSpaces_c<FactorTypeList_> > Parent_Tensor_i;
+                     TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,
+                     ComponentsAreImmutable_f<UseArrayType_>::V> Parent_Tensor_i;
     typedef typename ArrayStorage_f<Scalar_,
                                     AS_VECTOR_SPACE(TensorProductOfBasedVectorSpaces_c<FactorTypeList_>)::DIMENSION,
                                     UseArrayType_,
@@ -45,6 +47,10 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
     typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
     using Parent_Tensor_i::ORDER;
     using Parent_Tensor_i::IS_TENSOR_I;
+
+    using Parent_Array_i::COMPONENTS_ARE_IMMUTABLE;
+    typedef typename Parent_Array_i::ComponentAccessConstReturnType ComponentAccessConstReturnType;
+    typedef typename Parent_Array_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
 
     typedef typename DualOf_f<ImplementationOf_t>::T Dual; // relies on the template specialization below
 
@@ -117,6 +123,14 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
         STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
     }
 
+    // only use this if UseImmutableArray_t<...> is specified
+    ImplementationOf_t ()
+        :
+        Parent_Array_i(WithoutInitialization()) // sort of meaningless constructor
+    {
+        STATIC_ASSERT(IsUseImmutableArray_t<UseArrayType_>::V, MUST_BE_USE_IMMUTABLE_ARRAY);
+    }
+
     template <typename BundleIndexTypeList, typename BundledIndex>
     static MultiIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)
     {
@@ -130,8 +144,8 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
     using Parent_Array_i::pointer_to_allocation;
 
     // can't do "using Parent_Array_i::operator[];" due to overloading ambiguity.
-    Scalar const &operator [] (ComponentIndex const &i) const { return Parent_Array_i::operator[](i); }
-    Scalar &operator [] (ComponentIndex const &i) { return Parent_Array_i::operator[](i); }
+    ComponentAccessConstReturnType operator [] (ComponentIndex const &i) const { return Parent_Array_i::operator[](i); }
+    ComponentAccessNonConstReturnType operator [] (ComponentIndex const &i) { return Parent_Array_i::operator[](i); }
 
     using Parent_Tensor_i::operator[];
     // these are what provide indexed expressions -- via expression templates
@@ -147,11 +161,6 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
                                      + TypeStringOf_t<Scalar>::eval() + ','
                                      + TypeStringOf_t<UseArrayType_>::eval() + '>';
     }
-
-private:
-
-    // this has no definition, and is designed to generate a compiler error if used (use the one accepting WithoutInitialization instead).
-    ImplementationOf_t ();
 };
 
 template <typename FactorTypeList_, typename Scalar_, typename UseArrayType_>

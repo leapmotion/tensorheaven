@@ -21,7 +21,8 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
     :
     public EmbeddableAsTensor_i<ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_>,
                                 Scalar_,
-                                SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> >,
+                                SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,
+                                ComponentsAreImmutable_f<UseArrayType_>::V>,
     // privately inherited because it is an implementation detail
     private ArrayStorage_f<Scalar_,
                            UniqueVectorSpaceStructureOf_f<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> >::T::DIMENSION,
@@ -32,7 +33,8 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
 
     typedef EmbeddableAsTensor_i<ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_>,
                                  Scalar_,
-                                 SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> > Parent_EmbeddableAsTensor_i;
+                                 SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,
+                                 ComponentsAreImmutable_f<UseArrayType_>::V> Parent_EmbeddableAsTensor_i;
     typedef typename ArrayStorage_f<Scalar_,
                                     UniqueVectorSpaceStructureOf_f<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> >::T::DIMENSION,
                                     UseArrayType_,
@@ -50,6 +52,10 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
     static Uint32 const ORDER = ORDER_;
     typedef Factor_ Factor;
     typedef SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor> SymmetricPowerOfBasedVectorSpace;
+
+    using Parent_Array_i::COMPONENTS_ARE_IMMUTABLE;
+    typedef typename Parent_Array_i::ComponentAccessConstReturnType ComponentAccessConstReturnType;
+    typedef typename Parent_Array_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
 
     typedef typename DualOf_f<ImplementationOf_t>::T Dual; // relies on the template specialization below
 

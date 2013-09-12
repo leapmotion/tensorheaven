@@ -20,7 +20,8 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,F
     :
     public EmbeddableAsTensor_i<ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,Scalar_,UseArrayType_>,
                                 Scalar_,
-                                Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >,
+                                Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,
+                                ComponentsAreImmutable_f<UseArrayType_>::V>,
     // privately inherited because it is an implementation detail
     private ArrayStorage_f<Scalar_,
                            UniqueVectorSpaceStructureOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >::T::DIMENSION,
@@ -35,7 +36,8 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,F
 
     typedef EmbeddableAsTensor_i<ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,Scalar_,UseArrayType_>,
                                  Scalar_,
-                                 Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> > Parent_EmbeddableAsTensor_i;
+                                 Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,
+                                 ComponentsAreImmutable_f<UseArrayType_>::V> Parent_EmbeddableAsTensor_i;
     typedef typename ArrayStorage_f<Scalar_,
                                     UniqueVectorSpaceStructureOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >::T::DIMENSION,
                                     UseArrayType_,
@@ -54,6 +56,10 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,F
     typedef Factor1_ Factor1;
     typedef Factor2_ Factor2;
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1,Factor2> Diagonal2TensorProductOfBasedVectorSpaces;
+
+    using Parent_Array_i::COMPONENTS_ARE_IMMUTABLE;
+    typedef typename Parent_Array_i::ComponentAccessConstReturnType ComponentAccessConstReturnType;
+    typedef typename Parent_Array_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
 
     typedef typename DualOf_f<ImplementationOf_t>::T Dual; // relies on the template specialization below
 

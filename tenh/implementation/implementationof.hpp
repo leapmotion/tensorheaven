@@ -27,7 +27,7 @@ struct UsePreallocatedArray { static std::string type_as_string () { return "Use
 template <> struct DualOf_f<UsePreallocatedArray> { typedef UsePreallocatedArray T; };
 
 template <typename ComponentGenerator_>
-struct UseImmutableArray
+struct UseImmutableArray_t
 {
     enum { STATIC_ASSERT_IN_ENUM(IsComponentGenerator_t<ComponentGenerator_>::V, MUST_BE_COMPONENT_GENERATOR) };
 
@@ -35,15 +35,22 @@ struct UseImmutableArray
 
     static std::string type_as_string ()
     {
-        return "UseImmutableArray<" + TypeStringOf_t<ComponentGenerator_>::eval() + '>';
+        return "UseImmutableArray_t<" + TypeStringOf_t<ComponentGenerator_>::eval() + '>';
     } 
 };
 // use of this will require a template specialization of DualOf_f for ComponentGenerator_
 template <typename ComponentGenerator_>
-struct DualOf_f<UseImmutableArray<ComponentGenerator_> >
+struct DualOf_f<UseImmutableArray_t<ComponentGenerator_> >
 {
-    typedef UseImmutableArray<typename DualOf_f<ComponentGenerator_>::T> T;
+    typedef UseImmutableArray_t<typename DualOf_f<ComponentGenerator_>::T> T;
 };
+
+template <typename T> struct IsUseImmutableArray_t { static bool const V = false; };
+template <typename ComponentGenerator_> struct IsUseImmutableArray_t<UseImmutableArray_t<ComponentGenerator_> > { static bool const V = true; };
+
+// used by ImplementationOf_t to provide the COMPONENTS_ARE_IMMUTABLE parameter value
+template <typename T> struct ComponentsAreImmutable_f { static bool const V = false; };
+template <typename ComponentGenerator_> struct ComponentsAreImmutable_f<UseImmutableArray_t<ComponentGenerator_> > { static bool const V = true; };
 
 // the default is to use 
 template <typename Concept_,
@@ -76,7 +83,7 @@ struct ArrayStorage_f<Component_,COMPONENT_COUNT_,UsePreallocatedArray,Derived_>
 };
 
 template <typename Component_, Uint32 COMPONENT_COUNT_, typename ComponentGenerator_, typename Derived_>
-struct ArrayStorage_f<Component_,COMPONENT_COUNT_,UseImmutableArray<ComponentGenerator_>,Derived_>
+struct ArrayStorage_f<Component_,COMPONENT_COUNT_,UseImmutableArray_t<ComponentGenerator_>,Derived_>
 {
     typedef ImmutableArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_> T;
 };

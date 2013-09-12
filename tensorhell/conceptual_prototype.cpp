@@ -99,7 +99,7 @@ struct CountingVectorGeneratorId { static std::string type_as_string () { return
 template <typename Scalar_, Uint32 DIM_, Uint32 K_>
 void test_immutable_array_0 ()
 {
-    std::cout << "test_immutable_array_0<" + TypeStringOf_t<Scalar_>::eval() + ',' + AS_STRING(DIM_) + ',' + AS_STRING(K_) + ">\n";
+    std::cout << "test_immutable_array_0<" << TypeStringOf_t<Scalar_>::eval() << ',' + AS_STRING(DIM_) << ',' << AS_STRING(K_) << ">\n";
     typedef ComponentGenerator_t<Scalar_,DIM_,standard_basis_vector_generator<Scalar_,DIM_,K_>,StandardBasisVectorGeneratorId<K_> > ComponentGenerator;
     typedef ImmutableArray_t<Scalar_,DIM_,ComponentGenerator> A;
     A a;
@@ -112,13 +112,59 @@ void test_immutable_array_0 ()
 template <typename Scalar_, Uint32 DIM_>
 void test_immutable_array_1 ()
 {
-    std::cout << "test_immutable_array_1<" + TypeStringOf_t<Scalar_>::eval() + ',' + AS_STRING(DIM_) + ">\n";
+    std::cout << "test_immutable_array_1<" << TypeStringOf_t<Scalar_>::eval() << ',' << AS_STRING(DIM_) << ">\n";
     typedef ComponentGenerator_t<Scalar_,DIM_,counting_vector_generator<Scalar_,DIM_>,CountingVectorGeneratorId> ComponentGenerator;
     typedef ImmutableArray_t<Scalar_,DIM_,ComponentGenerator> A;
     A a;
     std::cout << FORMAT_VALUE(a.type_as_string()) << '\n';
     for (typename A::ComponentIndex i; i.is_not_at_end(); ++i)
         std::cout << FORMAT_VALUE(i) << ", " << FORMAT_VALUE(a[i]) << '\n';
+    std::cout << '\n';
+}
+
+template <typename Scalar_, Uint32 DIM_>
+void test_immutable_implementation_of_vector ()
+{
+    std::cout << "test_immutable_implementation_of_vector<" << TypeStringOf_t<Scalar_>::eval() << ',' << AS_STRING(DIM_) << ">\n";
+}
+
+template <typename Scalar_, Uint32 DIM_>
+Scalar_ identity_matrix_generator (ComponentIndex_t<DIM_*DIM_> const &i)
+{
+    Uint32 row = i.value() / DIM_;
+    Uint32 col = i.value() % DIM_;
+    return row == col ? Scalar_(1) : Scalar_(0);
+}
+
+struct IdentityMatrixGeneratorId { static std::string type_as_string () { return "IdentityMatrixGenerator"; } };
+
+template <typename Scalar_, typename BasedVectorSpace_>
+void test_immutable_identity_tensor ()
+{
+    typedef TypeList_t<BasedVectorSpace_,TypeList_t<typename DualOf_f<BasedVectorSpace_>::T> > FactorTypeList;
+    typedef TensorProductOfBasedVectorSpaces_c<FactorTypeList> TensorProduct;
+    typedef ComponentGenerator_t<Scalar_,
+                                 AS_VECTOR_SPACE(TensorProduct)::DIMENSION,
+                                 identity_matrix_generator<Scalar_,AS_VECTOR_SPACE(BasedVectorSpace_)::DIMENSION>,
+                                 IdentityMatrixGeneratorId> ComponentGenerator;
+    typedef ImplementationOf_t<TensorProduct,Scalar_,UseImmutableArray_t<ComponentGenerator> > IdentityTensor;
+    IdentityTensor identity_tensor;
+    std::cout << "test_immutable_identity_tensor<" << TypeStringOf_t<Scalar_>::eval() << ',' << TypeStringOf_t<BasedVectorSpace_>::eval() << ">\n";
+    std::cout << FORMAT_VALUE(TypeStringOf_t<IdentityTensor>::eval()) << '\n';
+    std::cout << FORMAT_VALUE(identity_tensor) << '\n';
+
+    typedef ImplementationOf_t<BasedVectorSpace_,Scalar_> Vector;
+    Vector v(Static<WithoutInitialization>::SINGLETON);
+    for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
+        v[i] = i.value();
+
+    AbstractIndex_c<'p'> p;
+    AbstractIndex_c<'q'> q;
+    AbstractIndex_c<'r'> r;
+    std::cout << FORMAT_VALUE(v) << '\n';
+    std::cout << FORMAT_VALUE(identity_tensor(p|q)*v(q)) << '\n';
+    std::cout << FORMAT_VALUE(identity_tensor(p|q)*identity_tensor(q|r)) << '\n';
+
     std::cout << '\n';
 }
 
@@ -1113,7 +1159,10 @@ int main (int argc, char **argv)
     test_immutable_array_0<float,3,0>();
     test_immutable_array_0<float,3,1>();
     test_immutable_array_0<float,3,2>();
+
     test_immutable_array_1<float,7>();
+
+    test_immutable_identity_tensor<float,BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,Basis_c<X> > >();
 
     return 0;
 }

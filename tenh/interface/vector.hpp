@@ -24,7 +24,7 @@ namespace Tenh {
 // really only needs to provide implementations of the const and non-const
 // component_access_without_range_check methods.  BasedVectorSpace_ should be
 // a BasedVectorSpace_c type.
-template <typename Derived_, typename Scalar_, typename BasedVectorSpace_>
+template <typename Derived_, typename Scalar_, typename BasedVectorSpace_, bool COMPONENTS_ARE_IMMUTABLE_>
 struct Vector_i
 {
     enum
@@ -45,17 +45,22 @@ struct Vector_i
     // a 1-tensor having a particular type.
     typedef TypeList_t<BasedVectorSpace> FactorTypeList;
 
+    // these definitions must coincide with the Array_i ones (if used in conjunction with Array_i)
+    static bool const COMPONENTS_ARE_IMMUTABLE = COMPONENTS_ARE_IMMUTABLE_;
+    typedef typename Lvd::Meta::If<COMPONENTS_ARE_IMMUTABLE_,Scalar_,Scalar_ const &>::T ComponentAccessConstReturnType;
+    typedef typename Lvd::Meta::If<COMPONENTS_ARE_IMMUTABLE_,Scalar_,Scalar_ &>::T ComponentAccessNonConstReturnType;
+
     static Uint32 dim () { return DIM; }
 
     // TODO: only allow when Basis = Euclidean once strongly-typed vectors are implemented
     // type conversion operator for canonical coercion to Scalar type when the vector is 1-dimensional
-    operator Scalar const & () const
+    operator ComponentAccessConstReturnType () const
     {
         STATIC_ASSERT((DIM == 1), ONLY_ONE_DIMENSIONAL_VECTORS_CAN_BE_CONVERTED_TO_SCALARS);
         return as_derived().Derived::operator[](ComponentIndex(0, DONT_CHECK_RANGE));
     }
     // this could be implemented as "operator Scalar & ()" but it would be bad to make implicit casts that can be used to change the value of this.
-    Scalar &as_scalar ()
+    ComponentAccessNonConstReturnType as_scalar ()
     {
         STATIC_ASSERT((DIM == 1), ONLY_ONE_DIMENSIONAL_VECTORS_CAN_BE_CONVERTED_TO_SCALARS);
         return as_derived().Derived::operator[](ComponentIndex(0, DONT_CHECK_RANGE));
@@ -81,13 +86,13 @@ struct Vector_i
     // NOTE: operator [] will be used to return values, while operator () will be
     // used to create expression templates for the purposes of indexed contractions.
 
-    Scalar const &operator [] (ComponentIndex const &i) const { return as_derived().Derived::operator[](i); }
-    Scalar &operator [] (ComponentIndex const &i) { return as_derived().Derived::operator[](i); }
+    ComponentAccessConstReturnType operator [] (ComponentIndex const &i) const { return as_derived().Derived::operator[](i); }
+    ComponentAccessNonConstReturnType operator [] (ComponentIndex const &i) { return as_derived().Derived::operator[](i); }
 
     template <typename Index_>
-    Scalar const &operator [] (MultiIndex_t<TypeList_t<Index_> > const &m) const { return as_derived().Derived::operator[](m.head()); }
+    ComponentAccessConstReturnType operator [] (MultiIndex_t<TypeList_t<Index_> > const &m) const { return as_derived().Derived::operator[](m.head()); }
     template <typename Index_>
-    Scalar &operator [] (MultiIndex_t<TypeList_t<Index_> > const &m) { return as_derived().Derived::operator[](m.head()); }
+    ComponentAccessNonConstReturnType operator [] (MultiIndex_t<TypeList_t<Index_> > const &m) { return as_derived().Derived::operator[](m.head()); }
 
     // the argument is technically unnecessary, as its value is not used.  however,
     // this allows the template system to deduce the SYMBOL of the AbstractIndex_c, so
@@ -139,17 +144,18 @@ struct Vector_i
     {
         return "Vector_i<" + TypeStringOf_t<Derived>::eval() + ','
                            + TypeStringOf_t<Scalar>::eval() + ','
-                           + TypeStringOf_t<BasedVectorSpace>::eval() + '>';
+                           + TypeStringOf_t<BasedVectorSpace>::eval() + ','
+                           + AS_STRING((COMPONENTS_ARE_IMMUTABLE_ ? "IMMUTABLE_COMPONENTS" : "MUTABLE_COMPONENTS")) + '>';
     }
 };
 
-template <typename T> struct IsAVector_i { static bool const V = false; };
-template <typename Derived, typename Scalar, typename BasedVectorSpace> struct IsAVector_i<Vector_i<Derived,Scalar,BasedVectorSpace> > { static bool const V = true; };
+template <typename T_> struct IsAVector_i { static bool const V = false; };
+template <typename Derived_, typename Scalar_, typename BasedVectorSpace_, bool COMPONENTS_ARE_IMMUTABLE_> struct IsAVector_i<Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> > { static bool const V = true; };
 
-template <typename Derived, typename Scalar, typename BasedVectorSpace>
-std::ostream &operator << (std::ostream &out, Vector_i<Derived,Scalar,BasedVectorSpace> const &v)
+template <typename Derived_, typename Scalar_, typename BasedVectorSpace_, bool COMPONENTS_ARE_IMMUTABLE_>
+std::ostream &operator << (std::ostream &out, Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &v)
 {
-    typedef Vector_i<Derived,Scalar,BasedVectorSpace> Vector;
+    typedef Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> Vector;
 
     if (Vector::DIM == 0)
         return out << "()";

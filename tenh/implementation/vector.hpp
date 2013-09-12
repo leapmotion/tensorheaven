@@ -19,7 +19,8 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
     :
     public Vector_i<ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_>,
                     Scalar_,
-                    BasedVectorSpace_c<VectorSpace_,Basis_> >,
+                    BasedVectorSpace_c<VectorSpace_,Basis_>,
+                    ComponentsAreImmutable_f<UseArrayType_>::V>,
     // privately inherited because it is an implementation detail
     private ArrayStorage_f<Scalar_,
                            AS_VECTOR_SPACE(VectorSpace_)::DIMENSION,
@@ -28,7 +29,8 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
 {
     typedef Vector_i<ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_>,
                      Scalar_,
-                     BasedVectorSpace_c<VectorSpace_,Basis_> > Parent_Vector_i;
+                     BasedVectorSpace_c<VectorSpace_,Basis_>,
+                     ComponentsAreImmutable_f<UseArrayType_>::V> Parent_Vector_i;
     typedef typename ArrayStorage_f<Scalar_,
                                     AS_VECTOR_SPACE(VectorSpace_)::DIMENSION,
                                     UseArrayType_,
@@ -40,6 +42,10 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
     using Parent_Vector_i::DIM;
     typedef typename Parent_Vector_i::ComponentIndex ComponentIndex;
     typedef typename Parent_Vector_i::MultiIndex MultiIndex;
+
+    using Parent_Array_i::COMPONENTS_ARE_IMMUTABLE;
+    typedef typename Parent_Array_i::ComponentAccessConstReturnType ComponentAccessConstReturnType;
+    typedef typename Parent_Array_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
 
     typedef typename DualOf_f<ImplementationOf_t>::T Dual; // relies on the template specialization below
 

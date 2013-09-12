@@ -72,7 +72,8 @@ struct ImmutableArray_t
                                           ImmutableArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_>,
                                           Derived_>::T,
                    Component_,
-                   COMPONENT_COUNT_>
+                   COMPONENT_COUNT_,
+                   IMMUTABLE_COMPONENTS>
 {
     enum { STATIC_ASSERT_IN_ENUM(IsComponentGenerator_t<ComponentGenerator_>::V, MUST_BE_COMPONENT_GENERATOR) };
 
@@ -80,7 +81,8 @@ struct ImmutableArray_t
                                           ImmutableArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_>,
                                           Derived_>::T,
                     Component_,
-                    COMPONENT_COUNT_> Parent_Array_i;
+                    COMPONENT_COUNT_,
+                    IMMUTABLE_COMPONENTS> Parent_Array_i;
 
     typedef typename Parent_Array_i::Component Component;
     using Parent_Array_i::COMPONENT_COUNT;
@@ -90,12 +92,25 @@ struct ImmutableArray_t
     // no initialization is necessary (or possible), since all components are
     // generated procedurally.
     ImmutableArray_t () { }
+    explicit ImmutableArray_t (WithoutInitialization const &) { }
 
     Component operator [] (ComponentIndex const &i) const
     {
         assert(i.is_not_at_end() && "you used ComponentIndex_t(x, DONT_RANGE_CHECK) inappropriately");
         return ComponentGenerator_::evaluate(i);
     }
+    Component operator [] (ComponentIndex const &i)
+    {
+        assert(i.is_not_at_end() && "you used ComponentIndex_t(x, DONT_RANGE_CHECK) inappropriately");
+        return ComponentGenerator_::evaluate(i);
+    }
+
+    // vacuous versions of these methods which don't really belong here, but are
+    // really just used so that stuff that uses ArrayStorage_f doesn't have to
+    // jump through template hoops to declare the right thing.
+    Uint32 allocation_size_in_bytes () const { return 0; }
+    Component const *pointer_to_allocation () const { return NULL; }
+    Component *pointer_to_allocation () { return NULL; }
 
     static std::string type_as_string ()
     {

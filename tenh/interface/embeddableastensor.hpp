@@ -23,10 +23,13 @@ namespace Tenh {
 // compile-time interface for a symmetric tensor type -- e.g. exterior/symmetric product.
 // EmbeddableAsTensor_ should be a EmbeddableAsTensor_c type.
 // TODO: technically, this should be LinearlyEmbeddableAsTensor_i
-template <typename Derived_, typename Scalar_, typename EmbeddableInTensorProductOfBasedVectorSpaces_>
+template <typename Derived_,
+          typename Scalar_,
+          typename EmbeddableInTensorProductOfBasedVectorSpaces_,
+          bool COMPONENTS_ARE_IMMUTABLE_>
 struct EmbeddableAsTensor_i
     :
-    public Vector_i<Derived_,Scalar_,EmbeddableInTensorProductOfBasedVectorSpaces_>
+    public Vector_i<Derived_,Scalar_,EmbeddableInTensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_>
 {
     enum
     {
@@ -35,12 +38,15 @@ struct EmbeddableAsTensor_i
                               MUST_BE_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES),
     };
 
-    typedef Vector_i<Derived_,Scalar_,EmbeddableInTensorProductOfBasedVectorSpaces_> Parent_Vector_i;
+    typedef Vector_i<Derived_,Scalar_,EmbeddableInTensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_> Parent_Vector_i;
     typedef typename Parent_Vector_i::Derived Derived;
     typedef typename Parent_Vector_i::Scalar Scalar;
     typedef typename Parent_Vector_i::BasedVectorSpace BasedVectorSpace;
     using Parent_Vector_i::DIM; // does this make any sense?  e.g. simple tensors aren't a linear space
     typedef typename Parent_Vector_i::ComponentIndex ComponentIndex;
+    using Parent_Vector_i::COMPONENTS_ARE_IMMUTABLE;
+    typedef typename Parent_Vector_i::ComponentAccessConstReturnType ComponentAccessConstReturnType;
+    typedef typename Parent_Vector_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
 
     typedef EmbeddableInTensorProductOfBasedVectorSpaces_ EmbeddableInTensorProductOfBasedVectorSpaces;
     typedef typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(EmbeddableInTensorProductOfBasedVectorSpaces)::TensorProductOfBasedVectorSpaces TensorProductOfBasedVectorSpaces;
@@ -101,14 +107,15 @@ struct EmbeddableAsTensor_i
     {
         return "EmbeddableAsTensor_i<" + TypeStringOf_t<Derived>::eval() + ','
                                        + TypeStringOf_t<Scalar>::eval() + ','
-                                       + TypeStringOf_t<EmbeddableInTensorProductOfBasedVectorSpaces>::eval() + '>';
+                                       + TypeStringOf_t<EmbeddableInTensorProductOfBasedVectorSpaces>::eval() + ','
+                                       + AS_STRING((COMPONENTS_ARE_IMMUTABLE_ ? "IMMUTABLE_COMPONENTS" : "MUTABLE_COMPONENTS")) + '>';
     }
 };
 
-template <typename Derived, typename Scalar, typename EmbeddableInTensorProductOfBasedVectorSpaces>
-std::ostream &operator << (std::ostream &out, EmbeddableAsTensor_i<Derived,Scalar,EmbeddableInTensorProductOfBasedVectorSpaces> const &e)
+template <typename Derived_, typename Scalar_, typename EmbeddableInTensorProductOfBasedVectorSpaces_, bool COMPONENTS_ARE_IMMUTABLE_>
+std::ostream &operator << (std::ostream &out, EmbeddableAsTensor_i<Derived_,Scalar_,EmbeddableInTensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_> const &e)
 {
-    return out << *static_cast<Vector_i<Derived,Scalar,EmbeddableInTensorProductOfBasedVectorSpaces> const *>(&e);
+    return out << *static_cast<Vector_i<Derived_,Scalar_,EmbeddableInTensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_> const *>(&e);
 }
 
 } // end of namespace Tenh

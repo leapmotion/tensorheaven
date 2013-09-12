@@ -17,19 +17,22 @@ namespace Tenh {
 template <typename Derived_, typename Component_, Uint32 COMPONENT_COUNT_>
 struct MemoryArray_i
     :
-    public Array_i<Derived_,Component_,COMPONENT_COUNT_>
+    public Array_i<Derived_,Component_,COMPONENT_COUNT_,MUTABLE_COMPONENTS>
 {
     enum
     {
         STATIC_ASSERT_IN_ENUM((!Lvd::Meta::TypesAreEqual<Derived_,NullType>::v), DERIVED_MUST_NOT_BE_NULL_TYPE)
     };
 
-    typedef Array_i<Derived_,Component_,COMPONENT_COUNT_> Parent_Array_i;
+    typedef Array_i<Derived_,Component_,COMPONENT_COUNT_,MUTABLE_COMPONENTS> Parent_Array_i;
 
     typedef typename Parent_Array_i::Derived Derived;
     typedef typename Parent_Array_i::Component Component;
     using Parent_Array_i::COMPONENT_COUNT;
     typedef typename Parent_Array_i::ComponentIndex ComponentIndex;
+    using Parent_Array_i::COMPONENTS_ARE_IMMUTABLE;
+    typedef typename Parent_Array_i::ComponentAccessConstReturnType ComponentAccessConstReturnType;
+    typedef typename Parent_Array_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
 
     using Parent_Array_i::operator[];
     using Parent_Array_i::as_derived;
