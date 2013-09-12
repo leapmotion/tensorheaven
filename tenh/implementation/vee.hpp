@@ -95,6 +95,14 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
         return BundleIndexComputer_t<BundleIndexTypeList, BundledIndex, ORDER_>::compute(b);
     }
 
+    // only use this if UseImmutableArray_t<...> is specified
+    ImplementationOf_t ()
+        :
+        Parent_Array_i(WithoutInitialization()) // sort of meaningless constructor
+    {
+        STATIC_ASSERT(IsUseImmutableArray_t<UseArrayType_>::V, MUST_BE_USE_IMMUTABLE_ARRAY);
+    }
+
     using Parent_Array_i::as_derived;
     using Parent_Array_i::operator[];
     using Parent_Array_i::allocation_size_in_bytes;
@@ -124,9 +132,6 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
     }
 
 private:
-
-    // this has no definition, and is designed to generate a compiler error if used (use the one accepting WithoutInitialization instead).
-    ImplementationOf_t ();
 
     template <typename BundleIndexTypeList, typename BundledIndex, Uint32 ORD>
     struct BundleIndexComputer_t;

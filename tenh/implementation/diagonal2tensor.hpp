@@ -132,6 +132,14 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,F
         STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
     }
 
+    // only use this if UseImmutableArray_t<...> is specified
+    ImplementationOf_t ()
+        :
+        Parent_Array_i(WithoutInitialization()) // sort of meaningless constructor
+    {
+        STATIC_ASSERT(IsUseImmutableArray_t<UseArrayType_>::V, MUST_BE_USE_IMMUTABLE_ARRAY);
+    }
+
     template <typename BundleIndexTypeList, typename BundledIndex>
     static MultiIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)
     {
@@ -171,11 +179,6 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,F
                                      + TypeStringOf_t<Scalar>::eval() + ','
                                      + TypeStringOf_t<UseArrayType_>::eval() + '>';
     }
-
-private:
-
-    // this has no definition, and is designed to generate a compiler error if used (use the one accepting WithoutInitialization instead).
-    ImplementationOf_t ();
 };
 
 template <typename Factor1_, typename Factor2_, typename Scalar_, typename UseArrayType_>

@@ -116,6 +116,14 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
         STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
     }
 
+    // only use this if UseImmutableArray_t<...> is specified or if the vector space is 0-dimensional
+    ImplementationOf_t ()
+        :
+        Parent_Array_i(WithoutInitialization()) // sort of meaningless constructor
+    {
+        STATIC_ASSERT(IsUseImmutableArray_t<UseArrayType_>::V || DIM == 0, MUST_BE_USE_IMMUTABLE_ARRAY_OR_BE_ZERO_DIMENSIONAL);
+    }
+
     using Parent_Array_i::as_derived;
     using Parent_Array_i::operator[];
     using Parent_Array_i::allocation_size_in_bytes;
@@ -127,14 +135,6 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
                                      + TypeStringOf_t<Scalar>::eval() + ','
                                      + TypeStringOf_t<UseArrayType_>::eval() + '>';
     }
-
-private:
-
-    // this has no definition, and is designed to generate a compiler error if used (use the
-    // one accepting WithoutInitialization instead).  TODO: may need to make this public to
-    // allow 0-dimensional vectors, adding a static assert to check that it's actually 
-    // 0-dimensional and not being used improperly.
-    ImplementationOf_t ();
 };
 
 template <typename VectorSpace_, typename Basis_, typename Scalar_, typename UseArrayType_>
