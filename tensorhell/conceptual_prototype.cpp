@@ -16,11 +16,11 @@
 #include "tenh/memberarray.hpp"
 #include "tenh/immutablearray.hpp"
 #include "tenh/implementation/diagonal2tensor.hpp"
+#include "tenh/implementation/innerproduct.hpp"
 #include "tenh/implementation/tensor.hpp"
 #include "tenh/implementation/vector.hpp"
 #include "tenh/implementation/vee.hpp"
 #include "tenh/implementation/wedge.hpp"
-// #include "tenh/innerproduct.hpp"
 
 struct X
 {
@@ -165,6 +165,20 @@ void test_immutable_identity_tensor ()
     std::cout << FORMAT_VALUE(identity_tensor(p|q)*v(q)) << '\n';
     std::cout << FORMAT_VALUE(identity_tensor(p|q)*identity_tensor(q|r)) << '\n';
 
+    std::cout << '\n';
+}
+
+template <typename Scalar_, typename VectorSpace_>
+void test_standard_euclidean_inner_product ()
+{
+    std::cout << "test_standard_euclidean_inner_product<" << TypeStringOf_t<Scalar_>::eval() << ',' << TypeStringOf_t<VectorSpace_>::eval() << ">\n";
+    typedef typename InnerProduct_f<BasedVectorSpace_c<VectorSpace_,StandardBasis>,StandardInnerProduct,Scalar_>::T InnerProduct;
+    InnerProduct g;
+    std::cout << FORMAT_VALUE(g) << '\n';
+    AbstractIndex_c<'i'> i;
+    AbstractIndex_c<'j'> j;
+    AbstractIndex_c<'p'> p;
+    std::cout << FORMAT_VALUE(g(p).split(p,i|j)) << '\n';
     std::cout << '\n';
 }
 
@@ -962,7 +976,7 @@ int main (int argc, char **argv)
     {
         std::cout << "testing InnerProduct_t\n";
         typedef VectorSpace_c<RealField,3,X> VSX;
-        typedef BasedVectorSpace_c<VSX,StandardEuclideanBasis> BasedX;
+        typedef BasedVectorSpace_c<VSX,StandardBasis> BasedX;
         InnerProduct_t<BasedX,float> b;
         AbstractIndex_c<'P'> P;
         AbstractIndex_c<'Q'> Q;
@@ -1164,5 +1178,6 @@ int main (int argc, char **argv)
 
     test_immutable_identity_tensor<float,BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,Basis_c<X> > >();
 
+    test_standard_euclidean_inner_product<float,VectorSpace_c<RealField,4,X> >();
     return 0;
 }

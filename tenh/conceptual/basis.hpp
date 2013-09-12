@@ -14,6 +14,10 @@
 
 namespace Tenh {
 
+// ////////////////////////////////////////////////////////////////////////////
+// Basis_c
+// ////////////////////////////////////////////////////////////////////////////
+
 template <typename Id_>
 struct Basis_c
 {
@@ -43,6 +47,26 @@ template <typename Id>
 struct DualOf_f<Basis_c<Id> >
 {
     typedef Basis_c<typename DualOf_f<Id>::T> T;
+};
+
+// ////////////////////////////////////////////////////////////////////////////
+// Standard[Basis]
+// ////////////////////////////////////////////////////////////////////////////
+
+struct Standard
+{
+    static std::string type_as_string () { return "Standard"; }
+};
+
+// convenience typedef for the standard [Euclidean] basis (basically is a pre-existing
+// name for an orthonormal basis).
+typedef Basis_c<Standard> StandardBasis;
+
+// StandardBasis is self-dual (as a Basis_c type), though the space it refers to may not be.
+template <>
+struct DualOf_f<StandardBasis>
+{
+    typedef StandardBasis T;
 };
 
 } // end of namespace Tenh
