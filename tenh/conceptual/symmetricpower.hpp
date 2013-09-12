@@ -198,6 +198,10 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(SymmetricPowerOfBasedVectorSpace);
 #define IS_SYMMETRIC_POWER_OF_BASED_VECTOR_SPACES_UNIQUELY(Concept) HasUniqueSymmetricPowerOfBasedVectorSpaceStructure_f<Concept>::V
 #define AS_SYMMETRIC_POWER_OF_BASED_VECTOR_SPACES(Concept) UniqueSymmetricPowerOfBasedVectorSpaceStructureOf_f<Concept>::T
 
+// TODO: DualOf_f<SymmetricPowerOfBasedVectorSpace_c> -- figure what sort of thing this is;
+// (it's not naturally the symmetric power of the dual, but it is embeddable in that space)
+// maybe it's just a based vector space for now?
+
 } // end of namespace Tenh
 
 #endif // TENH_CONCEPTUAL_SYMMETRICPOWER_HPP_

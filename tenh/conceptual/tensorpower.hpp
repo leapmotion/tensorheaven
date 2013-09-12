@@ -191,9 +191,9 @@ private:
     typedef BasedTensorPowerOfVectorSpace_c<TensorPowerOfVectorSpace_c<ORDER_,Factor_>,
                                             TensorPowerOfBasis_c<ORDER_,typename Factor_::Basis> > As_BasedTensorPowerOfVectorSpace;
     typedef EmbeddableInTensorPowerOfBasedVectorSpace_c<TensorPowerOfBasedVectorSpace_c,
-                                                         TensorPowerOfVectorSpace_c<ORDER_,Factor_>,
-                                                         TensorProductOfBasedVectorSpaces_c<FactorTypeList>,
-                                                         TensorProductOfVectorSpaces_c<FactorTypeList> > As_EmbeddableInTensorPowerOfBasedVectorSpace;
+                                                        TensorPowerOfVectorSpace_c<ORDER_,Factor_>,
+                                                        TensorProductOfBasedVectorSpaces_c<FactorTypeList>,
+                                                        TensorProductOfVectorSpaces_c<FactorTypeList> > As_EmbeddableInTensorPowerOfBasedVectorSpace;
 public:
     typedef TypeList_t<As_BasedTensorPowerOfVectorSpace,
             TypeList_t<As_TensorProductOfBasedVectorSpaces,

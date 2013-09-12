@@ -116,8 +116,16 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
     // these are what provide indexed expressions -- via expression templates
     using Parent_EmbeddableAsTensor_i::operator();
 
-    static bool component_is_immutable_zero (MultiIndex const &m) { return false; }
-    static Scalar scalar_factor_for_component (MultiIndex const &m) { return Scalar(MultiIndexMultiplicity_t<MultiIndex>::eval(sorted<typename MultiIndex::IndexTypeList,std::greater<Uint32> >(m)))/Scalar(Factorial_t<ORDER>::V); }
+    static bool component_is_immutable_zero (MultiIndex const &m)
+    {
+        return false;
+    }
+    static Scalar scalar_factor_for_component (MultiIndex const &m)
+    {
+        return Scalar(MultiIndexMultiplicity_t<MultiIndex>::eval(sorted<typename MultiIndex::IndexTypeList,std::greater<Uint32> >(m)))
+               /
+               Scalar(Factorial_t<ORDER>::V);
+    }
     static ComponentIndex vector_index_of (MultiIndex const &m)
     {
         MultiIndex n = sorted<typename MultiIndex::IndexTypeList,std::greater<Uint32> >(m);

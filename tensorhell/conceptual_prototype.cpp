@@ -175,10 +175,24 @@ void test_standard_euclidean_inner_product ()
     typedef typename InnerProduct_f<BasedVectorSpace_c<VectorSpace_,StandardBasis>,StandardInnerProduct,Scalar_>::T InnerProduct;
     InnerProduct g;
     std::cout << FORMAT_VALUE(g) << '\n';
+    AbstractIndex_c<'P'> P;
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
-    AbstractIndex_c<'p'> p;
-    std::cout << FORMAT_VALUE(g(p).split(p,i|j)) << '\n';
+    std::cout << FORMAT_VALUE(g(P).split(P,i|j)) << '\n';
+    std::cout << '\n';
+}
+
+template <typename Scalar_, Uint32 ORDER_, typename BasedVectorSpace_, typename InnerProductId_>
+void test_tensor_power_of_inner_product ()
+{
+    std::cout << "test_tensor_power_of_inner_product<" << TypeStringOf_t<Scalar_>::eval() << ',' << AS_STRING(ORDER_) << ',' << TypeStringOf_t<BasedVectorSpace_>::eval() << ">\n";
+    typedef typename InnerProduct_f<TensorPowerOfBasedVectorSpace_c<ORDER_,BasedVectorSpace_>,TensorPower_c<ORDER_,InnerProductId_>,Scalar_>::T InnerProduct;
+    InnerProduct g;
+    std::cout << FORMAT_VALUE(g) << '\n';
+    AbstractIndex_c<'P'> P;
+    AbstractIndex_c<'i'> i;
+    AbstractIndex_c<'j'> j;
+    std::cout << FORMAT_VALUE(g(P).split(P,i|j)) << '\n';
     std::cout << '\n';
 }
 
@@ -1179,5 +1193,11 @@ int main (int argc, char **argv)
     test_immutable_identity_tensor<float,BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,Basis_c<X> > >();
 
     test_standard_euclidean_inner_product<float,VectorSpace_c<RealField,4,X> >();
+
+    // {
+    //     typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,X>,StandardBasis> BasedVectorSpace;
+    //     test_tensor_power_of_inner_product<float,1,BasedVectorSpace,StandardInnerProduct>();
+    // }
+
     return 0;
 }
