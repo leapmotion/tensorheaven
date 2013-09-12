@@ -9,7 +9,7 @@
 #include "tenh/core.hpp"
 
 #include "tenh/immutablearray.hpp"
-#include "tenh/memoryarray.hpp"
+#include "tenh/memberarray.hpp"
 #include "tenh/preallocatedarray.hpp"
 
 namespace Tenh {
@@ -20,8 +20,8 @@ namespace Tenh {
 
 // these are for the UseArrayType parameter in ImplementationOf_t
 
-struct UseMemoryArray { static std::string type_as_string () { return "UseMemoryArray"; } };
-template <> struct DualOf_f<UseMemoryArray> { typedef UseMemoryArray T; };
+struct UseMemberArray { static std::string type_as_string () { return "UseMemberArray"; } };
+template <> struct DualOf_f<UseMemberArray> { typedef UseMemberArray T; };
 
 struct UsePreallocatedArray { static std::string type_as_string () { return "UsePreallocatedArray"; } };
 template <> struct DualOf_f<UsePreallocatedArray> { typedef UsePreallocatedArray T; };
@@ -55,25 +55,26 @@ template <typename ComponentGenerator_> struct ComponentsAreImmutable_f<UseImmut
 // the default is to use 
 template <typename Concept_,
           typename Scalar_,
-          typename UseArrayType = UseMemoryArray>
+          typename UseArrayType = UseMemberArray>
 struct ImplementationOf_t;
 
 // ///////////////////////////////////////////////////////////////////////////
 // metafunction for deciding which structure to use for component access
 // ///////////////////////////////////////////////////////////////////////////
 
-// a template metafunction for figuring out which type of array to use (MemoryArray_t or PreallocatedArray_t)
+// a template metafunction for figuring out which type of Array_i to use
+// (one of MemberArray_t, PreallocatedArray_t, ImmutableArray_t)
 template <typename Component_,
           Uint32 COMPONENT_COUNT_,
           typename UseArrayType_,
           typename Derived_ = NullType>
 struct ArrayStorage_f;
 
-// template specialization for use of MemoryArray_t
+// template specialization for use of MemberArray_t
 template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_>
-struct ArrayStorage_f<Component_,COMPONENT_COUNT_,UseMemoryArray,Derived_>
+struct ArrayStorage_f<Component_,COMPONENT_COUNT_,UseMemberArray,Derived_>
 {
-    typedef MemoryArray_t<Component_,COMPONENT_COUNT_,Derived_> T;
+    typedef MemberArray_t<Component_,COMPONENT_COUNT_,Derived_> T;
 };
 
 template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_>

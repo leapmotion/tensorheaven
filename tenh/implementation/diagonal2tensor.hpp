@@ -65,7 +65,7 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,F
 
     explicit ImplementationOf_t (WithoutInitialization const &w) : Parent_Array_i(w) { }
 
-    // only use these if UseMemoryArray is specified
+    // only use these if UseMemberArray is specified
 
     // probably only useful for zero element (because this is basis-dependent), though
     // this would also give any scalar matrix, including the identity matrix (though you
@@ -74,25 +74,25 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,F
         :
         Parent_Array_i(fill_with)
     {
-        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemoryArray);
+        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemberArray);
     }
     ImplementationOf_t (Scalar const &x0, Scalar const &x1)
         :
         Parent_Array_i(x0, x1)
     {
-        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemoryArray);
+        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemberArray);
     }
     ImplementationOf_t (Scalar const &x0, Scalar const &x1, Scalar const &x2)
         :
         Parent_Array_i(x0, x1, x2)
     {
-        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemoryArray);
+        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemberArray);
     }
     ImplementationOf_t (Scalar const &x0, Scalar const &x1, Scalar const &x2, Scalar const &x3)
         :
         Parent_Array_i(x0, x1, x2, x3)
     {
-        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemoryArray);
+        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemberArray);
     }
 
     // only use these if UsePreallocatedArray is specified

@@ -51,32 +51,32 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
 
     explicit ImplementationOf_t (WithoutInitialization const &w) : Parent_Array_i(w) { }
 
-    // only use these if UseMemoryArray is specified
+    // only use these if UseMemberArray is specified
 
     // probably only useful for zero element (because this is basis-dependent)
     explicit ImplementationOf_t (Scalar const &fill_with)
         :
         Parent_Array_i(fill_with)
     {
-        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemoryArray);
+        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemberArray);
     }
     ImplementationOf_t (Scalar const &x0, Scalar const &x1)
         :
         Parent_Array_i(x0, x1)
     {
-        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemoryArray);
+        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemberArray);
     }
     ImplementationOf_t (Scalar const &x0, Scalar const &x1, Scalar const &x2)
         :
         Parent_Array_i(x0, x1, x2)
     {
-        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemoryArray);
+        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemberArray);
     }
     ImplementationOf_t (Scalar const &x0, Scalar const &x1, Scalar const &x2, Scalar const &x3)
         :
         Parent_Array_i(x0, x1, x2, x3)
     {
-        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemoryArray);
+        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemberArray);
     }
 
     // only use these if UsePreallocatedArray is specified

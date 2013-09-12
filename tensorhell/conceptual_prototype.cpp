@@ -13,7 +13,7 @@
 #include "tenh/conceptual/vectorspace.hpp"
 #include "tenh/conceptual/dual.hpp"
 #include "tenh/expressiontemplate_eval.hpp"
-#include "tenh/memoryarray.hpp"
+#include "tenh/memberarray.hpp"
 #include "tenh/immutablearray.hpp"
 #include "tenh/implementation/diagonal2tensor.hpp"
 #include "tenh/implementation/tensor.hpp"
@@ -1006,7 +1006,7 @@ int main (int argc, char **argv)
 
     {
         std::cout << "member array\n";
-        typedef ImplementationOf_t<BasedX,float,UseMemoryArray> V;
+        typedef ImplementationOf_t<BasedX,float,UseMemberArray> V;
         V v(1.0f, 2.0f, 4.0f);
         std::cout << FORMAT_VALUE(v) << '\n';
         std::cout << '\n';
@@ -1032,7 +1032,7 @@ int main (int argc, char **argv)
         for (V::ComponentIndex j; j.is_not_at_end(); ++j)
             std::cout << FORMAT_VALUE(v[j]) << '\n';
 
-        // the following should cause a compile error regarding UseMemoryArray
+        // the following should cause a compile error regarding UseMemberArray
         //V w(1.0f, 2.0f, 4.0f);
 
         typedef ImplementationOf_t<BasedY,float,UsePreallocatedArray> W;
@@ -1045,7 +1045,7 @@ int main (int argc, char **argv)
 
     {
         typedef ImplementationOf_t<BasedX,float,UsePreallocatedArray> V;
-        typedef ImplementationOf_t<YTensorXDual,float,UseMemoryArray> T;
+        typedef ImplementationOf_t<YTensorXDual,float,UseMemberArray> T;
         float components[3] = {8.0f, 10.0f, 11.0f};
         V v(&components[0], CHECK_POINTER); // v must live no longer than components[]
         T t(2.0f);
@@ -1078,7 +1078,7 @@ int main (int argc, char **argv)
     }
 
     {
-        typedef ImplementationOf_t<YTensorXDual,float,UseMemoryArray> T;
+        typedef ImplementationOf_t<YTensorXDual,float,UseMemberArray> T;
         typedef ImplementationOf_t<YTensorXDual,float,UsePreallocatedArray> U;
         T t(2.0f);
         t[T::MultiIndex(0,1)] = -1.0f;
@@ -1094,7 +1094,7 @@ int main (int argc, char **argv)
     {
         std::cout << "testing Diagonal2TensorProductOfBasedVectorSpaces_c\n";
         typedef ImplementationOf_t<BasedX,float,UsePreallocatedArray> V;
-        typedef ImplementationOf_t<Diag_YTensorXDual,float,UseMemoryArray> T;
+        typedef ImplementationOf_t<Diag_YTensorXDual,float,UseMemberArray> T;
         float components[3] = {8.0f, 10.0f, 11.0f};
         V v(&components[0], CHECK_POINTER); // v must live no longer than components[]
         T t(2.0f, -3.0f);
@@ -1112,8 +1112,8 @@ int main (int argc, char **argv)
 
     {
         std::cout << "testing SymmetricPowerOfBasedVectorSpace_c\n";
-        typedef ImplementationOf_t<BasedX,float,UseMemoryArray> V;
-        typedef ImplementationOf_t<Sym,float,UseMemoryArray> S;
+        typedef ImplementationOf_t<BasedX,float,UseMemberArray> V;
+        typedef ImplementationOf_t<Sym,float,UseMemberArray> S;
         typedef ImplementationOf_t<Sym,float,UsePreallocatedArray> S_;
         S s(Static<WithoutInitialization>::SINGLETON);
         V v(3.0f, 4.0f, 7.0f);
@@ -1135,8 +1135,8 @@ int main (int argc, char **argv)
 
     {
         std::cout << "testing ExteriorPowerOfBasedVectorSpace_c\n";
-        typedef ImplementationOf_t<BasedZ,float,UseMemoryArray> V;
-        typedef ImplementationOf_t<Alt,float,UseMemoryArray> A;
+        typedef ImplementationOf_t<BasedZ,float,UseMemberArray> V;
+        typedef ImplementationOf_t<Alt,float,UseMemberArray> A;
         typedef ImplementationOf_t<Alt,float,UsePreallocatedArray> A_;
         A a(Static<WithoutInitialization>::SINGLETON);
         V u(3.0f, 4.0f, 7.0f, 0.0f);
