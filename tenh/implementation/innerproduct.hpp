@@ -17,6 +17,21 @@ template <typename BasedVectorSpace_, typename InnerProductId_, typename Scalar_
 // corresponds to the identity matrix
 struct StandardInnerProduct { static std::string type_as_string () { return "StandardInnerProduct"; } };
 
+// this would be better defined as a private static method in the specialization of InnerProduct_f below,
+// but g++ complains about that being invalid in a const expression (whereas clang++ is fine with it)
+template <typename EmbeddableInTensorProductOfBasedVectorSpaces_, typename Scalar_>
+Scalar_ standard_inner_product_component_generator_evaluator (ComponentIndex_t<AS_VECTOR_SPACE(EmbeddableInTensorProductOfBasedVectorSpaces_)::DIMENSION> const &i)
+{
+    typedef ComponentIndex_t<AS_VECTOR_SPACE(EmbeddableInTensorProductOfBasedVectorSpaces_)::DIMENSION> ComponentIndex;
+    // for using bundle_index_map -- the use of UsePreallocatedArray is somewhat arbitrary,
+    // since only the static method bundle_index_map will be used.
+    typedef ImplementationOf_t<EmbeddableInTensorProductOfBasedVectorSpaces_,Scalar_,UsePreallocatedArray> BootstrappingImplementation;
+    typedef typename BootstrappingImplementation::MultiIndex::IndexTypeList IndexTypeList;
+    typedef MultiIndex_t<IndexTypeList> MultiIndex;
+    MultiIndex m(BootstrappingImplementation::template bundle_index_map<IndexTypeList,ComponentIndex>(i));
+    return m.template el<0>() == m.template el<1>() ? Scalar_(1) : Scalar_(0);
+}
+
 // template specialization for inner product on Euclidean space
 template <typename VectorSpace_, typename Scalar_>
 struct InnerProduct_f<BasedVectorSpace_c<VectorSpace_,StandardBasis>,StandardInnerProduct,Scalar_>
@@ -25,18 +40,10 @@ private:
     typedef BasedVectorSpace_c<VectorSpace_,StandardBasis> BasedVectorSpace;
     typedef typename DualOf_f<BasedVectorSpace>::T DualOfBasedVectorSpace;
     typedef SymmetricPowerOfBasedVectorSpace_c<2,DualOfBasedVectorSpace> SymmetricPower;
-    // for using bundle_index_map -- the use of UsePreallocatedArray is somewhat arbitrary,
-    // since only the static method bundle_index_map will be used.
-    typedef ImplementationOf_t<SymmetricPower,Scalar_,UsePreallocatedArray> BootstrappingImplementation;
-    typedef ComponentIndex_t<AS_VECTOR_SPACE(SymmetricPower)::DIMENSION> ComponentIndex;
-    static Scalar_ evaluator (ComponentIndex const &i)
-    {
-        typedef typename BootstrappingImplementation::MultiIndex::IndexTypeList IndexTypeList;
-        typedef MultiIndex_t<IndexTypeList> MultiIndex;
-        MultiIndex m(BootstrappingImplementation::template bundle_index_map<IndexTypeList,ComponentIndex>(i));
-        return m.template el<0>() == m.template el<1>() ? Scalar_(1) : Scalar_(0);
-    }
-    typedef ComponentGenerator_t<Scalar_,AS_VECTOR_SPACE(SymmetricPower)::DIMENSION,evaluator,StandardInnerProduct> ComponentGenerator;
+    typedef ComponentGenerator_t<Scalar_,
+                                 AS_VECTOR_SPACE(SymmetricPower)::DIMENSION,
+                                 standard_inner_product_component_generator_evaluator<SymmetricPower,Scalar_>,
+                                 StandardInnerProduct> ComponentGenerator;
 public:
     typedef ImplementationOf_t<SymmetricPower,Scalar_,UseImmutableArray_t<ComponentGenerator> > T;
 };
