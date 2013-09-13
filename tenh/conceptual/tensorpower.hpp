@@ -213,17 +213,19 @@ struct IsConcept_f<TensorPowerOfBasedVectorSpace_c<ORDER_,Factor_> >
 { static bool const V = true; };
 
 template <typename T> struct IsTensorPowerOfBasedVectorSpace_f { static bool const V = false; };
-template <Uint32 ORDER, typename Factor> struct IsTensorPowerOfBasedVectorSpace_f<TensorPowerOfBasedVectorSpace_c<ORDER,Factor> > { static bool const V = true; };
+template <Uint32 ORDER_, typename Factor_> struct IsTensorPowerOfBasedVectorSpace_f<TensorPowerOfBasedVectorSpace_c<ORDER_,Factor_> > { static bool const V = true; };
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(TensorPowerOfBasedVectorSpace);
 // special convenience macros
 #define IS_TENSOR_POWER_OF_BASED_VECTOR_SPACES_UNIQUELY(Concept) HasUniqueTensorPowerOfBasedVectorSpaceStructure_f<Concept>::V
 #define AS_TENSOR_POWER_OF_BASED_VECTOR_SPACES(Concept) UniqueTensorPowerOfBasedVectorSpaceStructureOf_f<Concept>::T
 
-template <Uint32 ORDER, typename Factor>
-struct DualOf_f<TensorPowerOfBasedVectorSpace_c<ORDER,Factor> >
+// there is a natural identification of the Kth tensor power of a vector space with the
+// Kth tensor power of the dual of the vector space
+template <Uint32 ORDER_, typename Factor_>
+struct DualOf_f<TensorPowerOfBasedVectorSpace_c<ORDER_,Factor_> >
 {
-    typedef TensorPowerOfBasedVectorSpace_c<ORDER,typename DualOf_f<Factor>::T> T;
+    typedef TensorPowerOfBasedVectorSpace_c<ORDER_,typename DualOf_f<Factor_>::T> T;
 };
 
 } // end of namespace Tenh

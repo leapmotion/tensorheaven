@@ -346,6 +346,8 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(TensorProductOfBasedVectorSpaces);
 #define IS_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES_UNIQUELY(Concept) HasUniqueTensorProductOfBasedVectorSpacesStructure_f<Concept>::V
 #define AS_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(Concept) UniqueTensorProductOfBasedVectorSpacesStructureOf_f<Concept>::T
 
+// there is a natural identification of a tensor product of vector spaces with the
+// tensor product of the dual of the vector spaces
 template <typename FactorTypeList_>
 struct DualOf_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >
 {

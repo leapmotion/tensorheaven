@@ -17,10 +17,12 @@ template <typename BasedVectorSpace_, typename InnerProductId_, typename Scalar_
 // corresponds to the identity matrix
 struct StandardInnerProduct { static std::string type_as_string () { return "StandardInnerProduct"; } };
 
+namespace ComponentGeneratorEvaluator {
+
 // this would be better defined as a private static method in the specialization of InnerProduct_f below,
 // but g++ complains about that being invalid in a const expression (whereas clang++ is fine with it)
 template <typename EmbeddableInTensorProductOfBasedVectorSpaces_, typename Scalar_>
-Scalar_ standard_inner_product_component_generator_evaluator (ComponentIndex_t<AS_VECTOR_SPACE(EmbeddableInTensorProductOfBasedVectorSpaces_)::DIMENSION> const &i)
+Scalar_ standard_inner_product (ComponentIndex_t<AS_VECTOR_SPACE(EmbeddableInTensorProductOfBasedVectorSpaces_)::DIMENSION> const &i)
 {
     typedef ComponentIndex_t<AS_VECTOR_SPACE(EmbeddableInTensorProductOfBasedVectorSpaces_)::DIMENSION> ComponentIndex;
     // for using bundle_index_map -- the use of UsePreallocatedArray is somewhat arbitrary,
@@ -32,6 +34,8 @@ Scalar_ standard_inner_product_component_generator_evaluator (ComponentIndex_t<A
     return m.template el<0>() == m.template el<1>() ? Scalar_(1) : Scalar_(0);
 }
 
+} // end of namespace ComponentGeneratorEvaluator
+
 // template specialization for inner product on Euclidean space
 template <typename VectorSpace_, typename Scalar_>
 struct InnerProduct_f<BasedVectorSpace_c<VectorSpace_,StandardBasis>,StandardInnerProduct,Scalar_>
@@ -42,12 +46,12 @@ private:
     typedef SymmetricPowerOfBasedVectorSpace_c<2,DualOfBasedVectorSpace> SymmetricPower;
     typedef ComponentGenerator_t<Scalar_,
                                  AS_VECTOR_SPACE(SymmetricPower)::DIMENSION,
-                                 standard_inner_product_component_generator_evaluator<SymmetricPower,Scalar_>,
+                                 ComponentGeneratorEvaluator::standard_inner_product<SymmetricPower,Scalar_>,
                                  StandardInnerProduct> ComponentGenerator;
 public:
     typedef ImplementationOf_t<SymmetricPower,Scalar_,UseImmutableArray_t<ComponentGenerator> > T;
 };
-
+/*
 template <Uint32 ORDER_, typename BasedVectorSpace_, typename InnerProductId_, typename Scalar_>
 struct InnerProduct_f<TensorPowerOfBasedVectorSpace_c<ORDER_,BasedVectorSpace_>,TensorPower_c<ORDER_,InnerProductId_>,Scalar_>
 {
@@ -81,6 +85,20 @@ private:
 public:
     typedef ImplementationOf_t<SymmetricPower,Scalar_,UseImmutableArray_t<ComponentGenerator> > T;
 };
+*/
+namespace ComponentGeneratorEvaluator {
+
+template <typename EmbeddableInTensorProductOfBasedVectorSpaces_, typename BasedVectorSpace_, typename InnerProductId_, typename Scalar_>
+Scalar_ inner_product_induced_on_1st_tensor_power (ComponentIndex_t<AS_VECTOR_SPACE(EmbeddableInTensorProductOfBasedVectorSpaces_)::DIMENSION> const &i)
+{
+    STATIC_ASSERT(AS_VECTOR_SPACE(BasedVectorSpace_)::DIMENSION == AS_VECTOR_SPACE(EmbeddableInTensorProductOfBasedVectorSpaces_)::DIMENSION,
+                  DIMENSIONS_MUST_MATCH);
+    typedef typename InnerProduct_f<BasedVectorSpace_,InnerProductId_,Scalar_>::T HeadInnerProduct;
+    HeadInnerProduct head_inner_product;
+    return head_inner_product[i];
+}
+
+} // end of namespace ComponentGeneratorEvaluator
 
 // template specialization for ORDER_ == 1 (which is really just the original inner product)
 // TODO: do specialization for ORDER_ == 0 (but this would depend on the basis being Standard
@@ -94,22 +112,39 @@ private:
     enum
     {
         STATIC_ASSERT_IN_ENUM__UNIQUE(HasBasedVectorSpaceStructure_f<DualOfTensorPowerOfBasedVectorSpace>::V, MUST_BE_BASED_VECTOR_SPACE, HAS_STRUCTURE),
-        //STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(DualOfTensorPowerOfBasedVectorSpace), MUST_BE_BASED_VECTOR_SPACE)
+//         STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(DualOfTensorPowerOfBasedVectorSpace), MUST_BE_BASED_VECTOR_SPACE)
     };
+    /*
     typedef typename AS_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(DualOfTensorPowerOfBasedVectorSpace) Dual;
     enum { STATIC_ASSERT_IN_ENUM__UNIQUE(IS_BASED_VECTOR_SPACE_UNIQUELY(Dual), MUST_BE_BASED_VECTOR_SPACE, THINGY) };
     typedef SymmetricPowerOfBasedVectorSpace_c<2,DualOfTensorPowerOfBasedVectorSpace> SymmetricPower;
     enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(SymmetricPower), MUST_BE_VECTOR_SPACE) };
-    typedef ComponentIndex_t<AS_VECTOR_SPACE(SymmetricPower)::DIMENSION> ComponentIndex;
-    static Scalar_ evaluator (ComponentIndex const &i)
-    {
-        typedef typename InnerProduct_f<BasedVectorSpace_,InnerProductId_,Scalar_>::T HeadInnerProduct;
-        HeadInnerProduct head_inner_product;
-        return head_inner_product[i];
-    }
-    typedef ComponentGenerator_t<Scalar_,AS_VECTOR_SPACE(SymmetricPower)::DIMENSION,evaluator,TensorPower_c<1,InnerProductId_> > ComponentGenerator;
+//     typedef ComponentIndex_t<AS_VECTOR_SPACE(SymmetricPower)::DIMENSION> ComponentIndex;
+//     static Scalar_ evaluator (ComponentIndex const &i)
+//     {
+//         typedef typename InnerProduct_f<BasedVectorSpace_,InnerProductId_,Scalar_>::T HeadInnerProduct;
+//         HeadInnerProduct head_inner_product;
+//         return head_inner_product[i];
+//     }
+    typedef ComponentGenerator_t<Scalar_,
+                                 AS_VECTOR_SPACE(SymmetricPower)::DIMENSION,
+                                 ComponentGeneratorEvaluator::inner_product_induced_on_1st_tensor_power<SymmetricPower,
+                                                                                                        BasedVectorSpace_,
+                                                                                                        InnerProductId_,
+                                                                                                        Scalar_>,
+                                 TensorPower_c<1,InnerProductId_> > ComponentGenerator;
 public:
     typedef ImplementationOf_t<SymmetricPower,Scalar_,UseImmutableArray_t<ComponentGenerator> > T;
+    */
+public:
+    static void blah ()
+    {
+        std::cout << "blah\n";
+        std::cout << FORMAT_VALUE(TypeStringOf_t<TensorPowerOfBasedVectorSpace>::eval()) << '\n';
+        std::cout << FORMAT_VALUE(TypeStringOf_t<DualOfTensorPowerOfBasedVectorSpace>::eval()) << '\n';
+        std::cout << FORMAT_VALUE(TypeStringOf_t<typename BasedVectorSpaceStructuresOf_f<DualOfTensorPowerOfBasedVectorSpace>::T>::eval()) << '\n';
+        std::cout << '\n';
+    }
 };
 
 } // end of namespace Tenh
