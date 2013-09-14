@@ -86,7 +86,8 @@ struct AllFactorsHaveTheSameField_f
 {
     typedef typename FactorTypeList_::HeadType HeadType;
     typedef typename FactorTypeList_::BodyTypeList BodyTypeList;
-    static bool const V = Lvd::Meta::TypesAreEqual<typename HeadType::Field,typename BodyTypeList::HeadType::Field>::v &&
+    static bool const V = Lvd::Meta::TypesAreEqual<typename AS_VECTOR_SPACE(HeadType)::Field,
+                                                   typename AS_VECTOR_SPACE(typename BodyTypeList::HeadType)::Field>::v &&
                           AllFactorsHaveTheSameField_f<BodyTypeList>::V;
 };
 

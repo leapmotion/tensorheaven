@@ -80,8 +80,8 @@ template <Uint32 ORDER, typename Factor> struct IsExteriorPowerOfVectorSpace_f<E
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(ExteriorPowerOfVectorSpace);
 // special convenience macros
-#define IS_EXTERIOR_POWER_OF_VECTOR_SPACES_UNIQUELY(Concept) HasUniqueExteriorPowerOfVectorSpaceStructure_f<Concept>::V
-#define AS_EXTERIOR_POWER_OF_VECTOR_SPACES(Concept) UniqueExteriorPowerOfVectorSpaceStructureOf_f<Concept>::T
+#define IS_EXTERIOR_POWER_OF_VECTOR_SPACE_UNIQUELY(Concept) HasUniqueExteriorPowerOfVectorSpaceStructure_f<Concept>::V
+#define AS_EXTERIOR_POWER_OF_VECTOR_SPACE(Concept) UniqueExteriorPowerOfVectorSpaceStructureOf_f<Concept>::T
 
 
 // Factor_ must be a Basis_c type
@@ -124,7 +124,7 @@ struct BasedExteriorPowerOfVectorSpace_c
 private:
     enum
     {
-        STATIC_ASSERT_IN_ENUM(IS_EXTERIOR_POWER_OF_VECTOR_SPACES_UNIQUELY(ExteriorPowerOfVectorSpace_), MUST_BE_EXTERIOR_POWER_OF_VECTOR_SPACES),
+        STATIC_ASSERT_IN_ENUM(IS_EXTERIOR_POWER_OF_VECTOR_SPACE_UNIQUELY(ExteriorPowerOfVectorSpace_), MUST_BE_EXTERIOR_POWER_OF_VECTOR_SPACE),
         STATIC_ASSERT_IN_ENUM(IS_BASIS_UNIQUELY(Basis_), MUST_BE_BASIS),
     };
     typedef ExteriorPowerOfVectorSpace_ As_ExteriorPowerOfVectorSpace;
@@ -151,8 +151,8 @@ template <typename ExteriorPowerOfVectorSpace, typename Basis> struct IsBasedExt
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(BasedExteriorPowerOfVectorSpace);
 // special convenience macros
-#define IS_BASED_EXTERIOR_POWER_OF_VECTOR_SPACES_UNIQUELY(Concept) HasUniqueBasedExteriorPowerOfVectorSpaceStructure_f<Concept>::V
-#define AS_BASED_EXTERIOR_POWER_OF_VECTOR_SPACES(Concept) UniqueBasedExteriorPowerOfVectorSpaceStructureOf_f<Concept>::T
+#define IS_BASED_EXTERIOR_POWER_OF_VECTOR_SPACE_UNIQUELY(Concept) HasUniqueBasedExteriorPowerOfVectorSpaceStructure_f<Concept>::V
+#define AS_BASED_EXTERIOR_POWER_OF_VECTOR_SPACE(Concept) UniqueBasedExteriorPowerOfVectorSpaceStructureOf_f<Concept>::T
 
 // TODO: thinka bout this
 // template <typename ExteriorPowerOfVectorSpace, typename Basis>
@@ -197,8 +197,8 @@ template <Uint32 ORDER, typename Factor> struct IsExteriorPowerOfBasedVectorSpac
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(ExteriorPowerOfBasedVectorSpace);
 // special convenience macros
-#define IS_EXTERIOR_POWER_OF_BASED_VECTOR_SPACES_UNIQUELY(Concept) HasUniqueExteriorPowerOfBasedVectorSpaceStructure_f<Concept>::V
-#define AS_EXTERIOR_POWER_OF_BASED_VECTOR_SPACES(Concept) UniqueExteriorPowerOfBasedVectorSpaceStructureOf_f<Concept>::T
+#define IS_EXTERIOR_POWER_OF_BASED_VECTOR_SPACE_UNIQUELY(Concept) HasUniqueExteriorPowerOfBasedVectorSpaceStructure_f<Concept>::V
+#define AS_EXTERIOR_POWER_OF_BASED_VECTOR_SPACE(Concept) UniqueExteriorPowerOfBasedVectorSpaceStructureOf_f<Concept>::T
 
 template <Uint32 ORDER_, typename Factor_>
 struct DualOf_f<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_> >

@@ -85,8 +85,8 @@ template <Uint32 ORDER, typename Factor> struct IsTensorPowerOfVectorSpace_f<Ten
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(TensorPowerOfVectorSpace);
 // special convenience macros
-#define IS_TENSOR_POWER_OF_VECTOR_SPACES_UNIQUELY(Concept) HasUniqueTensorPowerOfVectorSpaceStructure_f<Concept>::V
-#define AS_TENSOR_POWER_OF_VECTOR_SPACES(Concept) UniqueTensorPowerOfVectorSpaceStructureOf_f<Concept>::T
+#define IS_TENSOR_POWER_OF_VECTOR_SPACE_UNIQUELY(Concept) HasUniqueTensorPowerOfVectorSpaceStructure_f<Concept>::V
+#define AS_TENSOR_POWER_OF_VECTOR_SPACE(Concept) UniqueTensorPowerOfVectorSpaceStructureOf_f<Concept>::T
 
 template <Uint32 ORDER, typename Factor>
 struct DualOf_f<TensorPowerOfVectorSpace_c<ORDER,Factor> >
@@ -141,7 +141,7 @@ struct BasedTensorPowerOfVectorSpace_c
 private:
     enum
     {
-        STATIC_ASSERT_IN_ENUM(IS_TENSOR_POWER_OF_VECTOR_SPACES_UNIQUELY(TensorPowerOfVectorSpace_), MUST_BE_TENSOR_POWER_OF_VECTOR_SPACES),
+        STATIC_ASSERT_IN_ENUM(IS_TENSOR_POWER_OF_VECTOR_SPACE_UNIQUELY(TensorPowerOfVectorSpace_), MUST_BE_TENSOR_POWER_OF_VECTOR_SPACE),
         STATIC_ASSERT_IN_ENUM(IS_BASIS_UNIQUELY(Basis_), MUST_BE_BASIS),
     };
     typedef TensorPowerOfVectorSpace_ As_TensorPowerOfVectorSpace;
@@ -168,8 +168,8 @@ template <typename TensorPowerOfVectorSpace_, typename Basis_> struct IsBasedTen
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(BasedTensorPowerOfVectorSpace);
 // special convenience macros
-#define IS_BASED_TENSOR_POWER_OF_VECTOR_SPACES_UNIQUELY(Concept) HasUniqueBasedTensorPowerOfVectorSpaceStructure_f<Concept>::V
-#define AS_BASED_TENSOR_POWER_OF_VECTOR_SPACES(Concept) UniqueBasedTensorPowerOfVectorSpaceStructureOf_f<Concept>::T
+#define IS_BASED_TENSOR_POWER_OF_VECTOR_SPACE_UNIQUELY(Concept) HasUniqueBasedTensorPowerOfVectorSpaceStructure_f<Concept>::V
+#define AS_BASED_TENSOR_POWER_OF_VECTOR_SPACE(Concept) UniqueBasedTensorPowerOfVectorSpaceStructureOf_f<Concept>::T
 
 template <typename TensorPowerOfVectorSpace, typename Basis>
 struct DualOf_f<BasedTensorPowerOfVectorSpace_c<TensorPowerOfVectorSpace,Basis> >
@@ -189,7 +189,7 @@ private:
 
     typedef TensorProductOfBasedVectorSpaces_c<typename UniformTypeListOfLength_t<Factor_,ORDER_>::T> As_TensorProductOfBasedVectorSpaces;
     typedef BasedTensorPowerOfVectorSpace_c<TensorPowerOfVectorSpace_c<ORDER_,Factor_>,
-                                            TensorPowerOfBasis_c<ORDER_,typename Factor_::Basis> > As_BasedTensorPowerOfVectorSpace;
+                                            TensorPowerOfBasis_c<ORDER_,typename AS_BASED_VECTOR_SPACE(Factor_)::Basis> > As_BasedTensorPowerOfVectorSpace;
     typedef EmbeddableInTensorPowerOfBasedVectorSpace_c<TensorPowerOfBasedVectorSpace_c,
                                                         TensorPowerOfVectorSpace_c<ORDER_,Factor_>,
                                                         TensorProductOfBasedVectorSpaces_c<FactorTypeList>,
@@ -217,8 +217,8 @@ template <Uint32 ORDER_, typename Factor_> struct IsTensorPowerOfBasedVectorSpac
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(TensorPowerOfBasedVectorSpace);
 // special convenience macros
-#define IS_TENSOR_POWER_OF_BASED_VECTOR_SPACES_UNIQUELY(Concept) HasUniqueTensorPowerOfBasedVectorSpaceStructure_f<Concept>::V
-#define AS_TENSOR_POWER_OF_BASED_VECTOR_SPACES(Concept) UniqueTensorPowerOfBasedVectorSpaceStructureOf_f<Concept>::T
+#define IS_TENSOR_POWER_OF_BASED_VECTOR_SPACE_UNIQUELY(Concept) HasUniqueTensorPowerOfBasedVectorSpaceStructure_f<Concept>::V
+#define AS_TENSOR_POWER_OF_BASED_VECTOR_SPACE(Concept) UniqueTensorPowerOfBasedVectorSpaceStructureOf_f<Concept>::T
 
 // there is a natural identification of the Kth tensor power of a vector space with the
 // Kth tensor power of the dual of the vector space

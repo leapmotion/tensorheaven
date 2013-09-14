@@ -47,8 +47,8 @@ template <typename Exactly_TensorPowerOfVectorSpace_, typename Exactly_TensorPro
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(EmbeddableInTensorPowerOfVectorSpace);
 // special convenience macros
-#define IS_EMBEDDABLE_IN_TENSOR_POWER_OF_VECTOR_SPACES_UNIQUELY(Concept) HasUniqueEmbeddableInTensorPowerOfVectorSpaceStructure_f<Concept>::V
-#define AS_EMBEDDABLE_IN_TENSOR_POWER_OF_VECTOR_SPACES(Concept) UniqueEmbeddableInTensorPowerOfVectorSpaceStructureOf_f<Concept>::T
+#define IS_EMBEDDABLE_IN_TENSOR_POWER_OF_VECTOR_SPACE_UNIQUELY(Concept) HasUniqueEmbeddableInTensorPowerOfVectorSpaceStructure_f<Concept>::V
+#define AS_EMBEDDABLE_IN_TENSOR_POWER_OF_VECTOR_SPACE(Concept) UniqueEmbeddableInTensorPowerOfVectorSpaceStructureOf_f<Concept>::T
 
 // NOTE: because the class of embeddable-in-tensor-powers-of-vector-spaces includes nonlinear
 // spaces such as the space of simple tensors, there is no general notion of Dual here.  That
@@ -104,8 +104,8 @@ template <typename Exactly_TensorPowerOfBasedVectorSpace_,
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(EmbeddableInTensorPowerOfBasedVectorSpace);
 // special convenience macros
-#define IS_EMBEDDABLE_IN_TENSOR_POWER_OF_BASED_VECTOR_SPACES_UNIQUELY(Concept) HasUniqueEmbeddableInTensorPowerOfBasedVectorSpaceStructure_f<Concept>::V
-#define AS_EMBEDDABLE_IN_TENSOR_POWER_OF_BASED_VECTOR_SPACES(Concept) UniqueEmbeddableInTensorPowerOfBasedVectorSpaceStructureOf_f<Concept>::T
+#define IS_EMBEDDABLE_IN_TENSOR_POWER_OF_BASED_VECTOR_SPACE_UNIQUELY(Concept) HasUniqueEmbeddableInTensorPowerOfBasedVectorSpaceStructure_f<Concept>::V
+#define AS_EMBEDDABLE_IN_TENSOR_POWER_OF_BASED_VECTOR_SPACE(Concept) UniqueEmbeddableInTensorPowerOfBasedVectorSpaceStructureOf_f<Concept>::T
 
 // TODO (?): LinearlyEmbeddableInTensorPowerOfVectorSpace_c -- this may possibly have a naturally induced Dual
 
