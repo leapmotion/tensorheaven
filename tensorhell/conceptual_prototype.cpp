@@ -5,6 +5,7 @@
 
 #include "tenh/conceptual/abstractindex.hpp"
 #include "tenh/conceptual/basis.hpp"
+#include "tenh/conceptual/conceptualinheritancegraph.hpp"
 #include "tenh/conceptual/diagonalbased2tensorproduct.hpp"
 #include "tenh/conceptual/exteriorpower.hpp"
 #include "tenh/conceptual/symmetricpower.hpp"
@@ -1212,6 +1213,49 @@ int main (int argc, char **argv)
 //         typedef SymmetricPowerOfBasedVectorSpace_c<2,DualOf_f<BasedVectorSpace>::T> SymmetricPowerOfDual;
 //         std::cout << FORMAT_VALUE(TypeStringOf_t<SymmetricPowerOfDual>::eval()) << '\n';
 //         std::cout << FORMAT_VALUE(TypeStringOf_t<AS_VECTOR_SPACE(SymmetricPowerOfDual)>::eval()) << '\n';
+        std::cout << '\n';
+    }
+
+    // testing pretty typestring printing
+    if (false)
+    {
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,Basis_c<X> > BasedVectorSpace;
+        typedef TensorPowerOfBasedVectorSpace_c<4,BasedVectorSpace> TensorPower;
+        std::cout << '\n' << Pretty<TypeStringOf_t<TensorPower> >() << '\n';
+        std::cout << '\n' << Pretty<TypeStringOf_t<TensorPower>,0>() << '\n';
+        std::cout << '\n' << Pretty<TypeStringOf_t<TensorPower>,1>() << '\n';
+        std::cout << '\n' << Pretty<TypeStringOf_t<TensorPower>,2>() << '\n';
+        std::cout << '\n' << Pretty<TypeStringOf_t<TensorPower>,3>() << '\n';
+        std::cout << '\n';
+        std::cout << "shortify_depth = 0\n";
+        std::cout << "OSTRICH 0 "; print_pretty_typestring(std::cout, "Blah<x", 0, 4, 0);          std::cout << '\n' << '\n';
+        std::cout << "OSTRICH 1 "; print_pretty_typestring(std::cout, "Blah<", 0, 4, 0);           std::cout << '\n' << '\n';
+        std::cout << "OSTRICH 2 "; print_pretty_typestring(std::cout, "Blah<x>", 0, 4, 0);         std::cout << '\n' << '\n';
+        std::cout << "OSTRICH 3 "; print_pretty_typestring(std::cout, "Blah<x>x>", 0, 4, 0);       std::cout << '\n' << '\n';
+        std::cout << '\n';
+        std::cout << "shortify_depth = 1\n";
+        std::cout << "OSTRICH 0 "; print_pretty_typestring(std::cout, "Blah<x", 0, 4, 1);          std::cout << '\n' << '\n';
+        std::cout << "OSTRICH 1 "; print_pretty_typestring(std::cout, "Blah<", 0, 4, 1);           std::cout << '\n' << '\n';
+        std::cout << "OSTRICH 2 "; print_pretty_typestring(std::cout, "Blah<x>", 0, 4, 1);         std::cout << '\n' << '\n';
+        std::cout << "OSTRICH 3 "; print_pretty_typestring(std::cout, "Blah<x>x>", 0, 4, 1);       std::cout << '\n' << '\n';
+        std::cout << '\n';
+        std::cout << "shortify_depth = 2\n";
+        std::cout << "OSTRICH 0 "; print_pretty_typestring(std::cout, "Blah<x", 0, 4, 2);          std::cout << '\n' << '\n';
+        std::cout << "OSTRICH 1 "; print_pretty_typestring(std::cout, "Blah<", 0, 4, 2);           std::cout << '\n' << '\n';
+        std::cout << "OSTRICH 2 "; print_pretty_typestring(std::cout, "Blah<x>", 0, 4, 2);         std::cout << '\n' << '\n';
+        std::cout << "OSTRICH 3 "; print_pretty_typestring(std::cout, "Blah<x>x>", 0, 4, 2);       std::cout << '\n' << '\n';
+        std::cout << '\n';
+    }
+
+    if (false)
+    {
+        std::cout << "testing conceptual inheritance graph stuff\n";
+        Graph g;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,Basis_c<X> > BasedVectorSpace;
+        typedef TensorPowerOfBasedVectorSpace_c<4,BasedVectorSpace> TensorPower;
+        add_concept_hierarchy_to_graph(TensorPower(), g);
+//         std::cout << g;
+        g.print_as_dot_graph(std::cout);
         std::cout << '\n';
     }
 

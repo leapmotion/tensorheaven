@@ -12,6 +12,7 @@
 #include "tenh/meta/lvd.hpp"
 #include "tenh/meta/static_assert.hpp"
 
+#define FORMAT(expr) static_cast<std::ostringstream &>(std::ostringstream().flush() << expr).str()
 #define FORMAT_VALUE(expr) #expr << " = " << (expr) // TODO: move this out into test code
 
 namespace Tenh {

@@ -8,6 +8,7 @@
 
 #include "tenh/core.hpp"
 
+#include "tenh/conceptual/basis.hpp"
 #include "tenh/conceptual/concept.hpp"
 #include "tenh/conceptual/dual.hpp"
 #include "tenh/conceptual/field.hpp"

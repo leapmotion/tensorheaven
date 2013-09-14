@@ -9,7 +9,7 @@
 #include "tenh/core.hpp"
 
 #include "tenh/conceptual/concept.hpp"
-#include "tenh/conceptual/embeddableintensorproduct.hpp"
+#include "tenh/conceptual/embeddableintensorpower.hpp"
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/meta/typelist_utility.hpp"
 
