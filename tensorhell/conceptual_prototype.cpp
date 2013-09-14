@@ -1253,7 +1253,7 @@ int main (int argc, char **argv)
         Graph g;
         typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,Basis_c<X> > BasedVectorSpace;
         typedef TensorPowerOfBasedVectorSpace_c<4,BasedVectorSpace> TensorPower;
-        add_concept_hierarchy_to_graph(TensorPower(), g);
+        add_concept_hierarchy_to_graph<0>(TensorPower(), g);
 //         std::cout << g;
         g.print_as_dot_graph(std::cout);
         std::cout << '\n';

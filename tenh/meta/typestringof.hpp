@@ -65,7 +65,7 @@ void print_pretty_typestring (std::ostream &out,
                 {
                     out << "<...>";
                 }
-                else
+                else if (shortify_depth == 0 || template_argument_depth < shortify_depth)
                 {
                     out << "<\n";
                     ++indent_level;

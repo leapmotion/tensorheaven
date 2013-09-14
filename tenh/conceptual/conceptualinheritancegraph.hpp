@@ -23,34 +23,27 @@ struct Graph
 {
     struct Node
     {
-        std::string m_short_name;
+        std::string m_shortified_name;
         std::string m_full_name;
 
-        explicit Node (std::string const &full_name)
+        Node (std::string const &shortified_name, std::string const &full_name)
             :
-            m_short_name(full_name),
+            m_shortified_name(shortified_name),
             m_full_name(full_name)
         {
-            assert(!m_full_name.empty());
-        }
-        Node (std::string const &short_name, std::string const &full_name)
-            :
-            m_short_name(short_name),
-            m_full_name(full_name)
-        {
-            assert(!m_short_name.empty());
+            assert(!m_shortified_name.empty());
             assert(!m_full_name.empty());
         }
 
         bool operator == (Node const &r) const
         {
-            return this->m_short_name == r.m_short_name && this->m_full_name == r.m_full_name;
+            return this->m_shortified_name == r.m_shortified_name && this->m_full_name == r.m_full_name;
         }
         bool operator < (Node const &r) const
         {
-            return this->m_short_name < r.m_short_name
+            return this->m_shortified_name < r.m_shortified_name
                    ||
-                   (this->m_short_name == r.m_short_name && this->m_full_name < r.m_full_name);
+                   (this->m_shortified_name == r.m_shortified_name && this->m_full_name < r.m_full_name);
         }
 
         struct Order
@@ -147,7 +140,7 @@ struct Graph
         {
             Node const &n = *it;
             out << "    " << node_identifier_map[n] << " [label=\"";
-            print_string_with_newlines_as_char_literals(out, n.m_full_name);
+            print_string_with_newlines_as_char_literals(out, n.m_shortified_name);
             out << "\", fontname=\"courier\", labeljust=\"l\", shape=box];\n";
         }
         out << '\n';
@@ -179,10 +172,10 @@ private:
 
 std::ostream &operator << (std::ostream &out, Graph::Node const &n)
 {
-    if (n.m_short_name == n.m_full_name)
+    if (n.m_shortified_name == n.m_full_name)
         return out << "Node(" << n.m_full_name << ')';
     else
-        return out << "Node(" << n.m_short_name << ',' << n.m_full_name << ')';
+        return out << "Node(" << n.m_shortified_name << ',' << n.m_full_name << ')';
 }
 
 std::ostream &operator << (std::ostream &out, Graph::Edge const &e)
@@ -207,32 +200,36 @@ std::ostream &operator << (std::ostream &out, Graph const &g)
     return out << ")\n";
 }
 
-template <typename Concept_, typename HeadType_, typename BodyTypeList_>
+template <Uint32 SHORTIFY_DEPTH_, typename Concept_, typename HeadType_, typename BodyTypeList_>
 void add_parent_concept_type_list_to_graph_recursive (Concept_ const &concept, TypeList_t<HeadType_,BodyTypeList_> const &parent_concept_type_list, Graph &g)
 {
     // add the parent nodes and edges connecting concept to them
-    Graph::Node concept_node(FORMAT(Pretty<TypeStringOf_t<Concept_> >()));
+    Graph::Node concept_node(FORMAT((Pretty<TypeStringOf_t<Concept_>,SHORTIFY_DEPTH_>())),
+                             FORMAT((Pretty<TypeStringOf_t<Concept_>,0>())));
     assert(g.nodes().find(concept_node) != g.nodes().end());
-    Graph::Node parent_node(FORMAT(Pretty<TypeStringOf_t<HeadType_> >()));
+    Graph::Node parent_node(FORMAT((Pretty<TypeStringOf_t<HeadType_>,SHORTIFY_DEPTH_>())),
+                            FORMAT((Pretty<TypeStringOf_t<HeadType_>,0>())));
     g.add_node(parent_node);
     g.add_edge(concept_node, parent_node);
-    add_parent_concept_type_list_to_graph_recursive(concept, BodyTypeList_(), g);
+    add_parent_concept_type_list_to_graph_recursive<SHORTIFY_DEPTH_>(concept, BodyTypeList_(), g);
 
     // call this function recursively on each parent
-    add_parent_concept_type_list_to_graph_recursive(HeadType_(), typename HeadType_::ParentTypeList(), g);
+    add_parent_concept_type_list_to_graph_recursive<SHORTIFY_DEPTH_>(HeadType_(), typename HeadType_::ParentTypeList(), g);
 }
 
-template <typename Concept_>
+template <Uint32 SHORTIFY_DEPTH_, typename Concept_>
 void add_parent_concept_type_list_to_graph_recursive (Concept_ const &, EmptyTypeList const &, Graph &g)
 {
     // nothing to add
 }
 
-template <typename Concept_>
+template <Uint32 SHORTIFY_DEPTH_, typename Concept_>
 void add_concept_hierarchy_to_graph (Concept_ const &root, Graph &g)
 {
-    g.add_node(Graph::Node(FORMAT(Pretty<TypeStringOf_t<Concept_> >())));
-    add_parent_concept_type_list_to_graph_recursive(root, typename Concept_::ParentTypeList(), g);
+    Graph::Node n(FORMAT((Pretty<TypeStringOf_t<Concept_>,SHORTIFY_DEPTH_>())),
+                  FORMAT((Pretty<TypeStringOf_t<Concept_>,0>())));
+    g.add_node(n);
+    add_parent_concept_type_list_to_graph_recursive<SHORTIFY_DEPTH_>(root, typename Concept_::ParentTypeList(), g);
 }
 
 } // end of namespace Tenh

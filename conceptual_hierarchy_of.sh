@@ -6,15 +6,17 @@ hierarchy graphs quickly and easily using Graphviz's 'dot' application.  If the\
 single commandline argument \"-cleanup\" is provided, it will delete all the\n\
 temporary files left over from previous invocations.  Ordinary commandline options:\n\
 \n\
-  ./conceptual_hierarchy_of.sh ConceptType path/to/tensorheaven \"decl1\" \"decl2\" ...\n\
+  ./conceptual_hierarchy_of.sh ConceptType path/to/tensorheaven SHORTIFY_DEPTH \"decl1\" \"decl2\" ...\n\
 \n\
-Here, ConceptType is the type of the concept whose hierarchy will be graphed, and\n\
-decl1, decl2, etc. are the optional additional supplemental declarations to assist\n\
+Here, ConceptType is the concept whose hierarchy will be graphed, SHORTIFY_DEPTH is\n\
+a number which controls how 'collapsed' the template typenames will be displayed (0\n\
+means 'uncollapsed', and positive integral values specify the level past which the\n\
+collapsing will be done), and decl1, decl2, ... are optional declarations to assist\n\
 in defining ConceptType.\n\
 \n\
 Example:\n\
 \n\
-  ./conceptual_hierarchy_of.sh BasedVectorSpace . \"#include \\\"tenh/conceptual/vectorspace.hpp\\\"\" \"using namespace Tenh;\" \"struct X { static std::string type_as_string () { return \\\"X\\\"; } };\" \"typedef VectorSpace_c<RealField,3,X> VectorSpace;\" \"typedef BasedVectorSpace_c<VectorSpace,Basis_c<X> > BasedVectorSpace;\"\n\
+  ./conceptual_hierarchy_of.sh BasedVectorSpace . 0 \"#include \\\"tenh/conceptual/vectorspace.hpp\\\"\" \"using namespace Tenh;\" \"struct X { static std::string type_as_string () { return \\\"X\\\"; } };\" \"typedef VectorSpace_c<RealField,3,X> VectorSpace;\" \"typedef BasedVectorSpace_c<VectorSpace,Basis_c<X> > BasedVectorSpace;\"\n\
 \n\
 This will produce a file called conceptual_hierarchy_of.png, which a graph generated\n\
 by the 'dot' application, which visualizes the conceptual ancestors of ConceptType,\n\
@@ -33,10 +35,11 @@ then
     exit 0
 fi
 
-CONCEPT_TYPE=$1
-TENSORHEAVEN_DIR=$2
+CONCEPT_TYPE=${1}
+TENSORHEAVEN_DIR=${2}
+SHORTIFY_DEPTH=${3}
 
-shift 2 # this chomps off the first two params
+shift 3 # this chomps off the first three params
 
 DECLARATIONS=""
 for arg in "$@"
@@ -55,7 +58,7 @@ ${DECLARATIONS}
 int main (int argc, char **argv)
 {
     Graph g;
-    add_concept_hierarchy_to_graph(${CONCEPT_TYPE}(), g);
+    add_concept_hierarchy_to_graph<${SHORTIFY_DEPTH}>(${CONCEPT_TYPE}(), g);
     g.print_as_dot_graph(std::cout);
     return 0;
 }
