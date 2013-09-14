@@ -187,16 +187,14 @@ template <typename Scalar_, Uint32 ORDER_, typename BasedVectorSpace_, typename 
 void test_tensor_power_of_inner_product ()
 {
     std::cout << "test_tensor_power_of_inner_product<" << TypeStringOf_t<Scalar_>::eval() << ',' << AS_STRING(ORDER_) << ',' << TypeStringOf_t<BasedVectorSpace_>::eval() << ">\n";
-//     typedef typename InnerProduct_f<TensorPowerOfBasedVectorSpace_c<ORDER_,BasedVectorSpace_>,TensorPower_c<ORDER_,InnerProductId_>,Scalar_>::T InnerProduct;
-    InnerProduct_f<TensorPowerOfBasedVectorSpace_c<ORDER_,BasedVectorSpace_>,TensorPower_c<ORDER_,InnerProductId_>,Scalar_>::blah();
-    /*
+    typedef typename InnerProduct_f<TensorPowerOfBasedVectorSpace_c<ORDER_,BasedVectorSpace_>,TensorPower_c<ORDER_,InnerProductId_>,Scalar_>::T InnerProduct;
+//     InnerProduct_f<TensorPowerOfBasedVectorSpace_c<ORDER_,BasedVectorSpace_>,TensorPower_c<ORDER_,InnerProductId_>,Scalar_>::blah();
     InnerProduct g;
     std::cout << FORMAT_VALUE(g) << '\n';
     AbstractIndex_c<'P'> P;
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
     std::cout << FORMAT_VALUE(g(P).split(P,i|j)) << '\n';
-    */
     std::cout << '\n';
 }
 
@@ -1201,19 +1199,7 @@ int main (int argc, char **argv)
     {
         typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,X>,StandardBasis> BasedVectorSpace;
         test_tensor_power_of_inner_product<float,1,BasedVectorSpace,StandardInnerProduct>();
-    }
-
-    {
-        typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,X>,StandardBasis> BasedVectorSpace;
-        typedef TensorPowerOfBasedVectorSpace_c<1,BasedVectorSpace> TensorPower;
-//         typedef SymmetricPowerOfBasedVectorSpace_c<2,BasedVectorSpace> SymmetricPower;
-        typedef DualOf_f<TensorPower>::T DualOfTensorPower;
-        std::cout << FORMAT_VALUE(TypeStringOf_t<DualOfTensorPower>::eval()) << '\n';
-        std::cout << FORMAT_VALUE(TypeStringOf_t<AS_VECTOR_SPACE(DualOfTensorPower)>::eval()) << '\n';
-//         typedef SymmetricPowerOfBasedVectorSpace_c<2,DualOf_f<BasedVectorSpace>::T> SymmetricPowerOfDual;
-//         std::cout << FORMAT_VALUE(TypeStringOf_t<SymmetricPowerOfDual>::eval()) << '\n';
-//         std::cout << FORMAT_VALUE(TypeStringOf_t<AS_VECTOR_SPACE(SymmetricPowerOfDual)>::eval()) << '\n';
-        std::cout << '\n';
+//         test_tensor_power_of_inner_product<float,2,BasedVectorSpace,StandardInnerProduct>();
     }
 
     // testing pretty typestring printing

@@ -51,7 +51,7 @@ private:
 public:
     typedef ImplementationOf_t<SymmetricPower,Scalar_,UseImmutableArray_t<ComponentGenerator> > T;
 };
-/*
+
 template <Uint32 ORDER_, typename BasedVectorSpace_, typename InnerProductId_, typename Scalar_>
 struct InnerProduct_f<TensorPowerOfBasedVectorSpace_c<ORDER_,BasedVectorSpace_>,TensorPower_c<ORDER_,InnerProductId_>,Scalar_>
 {
@@ -59,7 +59,7 @@ private:
     enum { STATIC_ASSERT_IN_ENUM(ORDER_ > 0, ORDER_MUST_BE_POSITIVE) }; // TODO: allow ORDER_ == 0
     typedef TensorPowerOfBasedVectorSpace_c<ORDER_,BasedVectorSpace_> TensorPowerOfBasedVectorSpace;
     typedef typename DualOf_f<TensorPowerOfBasedVectorSpace>::T DualOfTensorPowerOfBasedVectorSpace;
-    typedef SymmetricPowerOfBasedVectorSpace_c<2,DualOfTensorPowerOfBasedVectorSpace> SymmetricPower;
+    typedef SymmetricPowerOfBasedVectorSpace_c<2,typename AS_BASED_TENSOR_POWER_OF_VECTOR_SPACE(DualOfTensorPowerOfBasedVectorSpace)> SymmetricPower;
     typedef ComponentIndex_t<AS_VECTOR_SPACE(SymmetricPower)::DIMENSION> ComponentIndex;
     static Scalar_ evaluator (ComponentIndex const &i)
     {
@@ -79,19 +79,20 @@ private:
         return (head_inner_product(a).split(a,j|k) * body_inner_product(B).split(B,P|Q))
                .bundle(j|P,TensorPowerOfBasedVectorSpace(),r)
                .bundle(k|Q,TensorPowerOfBasedVectorSpace(),s)
-               .bundle(r|s,SymmetricPower(),T)[i];
+               .bundle(r|s,SymmetricPower(),T)[i];//[MultiIndex_t<TypeList_t<ComponentIndex> >(i)];
     }
     typedef ComponentGenerator_t<Scalar_,AS_VECTOR_SPACE(SymmetricPower)::DIMENSION,evaluator,TensorPower_c<ORDER_,InnerProductId_> > ComponentGenerator;
 public:
     typedef ImplementationOf_t<SymmetricPower,Scalar_,UseImmutableArray_t<ComponentGenerator> > T;
 };
-*/
+
 namespace ComponentGeneratorEvaluator {
 
 template <typename EmbeddableInTensorProductOfBasedVectorSpaces_, typename BasedVectorSpace_, typename InnerProductId_, typename Scalar_>
 Scalar_ inner_product_induced_on_1st_tensor_power (ComponentIndex_t<AS_VECTOR_SPACE(EmbeddableInTensorProductOfBasedVectorSpaces_)::DIMENSION> const &i)
 {
-    STATIC_ASSERT(AS_VECTOR_SPACE(BasedVectorSpace_)::DIMENSION == AS_VECTOR_SPACE(EmbeddableInTensorProductOfBasedVectorSpaces_)::DIMENSION,
+    typedef SymmetricPowerOfBasedVectorSpace_c<2,BasedVectorSpace_> SymmetricPower;
+    STATIC_ASSERT(AS_VECTOR_SPACE(SymmetricPower)::DIMENSION == AS_VECTOR_SPACE(EmbeddableInTensorProductOfBasedVectorSpaces_)::DIMENSION,
                   DIMENSIONS_MUST_MATCH);
     typedef typename InnerProduct_f<BasedVectorSpace_,InnerProductId_,Scalar_>::T HeadInnerProduct;
     HeadInnerProduct head_inner_product;
@@ -109,15 +110,17 @@ struct InnerProduct_f<TensorPowerOfBasedVectorSpace_c<1,BasedVectorSpace_>,Tenso
 private:
     typedef TensorPowerOfBasedVectorSpace_c<1,BasedVectorSpace_> TensorPowerOfBasedVectorSpace;
     typedef typename DualOf_f<TensorPowerOfBasedVectorSpace>::T DualOfTensorPowerOfBasedVectorSpace;
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM__UNIQUE(HasBasedVectorSpaceStructure_f<DualOfTensorPowerOfBasedVectorSpace>::V, MUST_BE_BASED_VECTOR_SPACE, HAS_STRUCTURE),
+//     typedef typename AS_BASED_VECTOR_SPACE(typename AS_BASED_TENSOR_POWER_OF_VECTOR_SPACE(DualOfTensorPowerOfBasedVectorSpace)) DualOfTensorPowerOfBasedVectorSpace_As_BasedVectorSpace;
+    typedef typename AS_BASED_TENSOR_POWER_OF_VECTOR_SPACE(DualOfTensorPowerOfBasedVectorSpace) DualOfTensorPowerOfBasedVectorSpace_As_BasedTensorPowerOfVectorSpace;
+//     enum
+//     {
+//         STATIC_ASSERT_IN_ENUM__UNIQUE(HasBasedVectorSpaceStructure_f<DualOfTensorPowerOfBasedVectorSpace>::V, MUST_BE_BASED_VECTOR_SPACE, HAS_STRUCTURE),
 //         STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(DualOfTensorPowerOfBasedVectorSpace), MUST_BE_BASED_VECTOR_SPACE)
-    };
-    /*
-    typedef typename AS_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(DualOfTensorPowerOfBasedVectorSpace) Dual;
-    enum { STATIC_ASSERT_IN_ENUM__UNIQUE(IS_BASED_VECTOR_SPACE_UNIQUELY(Dual), MUST_BE_BASED_VECTOR_SPACE, THINGY) };
-    typedef SymmetricPowerOfBasedVectorSpace_c<2,DualOfTensorPowerOfBasedVectorSpace> SymmetricPower;
+//     };
+//     typedef typename AS_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(DualOfTensorPowerOfBasedVectorSpace) Dual;
+//     enum { STATIC_ASSERT_IN_ENUM__UNIQUE(IS_BASED_VECTOR_SPACE_UNIQUELY(Dual), MUST_BE_BASED_VECTOR_SPACE, THINGY) };
+//     typedef SymmetricPowerOfBasedVectorSpace_c<2,DualOfTensorPowerOfBasedVectorSpace_As_BasedVectorSpace> SymmetricPower;
+    typedef SymmetricPowerOfBasedVectorSpace_c<2,DualOfTensorPowerOfBasedVectorSpace_As_BasedTensorPowerOfVectorSpace> SymmetricPower;
     enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(SymmetricPower), MUST_BE_VECTOR_SPACE) };
 //     typedef ComponentIndex_t<AS_VECTOR_SPACE(SymmetricPower)::DIMENSION> ComponentIndex;
 //     static Scalar_ evaluator (ComponentIndex const &i)
@@ -135,16 +138,15 @@ private:
                                  TensorPower_c<1,InnerProductId_> > ComponentGenerator;
 public:
     typedef ImplementationOf_t<SymmetricPower,Scalar_,UseImmutableArray_t<ComponentGenerator> > T;
-    */
-public:
-    static void blah ()
-    {
-        std::cout << "blah\n";
-        std::cout << FORMAT_VALUE(TypeStringOf_t<TensorPowerOfBasedVectorSpace>::eval()) << '\n';
-        std::cout << FORMAT_VALUE(TypeStringOf_t<DualOfTensorPowerOfBasedVectorSpace>::eval()) << '\n';
-        std::cout << FORMAT_VALUE(TypeStringOf_t<typename BasedVectorSpaceStructuresOf_f<DualOfTensorPowerOfBasedVectorSpace>::T>::eval()) << '\n';
-        std::cout << '\n';
-    }
+// public:
+//     static void blah ()
+//     {
+//         std::cout << "blah\n";
+//         std::cout << FORMAT_VALUE(Pretty<TypeStringOf_t<TensorPowerOfBasedVectorSpace> >()) << '\n';
+//         std::cout << FORMAT_VALUE(Pretty<TypeStringOf_t<DualOfTensorPowerOfBasedVectorSpace> >()) << '\n';
+//         std::cout << FORMAT_VALUE(Pretty<TypeStringOf_t<typename BasedVectorSpaceStructuresOf_f<DualOfTensorPowerOfBasedVectorSpace>::T> >()) << '\n';
+//         std::cout << '\n';
+//     }
 };
 
 } // end of namespace Tenh
