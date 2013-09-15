@@ -1245,5 +1245,13 @@ int main (int argc, char **argv)
         std::cout << '\n';
     }
 
+    {
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,Basis_c<X> > BasedVectorSpace;
+        std::cout << FORMAT_VALUE(DimensionOf_f<BasedVectorSpace>::V) << '\n';
+        std::cout << FORMAT_VALUE(TypeStringOf_t<IdOf_f<BasedVectorSpace>::T>::eval()) << '\n';
+        std::cout << FORMAT_VALUE(TypeStringOf_t<ScalarFieldOf_f<BasedVectorSpace>::T>::eval()) << '\n';
+        std::cout << FORMAT_VALUE(TypeStringOf_t<BasisOf_f<BasedVectorSpace>::T>::eval()) << '\n';
+    }
+
     return 0;
 }

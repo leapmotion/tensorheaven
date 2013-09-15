@@ -15,26 +15,30 @@
 
 namespace Tenh {
 
-template <typename Field_, Uint32 DIM_, typename Id_>
+// ///////////////////////////////////////////////////////////////////////////
+// VectorSpace_c
+// ///////////////////////////////////////////////////////////////////////////
+
+template <typename ScalarField_, Uint32 DIMENSION_, typename Id_>
 struct VectorSpace_c
 {
     typedef EmptyTypeList ParentTypeList;
 
-    enum { STATIC_ASSERT_IN_ENUM(IS_FIELD_UNIQUELY(Field_), MUST_BE_FIELD) };
+    enum { STATIC_ASSERT_IN_ENUM(IS_FIELD_UNIQUELY(ScalarField_), MUST_BE_FIELD) };
 
-    typedef typename AS_FIELD(Field_) Field;
-    static Uint32 const DIMENSION = DIM_;
+    typedef typename AS_FIELD(ScalarField_) Field;
+    static Uint32 const DIMENSION = DIMENSION_;
     typedef Id_ Id;
 
     static std::string type_as_string ()
     {
-        return "VectorSpace_c<" + TypeStringOf_t<Field_>::eval() + ','
-                                + AS_STRING(DIM_) + ',' + TypeStringOf_t<Id_>::eval() + '>';
+        return "VectorSpace_c<" + TypeStringOf_t<ScalarField_>::eval() + ','
+                                + AS_STRING(DIMENSION_) + ',' + TypeStringOf_t<Id_>::eval() + '>';
     }
 };
 
-template <typename Field_, Uint32 DIM_, typename Id_>
-struct IsConcept_f<VectorSpace_c<Field_, DIM_, Id_> >
+template <typename ScalarField_, Uint32 DIMENSION_, typename Id_>
+struct IsConcept_f<VectorSpace_c<ScalarField_, DIMENSION_, Id_> >
 { static bool const V = true; };
 
 template <typename T> struct IsVectorSpace_f { static bool const V = false; };
@@ -51,6 +55,41 @@ struct DualOf_f<VectorSpace_c<Field,DIM,Id> >
     typedef VectorSpace_c<Field,DIM,typename DualOf_f<Id>::T> T;
 };
 
+// property IDs
+
+struct Dimension { }; // could this be a forward declaration?
+struct Id { }; // could this be a forward declaration?
+struct ScalarField { }; // could this be a forward declaration?
+
+// BaseProperty_f accessors
+
+template <typename ScalarField_, Uint32 DIMENSION_, typename Id_>
+struct BaseProperty_f<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,Dimension>
+{
+    typedef TypedValue_t<Uint32,DIMENSION_> T;
+};
+
+template <typename ScalarField_, Uint32 DIMENSION_, typename Id_>
+struct BaseProperty_f<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,Id>
+{
+    typedef Id_ T;
+};
+
+template <typename ScalarField_, Uint32 DIMENSION_, typename Id_>
+struct BaseProperty_f<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,ScalarField>
+{
+    typedef ScalarField_ T;
+};
+
+// named property accessors
+
+template <typename Concept_> struct DimensionOf_f { static Uint32 const V = PropertyValue_f<Concept_,Dimension>::V; };
+template <typename Concept_> struct IdOf_f { typedef typename Property_f<Concept_,Id>::T T; };
+template <typename Concept_> struct ScalarFieldOf_f { typedef typename Property_f<Concept_,ScalarField>::T T; };
+
+// ///////////////////////////////////////////////////////////////////////////
+// BasedVectorSpace_c
+// ///////////////////////////////////////////////////////////////////////////
 
 // TODO: should these forgetful functors be here?
 template <typename VectorSpace_, typename Basis_>
@@ -95,6 +134,22 @@ struct DualOf_f<BasedVectorSpace_c<VectorSpace,Basis> >
 {
     typedef BasedVectorSpace_c<typename DualOf_f<VectorSpace>::T,typename DualOf_f<Basis>::T> T;
 };
+
+// property IDs
+
+struct Basis { }; // could this be a forward declaration?
+
+// BaseProperty_f accessors
+
+template <typename VectorSpace_, typename Basis_>
+struct BaseProperty_f<BasedVectorSpace_c<VectorSpace_,Basis_>,Basis>
+{
+    typedef Basis_ T;
+};
+
+// named property accessors
+
+template <typename Concept_> struct BasisOf_f { typedef typename Property_f<Concept_,Basis>::T T; };
 
 } // end of namespace Tenh
 

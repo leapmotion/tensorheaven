@@ -138,6 +138,79 @@ template <typename Concept> struct Unique##ConceptName##StructureOf_f \
     enum { STATIC_ASSERT_IN_ENUM(HasUnique##ConceptName##Structure_f<Concept>::V, MUST_HAVE_UNIQUE_CONCEPTUAL_STRUCTURE) }; \
     typedef typename UniqueConceptualStructureOf_f<Concept,Is##ConceptName##_p>::T T; \
 }
+
+// ///////////////////////////////////////////////////////////////////////////
+// conceptual property accessor machinery
+// ///////////////////////////////////////////////////////////////////////////
+
+// TODO: consolidate this with Lvd::Meta::Value and Ted's int-carrying value
+template <typename T_, T_ V_>
+struct TypedValue_t
+{
+    typedef T_ T;
+    static T_ const V = V_;
+
+    static std::string type_as_string () { return "TypedValue_t<" + TypeStringOf_t<T_>::eval() + ',' + AS_STRING(V_) + '>'; }
+};
+
+// sentinel "value" type
+struct NullValue { static std::string type_as_string () { return "NullValue"; } };
+
+// default definition of the given property of exactly the given concept (but
+// NOT its ancestors).  particular concepts should specialize this to provide
+// definitions.  if the property is a value (e.g. Uint32), then the type should
+// be TypedValue_t<...>
+template <typename Concept_, typename PropertyId_>
+struct BaseProperty_f
+{
+    typedef NullValue T;
+};
+
+template <typename TypeList_, typename PropertyId_>
+struct PropertyOfEachInTypeList_f
+{
+    typedef TypeList_t<typename BaseProperty_f<typename TypeList_::HeadType,PropertyId_>::T,
+                       typename PropertyOfEachInTypeList_f<typename TypeList_::BodyTypeList,PropertyId_>::T> T;
+};
+
+template <typename PropertyId_>
+struct PropertyOfEachInTypeList_f<EmptyTypeList,PropertyId_>
+{
+    typedef EmptyTypeList T;
+};
+
+// gives a list of the unique values of the given property, taken from all ancestors.
+template <typename Concept_, typename PropertyId_>
+struct MultiProperty_f
+{
+private:
+    typedef typename PropertyOfEachInTypeList_f<typename AncestorsOf_f<Concept_>::T,PropertyId_>::T PropertyOfEach;
+    typedef typename UniqueTypesIn_t<PropertyOfEach>::T UniquePropertyTypeList;
+public:
+    typedef typename SetSubtraction_t<UniquePropertyTypeList,TypeList_t<NullValue> >::T T;
+};
+
+// if MultiProperty_f has exactly one element, returns that.
+template <typename Concept_, typename PropertyId_>
+struct Property_f
+{
+private:
+    typedef typename MultiProperty_f<Concept_,PropertyId_>::T MultiProperty;
+    enum { STATIC_ASSERT_IN_ENUM(MultiProperty::LENGTH == 1, PROPERTY_IS_NOT_WELL_DEFINED) };
+public:
+    typedef typename MultiProperty::HeadType T;
+};
+
+// if Property_f is a TypedValue_t, returns the value.
+template <typename Concept_, typename PropertyId_>
+struct PropertyValue_f
+{
+private:
+    typedef typename Property_f<Concept_,PropertyId_>::T ValueType;
+public:
+    static typename ValueType::T const V = ValueType::V;
+};
+
 } // end of namespace Tenh
 
 #endif // TENH_CONCEPTUAL_CONCEPT_HPP_
