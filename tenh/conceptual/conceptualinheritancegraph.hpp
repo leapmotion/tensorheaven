@@ -200,8 +200,18 @@ std::ostream &operator << (std::ostream &out, Graph const &g)
     return out << ")\n";
 }
 
+// base case
+template <Uint32 SHORTIFY_DEPTH_, typename Concept_>
+void add_parent_concept_type_list_to_graph_recursive (Concept_ const &, EmptyTypeList const &, Graph &g)
+{
+    // nothing to add
+}
+
 template <Uint32 SHORTIFY_DEPTH_, typename Concept_, typename HeadType_, typename BodyTypeList_>
-void add_parent_concept_type_list_to_graph_recursive (Concept_ const &concept, TypeList_t<HeadType_,BodyTypeList_> const &parent_concept_type_list, Graph &g)
+void add_parent_concept_type_list_to_graph_recursive (
+    Concept_ const &concept,
+    TypeList_t<HeadType_,BodyTypeList_> const &parent_concept_type_list,
+    Graph &g)
 {
     // add the parent nodes and edges connecting concept to them
     Graph::Node concept_node(FORMAT((Pretty<TypeStringOf_t<Concept_>,SHORTIFY_DEPTH_>())),
@@ -215,12 +225,6 @@ void add_parent_concept_type_list_to_graph_recursive (Concept_ const &concept, T
 
     // call this function recursively on each parent
     add_parent_concept_type_list_to_graph_recursive<SHORTIFY_DEPTH_>(HeadType_(), typename HeadType_::ParentTypeList(), g);
-}
-
-template <Uint32 SHORTIFY_DEPTH_, typename Concept_>
-void add_parent_concept_type_list_to_graph_recursive (Concept_ const &, EmptyTypeList const &, Graph &g)
-{
-    // nothing to add
 }
 
 template <Uint32 SHORTIFY_DEPTH_, typename Concept_>
