@@ -143,7 +143,8 @@ template <typename Concept> struct Unique##ConceptName##StructureOf_f \
 // conceptual property accessor machinery
 // ///////////////////////////////////////////////////////////////////////////
 
-// TODO: consolidate this with Lvd::Meta::Value and Ted's int-carrying value
+// TODO: consolidate this with Lvd::Meta::Value and Ted's int-carrying value.
+// this should go in with the meta code.
 template <typename T_, T_ V_>
 struct TypedValue_t
 {

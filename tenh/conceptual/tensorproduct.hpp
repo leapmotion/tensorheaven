@@ -17,6 +17,10 @@
 
 namespace Tenh {
 
+// ///////////////////////////////////////////////////////////////////////////
+// TensorProduct_c
+// ///////////////////////////////////////////////////////////////////////////
+
 // generic tensor product of formal symbols (e.g. identifiers, builtin C++ types, etc)
 template <typename FactorTypeList_>
 struct TensorProduct_c
@@ -53,6 +57,48 @@ struct DualOf_f<TensorProduct_c<FactorTypeList_> >
 {
     typedef TensorProduct_c<typename DualOf_f<FactorTypeList_>::T> T;
 };
+
+// property IDs
+
+struct Order { }; // could this be a forward declaration?
+struct FactorTypeList { }; // could this be a forward declaration?
+struct TensorPowerFactor { }; // could this be a forward declaration?
+
+// BaseProperty_f accessors
+
+template <typename FactorTypeList_>
+struct BaseProperty_f<TensorProduct_c<FactorTypeList_>,Order>
+{
+    typedef TypedValue_t<Uint32,FactorTypeList_::LENGTH> T;
+};
+
+template <typename FactorTypeList_>
+struct BaseProperty_f<TensorProduct_c<FactorTypeList_>,FactorTypeList>
+{
+    typedef FactorTypeList_ T;
+};
+
+// this function is only well-defined if FactorTypeList_ is uniform and has at least one element
+template <typename FactorTypeList_>
+struct BaseProperty_f<TensorProduct_c<FactorTypeList_>,TensorPowerFactor>
+{
+private:
+    static bool const THERE_IS_A_UNIQUE_FACTOR = FactorTypeList_::LENGTH >= 1 && 
+                                                 TypeListIsUniform_t<FactorTypeList_>::V;
+    typedef typename Lvd::Meta::If<THERE_IS_A_UNIQUE_FACTOR,
+                                   typename FactorTypeList_::HeadType,
+                                   NullValue>::T T;
+};
+
+// named property accessors
+
+template <typename Concept_> struct OrderOf_f { static Uint32 const V = PropertyValue_f<Concept_,Order>::V; };
+template <typename Concept_> struct FactorTypeListOf_f { typedef typename Property_f<Concept_,FactorTypeList>::T T; };
+template <typename Concept_> struct TensorPowerFactorOf_f { typedef typename Property_f<Concept_,TensorPowerFactor>::T T; };
+
+// ///////////////////////////////////////////////////////////////////////////
+// TensorProductOfVectorSpaces_c
+// ///////////////////////////////////////////////////////////////////////////
 
 // TODO: Replace with predicate-based thing
 template <typename FactorTypeList_>
@@ -180,6 +226,9 @@ struct DualOf_f<TensorProductOfVectorSpaces_c<FactorTypeList_> >
     typedef TensorProductOfVectorSpaces_c<typename DualOf_f<FactorTypeList_>::T> T;
 };
 
+// ///////////////////////////////////////////////////////////////////////////
+// TensorProductOfBases_c
+// ///////////////////////////////////////////////////////////////////////////
 
 // FactorTypeList_ must be a TypeList_t of Basis_c types
 template <typename FactorTypeList_>
@@ -222,6 +271,9 @@ struct DualOf_f<TensorProductOfBases_c<FactorTypeList_> >
     typedef TensorProductOfBases_c<typename DualOf_f<FactorTypeList_>::T> T;
 };
 
+// ///////////////////////////////////////////////////////////////////////////
+// BasedTensorProductOfVectorSpaces_c
+// ///////////////////////////////////////////////////////////////////////////
 
 // TODO: this should be an EmbeddableInTensorProductOfVectorSpaces
 template <typename TensorProductOfVectorSpaces_, typename Basis_>
@@ -266,6 +318,9 @@ struct DualOf_f<BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces,B
     typedef BasedTensorProductOfVectorSpaces_c<typename DualOf_f<TensorProductOfVectorSpaces>::T,typename DualOf_f<Basis>::T> T;
 };
 
+// ///////////////////////////////////////////////////////////////////////////
+// TensorProductOfBasedVectorSpaces_c
+// ///////////////////////////////////////////////////////////////////////////
 
 // TODO: Predicate thingy
 template <typename FactorTypeList_>
@@ -307,7 +362,6 @@ struct BasesOfTypeList_t<EmptyTypeList>
 {
     typedef EmptyTypeList T;
 };
-
 
 // FactorTypeList_ must be a TypeList_t of BasedVectorSpace_c types
 template <typename FactorTypeList_>
@@ -353,6 +407,30 @@ template <typename FactorTypeList_>
 struct DualOf_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >
 {
     typedef TensorProductOfBasedVectorSpaces_c<typename DualOf_f<FactorTypeList_>::T> T;
+};
+
+// ///////////////////////////////////////////////////////////////////////////
+// meta-functions for taking tensor powers of stuff
+// ///////////////////////////////////////////////////////////////////////////
+
+template <Uint32 ORDER_, typename Factor_>
+struct TensorPower_f
+{
+    typedef TensorProduct_c<typename UniformTypeListOfLength_t<Factor_,ORDER_>::T> T;
+};
+
+template <Uint32 ORDER_, typename Factor_>
+struct TensorPowerOfVectorSpace_f
+{
+    enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_VECTOR_SPACE) };
+    typedef TensorProductOfVectorSpaces_c<typename UniformTypeListOfLength_t<Factor_,ORDER_>::T> T;
+};
+
+template <Uint32 ORDER_, typename Factor_>
+struct TensorPowerOfBasedVectorSpace_f
+{
+    enum { STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_BASED_VECTOR_SPACE) };
+    typedef TensorProductOfBasedVectorSpaces_c<typename UniformTypeListOfLength_t<Factor_,ORDER_>::T> T;
 };
 
 } // end of namespace Tenh

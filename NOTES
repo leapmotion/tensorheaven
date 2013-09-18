@@ -231,11 +231,6 @@ Notes for conceptual layer and refactor
 - Implement positive compile-time tests which verify that various diagrams commute
   (conceptual hierarchy diagram).  This will require implementing positive/negative compile
   tests in cmake or some such other framework.
-- rename *PowerOfVectorSpaces* to *PowerOfVectorSpace* and
-  *PowerOfBasedVectorSpaces* to *PowerOfBasedVectorSpace*
-- make TensorProductOfVectorSpaces_c and TensorPowerOfVectorSpace_c embeddable in the
-  corresponding EmbeddableIn* concepts trivially.
-- make the conceptual use of dimension use the full identifier DIMENSION, and reserve DIM for implementation
 - Make a full pass to remove the unnecessary members/member types from concepts
 - ComponentIndex_t and DimIndex_t should possibly be made conceptual types, they interact with 
   AbstractIndex_c, and right now DimIndex_t still overrides IsAbstractIndex_f (this is from Ted's 
@@ -263,7 +258,7 @@ x implementation of diagonal 2-tensors (of based vector spaces)
   QUESTION: Is there some reasonable generalization of diagonal 2-tensors to higher order
   tensors?  The answer to this question would likely be informed by results in higher
   order SVDs.
-- implement analog of Eigen's "map" (providing a vector/tensor/ext-pow/sym-pow/everything 
+x implement analog of Eigen's "map" (providing a vector/tensor/ext-pow/sym-pow/everything 
   implementations which uses some separate, specified block of memory, which could e.g. 
   coincide with an Eigen::Matrix).  Maybe do this via abstracting some aspects of Array_t 
   into Array_i, making Array_t inherit Array_i, then making PreallocatedArray_t also inherit 

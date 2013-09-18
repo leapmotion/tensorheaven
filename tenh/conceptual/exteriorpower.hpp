@@ -10,8 +10,8 @@
 
 #include "tenh/meta/typelist_utility.hpp"
 #include "tenh/conceptual/concept.hpp"
-#include "tenh/conceptual/embeddableintensorpower.hpp"
-#include "tenh/conceptual/tensorpower.hpp"
+#include "tenh/conceptual/embeddableintensorproduct.hpp"
+#include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/conceptual/vectorspace.hpp"
 #include "tenh/mathutil.hpp"
 
@@ -51,16 +51,14 @@ struct ExteriorPowerOfVectorSpace_c
 {
 private:
     enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_VECTOR_SPACE), };
-    typedef typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T FactorTypeList;
 
     typedef ExteriorPower_c<ORDER_,Factor_> As_ExteriorPower;
     typedef VectorSpace_c<typename Factor_::Field,BinomialCoefficient_t<AS_VECTOR_SPACE(Factor_)::DIMENSION, ORDER_>::V,ExteriorPower_c<ORDER_,typename Factor_::Id> > As_VectorSpace;
-    typedef EmbeddableInTensorPowerOfVectorSpace_c<TensorPowerOfVectorSpace_c<ORDER_,Factor_>,
-                                                   TensorProductOfVectorSpaces_c<FactorTypeList> > As_EmbeddableInTensorPowerOfVectorSpace;
+    typedef EmbeddableInTensorProductOfVectorSpaces_c<typename TensorPowerOfVectorSpace_f<ORDER_,Factor_>::T> As_EmbeddableInTensorProductOfVectorSpaces;
 public:
     typedef TypeList_t<As_ExteriorPower,
             TypeList_t<As_VectorSpace,
-            TypeList_t<As_EmbeddableInTensorPowerOfVectorSpace> > > ParentTypeList;
+            TypeList_t<As_EmbeddableInTensorProductOfVectorSpaces> > > ParentTypeList;
 
     typedef typename As_VectorSpace::Id Id;
     typedef Factor_ Factor;
@@ -171,13 +169,11 @@ private:
     typedef typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T FactorTypeList;
 
     typedef BasedExteriorPowerOfVectorSpace_c<ExteriorPowerOfVectorSpace_c<ORDER_,Factor_>,ExteriorPowerOfBasis_c<ORDER_,typename AS_BASED_VECTOR_SPACE(Factor_)::Basis> > As_BasedExteriorPowerOfVectorSpace;
-    typedef EmbeddableInTensorPowerOfBasedVectorSpace_c<TensorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,
-                                                        TensorPowerOfVectorSpace_c<ORDER_,Factor_>,
-                                                        TensorProductOfBasedVectorSpaces_c<FactorTypeList>,
-                                                        TensorProductOfVectorSpaces_c<FactorTypeList> > As_EmbeddableInTensorPowerOfBasedVectorSpace;
+    typedef EmbeddableInTensorProductOfBasedVectorSpaces_c<typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T,
+                                                           typename TensorPowerOfVectorSpace_f<ORDER_,Factor_>::T> As_EmbeddableInTensorProductOfBasedVectorSpaces;
 public:
     typedef TypeList_t<As_BasedExteriorPowerOfVectorSpace,
-            TypeList_t<As_EmbeddableInTensorPowerOfBasedVectorSpace> > ParentTypeList;
+            TypeList_t<As_EmbeddableInTensorProductOfBasedVectorSpaces> > ParentTypeList;
 
     typedef typename As_BasedExteriorPowerOfVectorSpace::Id Id;
     typedef Factor_ Factor;
