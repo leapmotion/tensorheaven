@@ -65,6 +65,41 @@ public:
 // induced inner product on TensorProductOfBasedVectorSpaces_c
 // ///////////////////////////////////////////////////////////////////////////
 
+namespace ComponentGeneratorEvaluator {
+
+// the fact that this is a global function (instead of a static method inside
+// the below InnerProduct_f specialization) is a workaround for GCC not accepting
+// a static method as a template param (which works in clang).
+template <typename SymmetricPower_, typename FactorTypeList_, typename InnerProductIdTypeList_, typename Scalar_>
+Scalar_ inner_product_induced_on_tensor_product (ComponentIndex_t<DimensionOf_f<SymmetricPower_>::V> const &i)
+{
+    typedef ComponentIndex_t<DimensionOf_f<SymmetricPower_>::V> ComponentIndex;
+    typedef TensorProductOfBasedVectorSpaces_c<FactorTypeList_> TensorProductOfBasedVectorSpaces;
+    typedef typename InnerProduct_f<typename FactorTypeList_::HeadType,
+                                    typename InnerProductIdTypeList_::HeadType,
+                                    Scalar_>::T HeadInnerProduct;
+    HeadInnerProduct head_inner_product;
+    typedef typename InnerProduct_f<TensorProductOfBasedVectorSpaces_c<typename FactorTypeList_::BodyTypeList>,
+                                    TensorProduct_c<typename InnerProductIdTypeList_::BodyTypeList>,
+                                    Scalar_>::T BodyInnerProduct;
+    BodyInnerProduct body_inner_product;
+    AbstractIndex_c<'a'> a;
+    AbstractIndex_c<'j'> j;
+    AbstractIndex_c<'k'> k;
+    AbstractIndex_c<'B'> B;
+    AbstractIndex_c<'P'> P;
+    AbstractIndex_c<'Q'> Q;
+    AbstractIndex_c<'r'> r;
+    AbstractIndex_c<'s'> s;
+    AbstractIndex_c<'T'> T;
+    return (head_inner_product(a).split(a,j|k) * body_inner_product(B).split(B,P|Q))
+            .bundle(j|P,TensorProductOfBasedVectorSpaces(),r)
+            .bundle(k|Q,TensorProductOfBasedVectorSpaces(),s)
+            .bundle(r|s,SymmetricPower_(),T)[MultiIndex_t<TypeList_t<ComponentIndex> >(i)];
+}
+
+} // end of namespace ComponentGeneratorEvaluator
+
 template <typename FactorTypeList_, typename InnerProductIdTypeList_, typename Scalar_>
 struct InnerProduct_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,TensorProduct_c<InnerProductIdTypeList_>,Scalar_>
 {
@@ -73,38 +108,16 @@ private:
     {
         STATIC_ASSERT_IN_ENUM(FactorTypeList_::LENGTH == InnerProductIdTypeList_::LENGTH, LENGTHS_MUST_BE_EQUAL),
         STATIC_ASSERT_IN_ENUM((FactorTypeList_::LENGTH > 0), ORDER_MUST_BE_POSITIVE) // TODO: allow ORDER_ == 0
-    }; 
+    };
     typedef TensorProductOfBasedVectorSpaces_c<FactorTypeList_> TensorProductOfBasedVectorSpaces;
     typedef typename DualOf_f<TensorProductOfBasedVectorSpaces>::T DualOfTensorProductOfBasedVectorSpaces;
     typedef SymmetricPowerOfBasedVectorSpace_c<2,DualOfTensorProductOfBasedVectorSpaces> SymmetricPower;
-    typedef ComponentIndex_t<DimensionOf_f<SymmetricPower>::V> ComponentIndex;
-    static Scalar_ evaluator (ComponentIndex const &i)
-    {
-        typedef typename InnerProduct_f<typename FactorTypeList_::HeadType,
-                                        typename InnerProductIdTypeList_::HeadType,
-                                        Scalar_>::T HeadInnerProduct;
-        HeadInnerProduct head_inner_product;
-        typedef typename InnerProduct_f<TensorProductOfBasedVectorSpaces_c<typename FactorTypeList_::BodyTypeList>,
-                                        TensorProduct_c<typename InnerProductIdTypeList_::BodyTypeList>,
-                                        Scalar_>::T BodyInnerProduct;
-        BodyInnerProduct body_inner_product;
-        AbstractIndex_c<'a'> a;
-        AbstractIndex_c<'j'> j;
-        AbstractIndex_c<'k'> k;
-        AbstractIndex_c<'B'> B;
-        AbstractIndex_c<'P'> P;
-        AbstractIndex_c<'Q'> Q;
-        AbstractIndex_c<'r'> r;
-        AbstractIndex_c<'s'> s;
-        AbstractIndex_c<'T'> T;
-        return (head_inner_product(a).split(a,j|k) * body_inner_product(B).split(B,P|Q))
-               .bundle(j|P,TensorProductOfBasedVectorSpaces(),r)
-               .bundle(k|Q,TensorProductOfBasedVectorSpaces(),s)
-               .bundle(r|s,SymmetricPower(),T)[MultiIndex_t<TypeList_t<ComponentIndex> >(i)];
-    }
     typedef ComponentGenerator_t<Scalar_,
                                  DimensionOf_f<SymmetricPower>::V,
-                                 evaluator,
+                                 ComponentGeneratorEvaluator::inner_product_induced_on_tensor_product<SymmetricPower,
+                                                                                                      FactorTypeList_,
+                                                                                                      InnerProductIdTypeList_,
+                                                                                                      Scalar_>,
                                  TensorProduct_c<InnerProductIdTypeList_> > ComponentGenerator;
 public:
     typedef ImplementationOf_t<SymmetricPower,Scalar_,UseImmutableArray_t<ComponentGenerator> > T;
