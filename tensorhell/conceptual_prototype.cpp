@@ -144,8 +144,8 @@ void test_immutable_identity_tensor ()
     typedef TypeList_t<BasedVectorSpace_,TypeList_t<typename DualOf_f<BasedVectorSpace_>::T> > FactorTypeList;
     typedef TensorProductOfBasedVectorSpaces_c<FactorTypeList> TensorProduct;
     typedef ComponentGenerator_t<Scalar_,
-                                 AS_VECTOR_SPACE(TensorProduct)::DIMENSION,
-                                 identity_matrix_generator<Scalar_,AS_VECTOR_SPACE(BasedVectorSpace_)::DIMENSION>,
+                                 DimensionOf_f<TensorProduct>::V,
+                                 identity_matrix_generator<Scalar_,DimensionOf_f<BasedVectorSpace_>::V>,
                                  IdentityMatrixGeneratorId> ComponentGenerator;
     typedef ImplementationOf_t<TensorProduct,Scalar_,UseImmutableArray_t<ComponentGenerator> > IdentityTensor;
     IdentityTensor identity_tensor;

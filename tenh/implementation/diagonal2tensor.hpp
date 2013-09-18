@@ -24,7 +24,7 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,F
                                 ComponentsAreImmutable_f<UseArrayType_>::V>,
     // privately inherited because it is an implementation detail
     private ArrayStorage_f<Scalar_,
-                           UniqueVectorSpaceStructureOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >::T::DIMENSION,
+                           DimensionOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >::V,
                            UseArrayType_,
                            ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,Scalar_,UseArrayType_> >::T
 {
@@ -39,7 +39,7 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,F
                                  Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,
                                  ComponentsAreImmutable_f<UseArrayType_>::V> Parent_EmbeddableAsTensor_i;
     typedef typename ArrayStorage_f<Scalar_,
-                                    UniqueVectorSpaceStructureOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >::T::DIMENSION,
+                                    DimensionOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >::V,
                                     UseArrayType_,
                                     ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,Scalar_,UseArrayType_> >::T Parent_Array_i;
 
@@ -103,7 +103,7 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,F
     {
         STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
     }
-    ImplementationOf_t (Scalar const &fill_with, 
+    ImplementationOf_t (Scalar const &fill_with,
                         Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Array_i(fill_with, pointer_to_allocation, check_pointer)
@@ -150,8 +150,8 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,F
         typedef typename BundleIndexTypeList::BodyTypeList::HeadType Index2;
         STATIC_ASSERT(IsDimIndex_f<Index1>::V, MUST_BE_DIM_INDEX);
         STATIC_ASSERT(IsDimIndex_f<Index2>::V, MUST_BE_DIM_INDEX);
-        STATIC_ASSERT(Index1::COMPONENT_COUNT == AS_VECTOR_SPACE(Factor1_)::DIMENSION, DIMENSIONS_MUST_MATCH);
-        STATIC_ASSERT(Index2::COMPONENT_COUNT == AS_VECTOR_SPACE(Factor2_)::DIMENSION, DIMENSIONS_MUST_MATCH);
+        STATIC_ASSERT(Index1::COMPONENT_COUNT == DimensionOf_f<Factor1_>::V, DIMENSIONS_MUST_MATCH);
+        STATIC_ASSERT(Index2::COMPONENT_COUNT == DimensionOf_f<Factor2_>::V, DIMENSIONS_MUST_MATCH);
         Uint32 b_value = b.value();
         return MultiIndex(b_value, b_value, DONT_CHECK_RANGE);
     }

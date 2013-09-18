@@ -53,7 +53,7 @@ private:
     enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_VECTOR_SPACE), };
 
     typedef ExteriorPower_c<ORDER_,Factor_> As_ExteriorPower;
-    typedef VectorSpace_c<typename Factor_::Field,BinomialCoefficient_t<AS_VECTOR_SPACE(Factor_)::DIMENSION, ORDER_>::V,ExteriorPower_c<ORDER_,typename Factor_::Id> > As_VectorSpace;
+    typedef VectorSpace_c<typename ScalarFieldOf_f<Factor_>::T,BinomialCoefficient_t<DimensionOf_f<Factor_>::V, ORDER_>::V,ExteriorPower_c<ORDER_,typename Factor_::Id> > As_VectorSpace;
     typedef EmbeddableInTensorProductOfVectorSpaces_c<typename TensorPowerOfVectorSpace_f<ORDER_,Factor_>::T> As_EmbeddableInTensorProductOfVectorSpaces;
 public:
     typedef TypeList_t<As_ExteriorPower,

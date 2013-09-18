@@ -95,7 +95,7 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Diagonal2TensorProductOfBases);
 // {
 // private:
 //     typedef Diagonal2TensorProduct_c<Factor1_,Factor2_> As_Diagonal2TensorProduct;
-//     typedef VectorSpace_c<typename Factor1_::Field,
+//     typedef VectorSpace_c<typename ScalarFieldOf_f<Factor1_>::T,
 //                           (Factor1_::DIM < Factor2_::DIM) ? Factor1_::DIM : Factor2_::DIM,
 //                           Diagonal2TensorProduct_c<Factor1_,Factor2_> > As_VectorSpace;
 // public:
@@ -105,14 +105,14 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Diagonal2TensorProductOfBases);
 //     {
 //         STATIC_ASSERT_IN_ENUM__UNIQUE(HasVectorSpaceStructure_f<Factor1_>::V, MUST_BE_VECTOR_SPACE, FACTOR1),
 //         STATIC_ASSERT_IN_ENUM__UNIQUE(HasVectorSpaceStructure_f<Factor2_>::V, MUST_BE_VECTOR_SPACE, FACTOR2),
-//         STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename Factor1_::Field,typename Factor2_::Field>::v), ALL_FACTORS_MUST_HAVE_SAME_FIELD)
+//         STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename ScalarFieldOf_f<Factor1_>::T,typename ScalarFieldOf_f<Factor2_>::T>::v), ALL_FACTORS_MUST_HAVE_SAME_FIELD)
 //     };
 //
 //
 //     typedef typename As_Diagonal2TensorProduct::Factor1 Factor1;
 //     typedef typename As_Diagonal2TensorProduct::Factor2 Factor2;
 //
-//     typedef typename As_VectorSpace::Field Field;
+//     typedef typename ScalarFieldOf_f<As_VectorSpace>::T Field;
 //     static Uint32 const DIM = As_VectorSpace::DIM;
 //     typedef typename As_VectorSpace::Id Id;
 //
@@ -146,13 +146,13 @@ private:
     {
         STATIC_ASSERT_IN_ENUM__UNIQUE(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor1_), MUST_BE_BASED_VECTOR_SPACE, FACTOR1),
         STATIC_ASSERT_IN_ENUM__UNIQUE(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor2_), MUST_BE_BASED_VECTOR_SPACE, FACTOR2),
-        STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename AS_VECTOR_SPACE(Factor1_)::Field,typename AS_VECTOR_SPACE(Factor2_)::Field>::v), ALL_FACTORS_MUST_HAVE_SAME_FIELD),
+        STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename ScalarFieldOf_f<Factor1_>::T,typename ScalarFieldOf_f<Factor2_>::T>::v), ALL_FACTORS_MUST_HAVE_SAME_FIELD),
     };
     typedef TypeList_t<Factor1_,TypeList_t<Factor2_> > FactorTypeList;
 
-    typedef VectorSpace_c<typename Factor1_::Field,
-                          (AS_VECTOR_SPACE(Factor1_)::DIMENSION < AS_VECTOR_SPACE(Factor2_)::DIMENSION) ?
-                              AS_VECTOR_SPACE(Factor1_)::DIMENSION : AS_VECTOR_SPACE(Factor2_)::DIMENSION,
+    typedef VectorSpace_c<typename ScalarFieldOf_f<Factor1_>::T,
+                          (DimensionOf_f<Factor1_>::V < DimensionOf_f<Factor2_>::V) ?
+                              DimensionOf_f<Factor1_>::V : DimensionOf_f<Factor2_>::V,
                           Diagonal2TensorProduct_c<Factor1_,Factor2_> > UnderlyingVectorSpace;
 
     typedef BasedVectorSpace_c<UnderlyingVectorSpace,

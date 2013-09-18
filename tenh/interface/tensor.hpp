@@ -21,14 +21,14 @@ namespace Tenh {
 template <typename FactorTypeList>
 struct FactorComponentIndexTypeList_t
 {
-    typedef TypeList_t<ComponentIndex_t<AS_VECTOR_SPACE(typename FactorTypeList::HeadType)::DIMENSION>,
+    typedef TypeList_t<ComponentIndex_t<DimensionOf_f<typename FactorTypeList::HeadType >::V>,
                        typename FactorComponentIndexTypeList_t<typename FactorTypeList::BodyTypeList>::T> T;
 };
 
 template <typename HeadType>
 struct FactorComponentIndexTypeList_t<TypeList_t<HeadType> >
 {
-    typedef TypeList_t<ComponentIndex_t<AS_VECTOR_SPACE(HeadType)::DIMENSION> > T;
+    typedef TypeList_t<ComponentIndex_t<DimensionOf_f<HeadType>::V> > T;
 };
 
 template <>

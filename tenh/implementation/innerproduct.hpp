@@ -31,9 +31,9 @@ namespace ComponentGeneratorEvaluator {
 // this would be better defined as a private static method in the specialization of InnerProduct_f below,
 // but g++ complains about that being invalid in a const expression (whereas clang++ is fine with it)
 template <typename EmbeddableInTensorProductOfBasedVectorSpaces_, typename Scalar_>
-Scalar_ standard_inner_product (ComponentIndex_t<AS_VECTOR_SPACE(EmbeddableInTensorProductOfBasedVectorSpaces_)::DIMENSION> const &i)
+Scalar_ standard_inner_product (ComponentIndex_t<DimensionOf_f<EmbeddableInTensorProductOfBasedVectorSpaces_>::V> const &i)
 {
-    typedef ComponentIndex_t<AS_VECTOR_SPACE(EmbeddableInTensorProductOfBasedVectorSpaces_)::DIMENSION> ComponentIndex;
+    typedef ComponentIndex_t<DimensionOf_f<EmbeddableInTensorProductOfBasedVectorSpaces_>::V> ComponentIndex;
     // for using bundle_index_map -- the use of UsePreallocatedArray is somewhat arbitrary,
     // since only the static method bundle_index_map will be used.
     typedef ImplementationOf_t<EmbeddableInTensorProductOfBasedVectorSpaces_,Scalar_,UsePreallocatedArray> BootstrappingImplementation;
@@ -54,7 +54,7 @@ private:
     typedef typename DualOf_f<BasedVectorSpace>::T DualOfBasedVectorSpace;
     typedef SymmetricPowerOfBasedVectorSpace_c<2,DualOfBasedVectorSpace> SymmetricPower;
     typedef ComponentGenerator_t<Scalar_,
-                                 AS_VECTOR_SPACE(SymmetricPower)::DIMENSION,
+                                 DimensionOf_f<SymmetricPower>::V,
                                  ComponentGeneratorEvaluator::standard_inner_product<SymmetricPower,Scalar_>,
                                  StandardInnerProduct> ComponentGenerator;
 public:
@@ -77,7 +77,7 @@ private:
     typedef TensorProductOfBasedVectorSpaces_c<FactorTypeList_> TensorProductOfBasedVectorSpaces;
     typedef typename DualOf_f<TensorProductOfBasedVectorSpaces>::T DualOfTensorProductOfBasedVectorSpaces;
     typedef SymmetricPowerOfBasedVectorSpace_c<2,DualOfTensorProductOfBasedVectorSpaces> SymmetricPower;
-    typedef ComponentIndex_t<AS_VECTOR_SPACE(SymmetricPower)::DIMENSION> ComponentIndex;
+    typedef ComponentIndex_t<DimensionOf_f<SymmetricPower>::V> ComponentIndex;
     static Scalar_ evaluator (ComponentIndex const &i)
     {
         typedef typename InnerProduct_f<typename FactorTypeList_::HeadType,
@@ -115,10 +115,10 @@ public:
 namespace ComponentGeneratorEvaluator {
 
 template <typename EmbeddableInTensorProductOfBasedVectorSpaces_, typename BasedVectorSpace_, typename InnerProductId_, typename Scalar_>
-Scalar_ inner_product_induced_on_1st_tensor_power (ComponentIndex_t<AS_VECTOR_SPACE(EmbeddableInTensorProductOfBasedVectorSpaces_)::DIMENSION> const &i)
+Scalar_ inner_product_induced_on_1st_tensor_power (ComponentIndex_t<DimensionOf_f<EmbeddableInTensorProductOfBasedVectorSpaces_>::V> const &i)
 {
     typedef SymmetricPowerOfBasedVectorSpace_c<2,BasedVectorSpace_> SymmetricPower;
-    STATIC_ASSERT(AS_VECTOR_SPACE(SymmetricPower)::DIMENSION == AS_VECTOR_SPACE(EmbeddableInTensorProductOfBasedVectorSpaces_)::DIMENSION,
+    STATIC_ASSERT(DimensionOf_f<SymmetricPower>::V == DimensionOf_f<EmbeddableInTensorProductOfBasedVectorSpaces_>::V,
                   DIMENSIONS_MUST_MATCH);
     typedef typename InnerProduct_f<BasedVectorSpace_,InnerProductId_,Scalar_>::T HeadInnerProduct;
     HeadInnerProduct head_inner_product;

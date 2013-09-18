@@ -72,7 +72,7 @@ struct DimIndexTypeListOf_t
         STATIC_ASSERT_IN_ENUM((FactorTypeList::LENGTH == AbstractIndexTypeList::LENGTH), MUST_HAVE_EQUAL_LENGTHS),
         STATIC_ASSERT_IN_ENUM(HasBasedVectorSpaceStructure_f<typename FactorTypeList::HeadType>::V, MUST_BE_BASED_VECTOR_SPACE)
     };
-    typedef TypeList_t<DimIndex_t<AbstractIndexTypeList::HeadType::SYMBOL,AS_VECTOR_SPACE(typename FactorTypeList::HeadType)::DIMENSION>,
+    typedef TypeList_t<DimIndex_t<AbstractIndexTypeList::HeadType::SYMBOL,DimensionOf_f<typename FactorTypeList::HeadType >::V>,
                        typename DimIndexTypeListOf_t<typename FactorTypeList::BodyTypeList,
                                                      typename AbstractIndexTypeList::BodyTypeList>::T> T;
 };

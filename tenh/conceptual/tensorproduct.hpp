@@ -132,8 +132,8 @@ struct AllFactorsHaveTheSameField_f
 {
     typedef typename FactorTypeList_::HeadType HeadType;
     typedef typename FactorTypeList_::BodyTypeList BodyTypeList;
-    static bool const V = Lvd::Meta::TypesAreEqual<typename AS_VECTOR_SPACE(HeadType)::Field,
-                                                   typename AS_VECTOR_SPACE(typename BodyTypeList::HeadType)::Field>::v &&
+    static bool const V = Lvd::Meta::TypesAreEqual<typename ScalarFieldOf_f<HeadType>::T,
+                                                   typename ScalarFieldOf_f<typename BodyTypeList::HeadType>::T>::v &&
                           AllFactorsHaveTheSameField_f<BodyTypeList>::V;
 };
 
@@ -154,7 +154,7 @@ struct ProductOfDimensions_t
 {
     enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(typename FactorTypeList_::HeadType), MUST_BE_VECTOR_SPACE) };
 
-    static Uint32 const V = AS_VECTOR_SPACE(typename FactorTypeList_::HeadType)::DIMENSION *
+    static Uint32 const V = DimensionOf_f<typename FactorTypeList_::HeadType >::V *
                             ProductOfDimensions_t<typename FactorTypeList_::BodyTypeList>::V;
 };
 
@@ -191,7 +191,7 @@ private:
     };
 
     typedef TensorProduct_c<FactorTypeList_> As_TensorProduct;
-    typedef VectorSpace_c<typename AS_VECTOR_SPACE(typename FactorTypeList_::HeadType)::Field,
+    typedef VectorSpace_c<typename ScalarFieldOf_f<typename FactorTypeList_::HeadType>::T,
                           ProductOfDimensions_t<FactorTypeList_>::V,
                           TensorProduct_c<typename IdsOfTypeList_t<FactorTypeList_>::T> > As_VectorSpace;
     typedef EmbeddableInTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_c> As_EmbeddableInTensorProductOfVectorSpaces;

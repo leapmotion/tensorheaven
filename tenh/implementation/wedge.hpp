@@ -26,7 +26,7 @@ struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scal
                                 ComponentsAreImmutable_f<UseArrayType_>::V>,
     // privately inherited because it is an implementation detail
     private ArrayStorage_f<Scalar_,
-                           UniqueVectorSpaceStructureOf_f<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_> >::T::DIMENSION,
+                           DimensionOf_f<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_> >::V,
                            UseArrayType_,
                            ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_> >::T
 {
@@ -37,7 +37,7 @@ struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scal
                                  ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,
                                  ComponentsAreImmutable_f<UseArrayType_>::V> Parent_EmbeddableAsTensor_i;
     typedef typename ArrayStorage_f<Scalar_,
-                                    UniqueVectorSpaceStructureOf_f<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_> >::T::DIMENSION,
+                                    DimensionOf_f<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_> >::V,
                                     UseArrayType_,
                                     ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_> >::T Parent_Array_i;
 
@@ -80,7 +80,7 @@ struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scal
     {
         STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
     }
-    ImplementationOf_t (Scalar const &fill_with, 
+    ImplementationOf_t (Scalar const &fill_with,
                         Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Array_i(fill_with, pointer_to_allocation, check_pointer)
@@ -128,7 +128,7 @@ struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scal
 
     static std::string type_as_string ()
     {
-        return "ImplementationOf_t<" + TypeStringOf_t<ExteriorPowerOfBasedVectorSpace>::eval() + ',' 
+        return "ImplementationOf_t<" + TypeStringOf_t<ExteriorPowerOfBasedVectorSpace>::eval() + ','
                                      + TypeStringOf_t<Scalar>::eval() + ','
                                      + TypeStringOf_t<UseArrayType_>::eval() + '>';
     }

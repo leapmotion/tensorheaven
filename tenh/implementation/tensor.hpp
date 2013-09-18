@@ -23,7 +23,7 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
                     ComponentsAreImmutable_f<UseArrayType_>::V>,
     // privately inherited because it is an implementation detail
     private ArrayStorage_f<Scalar_,
-                           AS_VECTOR_SPACE(TensorProductOfBasedVectorSpaces_c<FactorTypeList_>)::DIMENSION,
+                           DimensionOf_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >::V,
                            UseArrayType_,
                            ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Scalar_,UseArrayType_> >::T
 {
@@ -32,7 +32,7 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
                      TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,
                      ComponentsAreImmutable_f<UseArrayType_>::V> Parent_Tensor_i;
     typedef typename ArrayStorage_f<Scalar_,
-                                    AS_VECTOR_SPACE(TensorProductOfBasedVectorSpaces_c<FactorTypeList_>)::DIMENSION,
+                                    DimensionOf_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >::V,
                                     UseArrayType_,
                                     ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Scalar_,UseArrayType_> >::T Parent_Array_i;
 

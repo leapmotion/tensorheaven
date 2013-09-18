@@ -36,7 +36,7 @@ struct Vector_i
     typedef Derived_ Derived;
     typedef Scalar_ Scalar;
     typedef BasedVectorSpace_ BasedVectorSpace;
-    static Uint32 const DIM = AS_VECTOR_SPACE(BasedVectorSpace)::DIMENSION;
+    static Uint32 const DIM = DimensionOf_f<BasedVectorSpace>::V;
 
     typedef ComponentIndex_t<DIM> ComponentIndex;
     typedef MultiIndex_t<TypeList_t<ComponentIndex> > MultiIndex;

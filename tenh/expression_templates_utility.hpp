@@ -400,7 +400,7 @@ struct IndexBundle_t
     typedef typename DimIndexTypeListOf_t<BundleFactorTypeList,
                                           BundleAbstractIndexTypeList>::T BundleDimIndexTypeList;
     typedef DimIndex_t<ResultingAbstractIndexType::SYMBOL,
-                       AS_VECTOR_SPACE(ResultingFactorType)::DIMENSION> ResultingDimIndexType;
+                       DimensionOf_f<ResultingFactorType>::V> ResultingDimIndexType;
 
     // zip the stuff so that the transformations can act on both the DimIndex_t and factor lists
     typedef typename Zip_t<TypeList_t<OperandFreeDimIndexTypeList,
@@ -511,7 +511,7 @@ struct IndexSplitter_t
     {
         typedef typename DimIndexTypeListOf_t<typename AS_TENSOR_PRODUCT(typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_VECTOR_SPACES(SourceFactor)::TensorProductOfVectorSpaces)::FactorTypeList,
                                               SplitAbstractIndexTypeList>::T SourceFactorDimIndexTypeList;
-        typedef ComponentIndex_t<AS_VECTOR_SPACE(SourceFactor)::DIMENSION> SourceFactorComponentIndex;
+        typedef ComponentIndex_t<DimensionOf_f<SourceFactor>::V> SourceFactorComponentIndex;
         typedef MultiIndex_t<SourceFactorDimIndexTypeList> SourceFactorMultiIndex;
         // TODO: the use of UseMemberArray here is arbitrary because it's just used to access a
         // static method.  figure out if this is a problem

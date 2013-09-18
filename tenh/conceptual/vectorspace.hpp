@@ -107,7 +107,7 @@ public:
     typedef TypeList_t<As_VectorSpace> ParentTypeList;
 
 
-    typedef typename As_VectorSpace::Field Field;
+    typedef typename ScalarFieldOf_f<As_VectorSpace>::T Field;
     typedef typename As_VectorSpace::Id Id;
     typedef typename AS_BASIS(Basis_) Basis;
 

@@ -23,7 +23,7 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
                     ComponentsAreImmutable_f<UseArrayType_>::V>,
     // privately inherited because it is an implementation detail
     private ArrayStorage_f<Scalar_,
-                           AS_VECTOR_SPACE(VectorSpace_)::DIMENSION,
+                           DimensionOf_f<VectorSpace_>::V,
                            UseArrayType_,
                            ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_> >::T
 {
@@ -32,7 +32,7 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
                      BasedVectorSpace_c<VectorSpace_,Basis_>,
                      ComponentsAreImmutable_f<UseArrayType_>::V> Parent_Vector_i;
     typedef typename ArrayStorage_f<Scalar_,
-                                    AS_VECTOR_SPACE(VectorSpace_)::DIMENSION,
+                                    DimensionOf_f<VectorSpace_>::V,
                                     UseArrayType_,
                                     ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_> >::T Parent_Array_i;
 
