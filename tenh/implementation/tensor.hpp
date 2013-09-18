@@ -94,7 +94,7 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
     {
         STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
     }
-    ImplementationOf_t (Scalar const &fill_with, 
+    ImplementationOf_t (Scalar const &fill_with,
                         Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Array_i(fill_with, pointer_to_allocation, check_pointer)
@@ -157,7 +157,7 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
 
     static std::string type_as_string ()
     {
-        return "ImplementationOf_t<" + TypeStringOf_t<TensorProductOfBasedVectorSpaces>::eval() + ',' 
+        return "ImplementationOf_t<" + TypeStringOf_t<TensorProductOfBasedVectorSpaces>::eval() + ','
                                      + TypeStringOf_t<Scalar>::eval() + ','
                                      + TypeStringOf_t<UseArrayType_>::eval() + '>';
     }

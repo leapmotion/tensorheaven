@@ -14,6 +14,10 @@
 
 namespace Tenh {
 
+// ///////////////////////////////////////////////////////////////////////////
+// Diagonal2TensorProduct_c
+// ///////////////////////////////////////////////////////////////////////////
+
 // formal "diagonal 2-tensor product" of symbols
 template <typename Factor1_, typename Factor2_>
 struct Diagonal2TensorProduct_c
@@ -44,6 +48,9 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Diagonal2TensorProduct);
 #define IS_DIAGONAL_2_TENSOR_PRODUCT_UNIQUELY(Concept) HasUniqueDiagonal2TensorProductStructure_f<Concept>::V
 #define AS_DIAGONAL_2_TENSOR_PRODUCT(Concept) UniqueDiagonal2TensorProductStructureOf_f<Concept>::T
 
+// ///////////////////////////////////////////////////////////////////////////
+// Diagonal2TensorProductOfBases_c
+// ///////////////////////////////////////////////////////////////////////////
 
 template <typename Factor1_, typename Factor2_>
 struct Diagonal2TensorProductOfBases_c
@@ -86,57 +93,9 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Diagonal2TensorProductOfBases);
 #define IS_DIAGONAL_2_TENSOR_PRODUCT_OF_BASES_UNIQUELY(Concept) HasUniqueDiagonal2TensorProductOfBasesStructure_f<Concept>::V
 #define AS_DIAGONAL_2_TENSOR_PRODUCT_OF_BASES(Concept) UniqueDiagonal2TensorProductOfBasesStructureOf_f<Concept>::T
 
-
-// TODO: Should we just delete this?
-// // this is an abstract vector space, isomorphic to either Factor1_ or Factor2_ (each of which
-// // must be a VectorSpace_c).
-// template <typename Factor1_, typename Factor2_>
-// struct Diagonal2TensorProductOfVectorSpaces_c
-// {
-// private:
-//     typedef Diagonal2TensorProduct_c<Factor1_,Factor2_> As_Diagonal2TensorProduct;
-//     typedef VectorSpace_c<typename ScalarFieldOf_f<Factor1_>::T,
-//                           (Factor1_::DIM < Factor2_::DIM) ? Factor1_::DIM : Factor2_::DIM,
-//                           Diagonal2TensorProduct_c<Factor1_,Factor2_> > As_VectorSpace;
-// public:
-//     typedef TypeList_t<As_Diagonal2TensorProduct, TypeList_t<As_VectorSpace> > ParentTypeList;
-//
-//     enum
-//     {
-//         STATIC_ASSERT_IN_ENUM__UNIQUE(HasVectorSpaceStructure_f<Factor1_>::V, MUST_BE_VECTOR_SPACE, FACTOR1),
-//         STATIC_ASSERT_IN_ENUM__UNIQUE(HasVectorSpaceStructure_f<Factor2_>::V, MUST_BE_VECTOR_SPACE, FACTOR2),
-//         STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename ScalarFieldOf_f<Factor1_>::T,typename ScalarFieldOf_f<Factor2_>::T>::v), ALL_FACTORS_MUST_HAVE_SAME_FIELD)
-//     };
-//
-//
-//     typedef typename As_Diagonal2TensorProduct::Factor1 Factor1;
-//     typedef typename As_Diagonal2TensorProduct::Factor2 Factor2;
-//
-//     typedef typename ScalarFieldOf_f<As_VectorSpace>::T Field;
-//     static Uint32 const DIM = As_VectorSpace::DIM;
-//     typedef typename As_VectorSpace::Id Id;
-//
-//     static std::string type_as_string ()
-//     {
-//         return "Diagonal2TensorProductOfVectorSpaces_c<" + TypeStringOf_t<Factor1_>::eval() + ',' + TypeStringOf_t<Factor2_>::eval() + '>';
-//     }
-// };
-//
-// template <typename Factor1_, typename Factor2_>
-// struct IsConcept_f<Diagonal2TensorProductOfVectorSpaces_c<Factor1_, Factor2_> >
-// { static bool const V = true; };
-//
-// template <typename T> struct IsDiagonal2TensorProductOfVectorSpaces_f { static bool const V = false; };
-//
-// template <typename Factor1_, typename Factor2_>
-// struct IsDiagonal2TensorProductOfVectorSpaces_f<Diagonal2TensorProductOfVectorSpaces_c<Factor1_, Factor2_> >
-// { static bool const V = true; };
-//
-// DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Diagonal2TensorProductOfVectorSpaces);
-// // special convenience macros
-// #define IS_DIAGONAL_2_TENSOR_PRODUCT_OF_VECTOR_SPACES_UNIQUELY(Concept) HasUniqueDiagonal2TensorProductOfVectorSpacesStructure_f<Concept>::V
-// #define AS_DIAGONAL_2_TENSOR_PRODUCT_OF_VECTOR_SPACES(Concept) UniqueDiagonal2TensorProductOfVectorSpacesStructureOf_f<Concept>::T
-
+// ///////////////////////////////////////////////////////////////////////////
+// Diagonal2TensorProductOfBasedVectorSpaces_c
+// ///////////////////////////////////////////////////////////////////////////
 
 template <typename Factor1_, typename Factor2_>
 struct Diagonal2TensorProductOfBasedVectorSpaces_c
@@ -151,15 +110,14 @@ private:
     typedef TypeList_t<Factor1_,TypeList_t<Factor2_> > FactorTypeList;
 
     typedef VectorSpace_c<typename ScalarFieldOf_f<Factor1_>::T,
-                          (DimensionOf_f<Factor1_>::V < DimensionOf_f<Factor2_>::V) ?
-                              DimensionOf_f<Factor1_>::V : DimensionOf_f<Factor2_>::V,
+                          (DimensionOf_f<Factor1_>::V < DimensionOf_f<Factor2_>::V) ? DimensionOf_f<Factor1_>::V : DimensionOf_f<Factor2_>::V,
                           Diagonal2TensorProduct_c<Factor1_,Factor2_> > UnderlyingVectorSpace;
 
     typedef BasedVectorSpace_c<UnderlyingVectorSpace,
-                               Diagonal2TensorProductOfBases_c<typename AS_BASED_VECTOR_SPACE(Factor1_)::Basis,
-                                                               typename AS_BASED_VECTOR_SPACE(Factor2_)::Basis> > As_BasedVectorSpace;
+                               Diagonal2TensorProductOfBases_c<typename BasisOf_f<Factor1_>::T,
+                                                               typename BasisOf_f<Factor2_>::T> > As_BasedVectorSpace;
     typedef EmbeddableInTensorProductOfBasedVectorSpaces_c<TensorProductOfBasedVectorSpaces_c<FactorTypeList>,
-                                                            TensorProductOfVectorSpaces_c<FactorTypeList> > As_EmbeddableInTensorProductOfBasedVectorSpaces;
+                                                           TensorProductOfVectorSpaces_c<FactorTypeList> > As_EmbeddableInTensorProductOfBasedVectorSpaces;
 public:
     typedef TypeList_t<As_BasedVectorSpace,
             TypeList_t<As_EmbeddableInTensorProductOfBasedVectorSpaces> > ParentTypeList;

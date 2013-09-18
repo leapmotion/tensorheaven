@@ -50,11 +50,11 @@ struct EmbeddableAsTensor_i
 
     typedef EmbeddableInTensorProductOfBasedVectorSpaces_ EmbeddableInTensorProductOfBasedVectorSpaces;
     typedef typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(EmbeddableInTensorProductOfBasedVectorSpaces)::TensorProductOfBasedVectorSpaces TensorProductOfBasedVectorSpaces;
-    typedef typename AS_TENSOR_PRODUCT(TensorProductOfBasedVectorSpaces)::FactorTypeList FactorTypeList;
+    typedef typename FactorTypeListOf_f<TensorProductOfBasedVectorSpaces>::T FactorTypeList;
     typedef MultiIndex_t<typename FactorComponentIndexTypeList_t<FactorTypeList>::T> MultiIndex;
     // this is not the "fully expanded" order, but the number of [what you could think of
     // as "parenthesized"] factors that formed this tensor product type.
-    static Uint32 const ORDER = AS_TENSOR_PRODUCT(TensorProductOfBasedVectorSpaces)::ORDER;
+    static Uint32 const ORDER = OrderOf_f<TensorProductOfBasedVectorSpaces>::V;
     // static bool const IS_EMBEDDABLE_AS_TENSOR_I = true; // TODO: deprecate this in favor of IsEmbeddableAsTensor_i<...>
 
     static Uint32 order () { return ORDER; }

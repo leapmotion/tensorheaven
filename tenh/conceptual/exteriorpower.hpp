@@ -168,7 +168,8 @@ private:
     enum { STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_BASED_VECTOR_SPACE), };
     typedef typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T FactorTypeList;
 
-    typedef BasedExteriorPowerOfVectorSpace_c<ExteriorPowerOfVectorSpace_c<ORDER_,Factor_>,ExteriorPowerOfBasis_c<ORDER_,typename AS_BASED_VECTOR_SPACE(Factor_)::Basis> > As_BasedExteriorPowerOfVectorSpace;
+    typedef BasedExteriorPowerOfVectorSpace_c<ExteriorPowerOfVectorSpace_c<ORDER_,Factor_>,
+                                              ExteriorPowerOfBasis_c<ORDER_,typename BasisOf_f<Factor_>::T> > As_BasedExteriorPowerOfVectorSpace;
     typedef EmbeddableInTensorProductOfBasedVectorSpaces_c<typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T,
                                                            typename TensorPowerOfVectorSpace_f<ORDER_,Factor_>::T> As_EmbeddableInTensorProductOfBasedVectorSpaces;
 public:

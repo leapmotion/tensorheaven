@@ -168,14 +168,14 @@ struct BaseProperty_f
 };
 
 template <typename TypeList_, typename PropertyId_>
-struct PropertyOfEachInTypeList_f
+struct BasePropertyOfEachInTypeList_f
 {
     typedef TypeList_t<typename BaseProperty_f<typename TypeList_::HeadType,PropertyId_>::T,
-                       typename PropertyOfEachInTypeList_f<typename TypeList_::BodyTypeList,PropertyId_>::T> T;
+                       typename BasePropertyOfEachInTypeList_f<typename TypeList_::BodyTypeList,PropertyId_>::T> T;
 };
 
 template <typename PropertyId_>
-struct PropertyOfEachInTypeList_f<EmptyTypeList,PropertyId_>
+struct BasePropertyOfEachInTypeList_f<EmptyTypeList,PropertyId_>
 {
     typedef EmptyTypeList T;
 };
@@ -185,7 +185,7 @@ template <typename Concept_, typename PropertyId_>
 struct MultiProperty_f
 {
 private:
-    typedef typename PropertyOfEachInTypeList_f<typename AncestorsOf_f<Concept_>::T,PropertyId_>::T PropertyOfEach;
+    typedef typename BasePropertyOfEachInTypeList_f<typename AncestorsOf_f<Concept_>::T,PropertyId_>::T PropertyOfEach;
     typedef typename UniqueTypesIn_t<PropertyOfEach>::T UniquePropertyTypeList;
 public:
     typedef typename SetSubtraction_t<UniquePropertyTypeList,TypeList_t<NullValue> >::T T;
@@ -210,6 +210,21 @@ private:
     typedef typename Property_f<Concept_,PropertyId_>::T ValueType;
 public:
     static typename ValueType::T const V = ValueType::V;
+};
+
+// constructs a TypeList_t whose elements are the results of Property_f on each element
+template <typename TypeList_, typename PropertyId_>
+struct PropertyOfEachInTypeList_f
+{
+    typedef TypeList_t<typename Property_f<typename TypeList_::HeadType,PropertyId_>::T,
+                       typename PropertyOfEachInTypeList_f<typename TypeList_::BodyTypeList,PropertyId_>::T> T;
+};
+
+// base case
+template <typename PropertyId_>
+struct PropertyOfEachInTypeList_f<EmptyTypeList,PropertyId_>
+{
+    typedef EmptyTypeList T;
 };
 
 } // end of namespace Tenh

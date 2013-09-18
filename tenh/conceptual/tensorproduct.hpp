@@ -83,7 +83,7 @@ template <typename FactorTypeList_>
 struct BaseProperty_f<TensorProduct_c<FactorTypeList_>,TensorPowerFactor>
 {
 private:
-    static bool const THERE_IS_A_UNIQUE_FACTOR = FactorTypeList_::LENGTH >= 1 && 
+    static bool const THERE_IS_A_UNIQUE_FACTOR = FactorTypeList_::LENGTH >= 1 &&
                                                  TypeListIsUniform_t<FactorTypeList_>::V;
     typedef typename Lvd::Meta::If<THERE_IS_A_UNIQUE_FACTOR,
                                    typename FactorTypeList_::HeadType,
@@ -154,7 +154,7 @@ struct ProductOfDimensions_t
 {
     enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(typename FactorTypeList_::HeadType), MUST_BE_VECTOR_SPACE) };
 
-    static Uint32 const V = DimensionOf_f<typename FactorTypeList_::HeadType >::V *
+    static Uint32 const V = DimensionOf_f<typename FactorTypeList_::HeadType>::V *
                             ProductOfDimensions_t<typename FactorTypeList_::BodyTypeList>::V;
 };
 
@@ -286,10 +286,11 @@ private:
         STATIC_ASSERT_IN_ENUM(IS_BASIS_UNIQUELY(Basis_), MUST_BE_BASIS),
     };
 
-    typedef typename AS_TENSOR_PRODUCT_OF_VECTOR_SPACES(TensorProductOfVectorSpaces_) As_TensorProductOfVectorSpaces; // TODO: figure out if this forgetful functor should be used here
+    typedef TensorProductOfVectorSpaces_ As_TensorProductOfVectorSpaces;
     typedef BasedVectorSpace_c<TensorProductOfVectorSpaces_,Basis_> As_BasedVectorSpace;
 public:
-    typedef TypeList_t<As_TensorProductOfVectorSpaces, TypeList_t<As_BasedVectorSpace> > ParentTypeList;
+    typedef TypeList_t<As_TensorProductOfVectorSpaces,
+            TypeList_t<As_BasedVectorSpace> > ParentTypeList;
 
     typedef typename As_BasedVectorSpace::Id Id;
 
@@ -336,33 +337,6 @@ struct AllFactorsAreBasedVectorSpaces_f<EmptyTypeList>
     static bool const V = true;
 };
 
-// TODO: Replace with some sort of map function.
-template <typename TypeList>
-struct VectorSpacesOfTypeList_t
-{
-    typedef TypeList_t<typename AS_VECTOR_SPACE(typename TypeList::HeadType),
-                       typename VectorSpacesOfTypeList_t<typename TypeList::BodyTypeList>::T> T;
-};
-
-template <>
-struct VectorSpacesOfTypeList_t<EmptyTypeList>
-{
-    typedef EmptyTypeList T;
-};
-
-template <typename TypeList>
-struct BasesOfTypeList_t
-{
-    typedef TypeList_t<typename AS_BASED_VECTOR_SPACE(typename TypeList::HeadType)::Basis,
-                       typename BasesOfTypeList_t<typename TypeList::BodyTypeList>::T> T;
-};
-
-template <>
-struct BasesOfTypeList_t<EmptyTypeList>
-{
-    typedef EmptyTypeList T;
-};
-
 // FactorTypeList_ must be a TypeList_t of BasedVectorSpace_c types
 template <typename FactorTypeList_>
 struct TensorProductOfBasedVectorSpaces_c
@@ -374,8 +348,9 @@ private:
         STATIC_ASSERT_IN_ENUM(AllFactorsAreBasedVectorSpaces_f<FactorTypeList_>::V, ALL_FACTORS_MUST_BE_BASED_VECTOR_SPACES),
     };
 
+    typedef typename PropertyOfEachInTypeList_f<FactorTypeList_,Basis>::T BasisTypeList;
     typedef BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_c<FactorTypeList_>,
-                                               TensorProductOfBases_c<typename BasesOfTypeList_t<FactorTypeList_>::T> > As_BasedTensorProductOfVectorSpaces;
+                                               TensorProductOfBases_c<BasisTypeList> > As_BasedTensorProductOfVectorSpaces;
     typedef EmbeddableInTensorProductOfBasedVectorSpaces_c<TensorProductOfBasedVectorSpaces_c,TensorProductOfVectorSpaces_c<FactorTypeList_> > As_EmbeddableInTensorProductOfBasedVectorSpaces;
 public:
     typedef TypeList_t<As_BasedTensorProductOfVectorSpaces,

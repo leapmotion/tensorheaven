@@ -21,7 +21,7 @@ namespace Tenh {
 template <typename FactorTypeList>
 struct FactorComponentIndexTypeList_t
 {
-    typedef TypeList_t<ComponentIndex_t<DimensionOf_f<typename FactorTypeList::HeadType >::V>,
+    typedef TypeList_t<ComponentIndex_t<DimensionOf_f<typename FactorTypeList::HeadType>::V>,
                        typename FactorComponentIndexTypeList_t<typename FactorTypeList::BodyTypeList>::T> T;
 };
 
@@ -63,11 +63,11 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
     typedef typename Parent_Vector_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
 
     typedef TensorProductOfBasedVectorSpaces_ TensorProductOfBasedVectorSpaces;
-    typedef typename AS_TENSOR_PRODUCT(TensorProductOfBasedVectorSpaces)::FactorTypeList FactorTypeList;
+    typedef typename FactorTypeListOf_f<TensorProductOfBasedVectorSpaces>::T FactorTypeList;
     typedef MultiIndex_t<typename FactorComponentIndexTypeList_t<FactorTypeList>::T> MultiIndex;
     // this is not the "fully expanded" order, but the number of [what you could think of
     // as "parenthesized"] factors that formed this tensor product type.
-    static Uint32 const ORDER = AS_TENSOR_PRODUCT(TensorProductOfBasedVectorSpaces_)::ORDER;
+    static Uint32 const ORDER = OrderOf_f<TensorProductOfBasedVectorSpaces_>::V;
     static bool const IS_TENSOR_I = true; // TODO: deprecate this in favor of IsATensor_i<...>
 
     // TODO: could put canonical as_factorX conversions here

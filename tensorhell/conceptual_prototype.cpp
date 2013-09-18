@@ -64,8 +64,7 @@ template <typename BasedVectorSpace, Uint32 ORDER>
 void test_tensor_printing (std::ostream &out)
 {
     typedef typename TensorPowerOfBasedVectorSpace_f<ORDER,BasedVectorSpace>::T TPow;
-    typedef typename AS_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(TPow) TProd;
-    typedef ImplementationOf_t<TProd,float> T;
+    typedef ImplementationOf_t<TPow,float> T;
     T t(Static<WithoutInitialization>::SINGLETON);
     for (typename T::ComponentIndex i; i.is_not_at_end(); ++i)
         t[i] = i.value();
