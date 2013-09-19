@@ -41,6 +41,7 @@ struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scal
                                     UseArrayType_,
                                     ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_> >::T Parent_Array_i;
 
+    typedef ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_> Concept;
     typedef typename Parent_EmbeddableAsTensor_i::Derived Derived;
     typedef typename Parent_EmbeddableAsTensor_i::Scalar Scalar;
     typedef typename Parent_EmbeddableAsTensor_i::BasedVectorSpace BasedVectorSpace;

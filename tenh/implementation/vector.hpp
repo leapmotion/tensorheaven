@@ -36,6 +36,7 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
                                     UseArrayType_,
                                     ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_> >::T Parent_Array_i;
 
+    typedef BasedVectorSpace_c<VectorSpace_,Basis_> Concept;
     typedef typename Parent_Vector_i::Derived Derived;
     typedef typename Parent_Vector_i::Scalar Scalar;
     typedef typename Parent_Vector_i::BasedVectorSpace BasedVectorSpace;

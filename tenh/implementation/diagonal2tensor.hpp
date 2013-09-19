@@ -43,6 +43,7 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,F
                                     UseArrayType_,
                                     ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,Scalar_,UseArrayType_> >::T Parent_Array_i;
 
+    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> Concept;
     typedef typename Parent_EmbeddableAsTensor_i::Derived Derived;
     typedef typename Parent_EmbeddableAsTensor_i::Scalar Scalar;
     typedef typename Parent_EmbeddableAsTensor_i::BasedVectorSpace BasedVectorSpace;

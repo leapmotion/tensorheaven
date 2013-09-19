@@ -36,6 +36,7 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
                                     UseArrayType_,
                                     ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Scalar_,UseArrayType_> >::T Parent_Array_i;
 
+    typedef TensorProductOfBasedVectorSpaces_c<FactorTypeList_> Concept;
     typedef typename Parent_Tensor_i::Derived Derived;
     typedef typename Parent_Tensor_i::Scalar Scalar;
     typedef typename Parent_Tensor_i::BasedVectorSpace BasedVectorSpace;

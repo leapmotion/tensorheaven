@@ -36,7 +36,7 @@ struct UseImmutableArray_t
     static std::string type_as_string ()
     {
         return "UseImmutableArray_t<" + TypeStringOf_t<ComponentGenerator_>::eval() + '>';
-    } 
+    }
 };
 // use of this will require a template specialization of DualOf_f for ComponentGenerator_
 template <typename ComponentGenerator_>
@@ -52,7 +52,8 @@ template <typename ComponentGenerator_> struct IsUseImmutableArray_t<UseImmutabl
 template <typename T> struct ComponentsAreImmutable_f { static bool const V = false; };
 template <typename ComponentGenerator_> struct ComponentsAreImmutable_f<UseImmutableArray_t<ComponentGenerator_> > { static bool const V = true; };
 
-// the default is to use 
+// the default is UseMemberArray (internal storage).  each ImplementationOf_t must
+// have a "typedef Concept_ Concept".
 template <typename Concept_,
           typename Scalar_,
           typename UseArrayType = UseMemberArray>

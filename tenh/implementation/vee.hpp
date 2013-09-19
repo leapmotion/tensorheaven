@@ -40,6 +40,7 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
                                     UseArrayType_,
                                     ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_> >::T Parent_Array_i;
 
+    typedef SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> Concept;
     typedef typename Parent_EmbeddableAsTensor_i::Derived Derived;
     typedef typename Parent_EmbeddableAsTensor_i::Scalar Scalar;
     typedef typename Parent_EmbeddableAsTensor_i::BasedVectorSpace BasedVectorSpace;

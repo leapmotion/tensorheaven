@@ -212,6 +212,22 @@ void test_euclidean_embedding_of_standard_euclidean_space ()
     std::cout << '\n';
 }
 
+template <typename Scalar_, Uint32 ORDER_, typename BasedVectorSpace_, typename InnerProductId_>
+void test_tensor_power_of_euclidean_embedding ()
+{
+    std::cout << "test_tensor_power_of_euclidean_embedding<" << TypeStringOf_t<Scalar_>::eval() << ',' << AS_STRING(ORDER_) << ',' << TypeStringOf_t<BasedVectorSpace_>::eval() << ">\n";
+    typedef typename EuclideanEmbedding_f<typename TensorPowerOfBasedVectorSpace_f<ORDER_,BasedVectorSpace_>::T,
+                                          typename TensorPower_f<ORDER_,InnerProductId_>::T,
+                                          Scalar_>::T EuclideanEmbedding;
+    EuclideanEmbedding e;
+    std::cout << FORMAT_VALUE(e) << '\n';
+    AbstractIndex_c<'P'> P;
+    AbstractIndex_c<'i'> i;
+    AbstractIndex_c<'j'> j;
+    std::cout << FORMAT_VALUE(e(P).split(P,i|j)) << '\n';
+    std::cout << '\n';
+}
+
 int main (int argc, char **argv)
 {
     {
@@ -1063,6 +1079,13 @@ int main (int argc, char **argv)
     }
 
     test_euclidean_embedding_of_standard_euclidean_space<float,VectorSpace_c<RealField,4,X> >();
+
+//     {
+//         typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,OrthonormalBasis_c<X> > BasedVectorSpace;
+//         test_tensor_power_of_euclidean_embedding<float,1,BasedVectorSpace,StandardInnerProduct>();
+//         test_tensor_power_of_euclidean_embedding<float,2,BasedVectorSpace,StandardInnerProduct>();
+//         test_tensor_power_of_euclidean_embedding<float,3,BasedVectorSpace,StandardInnerProduct>();
+//     }
 
     // testing pretty typestring printing
     if (false)
