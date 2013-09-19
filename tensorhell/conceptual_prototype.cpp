@@ -19,6 +19,7 @@
 #include "tenh/implementation/euclideanembedding.hpp"
 #include "tenh/implementation/innerproduct.hpp"
 #include "tenh/implementation/tensor.hpp"
+#include "tenh/implementation/tensorproduct.hpp"
 #include "tenh/implementation/vector.hpp"
 #include "tenh/implementation/vee.hpp"
 #include "tenh/implementation/wedge.hpp"
@@ -73,19 +74,36 @@ void test_tensor_printing (std::ostream &out)
     out << FORMAT_VALUE(t) << '\n';
 }
 
-template <typename Scalar_, Uint32 DIM_, Uint32 K_>
-Scalar_ standard_basis_vector_generator (ComponentIndex_t<DIM_> const &i)
+template <typename Scalar_, Uint32 DIMENSION_, Uint32 K_>
+Scalar_ standard_basis_vector_generator (ComponentIndex_t<DIMENSION_> const &i)
 {
     return i.value() == K_ ? Scalar_(1) : Scalar_(0);
 }
 
-template <Uint32 K_>
+template <Uint32 DIMENSION_, Uint32 K_>
 struct StandardBasisVectorGeneratorId
 {
     static std::string type_as_string ()
     {
-        return "StandardBasisVectorGenerator<" + AS_STRING(K_) + '>';
+        return "StandardBasisVectorGenerator<" + AS_STRING(DIMENSION_) + ',' + AS_STRING(K_) + '>';
     }
+};
+
+template <typename Scalar_, Uint32 DIMENSION_, Uint32 K_>
+struct StandardBasisComponentGenerator_f
+{
+    typedef ComponentGenerator_t<Scalar_,DIMENSION_,
+                                 standard_basis_vector_generator<Scalar_,DIMENSION_,K_>,
+                                 StandardBasisVectorGeneratorId<DIMENSION_,K_> > T;
+};
+
+template <typename BasedVectorSpace_, typename Scalar_, Uint32 K_>
+struct StandardBasisVector_f
+{
+private:
+    typedef typename StandardBasisComponentGenerator_f<Scalar_,DimensionOf_f<BasedVectorSpace_>::V,K_>::T ComponentGenerator;
+public:
+    typedef ImplementationOf_t<BasedVectorSpace_,Scalar_,UseImmutableArray_t<ComponentGenerator> > T;
 };
 
 template <typename Scalar_, Uint32 DIM_>
@@ -100,7 +118,10 @@ template <typename Scalar_, Uint32 DIM_, Uint32 K_>
 void test_immutable_array_0 ()
 {
     std::cout << "test_immutable_array_0<" << TypeStringOf_t<Scalar_>::eval() << ',' + AS_STRING(DIM_) << ',' << AS_STRING(K_) << ">\n";
-    typedef ComponentGenerator_t<Scalar_,DIM_,standard_basis_vector_generator<Scalar_,DIM_,K_>,StandardBasisVectorGeneratorId<K_> > ComponentGenerator;
+    typedef ComponentGenerator_t<Scalar_,
+                                 DIM_,
+                                 standard_basis_vector_generator<Scalar_,DIM_,K_>,
+                                 StandardBasisVectorGeneratorId<DIM_,K_> > ComponentGenerator;
     typedef ImmutableArray_t<Scalar_,DIM_,ComponentGenerator> A;
     A a;
     std::cout << FORMAT_VALUE(a.type_as_string()) << '\n';
@@ -113,7 +134,10 @@ template <typename Scalar_, Uint32 DIM_>
 void test_immutable_array_1 ()
 {
     std::cout << "test_immutable_array_1<" << TypeStringOf_t<Scalar_>::eval() << ',' << AS_STRING(DIM_) << ">\n";
-    typedef ComponentGenerator_t<Scalar_,DIM_,counting_vector_generator<Scalar_,DIM_>,CountingVectorGeneratorId> ComponentGenerator;
+    typedef ComponentGenerator_t<Scalar_,
+                                 DIM_,
+                                 counting_vector_generator<Scalar_,DIM_>,
+                                 CountingVectorGeneratorId> ComponentGenerator;
     typedef ImmutableArray_t<Scalar_,DIM_,ComponentGenerator> A;
     A a;
     std::cout << FORMAT_VALUE(a.type_as_string()) << '\n';
@@ -1086,6 +1110,53 @@ int main (int argc, char **argv)
 //         test_tensor_power_of_euclidean_embedding<float,2,BasedVectorSpace,StandardInnerProduct>();
 //         test_tensor_power_of_euclidean_embedding<float,3,BasedVectorSpace,StandardInnerProduct>();
 //     }
+
+    {
+        std::cout << "testing StandardBasisVector_f\n";
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,OrthonormalBasis_c<X> > BasedVectorSpace;
+        std::cout << FORMAT_VALUE((StandardBasisVector_f<BasedVectorSpace,float,0>::T())) << '\n';
+        std::cout << FORMAT_VALUE((StandardBasisVector_f<BasedVectorSpace,float,1>::T())) << '\n';
+        std::cout << FORMAT_VALUE((StandardBasisVector_f<BasedVectorSpace,float,2>::T())) << '\n';
+    }
+
+    {
+        std::cout << "testing TensorProductOfImmutableVectors_f\n";
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,OrthonormalBasis_c<X> > BasedVectorSpace;
+        typedef StandardBasisVector_f<BasedVectorSpace,float,0>::T E0;
+        typedef StandardBasisVector_f<BasedVectorSpace,float,1>::T E1;
+        typedef StandardBasisVector_f<BasedVectorSpace,float,2>::T E2;
+        std::cout << FORMAT_VALUE(E0()) << '\n';
+        std::cout << FORMAT_VALUE(E1()) << '\n';
+        std::cout << FORMAT_VALUE(E2()) << '\n';
+        {
+            typedef TypeList_t<E0> ImmutableVectorImplementationTypeList;
+            typedef TensorProductOfImmutableVectors_f<ImmutableVectorImplementationTypeList>::T T;
+            std::cout << FORMAT_VALUE(TypeStringOf_t<T>::eval()) << '\n';
+            std::cout << FORMAT_VALUE(T()) << '\n';
+        }
+        {
+            typedef TypeList_t<E0,
+                    TypeList_t<E1> > ImmutableVectorImplementationTypeList;
+            typedef TensorProductOfImmutableVectors_f<ImmutableVectorImplementationTypeList>::T T;
+            std::cout << FORMAT_VALUE(TypeStringOf_t<T>::eval()) << '\n';
+            std::cout << FORMAT_VALUE(T()) << '\n';
+        }
+        {
+            typedef TypeList_t<E1,
+                    TypeList_t<E1> > ImmutableVectorImplementationTypeList;
+            typedef TensorProductOfImmutableVectors_f<ImmutableVectorImplementationTypeList>::T T;
+            std::cout << FORMAT_VALUE(TypeStringOf_t<T>::eval()) << '\n';
+            std::cout << FORMAT_VALUE(T()) << '\n';
+        }
+        {
+            typedef TypeList_t<E0,
+                    TypeList_t<E1,
+                    TypeList_t<E2> > > ImmutableVectorImplementationTypeList;
+            typedef TensorProductOfImmutableVectors_f<ImmutableVectorImplementationTypeList>::T T;
+            std::cout << FORMAT_VALUE(TypeStringOf_t<T>::eval()) << '\n';
+            std::cout << FORMAT_VALUE(T()) << '\n';
+        }
+    }
 
     // testing pretty typestring printing
     if (false)

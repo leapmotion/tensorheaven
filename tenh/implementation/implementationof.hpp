@@ -45,18 +45,18 @@ struct DualOf_f<UseImmutableArray_t<ComponentGenerator_> >
     typedef UseImmutableArray_t<typename DualOf_f<ComponentGenerator_>::T> T;
 };
 
-template <typename T> struct IsUseImmutableArray_t { static bool const V = false; };
-template <typename ComponentGenerator_> struct IsUseImmutableArray_t<UseImmutableArray_t<ComponentGenerator_> > { static bool const V = true; };
+template <typename T> struct IsUseImmutableArray_f { static bool const V = false; };
+template <typename ComponentGenerator_> struct IsUseImmutableArray_f<UseImmutableArray_t<ComponentGenerator_> > { static bool const V = true; };
 
 // used by ImplementationOf_t to provide the COMPONENTS_ARE_IMMUTABLE parameter value
 template <typename T> struct ComponentsAreImmutable_f { static bool const V = false; };
 template <typename ComponentGenerator_> struct ComponentsAreImmutable_f<UseImmutableArray_t<ComponentGenerator_> > { static bool const V = true; };
 
 // the default is UseMemberArray (internal storage).  each ImplementationOf_t must
-// have a "typedef Concept_ Concept".
+// have a "typedef Concept_ Concept" and a "typedef UseArrayType_ UseArrayType".
 template <typename Concept_,
           typename Scalar_,
-          typename UseArrayType = UseMemberArray>
+          typename UseArrayType_ = UseMemberArray>
 struct ImplementationOf_t;
 
 // ///////////////////////////////////////////////////////////////////////////

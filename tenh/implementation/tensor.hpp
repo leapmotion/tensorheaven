@@ -37,6 +37,7 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
                                     ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Scalar_,UseArrayType_> >::T Parent_Array_i;
 
     typedef TensorProductOfBasedVectorSpaces_c<FactorTypeList_> Concept;
+    typedef UseArrayType_ UseArrayType;
     typedef typename Parent_Tensor_i::Derived Derived;
     typedef typename Parent_Tensor_i::Scalar Scalar;
     typedef typename Parent_Tensor_i::BasedVectorSpace BasedVectorSpace;
@@ -129,7 +130,7 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
         :
         Parent_Array_i(WithoutInitialization()) // sort of meaningless constructor
     {
-        STATIC_ASSERT(IsUseImmutableArray_t<UseArrayType_>::V, MUST_BE_USE_IMMUTABLE_ARRAY);
+        STATIC_ASSERT(IsUseImmutableArray_f<UseArrayType_>::V, MUST_BE_USE_IMMUTABLE_ARRAY);
     }
 
     template <typename BundleIndexTypeList, typename BundledIndex>
