@@ -93,7 +93,7 @@ struct TensorProductOfImmutableVectors_f<TypeList_t<HeadImmutableVectorImplement
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM(ImmutableVectorImplementationTypeList_::LENGTH > 0, LENGTH_MUST_BE_POSITIVE),
+        STATIC_ASSERT_IN_ENUM((ImmutableVectorImplementationTypeList_::LENGTH > 0), LENGTH_MUST_BE_POSITIVE),
         STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<ConceptTypeList,IsBasedVectorSpace_p>::V), MUST_BE_TYPELIST_OF_BASED_VECTOR_SPACES),
         STATIC_ASSERT_IN_ENUM(TypeListIsUniform_t<ScalarTypeList>::V, ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
         STATIC_ASSERT_IN_ENUM((EachTypeUsesImmutableArray_f<ImmutableVectorImplementationTypeList_>::V), MUST_BE_TYPELIST_OF_IMMUTABLE_VECTOR_IMPLEMENTATIONS)
@@ -142,7 +142,7 @@ struct TensorProductOfImmutableVectors_f
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM(ImmutableVectorImplementationTypeList_::LENGTH > 0, LENGTH_MUST_BE_POSITIVE),
+        STATIC_ASSERT_IN_ENUM((ImmutableVectorImplementationTypeList_::LENGTH > 0), LENGTH_MUST_BE_POSITIVE),
         STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<ConceptTypeList,IsBasedVectorSpace_p>::V), MUST_BE_TYPELIST_OF_BASED_VECTOR_SPACES),
         STATIC_ASSERT_IN_ENUM(TypeListIsUniform_t<ScalarTypeList>::V, ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
         STATIC_ASSERT_IN_ENUM((EachTypeUsesImmutableArray_f<ImmutableVectorImplementationTypeList_>::V), MUST_BE_TYPELIST_OF_IMMUTABLE_VECTOR_IMPLEMENTATIONS)
