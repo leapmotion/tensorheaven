@@ -57,6 +57,16 @@ struct IsComponentGenerator_t<ComponentGenerator_t<Component_,COMPONENT_COUNT_,e
 // NOTE: you may need to provide a template specialization for DualOf_f<ComponentGenerator_t<...> >
 
 // ///////////////////////////////////////////////////////////////////////////
+// some convenience component generator evaluator functions
+// ///////////////////////////////////////////////////////////////////////////
+
+template <typename Component_, Uint32 COMPONENT_COUNT_, Sint32 VALUE_>
+Component_ constant_component_generator_evaluator (ComponentIndex_t<COMPONENT_COUNT_> const &i)
+{
+    return Component_(VALUE_);
+}
+
+// ///////////////////////////////////////////////////////////////////////////
 // ImmutableArray_t
 // ///////////////////////////////////////////////////////////////////////////
 
@@ -115,7 +125,7 @@ struct ImmutableArray_t
     static std::string type_as_string ()
     {
         // TODO: figure out how to provide stringified type info for the component_generator_ template param.
-        return "ImmutableArray_t<" + TypeStringOf_t<Component_>::eval() + ',' 
+        return "ImmutableArray_t<" + TypeStringOf_t<Component_>::eval() + ','
                                    + AS_STRING(COMPONENT_COUNT_) + ','
                                    + TypeStringOf_t<ComponentGenerator_>::eval() + '>';
     }

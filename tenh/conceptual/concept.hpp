@@ -59,7 +59,7 @@ struct AncestorsOf_Recursive_f;
 template <typename Concept>
 struct AncestorsOf_f
 {
-    enum { _ = Lvd::Meta::Assert<IsConcept_f<Concept>::V>::v };
+    enum { STATIC_ASSERT_IN_ENUM(IsConcept_f<Concept>::V, MUST_BE_CONCEPT) };
     typedef TypeList_t<Concept,typename AncestorsOf_Recursive_f<typename Concept::ParentTypeList>::T> T;
 };
 
@@ -96,7 +96,7 @@ struct AncestorsSatisfyingPredicate_f
 template <typename Concept, typename ConceptualStructurePredicate>
 struct ConceptualStructuresOf_f
 {
-    enum { _ = Lvd::Meta::Assert<IsConcept_f<Concept>::V>::v }; // TODO: check that ConceptualStructurePredicate actually is one
+    enum { STATIC_ASSERT_IN_ENUM(IsConcept_f<Concept>::V, MUST_BE_CONCEPT) }; // TODO: check that ConceptualStructurePredicate actually is one
     typedef typename UniqueTypesIn_t<typename AncestorsSatisfyingPredicate_f<Concept,ConceptualStructurePredicate>::T>::T T;
 };
 
@@ -115,7 +115,7 @@ struct HasUniqueConceptualStructure_f
 template <typename Concept, typename ConceptualStructurePredicate>
 struct UniqueConceptualStructureOf_f
 {
-    enum { _ = Lvd::Meta::Assert<HasUniqueConceptualStructure_f<Concept,ConceptualStructurePredicate>::V>::v };
+    enum { STATIC_ASSERT_IN_ENUM((HasUniqueConceptualStructure_f<Concept,ConceptualStructurePredicate>::V), MUST_HAVE_UNIQUE_CONCEPTUAL_STRUCTURE) };
     typedef typename ConceptualStructuresOf_f<Concept,ConceptualStructurePredicate>::T::HeadType T;
 };
 

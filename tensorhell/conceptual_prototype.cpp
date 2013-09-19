@@ -16,6 +16,7 @@
 #include "tenh/memberarray.hpp"
 #include "tenh/immutablearray.hpp"
 #include "tenh/implementation/diagonal2tensor.hpp"
+#include "tenh/implementation/euclideanembedding.hpp"
 #include "tenh/implementation/innerproduct.hpp"
 #include "tenh/implementation/tensor.hpp"
 #include "tenh/implementation/vector.hpp"
@@ -171,7 +172,7 @@ template <typename Scalar_, typename VectorSpace_>
 void test_standard_euclidean_inner_product ()
 {
     std::cout << "test_standard_euclidean_inner_product<" << TypeStringOf_t<Scalar_>::eval() << ',' << TypeStringOf_t<VectorSpace_>::eval() << ">\n";
-    typedef typename InnerProduct_f<BasedVectorSpace_c<VectorSpace_,StandardBasis>,StandardInnerProduct,Scalar_>::T InnerProduct;
+    typedef typename InnerProduct_f<BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<X> >,StandardInnerProduct,Scalar_>::T InnerProduct;
     InnerProduct g;
     std::cout << FORMAT_VALUE(g) << '\n';
     AbstractIndex_c<'P'> P;
@@ -194,6 +195,20 @@ void test_tensor_power_of_inner_product ()
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
     std::cout << FORMAT_VALUE(g(P).split(P,i|j)) << '\n';
+    std::cout << '\n';
+}
+
+template <typename Scalar_, typename VectorSpace_>
+void test_euclidean_embedding_of_standard_euclidean_space ()
+{
+    std::cout << "test_euclidean_embedding_of_standard_euclidean_space<" << TypeStringOf_t<Scalar_>::eval() << ',' << TypeStringOf_t<VectorSpace_>::eval() << ">\n";
+    typedef typename EuclideanEmbedding_f<BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<StandardBasisId> >,StandardInnerProduct,Scalar_>::T EuclideanEmbedding;
+    EuclideanEmbedding e;
+    std::cout << FORMAT_VALUE(e) << '\n';
+    AbstractIndex_c<'P'> P;
+    AbstractIndex_c<'i'> i;
+    AbstractIndex_c<'j'> j;
+    std::cout << FORMAT_VALUE(e(P).split(P,i|j)) << '\n';
     std::cout << '\n';
 }
 
@@ -874,48 +889,6 @@ int main (int argc, char **argv)
         std::cout << '\n';
     }
 
-/*
-    {
-        std::cout << "testing InnerProduct_t\n";
-        typedef VectorSpace_c<RealField,3,X> VSX;
-        typedef BasedVectorSpace_c<VSX,StandardBasis> BasedX;
-        InnerProduct_t<BasedX,float> b;
-        AbstractIndex_c<'P'> P;
-        AbstractIndex_c<'Q'> Q;
-        AbstractIndex_c<'i'> i;
-        AbstractIndex_c<'j'> j;
-        AbstractIndex_c<'k'> k;
-        std::cout << FORMAT_VALUE(b) << '\n';
-        std::cout << FORMAT_VALUE((i|j).type_as_string()) << '\n';
-        std::cout << FORMAT_VALUE(b(P).split(P,i|j)) << '\n' << '\n';
-
-        InnerProduct_t<DualOf_f<BasedX>::T,float> b_inv;
-        std::cout << FORMAT_VALUE(b_inv) << '\n';
-        std::cout << FORMAT_VALUE(b(Q).split(Q,i|j)) << '\n' << '\n';
-
-        std::cout << FORMAT_VALUE(b(P).split(P,i|j) * b_inv(Q).split(Q,j|k)) << '\n' << '\n';
-
-        std::cout << FORMAT_VALUE(b_inv(Q).split(Q,i|j) * b(P).split(P,j|k)) << '\n' << '\n';
-
-        typedef ImplementationOf_t<BasedX,float> Vector;
-        Vector v(Static<WithoutInitialization>::SINGLETON);
-        Vector w(Static<WithoutInitialization>::SINGLETON);
-        for (Vector::ComponentIndex idx; idx.is_not_at_end(); ++idx)
-        {
-            v[idx] = idx.value();
-            w[idx] = 2*idx.value() + 8;
-        }
-        std::cout << FORMAT_VALUE(v) << '\n';
-        std::cout << FORMAT_VALUE(w) << '\n';
-        std::cout << FORMAT_VALUE(v(i)*b(P).split(P,i|j)*w(j)) << '\n';
-
-        // uncommenting the following line should cause a compile error regarding natural pairing
-//         std::cout << FORMAT_VALUE(v(i)*w(i)) << '\n';
-
-        std::cout << '\n' << '\n';
-    }
-    */
-
     typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,Basis_c<X> > BasedX;
     typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,Y>,Basis_c<Y> > BasedY;
     typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Z>,Basis_c<Z> > BasedZ;
@@ -1083,11 +1056,13 @@ int main (int argc, char **argv)
     test_standard_euclidean_inner_product<float,VectorSpace_c<RealField,4,X> >();
 
     {
-        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,StandardBasis> BasedVectorSpace;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,OrthonormalBasis_c<X> > BasedVectorSpace;
         test_tensor_power_of_inner_product<float,1,BasedVectorSpace,StandardInnerProduct>();
         test_tensor_power_of_inner_product<float,2,BasedVectorSpace,StandardInnerProduct>();
         test_tensor_power_of_inner_product<float,3,BasedVectorSpace,StandardInnerProduct>();
     }
+
+    test_euclidean_embedding_of_standard_euclidean_space<float,VectorSpace_c<RealField,4,X> >();
 
     // testing pretty typestring printing
     if (false)

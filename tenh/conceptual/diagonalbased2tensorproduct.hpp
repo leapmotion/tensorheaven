@@ -154,6 +154,16 @@ struct DualOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1,Factor2> >
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<typename DualOf_f<Factor1>::T,typename DualOf_f<Factor2>::T> T;
 };
 
+// convenience metafunction for using a FactorTypeList_ instead of two separate factors
+template <typename FactorTypeList_>
+struct Diagonal2TensorProductOfBasedVectorSpaces_f
+{
+    enum { STATIC_ASSERT_IN_ENUM(FactorTypeList_::LENGTH == 2, LENGTH_MUST_BE_EXACTLY_2) };
+    typedef typename FactorTypeList_::HeadType Factor1;
+    typedef typename FactorTypeList_::BodyTypeList::HeadType Factor2;
+    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1,Factor2> T;
+};
+
 } // end of namespace Tenh
 
 #endif // TENH_CONCEPTUAL_DIAGONALBASED2TENSORPRODUCT_HPP_

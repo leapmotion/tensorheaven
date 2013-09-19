@@ -35,38 +35,53 @@ template <typename Id_>
 struct IsConcept_f<Basis_c<Id_> >
 { static bool const V = true; };
 
-template <typename T> struct IsBasis_f { static bool const V = false; };
-template <typename Id> struct IsBasis_f<Basis_c<Id> > { static bool const V = true; };
+template <typename T_> struct IsBasis_f { static bool const V = false; };
+template <typename Id_> struct IsBasis_f<Basis_c<Id_> > { static bool const V = true; };
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Basis);
 // special convenience macros
 #define IS_BASIS_UNIQUELY(Concept) HasUniqueBasisStructure_f<Concept>::V
 #define AS_BASIS(Concept) UniqueBasisStructureOf_f<Concept>::T
 
-template <typename Id>
-struct DualOf_f<Basis_c<Id> >
+template <typename Id_>
+struct DualOf_f<Basis_c<Id_> >
 {
-    typedef Basis_c<typename DualOf_f<Id>::T> T;
+    typedef Basis_c<typename DualOf_f<Id_>::T> T;
 };
 
 // ////////////////////////////////////////////////////////////////////////////
-// Standard[Basis]
+// OrthonormalBasis_c
 // ////////////////////////////////////////////////////////////////////////////
 
-struct Standard
+template <typename Id_>
+struct OrthonormalBasis_c
 {
-    static std::string type_as_string () { return "Standard"; }
+    typedef TypeList_t<Basis_c<Id_> > ParentTypeList;
+
+    typedef Id_ Id;
+
+    static std::string type_as_string ()
+    {
+        return "OrthonormalBasis_c<" + TypeStringOf_t<Id_>::eval() + '>';
+    }
 };
 
-// convenience typedef for the standard [Euclidean] basis (basically is a pre-existing
-// name for an orthonormal basis).
-typedef Basis_c<Standard> StandardBasis;
+template <typename Id_>
+struct IsConcept_f<OrthonormalBasis_c<Id_> >
+{ static bool const V = true; };
 
-// StandardBasis is self-dual (as a Basis_c type), though the space it refers to may not be.
-template <>
-struct DualOf_f<StandardBasis>
+template <typename T_> struct IsOrthonormalBasis_f { static bool const V = false; };
+template <typename Id_> struct IsOrthonormalBasis_f<OrthonormalBasis_c<Id_> > { static bool const V = true; };
+
+DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(OrthonormalBasis);
+// special convenience macros
+#define IS_ORTHONORMAL_BASIS_UNIQUELY(Concept) HasUniqueOrthonormalBasisStructure_f<Concept>::V
+#define AS_ORTHONORMAL_BASIS(Concept) UniqueOrthonormalBasisStructureOf_f<Concept>::T
+
+template <typename Id_>
+struct DualOf_f<OrthonormalBasis_c<Id_> >
 {
-    typedef StandardBasis T;
+    typedef OrthonormalBasis_c<typename DualOf_f<Id_>::T> T;
 };
 
 } // end of namespace Tenh

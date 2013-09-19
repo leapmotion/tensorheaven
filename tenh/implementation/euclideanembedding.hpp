@@ -1,66 +1,75 @@
 // ///////////////////////////////////////////////////////////////////////////
-// tenh/implementation/innerproduct.hpp by Victor Dods, created 2013/09/08
+// tenh/implementation/euclideanembedding.hpp by Victor Dods, created 2013/09/18
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#ifndef TENH_IMPLEMENTATION_INNERPRODUCT_HPP_
-#define TENH_IMPLEMENTATION_INNERPRODUCT_HPP_
+#ifndef TENH_IMPLEMENTATION_EUCLIDEANEMBEDDING_HPP_
+#define TENH_IMPLEMENTATION_EUCLIDEANEMBEDDING_HPP_
 
 #include "tenh/core.hpp"
 
-#include "tenh/implementation/vee.hpp"
+#include "tenh/implementation/diagonal2tensor.hpp"
+#include "tenh/implementation/innerproduct.hpp"
 
 namespace Tenh {
 
 // ///////////////////////////////////////////////////////////////////////////
-// forward declaration for the InnerProduct_f metafunction (should return
-// an ImplementationOf_t type that uses ImmutableArray_t)
+// forward declaration for the EuclideanEmbedding_f metafunction (should
+// return an ImplementationOf_t type that uses ImmutableArray_t)
 // ///////////////////////////////////////////////////////////////////////////
 
-template <typename BasedVectorSpace_, typename InnerProductId_, typename Scalar_> struct InnerProduct_f;
+template <typename BasedVectorSpace_, typename InnerProductId_, typename Scalar_> struct EuclideanEmbedding_f;
 
-// ///////////////////////////////////////////////////////////////////////////
-// standard inner product on a based vector space having an orthonormal basis
-// ///////////////////////////////////////////////////////////////////////////
-
-// corresponds to the identity matrix
-struct StandardInnerProduct { static std::string type_as_string () { return "StandardInnerProduct"; } };
-
-namespace ComponentGeneratorEvaluator {
-
-// this would be better defined as a private static method in the specialization of InnerProduct_f below,
-// but g++ complains about that being invalid in a const expression (whereas clang++ is fine with it)
-template <typename EmbeddableInTensorProductOfBasedVectorSpaces_, typename Scalar_>
-Scalar_ standard_inner_product (ComponentIndex_t<DimensionOf_f<EmbeddableInTensorProductOfBasedVectorSpaces_>::V> const &i)
+// an ID for uniquely specifying a finite-dimensional Euclidean space
+template <Uint32 DIMENSION_>
+struct EuclideanSpaceId_t
 {
-    typedef ComponentIndex_t<DimensionOf_f<EmbeddableInTensorProductOfBasedVectorSpaces_>::V> ComponentIndex;
-    // for using bundle_index_map -- the use of UsePreallocatedArray is somewhat arbitrary,
-    // since only the static method bundle_index_map will be used.
-    typedef ImplementationOf_t<EmbeddableInTensorProductOfBasedVectorSpaces_,Scalar_,UsePreallocatedArray> BootstrappingImplementation;
-    typedef typename BootstrappingImplementation::MultiIndex::IndexTypeList IndexTypeList;
-    typedef MultiIndex_t<IndexTypeList> MultiIndex;
-    MultiIndex m(BootstrappingImplementation::template bundle_index_map<IndexTypeList,ComponentIndex>(i));
-    return m.template el<0>() == m.template el<1>() ? Scalar_(1) : Scalar_(0);
-}
+    static Uint32 const DIMENSION = DIMENSION_;
 
-} // end of namespace ComponentGeneratorEvaluator
+    static std::string type_as_string () { return "EuclideanSpaceId_t<" + AS_STRING(DIMENSION_) + '>'; }
+};
 
-// template specialization for standard inner product on a based vector space having orthonormal basis
+struct StandardBasisId { static std::string type_as_string () { return "StandardBasis"; } };
+
+template <Uint32 DIMENSION_>
+struct BasedEuclideanSpace_f
+{
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,DIMENSION_,EuclideanSpaceId_t<DIMENSION_> >,OrthonormalBasis_c<StandardBasisId> > T;
+};
+
+// metafunction for easily determining the 2-tensor factors for a Euclidean embedding
+// a linear map from BasedVectorSpace_ to BasedEuclideanSpace_f
+template <typename BasedVectorSpace_>
+struct EuclideanEmbedding2TensorFactorTypeList_f
+{
+    typedef TypeList_t<typename BasedEuclideanSpace_f<DimensionOf_f<BasedVectorSpace_>::V>::T,
+            TypeList_t<typename DualOf_f<BasedVectorSpace_>::T> > T;
+};
+
+// ///////////////////////////////////////////////////////////////////////////
+// Euclidean embedding for based vector spaces having orthonormal basis
+// ///////////////////////////////////////////////////////////////////////////
+
+// template <typename Component_, Uint32 COMPONENT_COUNT_, Sint32 VALUE_>
+// Component_ constant_component_generator_evaluator (ComponentIndex_t<COMPONENT_COUNT_> const &i)
+
+// template specialization for inner product on Euclidean space
 template <typename VectorSpace_, typename OrthonormalBasisId_, typename Scalar_>
-struct InnerProduct_f<BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<OrthonormalBasisId_> >,StandardInnerProduct,Scalar_>
+struct EuclideanEmbedding_f<BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<OrthonormalBasisId_> >,StandardInnerProduct,Scalar_>
 {
 private:
     typedef BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<OrthonormalBasisId_> > BasedVectorSpace;
-    typedef typename DualOf_f<BasedVectorSpace>::T DualOfBasedVectorSpace;
-    typedef SymmetricPowerOfBasedVectorSpace_c<2,DualOfBasedVectorSpace> SymmetricPower;
+    typedef typename EuclideanEmbedding2TensorFactorTypeList_f<BasedVectorSpace>::T EuclideanEmbedding2TensorFactorTypeList;
+    typedef typename Diagonal2TensorProductOfBasedVectorSpaces_f<EuclideanEmbedding2TensorFactorTypeList>::T Diagonal2Tensor;
     typedef ComponentGenerator_t<Scalar_,
-                                 DimensionOf_f<SymmetricPower>::V,
-                                 ComponentGeneratorEvaluator::standard_inner_product<SymmetricPower,Scalar_>,
+                                 DimensionOf_f<Diagonal2Tensor>::V,
+                                 constant_component_generator_evaluator<Scalar_,DimensionOf_f<Diagonal2Tensor>::V,1>,
                                  StandardInnerProduct> ComponentGenerator;
 public:
-    typedef ImplementationOf_t<SymmetricPower,Scalar_,UseImmutableArray_t<ComponentGenerator> > T;
+    typedef ImplementationOf_t<Diagonal2Tensor,Scalar_,UseImmutableArray_t<ComponentGenerator> > T;
 };
 
+/*
 // ///////////////////////////////////////////////////////////////////////////
 // induced inner product on TensorProductOfBasedVectorSpaces_c
 // ///////////////////////////////////////////////////////////////////////////
@@ -141,8 +150,8 @@ Scalar_ inner_product_induced_on_1st_tensor_power (ComponentIndex_t<DimensionOf_
 } // end of namespace ComponentGeneratorEvaluator
 
 // template specialization for ORDER_ == 1 (which is really just the original inner product)
-// TODO: do specialization for ORDER_ == 0 (but this would depend on the basis being "field unit basis"
-// (i.e. the 0th tensor power is the field itself and the multiplicative identity of the field is the basis vector)).
+// TODO: do specialization for ORDER_ == 0 (but this would depend on the basis being Standard
+// (i.e. the 0th tensor power is the field itself and 1 is the basis vector)).
 template <typename BasedVectorSpace_, typename InnerProductId_, typename Scalar_>
 struct InnerProduct_f<TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_> >,TensorProduct_c<TypeList_t<InnerProductId_> >,Scalar_>
 {
@@ -160,7 +169,7 @@ private:
 public:
     typedef ImplementationOf_t<SymmetricPower,Scalar_,UseImmutableArray_t<ComponentGenerator> > T;
 };
-
+*/
 } // end of namespace Tenh
 
-#endif // TENH_IMPLEMENTATION_INNERPRODUCT_HPP_
+#endif // TENH_IMPLEMENTATION_EUCLIDEANEMBEDDING_HPP_
