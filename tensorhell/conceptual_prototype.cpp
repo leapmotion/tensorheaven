@@ -109,10 +109,11 @@ public:
 template <typename Scalar_, Uint32 DIM_>
 Scalar_ counting_vector_generator (ComponentIndex_t<DIM_> const &i)
 {
-    return Scalar_(i.value());
+    return Scalar_(i.value() + 1);
 }
 
-struct CountingVectorGeneratorId { static std::string type_as_string () { return "CountingVectorGenerator"; } };
+template <Uint32 DIM_>
+struct CountingVectorGeneratorId { static std::string type_as_string () { return "CountingVectorGenerator<" + AS_STRING(DIM_) + '>'; } };
 
 template <typename Scalar_, Uint32 DIM_, Uint32 K_>
 void test_immutable_array_0 ()
@@ -137,7 +138,7 @@ void test_immutable_array_1 ()
     typedef ComponentGenerator_t<Scalar_,
                                  DIM_,
                                  counting_vector_generator<Scalar_,DIM_>,
-                                 CountingVectorGeneratorId> ComponentGenerator;
+                                 CountingVectorGeneratorId<DIM_> > ComponentGenerator;
     typedef ImmutableArray_t<Scalar_,DIM_,ComponentGenerator> A;
     A a;
     std::cout << FORMAT_VALUE(a.type_as_string()) << '\n';
@@ -1117,6 +1118,7 @@ int main (int argc, char **argv)
         std::cout << FORMAT_VALUE((StandardBasisVector_f<BasedVectorSpace,float,0>::T())) << '\n';
         std::cout << FORMAT_VALUE((StandardBasisVector_f<BasedVectorSpace,float,1>::T())) << '\n';
         std::cout << FORMAT_VALUE((StandardBasisVector_f<BasedVectorSpace,float,2>::T())) << '\n';
+        std::cout << '\n';
     }
 
     {
@@ -1128,11 +1130,13 @@ int main (int argc, char **argv)
         std::cout << FORMAT_VALUE(E0()) << '\n';
         std::cout << FORMAT_VALUE(E1()) << '\n';
         std::cout << FORMAT_VALUE(E2()) << '\n';
+        std::cout << '\n';
         {
             typedef TypeList_t<E0> ImmutableVectorImplementationTypeList;
             typedef TensorProductOfImmutableVectors_f<ImmutableVectorImplementationTypeList>::T T;
             std::cout << FORMAT_VALUE(TypeStringOf_t<T>::eval()) << '\n';
             std::cout << FORMAT_VALUE(T()) << '\n';
+            std::cout << '\n';
         }
         {
             typedef TypeList_t<E0,
@@ -1140,6 +1144,7 @@ int main (int argc, char **argv)
             typedef TensorProductOfImmutableVectors_f<ImmutableVectorImplementationTypeList>::T T;
             std::cout << FORMAT_VALUE(TypeStringOf_t<T>::eval()) << '\n';
             std::cout << FORMAT_VALUE(T()) << '\n';
+            std::cout << '\n';
         }
         {
             typedef TypeList_t<E1,
@@ -1147,6 +1152,7 @@ int main (int argc, char **argv)
             typedef TensorProductOfImmutableVectors_f<ImmutableVectorImplementationTypeList>::T T;
             std::cout << FORMAT_VALUE(TypeStringOf_t<T>::eval()) << '\n';
             std::cout << FORMAT_VALUE(T()) << '\n';
+            std::cout << '\n';
         }
         {
             typedef TypeList_t<E0,
@@ -1155,7 +1161,89 @@ int main (int argc, char **argv)
             typedef TensorProductOfImmutableVectors_f<ImmutableVectorImplementationTypeList>::T T;
             std::cout << FORMAT_VALUE(TypeStringOf_t<T>::eval()) << '\n';
             std::cout << FORMAT_VALUE(T()) << '\n';
+            std::cout << '\n';
         }
+    }
+
+    {
+        std::cout << "testing TensorProductOfImmutable2Tensors_f (for general 2-tensors)\n";
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,X>,OrthonormalBasis_c<X> > BasedX;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Y>,OrthonormalBasis_c<Y> > BasedY;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Z>,OrthonormalBasis_c<Z> > BasedZ;
+        typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedX,TypeList_t<BasedY> > > TensorProductA;
+        typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedY,TypeList_t<BasedZ> > > TensorProductB;
+        typedef float Scalar;
+        typedef ImplementationOf_t<TensorProductA,
+                                   Scalar,
+                                   UseImmutableArray_t<ComponentGenerator_t<Scalar,
+                                                                            DimensionOf_f<TensorProductA>::V,
+                                                                            counting_vector_generator<Scalar,DimensionOf_f<TensorProductA>::V>,
+                                                                            CountingVectorGeneratorId<DimensionOf_f<TensorProductA>::V> > > > ImplementationA;
+        typedef ImplementationOf_t<TensorProductB,
+                                   Scalar,
+                                   UseImmutableArray_t<ComponentGenerator_t<Scalar,
+                                                                            DimensionOf_f<TensorProductB>::V,
+                                                                            counting_vector_generator<Scalar,DimensionOf_f<TensorProductB>::V>,
+                                                                            CountingVectorGeneratorId<DimensionOf_f<TensorProductB>::V> > > > ImplementationB;
+        {
+            std::cout << FORMAT_VALUE(ImplementationA()) << '\n';
+            typedef TensorProductOfImmutable2Tensors_f<TypeList_t<ImplementationA> >::T TProdOfImpl;
+            std::cout << FORMAT_VALUE(TProdOfImpl()) << '\n';
+        }
+        {
+            std::cout << FORMAT_VALUE(ImplementationB()) << '\n';
+            typedef TensorProductOfImmutable2Tensors_f<TypeList_t<ImplementationA,TypeList_t<ImplementationB> > >::T TProdOfImpl;
+            std::cout << FORMAT_VALUE(TProdOfImpl()) << '\n';
+            AbstractIndex_c<'P'> P;
+            AbstractIndex_c<'Q'> Q;
+            AbstractIndex_c<'i'> i;
+            AbstractIndex_c<'j'> j;
+            AbstractIndex_c<'k'> k;
+            AbstractIndex_c<'l'> l;
+            std::cout << FORMAT_VALUE(TProdOfImpl()(P|Q).split(P,i|j).split(Q,k|l)) << '\n';
+        }
+        std::cout << '\n';
+    }
+
+    {
+        std::cout << "testing TensorProductOfImmutable2Tensors_f (for diagonal 2-tensors)\n";
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,X>,OrthonormalBasis_c<X> > BasedX;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Y>,OrthonormalBasis_c<Y> > BasedY;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Z>,OrthonormalBasis_c<Z> > BasedZ;
+        typedef Diagonal2TensorProductOfBasedVectorSpaces_c<BasedX,BasedY> TensorProductA;
+        typedef Diagonal2TensorProductOfBasedVectorSpaces_c<BasedY,BasedZ> TensorProductB;
+        typedef float Scalar;
+        typedef ImplementationOf_t<TensorProductA,
+                                   Scalar,
+                                   UseImmutableArray_t<ComponentGenerator_t<Scalar,
+                                                                            DimensionOf_f<TensorProductA>::V,
+                                                                            counting_vector_generator<Scalar,DimensionOf_f<TensorProductA>::V>,
+                                                                            CountingVectorGeneratorId<DimensionOf_f<TensorProductA>::V> > > > ImplementationA;
+        typedef ImplementationOf_t<TensorProductB,
+                                   Scalar,
+                                   UseImmutableArray_t<ComponentGenerator_t<Scalar,
+                                                                            DimensionOf_f<TensorProductB>::V,
+                                                                            counting_vector_generator<Scalar,DimensionOf_f<TensorProductB>::V>,
+                                                                            CountingVectorGeneratorId<DimensionOf_f<TensorProductB>::V> > > > ImplementationB;
+        {
+            std::cout << FORMAT_VALUE(ImplementationA()) << '\n';
+            typedef TensorProductOfImmutable2Tensors_f<TypeList_t<ImplementationA> >::T TProdOfImpl;
+            std::cout << FORMAT_VALUE(TProdOfImpl()) << '\n';
+        }
+        {
+            std::cout << FORMAT_VALUE(ImplementationB()) << '\n';
+            typedef TensorProductOfImmutable2Tensors_f<TypeList_t<ImplementationA,TypeList_t<ImplementationB> > >::T TProdOfImpl;
+            std::cout << FORMAT_VALUE(TProdOfImpl()) << '\n';
+            AbstractIndex_c<'A'> A;
+            AbstractIndex_c<'P'> P;
+            AbstractIndex_c<'Q'> Q;
+            AbstractIndex_c<'i'> i;
+            AbstractIndex_c<'j'> j;
+            AbstractIndex_c<'k'> k;
+            AbstractIndex_c<'l'> l;
+            std::cout << FORMAT_VALUE(TProdOfImpl()(A).split(A,P|Q).split(P,i|j).split(Q,k|l)) << '\n';
+        }
+        std::cout << '\n';
     }
 
     // testing pretty typestring printing

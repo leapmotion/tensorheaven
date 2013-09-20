@@ -148,6 +148,8 @@ x strongly-typed vector spaces, and only natural pairings thereof allowed.
 x exterior powers -- i.e. wedges.
 x symmetric powers -- e.g. "vee"s.
 x diagonal 2-tensor products of based vector spaces
+x "mapped" tensors/vectors (using preallocated memory) and "immutable" tensors/vectors (using static
+  component-generating functions).
 
 ---------------------------
 
@@ -232,8 +234,8 @@ Notes for conceptual layer and refactor
   (conceptual hierarchy diagram).  This will require implementing positive/negative compile
   tests in cmake or some such other framework.
 - Make a full pass to remove the unnecessary members/member types from concepts
-- ComponentIndex_t and DimIndex_t should possibly be made conceptual types, they interact with 
-  AbstractIndex_c, and right now DimIndex_t still overrides IsAbstractIndex_f (this is from Ted's 
+- ComponentIndex_t and DimIndex_t should possibly be made conceptual types, they interact with
+  AbstractIndex_c, and right now DimIndex_t still overrides IsAbstractIndex_f (this is from Ted's
   commit ecebc8c4bd3a54b4f83f2ba74871990828f1114d on the cleanup-conceptual-members branch).
 - It might ease things like inducing inner products on tensor products/symmetric powers/etc if
   there was some decoupled "component supplier" mechanism, so it was much easier to define
@@ -245,10 +247,9 @@ Notes for conceptual layer and refactor
 - TODO: think about how to use runtime-specified inner products (lazy initialization?), since
   probably the inner product implementation type has to be constructed using the default
   constructor.
-- TODO: augment "bool USE_MEMBER_ARRAY_" template parameter of ImplementationOf_t to be a
-  specifier of the existing two (USE_MEMBER_ARRAY or USE_PREALLOCATED_ARRAY) and an additional
-  option (which could implement Array_i) which uses a static "component generator" function
-  to provide "immutable" ImplemementationOf_t types 
+- TODO: allow tensor products of non-immutable tensor/vector implementations -- this would
+  amount to providing constructors which would take the tensor product operands as parameters,
+  but could use the same code.
 
 
 Features necessary for "version 1.0"
@@ -258,10 +259,10 @@ x implementation of diagonal 2-tensors (of based vector spaces)
   QUESTION: Is there some reasonable generalization of diagonal 2-tensors to higher order
   tensors?  The answer to this question would likely be informed by results in higher
   order SVDs.
-x implement analog of Eigen's "map" (providing a vector/tensor/ext-pow/sym-pow/everything 
-  implementations which uses some separate, specified block of memory, which could e.g. 
-  coincide with an Eigen::Matrix).  Maybe do this via abstracting some aspects of Array_t 
-  into Array_i, making Array_t inherit Array_i, then making PreallocatedArray_t also inherit 
+x implement analog of Eigen's "map" (providing a vector/tensor/ext-pow/sym-pow/everything
+  implementations which uses some separate, specified block of memory, which could e.g.
+  coincide with an Eigen::Matrix).  Maybe do this via abstracting some aspects of Array_t
+  into Array_i, making Array_t inherit Array_i, then making PreallocatedArray_t also inherit
   Array_i.  Then the "mapped" versions of each tensor implementation would just flip a
   switch to use Array_t or PreallocatedArray_t (hopefully it can be this simple).
 - refactoring the Eigen interop code to be strongly typed, ideally using the "map" functionality

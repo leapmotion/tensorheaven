@@ -164,6 +164,13 @@ struct Diagonal2TensorProductOfBasedVectorSpaces_f
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1,Factor2> T;
 };
 
+// specialization for FactorTypeListOf_f
+template <typename Factor1_, typename Factor2_>
+struct BaseProperty_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,FactorTypeList>
+{
+    typedef TypeList_t<Factor1_,TypeList_t<Factor2_> > T;
+};
+
 } // end of namespace Tenh
 
 #endif // TENH_CONCEPTUAL_DIAGONALBASED2TENSORPRODUCT_HPP_
