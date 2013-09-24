@@ -146,7 +146,7 @@ template <typename TypeList, typename Type>
 struct Occurrence_t
 {
     static Uint32 const COUNT =
-        (Lvd::Meta::TypesAreEqual<typename TypeList::HeadType,Type>::v ? 1 : 0)
+        (Lvd::Meta::TypesAreEqual<typename TypeList::HeadType,Type>::V ? 1 : 0)
         + Occurrence_t<typename TypeList::BodyTypeList,Type>::COUNT;
 };
 
@@ -163,18 +163,18 @@ template <typename TypeList, typename Type>
 struct FirstMatchingIn_t
 {
     enum { STATIC_ASSERT_IN_ENUM((Occurrence_t<TypeList,Type>::COUNT > 0), TYPE_MUST_APPEAR_IN_TYPELIST) };
-    static Uint32 const INDEX = Lvd::Meta::If<Lvd::Meta::TypesAreEqual<typename TypeList::HeadType,Type>::v,
+    static Uint32 const INDEX = Lvd::Meta::If<Lvd::Meta::TypesAreEqual<typename TypeList::HeadType,Type>::V,
                                               FirstMatchingIn_t<TypeList_t<typename TypeList::HeadType>,typename TypeList::HeadType>,
                                               FirstMatchingIn_t<typename TypeList::BodyTypeList,Type> >::T::INDEX
                                 +
-                                (Lvd::Meta::TypesAreEqual<typename TypeList::HeadType,Type>::v ? 0 : 1);
+                                (Lvd::Meta::TypesAreEqual<typename TypeList::HeadType,Type>::V ? 0 : 1);
                                 // this offset is what gets past HeadType if there is no match here
 };
 
 template <typename HeadType, typename Type>
 struct FirstMatchingIn_t<TypeList_t<HeadType>,Type>
 {
-    enum { STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<HeadType,Type>::v), TYPE_MUST_APPEAR_IN_TYPELIST) };
+    enum { STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<HeadType,Type>::V), TYPE_MUST_APPEAR_IN_TYPELIST) };
     static Uint32 const INDEX = 0;
 };
 
@@ -536,7 +536,7 @@ template <typename TypeList> struct TypeListIsUniform_t;
 template <typename HeadType, typename BodyTypeList>
 struct TypeListIsUniform_t<TypeList_t<HeadType,BodyTypeList> >
 {
-    static bool const V = Lvd::Meta::TypesAreEqual<HeadType,typename BodyTypeList::HeadType>::v &&
+    static bool const V = Lvd::Meta::TypesAreEqual<HeadType,typename BodyTypeList::HeadType>::V &&
                           TypeListIsUniform_t<BodyTypeList>::V;
 };
 

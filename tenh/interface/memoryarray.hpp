@@ -21,7 +21,7 @@ struct MemoryArray_i
 {
     enum
     {
-        STATIC_ASSERT_IN_ENUM((!Lvd::Meta::TypesAreEqual<Derived_,NullType>::v), DERIVED_MUST_NOT_BE_NULL_TYPE)
+        STATIC_ASSERT_IN_ENUM((!Lvd::Meta::TypesAreEqual<Derived_,NullType>::V), DERIVED_MUST_NOT_BE_NULL_TYPE)
     };
 
     typedef Array_i<Derived_,Component_,COMPONENT_COUNT_,MUTABLE_COMPONENTS> Parent_Array_i;

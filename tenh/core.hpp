@@ -90,7 +90,7 @@ static bool const DONT_CHECK_POINTER = false;
 template <typename Derived, typename DefaultType>
 struct DerivedType_t
 {
-    typedef typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived,NullType>::v,
+    typedef typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived,NullType>::V,
                                    DefaultType,
                                    Derived>::T T;
 };

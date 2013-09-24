@@ -19,13 +19,13 @@ namespace Tenh {
 template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_ = NullType>
 struct MemberArray_t
     :
-    public MemoryArray_i<typename Lvd::Meta::If<(Lvd::Meta::TypesAreEqual<Derived_,NullType>::v),
+    public MemoryArray_i<typename Lvd::Meta::If<(Lvd::Meta::TypesAreEqual<Derived_,NullType>::V),
                                                 MemberArray_t<Component_,COMPONENT_COUNT_,Derived_>,
                                                 Derived_>::T,
                          Component_,
                          COMPONENT_COUNT_>
 {
-    typedef MemoryArray_i<typename Lvd::Meta::If<(Lvd::Meta::TypesAreEqual<Derived_,NullType>::v),
+    typedef MemoryArray_i<typename Lvd::Meta::If<(Lvd::Meta::TypesAreEqual<Derived_,NullType>::V),
                                                  MemberArray_t<Component_,COMPONENT_COUNT_,Derived_>,
                                                  Derived_>::T,
                           Component_,

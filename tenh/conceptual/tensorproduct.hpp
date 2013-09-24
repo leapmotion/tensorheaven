@@ -133,7 +133,7 @@ struct AllFactorsHaveTheSameField_f
     typedef typename FactorTypeList_::HeadType HeadType;
     typedef typename FactorTypeList_::BodyTypeList BodyTypeList;
     static bool const V = Lvd::Meta::TypesAreEqual<typename ScalarFieldOf_f<HeadType>::T,
-                                                   typename ScalarFieldOf_f<typename BodyTypeList::HeadType>::T>::v &&
+                                                   typename ScalarFieldOf_f<typename BodyTypeList::HeadType>::T>::V &&
                           AllFactorsHaveTheSameField_f<BodyTypeList>::V;
 };
 

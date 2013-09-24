@@ -244,7 +244,7 @@ for example.
 template <typename Scalar_, Uint32 DIM_, typename TypeID_>
 struct Vector_t
 {
-    enum { _ = Lvd::Meta::Assert<(DIM_>0)>::v }; // disallow 0-dimensional spaces (would 0-dim spaces be useful?)
+    enum { _ = Lvd::Meta::Assert<(DIM_>0)>::V }; // disallow 0-dimensional spaces (would 0-dim spaces be useful?)
     typedef Scalar_ Scalar;
     static Uint32 const DIM = DIM_;
     typedef TypeID_ TypeID;
@@ -314,7 +314,7 @@ struct Tensor_t : public Vector_t<typename Factor1_::Scalar,
                                   Factor1_::DIM * Factor2_::DIM,
                                   Tensor_TypeID_t<Factor1_,Factor2_> >
 {
-    enum { _ = Lvd::Meta::TypesAreEqual<typename Factor1_::Scalar,typename Factor2_::Scalar>::v }; // ensure the vectors have the same scalar
+    enum { _ = Lvd::Meta::TypesAreEqual<typename Factor1_::Scalar,typename Factor2_::Scalar>::V }; // ensure the vectors have the same scalar
     typedef Vector_t<typename Factor1_::Scalar,
                      Factor1_::DIM * Factor2_::DIM,
                      Tensor_TypeID_t<Factor1_,Factor2_> > ParentVector;

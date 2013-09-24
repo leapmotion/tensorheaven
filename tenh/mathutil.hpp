@@ -45,27 +45,23 @@ struct BinomialCoefficient_t
 template<Uint32 N>
 struct BinomialCoefficient_t<N,0>
 {
-    static const Uint32 V = 1 ;
+    static const Uint32 V = 1;
 };
 
 Uint32 index_of_greatest_triangular_number_less_than(Uint32 x, Uint32 d, Uint32 iteration = 0)
 {
-    return (binomial_coefficient(iteration,d) > x) ? iteration - 1 : index_of_greatest_triangular_number_less_than(x,d,iteration+1);
+    return (binomial_coefficient(iteration,d) > x) ? 
+           iteration - 1 : 
+           index_of_greatest_triangular_number_less_than(x,d,iteration+1);
 }
-
-template<Uint32 N>
-struct TemplateInt
-{
-    static const Uint32 V = N;
-};
 
 template<Uint32 X, Uint32 D, Uint32 iteration=0>
 struct IndexOfGreatestTriangularNumberLessThan_t
 {
-    static const Uint32 V = If<(BinomialCoefficient_t<iteration,D>::V > X), TemplateInt<iteration - 1>, IndexOfGreatestTriangularNumberLessThan_t<X,D,iteration+1> >::T::V;
+    static const Uint32 V = If<(BinomialCoefficient_t<iteration,D>::V > X),
+                               Lvd::Meta::Value<Uint32,iteration-1>,
+                               IndexOfGreatestTriangularNumberLessThan_t<X,D,iteration+1> >::T::V;
 };
-
-
 
 } // end of namespace Tenh
 

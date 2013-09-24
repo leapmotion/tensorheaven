@@ -29,7 +29,7 @@ struct StaticScalar
     // used for comparing floating point values, accounting for roundoff error
     static Scalar epsilon ()
     {
-        Lvd::Meta::Assert<(Lvd::Meta::TypesAreEqual<Scalar,float>::v || Lvd::Meta::TypesAreEqual<Scalar,double>::v)>();
+        Lvd::Meta::Assert<(Lvd::Meta::TypesAreEqual<Scalar,float>::V || Lvd::Meta::TypesAreEqual<Scalar,double>::V)>();
         if (Lvd::Meta::TypesAreEqual<Scalar,float>())
             return 1e-06;
         else // double

@@ -394,12 +394,9 @@ struct MultiIndex_t<TypeList_t<HeadIndexType_> > : public List_t<TypeList_t<Head
     static std::string type_as_string () { return "MultiIndex_t<" + TypeStringOf_t<IndexTypeList>::eval() + '>'; }
 };
 
-// TODO: check if this is actually made, and if not, prohibit making them
 template <>
 struct MultiIndex_t<EmptyTypeList> : public List_t<EmptyTypeList>
 {
-//    enum { _ = Lvd::Meta::Assert<false>::v }; // don't make one of these
-
     typedef List_t<EmptyTypeList> Parent;
     using Parent::LENGTH;
     typedef EmptyTypeList IndexTypeList;

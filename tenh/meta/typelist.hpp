@@ -76,7 +76,7 @@ struct TypeList_t
     template <typename Type>
     struct Contains_t
     {
-        static bool const V = Lvd::Meta::TypesAreEqual<HeadType,Type>::v || BodyTypeList::template Contains_t<Type>::V;
+        static bool const V = Lvd::Meta::TypesAreEqual<HeadType,Type>::V || BodyTypeList::template Contains_t<Type>::V;
         operator bool () const { return V; }
     };
 
@@ -123,7 +123,7 @@ struct TypeList_t
     template <typename Type>
     struct IndexOf_t
     {
-        static Uint32 const V = Lvd::Meta::TypesAreEqual<Type,HeadType>::v ? 0 : (1 + BodyTypeList::template IndexOf_t<Type>::V);
+        static Uint32 const V = Lvd::Meta::TypesAreEqual<Type,HeadType>::V ? 0 : (1 + BodyTypeList::template IndexOf_t<Type>::V);
         operator bool () const { return V; }
     };
 
