@@ -24,7 +24,7 @@ struct Array_i
 {
     enum
     {
-        STATIC_ASSERT_IN_ENUM((!Lvd::Meta::TypesAreEqual<Derived_,NullType>::V), DERIVED_MUST_NOT_BE_NULL_TYPE)
+        STATIC_ASSERT_IN_ENUM((!TypesAreEqual<Derived_,NullType>::V), DERIVED_MUST_NOT_BE_NULL_TYPE)
     };
 
     typedef Derived_ Derived;
@@ -32,8 +32,8 @@ struct Array_i
     static Uint32 const COMPONENT_COUNT = COMPONENT_COUNT_;
     static bool const COMPONENTS_ARE_IMMUTABLE = COMPONENTS_ARE_IMMUTABLE_;
     typedef ComponentIndex_t<COMPONENT_COUNT> ComponentIndex;
-    typedef typename Lvd::Meta::If<COMPONENTS_ARE_IMMUTABLE_,Component_,Component_ const &>::T ComponentAccessConstReturnType;
-    typedef typename Lvd::Meta::If<COMPONENTS_ARE_IMMUTABLE_,Component_,Component_ &>::T ComponentAccessNonConstReturnType;
+    typedef typename If<COMPONENTS_ARE_IMMUTABLE_,Component_,Component_ const &>::T ComponentAccessConstReturnType;
+    typedef typename If<COMPONENTS_ARE_IMMUTABLE_,Component_,Component_ &>::T ComponentAccessNonConstReturnType;
 
     ComponentAccessConstReturnType operator [] (ComponentIndex const &i) const { return as_derived().Derived::operator[](i); }
     ComponentAccessNonConstReturnType operator [] (ComponentIndex const &i) { return as_derived().Derived::operator[](i); }

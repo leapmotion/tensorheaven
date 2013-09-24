@@ -6,9 +6,7 @@
 #ifndef TENH_META_LVD_HPP_
 #define TENH_META_LVD_HPP_
 
-//namespace Tenh {
-namespace Lvd {
-namespace Meta {
+namespace Tenh {
 
 // ///////////////////////////////////////////////////////////////////////////
 // general template metaprogramming stuff
@@ -27,8 +25,6 @@ template <typename T_> struct TypesAreEqual<T_,T_> { static bool const V = true;
 template <bool condition_, typename Then_, typename Else_> struct If;
 template <typename Then_, typename Else_> struct If<true, Then_, Else_> { typedef Then_ T; };
 template <typename Then_, typename Else_> struct If<false, Then_, Else_> { typedef Else_ T; };
-
-} // end of namespace Meta
 
 // ///////////////////////////////////////////////////////////////////////////
 // setup for int type templates
@@ -63,7 +59,7 @@ struct Integer
     typedef typename IntegerType_::Next Next;
 
     typedef
-        typename Meta::If<
+        typename If<
             (bit_size_ == IntegerType_::bit_size),
             Current,
             Integer<bit_size_, Next>
@@ -96,8 +92,6 @@ typedef Integer<64>::Unsigned Uint64;
 // compile-time math stuff
 // ///////////////////////////////////////////////////////////////////////////
 
-namespace Meta {
-
 // don't use PrivateLog<> -- use Log<> instead
 template <unsigned long base_, unsigned long arg_> struct PrivateLog
 {
@@ -126,8 +120,6 @@ template <unsigned long arg_, unsigned long base_> struct IsExactPowerOf
 template <unsigned long arg_> struct IsExactPowerOf<arg_,0> { static bool const V = arg_ == 0; };
 template <unsigned long arg_> struct IsExactPowerOf<arg_,1> { static bool const V = arg_ == 1; };
 
-} // end of namespace Meta
-
 // ///////////////////////////////////////////////////////////////////////////
 // setup for binary number template types
 // ///////////////////////////////////////////////////////////////////////////
@@ -135,25 +127,25 @@ template <unsigned long arg_> struct IsExactPowerOf<arg_,1> { static bool const 
 template <Uint32 c_, Uint32 base_> struct IsInBinaryFormInBase
 {
     static bool const V =
-        Meta::If< (c_==0),
-            Meta::Value<bool,true>,
+        If< (c_==0),
+            Value<bool,true>,
             typename
-            Meta::If< ((c_%base_)<=1),
+            If< ((c_%base_)<=1),
                 IsInBinaryFormInBase<(c_/base_),base_>,
-                Meta::Value<bool,false>
+                Value<bool,false>
             >::T
         >::T::V;
 };
 
 template <Uint32 c_, Uint32 base_, Uint32 m_ = 1> struct BinaryByteFromBase
 {
-    enum { no_overflow = Meta::Assert<(m_<=(1<<8))>::V };
-    enum { is_in_binary_form_in_base = Meta::Assert<(IsInBinaryFormInBase<c_,base_>::V)>::V };
+    enum { no_overflow = Assert<(m_<=(1<<8))>::V };
+    enum { is_in_binary_form_in_base = Assert<(IsInBinaryFormInBase<c_,base_>::V)>::V };
     static Uint8 const V =
         ((c_%base_)*m_)
         |
-        Meta::If< (c_==0),
-            Meta::Value<Uint32,0>,
+        If< (c_==0),
+            Value<Uint32,0>,
             BinaryByteFromBase<(c_/base_),base_,(m_<<1)>
         >::T::V;
 };
@@ -162,10 +154,10 @@ template <Uint32 c_, typename T_>
 struct BinaryByte
 {
     static T_ const V =
-        Meta::If< IsInBinaryFormInBase<c_,8>::V,
+        If< IsInBinaryFormInBase<c_,8>::V,
             BinaryByteFromBase<c_,8>,
             typename
-            Meta::If< IsInBinaryFormInBase<c_,16>::V,
+            If< IsInBinaryFormInBase<c_,16>::V,
                 BinaryByteFromBase<c_,16>,
                 BinaryByteFromBase<c_,10>
             >::T
@@ -347,230 +339,229 @@ enum
 {
     LVD_HPP_COMPILE_TIME_ASSERTS =
         // basic asserts for template metaprogramming
-        Meta::Assert<true>::V &&
-        Meta::Assert<Meta::Assert<true>::V>::V &&
+        Assert<true>::V &&
+        Assert<Assert<true>::V>::V &&
 
-        Meta::Assert<Meta::Value<int,0>::V == 0>::V &&
-        Meta::Assert<Meta::Value<int,1>::V == 1>::V &&
+        Assert<Value<int,0>::V == 0>::V &&
+        Assert<Value<int,1>::V == 1>::V &&
 
-        Meta::Assert<Meta::TypesAreEqual<int,int>::V>::V &&
-        Meta::Assert<!Meta::TypesAreEqual<int,float>::V>::V &&
+        Assert<TypesAreEqual<int,int>::V>::V &&
+        Assert<!TypesAreEqual<int,float>::V>::V &&
 
-        Meta::Assert<Meta::TypesAreEqual<Meta::Type<int>::T,int>::V>::V &&
-        Meta::Assert<!Meta::TypesAreEqual<Meta::Type<int>,int>::V>::V &&
+        Assert<TypesAreEqual<Type<int>::T,int>::V>::V &&
+        Assert<!TypesAreEqual<Type<int>,int>::V>::V &&
 
-        Meta::Assert<Meta::TypesAreEqual<int,signed>::V>::V &&
+        Assert<TypesAreEqual<int,signed>::V>::V &&
 
-        Meta::Assert<Meta::TypesAreEqual<int*,int*>::V>::V &&
-        Meta::Assert<!Meta::TypesAreEqual<int*,int>::V>::V &&
-        Meta::Assert<!Meta::TypesAreEqual<int*,float*>::V>::V &&
+        Assert<TypesAreEqual<int*,int*>::V>::V &&
+        Assert<!TypesAreEqual<int*,int>::V>::V &&
+        Assert<!TypesAreEqual<int*,float*>::V>::V &&
 
-        Meta::Assert<Meta::If<true,Meta::Value<int,0>,Meta::Value<int,1> >::T::V == 0>::V &&
-        Meta::Assert<Meta::If<false,Meta::Value<int,0>,Meta::Value<int,1> >::T::V == 1>::V &&
+        Assert<If<true,Value<int,0>,Value<int,1> >::T::V == 0>::V &&
+        Assert<If<false,Value<int,0>,Value<int,1> >::T::V == 1>::V &&
 
         // math asserts
-        Meta::Assert<(Meta::Log<2,0x01>::V == 0)>::V &&
-        Meta::Assert<(Meta::Log<2,0x02>::V == 1)>::V &&
-        Meta::Assert<(Meta::Log<2,0x03>::V == 1)>::V &&
-        Meta::Assert<(Meta::Log<2,0x04>::V == 2)>::V &&
-        Meta::Assert<(Meta::Log<2,0x05>::V == 2)>::V &&
-        Meta::Assert<(Meta::Log<2,0x06>::V == 2)>::V &&
-        Meta::Assert<(Meta::Log<2,0x07>::V == 2)>::V &&
-        Meta::Assert<(Meta::Log<2,0x08>::V == 3)>::V &&
-        Meta::Assert<(Meta::Log<2,0x09>::V == 3)>::V &&
-        Meta::Assert<(Meta::Log<2,0x0A>::V == 3)>::V &&
-        Meta::Assert<(Meta::Log<2,0x0B>::V == 3)>::V &&
-        Meta::Assert<(Meta::Log<2,0x0C>::V == 3)>::V &&
-        Meta::Assert<(Meta::Log<2,0x0D>::V == 3)>::V &&
-        Meta::Assert<(Meta::Log<2,0x0E>::V == 3)>::V &&
-        Meta::Assert<(Meta::Log<2,0x0F>::V == 3)>::V &&
-        Meta::Assert<(Meta::Log<2,0x10>::V == 4)>::V &&
-        Meta::Assert<(Meta::Log<2,static_cast<unsigned long>(-1)>::V == 8*sizeof(unsigned long)-1)>::V &&
+        Assert<(Log<2,0x01>::V == 0)>::V &&
+        Assert<(Log<2,0x02>::V == 1)>::V &&
+        Assert<(Log<2,0x03>::V == 1)>::V &&
+        Assert<(Log<2,0x04>::V == 2)>::V &&
+        Assert<(Log<2,0x05>::V == 2)>::V &&
+        Assert<(Log<2,0x06>::V == 2)>::V &&
+        Assert<(Log<2,0x07>::V == 2)>::V &&
+        Assert<(Log<2,0x08>::V == 3)>::V &&
+        Assert<(Log<2,0x09>::V == 3)>::V &&
+        Assert<(Log<2,0x0A>::V == 3)>::V &&
+        Assert<(Log<2,0x0B>::V == 3)>::V &&
+        Assert<(Log<2,0x0C>::V == 3)>::V &&
+        Assert<(Log<2,0x0D>::V == 3)>::V &&
+        Assert<(Log<2,0x0E>::V == 3)>::V &&
+        Assert<(Log<2,0x0F>::V == 3)>::V &&
+        Assert<(Log<2,0x10>::V == 4)>::V &&
+        Assert<(Log<2,static_cast<unsigned long>(-1)>::V == 8*sizeof(unsigned long)-1)>::V &&
 
-        Meta::Assert<(Meta::Log<3,0x01>::V == 0)>::V &&
-        Meta::Assert<(Meta::Log<3,0x02>::V == 0)>::V &&
-        Meta::Assert<(Meta::Log<3,0x03>::V == 1)>::V &&
-        Meta::Assert<(Meta::Log<3,0x04>::V == 1)>::V &&
-        Meta::Assert<(Meta::Log<3,0x05>::V == 1)>::V &&
-        Meta::Assert<(Meta::Log<3,0x06>::V == 1)>::V &&
-        Meta::Assert<(Meta::Log<3,0x07>::V == 1)>::V &&
-        Meta::Assert<(Meta::Log<3,0x08>::V == 1)>::V &&
-        Meta::Assert<(Meta::Log<3,0x09>::V == 2)>::V &&
+        Assert<(Log<3,0x01>::V == 0)>::V &&
+        Assert<(Log<3,0x02>::V == 0)>::V &&
+        Assert<(Log<3,0x03>::V == 1)>::V &&
+        Assert<(Log<3,0x04>::V == 1)>::V &&
+        Assert<(Log<3,0x05>::V == 1)>::V &&
+        Assert<(Log<3,0x06>::V == 1)>::V &&
+        Assert<(Log<3,0x07>::V == 1)>::V &&
+        Assert<(Log<3,0x08>::V == 1)>::V &&
+        Assert<(Log<3,0x09>::V == 2)>::V &&
 
-        Meta::Assert<(Meta::Pow<2,0>::V ==   1)>::V &&
-        Meta::Assert<(Meta::Pow<2,1>::V ==   2)>::V &&
-        Meta::Assert<(Meta::Pow<2,2>::V ==   4)>::V &&
-        Meta::Assert<(Meta::Pow<2,3>::V ==   8)>::V &&
-        Meta::Assert<(Meta::Pow<2,4>::V ==  16)>::V &&
-        Meta::Assert<(Meta::Pow<2,5>::V ==  32)>::V &&
-        Meta::Assert<(Meta::Pow<2,6>::V ==  64)>::V &&
-        Meta::Assert<(Meta::Pow<2,7>::V == 128)>::V &&
-        Meta::Assert<(Meta::Pow<2,8>::V == 256)>::V &&
+        Assert<(Pow<2,0>::V ==   1)>::V &&
+        Assert<(Pow<2,1>::V ==   2)>::V &&
+        Assert<(Pow<2,2>::V ==   4)>::V &&
+        Assert<(Pow<2,3>::V ==   8)>::V &&
+        Assert<(Pow<2,4>::V ==  16)>::V &&
+        Assert<(Pow<2,5>::V ==  32)>::V &&
+        Assert<(Pow<2,6>::V ==  64)>::V &&
+        Assert<(Pow<2,7>::V == 128)>::V &&
+        Assert<(Pow<2,8>::V == 256)>::V &&
 
-        Meta::Assert<(Meta::Pow<3,0>::V ==   1)>::V &&
-        Meta::Assert<(Meta::Pow<3,1>::V ==   3)>::V &&
-        Meta::Assert<(Meta::Pow<3,2>::V ==   9)>::V &&
-        Meta::Assert<(Meta::Pow<3,3>::V ==  27)>::V &&
-        Meta::Assert<(Meta::Pow<3,4>::V ==  81)>::V &&
+        Assert<(Pow<3,0>::V ==   1)>::V &&
+        Assert<(Pow<3,1>::V ==   3)>::V &&
+        Assert<(Pow<3,2>::V ==   9)>::V &&
+        Assert<(Pow<3,3>::V ==  27)>::V &&
+        Assert<(Pow<3,4>::V ==  81)>::V &&
 
-        Meta::Assert<(Meta::LogRemainder<2, 1>::V == 0)>::V &&
-        Meta::Assert<(Meta::LogRemainder<2, 2>::V == 0)>::V &&
-        Meta::Assert<(Meta::LogRemainder<2, 3>::V == 1)>::V &&
-        Meta::Assert<(Meta::LogRemainder<2, 4>::V == 0)>::V &&
-        Meta::Assert<(Meta::LogRemainder<2, 5>::V == 1)>::V &&
-        Meta::Assert<(Meta::LogRemainder<2, 6>::V == 2)>::V &&
-        Meta::Assert<(Meta::LogRemainder<2, 7>::V == 3)>::V &&
-        Meta::Assert<(Meta::LogRemainder<2, 8>::V == 0)>::V &&
-        Meta::Assert<(Meta::LogRemainder<2, 9>::V == 1)>::V &&
-        Meta::Assert<(Meta::LogRemainder<2,10>::V == 2)>::V &&
-        Meta::Assert<(Meta::LogRemainder<2,11>::V == 3)>::V &&
-        Meta::Assert<(Meta::LogRemainder<2,12>::V == 4)>::V &&
-        Meta::Assert<(Meta::LogRemainder<2,13>::V == 5)>::V &&
-        Meta::Assert<(Meta::LogRemainder<2,14>::V == 6)>::V &&
-        Meta::Assert<(Meta::LogRemainder<2,15>::V == 7)>::V &&
-        Meta::Assert<(Meta::LogRemainder<2,16>::V == 0)>::V &&
+        Assert<(LogRemainder<2, 1>::V == 0)>::V &&
+        Assert<(LogRemainder<2, 2>::V == 0)>::V &&
+        Assert<(LogRemainder<2, 3>::V == 1)>::V &&
+        Assert<(LogRemainder<2, 4>::V == 0)>::V &&
+        Assert<(LogRemainder<2, 5>::V == 1)>::V &&
+        Assert<(LogRemainder<2, 6>::V == 2)>::V &&
+        Assert<(LogRemainder<2, 7>::V == 3)>::V &&
+        Assert<(LogRemainder<2, 8>::V == 0)>::V &&
+        Assert<(LogRemainder<2, 9>::V == 1)>::V &&
+        Assert<(LogRemainder<2,10>::V == 2)>::V &&
+        Assert<(LogRemainder<2,11>::V == 3)>::V &&
+        Assert<(LogRemainder<2,12>::V == 4)>::V &&
+        Assert<(LogRemainder<2,13>::V == 5)>::V &&
+        Assert<(LogRemainder<2,14>::V == 6)>::V &&
+        Assert<(LogRemainder<2,15>::V == 7)>::V &&
+        Assert<(LogRemainder<2,16>::V == 0)>::V &&
 
-        Meta::Assert<(Meta::LogRemainder<3, 1>::V == 0)>::V &&
-        Meta::Assert<(Meta::LogRemainder<3, 2>::V == 1)>::V &&
-        Meta::Assert<(Meta::LogRemainder<3, 3>::V == 0)>::V &&
-        Meta::Assert<(Meta::LogRemainder<3, 4>::V == 1)>::V &&
-        Meta::Assert<(Meta::LogRemainder<3, 5>::V == 2)>::V &&
-        Meta::Assert<(Meta::LogRemainder<3, 6>::V == 3)>::V &&
-        Meta::Assert<(Meta::LogRemainder<3, 7>::V == 4)>::V &&
-        Meta::Assert<(Meta::LogRemainder<3, 8>::V == 5)>::V &&
-        Meta::Assert<(Meta::LogRemainder<3, 9>::V == 0)>::V &&
-        Meta::Assert<(Meta::LogRemainder<3,10>::V == 1)>::V &&
-        Meta::Assert<(Meta::LogRemainder<3,11>::V == 2)>::V &&
-        Meta::Assert<(Meta::LogRemainder<3,12>::V == 3)>::V &&
-        Meta::Assert<(Meta::LogRemainder<3,13>::V == 4)>::V &&
-        Meta::Assert<(Meta::LogRemainder<3,14>::V == 5)>::V &&
-        Meta::Assert<(Meta::LogRemainder<3,15>::V == 6)>::V &&
-        Meta::Assert<(Meta::LogRemainder<3,16>::V == 7)>::V &&
+        Assert<(LogRemainder<3, 1>::V == 0)>::V &&
+        Assert<(LogRemainder<3, 2>::V == 1)>::V &&
+        Assert<(LogRemainder<3, 3>::V == 0)>::V &&
+        Assert<(LogRemainder<3, 4>::V == 1)>::V &&
+        Assert<(LogRemainder<3, 5>::V == 2)>::V &&
+        Assert<(LogRemainder<3, 6>::V == 3)>::V &&
+        Assert<(LogRemainder<3, 7>::V == 4)>::V &&
+        Assert<(LogRemainder<3, 8>::V == 5)>::V &&
+        Assert<(LogRemainder<3, 9>::V == 0)>::V &&
+        Assert<(LogRemainder<3,10>::V == 1)>::V &&
+        Assert<(LogRemainder<3,11>::V == 2)>::V &&
+        Assert<(LogRemainder<3,12>::V == 3)>::V &&
+        Assert<(LogRemainder<3,13>::V == 4)>::V &&
+        Assert<(LogRemainder<3,14>::V == 5)>::V &&
+        Assert<(LogRemainder<3,15>::V == 6)>::V &&
+        Assert<(LogRemainder<3,16>::V == 7)>::V &&
 
-        Meta::Assert<( Meta::IsExactPowerOf<0,0>::V)>::V &&
-        Meta::Assert<(!Meta::IsExactPowerOf<1,0>::V)>::V &&
-        Meta::Assert<(!Meta::IsExactPowerOf<2,0>::V)>::V &&
-        Meta::Assert<(!Meta::IsExactPowerOf<3,0>::V)>::V &&
-        Meta::Assert<(!Meta::IsExactPowerOf<4,0>::V)>::V &&
-        Meta::Assert<(!Meta::IsExactPowerOf<5,0>::V)>::V &&
+        Assert<( IsExactPowerOf<0,0>::V)>::V &&
+        Assert<(!IsExactPowerOf<1,0>::V)>::V &&
+        Assert<(!IsExactPowerOf<2,0>::V)>::V &&
+        Assert<(!IsExactPowerOf<3,0>::V)>::V &&
+        Assert<(!IsExactPowerOf<4,0>::V)>::V &&
+        Assert<(!IsExactPowerOf<5,0>::V)>::V &&
 
-        Meta::Assert<(!Meta::IsExactPowerOf<0,1>::V)>::V &&
-        Meta::Assert<( Meta::IsExactPowerOf<1,1>::V)>::V &&
-        Meta::Assert<(!Meta::IsExactPowerOf<2,1>::V)>::V &&
-        Meta::Assert<(!Meta::IsExactPowerOf<3,1>::V)>::V &&
-        Meta::Assert<(!Meta::IsExactPowerOf<4,1>::V)>::V &&
-        Meta::Assert<(!Meta::IsExactPowerOf<5,1>::V)>::V &&
+        Assert<(!IsExactPowerOf<0,1>::V)>::V &&
+        Assert<( IsExactPowerOf<1,1>::V)>::V &&
+        Assert<(!IsExactPowerOf<2,1>::V)>::V &&
+        Assert<(!IsExactPowerOf<3,1>::V)>::V &&
+        Assert<(!IsExactPowerOf<4,1>::V)>::V &&
+        Assert<(!IsExactPowerOf<5,1>::V)>::V &&
 
-        Meta::Assert<(Meta::IsExactPowerOf<1,1>::V)>::V &&
-        Meta::Assert<(Meta::IsExactPowerOf<1,2>::V)>::V &&
-        Meta::Assert<(Meta::IsExactPowerOf<1,3>::V)>::V &&
-        Meta::Assert<(Meta::IsExactPowerOf<1,4>::V)>::V &&
+        Assert<(IsExactPowerOf<1,1>::V)>::V &&
+        Assert<(IsExactPowerOf<1,2>::V)>::V &&
+        Assert<(IsExactPowerOf<1,3>::V)>::V &&
+        Assert<(IsExactPowerOf<1,4>::V)>::V &&
 
-        Meta::Assert<( Meta::IsExactPowerOf<1,2>::V)>::V &&
-        Meta::Assert<( Meta::IsExactPowerOf<2,2>::V)>::V &&
-        Meta::Assert<(!Meta::IsExactPowerOf<3,2>::V)>::V &&
-        Meta::Assert<( Meta::IsExactPowerOf<4,2>::V)>::V &&
-        Meta::Assert<(!Meta::IsExactPowerOf<5,2>::V)>::V &&
-        Meta::Assert<(!Meta::IsExactPowerOf<6,2>::V)>::V &&
-        Meta::Assert<(!Meta::IsExactPowerOf<7,2>::V)>::V &&
-        Meta::Assert<( Meta::IsExactPowerOf<8,2>::V)>::V &&
-        Meta::Assert<(!Meta::IsExactPowerOf<9,2>::V)>::V &&
+        Assert<( IsExactPowerOf<1,2>::V)>::V &&
+        Assert<( IsExactPowerOf<2,2>::V)>::V &&
+        Assert<(!IsExactPowerOf<3,2>::V)>::V &&
+        Assert<( IsExactPowerOf<4,2>::V)>::V &&
+        Assert<(!IsExactPowerOf<5,2>::V)>::V &&
+        Assert<(!IsExactPowerOf<6,2>::V)>::V &&
+        Assert<(!IsExactPowerOf<7,2>::V)>::V &&
+        Assert<( IsExactPowerOf<8,2>::V)>::V &&
+        Assert<(!IsExactPowerOf<9,2>::V)>::V &&
 
-        Meta::Assert<( Meta::IsExactPowerOf<1,3>::V)>::V &&
-        Meta::Assert<(!Meta::IsExactPowerOf<2,3>::V)>::V &&
-        Meta::Assert<( Meta::IsExactPowerOf<3,3>::V)>::V &&
-        Meta::Assert<(!Meta::IsExactPowerOf<4,3>::V)>::V &&
-        Meta::Assert<(!Meta::IsExactPowerOf<5,3>::V)>::V &&
-        Meta::Assert<(!Meta::IsExactPowerOf<6,3>::V)>::V &&
-        Meta::Assert<(!Meta::IsExactPowerOf<7,3>::V)>::V &&
-        Meta::Assert<(!Meta::IsExactPowerOf<8,3>::V)>::V &&
-        Meta::Assert<( Meta::IsExactPowerOf<9,3>::V)>::V &&
+        Assert<( IsExactPowerOf<1,3>::V)>::V &&
+        Assert<(!IsExactPowerOf<2,3>::V)>::V &&
+        Assert<( IsExactPowerOf<3,3>::V)>::V &&
+        Assert<(!IsExactPowerOf<4,3>::V)>::V &&
+        Assert<(!IsExactPowerOf<5,3>::V)>::V &&
+        Assert<(!IsExactPowerOf<6,3>::V)>::V &&
+        Assert<(!IsExactPowerOf<7,3>::V)>::V &&
+        Assert<(!IsExactPowerOf<8,3>::V)>::V &&
+        Assert<( IsExactPowerOf<9,3>::V)>::V &&
 
         // type size checks
-        Meta::Assert<sizeof(Diff) == sizeof(void *)>::V &&
-        Meta::Assert<sizeof(Size) == sizeof(void *)>::V &&
-        Meta::Assert<8*sizeof(Sint8) == 8>::V &&
-        Meta::Assert<8*sizeof(Uint8) == 8>::V &&
-        Meta::Assert<8*sizeof(Sint16) == 16>::V &&
-        Meta::Assert<8*sizeof(Uint16) == 16>::V &&
-        Meta::Assert<8*sizeof(Sint32) == 32>::V &&
-        Meta::Assert<8*sizeof(Uint32) == 32>::V &&
-        Meta::Assert<8*sizeof(Sint64) == 64>::V &&
-        Meta::Assert<8*sizeof(Uint64) == 64>::V &&
+        Assert<sizeof(Diff) == sizeof(void *)>::V &&
+        Assert<sizeof(Size) == sizeof(void *)>::V &&
+        Assert<8*sizeof(Sint8) == 8>::V &&
+        Assert<8*sizeof(Uint8) == 8>::V &&
+        Assert<8*sizeof(Sint16) == 16>::V &&
+        Assert<8*sizeof(Uint16) == 16>::V &&
+        Assert<8*sizeof(Sint32) == 32>::V &&
+        Assert<8*sizeof(Uint32) == 32>::V &&
+        Assert<8*sizeof(Sint64) == 64>::V &&
+        Assert<8*sizeof(Uint64) == 64>::V &&
 
         // unsigned 8-bit integers
-        Meta::Assert<Bin8<00000000>::u == Uint8(0)>::V &&
-        Meta::Assert<Bin8<11111111>::u == Uint8(-1)>::V &&
-        Meta::Assert<Bin8<00000001>::u == (Uint8(1) << 0)>::V &&
-        Meta::Assert<Bin8<00000010>::u == (Uint8(1) << 1)>::V &&
-        Meta::Assert<Bin8<00000100>::u == (Uint8(1) << 2)>::V &&
-        Meta::Assert<Bin8<00001000>::u == (Uint8(1) << 3)>::V &&
-        Meta::Assert<Bin8<00010000>::u == (Uint8(1) << 4)>::V &&
-        Meta::Assert<Bin8<00100000>::u == (Uint8(1) << 5)>::V &&
-        Meta::Assert<Bin8<01000000>::u == (Uint8(1) << 6)>::V &&
-        Meta::Assert<Bin8<10000000>::u == (Uint8(1) << 7)>::V &&
+        Assert<Bin8<00000000>::u == Uint8(0)>::V &&
+        Assert<Bin8<11111111>::u == Uint8(-1)>::V &&
+        Assert<Bin8<00000001>::u == (Uint8(1) << 0)>::V &&
+        Assert<Bin8<00000010>::u == (Uint8(1) << 1)>::V &&
+        Assert<Bin8<00000100>::u == (Uint8(1) << 2)>::V &&
+        Assert<Bin8<00001000>::u == (Uint8(1) << 3)>::V &&
+        Assert<Bin8<00010000>::u == (Uint8(1) << 4)>::V &&
+        Assert<Bin8<00100000>::u == (Uint8(1) << 5)>::V &&
+        Assert<Bin8<01000000>::u == (Uint8(1) << 6)>::V &&
+        Assert<Bin8<10000000>::u == (Uint8(1) << 7)>::V &&
 
         // signed 8-bit integers
-        Meta::Assert<Bin8<00000000>::s == Sint8(0)>::V &&
-        Meta::Assert<Bin8<11111111>::s == Sint8(-1)>::V &&
-        Meta::Assert<Bin8<00000001>::s == Sint8(Uint8(1) << 0)>::V &&
-        Meta::Assert<Bin8<00000010>::s == Sint8(Uint8(1) << 1)>::V &&
-        Meta::Assert<Bin8<00000100>::s == Sint8(Uint8(1) << 2)>::V &&
-        Meta::Assert<Bin8<00001000>::s == Sint8(Uint8(1) << 3)>::V &&
-        Meta::Assert<Bin8<00010000>::s == Sint8(Uint8(1) << 4)>::V &&
-        Meta::Assert<Bin8<00100000>::s == Sint8(Uint8(1) << 5)>::V &&
-        Meta::Assert<Bin8<01000000>::s == Sint8(Uint8(1) << 6)>::V &&
-        Meta::Assert<Bin8<10000000>::s == Sint8(Uint8(1) << 7)>::V &&
+        Assert<Bin8<00000000>::s == Sint8(0)>::V &&
+        Assert<Bin8<11111111>::s == Sint8(-1)>::V &&
+        Assert<Bin8<00000001>::s == Sint8(Uint8(1) << 0)>::V &&
+        Assert<Bin8<00000010>::s == Sint8(Uint8(1) << 1)>::V &&
+        Assert<Bin8<00000100>::s == Sint8(Uint8(1) << 2)>::V &&
+        Assert<Bin8<00001000>::s == Sint8(Uint8(1) << 3)>::V &&
+        Assert<Bin8<00010000>::s == Sint8(Uint8(1) << 4)>::V &&
+        Assert<Bin8<00100000>::s == Sint8(Uint8(1) << 5)>::V &&
+        Assert<Bin8<01000000>::s == Sint8(Uint8(1) << 6)>::V &&
+        Assert<Bin8<10000000>::s == Sint8(Uint8(1) << 7)>::V &&
 
         // unsigned 16-bit integers
-        Meta::Assert<Bin16<00000000,00000000>::u == Uint16(0)>::V &&
-        Meta::Assert<Bin16<11111111,11111111>::u == Uint16(-1)>::V &&
-        Meta::Assert<Bin16<00000000,00000001>::u == (Uint16(1) << 0)>::V &&
-        Meta::Assert<Bin16<00000000,00000010>::u == (Uint16(1) << 1)>::V &&
-        Meta::Assert<Bin16<00000000,00000100>::u == (Uint16(1) << 2)>::V &&
-        Meta::Assert<Bin16<00000000,00001000>::u == (Uint16(1) << 3)>::V &&
-        Meta::Assert<Bin16<00000000,00010000>::u == (Uint16(1) << 4)>::V &&
-        Meta::Assert<Bin16<00000000,00100000>::u == (Uint16(1) << 5)>::V &&
-        Meta::Assert<Bin16<00000000,01000000>::u == (Uint16(1) << 6)>::V &&
-        Meta::Assert<Bin16<00000000,10000000>::u == (Uint16(1) << 7)>::V &&
-        Meta::Assert<Bin16<00000001,00000000>::u == (Uint16(1) << 8)>::V &&
-        Meta::Assert<Bin16<00000010,00000000>::u == (Uint16(1) << 9)>::V &&
-        Meta::Assert<Bin16<00000100,00000000>::u == (Uint16(1) << 10)>::V &&
-        Meta::Assert<Bin16<00001000,00000000>::u == (Uint16(1) << 11)>::V &&
-        Meta::Assert<Bin16<00010000,00000000>::u == (Uint16(1) << 12)>::V &&
-        Meta::Assert<Bin16<00100000,00000000>::u == (Uint16(1) << 13)>::V &&
-        Meta::Assert<Bin16<01000000,00000000>::u == (Uint16(1) << 14)>::V &&
-        Meta::Assert<Bin16<10000000,00000000>::u == (Uint16(1) << 15)>::V &&
+        Assert<Bin16<00000000,00000000>::u == Uint16(0)>::V &&
+        Assert<Bin16<11111111,11111111>::u == Uint16(-1)>::V &&
+        Assert<Bin16<00000000,00000001>::u == (Uint16(1) << 0)>::V &&
+        Assert<Bin16<00000000,00000010>::u == (Uint16(1) << 1)>::V &&
+        Assert<Bin16<00000000,00000100>::u == (Uint16(1) << 2)>::V &&
+        Assert<Bin16<00000000,00001000>::u == (Uint16(1) << 3)>::V &&
+        Assert<Bin16<00000000,00010000>::u == (Uint16(1) << 4)>::V &&
+        Assert<Bin16<00000000,00100000>::u == (Uint16(1) << 5)>::V &&
+        Assert<Bin16<00000000,01000000>::u == (Uint16(1) << 6)>::V &&
+        Assert<Bin16<00000000,10000000>::u == (Uint16(1) << 7)>::V &&
+        Assert<Bin16<00000001,00000000>::u == (Uint16(1) << 8)>::V &&
+        Assert<Bin16<00000010,00000000>::u == (Uint16(1) << 9)>::V &&
+        Assert<Bin16<00000100,00000000>::u == (Uint16(1) << 10)>::V &&
+        Assert<Bin16<00001000,00000000>::u == (Uint16(1) << 11)>::V &&
+        Assert<Bin16<00010000,00000000>::u == (Uint16(1) << 12)>::V &&
+        Assert<Bin16<00100000,00000000>::u == (Uint16(1) << 13)>::V &&
+        Assert<Bin16<01000000,00000000>::u == (Uint16(1) << 14)>::V &&
+        Assert<Bin16<10000000,00000000>::u == (Uint16(1) << 15)>::V &&
 
         // signed 16-bit integers
-        Meta::Assert<Bin16<00000000,00000000>::s == Sint16(0)>::V &&
-        Meta::Assert<Bin16<11111111,11111111>::s == Sint16(-1)>::V &&
-        Meta::Assert<Bin16<00000000,00000001>::s == Sint16(Uint16(1) << 0)>::V &&
-        Meta::Assert<Bin16<00000000,00000010>::s == Sint16(Uint16(1) << 1)>::V &&
-        Meta::Assert<Bin16<00000000,00000100>::s == Sint16(Uint16(1) << 2)>::V &&
-        Meta::Assert<Bin16<00000000,00001000>::s == Sint16(Uint16(1) << 3)>::V &&
-        Meta::Assert<Bin16<00000000,00010000>::s == Sint16(Uint16(1) << 4)>::V &&
-        Meta::Assert<Bin16<00000000,00100000>::s == Sint16(Uint16(1) << 5)>::V &&
-        Meta::Assert<Bin16<00000000,01000000>::s == Sint16(Uint16(1) << 6)>::V &&
-        Meta::Assert<Bin16<00000000,10000000>::s == Sint16(Uint16(1) << 7)>::V &&
-        Meta::Assert<Bin16<00000001,00000000>::s == Sint16(Uint16(1) << 8)>::V &&
-        Meta::Assert<Bin16<00000010,00000000>::s == Sint16(Uint16(1) << 9)>::V &&
-        Meta::Assert<Bin16<00000100,00000000>::s == Sint16(Uint16(1) << 10)>::V &&
-        Meta::Assert<Bin16<00001000,00000000>::s == Sint16(Uint16(1) << 11)>::V &&
-        Meta::Assert<Bin16<00010000,00000000>::s == Sint16(Uint16(1) << 12)>::V &&
-        Meta::Assert<Bin16<00100000,00000000>::s == Sint16(Uint16(1) << 13)>::V &&
-        Meta::Assert<Bin16<01000000,00000000>::s == Sint16(Uint16(1) << 14)>::V &&
-        Meta::Assert<Bin16<10000000,00000000>::s == Sint16(Uint16(1) << 15)>::V &&
+        Assert<Bin16<00000000,00000000>::s == Sint16(0)>::V &&
+        Assert<Bin16<11111111,11111111>::s == Sint16(-1)>::V &&
+        Assert<Bin16<00000000,00000001>::s == Sint16(Uint16(1) << 0)>::V &&
+        Assert<Bin16<00000000,00000010>::s == Sint16(Uint16(1) << 1)>::V &&
+        Assert<Bin16<00000000,00000100>::s == Sint16(Uint16(1) << 2)>::V &&
+        Assert<Bin16<00000000,00001000>::s == Sint16(Uint16(1) << 3)>::V &&
+        Assert<Bin16<00000000,00010000>::s == Sint16(Uint16(1) << 4)>::V &&
+        Assert<Bin16<00000000,00100000>::s == Sint16(Uint16(1) << 5)>::V &&
+        Assert<Bin16<00000000,01000000>::s == Sint16(Uint16(1) << 6)>::V &&
+        Assert<Bin16<00000000,10000000>::s == Sint16(Uint16(1) << 7)>::V &&
+        Assert<Bin16<00000001,00000000>::s == Sint16(Uint16(1) << 8)>::V &&
+        Assert<Bin16<00000010,00000000>::s == Sint16(Uint16(1) << 9)>::V &&
+        Assert<Bin16<00000100,00000000>::s == Sint16(Uint16(1) << 10)>::V &&
+        Assert<Bin16<00001000,00000000>::s == Sint16(Uint16(1) << 11)>::V &&
+        Assert<Bin16<00010000,00000000>::s == Sint16(Uint16(1) << 12)>::V &&
+        Assert<Bin16<00100000,00000000>::s == Sint16(Uint16(1) << 13)>::V &&
+        Assert<Bin16<01000000,00000000>::s == Sint16(Uint16(1) << 14)>::V &&
+        Assert<Bin16<10000000,00000000>::s == Sint16(Uint16(1) << 15)>::V &&
 
         // asserts for Property<Diff> and Property<Size> (because
         // they're specified via Property<XintXX> already)
-        Meta::Assert<Property<Diff>::min == Diff(~(Size(-1) >> 1))>::V &&
-        Meta::Assert<Property<Diff>::max == Diff(Size(-1) >> 1)>::V &&
-        Meta::Assert<Property<Size>::min == 0>::V &&
-        Meta::Assert<Property<Size>::max == Size(-1)>::V
+        Assert<Property<Diff>::min == Diff(~(Size(-1) >> 1))>::V &&
+        Assert<Property<Diff>::max == Diff(Size(-1) >> 1)>::V &&
+        Assert<Property<Size>::min == 0>::V &&
+        Assert<Property<Size>::max == Size(-1)>::V
 };
 
-} // end of namespace Lvd
-//} // end of namespace Tenh
+} // end of namespace Tenh
 
 #endif // !defined(TENH_META_LVD_HPP_)

@@ -29,7 +29,7 @@ struct Vector_i
 {
     enum
     {
-        STATIC_ASSERT_IN_ENUM((!Lvd::Meta::TypesAreEqual<Derived_,NullType>::V), DERIVED_MUST_NOT_BE_NULL_TYPE),
+        STATIC_ASSERT_IN_ENUM((!TypesAreEqual<Derived_,NullType>::V), DERIVED_MUST_NOT_BE_NULL_TYPE),
         STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(BasedVectorSpace_), MUST_BE_BASED_VECTOR_SPACE)
     };
 
@@ -47,8 +47,8 @@ struct Vector_i
 
     // these definitions must coincide with the Array_i ones (if used in conjunction with Array_i)
     static bool const COMPONENTS_ARE_IMMUTABLE = COMPONENTS_ARE_IMMUTABLE_;
-    typedef typename Lvd::Meta::If<COMPONENTS_ARE_IMMUTABLE_,Scalar_,Scalar_ const &>::T ComponentAccessConstReturnType;
-    typedef typename Lvd::Meta::If<COMPONENTS_ARE_IMMUTABLE_,Scalar_,Scalar_ &>::T ComponentAccessNonConstReturnType;
+    typedef typename If<COMPONENTS_ARE_IMMUTABLE_,Scalar_,Scalar_ const &>::T ComponentAccessConstReturnType;
+    typedef typename If<COMPONENTS_ARE_IMMUTABLE_,Scalar_,Scalar_ &>::T ComponentAccessNonConstReturnType;
 
     static Uint32 dim () { return DIM; }
 

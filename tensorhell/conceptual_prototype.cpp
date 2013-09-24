@@ -264,9 +264,9 @@ int main (int argc, char **argv)
                   << "DualOf_f<Basis>::T = " << TypeStringOf_t<DualOf_f<Basis>::T>::eval() << '\n'
                   << "DualDualBasis = " << TypeStringOf_t<DualDualBasis>::eval() << '\n' << '\n';
         // make sure the basis is reflexive (self-double-dual)
-        assert((Lvd::Meta::TypesAreEqual<Basis,DualDualBasis>::V));
+        assert((TypesAreEqual<Basis,DualDualBasis>::V));
         // make sure that DualOf_f<Basis>::T and DualOf_f<Basis>::T are the same
-        assert((Lvd::Meta::TypesAreEqual<DualBasis,DualOf_f<Basis>::T>::V));
+        assert((TypesAreEqual<DualBasis,DualOf_f<Basis>::T>::V));
     }
 
     {
@@ -278,9 +278,9 @@ int main (int argc, char **argv)
                   << "DualOf_f<VectorSpace>::T = " << TypeStringOf_t<DualOf_f<VectorSpace>::T>::eval() << '\n'
                   << "DualDualVectorSpace = " << TypeStringOf_t<DualDualVectorSpace>::eval() << '\n' << '\n';
         // make sure the vector space is reflexive (self-double-dual)
-        assert((Lvd::Meta::TypesAreEqual<VectorSpace,DualDualVectorSpace>::V));
+        assert((TypesAreEqual<VectorSpace,DualDualVectorSpace>::V));
         // make sure that DualOf_f<VectorSpace>::T and DualOf_f<VectorSpace>::T are the same
-        assert((Lvd::Meta::TypesAreEqual<DualVectorSpace,DualOf_f<VectorSpace>::T>::V));
+        assert((TypesAreEqual<DualVectorSpace,DualOf_f<VectorSpace>::T>::V));
         // make sure VectorSpace is actually a VectorSpace
         assert(HasVectorSpaceStructure_f<VectorSpace>::V);
     }
@@ -300,11 +300,11 @@ int main (int argc, char **argv)
                   << "DualOf_f<BasedVectorSpace>::T = " << TypeStringOf_t<DualOf_f<BasedVectorSpace>::T>::eval() << '\n'
                   << "DualDualBasedVectorSpace = " << TypeStringOf_t<DualDualBasedVectorSpace>::eval() << '\n' << '\n';
         // make sure the vector space is reflexive (self-double-dual)
-        assert((Lvd::Meta::TypesAreEqual<BasedVectorSpace,DualDualBasedVectorSpace>::V));
+        assert((TypesAreEqual<BasedVectorSpace,DualDualBasedVectorSpace>::V));
         // make sure that DualOf_f<BasedVectorSpace>::T and DualOf_f<BasedVectorSpace>::T are the same
-        assert((Lvd::Meta::TypesAreEqual<DualBasedVectorSpace,DualOf_f<BasedVectorSpace>::T>::V));
+        assert((TypesAreEqual<DualBasedVectorSpace,DualOf_f<BasedVectorSpace>::T>::V));
         // make sure that DualOf_f<BasedVectorSpace>::T::Index and DualOf_f<BasedVectorSpace>::T::Index are the same
-        // assert((Lvd::Meta::TypesAreEqual<DualOf_f<BasedVectorSpace>::T::Index,DualOf_f<BasedVectorSpace::Index>::T>::V));
+        // assert((TypesAreEqual<DualOf_f<BasedVectorSpace>::T::Index,DualOf_f<BasedVectorSpace::Index>::T>::V));
         // make sure BasedVectorSpace is actually a VectorSpace_c and a BasedVectorSpace_c
         assert(HasVectorSpaceStructure_f<BasedVectorSpace>::V);
         assert(HasBasedVectorSpaceStructure_f<BasedVectorSpace>::V);
@@ -320,9 +320,9 @@ int main (int argc, char **argv)
                   << "DualOf_f<TensorProduct>::T = " << TypeStringOf_t<DualOf_f<TensorProduct>::T>::eval() << '\n'
                   << "DualDualTensorProduct = " << TypeStringOf_t<DualDualTensorProduct>::eval() << '\n' << '\n';
         // make sure the tensor product is reflexive (self-double-dual)
-        assert((Lvd::Meta::TypesAreEqual<TensorProduct,DualDualTensorProduct>::V));
+        assert((TypesAreEqual<TensorProduct,DualDualTensorProduct>::V));
         // make sure that DualOf_f<TensorProduct>::T and DualOf_f<TensorProduct>::T are the same
-        assert((Lvd::Meta::TypesAreEqual<DualTensorProduct,DualOf_f<TensorProduct>::T>::V));
+        assert((TypesAreEqual<DualTensorProduct,DualOf_f<TensorProduct>::T>::V));
     }
 
     {
@@ -337,9 +337,9 @@ int main (int argc, char **argv)
                   << "DualOf_f<TensorProductOfVectorSpaces>::T = " << TypeStringOf_t<DualOf_f<T>::T>::eval() << '\n'
                   << "DualDualTensorProductOfVectorSpaces = " << TypeStringOf_t<DualDualT>::eval() << '\n' << '\n';
         // make sure the tensor product of vector spaces is reflexive (self-double-dual)
-        assert((Lvd::Meta::TypesAreEqual<T,DualDualT>::V));
+        assert((TypesAreEqual<T,DualDualT>::V));
         // make sure that DualOf_f<T>::T and DualOf_f<T>::T are the same
-        assert((Lvd::Meta::TypesAreEqual<DualT,DualOf_f<T>::T>::V));
+        assert((TypesAreEqual<DualT,DualOf_f<T>::T>::V));
     }
 
     {
@@ -354,9 +354,9 @@ int main (int argc, char **argv)
                   << "DualOf_f<TensorProductOfBases>::T = " << TypeStringOf_t<DualOf_f<T>::T>::eval() << '\n'
                   << "DualDualTensorProductOfBases = " << TypeStringOf_t<DualDualT>::eval() << '\n' << '\n';
         // make sure the tensor product of bases is reflexive (self-double-dual)
-        assert((Lvd::Meta::TypesAreEqual<T,DualDualT>::V));
+        assert((TypesAreEqual<T,DualDualT>::V));
         // make sure that DualOf_f<T>::T and DualOf_f<T>::T are the same
-        assert((Lvd::Meta::TypesAreEqual<DualT,DualOf_f<T>::T>::V));
+        assert((TypesAreEqual<DualT,DualOf_f<T>::T>::V));
     }
 
     {
@@ -397,9 +397,9 @@ int main (int argc, char **argv)
                       << "DualOf_f<BasedTensorProductOfVectorSpaces>::T = " << TypeStringOf_t<DualOf_f<T>::T>::eval() << '\n'
                       << "DualDualBasedTensorProductOfVectorSpaces = " << TypeStringOf_t<DualDualT>::eval() << '\n' << '\n';
             // make sure the based tensor product of vector spaces is reflexive (self-double-dual)
-            assert((Lvd::Meta::TypesAreEqual<T,DualDualT>::V));
+            assert((TypesAreEqual<T,DualDualT>::V));
             // make sure that DualOf_f<T>::T and DualOf_f<T>::T are the same
-            assert((Lvd::Meta::TypesAreEqual<DualT,DualOf_f<T>::T>::V));
+            assert((TypesAreEqual<DualT,DualOf_f<T>::T>::V));
         }
 
         {
@@ -418,9 +418,9 @@ int main (int argc, char **argv)
                       << "DualOf_f<TensorProductOfBasedVectorSpaces>::T = " << TypeStringOf_t<DualOf_f<T>::T>::eval() << '\n'
                       << "DualDualTensorProductOfBasedVectorSpaces = " << TypeStringOf_t<DualDualT>::eval() << '\n' << '\n';
             // make sure the tensor product of based vector spaces is reflexive (self-double-dual)
-            assert((Lvd::Meta::TypesAreEqual<T,DualDualT>::V));
+            assert((TypesAreEqual<T,DualDualT>::V));
             // make sure that DualOf_f<T>::T and DualOf_f<T>::T are the same
-            assert((Lvd::Meta::TypesAreEqual<DualT,DualOf_f<T>::T>::V));
+            assert((TypesAreEqual<DualT,DualOf_f<T>::T>::V));
         }
 
         {
@@ -440,9 +440,9 @@ int main (int argc, char **argv)
                       << "DualOf_f<Diagonal2TensorProductOfBasedVectorSpaces>::T = " << TypeStringOf_t<DualOf_f<T>::T>::eval() << '\n'
                       << "DualDualDiagonal2TensorProductOfBasedVectorSpaces = " << TypeStringOf_t<DualDualT>::eval() << '\n' << '\n';
             // make sure the diagonal 2 tensor product of based vector spaces is reflexive (self-double-dual)
-            assert((Lvd::Meta::TypesAreEqual<T,DualDualT>::V));
+            assert((TypesAreEqual<T,DualDualT>::V));
             // make sure that DualOf_f<T>::T and DualOf_f<T>::T are the same
-            assert((Lvd::Meta::TypesAreEqual<DualT,DualOf_f<T>::T>::V));
+            assert((TypesAreEqual<DualT,DualOf_f<T>::T>::V));
         }
     }
 
@@ -457,9 +457,9 @@ int main (int argc, char **argv)
                   << "DualOf_f<SymmetricPower>::T = " << TypeStringOf_t<DualOf_f<SymmetricPower>::T>::eval() << '\n'
                   << "DualDualSymmetricPower = " << TypeStringOf_t<DualDualSymmetricPower>::eval() << '\n' << '\n';
         // make sure the tensor power is reflexive (self-double-dual)
-        assert((Lvd::Meta::TypesAreEqual<SymmetricPower,DualDualSymmetricPower>::V));
+        assert((TypesAreEqual<SymmetricPower,DualDualSymmetricPower>::V));
         // make sure that DualOf_f<SymmetricPower>::T and DualOf_f<SymmetricPower>::T are the same
-        assert((Lvd::Meta::TypesAreEqual<DualSymmetricPower,DualOf_f<SymmetricPower>::T>::V));
+        assert((TypesAreEqual<DualSymmetricPower,DualOf_f<SymmetricPower>::T>::V));
     }
 
     {
@@ -472,9 +472,9 @@ int main (int argc, char **argv)
                   << "DualOf_f<SymmetricPowerOfVectorSpace>::T = " << TypeStringOf_t<DualOf_f<T>::T>::eval() << '\n'
                   << "DualDualSymmetricPowerOfVectorSpace = " << TypeStringOf_t<DualDualT>::eval() << '\n' << '\n';
         // make sure the tensor power of vector spaces is reflexive (self-double-dual)
-        assert((Lvd::Meta::TypesAreEqual<T,DualDualT>::V));
+        assert((TypesAreEqual<T,DualDualT>::V));
         // make sure that DualOf_f<T>::T and DualOf_f<T>::T are the same
-        assert((Lvd::Meta::TypesAreEqual<DualT,DualOf_f<T>::T>::V));
+        assert((TypesAreEqual<DualT,DualOf_f<T>::T>::V));
     }
 
     {
@@ -487,9 +487,9 @@ int main (int argc, char **argv)
                   << "DualOf_f<SymmetricPowerOfBasis>::T = " << TypeStringOf_t<DualOf_f<T>::T>::eval() << '\n'
                   << "DualDualSymmetricPowerOfBasis = " << TypeStringOf_t<DualDualT>::eval() << '\n' << '\n';
         // make sure the tensor power of bases is reflexive (self-double-dual)
-        assert((Lvd::Meta::TypesAreEqual<T,DualDualT>::V));
+        assert((TypesAreEqual<T,DualDualT>::V));
         // make sure that DualOf_f<T>::T and DualOf_f<T>::T are the same
-        assert((Lvd::Meta::TypesAreEqual<DualT,DualOf_f<T>::T>::V));
+        assert((TypesAreEqual<DualT,DualOf_f<T>::T>::V));
     }
 
     {
@@ -522,9 +522,9 @@ int main (int argc, char **argv)
                       << "DualOf_f<BasedSymmetricPowerOfVectorSpace>::T = " << TypeStringOf_t<DualOf_f<T>::T>::eval() << '\n'
                       << "DualDualBasedSymmetricPowerOfVectorSpace = " << TypeStringOf_t<DualDualT>::eval() << '\n' << '\n';
             // make sure the based tensor power of vector spaces is reflexive (self-double-dual)
-            assert((Lvd::Meta::TypesAreEqual<T,DualDualT>::V));
+            assert((TypesAreEqual<T,DualDualT>::V));
             // make sure that DualOf_f<T>::T and DualOf_f<T>::T are the same
-            assert((Lvd::Meta::TypesAreEqual<DualT,DualOf_f<T>::T>::V));
+            assert((TypesAreEqual<DualT,DualOf_f<T>::T>::V));
         }
 */
         {
@@ -542,9 +542,9 @@ int main (int argc, char **argv)
                       << "DualOf_f<SymmetricPowerOfBasedVectorSpace>::T = " << TypeStringOf_t<DualOf_f<T>::T>::eval() << '\n'
                       << "DualDualSymmetricPowerOfBasedVectorSpace = " << TypeStringOf_t<DualDualT>::eval() << '\n' << '\n';
             // make sure the tensor power of based vector spaces is reflexive (self-double-dual)
-            assert((Lvd::Meta::TypesAreEqual<T,DualDualT>::V));
+            assert((TypesAreEqual<T,DualDualT>::V));
             // make sure that DualOf_f<T>::T and DualOf_f<T>::T are the same
-            assert((Lvd::Meta::TypesAreEqual<DualT,DualOf_f<T>::T>::V));
+            assert((TypesAreEqual<DualT,DualOf_f<T>::T>::V));
         }
     }
 

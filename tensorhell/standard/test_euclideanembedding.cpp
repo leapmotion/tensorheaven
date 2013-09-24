@@ -114,7 +114,7 @@ template <typename TensorType>
 void verify_on_tensor_type (Context const &context)
 {
     // for now, only deal with 2-tensor types
-    Lvd::Meta::Assert<TensorType::ORDER == 2>();
+    Assert<TensorType::ORDER == 2>();
 
     typedef typename TensorType::Scalar Scalar;
     typedef TensorType S;

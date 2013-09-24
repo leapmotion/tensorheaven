@@ -33,7 +33,7 @@ struct EmbeddableAsTensor_i
 {
     enum
     {
-        STATIC_ASSERT_IN_ENUM((!Lvd::Meta::TypesAreEqual<Derived_,NullType>::V), DERIVED_MUST_NOT_BE_NULL_TYPE),
+        STATIC_ASSERT_IN_ENUM((!TypesAreEqual<Derived_,NullType>::V), DERIVED_MUST_NOT_BE_NULL_TYPE),
         STATIC_ASSERT_IN_ENUM(IS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES_UNIQUELY(EmbeddableInTensorProductOfBasedVectorSpaces_),
                               MUST_BE_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES),
     };

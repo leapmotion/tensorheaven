@@ -244,7 +244,7 @@ for example.
 template <typename Scalar_, Uint32 DIM_, typename TypeID_>
 struct Vector_t
 {
-    enum { _ = Lvd::Meta::Assert<(DIM_>0)>::V }; // disallow 0-dimensional spaces (would 0-dim spaces be useful?)
+    enum { _ = Assert<(DIM_>0)>::V }; // disallow 0-dimensional spaces (would 0-dim spaces be useful?)
     typedef Scalar_ Scalar;
     static Uint32 const DIM = DIM_;
     typedef TypeID_ TypeID;
@@ -254,8 +254,8 @@ struct Vector_t
 
     Vector_t (WithoutInitialization const &) { }
     Vector_t (Scalar filler) { for (Uint32 i = 0; i < DIM; ++i) m[i] = filler; } // initialize to zero
-    Vector_t (Scalar x0, Scalar x1) { Lvd::Meta::Assert<(DIM==2)>(); m[0] = x0; m[1] = x1; }
-    Vector_t (Scalar x0, Scalar x1, Scalar x2) { Lvd::Meta::Assert<(DIM==3)>(); m[0] = x0; m[1] = x1; m[2] = x2; }
+    Vector_t (Scalar x0, Scalar x1) { Assert<(DIM==2)>(); m[0] = x0; m[1] = x1; }
+    Vector_t (Scalar x0, Scalar x1, Scalar x2) { Assert<(DIM==3)>(); m[0] = x0; m[1] = x1; m[2] = x2; }
     Vector_t (Vector_t const &v) { for (Uint32 i = 0; i < DIM; ++i) m[i] = v.m[i]; }
 
     Scalar const &operator [] (Uint32 index) const
@@ -314,7 +314,7 @@ struct Tensor_t : public Vector_t<typename Factor1_::Scalar,
                                   Factor1_::DIM * Factor2_::DIM,
                                   Tensor_TypeID_t<Factor1_,Factor2_> >
 {
-    enum { _ = Lvd::Meta::TypesAreEqual<typename Factor1_::Scalar,typename Factor2_::Scalar>::V }; // ensure the vectors have the same scalar
+    enum { _ = TypesAreEqual<typename Factor1_::Scalar,typename Factor2_::Scalar>::V }; // ensure the vectors have the same scalar
     typedef Vector_t<typename Factor1_::Scalar,
                      Factor1_::DIM * Factor2_::DIM,
                      Tensor_TypeID_t<Factor1_,Factor2_> > ParentVector;

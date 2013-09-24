@@ -98,7 +98,7 @@ struct SummedAbstractIndexPairElementIndices_t
 template <typename FirstFactor, typename SecondFactor>
 struct AssertThatSummationIsNaturalPairing_t
 {
-    enum { STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<FirstFactor,typename DualOf_f<SecondFactor>::T>::V), SUMMATION_MUST_BE_NATURAL_PAIRING) };
+    enum { STATIC_ASSERT_IN_ENUM((TypesAreEqual<FirstFactor,typename DualOf_f<SecondFactor>::T>::V), SUMMATION_MUST_BE_NATURAL_PAIRING) };
     static bool const V = true;
 };
 
@@ -212,7 +212,7 @@ public:
     {
         STATIC_ASSERT_IN_ENUM(LeftOperand::IS_EXPRESSION_TEMPLATE_I, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE_I, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
-        STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
+        STATIC_ASSERT_IN_ENUM((TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
         STATIC_ASSERT_IN_ENUM((SummedDimIndexTypeList::LENGTH > 0), LENGTH_MUST_BE_POSITIVE),
         STATIC_ASSERT_IN_ENUM((AssertThatAllSummationsAreNaturalPairings_t<FactorTypeList,
                                                                            AbstractIndexTypeList,
@@ -257,7 +257,7 @@ struct BinarySummation_t<LeftOperand,RightOperand,FreeDimIndexTypeList,EmptyType
     {
         STATIC_ASSERT_IN_ENUM(LeftOperand::IS_EXPRESSION_TEMPLATE_I, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE_I, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
-        STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
+        STATIC_ASSERT_IN_ENUM((TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
         STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<FreeDimIndexTypeList,IsDimIndex_p>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES)
         // no summation, so no need to check naturality of pairings
     };

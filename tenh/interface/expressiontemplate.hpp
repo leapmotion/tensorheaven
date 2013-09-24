@@ -48,8 +48,8 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
 {
     enum
     {
-        //DERIVED_MUST_NOT_BE_NULL_TYPE = Lvd::Meta::Assert<!Lvd::Meta::TypesAreEqual<Derived_,NullType>::V>::V
-        STATIC_ASSERT_IN_ENUM((!Lvd::Meta::TypesAreEqual<Derived_,NullType>::V), DERIVED_MUST_NOT_BE_NULL_TYPE),
+        //DERIVED_MUST_NOT_BE_NULL_TYPE = Assert<!TypesAreEqual<Derived_,NullType>::V>::V
+        STATIC_ASSERT_IN_ENUM((!TypesAreEqual<Derived_,NullType>::V), DERIVED_MUST_NOT_BE_NULL_TYPE),
         STATIC_ASSERT_IN_ENUM__UNIQUE((EachTypeSatisfies_f<FreeDimIndexTypeList_,IsDimIndex_p>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, FREEDIMINDEXTYPELIST),
         STATIC_ASSERT_IN_ENUM__UNIQUE((EachTypeSatisfies_f<UsedDimIndexTypeList_,IsDimIndex_p>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, USEDDIMINDEXTYPELIST)
     };

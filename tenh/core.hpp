@@ -17,15 +17,6 @@
 
 namespace Tenh {
 
-typedef Lvd::Sint8 Sint8;
-typedef Lvd::Uint8 Uint8;
-typedef Lvd::Sint16 Sint16;
-typedef Lvd::Uint16 Uint16;
-typedef Lvd::Sint32 Sint32;
-typedef Lvd::Uint32 Uint32;
-typedef Lvd::Sint64 Sint64;
-typedef Lvd::Uint64 Uint64;
-
 // shouldn't ever actually construct one of these
 struct NullType
 {
@@ -90,9 +81,9 @@ static bool const DONT_CHECK_POINTER = false;
 template <typename Derived, typename DefaultType>
 struct DerivedType_t
 {
-    typedef typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived,NullType>::V,
-                                   DefaultType,
-                                   Derived>::T T;
+    typedef typename If<TypesAreEqual<Derived,NullType>::V,
+                        DefaultType,
+                        Derived>::T T;
 };
 
 // provide an implementation of this for any custom scalar type (e.g. an arbitrary-precision

@@ -85,9 +85,9 @@ struct BaseProperty_f<TensorProduct_c<FactorTypeList_>,TensorPowerFactor>
 private:
     static bool const THERE_IS_A_UNIQUE_FACTOR = FactorTypeList_::LENGTH >= 1 &&
                                                  TypeListIsUniform_t<FactorTypeList_>::V;
-    typedef typename Lvd::Meta::If<THERE_IS_A_UNIQUE_FACTOR,
-                                   typename FactorTypeList_::HeadType,
-                                   NullValue>::T T;
+    typedef typename If<THERE_IS_A_UNIQUE_FACTOR,
+                        typename FactorTypeList_::HeadType,
+                        NullValue>::T T;
 };
 
 // named property accessors
@@ -132,8 +132,8 @@ struct AllFactorsHaveTheSameField_f
 {
     typedef typename FactorTypeList_::HeadType HeadType;
     typedef typename FactorTypeList_::BodyTypeList BodyTypeList;
-    static bool const V = Lvd::Meta::TypesAreEqual<typename ScalarFieldOf_f<HeadType>::T,
-                                                   typename ScalarFieldOf_f<typename BodyTypeList::HeadType>::T>::V &&
+    static bool const V = TypesAreEqual<typename ScalarFieldOf_f<HeadType>::T,
+                                        typename ScalarFieldOf_f<typename BodyTypeList::HeadType>::T>::V &&
                           AllFactorsHaveTheSameField_f<BodyTypeList>::V;
 };
 

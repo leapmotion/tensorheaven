@@ -93,31 +93,6 @@ struct ReversedTypeList_t<EmptyTypeList>
 
 
 
-/*
-// input: TypeList_t TypeList -- output: a TypeList_t having exactly one of each of the elements of TypeList, in
-// the reverse order in which they occurred.
-template <typename TypeList>
-struct ReversedUniqueTypesIn_t
-{
-    typedef typename ReversedUniqueTypesIn_t<typename TypeList::BodyTypeList>::T ReversedUniqueTypesInBody;
-    typedef typename Lvd::Meta::If<(ReversedUniqueTypesInBody::template Contains_t<typename TypeList::HeadType>::V),
-                                   ReversedUniqueTypesInBody,
-                                   TypeList_t<typename TypeList::HeadType,ReversedUniqueTypesInBody> >::T T;
-};
-
-template <>
-struct ReversedUniqueTypesIn_t<EmptyTypeList>
-{
-    typedef EmptyTypeList T;
-};
-*/
-
-
-
-
-
-
-
 
 template <typename TypeList, typename UsedTypeList = EmptyTypeList>
 struct UniqueTypesIn_t
@@ -128,9 +103,9 @@ private:
     typedef TypeList_t<HeadType,UsedTypeList> NextUsedTypeList;
     typedef typename UniqueTypesIn_t<BodyTypeList,NextUsedTypeList>::T RemainingUniqueTypeList;
 public:
-    typedef typename Lvd::Meta::If<(UsedTypeList::template Contains_t<HeadType>::V),
-                          RemainingUniqueTypeList,
-                          TypeList_t<HeadType,RemainingUniqueTypeList> >::T T;
+    typedef typename If<(UsedTypeList::template Contains_t<HeadType>::V),
+                        RemainingUniqueTypeList,
+                        TypeList_t<HeadType,RemainingUniqueTypeList> >::T T;
 };
 
 template <typename UsedTypeList>
@@ -146,7 +121,7 @@ template <typename TypeList, typename Type>
 struct Occurrence_t
 {
     static Uint32 const COUNT =
-        (Lvd::Meta::TypesAreEqual<typename TypeList::HeadType,Type>::V ? 1 : 0)
+        (TypesAreEqual<typename TypeList::HeadType,Type>::V ? 1 : 0)
         + Occurrence_t<typename TypeList::BodyTypeList,Type>::COUNT;
 };
 
@@ -163,18 +138,18 @@ template <typename TypeList, typename Type>
 struct FirstMatchingIn_t
 {
     enum { STATIC_ASSERT_IN_ENUM((Occurrence_t<TypeList,Type>::COUNT > 0), TYPE_MUST_APPEAR_IN_TYPELIST) };
-    static Uint32 const INDEX = Lvd::Meta::If<Lvd::Meta::TypesAreEqual<typename TypeList::HeadType,Type>::V,
-                                              FirstMatchingIn_t<TypeList_t<typename TypeList::HeadType>,typename TypeList::HeadType>,
-                                              FirstMatchingIn_t<typename TypeList::BodyTypeList,Type> >::T::INDEX
+    static Uint32 const INDEX = If<TypesAreEqual<typename TypeList::HeadType,Type>::V,
+                                   FirstMatchingIn_t<TypeList_t<typename TypeList::HeadType>,typename TypeList::HeadType>,
+                                   FirstMatchingIn_t<typename TypeList::BodyTypeList,Type> >::T::INDEX
                                 +
-                                (Lvd::Meta::TypesAreEqual<typename TypeList::HeadType,Type>::V ? 0 : 1);
+                                (TypesAreEqual<typename TypeList::HeadType,Type>::V ? 0 : 1);
                                 // this offset is what gets past HeadType if there is no match here
 };
 
 template <typename HeadType, typename Type>
 struct FirstMatchingIn_t<TypeList_t<HeadType>,Type>
 {
-    enum { STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<HeadType,Type>::V), TYPE_MUST_APPEAR_IN_TYPELIST) };
+    enum { STATIC_ASSERT_IN_ENUM((TypesAreEqual<HeadType,Type>::V), TYPE_MUST_APPEAR_IN_TYPELIST) };
     static Uint32 const INDEX = 0;
 };
 
@@ -187,9 +162,9 @@ template <typename TypeList, typename UniqueTypeList, Uint32 MULTIPLICITY>
 struct ElementsOfTypeListHavingMultiplicity_t
 {
     typedef typename ElementsOfTypeListHavingMultiplicity_t<TypeList,typename UniqueTypeList::BodyTypeList,MULTIPLICITY>::T InBody;
-    typedef typename Lvd::Meta::If<(Occurrence_t<TypeList,typename UniqueTypeList::HeadType>::COUNT == MULTIPLICITY),
-                                   TypeList_t<typename UniqueTypeList::HeadType,InBody>,
-                                   InBody>::T T;
+    typedef typename If<(Occurrence_t<TypeList,typename UniqueTypeList::HeadType>::COUNT == MULTIPLICITY),
+                        TypeList_t<typename UniqueTypeList::HeadType,InBody>,
+                        InBody>::T T;
 };
 
 template <typename TypeList, Uint32 MULTIPLICITY>
@@ -214,17 +189,17 @@ template <typename TypeList, typename Predicate>
 struct ElementsOfTypeListSatisfyingPredicate_t
 {
     typedef typename ElementsOfTypeListSatisfyingPredicate_t<typename TypeList::BodyTypeList,Predicate>::T ElementsInBodyTypeListSatisfyingPredicate;
-    typedef typename Lvd::Meta::If<Predicate::template Eval_t<typename TypeList::HeadType>::V,
-                                   TypeList_t<typename TypeList::HeadType,ElementsInBodyTypeListSatisfyingPredicate>,
-                                   ElementsInBodyTypeListSatisfyingPredicate>::T T;
+    typedef typename If<Predicate::template Eval_t<typename TypeList::HeadType>::V,
+                        TypeList_t<typename TypeList::HeadType,ElementsInBodyTypeListSatisfyingPredicate>,
+                        ElementsInBodyTypeListSatisfyingPredicate>::T T;
 };
 
 template <typename HeadType, typename Predicate>
 struct ElementsOfTypeListSatisfyingPredicate_t<TypeList_t<HeadType>,Predicate>
 {
-    typedef typename Lvd::Meta::If<Predicate::template Eval_t<HeadType>::V,
-                                   TypeList_t<HeadType>,
-                                   EmptyTypeList>::T T;
+    typedef typename If<Predicate::template Eval_t<HeadType>::V,
+                        TypeList_t<HeadType>,
+                        EmptyTypeList>::T T;
 };
 
 template <typename Predicate>
@@ -330,9 +305,9 @@ struct IntersectionAsSets_t
 private:
     typedef typename IntersectionAsSets_t<typename TypeListA::BodyTypeList,TypeListB>::T RecursionTypeList;
 public:
-    typedef typename Lvd::Meta::If<TypeListB::template Contains_t<typename TypeListA::HeadType>::V,
-                                   TypeList_t<typename TypeListA::HeadType,RecursionTypeList>,
-                                   RecursionTypeList>::T T;
+    typedef typename If<TypeListB::template Contains_t<typename TypeListA::HeadType>::V,
+                        TypeList_t<typename TypeListA::HeadType,RecursionTypeList>,
+                        RecursionTypeList>::T T;
 };
 
 template <typename TypeListB>
@@ -347,9 +322,9 @@ template <typename TypeListA, typename TypeListB>
 struct SetSubtraction_t
 {
 private:
-    typedef typename Lvd::Meta::If<TypeListB::template Contains_t<typename TypeListA::HeadType>::V,
-                                   EmptyTypeList,
-                                   TypeList_t<typename TypeListA::HeadType> >::T HeadTypeList;
+    typedef typename If<TypeListB::template Contains_t<typename TypeListA::HeadType>::V,
+                        EmptyTypeList,
+                        TypeList_t<typename TypeListA::HeadType> >::T HeadTypeList;
 public:
     typedef typename ConcatenationOfTypeLists_t<HeadTypeList,typename SetSubtraction_t<typename TypeListA::BodyTypeList,TypeListB>::T>::T T;
 };
@@ -536,7 +511,7 @@ template <typename TypeList> struct TypeListIsUniform_t;
 template <typename HeadType, typename BodyTypeList>
 struct TypeListIsUniform_t<TypeList_t<HeadType,BodyTypeList> >
 {
-    static bool const V = Lvd::Meta::TypesAreEqual<HeadType,typename BodyTypeList::HeadType>::V &&
+    static bool const V = TypesAreEqual<HeadType,typename BodyTypeList::HeadType>::V &&
                           TypeListIsUniform_t<BodyTypeList>::V;
 };
 

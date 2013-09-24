@@ -12,8 +12,6 @@
 // TODO: Decide if/how this code should be split amongst files.
 namespace Tenh {
 
-using Lvd::Meta::If;
-
 Uint32 factorial(Uint32 x)
 {
     return (x > 0) ? factorial(x-1) * x : 1;
@@ -59,7 +57,7 @@ template<Uint32 X, Uint32 D, Uint32 iteration=0>
 struct IndexOfGreatestTriangularNumberLessThan_t
 {
     static const Uint32 V = If<(BinomialCoefficient_t<iteration,D>::V > X),
-                               Lvd::Meta::Value<Uint32,iteration-1>,
+                               Value<Uint32,iteration-1>,
                                IndexOfGreatestTriangularNumberLessThan_t<X,D,iteration+1> >::T::V;
 };
 

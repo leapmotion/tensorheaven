@@ -105,7 +105,7 @@ private:
     {
         STATIC_ASSERT_IN_ENUM__UNIQUE(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor1_), MUST_BE_BASED_VECTOR_SPACE, FACTOR1),
         STATIC_ASSERT_IN_ENUM__UNIQUE(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor2_), MUST_BE_BASED_VECTOR_SPACE, FACTOR2),
-        STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename ScalarFieldOf_f<Factor1_>::T,typename ScalarFieldOf_f<Factor2_>::T>::V), ALL_FACTORS_MUST_HAVE_SAME_FIELD),
+        STATIC_ASSERT_IN_ENUM((TypesAreEqual<typename ScalarFieldOf_f<Factor1_>::T,typename ScalarFieldOf_f<Factor2_>::T>::V), ALL_FACTORS_MUST_HAVE_SAME_FIELD),
     };
     typedef TypeList_t<Factor1_,TypeList_t<Factor2_> > FactorTypeList;
 

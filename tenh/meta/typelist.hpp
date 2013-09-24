@@ -76,7 +76,7 @@ struct TypeList_t
     template <typename Type>
     struct Contains_t
     {
-        static bool const V = Lvd::Meta::TypesAreEqual<HeadType,Type>::V || BodyTypeList::template Contains_t<Type>::V;
+        static bool const V = TypesAreEqual<HeadType,Type>::V || BodyTypeList::template Contains_t<Type>::V;
         operator bool () const { return V; }
     };
 
@@ -86,7 +86,7 @@ struct TypeList_t
         enum { STATIC_ASSERT_IN_ENUM((INDEX < LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END) };
 
         static Uint32 const I = (INDEX == 0) ? 0 : INDEX-1;
-        typedef typename Lvd::Meta::If<(INDEX == 0), HeadType, typename BodyTypeList::template El_t<I>::T >::T T;
+        typedef typename If<(INDEX == 0), HeadType, typename BodyTypeList::template El_t<I>::T >::T T;
     };
 
     // returns the TypeList_t which ends at the INDEXth element
@@ -96,7 +96,7 @@ struct TypeList_t
     private:
         static Uint32 const I = (INDEX == 0) ? 0 : INDEX-1;
     public:
-        typedef typename Lvd::Meta::If<(INDEX == 0), EmptyTypeList, TypeList_t<HeadType,typename BodyTypeList::template LeadingTypeList_t<I>::T> >::T T;
+        typedef typename If<(INDEX == 0), EmptyTypeList, TypeList_t<HeadType,typename BodyTypeList::template LeadingTypeList_t<I>::T> >::T T;
     };
 
     // returns the TypeList_t which starts at the INDEXth element
@@ -106,7 +106,7 @@ struct TypeList_t
     private:
         static Uint32 const I = (INDEX == 0) ? 0 : INDEX-1;
     public:
-        typedef typename Lvd::Meta::If<(INDEX == 0), TypeList_t, typename BodyTypeList::template TrailingTypeList_t<I>::T >::T T;
+        typedef typename If<(INDEX == 0), TypeList_t, typename BodyTypeList::template TrailingTypeList_t<I>::T >::T T;
     };
 
     // returns the TypeList_t which is the range [START_INDEX, END_INDEX) (right endpoint not included)
@@ -123,7 +123,7 @@ struct TypeList_t
     template <typename Type>
     struct IndexOf_t
     {
-        static Uint32 const V = Lvd::Meta::TypesAreEqual<Type,HeadType>::V ? 0 : (1 + BodyTypeList::template IndexOf_t<Type>::V);
+        static Uint32 const V = TypesAreEqual<Type,HeadType>::V ? 0 : (1 + BodyTypeList::template IndexOf_t<Type>::V);
         operator bool () const { return V; }
     };
 

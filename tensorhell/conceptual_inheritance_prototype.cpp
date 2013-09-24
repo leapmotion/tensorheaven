@@ -31,7 +31,7 @@ template <typename DomainElement, typename CodomainElement, typename RestOfMap =
 struct Map_t
 {
 private:
-    enum { _ = Lvd::Meta::Assert<IsMap_t<RestOfMap>::V>::V };
+    enum { _ = Assert<IsMap_t<RestOfMap>::V>::V };
 
     typedef TypeList_t<DomainElement,TypeList_t<CodomainElement> > DomainCodomainElementPair;
 public:
@@ -43,7 +43,7 @@ public:
     typedef typename UnzippedDomainCodomainElementPairTypeList::HeadType DomainElementTypeList;
     typedef typename UnzippedDomainCodomainElementPairTypeList::BodyTypeList::HeadType CodomainElementTypeList;
     // make sure that DomainElementTypeList contains no duplicates (necessary for the map to be well-defined)
-    enum { __ = Lvd::Meta::Assert<(ElementsHavingMultiplicity_t<DomainElementTypeList,1>::T::LENGTH == DomainElementTypeList::LENGTH)>::V };
+    enum { __ = Assert<(ElementsHavingMultiplicity_t<DomainElementTypeList,1>::T::LENGTH == DomainElementTypeList::LENGTH)>::V };
 
     static std::string type_as_string () { return "Map_t( " + domain_codomain_element_pairs_as_string() + " )"; }
     static std::string domain_codomain_element_pairs_as_string ()
@@ -78,7 +78,7 @@ template <typename Map, typename InputDomainElement>
 struct EvalMap_t
 {
 private:
-    enum { _ = Lvd::Meta::Assert<IsMap_t<Map>::V>::V && Lvd::Meta::Assert<(Map::DomainElementTypeList::LENGTH > 0)>::V };
+    enum { _ = Assert<IsMap_t<Map>::V>::V && Assert<(Map::DomainElementTypeList::LENGTH > 0)>::V };
     static Uint32 const INDEX_OF_INPUT_DOMAIN_ELEMENT = FirstMatchingIn_t<typename Map::DomainElementTypeList,InputDomainElement>::INDEX;
 public:
     typedef typename Map::CodomainElementTypeList::template El_t<INDEX_OF_INPUT_DOMAIN_ELEMENT>::T T;
@@ -90,7 +90,7 @@ public:
 template <typename DomainElementTypeList, typename CodomainElementTypeList, typename RestOfMap = EmptyMap>
 struct MapConstructor_t
 {
-    enum { _ = Lvd::Meta::Assert<(DomainElementTypeList::LENGTH == CodomainElementTypeList::LENGTH)>::V };
+    enum { _ = Assert<(DomainElementTypeList::LENGTH == CodomainElementTypeList::LENGTH)>::V };
     typedef Map_t<typename DomainElementTypeList::HeadType,
                   typename CodomainElementTypeList::HeadType,
                   typename MapConstructor_t<typename DomainElementTypeList::BodyTypeList,
@@ -134,7 +134,7 @@ template <typename MapTypeList>
 struct MapUnion_t
 {
 private:
-    enum { _ = Lvd::Meta::Assert<IsTypeList_f<MapTypeList>::V>::V };
+    enum { _ = Assert<IsTypeList_f<MapTypeList>::V>::V };
     typedef typename MapTypeList::HeadType HeadMapType;
     typedef typename MapUnion_t<typename MapTypeList::BodyTypeList>::T MapUnionOfBodyTypeList;
     typedef typename IntersectionAsSets_t<typename HeadMapType::DomainElementTypeList,
@@ -142,7 +142,7 @@ private:
     typedef typename EvalMapOnTypeList_t<HeadMapType,DomainIntersectionTypeList>::T HeadMapEvaluation;
     typedef typename EvalMapOnTypeList_t<MapUnionOfBodyTypeList,DomainIntersectionTypeList>::T MapUnionOfBodyTypeListEvaluation;
     // ensure that the maps act identically on the domains' intersection.
-    enum { __ = Lvd::Meta::Assert<(Lvd::Meta::TypesAreEqual<HeadMapEvaluation,MapUnionOfBodyTypeListEvaluation>::V)>::V };
+    enum { __ = Assert<(TypesAreEqual<HeadMapEvaluation,MapUnionOfBodyTypeListEvaluation>::V)>::V };
 
     typedef typename SetSubtraction_t<typename HeadMapType::DomainElementTypeList,DomainIntersectionTypeList>::T HeadMapTypeOnlyDomain;
     typedef typename EvalMapOnTypeList_t<HeadMapType,HeadMapTypeOnlyDomain>::T HeadMapTypeOnlyDomainEvaluation;
@@ -153,7 +153,7 @@ public:
 template <typename HeadMapType>
 struct MapUnion_t<TypeList_t<HeadMapType> >
 {
-    enum { _ = Lvd::Meta::Assert<IsMap_t<HeadMapType>::V>::V };
+    enum { _ = Assert<IsMap_t<HeadMapType>::V>::V };
     typedef HeadMapType T;
 };
 
@@ -202,7 +202,7 @@ struct AncestorsOf_Recursive_f;
 template <typename Concept>
 struct AncestorsOf_f
 {
-    enum { _ = Lvd::Meta::Assert<IsConcept_f<Concept>::V>::V };
+    enum { _ = Assert<IsConcept_f<Concept>::V>::V };
     typedef TypeList_t<Concept,typename AncestorsOf_Recursive_f<typename Concept::ParentTypeList>::T> T;
 };
 
@@ -242,7 +242,7 @@ struct StructureDisambiguationMapsOf_Recursive_f;
 template <typename Concept>
 struct StructureDisambiguationMapsOf_f
 {
-    enum { _ = Lvd::Meta::Assert<IsConcept_f<Concept>::V>::V };
+    enum { _ = Assert<IsConcept_f<Concept>::V>::V };
     typedef TypeList_t<typename Concept::StructureDisambiguationMap,
                        typename StructureDisambiguationMapsOf_Recursive_f<typename Concept::ParentTypeList>::T> T;
 };
@@ -251,7 +251,7 @@ template <typename ParentTypeList>
 struct StructureDisambiguationMapsOf_Recursive_f
 {
     // depth-first traversal of the ancestor tree
-    enum { _ = Lvd::Meta::Assert<IsConcept_f<typename ParentTypeList::HeadType>::V>::V };
+    enum { _ = Assert<IsConcept_f<typename ParentTypeList::HeadType>::V>::V };
     typedef typename ConcatenationOfTypeLists_t<typename StructureDisambiguationMapsOf_f<typename ParentTypeList::HeadType>::T,
                                                 typename StructureDisambiguationMapsOf_Recursive_f<typename ParentTypeList::BodyTypeList>::T>::T T;
 };
@@ -284,7 +284,7 @@ struct TotalStructureDisambiguationMapOf_f
 template <typename Concept, typename ConceptualStructurePredicate>
 struct ConceptualStructuresOf_f
 {
-    enum { _ = Lvd::Meta::Assert<IsConcept_f<Concept>::V>::V }; // TODO: check that ConceptualStructurePredicate actually is one
+    enum { _ = Assert<IsConcept_f<Concept>::V>::V }; // TODO: check that ConceptualStructurePredicate actually is one
     typedef typename UniqueTypesIn_t<typename AncestorsSatisfyingPredicate_f<Concept,ConceptualStructurePredicate>::T>::T T;
 };
 
@@ -303,7 +303,7 @@ struct HasUniqueConceptualStructure_f
 template <typename Concept, typename ConceptualStructurePredicate>
 struct UniqueConceptualStructureOf_f
 {
-    enum { _ = Lvd::Meta::Assert<HasUniqueConceptualStructure_f<Concept,ConceptualStructurePredicate>::V>::V };
+    enum { _ = Assert<HasUniqueConceptualStructure_f<Concept,ConceptualStructurePredicate>::V>::V };
     typedef typename ConceptualStructuresOf_f<Concept,ConceptualStructurePredicate>::T::HeadType T;
 };
 
@@ -664,7 +664,7 @@ int main (int argc, char **argv)
 
             typedef EvalMap_t<SimpleMap,int>::T ShouldBe_float;
             cout << FORMAT_VALUE(TypeStringOf_t<ShouldBe_float>::eval()) << '\n';
-            Lvd::Meta::Assert<(Lvd::Meta::TypesAreEqual<ShouldBe_float,float>::V)>();
+            Assert<(TypesAreEqual<ShouldBe_float,float>::V)>();
             // typedef EvalMap_t<SimpleMap,bool>::T ThisShouldCauseACompileError;
 
             cout << FORMAT_VALUE((MapDomainContains_t<SimpleMap,int>::V)) << '\n';
@@ -679,8 +679,8 @@ int main (int argc, char **argv)
             typedef EvalMap_t<TwoElementMap,char>::T ShouldBe_double;
             cout << FORMAT_VALUE(TypeStringOf_t<ShouldBe_float>::eval()) << '\n';
             cout << FORMAT_VALUE(TypeStringOf_t<ShouldBe_double>::eval()) << '\n';
-            Lvd::Meta::Assert<(Lvd::Meta::TypesAreEqual<ShouldBe_float,float>::V)>();
-            Lvd::Meta::Assert<(Lvd::Meta::TypesAreEqual<ShouldBe_double,double>::V)>();
+            Assert<(TypesAreEqual<ShouldBe_float,float>::V)>();
+            Assert<(TypesAreEqual<ShouldBe_double,double>::V)>();
             // typedef EvalMap_t<TwoElementMap,bool>::T ThisShouldCauseACompileError;
             cout << '\n';
         }

@@ -95,9 +95,9 @@ void invert_tensor2 (Tensor2Type const &t, InverseTensor2Type &t_inverse)
 {
     STATIC_ASSERT(Tensor2Type::Factor1::DIM == Tensor2Type::Factor2::DIM, FACTOR_DIMENSIONS_MUST_BE_EQUAL);
     // the factors of InverseTensor2Type must be the reverse of those of Tensor2Type
-    STATIC_ASSERT((Lvd::Meta::TypesAreEqual<typename Tensor2Type::Factor1,typename InverseTensor2Type::Factor2>::V),
+    STATIC_ASSERT((TypesAreEqual<typename Tensor2Type::Factor1,typename InverseTensor2Type::Factor2>::V),
                   FACTOR_TYPE_ERROR_ON_INVERSE_TENSOR_TYPE);
-    STATIC_ASSERT((Lvd::Meta::TypesAreEqual<typename Tensor2Type::Factor2,typename InverseTensor2Type::Factor1>::V),
+    STATIC_ASSERT((TypesAreEqual<typename Tensor2Type::Factor2,typename InverseTensor2Type::Factor1>::V),
                   FACTOR_TYPE_ERROR_ON_INVERSE_TENSOR_TYPE);
     typedef typename Tensor2Type::Scalar Scalar;
     typedef typename Tensor2Type::Factor1 Factor1;
