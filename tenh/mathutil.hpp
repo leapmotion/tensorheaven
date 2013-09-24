@@ -7,7 +7,6 @@
 #define TENH_MATHUTIL_HPP_
 
 #include "tenh/core.hpp"
-#include "tenh/meta/lvd.hpp"
 
 // TODO: Decide if/how this code should be split amongst files.
 namespace Tenh {

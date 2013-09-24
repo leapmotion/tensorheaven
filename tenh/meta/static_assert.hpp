@@ -6,7 +6,7 @@
 #ifndef TENH_META_STATIC_ASSERT_HPP_
 #define TENH_META_STATIC_ASSERT_HPP_
 
-#include "tenh/meta/lvd.hpp"
+#include "tenh/meta/core.hpp"
 
 namespace Tenh {
 

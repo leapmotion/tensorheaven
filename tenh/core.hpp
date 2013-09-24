@@ -9,7 +9,7 @@
 #include <cassert>
 #include <complex>
 
-#include "tenh/meta/lvd.hpp"
+#include "tenh/meta/core.hpp"
 #include "tenh/meta/static_assert.hpp"
 
 #define FORMAT(expr) static_cast<std::ostringstream &>(std::ostringstream().flush() << expr).str()

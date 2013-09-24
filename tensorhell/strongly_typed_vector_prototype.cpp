@@ -3,7 +3,7 @@
 #include <sstream>
 #include <stdexcept>
 
-#include "tenh/meta/lvd.hpp"
+#include "tenh/meta/core.hpp"
 
 /*
 design goals:
@@ -26,8 +26,6 @@ design goals:
 */
 
 //using namespace Tenh;
-
-typedef Lvd::Uint32 Uint32;
 
 struct Null { }; // sentinel type
 
