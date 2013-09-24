@@ -1105,12 +1105,12 @@ int main (int argc, char **argv)
 
     test_euclidean_embedding_of_standard_euclidean_space<float,VectorSpace_c<RealField,4,X> >();
 
-//     {
-//         typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,OrthonormalBasis_c<X> > BasedVectorSpace;
-//         test_tensor_power_of_euclidean_embedding<float,1,BasedVectorSpace,StandardInnerProduct>();
-//         test_tensor_power_of_euclidean_embedding<float,2,BasedVectorSpace,StandardInnerProduct>();
-//         test_tensor_power_of_euclidean_embedding<float,3,BasedVectorSpace,StandardInnerProduct>();
-//     }
+    {
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,OrthonormalBasis_c<X> > BasedVectorSpace;
+        test_tensor_power_of_euclidean_embedding<float,1,BasedVectorSpace,StandardInnerProduct>();
+        test_tensor_power_of_euclidean_embedding<float,2,BasedVectorSpace,StandardInnerProduct>();
+        test_tensor_power_of_euclidean_embedding<float,3,BasedVectorSpace,StandardInnerProduct>();
+    }
 
     {
         std::cout << "testing StandardBasisVector_f\n";
@@ -1207,9 +1207,9 @@ int main (int argc, char **argv)
 
     {
         std::cout << "testing TensorProductOfImmutable2Tensors_f (for diagonal 2-tensors)\n";
-        typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,X>,OrthonormalBasis_c<X> > BasedX;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,OrthonormalBasis_c<X> > BasedX;
         typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Y>,OrthonormalBasis_c<Y> > BasedY;
-        typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Z>,OrthonormalBasis_c<Z> > BasedZ;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Z>,OrthonormalBasis_c<Z> > BasedZ;
         typedef Diagonal2TensorProductOfBasedVectorSpaces_c<BasedX,BasedY> TensorProductA;
         typedef Diagonal2TensorProductOfBasedVectorSpaces_c<BasedY,BasedZ> TensorProductB;
         typedef float Scalar;
@@ -1241,6 +1241,7 @@ int main (int argc, char **argv)
             AbstractIndex_c<'j'> j;
             AbstractIndex_c<'k'> k;
             AbstractIndex_c<'l'> l;
+            std::cout << FORMAT_VALUE(TProdOfImpl()(A).split(A,P|Q)) << '\n';
             std::cout << FORMAT_VALUE(TProdOfImpl()(A).split(A,P|Q).split(P,i|j).split(Q,k|l)) << '\n';
         }
         std::cout << '\n';

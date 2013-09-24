@@ -8,8 +8,8 @@
 
 #include "tenh/core.hpp"
 
-#include "tenh/implementation/diagonal2tensor.hpp"
 #include "tenh/implementation/innerproduct.hpp"
+#include "tenh/implementation/tensorproduct.hpp"
 
 namespace Tenh {
 
@@ -74,99 +74,37 @@ public:
 // induced Euclidean embedding on TensorProductOfBasedVectorSpaces_c
 // ///////////////////////////////////////////////////////////////////////////
 
-namespace ComponentGeneratorEvaluator {
+// meta-function helper for induced Euclidean embeddings
 
-// the fact that this is a global function (instead of a static method inside
-// the below EuclideanEmbedding_f specialization) is a workaround for GCC not accepting
-// a static method as a template param (which works in clang).
-template <typename Endomorphism_, typename FactorTypeList_, typename InnerProductIdTypeList_, typename Scalar_>
-Scalar_ euclidean_embedding_induced_on_tensor_product (ComponentIndex_t<DimensionOf_f<Endomorphism_>::V> const &i)
+template <typename FactorTypeList_, typename InnerProductIdTypeList_, typename Scalar_>
+struct EuclideanEmbeddingOfEachInTypeList_f
 {
-    typedef ComponentIndex_t<DimensionOf_f<Endomorphism_>::V> ComponentIndex;
-    typedef TensorProductOfBasedVectorSpaces_c<FactorTypeList_> TensorProductOfBasedVectorSpaces;
-    typedef typename EuclideanEmbedding_f<typename FactorTypeList_::HeadType,
-                                          typename InnerProductIdTypeList_::HeadType,
-                                          Scalar_>::T HeadEuclideanEmbedding;
-    HeadEuclideanEmbedding head_euclidean_embedding;
-    typedef typename EuclideanEmbedding_f<TensorProductOfBasedVectorSpaces_c<typename FactorTypeList_::BodyTypeList>,
-                                          TensorProduct_c<typename InnerProductIdTypeList_::BodyTypeList>,
-                                          Scalar_>::T BodyEuclideanEmbedding;
-    BodyEuclideanEmbedding body_euclidean_embedding;
-    AbstractIndex_c<'a'> a;
-    AbstractIndex_c<'j'> j;
-    AbstractIndex_c<'k'> k;
-    AbstractIndex_c<'B'> B;
-    AbstractIndex_c<'P'> P;
-    AbstractIndex_c<'Q'> Q;
-    AbstractIndex_c<'r'> r;
-    AbstractIndex_c<'s'> s;
-    AbstractIndex_c<'T'> T;
-    return (head_euclidean_embedding(a).split(a,j|k) * body_euclidean_embedding(B).split(B,P|Q))
-            .bundle(j|P,TensorProductOfBasedVectorSpaces(),r)
-            .bundle(k|Q,TensorProductOfBasedVectorSpaces(),s)
-            .bundle(r|s,Endomorphism_(),T)[MultiIndex_t<TypeList_t<ComponentIndex> >(i)];
-}
+private:
+    enum { STATIC_ASSERT_IN_ENUM(FactorTypeList_::LENGTH == InnerProductIdTypeList_::LENGTH, LENGTHS_MUST_BE_EQUAL) };
+public:
+    typedef TypeList_t<typename EuclideanEmbedding_f<typename FactorTypeList_::HeadType,
+                                                     typename InnerProductIdTypeList_::HeadType,
+                                                     Scalar_>::T,
+                       typename EuclideanEmbeddingOfEachInTypeList_f<typename FactorTypeList_::BodyTypeList,
+                                                                     typename InnerProductIdTypeList_::BodyTypeList,
+                                                                     Scalar_>::T> T;
+};
 
-} // end of namespace ComponentGeneratorEvaluator
+template <typename Scalar_>
+struct EuclideanEmbeddingOfEachInTypeList_f<EmptyTypeList,EmptyTypeList,Scalar_>
+{
+    typedef EmptyTypeList T;
+};
 
+// TODO: do specialization for ORDER_ == 0 (but this would depend on the basis being "field unit"
+// (i.e. the 0th tensor power is the field itself and 1 is the basis vector)).
 template <typename FactorTypeList_, typename InnerProductIdTypeList_, typename Scalar_>
 struct EuclideanEmbedding_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,TensorProduct_c<InnerProductIdTypeList_>,Scalar_>
 {
 private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(FactorTypeList_::LENGTH == InnerProductIdTypeList_::LENGTH, LENGTHS_MUST_BE_EQUAL),
-        STATIC_ASSERT_IN_ENUM((FactorTypeList_::LENGTH > 0), ORDER_MUST_BE_POSITIVE) // TODO: allow ORDER_ == 0
-    };
-    typedef TensorProductOfBasedVectorSpaces_c<FactorTypeList_> TensorProductOfBasedVectorSpaces;
-    typedef typename EuclideanEmbedding2TensorFactorTypeList_f<TensorProductOfBasedVectorSpaces>::T EndomorphismFactorTypeList;
-    typedef TensorProductOfBasedVectorSpaces_c<EndomorphismFactorTypeList> Endomorphism;
-    typedef ComponentGenerator_t<Scalar_,
-                                 DimensionOf_f<Endomorphism>::V,
-                                 ComponentGeneratorEvaluator::euclidean_embedding_induced_on_tensor_product<Endomorphism,
-                                                                                                            FactorTypeList_,
-                                                                                                            InnerProductIdTypeList_,
-                                                                                                            Scalar_>,
-                                 TensorProduct_c<InnerProductIdTypeList_> > ComponentGenerator;
+    typedef typename EuclideanEmbeddingOfEachInTypeList_f<FactorTypeList_,InnerProductIdTypeList_,Scalar_>::T EuclideanEmbeddingTypeList;
 public:
-    typedef ImplementationOf_t<Endomorphism,Scalar_,UseImmutableArray_t<ComponentGenerator> > T;
-};
-
-// base case for order-1 tensor products.
-
-namespace ComponentGeneratorEvaluator {
-
-template <typename Endomorphism_, typename BasedVectorSpace_, typename InnerProductId_, typename Scalar_>
-Scalar_ euclidean_embedding_induced_on_1st_tensor_power (ComponentIndex_t<DimensionOf_f<Endomorphism_>::V> const &i)
-{
-    typedef typename EuclideanEmbedding2TensorFactorTypeList_f<BasedVectorSpace_>::T EndomorphismFactorTypeList;
-    typedef TensorProductOfBasedVectorSpaces_c<EndomorphismFactorTypeList> Endomorphism;
-    STATIC_ASSERT_TYPES_ARE_EQUAL(Endomorphism_, Endomorphism);
-    typedef typename EuclideanEmbedding_f<BasedVectorSpace_,InnerProductId_,Scalar_>::T HeadEuclideanEmbedding;
-    HeadEuclideanEmbedding head_euclidean_embedding;
-    return head_euclidean_embedding[i];
-}
-
-} // end of namespace ComponentGeneratorEvaluator
-
-// template specialization for ORDER_ == 1 (which is really just the original euclidean embedding)
-// TODO: do specialization for ORDER_ == 0 (but this would depend on the basis being "field unit"
-// (i.e. the 0th tensor power is the field itself and 1 is the basis vector)).
-template <typename BasedVectorSpace_, typename InnerProductId_, typename Scalar_>
-struct EuclideanEmbedding_f<TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_> >,TensorProduct_c<TypeList_t<InnerProductId_> >,Scalar_>
-{
-private:
-    typedef typename EuclideanEmbedding2TensorFactorTypeList_f<BasedVectorSpace_>::T EndomorphismFactorTypeList;
-    typedef TensorProductOfBasedVectorSpaces_c<EndomorphismFactorTypeList> Endomorphism;
-    typedef ComponentGenerator_t<Scalar_,
-                                 DimensionOf_f<Endomorphism>::V,
-                                 ComponentGeneratorEvaluator::euclidean_embedding_induced_on_1st_tensor_power<Endomorphism,
-                                                                                                              BasedVectorSpace_,
-                                                                                                              InnerProductId_,
-                                                                                                              Scalar_>,
-                                 typename TensorPower_f<1,InnerProductId_>::T> ComponentGenerator;
-public:
-    typedef ImplementationOf_t<Endomorphism,Scalar_,UseImmutableArray_t<ComponentGenerator> > T;
+    typedef typename TensorProductOfImmutable2Tensors_f<EuclideanEmbeddingTypeList>::T T;
 };
 
 } // end of namespace Tenh
