@@ -121,11 +121,11 @@ struct UniqueTypesIn_t
 private:
     typedef typename TypeList_::HeadType HeadType;
     typedef typename TypeList_::BodyTypeList BodyTypeList;
-    typedef TypeList_t<HeadType_,UsedTypeList_> NextUsedTypeList;
+    typedef TypeList_t<HeadType,UsedTypeList_> NextUsedTypeList;
     typedef typename UniqueTypesIn_t<BodyTypeList,NextUsedTypeList>::T RemainingUniqueTypeList;
 public:
     /// A typelist containing the unique types in TypeList_.
-    typedef typename If<(UsedTypeList::template Contains_t<HeadType>::V),
+    typedef typename If<(UsedTypeList_::template Contains_t<HeadType>::V),
                         RemainingUniqueTypeList,
                         TypeList_t<HeadType,RemainingUniqueTypeList> >::T T;
 };
@@ -170,7 +170,7 @@ template <typename TypeList_, typename Type_>
 struct FirstMatchingIn_t
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM((Occurrence_t<TypeList,Type>::COUNT > 0), TYPE_MUST_APPEAR_IN_TYPELIST) };
+    enum { STATIC_ASSERT_IN_ENUM((Occurrence_t<TypeList_,Type_>::COUNT > 0), TYPE_MUST_APPEAR_IN_TYPELIST) };
 public:
     static Uint32 const INDEX = If<TypesAreEqual<typename TypeList_::HeadType,Type_>::V,
                                    FirstMatchingIn_t<TypeList_t<typename TypeList_::HeadType>,typename TypeList_::HeadType>,
@@ -225,7 +225,7 @@ template <typename TypeList_, Uint32 MULTIPLICITY_>
 struct ElementsHavingMultiplicity_t
 {
 private:
-    typedef typename UniqueTypesIn_t<TypeList>::T UniqueTypeList;
+    typedef typename UniqueTypesIn_t<TypeList_>::T UniqueTypeList;
 public:
     typedef typename ElementsOfTypeListHavingMultiplicity_t<TypeList_,UniqueTypeList,MULTIPLICITY_>::T T;
 };
@@ -555,7 +555,7 @@ private:
     typedef typename HeadTypeOfEach_t<TypeLists_>::T HeadTypes;
     typedef typename BodyTypeListOfEach_t<TypeLists_>::T BodyTypeLists;
 public:
-    typedef TypeList_t<HeadTypes_,typename Zip_t<BodyTypeLists_>::T> T;
+    typedef TypeList_t<HeadTypes,typename Zip_t<BodyTypeLists>::T> T;
 };
 
 /// @cond false
@@ -619,7 +619,7 @@ template <typename TypeList_> struct TypeListIsUniform_t;
 template <typename HeadType_, typename BodyTypeList_>
 struct TypeListIsUniform_t<TypeList_t<HeadType_,BodyTypeList_> >
 {
-    static bool const V = TypesAreEqual<HeadType_,typename BodyTypeList::HeadType_>::V &&
+    static bool const V = TypesAreEqual<HeadType_,typename BodyTypeList_::HeadType>::V &&
                           TypeListIsUniform_t<BodyTypeList_>::V;
 };
 
