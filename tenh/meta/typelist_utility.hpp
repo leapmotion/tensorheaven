@@ -2,9 +2,9 @@
 // tenh/meta/typelist_utility.hpp by Victor Dods, created 2013/03/12
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
-/// \file typelist_utility.hpp
-/// \headerfile typelist_utility.hpp "tenh/meta/typelist_utility.hpp"
-/// \brief Contains utility functions for working with Typelist_t types.
+/// @file typelist_utility.hpp
+/// @headerfile typelist_utility.hpp "tenh/meta/typelist_utility.hpp"
+/// @brief Contains utility functions for working with Typelist_t types.
 #ifndef TENH_META_TYPELIST_UTILITY_HPP_
 #define TENH_META_TYPELIST_UTILITY_HPP_
 

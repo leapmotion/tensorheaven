@@ -2,9 +2,9 @@
 // tenh/meta/typelist.hpp by Victor Dods, created 2013/02/16
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
-/// \file typelist.hpp
-/// \headerfile typelist.hpp "tenh/meta/typelist.hpp"
-/// \brief Contains basic classes for creating compile type lists of types.
+/// @file typelist.hpp
+/// @headerfile typelist.hpp "tenh/meta/typelist.hpp"
+/// @brief Contains basic classes for creating compile type lists of types.
 #ifndef TENH_META_TYPELIST_HPP_
 #define TENH_META_TYPELIST_HPP_
 
@@ -18,6 +18,7 @@ namespace Tenh {
 
 /// @struct EmptyTypeList typelist.hpp "tenh/meta/typelist.hpp"
 /// @brief A type which acts like a TypeList_t which contains no types.
+/// @details For detailed information on the members of EmptyTypeList see the documentation for TypeList_t
 struct EmptyTypeList
 {
     /// @cond false
@@ -87,7 +88,8 @@ struct TypeList_t
 
     static Uint32 length () { return LENGTH; }
 
-    /// Determine if this TypeList_t contains a given type.
+    /// @brief Determine if this TypeList_t contains a given type.
+    /// @headerfile typelist.hpp "tenh/meta/typelist.hpp"
     template <typename Type_>
     struct Contains_t
     {
@@ -95,7 +97,8 @@ struct TypeList_t
         operator bool () const { return V; }
     };
 
-    /// Find the type at a given index into this TypeList_t.
+    /// @brief Find the type at a given index into this TypeList_t.
+    /// @headerfile typelist.hpp "tenh/meta/typelist.hpp"
     template <Uint32 INDEX_>
     struct El_t
     {
@@ -106,7 +109,8 @@ struct TypeList_t
         typedef typename If<(INDEX_ == 0), HeadType, typename BodyTypeList::template El_t<I>::T >::T T;
     };
 
-    /// Returns the TypeList_t which ends at the INDEXth element.
+    /// @brief Returns the TypeList_t which ends at the INDEXth element.
+    /// @headerfile typelist.hpp "tenh/meta/typelist.hpp"
     template <Uint32 INDEX_>
     struct LeadingTypeList_t
     {
@@ -116,7 +120,8 @@ struct TypeList_t
         typedef typename If<(INDEX_ == 0), EmptyTypeList, TypeList_t<HeadType,typename BodyTypeList::template LeadingTypeList_t<I>::T> >::T T;
     };
 
-    /// Returns the TypeList_t which starts at the INDEXth element.
+    /// @brief Returns the TypeList_t which starts at the INDEXth element.
+    /// @headerfile typelist.hpp "tenh/meta/typelist.hpp"
     template <Uint32 INDEX_>
     struct TrailingTypeList_t
     {
@@ -126,7 +131,8 @@ struct TypeList_t
         typedef typename If<(INDEX_ == 0), TypeList_t, typename BodyTypeList::template TrailingTypeList_t<I>::T >::T T;
     };
 
-    /// Returns the TypeList_t which is the range [START_INDEX_, END_INDEX_) (right endpoint not included).
+    /// @brief Returns the TypeList_t which is the range [START_INDEX_, END_INDEX_) (right endpoint not included).
+    /// @headerfile typelist.hpp "tenh/meta/typelist.hpp"
     template <Uint32 START_INDEX_, Uint32 END_INDEX_>
     struct Range_t
     {
@@ -137,7 +143,8 @@ struct TypeList_t
         typedef typename LeadingRange::template LeadingTypeList_t<END_INDEX_-START_INDEX_>::T T;
     };
 
-    /// Returns the first index at which a type occurs.
+    /// @brief Returns the first index at which a type occurs.
+    /// @headerfile typelist.hpp "tenh/meta/typelist.hpp"
     template <typename Type_>
     struct IndexOf_t
     {
