@@ -25,7 +25,7 @@ struct ExteriorPower_c
 
     static Uint32 const ORDER = ORDER_;
     typedef Factor_ Factor;
-    typedef typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T FactorTypeList;
+    typedef typename UniformTypeListOfLength_t<Factor_,ORDER_>::T FactorTypeList;
 
     static std::string type_as_string ()
     {
@@ -166,7 +166,7 @@ struct ExteriorPowerOfBasedVectorSpace_c
 {
 private:
     enum { STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_BASED_VECTOR_SPACE), };
-    typedef typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T FactorTypeList;
+    typedef typename UniformTypeListOfLength_t<Factor_,ORDER_>::T FactorTypeList;
 
     typedef BasedExteriorPowerOfVectorSpace_c<ExteriorPowerOfVectorSpace_c<ORDER_,Factor_>,
                                               ExteriorPowerOfBasis_c<ORDER_,typename BasisOf_f<Factor_>::T> > As_BasedExteriorPowerOfVectorSpace;

@@ -24,7 +24,7 @@ struct SymmetricPower_c
 
     static Uint32 const ORDER = ORDER_;
     typedef Factor_ Factor;
-    typedef typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T FactorTypeList;
+    typedef typename UniformTypeListOfLength_t<Factor_,ORDER_>::T FactorTypeList;
 
     static std::string type_as_string ()
     {
@@ -167,7 +167,7 @@ private:
     enum { STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_BASED_VECTOR_SPACE) };
     typedef BasedSymmetricPowerOfVectorSpace_c<SymmetricPowerOfVectorSpace_c<ORDER_,Factor_>,
                                                SymmetricPowerOfBasis_c<ORDER_,typename BasisOf_f<Factor_>::T> > As_BasedSymmetricPowerOfVectorSpace;
-    typedef typename TypeListWithMultiplicity_t<Factor_,ORDER_>::T FactorTypeList;
+    typedef typename UniformTypeListOfLength_t<Factor_,ORDER_>::T FactorTypeList;
     typedef EmbeddableInTensorProductOfBasedVectorSpaces_c<typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T,
                                                            typename TensorPowerOfVectorSpace_f<ORDER_,Factor_>::T> As_EmbeddableInTensorProductOfBasedVectorSpaces;
 public:

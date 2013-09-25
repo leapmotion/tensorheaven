@@ -2,9 +2,9 @@
 // tenh/meta/typestringof.hpp by Victor Dods, created 2013/02/16
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
-/// \file typestringof.hpp
-/// \headerfile typestringof.hpp "tenh/meta/typestringof.hpp"
-/// \brief Contains runtime and compile time functions for generating strings associated
+/// @file typestringof.hpp
+/// @headerfile typestringof.hpp "tenh/meta/typestringof.hpp"
+/// @brief Contains runtime and compile time functions for generating strings associated
 /// with type names, and for making pretty versions of the same.
 #ifndef TENH_META_TYPESTRINGOF_HPP_
 #define TENH_META_TYPESTRINGOF_HPP_
