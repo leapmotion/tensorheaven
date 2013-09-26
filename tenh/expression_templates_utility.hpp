@@ -454,6 +454,7 @@ struct IndexBundle_t
 
 private:
 
+	IndexBundle_t operator= (const IndexBundle_t&);
     Operand const &m_operand;
 };
 
@@ -533,6 +534,7 @@ struct IndexSplitter_t
 
 private:
 
+	IndexSplitter_t operator=(const IndexSplitter_t&);
     Operand const &m_operand;
 };
 

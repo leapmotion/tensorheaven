@@ -184,7 +184,7 @@ template <Uint32 ORDER_, typename Factor_, typename Scalar_, typename UseArrayTy
 template <typename I>
 struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_>::VectorIndexComputer_t<MultiIndex_t<EmptyTypeList>, I>
 {
-    static Uint32 compute (MultiIndex_t<EmptyTypeList> const &m)
+    static Uint32 compute (MultiIndex_t<EmptyTypeList> const &)
     {
         return 0;
     }

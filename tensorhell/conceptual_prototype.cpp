@@ -71,7 +71,7 @@ void test_tensor_printing (std::ostream &out)
     typedef ImplementationOf_t<TPow,float> T;
     T t(Static<WithoutInitialization>::SINGLETON);
     for (typename T::ComponentIndex i; i.is_not_at_end(); ++i)
-        t[i] = i.value();
+        t[i] = static_cast<float>(i.value());
 
     out << FORMAT_VALUE(t) << '\n';
 }
@@ -183,7 +183,7 @@ void test_immutable_identity_tensor ()
     typedef ImplementationOf_t<BasedVectorSpace_,Scalar_> Vector;
     Vector v(Static<WithoutInitialization>::SINGLETON);
     for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
-        v[i] = i.value();
+        v[i] = static_cast<float>(i.value());
 
     AbstractIndex_c<'p'> p;
     AbstractIndex_c<'q'> q;
@@ -277,7 +277,7 @@ void test_alt ()
     std::cout << '\n';
 }
 
-int main (int argc, char **argv)
+int main (int, char **)
 {
     {
         typedef Basis_c<X> Basis;
@@ -651,7 +651,7 @@ int main (int argc, char **argv)
         typedef ImplementationOf_t<H,float> E;
         E e(0.0f);
         for (E::ComponentIndex it; it.is_not_at_end(); ++it)
-            e[it] = it.value();
+            e[it] = static_cast<float>(it.value());
         std::cout << FORMAT_VALUE(e(i)) << '\n'; // this has problems: TODO: fix -- ExpressionTemplate_i may need a vector-indexable operator[]
 
         V w(1.0f, 3.0f);
@@ -683,7 +683,7 @@ int main (int argc, char **argv)
         std::cout << FORMAT_VALUE(f(i|j|k)*e(i|k|j)) << '\n';
         std::cout << FORMAT_VALUE(f(i)*e(i)) << '\n';
 
-        std::cout << FORMAT_VALUE(e(i).eval()) << '\n';
+//        std::cout << FORMAT_VALUE(e(i).eval()) << '\n';
         std::cout << FORMAT_VALUE(e(i|j|k).eval()) << '\n';
 
         AbstractIndex_c<'l'> l;

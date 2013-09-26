@@ -61,7 +61,7 @@ struct IsComponentGenerator_t<ComponentGenerator_t<Component_,COMPONENT_COUNT_,e
 // ///////////////////////////////////////////////////////////////////////////
 
 template <typename Component_, Uint32 COMPONENT_COUNT_, Sint32 VALUE_>
-Component_ constant_component_generator_evaluator (ComponentIndex_t<COMPONENT_COUNT_> const &i)
+Component_ constant_component_generator_evaluator (ComponentIndex_t<COMPONENT_COUNT_> const &)
 {
     return Component_(VALUE_);
 }

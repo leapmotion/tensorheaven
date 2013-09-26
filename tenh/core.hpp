@@ -6,6 +6,10 @@
 #ifndef TENH_CORE_HPP_
 #define TENH_CORE_HPP_
 
+#if _WIN32
+#pragma warning( disable : 4503 )
+#endif
+
 #include <cassert>
 #include <complex>
 

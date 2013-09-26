@@ -14,6 +14,20 @@
 
 namespace Tenh {
 
+template <Uint32 SIZE_>
+struct ArraySize_f
+{
+	static const Uint32 V = SIZE_;
+};
+
+#if _WIN32
+template<>
+struct ArraySize_f<0>
+{
+	static const Uint32 V = 1;
+};
+#endif
+
 // fixed-length array of a given component type, which must be a POD type
 // (the allocation_size_in_bytes and pointer_to_allocation methods require this).
 template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_ = NullType>
@@ -75,7 +89,7 @@ struct MemberArray_t
 
 protected:
 
-    Component m_component[COMPONENT_COUNT];
+    Component m_component[ArraySize_f<COMPONENT_COUNT>::V];
 
 private:
 

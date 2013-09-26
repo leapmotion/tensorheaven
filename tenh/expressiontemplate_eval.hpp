@@ -97,6 +97,8 @@ private:
         }
     }
 
+	ExpressionTemplate_Eval_t operator= (const ExpressionTemplate_Eval_t&);
+
     typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FreeFactorTypeList>,Scalar,UseMemberArray> Tensor;
 
     Operand const &m_operand;

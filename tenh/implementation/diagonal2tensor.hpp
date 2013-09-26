@@ -172,7 +172,7 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,F
     using Parent_EmbeddableAsTensor_i::operator();
 
     static bool component_is_immutable_zero (MultiIndex const &m) { return m.template el<0>().value() != m.template el<1>().value(); }
-    static Scalar scalar_factor_for_component (MultiIndex const &m) { return Scalar(1); }
+    static Scalar scalar_factor_for_component (MultiIndex const &) { return Scalar(1); }
     static ComponentIndex vector_index_of (MultiIndex const &m) { return ComponentIndex(m.template el<0>().value(), DONT_CHECK_RANGE); }
 
     static std::string type_as_string ()

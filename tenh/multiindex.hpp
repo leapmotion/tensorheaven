@@ -406,9 +406,9 @@ struct MultiIndex_t<EmptyTypeList> : public List_t<EmptyTypeList>
 
     MultiIndex_t () { }
 
-    bool operator == (MultiIndex_t const &m) const { return true; }  // there is only one of these, so it must be equal
-    bool operator != (MultiIndex_t const &m) const { return false; } // there is only one of these, so it must not be unequal
-    bool operator < (MultiIndex_t const &m) const { return false; }  // there is only one of these, so it can't be less than
+    bool operator == (MultiIndex_t const &) const { return true; }  // there is only one of these, so it must be equal
+    bool operator != (MultiIndex_t const &) const { return false; } // there is only one of these, so it must not be unequal
+    bool operator < (MultiIndex_t const &) const { return false; }  // there is only one of these, so it can't be less than
 
     bool is_at_end () const { return true; }
     bool is_not_at_end () const { return false; }

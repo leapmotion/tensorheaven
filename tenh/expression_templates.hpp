@@ -111,6 +111,7 @@ struct ExpressionTemplate_IndexedObject_t
 
 private:
 
+	ExpressionTemplate_IndexedObject_t operator=(const ExpressionTemplate_IndexedObject_t&);
     Object const &m_object;
 };
 
@@ -311,6 +312,7 @@ struct ExpressionTemplate_Addition_t
 
 private:
 
+	ExpressionTemplate_Addition_t operator=(const ExpressionTemplate_Addition_t&);
     LeftOperand const &m_left_operand;
     RightOperand const &m_right_operand;
 };
@@ -388,6 +390,7 @@ struct ExpressionTemplate_ScalarMultiplication_t
 
 private:
 
+	ExpressionTemplate_ScalarMultiplication_t operator=(const ExpressionTemplate_ScalarMultiplication_t&);
     Operand const &m_operand;
     Scalar m_scalar_operand;
 };
@@ -472,6 +475,7 @@ struct ExpressionTemplate_Multiplication_t
 
 private:
 
+	ExpressionTemplate_Multiplication_t operator=(const ExpressionTemplate_Multiplication_t&);
     LeftOperand const &m_left_operand;
     RightOperand const &m_right_operand;
 };
@@ -540,6 +544,7 @@ public:
 
 private:
 
+	ExpressionTemplate_IndexBundle_t operator=(const ExpressionTemplate_IndexBundle_t&);
     IndexBundle m_index_bundle;
 };
 
@@ -611,6 +616,7 @@ public:
 
 private:
 
+	ExpressionTemplate_IndexSplit_t operator=(const ExpressionTemplate_IndexSplit_t&);
     IndexSplitter m_index_splitter;
 };
 

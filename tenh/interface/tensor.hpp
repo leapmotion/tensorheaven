@@ -168,8 +168,8 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
             CHECK_FOR_ALIASING>(as_derived());
     }
 
-    static bool component_is_immutable_zero (MultiIndex const &m) { return false; }
-    static Scalar scalar_factor_for_component (MultiIndex const &m) { return Scalar(1); }
+    static bool component_is_immutable_zero (MultiIndex const &) { return false; }
+    static Scalar scalar_factor_for_component (MultiIndex const &) { return Scalar(1); }
     static ComponentIndex vector_index_of (MultiIndex const &m) { return ComponentIndex(m.value(), DONT_CHECK_RANGE); }
 
     static std::string type_as_string ()

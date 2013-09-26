@@ -210,7 +210,7 @@ void add_parent_concept_type_list_to_graph_recursive (Concept_ const &, EmptyTyp
 template <Uint32 SHORTIFY_DEPTH_, typename Concept_, typename HeadType_, typename BodyTypeList_>
 void add_parent_concept_type_list_to_graph_recursive (
     Concept_ const &concept,
-    TypeList_t<HeadType_,BodyTypeList_> const &parent_concept_type_list,
+    TypeList_t<HeadType_,BodyTypeList_> const &,// This is the parent_concept_type_list
     Graph &g)
 {
     // add the parent nodes and edges connecting concept to them

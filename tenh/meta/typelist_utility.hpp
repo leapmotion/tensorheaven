@@ -39,7 +39,7 @@ inline void compile_time_check_that_there_is_a_type_conversion (TypeList_t<FromH
     ToHeadType head_conversion_checker(from_head);
 }
 
-inline void compile_time_check_that_there_is_a_type_conversion (EmptyTypeList const &from, EmptyTypeList const &to)
+inline void compile_time_check_that_there_is_a_type_conversion (EmptyTypeList const &, EmptyTypeList const &)
 {
     // nothing needs to be done, there are no types to check
 }

@@ -179,8 +179,8 @@ struct List_t<EmptyTypeList>
 //     template <typename TypeList>
 //     List_t (List_t<TypeList> const &) { }
 
-    bool operator == (List_t const &l) const { return true; }  // there is only one of these, so it must be equal
-    bool operator != (List_t const &l) const { return false; } // there is only one of these, so it can't be unequal
+    bool operator == (List_t const &) const { return true; }  // there is only one of these, so it must be equal
+    bool operator != (List_t const &) const { return false; } // there is only one of these, so it can't be unequal
 
     static Uint32 length () { return LENGTH; }
 
