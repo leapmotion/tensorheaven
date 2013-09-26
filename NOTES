@@ -251,6 +251,10 @@
 - TODO: allow tensor products of non-immutable tensor/vector implementations -- this would
   amount to providing constructors which would take the tensor product operands as parameters,
   but could use the same code.
+- MSVC doesn't like the following code, when e is a 3-tensor implementation and i is an
+  AbstractIndex_c<'i'>:  FORMAT_VALUE(e(i).eval()) (this probably has something to do with
+  the derived type passed into ExpressionTemplate_IndexedObject_t when the indexed expression
+  is created.  Note that FORMAT_VALUE(e(i|j|k).eval()) works normally.
 
 
 ###Features necessary for "version 1.0"

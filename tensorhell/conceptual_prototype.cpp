@@ -18,6 +18,7 @@
 #include "tenh/implementation/diagonal2tensor.hpp"
 #include "tenh/implementation/euclideanembedding.hpp"
 #include "tenh/implementation/innerproduct.hpp"
+#include "tenh/implementation/sym.hpp"
 #include "tenh/implementation/tensor.hpp"
 #include "tenh/implementation/tensorproduct.hpp"
 #include "tenh/implementation/vector.hpp"
@@ -250,6 +251,20 @@ void test_tensor_power_of_euclidean_embedding ()
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
     std::cout << FORMAT_VALUE(e(P).split(P,i|j)) << '\n';
+    std::cout << '\n';
+}
+
+template <typename Scalar_, Uint32 ORDER_, Uint32 DIMENSION_>
+void test_sym ()
+{
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,DIMENSION_,X>,Basis_c<X> > BasedVectorSpace;
+    std::cout << "testing Sym_f<" << TypeStringOf_t<Scalar_>::eval() << ',' << ORDER_ << ',' << DIMENSION_ << ">\n";
+    typedef typename Sym_f<ORDER_,BasedVectorSpace,Scalar_>::T Sym;
+    Sym sym;
+    std::cout << FORMAT_VALUE(sym) << '\n';
+    AbstractIndex_c<'i'> i;
+    AbstractIndex_c<'j'> j;
+    std::cout << FORMAT_VALUE(sym(i|j)) << '\n';
     std::cout << '\n';
 }
 
@@ -1296,6 +1311,16 @@ int main (int argc, char **argv)
         std::cout << FORMAT_VALUE(TypeStringOf_t<IdOf_f<BasedVectorSpace>::T>::eval()) << '\n';
         std::cout << FORMAT_VALUE(TypeStringOf_t<ScalarFieldOf_f<BasedVectorSpace>::T>::eval()) << '\n';
         std::cout << FORMAT_VALUE(TypeStringOf_t<BasisOf_f<BasedVectorSpace>::T>::eval()) << '\n';
+    }
+
+    {
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,Basis_c<X> > BasedVectorSpace;
+        test_sym<float,1,2>();
+        test_sym<float,2,2>();
+        test_sym<float,3,2>();
+        test_sym<float,1,3>();
+        test_sym<float,2,3>();
+        test_sym<float,3,3>();
     }
 
     return 0;
