@@ -30,7 +30,7 @@ struct Factorial_t<0>
 
 Uint32 binomial_coefficient(Uint32 n, Uint32 k)
 {
-  return (k == 0) ? 1 : binomial_coefficient(n,k-1) * (n - k + 1) / k;
+    return (k == 0) ? 1 : binomial_coefficient(n,k-1) * (n - k + 1) / k;
 }
 
 template<Uint32 N, Uint32 K>
@@ -47,8 +47,8 @@ struct BinomialCoefficient_t<N,0>
 
 Uint32 index_of_greatest_triangular_number_less_than(Uint32 x, Uint32 d, Uint32 iteration = 0)
 {
-    return (binomial_coefficient(iteration,d) > x) ? 
-           iteration - 1 : 
+    return (binomial_coefficient(iteration,d) > x) ?
+           iteration - 1 :
            index_of_greatest_triangular_number_less_than(x,d,iteration+1);
 }
 

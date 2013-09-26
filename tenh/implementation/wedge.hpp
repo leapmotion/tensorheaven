@@ -120,8 +120,7 @@ struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scal
     using Parent_EmbeddableAsTensor_i::operator();
 
     static bool component_is_immutable_zero (MultiIndex const &m) { return MultiIndexMultiplicity_t<MultiIndex>::eval(sorted<typename MultiIndex::IndexTypeList,std::greater<Uint32> >(m)) != 1; }
-    // TODO: This needs to be (-1)^sign(m)/ORDER!.
-    static Scalar scalar_factor_for_component (MultiIndex const &m) { return SignComputer_t<MultiIndex>::compute(m)/Scalar(Factorial_t<ORDER>::V); }
+    static Scalar scalar_factor_for_component (MultiIndex const &m) { return SignComputer_t<MultiIndex>::compute(m); }
     static ComponentIndex vector_index_of (MultiIndex const &m)
     {
         MultiIndex n = sorted<typename MultiIndex::IndexTypeList,std::greater<Uint32> >(m);
