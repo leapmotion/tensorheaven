@@ -189,19 +189,20 @@ template <Uint32 ORDER_, typename Factor_>
 struct IsConcept_f<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_> >
 { static bool const V = true; };
 
-template <typename T> struct IsExteriorPowerOfBasedVectorSpace_f { static bool const V = false; };
-template <Uint32 ORDER, typename Factor> struct IsExteriorPowerOfBasedVectorSpace_f<ExteriorPowerOfBasedVectorSpace_c<ORDER,Factor> > { static bool const V = true; };
+template <typename T_> struct IsExteriorPowerOfBasedVectorSpace_f { static bool const V = false; };
+template <Uint32 ORDER_, typename Factor_> struct IsExteriorPowerOfBasedVectorSpace_f<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_> > { static bool const V = true; };
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(ExteriorPowerOfBasedVectorSpace);
 // special convenience macros
 #define IS_EXTERIOR_POWER_OF_BASED_VECTOR_SPACE_UNIQUELY(Concept) HasUniqueExteriorPowerOfBasedVectorSpaceStructure_f<Concept>::V
 #define AS_EXTERIOR_POWER_OF_BASED_VECTOR_SPACE(Concept) UniqueExteriorPowerOfBasedVectorSpaceStructureOf_f<Concept>::T
 
+// in the category of based vector spaces, the dual space functor commutes 
+// with the kth exterior power functor.
 template <Uint32 ORDER_, typename Factor_>
 struct DualOf_f<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_> >
 {
-    typedef BasedExteriorPowerOfVectorSpace_c<typename DualOf_f<ExteriorPowerOfVectorSpace_c<ORDER_,Factor_> >::T,
-                                              typename DualOf_f<typename UniqueBasedVectorSpaceStructureOf_f<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_> >::T::Basis>::T> T;
+    typedef ExteriorPowerOfBasedVectorSpace_c<ORDER_,typename DualOf_f<Factor_>::T> T;
 };
 
 } // end of namespace Tenh

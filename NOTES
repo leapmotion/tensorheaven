@@ -84,6 +84,7 @@
   conceptual layer, where `IsBlah_f<T>::V` is true if and only if T actually is exactly a Blah type.
 - make a bunch of the typedefs in `ImplementationOf_t` classes private, and decide which ones
   to offer publicly, or get rid of.
+- fix tensor products of diagonal 2-tensors on factors having non-equal dimension
 
 ###features necessary for version 0.5:
 - x euclidean embedding (using short-term zero-dimensional hack (?))
@@ -279,8 +280,8 @@
   documentation, and LaTeX writeups of the abstract math), and probably most critically,
   tutorials, examples, and some intro material to get people into tensor math who only
   know about matrices/vectors.
-- translating LVD code in tenh/meta/lvd.hpp (Victor's legacy metaprogramming lib) into
-  "native Tensor Heaven" code (important for legal purposes)
+- x translating LVD code in tenh/meta/lvd.hpp (Victor's legacy metaprogramming lib) into
+    "native Tensor Heaven" code (important for legal purposes)
 - Talking to Tom about officially licensing the LVD unit test code (important for legal purposes)
 
 

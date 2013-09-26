@@ -188,16 +188,20 @@ struct IsConcept_f<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> >
 { static bool const V = true; };
 
 template <typename T> struct IsSymmetricPowerOfBasedVectorSpace_f { static bool const V = false; };
-template <Uint32 ORDER, typename Factor> struct IsSymmetricPowerOfBasedVectorSpace_f<SymmetricPowerOfBasedVectorSpace_c<ORDER,Factor> > { static bool const V = true; };
+template <Uint32 ORDER_, typename Factor_> struct IsSymmetricPowerOfBasedVectorSpace_f<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> > { static bool const V = true; };
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(SymmetricPowerOfBasedVectorSpace);
 // special convenience macros
 #define IS_SYMMETRIC_POWER_OF_BASED_VECTOR_SPACE_UNIQUELY(Concept) HasUniqueSymmetricPowerOfBasedVectorSpaceStructure_f<Concept>::V
 #define AS_SYMMETRIC_POWER_OF_BASED_VECTOR_SPACE(Concept) UniqueSymmetricPowerOfBasedVectorSpaceStructureOf_f<Concept>::T
 
-// TODO: DualOf_f<SymmetricPowerOfBasedVectorSpace_c> -- figure what sort of thing this is;
-// (it's not naturally the symmetric power of the dual, but it is embeddable in that space)
-// maybe it's just a based vector space for now?
+// in the category of based vector spaces, the dual space functor commutes 
+// with the kth symmetric power functor, modulo a particular natural isomorphism.
+template <Uint32 ORDER_, typename Factor_>
+struct DualOf_f<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> >
+{
+    typedef SymmetricPowerOfBasedVectorSpace_c<ORDER_,typename DualOf_f<Factor_>::T> T;
+};
 
 } // end of namespace Tenh
 
