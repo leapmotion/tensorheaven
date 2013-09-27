@@ -1334,12 +1334,12 @@ int main (int, char **)
     {
         test_alt<float,1,1>();
         test_alt<float,1,2>();
-//         test_alt<float,2,2>();
-//         test_alt<float,3,2>();
+        test_alt<float,2,2>();
+        test_alt<float,3,2>();
         test_alt<float,1,3>();
-//         test_alt<float,2,3>();
-//         test_alt<float,3,3>();
-//         test_alt<float,4,3>();
+        test_alt<float,2,3>();
+        test_alt<float,3,3>();
+        test_alt<float,4,3>();
     }
 
     return 0;
