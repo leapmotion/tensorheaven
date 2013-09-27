@@ -280,14 +280,13 @@ void test_alt ()
     std::cout << '\n';
 }
 
-template <typename Scalar_, Uint32 DIMENSION_>
-void test_split_index_to_index_1st_symmetric_power ()
+template <typename Scalar_, typename EmbeddableAsTensorProduct_>
+void test_split_index_to_index_order_1 ()
 {
-    std::cout << "test_split_index_to_index_1st_symmetric_power<" + TypeStringOf_t<Scalar_>::eval() + ',' + AS_STRING(DIMENSION_) + ">\n";
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,DIMENSION_,X>,Basis_c<X> > BasedVectorSpace;
-    typedef SymmetricPowerOfBasedVectorSpace_c<1,BasedVectorSpace> SymmetricPower;
-    typedef typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(SymmetricPower)::TensorProductOfBasedVectorSpaces TensorPower;
-    typedef ImplementationOf_t<SymmetricPower,float> S;
+    typedef typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(EmbeddableAsTensorProduct_)::TensorProductOfBasedVectorSpaces TensorProduct;
+    STATIC_ASSERT(OrderOf_f<TensorProduct>::V == 1, UNSPECIFIED_MESSAGE);
+    std::cout << "test_split_index_to_index_order_1<" + TypeStringOf_t<Scalar_>::eval() + ',' + TypeStringOf_t<EmbeddableAsTensorProduct_>::eval() + ">\n";
+    typedef ImplementationOf_t<EmbeddableAsTensorProduct_,float> S;
     S s(Static<WithoutInitialization>::SINGLETON);
     for (typename S::ComponentIndex i; i.is_not_at_end(); ++i)
         s[i] = i.value() + 1;
@@ -301,18 +300,17 @@ void test_split_index_to_index_1st_symmetric_power ()
     std::cout << "the following should be exactly zero\n";
     std::cout << FORMAT_VALUE(s(i).split(i,EmptyTypeList()|k) - s(i).split(i,j).split(j,EmptyTypeList()|k)) << '\n';
     std::cout << "the following should be exactly zero\n";
-    std::cout << FORMAT_VALUE(s(i).split(i,j) - s(i).split(i,EmptyTypeList()|k).bundle(EmptyTypeList()|k,TensorPower(),j)) << '\n';
+    std::cout << FORMAT_VALUE(s(i).split(i,j) - s(i).split(i,EmptyTypeList()|k).bundle(EmptyTypeList()|k,TensorProduct(),j)) << '\n';
     std::cout << '\n';
 }
 
-template <typename Scalar_, Uint32 DIMENSION_>
-void test_split_index_to_index_2nd_symmetric_power ()
+template <typename Scalar_, typename EmbeddableAsTensorProduct_>
+void test_split_index_to_index_order_2 ()
 {
-    std::cout << "test_split_index_to_index_2nd_symmetric_power<" + TypeStringOf_t<Scalar_>::eval() + ',' + AS_STRING(DIMENSION_) + ">\n";
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,DIMENSION_,X>,Basis_c<X> > BasedVectorSpace;
-    typedef SymmetricPowerOfBasedVectorSpace_c<2,BasedVectorSpace> SymmetricPower;
-    typedef typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(SymmetricPower)::TensorProductOfBasedVectorSpaces TensorPower;
-    typedef ImplementationOf_t<SymmetricPower,float> S;
+    typedef typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(EmbeddableAsTensorProduct_)::TensorProductOfBasedVectorSpaces TensorProduct;
+    STATIC_ASSERT(OrderOf_f<TensorProduct>::V == 2, UNSPECIFIED_MESSAGE);
+    std::cout << "test_split_index_to_index_order_2<" + TypeStringOf_t<Scalar_>::eval() + ',' + TypeStringOf_t<EmbeddableAsTensorProduct_>::eval() + ">\n";
+    typedef ImplementationOf_t<EmbeddableAsTensorProduct_,float> S;
     S s(Static<WithoutInitialization>::SINGLETON);
     for (typename S::ComponentIndex i; i.is_not_at_end(); ++i)
         s[i] = i.value() + 1;
@@ -327,18 +325,17 @@ void test_split_index_to_index_2nd_symmetric_power ()
     std::cout << "the following should be exactly zero\n";
     std::cout << FORMAT_VALUE(s(i).split(i,k|l) - s(i).split(i,j).split(j,k|l)) << '\n';
     std::cout << "the following should be exactly zero\n";
-    std::cout << FORMAT_VALUE(s(i).split(i,j) - s(i).split(i,k|l).bundle(k|l,TensorPower(),j)) << '\n';
+    std::cout << FORMAT_VALUE(s(i).split(i,j) - s(i).split(i,k|l).bundle(k|l,TensorProduct(),j)) << '\n';
     std::cout << '\n';
 }
 
-template <typename Scalar_, Uint32 DIMENSION_>
-void test_split_index_to_index_3rd_symmetric_power ()
+template <typename Scalar_, typename EmbeddableAsTensorProduct_>
+void test_split_index_to_index_order_3 ()
 {
-    std::cout << "test_split_index_to_index_3rd_symmetric_power<" + TypeStringOf_t<Scalar_>::eval() + ',' + AS_STRING(DIMENSION_) + ">\n";
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,DIMENSION_,X>,Basis_c<X> > BasedVectorSpace;
-    typedef SymmetricPowerOfBasedVectorSpace_c<3,BasedVectorSpace> SymmetricPower;
-    typedef typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(SymmetricPower)::TensorProductOfBasedVectorSpaces TensorPower;
-    typedef ImplementationOf_t<SymmetricPower,float> S;
+    typedef typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(EmbeddableAsTensorProduct_)::TensorProductOfBasedVectorSpaces TensorProduct;
+    STATIC_ASSERT(OrderOf_f<TensorProduct>::V == 3, UNSPECIFIED_MESSAGE);
+    std::cout << "test_split_index_to_index_order_3<" + TypeStringOf_t<Scalar_>::eval() + ',' + TypeStringOf_t<EmbeddableAsTensorProduct_>::eval() + ">\n";
+    typedef ImplementationOf_t<EmbeddableAsTensorProduct_,float> S;
     S s(Static<WithoutInitialization>::SINGLETON);
     for (typename S::ComponentIndex i; i.is_not_at_end(); ++i)
         s[i] = i.value() + 1;
@@ -354,7 +351,7 @@ void test_split_index_to_index_3rd_symmetric_power ()
     std::cout << "the following should be exactly zero\n";
     std::cout << FORMAT_VALUE(s(i).split(i,k|l|m) - s(i).split(i,j).split(j,k|l|m)) << '\n';
     std::cout << "the following should be exactly zero\n";
-    std::cout << FORMAT_VALUE(s(i).split(i,j) - s(i).split(i,k|l|m).bundle(k|l|m,TensorPower(),j)) << '\n';
+    std::cout << FORMAT_VALUE(s(i).split(i,j) - s(i).split(i,k|l|m).bundle(k|l|m,TensorProduct(),j)) << '\n';
     std::cout << '\n';
 }
 
@@ -1458,12 +1455,42 @@ int main (int, char **)
         std::cout << FORMAT_VALUE(t_inverse(i|j)*t(j|k)) << '\n';
         std::cout << '\n';
     }
-    
-    test_split_index_to_index_1st_symmetric_power<float,3>();
-    test_split_index_to_index_2nd_symmetric_power<float,3>();
-    test_split_index_to_index_3rd_symmetric_power<float,3>();
-    
 
+    {
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,Basis_c<X> > BasedVectorSpaceX;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Y>,Basis_c<Y> > BasedVectorSpaceY;
+        typedef TensorPowerOfBasedVectorSpace_f<1,BasedVectorSpaceX>::T TensorPower;
+        typedef SymmetricPowerOfBasedVectorSpace_c<1,BasedVectorSpaceX> SymmetricPower;
+        typedef ExteriorPowerOfBasedVectorSpace_c<1,BasedVectorSpaceX> ExteriorPower;
+        test_split_index_to_index_order_1<float,TensorPower>();
+        test_split_index_to_index_order_1<float,SymmetricPower>();
+        test_split_index_to_index_order_1<float,ExteriorPower>();
+    }
+    
+    {
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,Basis_c<X> > BasedVectorSpaceX;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Y>,Basis_c<Y> > BasedVectorSpaceY;
+        typedef TensorPowerOfBasedVectorSpace_f<2,BasedVectorSpaceX>::T TensorPower;
+        typedef SymmetricPowerOfBasedVectorSpace_c<2,BasedVectorSpaceX> SymmetricPower;
+        typedef ExteriorPowerOfBasedVectorSpace_c<2,BasedVectorSpaceX> ExteriorPower;
+        typedef Diagonal2TensorProductOfBasedVectorSpaces_c<BasedVectorSpaceX,BasedVectorSpaceY> Diagonal2TensorProduct;
+        test_split_index_to_index_order_2<float,TensorPower>();
+        test_split_index_to_index_order_2<float,SymmetricPower>();
+        test_split_index_to_index_order_2<float,ExteriorPower>();
+        test_split_index_to_index_order_2<float,Diagonal2TensorProduct>();
+    }
+    
+    {
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,Basis_c<X> > BasedVectorSpaceX;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Y>,Basis_c<Y> > BasedVectorSpaceY;
+        typedef TensorPowerOfBasedVectorSpace_f<3,BasedVectorSpaceX>::T TensorPower;
+        typedef SymmetricPowerOfBasedVectorSpace_c<3,BasedVectorSpaceX> SymmetricPower;
+        typedef ExteriorPowerOfBasedVectorSpace_c<3,BasedVectorSpaceX> ExteriorPower;
+        test_split_index_to_index_order_3<float,TensorPower>();
+        test_split_index_to_index_order_3<float,SymmetricPower>();
+        test_split_index_to_index_order_3<float,ExteriorPower>();
+    }
+    
     {
         std::cout << "Polynomials in 0 dimensions." << std::endl;
         typedef MultivariatePolynomial<2,0,X> PolyType;
