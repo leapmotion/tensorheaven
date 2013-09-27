@@ -26,7 +26,7 @@
 #include "tenh/implementation/vee.hpp"
 #include "tenh/implementation/wedge.hpp"
 
-#include "tenh/applications/polynomial.hpp"
+#include "applications/polynomial.hpp"
 
 struct X
 {
