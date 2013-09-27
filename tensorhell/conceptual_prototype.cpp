@@ -1353,13 +1353,13 @@ int main (int, char **)
         std::cout << FORMAT_VALUE(t) << '\n';
         std::cout << FORMAT_VALUE(EigenMap_of_2tensor(t)) << '\n';
         std::cout << FORMAT_VALUE(EigenMap_of_2tensor(static_cast<T const>(t))) << '\n';
-        Eigen::Matrix<float,3,1> v1(1.0f, 2.0f, 3.0f);
+        Eigen::Matrix<float,3,1> v1(1.0f, 2.0f, 3.0f); // 3 linearly independent vectors
         Eigen::Matrix<float,3,1> v2(0.0f, 2.0f, 3.0f);
         Eigen::Matrix<float,3,1> v3(1.0f, 2.0f, 4.0f);
         std::cout << FORMAT_VALUE(v1) << '\n';
         std::cout << FORMAT_VALUE(v2) << '\n';
         std::cout << FORMAT_VALUE(v3) << '\n';
-        EigenMap_of_2tensor(t) = v1*v1.transpose() + v2*v2.transpose() + v3*v3.transpose();
+        EigenMap_of_2tensor(t) = v1*v1.transpose() + v2*v2.transpose() + v3*v3.transpose(); // make a nonsingular 2-tensor
         std::cout << "after assignment from v1*v1.transpose() + v2*v2.transpose() + v3*v3.transpose() via Eigen Map: ";
         std::cout << FORMAT_VALUE(t) << '\n';
 
@@ -1370,6 +1370,12 @@ int main (int, char **)
         TInverse t_inverse(Static<WithoutInitialization>::SINGLETON);
         invert_2tensor(t, t_inverse);
         std::cout << FORMAT_VALUE(t_inverse) << '\n';
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        AbstractIndex_c<'k'> k;
+        // verify the identity tensor of the appropriate type pops out of each composition
+        std::cout << FORMAT_VALUE(t(i|j)*t_inverse(j|k)) << '\n';
+        std::cout << FORMAT_VALUE(t_inverse(i|j)*t(j|k)) << '\n';
         std::cout << '\n';
     }
 
