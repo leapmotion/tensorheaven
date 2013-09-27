@@ -63,8 +63,8 @@ void test_invert_tensor2 (Context const &context)
     D1 inner_product_inverse_squared_on_Factor1(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
     D2 inner_product_inverse_squared_on_Factor2(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
     // manually populate the result tensor
-    Lvd::Meta::Assert<(D1::Index::COMPONENT_COUNT == Factor1::Index::COMPONENT_COUNT)>();
-    Lvd::Meta::Assert<(D2::Index::COMPONENT_COUNT == Factor2::Index::COMPONENT_COUNT)>();
+    Assert<(D1::Index::COMPONENT_COUNT == Factor1::Index::COMPONENT_COUNT)>();
+    Assert<(D2::Index::COMPONENT_COUNT == Factor2::Index::COMPONENT_COUNT)>();
     // NOTE: this is only the inverse if the inner product is diagonal (which it currently is)
     for (typename D1::Index i; i.is_not_at_end(); ++i)
     {

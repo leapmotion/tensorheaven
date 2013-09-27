@@ -56,7 +56,7 @@ void e_inv_e_composition (Context const &context)
     typedef Tenh::Tensor2Diagonal_t<V,V> D;
     D inner_product_inverse_on_V(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
     // manually populate the result tensor
-    Lvd::Meta::Assert<(D::Index::COMPONENT_COUNT == V::Index::COMPONENT_COUNT)>();
+    Assert<(D::Index::COMPONENT_COUNT == V::Index::COMPONENT_COUNT)>();
     // NOTE: this is only the inverse if the inner product is diagonal (which it currently is)
     for (typename D::Index i; i.is_not_at_end(); ++i)
         inner_product_inverse_on_V[i] = Scalar(1) / Tenh::InnerProduct_t<V,typename V::Basis>::component(typename V::Index(i.value()));

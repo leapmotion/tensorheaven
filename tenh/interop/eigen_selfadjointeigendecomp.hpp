@@ -39,7 +39,7 @@ struct SelfAdjointEigenDecomposition_t
     {
         typedef Eigen::Matrix<typename Factor::Scalar,Factor::DIM,Factor::DIM,Eigen::RowMajor> EigenMatrix;
         Eigen::SelfAdjointEigenSolver<EigenMatrix> solver(euclideanly_embedded_EigenMatrix_from(s));         // do the diagonalization
-        memcpy(eigenvalues.data_pointer(), &solver.eigenvalues()(0,0), eigenvalues.data_size_in_bytes());    // copy the eigenvalues
+        memcpy(eigenvalues.pointer_to_allocation(), &solver.eigenvalues()(0,0), eigenvalues.allocation_size_in_bytes());    // copy the eigenvalues
         typedef Tensor2_t<DiagonalizingBasis,typename Factor::WithStandardEuclideanBasis> T;                 // type of computed eigenvectors
         T &euclideanly_embedded_eigenvectors = *reinterpret_cast<T *>(&solver.eigenvalues()(0,0));           // hacky way to avoid a copy
         // transform back to the original basis
@@ -56,7 +56,7 @@ struct SelfAdjointEigenDecomposition_t
     {
         typedef Eigen::Matrix<typename Factor::Scalar,Factor::DIM,Factor::DIM,Eigen::RowMajor> EigenMatrix;
         Eigen::SelfAdjointEigenSolver<EigenMatrix> solver(euclideanly_embedded_EigenMatrix_from(s));         // do the diagonalization
-        memcpy(eigenvalues.data_pointer(), &solver.eigenvalues()(0,0), eigenvalues.data_size_in_bytes());    // copy the eigenvalues
+        memcpy(eigenvalues.pointer_to_allocation(), &solver.eigenvalues()(0,0), eigenvalues.allocation_size_in_bytes());    // copy the eigenvalues
     }
 };
 
@@ -68,8 +68,8 @@ void diagonalize_Tensor2Symmetric (Tensor2Symmetric_t<Factor,Factor,Basis,Derive
 {
     typedef Eigen::Matrix<typename Factor::Scalar,Factor::DIM,Factor::DIM,Eigen::RowMajor> EigenMatrix;
     Eigen::SelfAdjointEigenSolver<EigenMatrix> solver(euclideanly_embedded_EigenMatrix_from(s));         // do the diagonalization
-    memcpy(eigenvectors.data_pointer(), &solver.eigenvectors()(0,0), eigenvectors.data_size_in_bytes()); // copy the eigenvectors
-    memcpy(eigenvalues.data_pointer(), &solver.eigenvalues()(0,0), eigenvalues.data_size_in_bytes());    // copy the eigenvalues
+    memcpy(eigenvectors.pointer_to_allocation(), &solver.eigenvectors()(0,0), eigenvectors.allocation_size_in_bytes()); // copy the eigenvectors
+    memcpy(eigenvalues.pointer_to_allocation(), &solver.eigenvalues()(0,0), eigenvalues.allocation_size_in_bytes());    // copy the eigenvalues
 }
 
 template <typename Factor, typename Basis, typename Derived>
@@ -79,7 +79,7 @@ void eigenvalues_of_Tensor2Symmetric (Tensor2Symmetric_t<Factor,Factor,Basis,Der
 {
     typedef Eigen::Matrix<typename Factor::Scalar,Factor::DIM,Factor::DIM,Eigen::RowMajor> EigenMatrix;
     Eigen::SelfAdjointEigenSolver<EigenMatrix> solver(euclideanly_embedded_EigenMatrix_from(s), Eigen::EigenvaluesOnly); // compute eigenvalues
-    memcpy(eigenvalues.data_pointer(), &solver.eigenvalues()(0,0), eigenvalues.data_size_in_bytes());                    // copy the eigenvalues
+    memcpy(eigenvalues.pointer_to_allocation(), &solver.eigenvalues()(0,0), eigenvalues.allocation_size_in_bytes());                    // copy the eigenvalues
 }
 
 } // end of namespace Tenh

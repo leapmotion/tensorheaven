@@ -125,7 +125,7 @@ template <Uint64 VALUE>
 SInt_t<-VALUE> operator - (UInt_t<VALUE> const &)
 {
 	// can't negate if the value is too big -- alternatively could add "negative unsigned value"
-	Lvd::Meta::Assert<(VALUE < (1ull << 63))>();
+	Assert<(VALUE < (1ull << 63))>();
 	return SInt_t<-VALUE>();
 }
 
@@ -133,7 +133,7 @@ template <Uint64 NUMERATOR, Uint64 DENOMINATOR>
 SFrac_t<-NUMERATOR,DENOMINATOR> operator - (UFrac_t<NUMERATOR,DENOMINATOR> const &)
 {
 	// can't negate if the value is too big -- alternatively could add "negative unsigned value"
-	Lvd::Meta::Assert<(NUMERATOR < (1ull << 63))>();
+	Assert<(NUMERATOR < (1ull << 63))>();
 	return SFrac_t<-NUMERATOR,DENOMINATOR>();
 }
 

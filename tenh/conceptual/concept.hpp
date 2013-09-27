@@ -59,7 +59,7 @@ struct AncestorsOf_Recursive_f;
 template <typename Concept>
 struct AncestorsOf_f
 {
-    enum { _ = Lvd::Meta::Assert<IsConcept_f<Concept>::V>::v };
+    enum { STATIC_ASSERT_IN_ENUM(IsConcept_f<Concept>::V, MUST_BE_CONCEPT) };
     typedef TypeList_t<Concept,typename AncestorsOf_Recursive_f<typename Concept::ParentTypeList>::T> T;
 };
 
@@ -96,7 +96,7 @@ struct AncestorsSatisfyingPredicate_f
 template <typename Concept, typename ConceptualStructurePredicate>
 struct ConceptualStructuresOf_f
 {
-    enum { _ = Lvd::Meta::Assert<IsConcept_f<Concept>::V>::v }; // TODO: check that ConceptualStructurePredicate actually is one
+    enum { STATIC_ASSERT_IN_ENUM(IsConcept_f<Concept>::V, MUST_BE_CONCEPT) }; // TODO: check that ConceptualStructurePredicate actually is one
     typedef typename UniqueTypesIn_t<typename AncestorsSatisfyingPredicate_f<Concept,ConceptualStructurePredicate>::T>::T T;
 };
 
@@ -115,7 +115,7 @@ struct HasUniqueConceptualStructure_f
 template <typename Concept, typename ConceptualStructurePredicate>
 struct UniqueConceptualStructureOf_f
 {
-    enum { _ = Lvd::Meta::Assert<HasUniqueConceptualStructure_f<Concept,ConceptualStructurePredicate>::V>::v };
+    enum { STATIC_ASSERT_IN_ENUM((HasUniqueConceptualStructure_f<Concept,ConceptualStructurePredicate>::V), MUST_HAVE_UNIQUE_CONCEPTUAL_STRUCTURE) };
     typedef typename ConceptualStructuresOf_f<Concept,ConceptualStructurePredicate>::T::HeadType T;
 };
 
@@ -138,6 +138,95 @@ template <typename Concept> struct Unique##ConceptName##StructureOf_f \
     enum { STATIC_ASSERT_IN_ENUM(HasUnique##ConceptName##Structure_f<Concept>::V, MUST_HAVE_UNIQUE_CONCEPTUAL_STRUCTURE) }; \
     typedef typename UniqueConceptualStructureOf_f<Concept,Is##ConceptName##_p>::T T; \
 }
+
+// ///////////////////////////////////////////////////////////////////////////
+// conceptual property accessor machinery
+// ///////////////////////////////////////////////////////////////////////////
+
+// TODO: consolidate this with Value and Ted's int-carrying value.
+// this should go in with the meta code.
+template <typename T_, T_ V_>
+struct TypedValue_t
+{
+    typedef T_ T;
+    static T_ const V = V_;
+
+    static std::string type_as_string () { return "TypedValue_t<" + TypeStringOf_t<T_>::eval() + ',' + AS_STRING(V_) + '>'; }
+};
+
+// sentinel "value" type
+struct NullValue { static std::string type_as_string () { return "NullValue"; } };
+
+// default definition of the given property of exactly the given concept (but
+// NOT its ancestors).  particular concepts should specialize this to provide
+// definitions.  if the property is a value (e.g. Uint32), then the type should
+// be TypedValue_t<...>
+template <typename Concept_, typename PropertyId_>
+struct BaseProperty_f
+{
+    typedef NullValue T;
+};
+
+template <typename TypeList_, typename PropertyId_>
+struct BasePropertyOfEachInTypeList_f
+{
+    typedef TypeList_t<typename BaseProperty_f<typename TypeList_::HeadType,PropertyId_>::T,
+                       typename BasePropertyOfEachInTypeList_f<typename TypeList_::BodyTypeList,PropertyId_>::T> T;
+};
+
+template <typename PropertyId_>
+struct BasePropertyOfEachInTypeList_f<EmptyTypeList,PropertyId_>
+{
+    typedef EmptyTypeList T;
+};
+
+// gives a list of the unique values of the given property, taken from all ancestors.
+template <typename Concept_, typename PropertyId_>
+struct MultiProperty_f
+{
+private:
+    typedef typename BasePropertyOfEachInTypeList_f<typename AncestorsOf_f<Concept_>::T,PropertyId_>::T PropertyOfEach;
+    typedef typename UniqueTypesIn_t<PropertyOfEach>::T UniquePropertyTypeList;
+public:
+    typedef typename SetSubtraction_t<UniquePropertyTypeList,TypeList_t<NullValue> >::T T;
+};
+
+// if MultiProperty_f has exactly one element, returns that.
+template <typename Concept_, typename PropertyId_>
+struct Property_f
+{
+private:
+    typedef typename MultiProperty_f<Concept_,PropertyId_>::T MultiProperty;
+    enum { STATIC_ASSERT_IN_ENUM(MultiProperty::LENGTH == 1, PROPERTY_IS_NOT_WELL_DEFINED) };
+public:
+    typedef typename MultiProperty::HeadType T;
+};
+
+// if Property_f is a TypedValue_t, returns the value.
+template <typename Concept_, typename PropertyId_>
+struct PropertyValue_f
+{
+private:
+    typedef typename Property_f<Concept_,PropertyId_>::T ValueType;
+public:
+    static typename ValueType::T const V = ValueType::V;
+};
+
+// constructs a TypeList_t whose elements are the results of Property_f on each element
+template <typename TypeList_, typename PropertyId_>
+struct PropertyOfEachInTypeList_f
+{
+    typedef TypeList_t<typename Property_f<typename TypeList_::HeadType,PropertyId_>::T,
+                       typename PropertyOfEachInTypeList_f<typename TypeList_::BodyTypeList,PropertyId_>::T> T;
+};
+
+// base case
+template <typename PropertyId_>
+struct PropertyOfEachInTypeList_f<EmptyTypeList,PropertyId_>
+{
+    typedef EmptyTypeList T;
+};
+
 } // end of namespace Tenh
 
 #endif // TENH_CONCEPTUAL_CONCEPT_HPP_

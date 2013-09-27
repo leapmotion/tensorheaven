@@ -7,12 +7,9 @@
 #define TENH_MATHUTIL_HPP_
 
 #include "tenh/core.hpp"
-#include "tenh/meta/lvd.hpp"
 
 // TODO: Decide if/how this code should be split amongst files.
 namespace Tenh {
-
-using Lvd::Meta::If;
 
 Uint32 factorial(Uint32 x)
 {
@@ -33,7 +30,7 @@ struct Factorial_t<0>
 
 Uint32 binomial_coefficient(Uint32 n, Uint32 k)
 {
-  return (k == 0) ? 1 : binomial_coefficient(n,k-1) * (n - k + 1) / k;
+    return (k == 0) ? 1 : binomial_coefficient(n,k-1) * (n - k + 1) / k;
 }
 
 template<Uint32 N, Uint32 K>
@@ -45,27 +42,23 @@ struct BinomialCoefficient_t
 template<Uint32 N>
 struct BinomialCoefficient_t<N,0>
 {
-    static const Uint32 V = 1 ;
+    static const Uint32 V = 1;
 };
 
 Uint32 index_of_greatest_triangular_number_less_than(Uint32 x, Uint32 d, Uint32 iteration = 0)
 {
-    return (binomial_coefficient(iteration,d) > x) ? iteration - 1 : index_of_greatest_triangular_number_less_than(x,d,iteration+1);
+    return (binomial_coefficient(iteration,d) > x) ?
+           iteration - 1 :
+           index_of_greatest_triangular_number_less_than(x,d,iteration+1);
 }
-
-template<Uint32 N>
-struct TemplateInt
-{
-    static const Uint32 V = N;
-};
 
 template<Uint32 X, Uint32 D, Uint32 iteration=0>
 struct IndexOfGreatestTriangularNumberLessThan_t
 {
-    static const Uint32 V = If<(BinomialCoefficient_t<iteration,D>::V > X), TemplateInt<iteration - 1>, IndexOfGreatestTriangularNumberLessThan_t<X,D,iteration+1> >::T::V;
+    static const Uint32 V = If<(BinomialCoefficient_t<iteration,D>::V > X),
+                               Value<Uint32,iteration-1>,
+                               IndexOfGreatestTriangularNumberLessThan_t<X,D,iteration+1> >::T::V;
 };
-
-
 
 } // end of namespace Tenh
 

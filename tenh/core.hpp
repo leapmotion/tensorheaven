@@ -6,24 +6,20 @@
 #ifndef TENH_CORE_HPP_
 #define TENH_CORE_HPP_
 
+#if _WIN32
+#pragma warning( disable : 4503 )
+#endif
+
 #include <cassert>
 #include <complex>
 
-#include "tenh/meta/lvd.hpp"
+#include "tenh/meta/core.hpp"
 #include "tenh/meta/static_assert.hpp"
 
+#define FORMAT(expr) static_cast<std::ostringstream &>(std::ostringstream().flush() << expr).str()
 #define FORMAT_VALUE(expr) #expr << " = " << (expr) // TODO: move this out into test code
 
 namespace Tenh {
-
-typedef Lvd::Sint8 Sint8;
-typedef Lvd::Uint8 Uint8;
-typedef Lvd::Sint16 Sint16;
-typedef Lvd::Uint16 Uint16;
-typedef Lvd::Sint32 Sint32;
-typedef Lvd::Uint32 Uint32;
-typedef Lvd::Sint64 Sint64;
-typedef Lvd::Uint64 Uint64;
 
 // shouldn't ever actually construct one of these
 struct NullType
@@ -72,6 +68,16 @@ T sqr (T const &t)
 static bool const CHECK_RANGE = true;
 static bool const DONT_CHECK_RANGE = false;
 
+// these are used in constructors for determining if a pointer check should be done.
+// the default check parameter value should be CHECK_POINTER, which is more expensive,
+// but if you know what you're doing, you can pass in DONT_CHECK_POINTER to avoid the
+// pointer check and gain efficiency (e.g. if you know for a fact that the pointer is
+// non-NULL).  this is a compromise between completely correct program behavior and
+// program efficiency.
+// TODO: should these be moved to preallocatedarray.hpp? (if they're only used there)
+static bool const CHECK_POINTER = true;
+static bool const DONT_CHECK_POINTER = false;
+
 // used in the curiously recurring template pattern, where the derived type is passed
 // to parent classes as a template parameter, so that the baseclass can access the
 // derived type's methods.  will "return" (as a typedef for T) Derived if Derived
@@ -79,9 +85,9 @@ static bool const DONT_CHECK_RANGE = false;
 template <typename Derived, typename DefaultType>
 struct DerivedType_t
 {
-    typedef typename Lvd::Meta::If<Lvd::Meta::TypesAreEqual<Derived,NullType>::v,
-                                   DefaultType,
-                                   Derived>::T T;
+    typedef typename If<TypesAreEqual<Derived,NullType>::V,
+                        DefaultType,
+                        Derived>::T T;
 };
 
 // provide an implementation of this for any custom scalar type (e.g. an arbitrary-precision

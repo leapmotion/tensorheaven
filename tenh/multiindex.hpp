@@ -394,12 +394,9 @@ struct MultiIndex_t<TypeList_t<HeadIndexType_> > : public List_t<TypeList_t<Head
     static std::string type_as_string () { return "MultiIndex_t<" + TypeStringOf_t<IndexTypeList>::eval() + '>'; }
 };
 
-// TODO: check if this is actually made, and if not, prohibit making them
 template <>
 struct MultiIndex_t<EmptyTypeList> : public List_t<EmptyTypeList>
 {
-//    enum { _ = Lvd::Meta::Assert<false>::v }; // don't make one of these
-
     typedef List_t<EmptyTypeList> Parent;
     using Parent::LENGTH;
     typedef EmptyTypeList IndexTypeList;
@@ -409,9 +406,9 @@ struct MultiIndex_t<EmptyTypeList> : public List_t<EmptyTypeList>
 
     MultiIndex_t () { }
 
-    bool operator == (MultiIndex_t const &m) const { return true; }  // there is only one of these, so it must be equal
-    bool operator != (MultiIndex_t const &m) const { return false; } // there is only one of these, so it must not be unequal
-    bool operator < (MultiIndex_t const &m) const { return false; }  // there is only one of these, so it can't be less than
+    bool operator == (MultiIndex_t const &) const { return true; }  // there is only one of these, so it must be equal
+    bool operator != (MultiIndex_t const &) const { return false; } // there is only one of these, so it must not be unequal
+    bool operator < (MultiIndex_t const &) const { return false; }  // there is only one of these, so it can't be less than
 
     bool is_at_end () const { return true; }
     bool is_not_at_end () const { return false; }

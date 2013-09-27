@@ -95,11 +95,23 @@ struct ExpressionTemplate_IndexedObject_t
     {
         // the reinterpret_cast is safe because we're dealing with POD types and there
         // is an explicit type-check at compiletime (TypesAreEqual)
-        return Lvd::Meta::TypesAreEqual<OtherTensor,Object>::v && reinterpret_cast<Object const *>(&t) == &m_object;
+        return TypesAreEqual<OtherTensor,Object>::V && reinterpret_cast<Object const *>(&t) == &m_object;
+    }
+
+    static std::string type_as_string ()
+    {
+        return "ExpressionTemplate_IndexedObject_t<" + TypeStringOf_t<Object>::eval() + ','
+                                                     + TypeStringOf_t<FactorTypeList>::eval() + ','
+                                                     + TypeStringOf_t<DimIndexTypeList>::eval() + ','
+                                                     + TypeStringOf_t<SummedDimIndexTypeList_>::eval() + ','
+                                                     + AS_STRING(FORCE_CONST_) + ','
+                                                     + AS_STRING(CHECK_FOR_ALIASING_) + ','
+                                                     + TypeStringOf_t<Derived_>::eval() + '>';
     }
 
 private:
 
+	ExpressionTemplate_IndexedObject_t operator=(const ExpressionTemplate_IndexedObject_t&);
     Object const &m_object;
 };
 
@@ -170,7 +182,7 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList
         enum
         {
             STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE_I, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
-            STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<Scalar,typename RightOperand::Scalar>::v), OPERAND_SCALAR_TYPES_ARE_EQUAL),
+            STATIC_ASSERT_IN_ENUM((TypesAreEqual<Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
             STATIC_ASSERT_IN_ENUM((AreEqualAsSets_t<FreeDimIndexTypeList,typename RightOperand::FreeDimIndexTypeList>::V),OPERANDS_HAVE_SAME_FREE_INDICES),
             STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_t<FreeDimIndexTypeList>::V), LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
             STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_t<typename RightOperand::FreeDimIndexTypeList>::V), RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES)
@@ -193,7 +205,18 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList
     {
         // the reinterpret_cast is safe because we're dealing with POD types and there
         // is an explicit type-check at compiletime (TypesAreEqual)
-        return Lvd::Meta::TypesAreEqual<OtherTensor,Object>::v && reinterpret_cast<Object const *>(&t) == &m_object;
+        return TypesAreEqual<OtherTensor,Object>::V && reinterpret_cast<Object const *>(&t) == &m_object;
+    }
+
+    static std::string type_as_string ()
+    {
+        return "ExpressionTemplate_IndexedObject_t<" + TypeStringOf_t<Object>::eval() + ','
+                                                     + TypeStringOf_t<FactorTypeList>::eval() + ','
+                                                     + TypeStringOf_t<DimIndexTypeList>::eval() + ','
+                                                     + TypeStringOf_t<EmptyTypeList>::eval() + ','
+                                                     + AS_STRING(DONT_FORCE_CONST) + ','
+                                                     + AS_STRING(CHECK_FOR_ALIASING_) + ','
+                                                     + TypeStringOf_t<Derived_>::eval() + '>';
     }
 
 private:
@@ -238,8 +261,8 @@ struct ExpressionTemplate_Addition_t
     {
         STATIC_ASSERT_IN_ENUM(LeftOperand::IS_EXPRESSION_TEMPLATE_I, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE_I, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
-        STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename LeftOperand::FreeFactorTypeList,typename RightOperand::FreeFactorTypeList>::v), OPERANDS_HAVE_SAME_FACTORS),
+        STATIC_ASSERT_IN_ENUM((TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
+        STATIC_ASSERT_IN_ENUM((TypesAreEqual<typename LeftOperand::FreeFactorTypeList,typename RightOperand::FreeFactorTypeList>::V), OPERANDS_HAVE_SAME_FACTORS),
         STATIC_ASSERT_IN_ENUM((AreEqualAsSets_t<typename LeftOperand::FreeDimIndexTypeList,typename RightOperand::FreeDimIndexTypeList>::V), OPERANDS_HAVE_SAME_FREE_INDICES),
         STATIC_ASSERT_IN_ENUM(!ContainsDuplicates_t<typename LeftOperand::FreeDimIndexTypeList>::V, LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
         STATIC_ASSERT_IN_ENUM(!ContainsDuplicates_t<typename RightOperand::FreeDimIndexTypeList>::V, RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
@@ -280,8 +303,16 @@ struct ExpressionTemplate_Addition_t
         return m_left_operand.uses_tensor(t) || m_right_operand.uses_tensor(t);
     }
 
+    static std::string type_as_string ()
+    {
+        return "ExpressionTemplate_Addition_t<" + TypeStringOf_t<LeftOperand>::eval() + ','
+                                                + TypeStringOf_t<RightOperand>::eval() + ','
+                                                + '\'' + AS_STRING(OPERATOR) + '\'' + '>';
+    }
+
 private:
 
+	ExpressionTemplate_Addition_t operator=(const ExpressionTemplate_Addition_t&);
     LeftOperand const &m_left_operand;
     RightOperand const &m_right_operand;
 };
@@ -318,7 +349,7 @@ struct ExpressionTemplate_ScalarMultiplication_t
     enum
     {
         STATIC_ASSERT_IN_ENUM(Operand::IS_EXPRESSION_TEMPLATE_I, OPERAND_IS_EXPRESSION_TEMPLATE),
-        STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename Operand::Scalar,Scalar_>::v), OPERAND_SCALAR_MATCHES_SCALAR),
+        STATIC_ASSERT_IN_ENUM((TypesAreEqual<typename Operand::Scalar,Scalar_>::V), OPERAND_SCALAR_MATCHES_SCALAR),
         STATIC_ASSERT_IN_ENUM((OPERATOR == '*' || OPERATOR == '/'), OPERATOR_IS_VALID)
     };
 
@@ -350,8 +381,16 @@ struct ExpressionTemplate_ScalarMultiplication_t
         return m_operand.uses_tensor(t);
     }
 
+    static std::string type_as_string ()
+    {
+        return "ExpressionTemplate_ScalarMultiplication_t<" + TypeStringOf_t<Operand>::eval() + ','
+                                                            + TypeStringOf_t<Scalar>::eval() + ','
+                                                            + '\'' + AS_STRING(OPERATOR) + '\'' + '>';
+    }
+
 private:
 
+	ExpressionTemplate_ScalarMultiplication_t operator=(const ExpressionTemplate_ScalarMultiplication_t&);
     Operand const &m_operand;
     Scalar m_scalar_operand;
 };
@@ -399,7 +438,7 @@ struct ExpressionTemplate_Multiplication_t
     {
         STATIC_ASSERT_IN_ENUM(LeftOperand::IS_EXPRESSION_TEMPLATE_I, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE_I, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
-        STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v), OPERAND_SCALAR_TYPES_ARE_EQUAL),
+        STATIC_ASSERT_IN_ENUM((TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
         STATIC_ASSERT_IN_ENUM((!HasNontrivialIntersectionAsSets_t<FreeDimIndexTypeList,UsedDimIndexTypeList>::V), FREE_INDICES_DONT_COLLIDE_WITH_USED)
     };
     // TODO: ensure there are no indices that occur 3+ times (?)
@@ -428,8 +467,15 @@ struct ExpressionTemplate_Multiplication_t
         return m_left_operand.uses_tensor(t) || m_right_operand.uses_tensor(t);
     }
 
+    static std::string type_as_string ()
+    {
+        return "ExpressionTemplate_Multiplication_t<" + TypeStringOf_t<LeftOperand>::eval() + ','
+                                                      + TypeStringOf_t<RightOperand>::eval() + '>';
+    }
+
 private:
 
+	ExpressionTemplate_Multiplication_t operator=(const ExpressionTemplate_Multiplication_t&);
     LeftOperand const &m_left_operand;
     RightOperand const &m_right_operand;
 };
@@ -488,8 +534,17 @@ public:
     template <typename OtherTensor>
     bool uses_tensor (OtherTensor const &t) const { return m_index_bundle.uses_tensor(t); }
 
+    static std::string type_as_string ()
+    {
+        return "ExpressionTemplate_IndexBundle_t<" + TypeStringOf_t<Operand>::eval() + ','
+                                                   + TypeStringOf_t<BundleAbstractIndexTypeList>::eval() + ','
+                                                   + TypeStringOf_t<ResultingFactorType>::eval() + ','
+                                                   + TypeStringOf_t<ResultingAbstractIndexType>::eval() + '>';
+    }
+
 private:
 
+	ExpressionTemplate_IndexBundle_t operator=(const ExpressionTemplate_IndexBundle_t&);
     IndexBundle m_index_bundle;
 };
 
@@ -552,8 +607,16 @@ public:
     template <typename OtherTensor>
     bool uses_tensor (OtherTensor const &t) const { return m_index_splitter.uses_tensor(t); }
 
+    static std::string type_as_string ()
+    {
+        return "ExpressionTemplate_IndexSplit_t<" + TypeStringOf_t<Operand>::eval() + ','
+                                                  + TypeStringOf_t<SourceAbstractIndexType>::eval() + ','
+                                                  + TypeStringOf_t<SplitAbstractIndexTypeList>::eval() + '>';
+    }
+
 private:
 
+	ExpressionTemplate_IndexSplit_t operator=(const ExpressionTemplate_IndexSplit_t&);
     IndexSplitter m_index_splitter;
 };
 

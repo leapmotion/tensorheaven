@@ -11,15 +11,13 @@
 #include "tenh/componentindex.hpp"
 #include "tenh/conceptual/abstractindex.hpp"
 #include "tenh/dimindex.hpp"
-// #include "tenh/innerproduct.hpp"
+#include "tenh/implementation/implementationof.hpp"
 #include "tenh/meta/typelist.hpp"
 #include "tenh/multiindex.hpp"
 
 namespace Tenh {
 
 // this file contains template metaprograms which assist in the construction and evaluation of expression templates
-
-template <typename Scalar, typename Space> struct ImplementationOf_t;
 
 // for this to work correctly on DimIndex_t types, the dimensions must be correct (i.e. the
 // primal/dual vector space checking must already be done).  TODO: redesign-away this caveat
@@ -84,20 +82,6 @@ public:
     typedef typename FreeFactorTypeListHelper_t<Unzipped>::T T;
 };
 
-/*
-template <typename HeadType>
-typename HeadType::Owner::Scalar summation_component_factor (MultiIndex_t<TypeList_t<HeadType> > const &s)
-{
-    return InnerProduct_t<typename HeadType::Owner,typename HeadType::Owner::Basis>::component(s.head());
-}
-
-template <typename HeadType, typename BodyTypeList>
-typename HeadType::Owner::Scalar summation_component_factor (MultiIndex_t<TypeList_t<HeadType,BodyTypeList> > const &s)
-{
-    return InnerProduct_t<typename HeadType::Owner,typename HeadType::Owner::Basis>::component(s.head()) * summation_component_factor(s.body());
-}
-*/
-
 template <typename AbstractIndexTypeList, typename SummedAbstractIndexTypeList, typename AbstractIndex>
 struct SummedAbstractIndexPairElementIndices_t
 {
@@ -114,7 +98,7 @@ struct SummedAbstractIndexPairElementIndices_t
 template <typename FirstFactor, typename SecondFactor>
 struct AssertThatSummationIsNaturalPairing_t
 {
-    enum { STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<FirstFactor,typename DualOf_f<SecondFactor>::T>::v), SUMMATION_MUST_BE_NATURAL_PAIRING) };
+    enum { STATIC_ASSERT_IN_ENUM((TypesAreEqual<FirstFactor,typename DualOf_f<SecondFactor>::T>::V), SUMMATION_MUST_BE_NATURAL_PAIRING) };
     static bool const V = true;
 };
 
@@ -228,7 +212,7 @@ public:
     {
         STATIC_ASSERT_IN_ENUM(LeftOperand::IS_EXPRESSION_TEMPLATE_I, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE_I, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
-        STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v), OPERAND_SCALAR_TYPES_ARE_EQUAL),
+        STATIC_ASSERT_IN_ENUM((TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
         STATIC_ASSERT_IN_ENUM((SummedDimIndexTypeList::LENGTH > 0), LENGTH_MUST_BE_POSITIVE),
         STATIC_ASSERT_IN_ENUM((AssertThatAllSummationsAreNaturalPairings_t<FactorTypeList,
                                                                            AbstractIndexTypeList,
@@ -273,7 +257,7 @@ struct BinarySummation_t<LeftOperand,RightOperand,FreeDimIndexTypeList,EmptyType
     {
         STATIC_ASSERT_IN_ENUM(LeftOperand::IS_EXPRESSION_TEMPLATE_I, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE_I, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
-        STATIC_ASSERT_IN_ENUM((Lvd::Meta::TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::v), OPERAND_SCALAR_TYPES_ARE_EQUAL),
+        STATIC_ASSERT_IN_ENUM((TypesAreEqual<typename LeftOperand::Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
         STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<FreeDimIndexTypeList,IsDimIndex_p>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES)
         // no summation, so no need to check naturality of pairings
     };
@@ -378,9 +362,10 @@ struct BundleIndexMap_t
     static T const V;
 };
 
+// TODO: the use of UseMemberArray is somewhat arbitrary -- should this be addressed somehow?
 template <typename Scalar, typename BundleDimIndexTypeList, typename ResultingFactorType, typename ResultingDimIndexType>
 typename BundleIndexMap_t<Scalar,BundleDimIndexTypeList,ResultingFactorType,ResultingDimIndexType>::T const BundleIndexMap_t<Scalar,BundleDimIndexTypeList,ResultingFactorType,ResultingDimIndexType>::V =
-    ImplementationOf_t<Scalar,ResultingFactorType>::template bundle_index_map<BundleDimIndexTypeList,ResultingDimIndexType>;
+    ImplementationOf_t<ResultingFactorType,Scalar,UseMemberArray>::template bundle_index_map<BundleDimIndexTypeList,ResultingDimIndexType>;
 
 // not an expression template, but just something that handles the bundled indices
 template <typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType>
@@ -415,7 +400,7 @@ struct IndexBundle_t
     typedef typename DimIndexTypeListOf_t<BundleFactorTypeList,
                                           BundleAbstractIndexTypeList>::T BundleDimIndexTypeList;
     typedef DimIndex_t<ResultingAbstractIndexType::SYMBOL,
-                       AS_VECTOR_SPACE(ResultingFactorType)::DIMENSION> ResultingDimIndexType;
+                       DimensionOf_f<ResultingFactorType>::V> ResultingDimIndexType;
 
     // zip the stuff so that the transformations can act on both the DimIndex_t and factor lists
     typedef typename Zip_t<TypeList_t<OperandFreeDimIndexTypeList,
@@ -469,6 +454,7 @@ struct IndexBundle_t
 
 private:
 
+	IndexBundle_t operator= (const IndexBundle_t&);
     Operand const &m_operand;
 };
 
@@ -494,13 +480,13 @@ struct IndexSplitter_t
     enum
     {
         // TODO: assert that SourceFactor can actually be split (can be embedded into a tensor space)
-        STATIC_ASSERT_IN_ENUM__UNIQUE((AS_TENSOR_PRODUCT(typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_VECTOR_SPACES(SourceFactor)::TensorProductOfVectorSpaces)::FactorTypeList::LENGTH == SplitAbstractIndexTypeList::LENGTH), MUST_HAVE_EQUAL_LENGTHS, FREEFACTORTYPELIST)
+        STATIC_ASSERT_IN_ENUM__UNIQUE((FactorTypeListOf_f<typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_VECTOR_SPACES(SourceFactor)::TensorProductOfVectorSpaces>::T::LENGTH == SplitAbstractIndexTypeList::LENGTH), MUST_HAVE_EQUAL_LENGTHS, FREEFACTORTYPELIST)
     };
 
     typedef typename ConcatenationOfTypeLists_t<
         typename Operand::FreeFactorTypeList::template LeadingTypeList_t<SOURCE_INDEX_TYPE_INDEX>::T,
         typename ConcatenationOfTypeLists_t<
-            typename AS_TENSOR_PRODUCT(typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_VECTOR_SPACES(SourceFactor)::TensorProductOfVectorSpaces)::FactorTypeList,
+            typename FactorTypeListOf_f<typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_VECTOR_SPACES(SourceFactor)::TensorProductOfVectorSpaces>::T,
             typename Operand::FreeFactorTypeList::template TrailingTypeList_t<SOURCE_INDEX_TYPE_INDEX+1>::T
             >::T
         >::T FactorTypeList;
@@ -524,11 +510,13 @@ struct IndexSplitter_t
 
     Scalar operator [] (MultiIndex const &m) const
     {
-        typedef typename DimIndexTypeListOf_t<typename AS_TENSOR_PRODUCT(typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_VECTOR_SPACES(SourceFactor)::TensorProductOfVectorSpaces)::FactorTypeList,
+        typedef typename DimIndexTypeListOf_t<typename FactorTypeListOf_f<typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_VECTOR_SPACES(SourceFactor)::TensorProductOfVectorSpaces>::T,
                                               SplitAbstractIndexTypeList>::T SourceFactorDimIndexTypeList;
-        typedef ComponentIndex_t<AS_VECTOR_SPACE(SourceFactor)::DIMENSION> SourceFactorComponentIndex;
+        typedef ComponentIndex_t<DimensionOf_f<SourceFactor>::V> SourceFactorComponentIndex;
         typedef MultiIndex_t<SourceFactorDimIndexTypeList> SourceFactorMultiIndex;
-        typedef ImplementationOf_t<Scalar,SourceFactor> ImplementationOfSourceFactor;
+        // TODO: the use of UseMemberArray here is arbitrary because it's just used to access a
+        // static method.  figure out if this is a problem
+        typedef ImplementationOf_t<SourceFactor,Scalar,UseMemberArray> ImplementationOfSourceFactor;
 
         SourceFactorMultiIndex s(m.template range<SOURCE_INDEX_TYPE_INDEX,SOURCE_INDEX_TYPE_INDEX+SplitAbstractIndexTypeList::LENGTH>());
         if (ImplementationOfSourceFactor::component_is_immutable_zero(s))
@@ -546,6 +534,7 @@ struct IndexSplitter_t
 
 private:
 
+	IndexSplitter_t operator=(const IndexSplitter_t&);
     Operand const &m_operand;
 };
 

@@ -25,9 +25,9 @@ void SVD_of_Tensor2 (Tensor2_t<Factor1,Factor2,Basis,Derived> const &t,
 {
     typedef Eigen::Matrix<typename Factor1::Scalar,Factor1::DIM,Factor2::DIM,Eigen::RowMajor> EigenMatrix;
     Eigen::JacobiSVD<EigenMatrix> svd(euclideanly_embedded_EigenMatrix_from(t).jacobiSvd(Eigen::ComputeFullU|Eigen::ComputeFullV));
-    memcpy(u.data_pointer(), &svd.matrixU()(0,0), u.data_size_in_bytes());
-    memcpy(s.data_pointer(), &svd.singularValues()(0,0), s.data_size_in_bytes());
-    memcpy(v.data_pointer(), &svd.matrixV()(0,0), v.data_size_in_bytes());
+    memcpy(u.pointer_to_allocation(), &svd.matrixU()(0,0), u.allocation_size_in_bytes());
+    memcpy(s.pointer_to_allocation(), &svd.singularValues()(0,0), s.allocation_size_in_bytes());
+    memcpy(v.pointer_to_allocation(), &svd.matrixV()(0,0), v.allocation_size_in_bytes());
 }
 
 // SVD with u matrix but no v matrix; the singular values are in s.
@@ -38,8 +38,8 @@ void SVD_of_Tensor2 (Tensor2_t<Factor1,Factor2,Basis,Derived> const &t,
 {
     typedef Eigen::Matrix<typename Factor1::Scalar,Factor1::DIM,Factor2::DIM,Eigen::RowMajor> EigenMatrix;
     Eigen::JacobiSVD<EigenMatrix> svd(euclideanly_embedded_EigenMatrix_from(t).jacobiSvd(Eigen::ComputeFullU));
-    memcpy(u.data_pointer(), &svd.matrixU()(0,0), u.data_size_in_bytes());
-    memcpy(s.data_pointer(), &svd.singularValues()(0,0), s.data_size_in_bytes());
+    memcpy(u.pointer_to_allocation(), &svd.matrixU()(0,0), u.allocation_size_in_bytes());
+    memcpy(s.pointer_to_allocation(), &svd.singularValues()(0,0), s.allocation_size_in_bytes());
 }
 
 // SVD with v matrix but no u matrix; the singular values are in s.
@@ -50,8 +50,8 @@ void SVD_of_Tensor2 (Tensor2_t<Factor1,Factor2,Basis,Derived> const &t,
 {
     typedef Eigen::Matrix<typename Factor1::Scalar,Factor1::DIM,Factor2::DIM,Eigen::RowMajor> EigenMatrix;
     Eigen::JacobiSVD<EigenMatrix> svd(euclideanly_embedded_EigenMatrix_from(t).jacobiSvd(Eigen::ComputeFullU));
-    memcpy(s.data_pointer(), &svd.singularValues()(0,0), s.data_size_in_bytes());
-    memcpy(v.data_pointer(), &svd.matrixV()(0,0), v.data_size_in_bytes());
+    memcpy(s.pointer_to_allocation(), &svd.singularValues()(0,0), s.allocation_size_in_bytes());
+    memcpy(v.pointer_to_allocation(), &svd.matrixV()(0,0), v.allocation_size_in_bytes());
 }
 
 // SVD with no u or v matrix; the singular values are in s.
@@ -61,7 +61,7 @@ void SVD_of_Tensor2 (Tensor2_t<Factor1,Factor2,Basis,Derived> const &t,
 {
     typedef Eigen::Matrix<typename Factor1::Scalar,Factor1::DIM,Factor2::DIM,Eigen::RowMajor> EigenMatrix;
     Eigen::JacobiSVD<EigenMatrix> svd(euclideanly_embedded_EigenMatrix_from(t).jacobiSvd());
-    memcpy(s.data_pointer(), &svd.singularValues()(0,0), s.data_size_in_bytes());
+    memcpy(s.pointer_to_allocation(), &svd.singularValues()(0,0), s.allocation_size_in_bytes());
 }
 
 } // end of namespace Tenh

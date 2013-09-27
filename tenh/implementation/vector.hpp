@@ -8,28 +8,36 @@
 
 #include "tenh/core.hpp"
 
-#include "tenh/array.hpp"
 #include "tenh/conceptual/vectorspace.hpp"
+#include "tenh/implementation/implementationof.hpp"
 #include "tenh/interface/vector.hpp"
 
 namespace Tenh {
 
-template <typename Scalar, typename Space> struct ImplementationOf_t;
-
-template <typename Scalar_, typename VectorSpace_, typename Basis_>
-struct ImplementationOf_t<Scalar_,BasedVectorSpace_c<VectorSpace_,Basis_> >
+template <typename VectorSpace_, typename Basis_, typename Scalar_, typename UseArrayType_>
+struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_>
     :
-    public Vector_i<ImplementationOf_t<Scalar_,BasedVectorSpace_c<VectorSpace_,Basis_> >,
+    public Vector_i<ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_>,
                     Scalar_,
-                    BasedVectorSpace_c<VectorSpace_,Basis_> >,
-    // Array_t is privately inherited because it is an implementation detail
-    private Array_t<Scalar_,UniqueVectorSpaceStructureOf_f<VectorSpace_>::T::DIMENSION>
+                    BasedVectorSpace_c<VectorSpace_,Basis_>,
+                    ComponentsAreImmutable_f<UseArrayType_>::V>,
+    // privately inherited because it is an implementation detail
+    private ArrayStorage_f<Scalar_,
+                           DimensionOf_f<VectorSpace_>::V,
+                           UseArrayType_,
+                           ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_> >::T
 {
-    typedef Vector_i<ImplementationOf_t<Scalar_,BasedVectorSpace_c<VectorSpace_,Basis_> >,
+    typedef Vector_i<ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_>,
                      Scalar_,
-                     BasedVectorSpace_c<VectorSpace_,Basis_> > Parent_Vector_i;
-    typedef Array_t<Scalar_,AS_VECTOR_SPACE(VectorSpace_)::DIMENSION> Parent_Array_t;
+                     BasedVectorSpace_c<VectorSpace_,Basis_>,
+                     ComponentsAreImmutable_f<UseArrayType_>::V> Parent_Vector_i;
+    typedef typename ArrayStorage_f<Scalar_,
+                                    DimensionOf_f<VectorSpace_>::V,
+                                    UseArrayType_,
+                                    ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_> >::T Parent_Array_i;
 
+    typedef BasedVectorSpace_c<VectorSpace_,Basis_> Concept;
+    typedef UseArrayType_ UseArrayType;
     typedef typename Parent_Vector_i::Derived Derived;
     typedef typename Parent_Vector_i::Scalar Scalar;
     typedef typename Parent_Vector_i::BasedVectorSpace BasedVectorSpace;
@@ -37,37 +45,104 @@ struct ImplementationOf_t<Scalar_,BasedVectorSpace_c<VectorSpace_,Basis_> >
     typedef typename Parent_Vector_i::ComponentIndex ComponentIndex;
     typedef typename Parent_Vector_i::MultiIndex MultiIndex;
 
+    using Parent_Array_i::COMPONENTS_ARE_IMMUTABLE;
+    typedef typename Parent_Array_i::ComponentAccessConstReturnType ComponentAccessConstReturnType;
+    typedef typename Parent_Array_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
+
     typedef typename DualOf_f<ImplementationOf_t>::T Dual; // relies on the template specialization below
 
-    explicit ImplementationOf_t (WithoutInitialization const &w) : Parent_Array_t(w) { }
-    // probably only useful for zero element (because this is basis-dependent)
-    explicit ImplementationOf_t (Scalar const &fill_with) : Parent_Array_t(fill_with) { }
-    ImplementationOf_t (Scalar const &x0, Scalar const &x1) : Parent_Array_t(x0, x1) { }
-    ImplementationOf_t (Scalar const &x0, Scalar const &x1, Scalar const &x2) : Parent_Array_t(x0, x1, x2) { }
-    ImplementationOf_t (Scalar const &x0, Scalar const &x1, Scalar const &x2, Scalar const &x3) : Parent_Array_t(x0, x1, x2, x3) { }
+    explicit ImplementationOf_t (WithoutInitialization const &w) : Parent_Array_i(w) { }
 
-    using Parent_Vector_i::as_derived;
-    using Parent_Array_t::operator[];
-    using Parent_Array_t::data_size_in_bytes;
-    using Parent_Array_t::data_pointer;
+    // only use these if UseMemberArray is specified
+
+    // probably only useful for zero element (because this is basis-dependent)
+    explicit ImplementationOf_t (Scalar const &fill_with)
+        :
+        Parent_Array_i(fill_with)
+    {
+        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemberArray);
+    }
+    ImplementationOf_t (Scalar const &x0, Scalar const &x1)
+        :
+        Parent_Array_i(x0, x1)
+    {
+        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemberArray);
+    }
+    ImplementationOf_t (Scalar const &x0, Scalar const &x1, Scalar const &x2)
+        :
+        Parent_Array_i(x0, x1, x2)
+    {
+        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemberArray);
+    }
+    ImplementationOf_t (Scalar const &x0, Scalar const &x1, Scalar const &x2, Scalar const &x3)
+        :
+        Parent_Array_i(x0, x1, x2, x3)
+    {
+        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemberArray);
+    }
+
+    // only use these if UsePreallocatedArray is specified
+
+    explicit ImplementationOf_t (Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+        :
+        Parent_Array_i(pointer_to_allocation, check_pointer)
+    {
+        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
+    }
+    ImplementationOf_t (Scalar const &fill_with,
+                        Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+        :
+        Parent_Array_i(fill_with, pointer_to_allocation, check_pointer)
+    {
+        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
+    }
+    ImplementationOf_t (Scalar const &x0, Scalar const &x1,
+                        Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+        :
+        Parent_Array_i(x0, x1, pointer_to_allocation, check_pointer)
+    {
+        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
+    }
+    ImplementationOf_t (Scalar const &x0, Scalar const &x1, Scalar const &x2,
+                        Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+        :
+        Parent_Array_i(x0, x1, x2, pointer_to_allocation, check_pointer)
+    {
+        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
+    }
+    ImplementationOf_t (Scalar const &x0, Scalar const &x1, Scalar const &x2, Scalar const &x3,
+                        Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+        :
+        Parent_Array_i(x0, x1, x2, x3, pointer_to_allocation, check_pointer)
+    {
+        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
+    }
+
+    // only use this if UseImmutableArray_t<...> is specified or if the vector space is 0-dimensional
+    ImplementationOf_t ()
+        :
+        Parent_Array_i(WithoutInitialization()) // sort of meaningless constructor
+    {
+        STATIC_ASSERT(IsUseImmutableArray_f<UseArrayType_>::V || DIM == 0, MUST_BE_USE_IMMUTABLE_ARRAY_OR_BE_ZERO_DIMENSIONAL);
+    }
+
+    using Parent_Array_i::as_derived;
+    using Parent_Array_i::operator[];
+    using Parent_Array_i::allocation_size_in_bytes;
+    using Parent_Array_i::pointer_to_allocation;
 
     static std::string type_as_string ()
     {
-        return "ImplementationOf_t<" + TypeStringOf_t<Scalar>::eval() + ',' + TypeStringOf_t<BasedVectorSpace>::eval() + '>';
+        return "ImplementationOf_t<" + TypeStringOf_t<BasedVectorSpace>::eval() + ','
+                                     + TypeStringOf_t<Scalar>::eval() + ','
+                                     + TypeStringOf_t<UseArrayType_>::eval() + '>';
     }
-
-private:
-
-    // this has no definition, and is designed to generate a compiler error if used (use the one accepting WithoutInitialization instead).
-    // TODO: may need to make this public to allow 0-dimensional vectors, adding a static assert to check that it's actually 0-dimensional
-    // and not being used improperly.
-    ImplementationOf_t ();
 };
 
-template <typename Scalar, typename VectorSpace, typename Basis>
-struct DualOf_f<ImplementationOf_t<Scalar,BasedVectorSpace_c<VectorSpace,Basis> > >
+template <typename VectorSpace_, typename Basis_, typename Scalar_, typename UseArrayType_>
+struct DualOf_f<ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_> >
 {
-    typedef ImplementationOf_t<Scalar,typename DualOf_f<BasedVectorSpace_c<VectorSpace,Basis> >::T> T;
+    typedef ImplementationOf_t<typename DualOf_f<BasedVectorSpace_c<VectorSpace_,Basis_> >::T,Scalar_,typename DualOf_f<UseArrayType_>::T> T;
 };
 
 } // end of namespace Tenh
