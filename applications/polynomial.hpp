@@ -10,13 +10,14 @@
 
 #include <iostream>
 
-#include "tenh/meta/typelist_utility.hpp"
 #include "tenh/conceptual/symmetricpower.hpp"
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/conceptual/vectorspace.hpp"
 #include "tenh/implementation/sym.hpp"
 #include "tenh/implementation/vector.hpp"
 #include "tenh/implementation/vee.hpp"
+#include "tenh/meta/typelist_utility.hpp"
+#include "tenh/multiindex.hpp"
 
 using Tenh::Uint32;
 
@@ -85,6 +86,7 @@ private:
         typedef Tenh::SymmetricPowerOfBasedVectorSpace_c<Term_Degree + DEGREE_,typename Tenh::DualOf_f<VectorSpace>::T> ResultingTermType;
         typedef typename Tenh::TensorPowerOfBasedVectorSpace_f<Term_Degree + DEGREE_,typename Tenh::DualOf_f<VectorSpace>::T>::T ResultingTensorPowerType;
         typedef typename Tenh::Sym_f<Term_Degree + DEGREE_,typename Tenh::DualOf_f<VectorSpace>::T,Scalar_>::T SymmetrizeType;
+        typedef Tenh::ImplementationOf_t<ResultingTermType,Scalar_> ResultType;
 
         Tenh::ImplementationOf_t<ResultingTermType,Scalar_> result(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
         SymmetrizeType symmetrize;
@@ -95,6 +97,14 @@ private:
         Tenh::AbstractIndex_c<'J'> J;
         Tenh::AbstractIndex_c<'K'> K;
         result(i) = (m_term(j).split(j,J)*monomial(k).split(k,K)).bundle(J|K,ResultingTensorPowerType(),I)*symmetrize(i|I);
+
+        for (typename ResultType::ComponentIndex it; it.is_not_at_end(); ++it)
+        {
+            typename ResultType::MultiIndex m = ResultType::template bundle_index_map<typename ResultType::MultiIndex::IndexTypeList, typename ResultType::ComponentIndex>(it);
+            result[it] /= Tenh::Factorial_t<Term_Degree + DEGREE_>::V / (Tenh::MultiIndexMultiplicity_t<typename ResultType::MultiIndex>::eval(m));
+        }
+
+//        std::cout << std::endl << m_term << std::endl << monomial << std::endl << result << std::endl << (m_term(j).split(j,J)*monomial(k).split(k,K)).bundle(J|K,ResultingTensorPowerType(),I) << std::endl;
 
         return MultivariatePolynomial<Term_Degree + DEGREE_, DIMENSION_, Id_, Scalar_>(result, m_body.template monomial_multiply<Term_Degree>(monomial));
     }
@@ -365,28 +375,30 @@ struct VariableStringComputer<DEG,3,Id,Scalar>
 };
 
 template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar>
-std::ostream &operator << (std::ostream &out, MultivariatePolynomial<DEG,DIM,Id,Scalar> const &m)
+std::ostream &operator << (std::ostream &out, MultivariatePolynomial<DEG,DIM,Id,Scalar> const &poly)
 {
-    typedef typename MultivariatePolynomial<DEG,DIM,Id,Scalar>::Sym::ComponentIndex ComponentIndex;
-    typedef typename MultivariatePolynomial<DEG,DIM,Id,Scalar>::Sym::MultiIndex MultiIndex;
+    typedef MultivariatePolynomial<DEG,DIM,Id,Scalar> PolyType;
+    typedef typename PolyType::Sym::ComponentIndex ComponentIndex;
+    typedef typename PolyType::Sym::MultiIndex MultiIndex;
     for (ComponentIndex it; it.is_not_at_end(); ++it)
     {
-        Scalar coeff = m.m_term[it];
+        MultiIndex m = PolyType::Sym::template bundle_index_map<typename MultiIndex::IndexTypeList, ComponentIndex>(it);
+        Scalar coeff = poly.m_term[it] * Tenh::Factorial_t<DEG>::V / (Tenh::MultiIndexMultiplicity_t<MultiIndex>::eval(m));
         if (coeff == Scalar(1))
         {
-            out << VariableStringComputer<DEG,DIM,Id,Scalar>::compute(MultivariatePolynomial<DEG,DIM,Id,Scalar>::Sym::template bundle_index_map<typename MultiIndex::IndexTypeList, ComponentIndex>(it))
+            out << VariableStringComputer<DEG,DIM,Id,Scalar>::compute(m)
                 << " + ";
         }
         else if (coeff != Scalar(0))
         {
             out << coeff
                 << "*"
-                <<  VariableStringComputer<DEG,DIM,Id,Scalar>::compute(MultivariatePolynomial<DEG,DIM,Id,Scalar>::Sym::template bundle_index_map<typename MultiIndex::IndexTypeList, ComponentIndex>(it))
+                <<  VariableStringComputer<DEG,DIM,Id,Scalar>::compute(m)
                 << " + ";
         }
     }
 
-    return out << m.m_body;
+    return out << poly.m_body;
 }
 
 template<Uint32 DIM, typename Id, typename Scalar>
