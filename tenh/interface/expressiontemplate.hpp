@@ -26,6 +26,9 @@ struct ExpressionTemplate_IndexBundle_t;
 template <typename Operand, typename SourceIndexType, typename SplitIndexTypeList>
 struct ExpressionTemplate_IndexSplit_t;
 
+template <typename Operand, typename SourceAbstractIndexType, typename SplitAbstractIndexType>
+struct ExpressionTemplate_IndexSplitToIndex_t;
+
 template <typename Operand>
 struct ExpressionTemplate_Eval_t;
 
@@ -102,9 +105,13 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
         STATIC_ASSERT(HasBasedVectorSpaceStructure_f<ResultingFactorType>::V, MUST_BE_BASED_VECTOR_SPACE);
         return ExpressionTemplate_IndexBundle_t<Derived,TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList>,ResultingFactorType,ResultingAbstractIndexType>(as_derived());
     }
-    // method for "splitting" a tensor index into a separate indices.
-    // a(P|Q).split(P,i|j).split(Q,k|l) -- split the tensor indices P and Q into the pairs i,j and k,l
+    // method for "splitting" the index of something that is "embeddable
+    // as tensor" into a separate indices (a multiindex).  for example:
+    //   a(P|Q).split(P,i|j).split(Q,k|l) 
+    // splits the tensor indices P and Q into the pairs i,j and k,l
     // so that the expression now has the four free indices i,j,k,l.
+    // essentially this embeds the indexed factor into a particular 
+    // tensor product, and forgets the symmetries of the indexed factor.
     template <typename SourceAbstractIndexType, typename AbstractIndexHeadType, typename AbstractIndexBodyTypeList>
     ExpressionTemplate_IndexSplit_t<Derived,SourceAbstractIndexType,TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> > split (
         SourceAbstractIndexType const &,
@@ -115,6 +122,23 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
         // make sure that the index type list actually contains AbstractIndex_c types
         STATIC_ASSERT((EachTypeSatisfies_f<TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList>, IsAbstractIndex_p>::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
         return ExpressionTemplate_IndexSplit_t<Derived,SourceAbstractIndexType,TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> >(as_derived());
+    }
+    // method for "splitting" the index of something that is "embeddable
+    // as tensor" into the vector index of the tensor product.  for example,
+    // if a is an element of the kth symmetric power of vector space X, then
+    //   a(P).split(P,Q)
+    // is an element of the kth [nonsymmetric] tensor power of vector space X,
+    // indexed by the single index Q.  essentially this embeds the indexed 
+    // factor into a particular tensor product, and forgets the symmetries of
+    // the indexed factor.
+    template <typename SourceAbstractIndexType, char SPLIT_ABSTRACT_INDEX_SYMBOL_>
+    ExpressionTemplate_IndexSplitToIndex_t<Derived,SourceAbstractIndexType,AbstractIndex_c<SPLIT_ABSTRACT_INDEX_SYMBOL_> > split (
+        SourceAbstractIndexType const &,
+        AbstractIndex_c<SPLIT_ABSTRACT_INDEX_SYMBOL_> const &) const
+    {
+        // make sure that SourceAbstractIndexType actually is one
+        STATIC_ASSERT(IsAbstractIndex_f<SourceAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX);
+        return ExpressionTemplate_IndexSplitToIndex_t<Derived,SourceAbstractIndexType,AbstractIndex_c<SPLIT_ABSTRACT_INDEX_SYMBOL_> >(as_derived());
     }
     // method for doing an intermediate evaluation of an expression template to avoid aliasing
     ExpressionTemplate_Eval_t<Derived> eval () const

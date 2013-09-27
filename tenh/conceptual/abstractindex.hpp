@@ -60,6 +60,15 @@ typename ConcatenationOfTypeLists_t<TypeList_t<HeadType,BodyTypeList>,TypeList_t
     return typename ConcatenationOfTypeLists_t<TypeList_t<HeadType,BodyTypeList>,TypeList_t<AbstractIndex_c<SYMBOL> > >::T();
 }
 
+// base case
+template <char SYMBOL>
+TypeList_t<AbstractIndex_c<SYMBOL> > operator | (
+    EmptyTypeList const &,
+    AbstractIndex_c<SYMBOL> const &)
+{
+    return TypeList_t<AbstractIndex_c<SYMBOL> >();
+}
+
 template <char HEAD_SYMBOL, typename BodyAbstractIndexTypeList>
 std::string symbol_string_of_abstract_index_type_list (TypeList_t<AbstractIndex_c<HEAD_SYMBOL>,BodyAbstractIndexTypeList> const &)
 {

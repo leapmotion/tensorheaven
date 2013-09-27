@@ -280,6 +280,84 @@ void test_alt ()
     std::cout << '\n';
 }
 
+template <typename Scalar_, Uint32 DIMENSION_>
+void test_split_index_to_index_1st_symmetric_power ()
+{
+    std::cout << "test_split_index_to_index_1st_symmetric_power<" + TypeStringOf_t<Scalar_>::eval() + ',' + AS_STRING(DIMENSION_) + ">\n";
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,DIMENSION_,X>,Basis_c<X> > BasedVectorSpace;
+    typedef SymmetricPowerOfBasedVectorSpace_c<1,BasedVectorSpace> SymmetricPower;
+    typedef typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(SymmetricPower)::TensorProductOfBasedVectorSpaces TensorPower;
+    typedef ImplementationOf_t<SymmetricPower,float> S;
+    S s(Static<WithoutInitialization>::SINGLETON);
+    for (typename S::ComponentIndex i; i.is_not_at_end(); ++i)
+        s[i] = i.value() + 1;
+    std::cout << FORMAT_VALUE(s) << '\n';
+    AbstractIndex_c<'i'> i;
+    AbstractIndex_c<'j'> j;
+    AbstractIndex_c<'k'> k;
+    std::cout << FORMAT_VALUE(s(i).split(i,EmptyTypeList()|k)) << '\n';
+    std::cout << FORMAT_VALUE(s(i).split(i,j)) << '\n';
+    std::cout << FORMAT_VALUE(s(i).split(i,j).split(j,EmptyTypeList()|k)) << '\n';
+    std::cout << "the following should be exactly zero\n";
+    std::cout << FORMAT_VALUE(s(i).split(i,EmptyTypeList()|k) - s(i).split(i,j).split(j,EmptyTypeList()|k)) << '\n';
+    std::cout << "the following should be exactly zero\n";
+    std::cout << FORMAT_VALUE(s(i).split(i,j) - s(i).split(i,EmptyTypeList()|k).bundle(EmptyTypeList()|k,TensorPower(),j)) << '\n';
+    std::cout << '\n';
+}
+
+template <typename Scalar_, Uint32 DIMENSION_>
+void test_split_index_to_index_2nd_symmetric_power ()
+{
+    std::cout << "test_split_index_to_index_2nd_symmetric_power<" + TypeStringOf_t<Scalar_>::eval() + ',' + AS_STRING(DIMENSION_) + ">\n";
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,DIMENSION_,X>,Basis_c<X> > BasedVectorSpace;
+    typedef SymmetricPowerOfBasedVectorSpace_c<2,BasedVectorSpace> SymmetricPower;
+    typedef typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(SymmetricPower)::TensorProductOfBasedVectorSpaces TensorPower;
+    typedef ImplementationOf_t<SymmetricPower,float> S;
+    S s(Static<WithoutInitialization>::SINGLETON);
+    for (typename S::ComponentIndex i; i.is_not_at_end(); ++i)
+        s[i] = i.value() + 1;
+    std::cout << FORMAT_VALUE(s) << '\n';
+    AbstractIndex_c<'i'> i;
+    AbstractIndex_c<'j'> j;
+    AbstractIndex_c<'k'> k;
+    AbstractIndex_c<'l'> l;
+    std::cout << FORMAT_VALUE(s(i).split(i,k|l)) << '\n';
+    std::cout << FORMAT_VALUE(s(i).split(i,j)) << '\n';
+    std::cout << FORMAT_VALUE(s(i).split(i,j).split(j,k|l)) << '\n';
+    std::cout << "the following should be exactly zero\n";
+    std::cout << FORMAT_VALUE(s(i).split(i,k|l) - s(i).split(i,j).split(j,k|l)) << '\n';
+    std::cout << "the following should be exactly zero\n";
+    std::cout << FORMAT_VALUE(s(i).split(i,j) - s(i).split(i,k|l).bundle(k|l,TensorPower(),j)) << '\n';
+    std::cout << '\n';
+}
+
+template <typename Scalar_, Uint32 DIMENSION_>
+void test_split_index_to_index_3rd_symmetric_power ()
+{
+    std::cout << "test_split_index_to_index_3rd_symmetric_power<" + TypeStringOf_t<Scalar_>::eval() + ',' + AS_STRING(DIMENSION_) + ">\n";
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,DIMENSION_,X>,Basis_c<X> > BasedVectorSpace;
+    typedef SymmetricPowerOfBasedVectorSpace_c<3,BasedVectorSpace> SymmetricPower;
+    typedef typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(SymmetricPower)::TensorProductOfBasedVectorSpaces TensorPower;
+    typedef ImplementationOf_t<SymmetricPower,float> S;
+    S s(Static<WithoutInitialization>::SINGLETON);
+    for (typename S::ComponentIndex i; i.is_not_at_end(); ++i)
+        s[i] = i.value() + 1;
+    std::cout << FORMAT_VALUE(s) << '\n';
+    AbstractIndex_c<'i'> i;
+    AbstractIndex_c<'j'> j;
+    AbstractIndex_c<'k'> k;
+    AbstractIndex_c<'l'> l;
+    AbstractIndex_c<'m'> m;
+    std::cout << FORMAT_VALUE(s(i).split(i,k|l|m)) << '\n';
+    std::cout << FORMAT_VALUE(s(i).split(i,j)) << '\n';
+    std::cout << FORMAT_VALUE(s(i).split(i,j).split(j,k|l|m)) << '\n';
+    std::cout << "the following should be exactly zero\n";
+    std::cout << FORMAT_VALUE(s(i).split(i,k|l|m) - s(i).split(i,j).split(j,k|l|m)) << '\n';
+    std::cout << "the following should be exactly zero\n";
+    std::cout << FORMAT_VALUE(s(i).split(i,j) - s(i).split(i,k|l|m).bundle(k|l|m,TensorPower(),j)) << '\n';
+    std::cout << '\n';
+}
+
 int main (int, char **)
 {
     {
@@ -1380,6 +1458,11 @@ int main (int, char **)
         std::cout << FORMAT_VALUE(t_inverse(i|j)*t(j|k)) << '\n';
         std::cout << '\n';
     }
+    
+    test_split_index_to_index_1st_symmetric_power<float,3>();
+    test_split_index_to_index_2nd_symmetric_power<float,3>();
+    test_split_index_to_index_3rd_symmetric_power<float,3>();
+    
 
     {
         std::cout << "Polynomials in 0 dimensions." << std::endl;

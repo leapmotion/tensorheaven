@@ -111,7 +111,8 @@ struct ExpressionTemplate_IndexedObject_t
 
 private:
 
-	ExpressionTemplate_IndexedObject_t operator=(const ExpressionTemplate_IndexedObject_t&);
+    void operator = (ExpressionTemplate_IndexedObject_t const &);
+
     Object const &m_object;
 };
 
@@ -312,7 +313,8 @@ struct ExpressionTemplate_Addition_t
 
 private:
 
-	ExpressionTemplate_Addition_t operator=(const ExpressionTemplate_Addition_t&);
+    void operator = (ExpressionTemplate_Addition_t const &);
+
     LeftOperand const &m_left_operand;
     RightOperand const &m_right_operand;
 };
@@ -390,7 +392,8 @@ struct ExpressionTemplate_ScalarMultiplication_t
 
 private:
 
-	ExpressionTemplate_ScalarMultiplication_t operator=(const ExpressionTemplate_ScalarMultiplication_t&);
+    void operator = (ExpressionTemplate_ScalarMultiplication_t const &);
+
     Operand const &m_operand;
     Scalar m_scalar_operand;
 };
@@ -475,7 +478,8 @@ struct ExpressionTemplate_Multiplication_t
 
 private:
 
-	ExpressionTemplate_Multiplication_t operator=(const ExpressionTemplate_Multiplication_t&);
+    void operator = (ExpressionTemplate_Multiplication_t const &);
+
     LeftOperand const &m_left_operand;
     RightOperand const &m_right_operand;
 };
@@ -517,7 +521,10 @@ private:
 
 public:
 
-    ExpressionTemplate_IndexBundle_t (Operand const &operand) : Parent(m_index_bundle), m_index_bundle(operand) { }
+    // it's not great that m_bundler is being passed to Parent before
+    // m_bundler is constructed, but Parent only stores a reference
+    // to m_bundler, so it doesn't really matter.
+    ExpressionTemplate_IndexBundle_t (Operand const &operand) : Parent(m_bundler), m_bundler(operand) { }
 
     operator Scalar () const
     {
@@ -528,11 +535,11 @@ public:
     // read-only, because it doesn't make sense to assign to an index-bundled expression (which is possibly also a summation).
     Scalar operator [] (MultiIndex const &m) const
     {
-        return UnarySummation_t<IndexBundle,typename IndexBundle::DimIndexTypeList,SummedDimIndexTypeList>::eval(m_index_bundle, m);
+        return UnarySummation_t<IndexBundle,typename IndexBundle::DimIndexTypeList,SummedDimIndexTypeList>::eval(m_bundler, m);
     }
 
     template <typename OtherTensor>
-    bool uses_tensor (OtherTensor const &t) const { return m_index_bundle.uses_tensor(t); }
+    bool uses_tensor (OtherTensor const &t) const { return m_bundler.uses_tensor(t); }
 
     static std::string type_as_string ()
     {
@@ -544,8 +551,9 @@ public:
 
 private:
 
-	ExpressionTemplate_IndexBundle_t operator=(const ExpressionTemplate_IndexBundle_t&);
-    IndexBundle m_index_bundle;
+    void operator = (ExpressionTemplate_IndexBundle_t const &);
+
+    IndexBundle m_bundler;
 };
 
 // ////////////////////////////////////////////////////////////////////////////
@@ -590,7 +598,10 @@ private:
 
 public:
 
-    ExpressionTemplate_IndexSplit_t (Operand const &operand) : Parent(m_index_splitter), m_index_splitter(operand) { }
+    // it's not great that m_splitter is being passed to Parent before
+    // m_splitter is constructed, but Parent only stores a reference
+    // to m_splitter, so it doesn't really matter.
+    ExpressionTemplate_IndexSplit_t (Operand const &operand) : Parent(m_splitter), m_splitter(operand) { }
 
     operator Scalar () const
     {
@@ -601,11 +612,11 @@ public:
     // read-only, because it doesn't make sense to assign to an index-bundled expression (which is possibly also a summation).
     Scalar operator [] (MultiIndex const &m) const
     {
-        return UnarySummation_t<IndexSplitter,typename IndexSplitter::DimIndexTypeList,SummedDimIndexTypeList>::eval(m_index_splitter, m);
+        return UnarySummation_t<IndexSplitter,typename IndexSplitter::DimIndexTypeList,SummedDimIndexTypeList>::eval(m_splitter, m);
     }
 
     template <typename OtherTensor>
-    bool uses_tensor (OtherTensor const &t) const { return m_index_splitter.uses_tensor(t); }
+    bool uses_tensor (OtherTensor const &t) const { return m_splitter.uses_tensor(t); }
 
     static std::string type_as_string ()
     {
@@ -616,8 +627,86 @@ public:
 
 private:
 
-	ExpressionTemplate_IndexSplit_t operator=(const ExpressionTemplate_IndexSplit_t&);
-    IndexSplitter m_index_splitter;
+    void operator = (ExpressionTemplate_IndexSplit_t const &);
+
+    IndexSplitter m_splitter;
+};
+
+// ////////////////////////////////////////////////////////////////////////////
+// splitting a single vector index into a a single vector index for larger space
+// ////////////////////////////////////////////////////////////////////////////
+
+// TODO: this could probably combine with ExpressionTemplate_IndexSplit_t
+template <typename Operand, typename SourceAbstractIndexType, typename SplitAbstractIndexType>
+struct ExpressionTemplate_IndexSplitToIndex_t
+    :
+    public ExpressionTemplate_IndexedObject_t<IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>,
+                                              typename IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>::FactorTypeList,
+                                              typename IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>::DimIndexTypeList,
+                                              typename SummedIndexTypeList_t<typename IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>::DimIndexTypeList>::T,
+                                              FORCE_CONST,
+                                              CHECK_FOR_ALIASING, // irrelevant value
+                                              ExpressionTemplate_IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType> >
+{
+    enum
+    {
+        STATIC_ASSERT_IN_ENUM(IsAbstractIndex_f<SourceAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX),
+    };
+
+    typedef ExpressionTemplate_IndexedObject_t<IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>,
+                                               typename IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>::FactorTypeList,
+                                               typename IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>::DimIndexTypeList,
+                                               typename SummedIndexTypeList_t<typename IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>::DimIndexTypeList>::T,
+                                               FORCE_CONST,
+                                               CHECK_FOR_ALIASING, // irrelevant value
+                                               ExpressionTemplate_IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType> > Parent;
+    typedef typename Parent::Derived Derived;
+    typedef typename Parent::Scalar Scalar;
+    typedef typename Parent::FreeFactorTypeList FreeFactorTypeList;
+    typedef typename Parent::FreeDimIndexTypeList FreeDimIndexTypeList;
+    typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
+    typedef typename Parent::MultiIndex MultiIndex;
+    using Parent::IS_EXPRESSION_TEMPLATE_I;
+    typedef typename Parent::SummedDimIndexTypeList SummedDimIndexTypeList;
+
+private:
+
+    typedef IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType> IndexSplitToIndex;
+
+public:
+
+    // it's not great that m_splitter is being passed to Parent before
+    // m_splitter is constructed, but Parent only stores a reference
+    // to m_splitter, so it doesn't really matter.
+    ExpressionTemplate_IndexSplitToIndex_t (Operand const &operand) : Parent(m_splitter), m_splitter(operand) { }
+
+    operator Scalar () const
+    {
+        STATIC_ASSERT_TYPELIST_IS_EMPTY(FreeDimIndexTypeList);
+        return operator[](MultiIndex());
+    }
+
+    // read-only, because it doesn't make sense to assign to an index-bundled expression (which is possibly also a summation).
+    Scalar operator [] (MultiIndex const &m) const
+    {
+        return UnarySummation_t<IndexSplitToIndex,typename IndexSplitToIndex::DimIndexTypeList,SummedDimIndexTypeList>::eval(m_splitter, m);
+    }
+
+    template <typename OtherTensor>
+    bool uses_tensor (OtherTensor const &t) const { return m_splitter.uses_tensor(t); }
+
+    static std::string type_as_string ()
+    {
+        return "ExpressionTemplate_IndexSplitToIndex_t<" + TypeStringOf_t<Operand>::eval() + ','
+                                                         + TypeStringOf_t<SourceAbstractIndexType>::eval() + ','
+                                                         + TypeStringOf_t<SplitAbstractIndexType>::eval() + '>';
+    }
+
+private:
+
+    void operator = (ExpressionTemplate_IndexSplitToIndex_t const &);
+
+    IndexSplitToIndex m_splitter;
 };
 
 // ////////////////////////////////////////////////////////////////////////////
