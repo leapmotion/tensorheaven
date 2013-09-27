@@ -5,15 +5,64 @@ project(tensorheaven_test)
 find_path(EIGEN_INCLUDE_DIR "eigen" PATHS $ENV{EIGEN_INCLUDE_DIR} NO_DEFAULT_PATH)
 find_path(BOOST_INCLUDE_DIR "boost" PATHS $ENV{BOOST_INCLUDE_DIR} NO_DEFAULT_PATH)
 
+OPTION(ASM_EXAM "Keep ASM intermedearies for inspection of compiler optimizations." OFF)
+
 # the root directory of the project (the one containing the tenh/ dir) is the only necessary include dir
 include_directories(${tensorheaven_test_SOURCE_DIR} ${EIGEN_INCLUDE_DIR} ${BOOST_INCLUDE_DIR})
 
-# TODO: build options for other compilers
-set(CMAKE_CXX_FLAGS "-Wall -Werror") # -Werror can give problems under clang due to -Wtautological-compare see pragma in array.hpp and componentindex.hpp to disable it as needed.
-set(CMAKE_CXX_FLAGS_DEBUG "-g -O3") # this uses -O3 so that the tests run reasonably quickly, even though the inlining may interfere with step-debugging.
-set(CMAKE_CXX_FLAGS_DEBUG_NO_OPTIMIZE "-g -O0") # this uses -O0, which is useful for step-debugging sometimes.
-set(CMAKE_CXX_FLAGS_RELEASE "-g -O3 -DNDEBUG")
-set(CMAKE_CXX_FLAGS_ASMEXAM "-g0 -O3 -save-temps -DNDEBUG")
+set(BASE_MSVC_FLAGS /arch:SSE2)
+# misnomer: The above MSVC flags are not used in Debug mode
+set(PRODUCTION_MSVC_FLAGS /GL /Ox /Oi /Ot /Ob2 )
+set(BASE_GCC_FLAGS -std=c++0x -fpermissive -msse2 -Wall -Wno-reorder -Wno-strict-aliasing -Wno-missing-braces -Wno-uninitialized -Wno-sequence-point )
+if(BUILD_64_BIT)
+  set(BASE_GCC_FLAGS ${BASE_GCC_FLAGS} -fPIC )
+else()
+  set(BASE_GCC_FLAGS ${BASE_GCC_FLAGS} -m32 )
+endif()
+set(BASE_CLANG_FLAGS -std=c++11 -Wall -Wno-deprecated-declarations -Wno-address-of-temporary -Wno-dynamic-class-memaccess -Wno-overloaded-virtual -Wno-missing-braces -Wno-unneeded-internal-declaration -Wno-reorder )
+set(PRODUCTION_GCC_FLAGS "")
+if(BUILD_WINDOWS)
+  set(COMPILER_DEBUG_FLAGS /Zi /D_DEBUG /MDd /Od /fp:except /D_CRT_SECURE_NO_WARNINGS /D_SCL_SECURE_NO_WARNINGS=1 /RTC1 /MP)
+  set(COMPILER_RELEASE_FLAGS /Zi /D NDEBUG /D _CRT_SECURE_NO_WARNINGS /MD /O2 /fp:fast /WX /MP)
+  # USE_PRODUCTION_FLAGS will replace /Od or /O2 with /Ox /Ob2 /Oi /Ot, adds ~20% compile time
+  set(COMPILER_NOPRODUCTION_FLAGS /Zi )
+  set(BASE_LINKER_FLAGS /NODEFAULTLIB:LIBCMT /ignore:4099 /DEBUG )
+  set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /OPT:REF,ICF")
+  set(NOPRODUCTION_LINKER_FLAGS "")
+  set(PRODUCTION_LINKER_FLAGS /LTCG )
+  add_definitions(-DNOMINMAX)
+else() # clang or gcc
+  set(COMPILER_DEBUG_FLAGS -g )
+  set(COMPILER_RELEASE_FLAGS -O3 -g -DNDEBUG )
+  set(COMPILER_NOPRODUCTION_FLAGS "")
+  set(BASE_LINKER_FLAGS "")
+  set(NOPRODUCTION_LINKER_FLAGS "")
+  set(PRODUCTION_LINKER_FLAGS "")
+  if(BUILD_MAC)
+    set(COMPILER_DEBUG_FLAGS ${COMPILER_DEBUG_FLAGS} -mmacosx-version-min=10.4 -fvisibility=hidden)
+    set(COMPILER_RELEASE_FLAGS ${COMPILER_RELEASE_FLAGS} -mmacosx-version-min=10.4 -fvisibility=hidden)
+    set(STRIPPED_EXE_LINKER_FLAGS "-Xlinker -unexported_symbol -Xlinker \"*\" -Xlinker -dead_strip -Xlinker -dead_strip_dylibs")
+  else()
+    set(STRIPPED_EXE_LINKER_FLAGS " ")
+    set(COMPILER_DEBUG_FLAGS ${COMPILER_DEBUG_FLAGS} -fvisibility=hidden)
+    set(COMPILER_RELEASE_FLAGS ${COMPILER_RELEASE_FLAGS} -fvisibility=hidden)
+  endif()
+endif()
+
+if(BUILD_WINDOWS)
+  set(COMPILER_FLAGS ${COMPILER_FLAGS} ${BASE_MSVC_FLAGS})
+elseif(BUILD_MAC)
+  set(COMPILER_FLAGS ${COMPILER_FLAGS} ${BASE_CLANG_FLAGS})
+else() # Linux
+  set(COMPILER_FLAGS ${COMPILER_FLAGS} ${BASE_GCC_FLAGS})
+endif()
+
+# # TODO: build options for other compilers
+# set(CMAKE_CXX_FLAGS "-Wall -Werror") # -Werror can give problems under clang due to -Wtautological-compare see pragma in array.hpp and componentindex.hpp to disable it as needed.
+# set(CMAKE_CXX_FLAGS_DEBUG "-g -O3") # this uses -O3 so that the tests run reasonably quickly, even though the inlining may interfere with step-debugging.
+# set(CMAKE_CXX_FLAGS_DEBUG_NO_OPTIMIZE "-g -O0") # this uses -O0, which is useful for step-debugging sometimes.
+# set(CMAKE_CXX_FLAGS_RELEASE "-g -O3 -DNDEBUG")
+# set(CMAKE_CXX_FLAGS_ASMEXAM "-g0 -O3 -save-temps -DNDEBUG")
 
 # temp tests
 add_executable(algebraic_expression_prototype algebraic_expression_prototype.cpp)

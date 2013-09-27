@@ -362,13 +362,13 @@ std::ostream &operator << (std::ostream &out, MultivariatePolynomial<DEG,DIM,Id,
     typedef typename MultivariatePolynomial<DEG,DIM,Id,Scalar>::Sym::MultiIndex MultiIndex;
     for (ComponentIndex it; it.is_not_at_end(); ++it)
     {
-        Uint32 coeff = m.m_term[it];
-        if (coeff == 1)
+        Scalar coeff = m.m_term[it];
+        if (coeff == Scalar(1))
         {
             out << VariableStringComputer<DEG,DIM,Id,Scalar>::compute(MultivariatePolynomial<DEG,DIM,Id,Scalar>::Sym::template bundle_index_map<typename MultiIndex::IndexTypeList, ComponentIndex>(it))
                 << " + ";
         }
-        else if (coeff != 0)
+        else if (coeff != Scalar(0))
         {
             out << coeff
                 << "*"

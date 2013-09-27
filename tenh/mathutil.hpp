@@ -30,17 +30,23 @@ struct Factorial_t<0>
 
 Uint32 binomial_coefficient(Uint32 n, Uint32 k)
 {
-    return (k == 0) ? 1 : binomial_coefficient(n,k-1) * (n - k + 1) / k;
+    return (k > n) ? 0 : (k == 0) ? 1 : binomial_coefficient(n,k-1) * (n + 1 - k) / k;
 }
 
 template<Uint32 N, Uint32 K>
 struct BinomialCoefficient_t
 {
-    static const Uint32 V = BinomialCoefficient_t<N,K-1>::V * (N - K + 1) / K;
+	static const Uint32 V = If<(K > N), Value<Uint32,0>, BinomialCoefficientImpl_t<N,K> >::T::V;
+};
+
+template<Uint32 N, Uint32 K>
+struct BinomialCoefficientImpl_t
+{
+    static const Uint32 V = BinomialCoefficientImpl_t<N,K-1>::V * (N + 1 - K) / K;
 };
 
 template<Uint32 N>
-struct BinomialCoefficient_t<N,0>
+struct BinomialCoefficientImpl_t<N,0>
 {
     static const Uint32 V = 1;
 };
