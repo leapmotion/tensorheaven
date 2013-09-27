@@ -8,13 +8,32 @@
 
 #include "tenh/core.hpp"
 #include "tenh/interop/eigen.hpp"
-#include "tenh/tensor2.hpp"
-#include "tenh/tensor2diagonal.hpp"
+#include "tenh/implementation/diagonal2tensor.hpp"
+#include "tenh/implementation/tensor.hpp"
 
 #include "Eigen/Core"
 #include "Eigen/SVD"
 
 namespace Tenh {
+
+template <typename Factor1_, typename Factor2_, typename Scalar_, typename UseArrayType_>
+void SVD_of_2tensor (ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,
+                                                                           TypeList_t<Factor2_> > >,
+                                        Scalar_,
+                                        UseArrayType_> const &t,
+                     ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,
+                                                                           TypeList_t<TODO THINK ABOUT THIS> > >,
+                                        Scalar_,
+                                        UseArrayType_> const &u,
+                     ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<TODO THINK ABOUT THIS, THINK ABOUT>,
+                                        Scalar_,
+                                        UseArrayType_> const &s,
+                     ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<TODO THINK ABOUT THIS,
+                                                                           TypeList_t<Factor2_> > >,
+                                        Scalar_,
+                                        UseArrayType_> const &v)
+{
+}
 
 // SVD with u and v matrices; the singular values are in s; t = u * s * v^T
 template <typename Factor1, typename Factor2, typename Basis, typename Derived>

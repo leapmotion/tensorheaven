@@ -81,6 +81,8 @@ bool invert_2tensor (ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeL
     return was_invertible;
 }
 
+// TODO: specialization for diagonal 2-tensors
+
 } // end of namespace Tenh
 
 #endif // TENH_INTEROP_EIGEN_HPP_
