@@ -52,15 +52,12 @@ Scalar_ alt (ComponentIndex_t<COMPONENT_COUNT_> const &i)
         return Scalar_(0);
     }
     // vector_index_of sorts the multiindex and returns the vector index -- if this
-    // matches the symmetric vector index, then return 1; otherwise 0.
+    // matches the symmetric vector index, then return 1.
     else if (m.template el<0>() == Factor0BootstrappingImplementation::vector_index_of(m1))
     {
-        typedef typename Factor0BootstrappingImplementation::MultiIndex ExteriorPowerMultiIndex;
-        typedef typename ExteriorPowerMultiIndex::IndexTypeList Factor0IndexTypeList;
-        typedef typename Factor0BootstrappingImplementation::ComponentIndex ExteriorPowerComponentIndex;
-        ExteriorPowerMultiIndex m0(Factor0BootstrappingImplementation::template bundle_index_map<Factor0IndexTypeList,ExteriorPowerComponentIndex>(m.template el<0>()));
         return Factor0BootstrappingImplementation::scalar_factor_for_component(m1);
     }
+    // otherwise 0.
     else
     {
         return Scalar_(0);
