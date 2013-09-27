@@ -12,7 +12,9 @@
 
 #include "tenh/meta/typelist_utility.hpp"
 #include "tenh/conceptual/symmetricpower.hpp"
+#include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/conceptual/vectorspace.hpp"
+#include "tenh/implementation/sym.hpp"
 #include "tenh/implementation/vector.hpp"
 #include "tenh/implementation/vee.hpp"
 
@@ -81,12 +83,19 @@ private:
     MultivariatePolynomial<Term_Degree + DEGREE_,DIMENSION_,Id_,Scalar_> monomial_multiply (Tenh::ImplementationOf_t<Tenh::SymmetricPowerOfBasedVectorSpace_c<Term_Degree,typename Tenh::DualOf_f<VectorSpace>::T>,Scalar_> const &monomial) const
     {
         typedef Tenh::SymmetricPowerOfBasedVectorSpace_c<Term_Degree + DEGREE_,typename Tenh::DualOf_f<VectorSpace>::T> ResultingTermType;
+        typedef typename Tenh::TensorPowerOfBasedVectorSpace_f<Term_Degree + DEGREE_,typename Tenh::DualOf_f<VectorSpace>::T>::T ResultingTensorPowerType;
+        typedef typename Tenh::Sym_f<Term_Degree + DEGREE_,typename Tenh::DualOf_f<VectorSpace>::T,Scalar_>::T SymmetrizeType;
+
+        Tenh::ImplementationOf_t<ResultingTermType,Scalar_> result(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+        SymmetrizeType symmetrize;
         Tenh::AbstractIndex_c<'i'> i;
         Tenh::AbstractIndex_c<'j'> j;
         Tenh::AbstractIndex_c<'k'> k;
-        Tenh::ImplementationOf_t<ResultingTermType,Scalar_> result(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
-        // I know this doesn't work, we need to symmatrize, not bundle.
-        result(i) = (m_term(j)*monomial(k)).bundle(j|k,ResultingTermType(),i);
+        Tenh::AbstractIndex_c<'I'> I;
+        Tenh::AbstractIndex_c<'J'> J;
+        Tenh::AbstractIndex_c<'K'> K;
+        result(i) = (m_term(j).split(j,J)*monomial(k).split(k,K)).bundle(J|K,ResultingTensorPowerType(),I)*symmetrize(i|I);
+
         return MultivariatePolynomial<Term_Degree + DEGREE_, DIMENSION_, Id_, Scalar_>(result, m_body.template monomial_multiply<Term_Degree>(monomial));
     }
 
