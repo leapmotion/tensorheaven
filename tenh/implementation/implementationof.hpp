@@ -38,12 +38,6 @@ struct UseImmutableArray_t
         return "UseImmutableArray_t<" + TypeStringOf_t<ComponentGenerator_>::eval() + '>';
     }
 };
-// use of this will require a template specialization of DualOf_f for ComponentGenerator_
-template <typename ComponentGenerator_>
-struct DualOf_f<UseImmutableArray_t<ComponentGenerator_> >
-{
-    typedef UseImmutableArray_t<typename DualOf_f<ComponentGenerator_>::T> T;
-};
 
 template <typename T> struct IsUseImmutableArray_f { static bool const V = false; };
 template <typename ComponentGenerator_> struct IsUseImmutableArray_f<UseImmutableArray_t<ComponentGenerator_> > { static bool const V = true; };

@@ -1347,12 +1347,12 @@ int main (int, char **)
     {
         std::cout << "Polynomials in 0 dimensions." << std::endl;
         typedef MultivariatePolynomial<2,0,X> PolyType;
-        PolyType::SymDual w(0);
+        PolyType::SymDual w(0.0f);
         MultivariatePolynomial<1,0,X>::SymDual x(1);
         std::cout << FORMAT_VALUE(w) << std::endl;
         PolyType roly(w,MultivariatePolynomial<1,0,X>(x,3)), poly;
         poly = poly + MultivariatePolynomial<1,0,X>(x,3);
-        PolyType::Vector v(0);
+        PolyType::Vector v(0.0f);
         std::cout << FORMAT_VALUE(roly) << std::endl;
         std::cout << FORMAT_VALUE(poly) << std::endl;
         std::cout << FORMAT_VALUE(v) << std::endl;
@@ -1368,13 +1368,13 @@ int main (int, char **)
     {
         std::cout << "Polynomials in 1 dimension." << std::endl;
         typedef MultivariatePolynomial<2,1,X> PolyType;
-        PolyType::SymDual w(0);
+        PolyType::SymDual w(0.0f);
         MultivariatePolynomial<1,1,X>::SymDual x(1);
         w[PolyType::SymDual::ComponentIndex(0, CHECK_RANGE)] = 1; // x^2
         std::cout << FORMAT_VALUE(w) << std::endl;
         PolyType roly(w,MultivariatePolynomial<1,1,X>(x,3)), poly;
         poly = poly + MultivariatePolynomial<1,1,X>(x,3);
-        PolyType::Vector v(1);
+        PolyType::Vector v(1.0f);
         std::cout << FORMAT_VALUE(roly) << std::endl;
         std::cout << FORMAT_VALUE(poly) << std::endl;
         std::cout << FORMAT_VALUE(v) << std::endl;
@@ -1390,7 +1390,7 @@ int main (int, char **)
     {
         std::cout << "Polynomials in 2 dimensions." << std::endl;
         typedef MultivariatePolynomial<2,2,X> PolyType;
-        PolyType::SymDual w(0);
+        PolyType::SymDual w(0.0f);
         MultivariatePolynomial<1,2,X>::SymDual x(1);
         w[PolyType::SymDual::ComponentIndex(0, CHECK_RANGE)] = 1; // x^2
         w[PolyType::SymDual::ComponentIndex(1, CHECK_RANGE)] = 2; // xy
@@ -1398,7 +1398,7 @@ int main (int, char **)
         std::cout << FORMAT_VALUE(w) << std::endl;
         PolyType roly(w,MultivariatePolynomial<1,2,X>(x,3)), poly;
         poly = poly + MultivariatePolynomial<1,2,X>(x,3);
-        PolyType::Vector v(1,2);
+        PolyType::Vector v(1.0f,2.0f);
         std::cout << FORMAT_VALUE(roly) << std::endl;
         std::cout << FORMAT_VALUE(poly) << std::endl;
         std::cout << FORMAT_VALUE(v) << std::endl;
@@ -1414,7 +1414,7 @@ int main (int, char **)
     {
         std::cout << "Polynomials in 3 dimensions." << std::endl;
         typedef MultivariatePolynomial<2,3,X> PolyType;
-        PolyType::SymDual w(0);
+        PolyType::SymDual w(0.0f);
         MultivariatePolynomial<1,3,X>::SymDual x(1);
         w[PolyType::SymDual::ComponentIndex(0, CHECK_RANGE)] = 1; // x^2
         w[PolyType::SymDual::ComponentIndex(1, CHECK_RANGE)] = 0; // xy
@@ -1425,7 +1425,7 @@ int main (int, char **)
         std::cout << FORMAT_VALUE(w) << std::endl;
         PolyType roly(w,MultivariatePolynomial<1,3,X>(x,3)), poly;
         poly = poly + MultivariatePolynomial<1,3,X>(x,3);
-        PolyType::Vector v(1,2,3);
+        PolyType::Vector v(1.0f,2.0f,3.0f);
         std::cout << FORMAT_VALUE(roly) << std::endl;
         std::cout << FORMAT_VALUE(poly) << std::endl;
         std::cout << FORMAT_VALUE(v) << std::endl;
@@ -1441,7 +1441,7 @@ int main (int, char **)
     {
         std::cout << "Polynomials in 4 dimensions." << std::endl;
         typedef MultivariatePolynomial<2,4,X> PolyType;
-        PolyType::SymDual w(0);
+        PolyType::SymDual w(0.0f);
         MultivariatePolynomial<1,4,X>::SymDual x(1);
         w[PolyType::SymDual::ComponentIndex(0, CHECK_RANGE)] = 1; // x^2
         w[PolyType::SymDual::ComponentIndex(1, CHECK_RANGE)] = 0; // xy
@@ -1456,7 +1456,7 @@ int main (int, char **)
         std::cout << FORMAT_VALUE(w) << std::endl;
         PolyType roly(w,MultivariatePolynomial<1,4,X>(x,3)), poly;
         poly = poly + MultivariatePolynomial<1,4,X>(x,3);
-        PolyType::Vector v(1,2,3,4);
+        PolyType::Vector v(1.0f,2.0f,3.0f,4.0f);
         std::cout << FORMAT_VALUE(roly) << std::endl;
         std::cout << FORMAT_VALUE(poly) << std::endl;
         std::cout << FORMAT_VALUE(v) << std::endl;

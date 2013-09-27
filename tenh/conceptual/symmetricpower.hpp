@@ -195,18 +195,12 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(SymmetricPowerOfBasedVectorSpace);
 #define IS_SYMMETRIC_POWER_OF_BASED_VECTOR_SPACE_UNIQUELY(Concept) HasUniqueSymmetricPowerOfBasedVectorSpaceStructure_f<Concept>::V
 #define AS_SYMMETRIC_POWER_OF_BASED_VECTOR_SPACE(Concept) UniqueSymmetricPowerOfBasedVectorSpaceStructureOf_f<Concept>::T
 
-// in the category of based vector spaces, the dual space functor commutes 
+// in the category of based vector spaces, the dual space functor commutes
 // with the kth symmetric power functor, modulo a particular natural isomorphism.
 template <Uint32 ORDER_, typename Factor_>
 struct DualOf_f<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> >
 {
     typedef SymmetricPowerOfBasedVectorSpace_c<ORDER_,typename DualOf_f<Factor_>::T> T;
-};
-
-template <typename Factor, Uint32 ORDER>
-struct DualOf_f<SymmetricPowerOfBasedVectorSpace_c<Factor,ORDER> >
-{
-    typedef SymmetricPowerOfBasedVectorSpace_c<typename DualOf_f<Factor>::T,ORDER> T;
 };
 
 

@@ -22,10 +22,10 @@ template <Uint32 DEGREE_, Uint32 DIMENSION_, typename Id_, typename Scalar_ = fl
 struct MultivariatePolynomial
 {
     typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIMENSION_,Id_>,Tenh::Basis_c<Id_> > VectorSpace;
-    typedef Tenh::ImplementationOf_t<Scalar_, VectorSpace> Vector;
-    typedef Tenh::ImplementationOf_t<Scalar_,Tenh::SymmetricPowerOfBasedVectorSpace_c<VectorSpace,DEGREE_> > Sym;
-    // typedef typename Tenh::DualOf_f<Sym>::T SymDual;
-    typedef Tenh::ImplementationOf_t<Scalar_,Tenh::SymmetricPowerOfBasedVectorSpace_c<typename Tenh::DualOf_f<VectorSpace>::T,DEGREE_> > SymDual;
+    typedef Tenh::ImplementationOf_t<VectorSpace,Scalar_> Vector;
+    typedef Tenh::ImplementationOf_t<Tenh::SymmetricPowerOfBasedVectorSpace_c<DEGREE_,VectorSpace>,Scalar_> Sym;
+    typedef typename Tenh::DualOf_f<Sym>::T SymDual;
+    //typedef Tenh::ImplementationOf_t<Tenh::SymmetricPowerOfBasedVectorSpace_c<DEGREE_,typename Tenh::DualOf_f<VectorSpace>::T>,Scalar_> SymDual;
     typedef Scalar_ Scalar;
 
     MultivariatePolynomial() : m_term(Scalar_(0)) {};
@@ -78,13 +78,13 @@ private:
     }
 
     template<Uint32 Term_Degree>
-    MultivariatePolynomial<Term_Degree + DEGREE_,DIMENSION_,Id_,Scalar_> monomial_multiply (Tenh::ImplementationOf_t<Scalar_,Tenh::SymmetricPowerOfBasedVectorSpace_c<typename Tenh::DualOf_f<VectorSpace>::T,Term_Degree> > const &monomial) const
+    MultivariatePolynomial<Term_Degree + DEGREE_,DIMENSION_,Id_,Scalar_> monomial_multiply (Tenh::ImplementationOf_t<Tenh::SymmetricPowerOfBasedVectorSpace_c<Term_Degree,typename Tenh::DualOf_f<VectorSpace>::T>,Scalar_> const &monomial) const
     {
-        typedef Tenh::SymmetricPowerOfBasedVectorSpace_c<typename Tenh::DualOf_f<VectorSpace>::T,Term_Degree + DEGREE_> ResultingTermType;
+        typedef Tenh::SymmetricPowerOfBasedVectorSpace_c<Term_Degree + DEGREE_,typename Tenh::DualOf_f<VectorSpace>::T> ResultingTermType;
         Tenh::AbstractIndex_c<'i'> i;
         Tenh::AbstractIndex_c<'j'> j;
         Tenh::AbstractIndex_c<'k'> k;
-        Tenh::ImplementationOf_t<Scalar_,ResultingTermType> result(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+        Tenh::ImplementationOf_t<ResultingTermType,Scalar_> result(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
         // I know this doesn't work, we need to symmatrize, not bundle.
         result(i) = (m_term(j)*monomial(k)).bundle(j|k,ResultingTermType(),i);
         return MultivariatePolynomial<Term_Degree + DEGREE_, DIMENSION_, Id_, Scalar_>(result, m_body.template monomial_multiply<Term_Degree>(monomial));
@@ -120,7 +120,7 @@ template <Uint32 DIMENSION_, typename Id_, typename Scalar_>
 struct MultivariatePolynomial<0,DIMENSION_,Id_,Scalar_>
 {
     typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIMENSION_,Id_>,Tenh::Basis_c<Id_> > VectorSpace;
-    typedef Tenh::ImplementationOf_t<Scalar_, VectorSpace> Vector;
+    typedef Tenh::ImplementationOf_t<VectorSpace,Scalar_> Vector;
 
     MultivariatePolynomial() : m_term(Scalar_(0)) {};
     MultivariatePolynomial(Scalar_ const &leading_term) : m_term(leading_term) {};
@@ -148,10 +148,10 @@ private:
     MultivariatePolynomial add_eq (MultivariatePolynomial const &other) const { return MultivariatePolynomial(m_term + other.m_term); }
 
     template<Uint32 Term_Degree>
-    MultivariatePolynomial<Term_Degree, DIMENSION_, Id_, Scalar_> monomial_multiply (Tenh::ImplementationOf_t<Scalar_,Tenh::SymmetricPowerOfBasedVectorSpace_c<typename Tenh::DualOf_f<VectorSpace>::T,Term_Degree> > const &monomial) const
+    MultivariatePolynomial<Term_Degree, DIMENSION_, Id_, Scalar_> monomial_multiply (Tenh::ImplementationOf_t<Tenh::SymmetricPowerOfBasedVectorSpace_c<Term_Degree,typename Tenh::DualOf_f<VectorSpace>::T>,Scalar_> const &monomial) const
     {
         Tenh::AbstractIndex_c<'i'> i;
-        Tenh::ImplementationOf_t<Scalar_,Tenh::SymmetricPowerOfBasedVectorSpace_c<typename Tenh::DualOf_f<VectorSpace>::T,Term_Degree> > term(Scalar_(0));
+        Tenh::ImplementationOf_t<Tenh::SymmetricPowerOfBasedVectorSpace_c<Term_Degree,typename Tenh::DualOf_f<VectorSpace>::T>,Scalar_> term(Scalar_(0));
         term(i) = m_term*monomial(i);
         return MultivariatePolynomial<Term_Degree, DIMENSION_, Id_, Scalar_>(term);
     }
