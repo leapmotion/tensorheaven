@@ -25,6 +25,7 @@
 #include "tenh/implementation/vector.hpp"
 #include "tenh/implementation/vee.hpp"
 #include "tenh/implementation/wedge.hpp"
+#include "tenh/interop/eigen.hpp"
 
 struct X
 {
@@ -1340,6 +1341,36 @@ int main (int, char **)
         test_alt<float,2,3>();
         test_alt<float,3,3>();
         test_alt<float,4,3>();
+    }
+
+    {
+        std::cout << "testing EigenMap_of_2tensor\n";
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,Basis_c<X> > BasedVectorSpace;
+        typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace,
+                                                   TypeList_t<BasedVectorSpace> > > TensorProduct;
+        typedef ImplementationOf_t<TensorProduct,float> T;
+        T t(3.0f);
+        std::cout << FORMAT_VALUE(t) << '\n';
+        std::cout << FORMAT_VALUE(EigenMap_of_2tensor(t)) << '\n';
+        std::cout << FORMAT_VALUE(EigenMap_of_2tensor(static_cast<T const>(t))) << '\n';
+        Eigen::Matrix<float,3,1> v1(1.0f, 2.0f, 3.0f);
+        Eigen::Matrix<float,3,1> v2(0.0f, 2.0f, 3.0f);
+        Eigen::Matrix<float,3,1> v3(1.0f, 2.0f, 4.0f);
+        std::cout << FORMAT_VALUE(v1) << '\n';
+        std::cout << FORMAT_VALUE(v2) << '\n';
+        std::cout << FORMAT_VALUE(v3) << '\n';
+        EigenMap_of_2tensor(t) = v1*v1.transpose() + v2*v2.transpose() + v3*v3.transpose();
+        std::cout << "after assignment from v1*v1.transpose() + v2*v2.transpose() + v3*v3.transpose() via Eigen Map: ";
+        std::cout << FORMAT_VALUE(t) << '\n';
+
+        // TODO: make a metafunction to return the type of the inverse 2-tensor?
+        typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<DualOf_f<BasedVectorSpace>::T,
+                                                   TypeList_t<DualOf_f<BasedVectorSpace>::T> > > TensorProduct_Inverse;
+        typedef ImplementationOf_t<TensorProduct_Inverse,float> TInverse;
+        TInverse t_inverse(Static<WithoutInitialization>::SINGLETON);
+        invert_2tensor(t, t_inverse);
+        std::cout << FORMAT_VALUE(t_inverse) << '\n';
+        std::cout << '\n';
     }
 
     return 0;
