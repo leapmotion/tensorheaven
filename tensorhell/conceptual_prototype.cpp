@@ -290,7 +290,7 @@ void test_split_index_to_index_order_1 ()
     typedef ImplementationOf_t<EmbeddableAsTensorProduct_,float> S;
     S s(Static<WithoutInitialization>::SINGLETON);
     for (typename S::ComponentIndex i; i.is_not_at_end(); ++i)
-        s[i] = i.value() + 1;
+        s[i] = static_cast<Scalar_>(i.value() + 1);
     std::cout << FORMAT_VALUE(s) << '\n';
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
@@ -314,7 +314,7 @@ void test_split_index_to_index_order_2 ()
     typedef ImplementationOf_t<EmbeddableAsTensorProduct_,float> S;
     S s(Static<WithoutInitialization>::SINGLETON);
     for (typename S::ComponentIndex i; i.is_not_at_end(); ++i)
-        s[i] = i.value() + 1;
+        s[i] = static_cast<Scalar_>(i.value() + 1);
     std::cout << FORMAT_VALUE(s) << '\n';
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
@@ -339,7 +339,7 @@ void test_split_index_to_index_order_3 ()
     typedef ImplementationOf_t<EmbeddableAsTensorProduct_,float> S;
     S s(Static<WithoutInitialization>::SINGLETON);
     for (typename S::ComponentIndex i; i.is_not_at_end(); ++i)
-        s[i] = i.value() + 1;
+        s[i] = static_cast<Scalar_>(i.value() + 1);
     std::cout << FORMAT_VALUE(s) << '\n';
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
