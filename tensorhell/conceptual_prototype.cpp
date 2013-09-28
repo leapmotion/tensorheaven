@@ -1616,5 +1616,24 @@ int main (int, char **)
         std::cout << std::endl;
     }
 
+    {
+        std::cout << "Polynomial multiplication tests." << std::endl;
+        typedef MultivariatePolynomial<1,2,X> PolyType;
+        PolyType::SymDual x(0.0f),y(0.0f);
+        x[PolyType::SymDual::ComponentIndex(0, CHECK_RANGE)] = 1.0f;
+        y[PolyType::SymDual::ComponentIndex(1, CHECK_RANGE)] = 1.0f;
+
+        PolyType X(x,0), Y(y,0);
+
+        std::cout << X << std::endl;
+        std::cout << Y << std::endl;
+        std::cout << X*X << std::endl;
+        std::cout << Y*Y << std::endl;
+        std::cout << X*Y << std::endl;
+        std::cout << (X*X)*(Y*Y) + 3 << std::endl;
+        std::cout << (X*Y)*(X*Y) << std::endl;
+        std::cout << 17 + X*X*Y*Y << std::endl;
+    }
+
     return 0;
 }

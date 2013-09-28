@@ -54,6 +54,11 @@ struct MultivariatePolynomial
         return MultivariatePolynomial(term, rhs*m_body);
     }
 
+    MultivariatePolynomial operator+ (Scalar_ const &rhs) const
+    {
+        return MultivariatePolynomial(m_term, m_body+rhs);
+    }
+
     MultivariatePolynomial operator- () const { return (*this)*Scalar_(-1); }
 
     template<Uint32 DEG>
@@ -159,7 +164,10 @@ struct MultivariatePolynomial<0,DIMENSION_,Id_,Scalar_>
         // Use operator+
         return *this + (-rhs);
     }
+
     MultivariatePolynomial operator* (Scalar_ const &rhs) const { return MultivariatePolynomial(rhs*m_term); }
+
+    MultivariatePolynomial operator+ (Scalar_ const &rhs) const { return MultivariatePolynomial(rhs+m_term); }
 
 private:
     Scalar_ m_term;
@@ -213,6 +221,15 @@ template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar>
 MultivariatePolynomial<DEG,DIM,Id,Scalar> operator+ (MultivariatePolynomial<DEG,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG,DIM,Id,Scalar> const &rhs)
 {
     return lhs.add_eq(rhs);
+}
+
+
+//    scalar operator+
+template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar, typename T>
+MultivariatePolynomial<DEG,DIM,Id,Scalar> operator+ (T const &lhs, MultivariatePolynomial<DEG,DIM,Id,Scalar> const &rhs)
+{
+    // Use the member version
+    return rhs+Scalar(lhs);
 }
 
 
