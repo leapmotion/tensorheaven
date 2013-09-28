@@ -121,6 +121,7 @@ private:
             {
                 result[it] *= input[typename Vector::ComponentIndex(m.value_of_index(i, Tenh::DONT_CHECK_RANGE))];
             }
+            result[it] *= Tenh::Factorial_t<DEGREE_>::V / (Tenh::MultiIndexMultiplicity_t<typename Sym::MultiIndex>::eval(m));
         }
         return result;
     }
