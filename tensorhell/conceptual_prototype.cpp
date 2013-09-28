@@ -28,6 +28,7 @@
 #include "tenh/interop/eigen.hpp"
 
 #include "applications/polynomial.hpp"
+#include "applications/polynomial_util.hpp"
 
 struct X
 {
