@@ -34,6 +34,44 @@ struct MemoryArray_i
     typedef typename Parent_Array_i::ComponentAccessConstReturnType ComponentAccessConstReturnType;
     typedef typename Parent_Array_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
 
+    // start_offset is the index in this array at which copied components will start.
+    // components_to_copy is the number of components of the other array to copy into this one.
+    template <typename OtherDerived_, Uint32 OTHER_COMPONENT_COUNT_>
+    void copy_from (Array_i<OtherDerived_,Component_,OTHER_COMPONENT_COUNT_,MUTABLE_COMPONENTS> const &a,
+                    Uint32 start_offset = 0,
+                    Uint32 components_to_copy = OTHER_COMPONENT_COUNT_,
+                    bool check_range = CHECK_RANGE)
+    {
+        if (check_range && start_offset >= COMPONENT_COUNT_)
+            throw std::out_of_range("start_offset is outside of range");
+        if (check_range && start_offset + components_to_copy > COMPONENT_COUNT_)
+            throw std::out_of_range("range to copy exceeds this array size");
+
+        typedef Array_i<OtherDerived_,Component_,OTHER_COMPONENT_COUNT_,MUTABLE_COMPONENTS> OtherArray;
+        // memmove is used so that the memory segments may overlap
+        memmove(reinterpret_cast<void *>(&(*this)[ComponentIndex(start_offset, DONT_CHECK_RANGE)]),
+                reinterpret_cast<void const *>(&a[typename OtherArray::ComponentIndex(0, DONT_CHECK_RANGE)]),
+                sizeof(Component_)*components_to_copy);
+    }
+    // overload for immutable-component arrays (which don't correspond to actual memory,
+    // so no memcpy/memmove is possible; each component has to be produced individually)
+    template <typename OtherDerived_, Uint32 OTHER_COMPONENT_COUNT_>
+    void copy_from (Array_i<OtherDerived_,Component_,OTHER_COMPONENT_COUNT_,IMMUTABLE_COMPONENTS> const &a,
+                    Uint32 start_offset = 0,
+                    Uint32 components_to_copy = OTHER_COMPONENT_COUNT_,
+                    bool check_range = CHECK_RANGE)
+    {
+        if (check_range && start_offset >= COMPONENT_COUNT_)
+            throw std::out_of_range("start_offset is outside of range");
+        if (check_range && start_offset + components_to_copy > COMPONENT_COUNT_)
+            throw std::out_of_range("range to copy exceeds this array size");
+
+        typedef Array_i<OtherDerived_,Component_,OTHER_COMPONENT_COUNT_,MUTABLE_COMPONENTS> OtherArray;
+        ComponentIndex this_i(start_offset, DONT_CHECK_RANGE);
+        for (typename OtherArray::ComponentIndex other_i; this_i.value() < components_to_copy; ++this_i, ++other_i)
+            (*this)[this_i] = a[other_i];
+    }
+
     using Parent_Array_i::operator[];
     using Parent_Array_i::as_derived;
 

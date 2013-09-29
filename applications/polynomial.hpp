@@ -18,26 +18,44 @@
 #include "tenh/implementation/vee.hpp"
 #include "tenh/meta/typelist_utility.hpp"
 #include "tenh/multiindex.hpp"
+#include "tenh/preallocatedarray.hpp"
 
 using Tenh::Uint32;
+
+// TODO: consider creating a HomogeneousMultivariatePolynomial, and make
+// MultivariatePolynomial use that.
 
 template <Uint32 DEGREE_, Uint32 DIMENSION_, typename Id_, typename Scalar_ = float>
 struct MultivariatePolynomial
 {
-    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIMENSION_,Id_>,Tenh::Basis_c<Id_> > VectorSpace;
+    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIMENSION_,Id_>,
+                                     Tenh::Basis_c<Id_> > VectorSpace;
     typedef Tenh::ImplementationOf_t<VectorSpace,Scalar_> Vector;
-    typedef Tenh::ImplementationOf_t<Tenh::SymmetricPowerOfBasedVectorSpace_c<DEGREE_,VectorSpace>,Scalar_> Sym;
+    typedef Tenh::SymmetricPowerOfBasedVectorSpace_c<DEGREE_,VectorSpace> SymmetricPower;
+    typedef Tenh::ImplementationOf_t<SymmetricPower,Scalar_> Sym;
     typedef typename Tenh::DualOf_f<Sym>::T SymDual;
-    //typedef Tenh::ImplementationOf_t<Tenh::SymmetricPowerOfBasedVectorSpace_c<DEGREE_,typename Tenh::DualOf_f<VectorSpace>::T>,Scalar_> SymDual;
     typedef Scalar_ Scalar;
 
-    MultivariatePolynomial() : m_term(Scalar_(0)) {};
-    MultivariatePolynomial(SymDual const &leading_term,  MultivariatePolynomial<DEGREE_-1,DIMENSION_,Id_,Scalar_> const &rest)
-        : m_term(leading_term), m_body(rest) {};
-    MultivariatePolynomial(SymDual const &leading_term)
-        : m_term(leading_term), m_body() {};
+    typedef MultivariatePolynomial<DEGREE_-1,DIMENSION_,Id_,Scalar_> BodyPolynomial;
+    static Uint32 const DIMENSION = SymDual::DIM + BodyPolynomial::DIMENSION;
 
-    MultivariatePolynomial(MultivariatePolynomial const & other) : m_term(other.m_term), m_body(other.m_body) {};
+    MultivariatePolynomial (Scalar_ const &fill_with) : m_body(fill_with), m_term(fill_with) { }
+    MultivariatePolynomial (Tenh::WithoutInitialization const &w) : m_body(w), m_term(w) { }
+    MultivariatePolynomial (SymDual const &leading_term, BodyPolynomial const &body)
+        :
+        m_body(body),
+        m_term(leading_term)
+    { }
+    MultivariatePolynomial (SymDual const &leading_term)
+        :
+        m_body(Scalar(0)),
+        m_term(leading_term)
+    { }
+    MultivariatePolynomial (MultivariatePolynomial const &other)
+        :
+        m_body(other.m_body),
+        m_term(other.m_term)
+    { }
 
     Scalar_ evaluate (Vector const &at) const
     {
@@ -62,15 +80,33 @@ struct MultivariatePolynomial
     MultivariatePolynomial operator- () const { return (*this)*Scalar_(-1); }
 
     template<Uint32 DEG>
-    MultivariatePolynomial<(DEG>DEGREE_?DEG:DEGREE_),DIMENSION_,Id_,Scalar_> operator- (MultivariatePolynomial<DEG,DIMENSION_,Id_,Scalar_> const &rhs)
+    MultivariatePolynomial<(DEG>DEGREE_?DEG:DEGREE_),DIMENSION_,Id_,Scalar_> operator- (
+        MultivariatePolynomial<DEG,DIMENSION_,Id_,Scalar_> const &rhs)
     {
         // Use operator+
         return *this + (-rhs);
     }
 
+    // NOTE: the PreallocatedArray_t returned from this is valid only as long as
+    // this object is alive -- this is effectively a shallow copy.
+    Tenh::PreallocatedArray_t<Scalar_ const,DIMENSION> as_array () const
+    {
+        assert(reinterpret_cast<Tenh::Uint8 const *>(&m_body) + sizeof(m_body) == reinterpret_cast<Tenh::Uint8 const *>(&m_term) &&
+               "for this to work, the members must be layed out contiguously in memory");
+        return Tenh::PreallocatedArray_t<Scalar_ const,DIMENSION>(reinterpret_cast<Scalar_ const *>(&m_body), Tenh::DONT_CHECK_POINTER);
+    }
+    // NOTE: the PreallocatedArray_t returned from this is valid only as long as
+    // this object is alive -- this is effectively a shallow copy.
+    Tenh::PreallocatedArray_t<Scalar_,DIMENSION> as_array ()
+    {
+        assert(reinterpret_cast<Tenh::Uint8 const *>(&m_body) + sizeof(m_body) == reinterpret_cast<Tenh::Uint8 const *>(&m_term) &&
+               "for this to work, the members must be layed out contiguously in memory");
+        return Tenh::PreallocatedArray_t<Scalar_,DIMENSION>(reinterpret_cast<Scalar_ *>(&m_body), Tenh::DONT_CHECK_POINTER);
+    }
+
 private:
-    SymDual m_term;
     MultivariatePolynomial<DEGREE_-1,DIMENSION_,Id_,Scalar_> m_body;
+    SymDual m_term;
 
     // Helper members for non-member operators.
     //    add is for adding a polynomial of strictly lower degree to this polynomial
@@ -147,9 +183,11 @@ struct MultivariatePolynomial<0,DIMENSION_,Id_,Scalar_>
     typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIMENSION_,Id_>,Tenh::Basis_c<Id_> > VectorSpace;
     typedef Tenh::ImplementationOf_t<VectorSpace,Scalar_> Vector;
 
-    MultivariatePolynomial() : m_term(Scalar_(0)) {};
-    MultivariatePolynomial(Scalar_ const &leading_term) : m_term(leading_term) {};
-    MultivariatePolynomial(MultivariatePolynomial const & other) : m_term(other.m_term) {};
+    static Uint32 const DIMENSION = Vector::DIM;
+
+    MultivariatePolynomial (Scalar_ const &leading_term) : m_term(leading_term) { }
+    MultivariatePolynomial (Tenh::WithoutInitialization const &w) { }
+    MultivariatePolynomial (MultivariatePolynomial const &other) : m_term(other.m_term) { }
 
     Scalar_ evaluate (Vector const &at) const
     {
@@ -169,6 +207,19 @@ struct MultivariatePolynomial<0,DIMENSION_,Id_,Scalar_>
 
     MultivariatePolynomial operator+ (Scalar_ const &rhs) const { return MultivariatePolynomial(rhs+m_term); }
 
+    // NOTE: the PreallocatedArray_t returned from this is valid only as long as
+    // this object is alive -- this is effectively a shallow copy.
+    Tenh::PreallocatedArray_t<Scalar_ const,DIMENSION> as_array () const
+    {
+        return Tenh::PreallocatedArray_t<Scalar_ const,DIMENSION>(reinterpret_cast<Scalar_ const *>(&m_term), Tenh::DONT_CHECK_POINTER);
+    }
+    // NOTE: the PreallocatedArray_t returned from this is valid only as long as
+    // this object is alive -- this is effectively a shallow copy.
+    Tenh::PreallocatedArray_t<Scalar_,DIMENSION> as_array ()
+    {
+        return Tenh::PreallocatedArray_t<Scalar_,DIMENSION>(reinterpret_cast<Scalar_ *>(&m_term), Tenh::DONT_CHECK_POINTER);
+    }
+
 private:
     Scalar_ m_term;
 
@@ -184,16 +235,18 @@ private:
         return MultivariatePolynomial<Term_Degree, DIMENSION_, Id_, Scalar_>(term);
     }
 
-    template<Uint32,Uint32,typename,typename> friend struct MultivariatePolynomial;
-    template<bool> friend struct Adder;
-    template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar> friend
-    MultivariatePolynomial<DEG,DIM,Id,Scalar> operator+ (MultivariatePolynomial<DEG,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG,DIM,Id,Scalar> const &rhs);
-    template<Uint32 DEG1, Uint32 DEG2, Uint32 DIM, typename Id, typename Scalar> friend
-    MultivariatePolynomial<DEG1+DEG2,DIM,Id,Scalar> operator* (MultivariatePolynomial<DEG1,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG2,DIM,Id,Scalar> const &rhs);
-    template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar> friend
-    MultivariatePolynomial<DEG,DIM,Id,Scalar> operator* (MultivariatePolynomial<0,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG,DIM,Id,Scalar> const &rhs);
-    template<Uint32 DIM, typename Id, typename Scalar> friend
-    std::ostream &operator << (std::ostream &out, MultivariatePolynomial<0,DIM,Id,Scalar> const &m);
+    template<Uint32,Uint32,typename,typename>
+    friend struct MultivariatePolynomial;
+    template<bool>
+    friend struct Adder;
+    template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar>
+    friend MultivariatePolynomial<DEG,DIM,Id,Scalar> operator+ (MultivariatePolynomial<DEG,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG,DIM,Id,Scalar> const &rhs);
+    template<Uint32 DEG1, Uint32 DEG2, Uint32 DIM, typename Id, typename Scalar>
+    friend MultivariatePolynomial<DEG1+DEG2,DIM,Id,Scalar> operator* (MultivariatePolynomial<DEG1,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG2,DIM,Id,Scalar> const &rhs);
+    template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar>
+    friend MultivariatePolynomial<DEG,DIM,Id,Scalar> operator* (MultivariatePolynomial<0,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG,DIM,Id,Scalar> const &rhs);
+    template<Uint32 DIM, typename Id, typename Scalar>
+    friend std::ostream &operator << (std::ostream &out, MultivariatePolynomial<0,DIM,Id,Scalar> const &m);
 };
 
 

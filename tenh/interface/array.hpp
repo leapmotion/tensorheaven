@@ -42,6 +42,22 @@ struct Array_i
     Derived const &as_derived () const { return *static_cast<Derived const *>(this); }
     Derived &as_derived () { return *static_cast<Derived *>(this); }
 
+    void print (std::ostream &out) const
+    {
+        if (COMPONENT_COUNT_ == 0)
+        {
+            out << "{ }";
+            return;
+        }
+
+        ComponentIndex i; // initialized to the beginning automatically
+        out << '{' << operator[](i);
+        ++i;
+        for ( ; i.is_not_at_end(); ++i)
+            out << ", " << operator[](i);
+        out << '}';
+    }
+
     static std::string type_as_string ()
     {
         return "Array_i<" + TypeStringOf_t<Derived>::eval() + ','
