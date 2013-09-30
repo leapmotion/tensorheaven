@@ -18,7 +18,7 @@
 namespace Tenh {
 
 /// @def AS_STRING(X)
-/// @brief Converst built-in types to `std::string` for ease of building type strings.
+/// @brief Converts built-in types to `std::string` for ease of building type strings.
 #define AS_STRING(x) static_cast<std::ostringstream &>(std::ostringstream().flush() << x).str()
 
 
@@ -46,8 +46,16 @@ template <> struct TypeStringOf_t<float> { static std::string eval () { return "
 template <> struct TypeStringOf_t<double> { static std::string eval () { return "double"; } };
 template <> struct TypeStringOf_t<long double> { static std::string eval () { return "long double"; } };
 template <> struct TypeStringOf_t<std::string> { static std::string eval () { return "std::string"; } };
-template <typename T> struct TypeStringOf_t<std::complex<T> > { static std::string eval ()
-    { return "complex<" + TypeStringOf_t<T>::eval() + ">"; } };
+template <typename T>
+struct TypeStringOf_t<std::complex<T> >
+{
+    static std::string eval () { return "complex<" + TypeStringOf_t<T>::eval() + '>'; }
+};
+template <typename T_, T_ VALUE_>
+struct TypeStringOf_t<Value<T_,VALUE_> >
+{
+    static std::string eval () { return "Value<" + TypeStringOf_t<T_>::eval() + ',' + AS_STRING(VALUE_) + '>'; }
+};
 /// @endcond
 
 /// @struct Pretty typestringof.hpp "tenh/meta/typestringof.hpp"

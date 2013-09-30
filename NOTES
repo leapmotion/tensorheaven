@@ -384,6 +384,7 @@
 - TODO: once conceptual inheritance stuff is done, write up some notes on this and about the
   conceptual layer in general.  Should probably look into prior art on implementing C++ concepts
   (boost?).
+- Haskell turns out to be a great model for the metaprogramming.  Embrace it.
 
 
 ###Notes from Tensor Heaven future planning

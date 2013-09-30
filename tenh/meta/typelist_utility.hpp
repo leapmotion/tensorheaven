@@ -264,19 +264,6 @@ struct ElementsOfTypeListSatisfyingPredicate_t<EmptyTypeList,Predicate_>
 /// @endcond
 
 
-/// @struct NegationOfPredicate_t typelist_utility.hpp "tenh/meta/typelist_utility.hpp"
-/// @brief Is a predicate, which is the negation of the supplied predicate.
-/// @todo Should this be named NegationOfPredicate_p, and should we provide other logical predicate builders?
-/// @tparam Predicate_ the predicate to negate.
-template <typename Predicate_>
-struct NegationOfPredicate_t
-{
-    /// @cond false
-    template <typename T> struct Eval_t { static bool const V = !Predicate_::template Eval_t<T>::V; };
-    /// @endcond
-};
-
-
 /// @struct ContainsDuplicates_t typelist_utility.hpp "tenh/meta/typelist_utility.hpp"
 /// @brief Determines if a TypeList_t contains any duplicate types.
 /// @tparam TypeList_ the TypeList_t to examine for duplicates.
@@ -657,6 +644,305 @@ struct EachTypeSatisfies_f<EmptyTypeList, Predicate_>
     static bool const V = true;
 };
 /// @endcond
+
+
+
+
+// ///////////////////////////////////////////////////////////////////////////
+// apply a metafunction to each element in a TypeList_t
+// ///////////////////////////////////////////////////////////////////////////
+
+template <typename TypeList_, typename FunctionEvaluator_>
+struct OnEach_f
+{
+    typedef TypeList_t<typename FunctionEvaluator_::template Eval_f<typename TypeList_::HeadType>::T,
+                       typename OnEach_f<typename TypeList_::BodyTypeList,FunctionEvaluator_>::T> T;
+};
+
+template <typename FunctionEvaluator_>
+struct OnEach_f<EmptyTypeList,FunctionEvaluator_>
+{
+    typedef EmptyTypeList T;
+};
+
+// ///////////////////////////////////////////////////////////////////////////
+// logic
+// ///////////////////////////////////////////////////////////////////////////
+
+/// @struct NegationOfPredicate_e typelist_utility.hpp "tenh/meta/typelist_utility.hpp"
+/// @brief Is a predicate, which is the negation of the supplied predicate.
+/// @tparam Predicate_ the predicate to negate.
+template <typename Predicate_>
+struct NegationOfPredicate_e
+{
+    /// @cond false
+    template <typename T_>
+    struct Eval_f
+    {
+        typedef Value<bool,!Predicate_::template Eval_f<T_>::T::V> T;
+    };
+    /// @endcond
+};
+
+template <typename TypeList_>
+struct And_f
+{
+private:
+    // TODO: assert that each type is a Value<bool,...>
+public:
+    static bool const V = TypeList_::HeadType::V && And_f<typename TypeList_::BodyTypeList>::V;
+};
+
+template <>
+struct And_f<EmptyTypeList>
+{
+    static bool const V = true; // vacuously true
+};
+
+template <typename TypeList_>
+struct Or_f
+{
+private:
+    // TODO: assert that each type is a Value<bool,...>
+public:
+    static bool const V = TypeList_::HeadType::V || Or_f<typename TypeList_::BodyTypeList>::V;
+};
+
+template <>
+struct Or_f<EmptyTypeList>
+{
+    static bool const V = false; // base case ("at least one must be true")
+};
+
+// ///////////////////////////////////////////////////////////////////////////
+// math
+// ///////////////////////////////////////////////////////////////////////////
+
+template <typename TypeList_, typename OperandType_>
+struct Sum_f
+{
+private:
+    // TODO: assert that each type is a Value<OperandType_,...>
+public:
+    static OperandType_ const V = TypeList_::HeadType::V + Sum_f<typename TypeList_::BodyTypeList,OperandType_>::V;
+};
+
+template <typename OperandType_>
+struct Sum_f<EmptyTypeList,OperandType_>
+{
+    static OperandType_ const V = 0;
+};
+
+template <typename TypeList_, typename OperandType_>
+struct Product_f
+{
+private:
+    // TODO: assert that each type is a Value<OperandType_,...>
+public:
+    static OperandType_ const V = TypeList_::HeadType::V * Product_f<typename TypeList_::BodyTypeList,OperandType_>::V;
+};
+
+template <typename OperandType_>
+struct Product_f<EmptyTypeList,OperandType_>
+{
+    static OperandType_ const V = 1;
+};
+
+// note that Min_f is not defined on EmptyTypeList
+template <typename TypeList_, typename OperandType_> struct Min_f;
+
+template <typename HeadType_, typename NextHeadType_, typename NextBodyTypeList_, typename OperandType_>
+struct Min_f<TypeList_t<HeadType_,TypeList_t<NextHeadType_,NextBodyTypeList_> >,OperandType_>
+{
+private:
+    // TODO: assert that each type is a Value<OperandType_,...>
+    typedef TypeList_t<NextHeadType_,NextBodyTypeList_> BodyTypeList;
+    static OperandType_ const HEAD_V = HeadType_::V;
+    static OperandType_ const BODY_V = Min_f<BodyTypeList,OperandType_>::V;
+public:
+    static OperandType_ const V = (HEAD_V < BODY_V) ? HEAD_V : BODY_V;
+};
+
+template <typename HeadType_, typename OperandType_>
+struct Min_f<TypeList_t<HeadType_>,OperandType_>
+{
+private:
+    // TODO: assert that each type is a Value<OperandType_,...>
+public:
+    static OperandType_ const V = HeadType_::V;
+};
+
+// note that Max_f is not defined on EmptyTypeList
+template <typename TypeList_, typename OperandType_> struct Max_f;
+
+template <typename HeadType_, typename NextHeadType_, typename NextBodyTypeList_, typename OperandType_>
+struct Max_f<TypeList_t<HeadType_,TypeList_t<NextHeadType_,NextBodyTypeList_> >,OperandType_>
+{
+private:
+    // TODO: assert that each type is a Value<OperandType_,...>
+    typedef TypeList_t<NextHeadType_,NextBodyTypeList_> BodyTypeList;
+    static OperandType_ const HEAD_V = HeadType_::V;
+    static OperandType_ const BODY_V = Max_f<BodyTypeList,OperandType_>::V;
+public:
+    static OperandType_ const V = (HEAD_V > BODY_V) ? HEAD_V : BODY_V;
+};
+
+template <typename HeadType_, typename OperandType_>
+struct Max_f<TypeList_t<HeadType_>,OperandType_>
+{
+private:
+    // TODO: assert that each type is a Value<OperandType_,...>
+public:
+    static OperandType_ const V = HeadType_::V;
+};
+
+// ///////////////////////////////////////////////////////////////////////////
+// TypeList_t specific stuff
+// ///////////////////////////////////////////////////////////////////////////
+
+template <typename TypeList_>
+struct Head_f
+{
+    typedef typename TypeList_::HeadType T;
+};
+
+// base case
+template <>
+struct Head_f<EmptyTypeList>
+{
+    // undefined on purpose
+};
+
+MAKE_1_ARY_TYPE_EVALUATOR(Head);
+
+template <typename TypeList_>
+struct Body_f
+{
+    typedef typename TypeList_::BodyTypeList T;
+};
+
+// base case
+template <>
+struct Body_f<EmptyTypeList>
+{
+    // undefined on purpose
+};
+
+MAKE_1_ARY_TYPE_EVALUATOR(Body);
+
+template <typename TypeList_>
+struct Length_f
+{
+    static Uint32 const V = TypeList_::LENGTH;
+};
+
+MAKE_1_ARY_VALUE_EVALUATOR(Length, Uint32);
+
+template <typename TypeList_, Uint32 INDEX_>
+struct Element_f
+{
+private:
+    static Uint32 const I = (INDEX_ == 0) ? 0 : INDEX_-1;
+public:
+    typedef typename If<INDEX_ == 0,
+                        typename TypeList_::HeadType,
+                        typename Element_f<typename TypeList_::BodyTypeList,I>::T>::T T;
+};
+
+// base case
+template <Uint32 INDEX_>
+struct Element_f<EmptyTypeList,INDEX_>
+{
+    // seems to be necessary
+    typedef NullType T;
+};
+
+MAKE_2_ARY_TYPE_EVALUATOR(Element, Uint32, INDEX_);
+
+// TODO: could be implemented as Or_f<OnEach_f<TypeList_,TypesAreEqual_e>::T>::V
+template <typename TypeList_, typename Type_>
+struct Contains_f
+{
+    static bool const V = TypesAreEqual<typename TypeList_::HeadType,Type_>::V ||
+                          Contains_f<typename TypeList_::BodyTypeList,Type_>::V;
+};
+
+// base case
+template <typename Type_>
+struct Contains_f<EmptyTypeList,Type_>
+{
+    static bool const V = false;
+};
+
+MAKE_2_ARY_VALUE_EVALUATOR(Contains, bool, typename, Type_);
+
+// if Type_ doesn't occur in TypeList_, this returns TypeList_::LENGTH.
+template <typename TypeList_, typename Type_>
+struct IndexOfFirstOccurrence_f
+{
+    static Uint32 const V = TypesAreEqual<typename TypeList_::HeadType,Type_>::V ?
+                            0 :
+                            1 + IndexOfFirstOccurrence_f<typename TypeList_::BodyTypeList,Type_>::V;
+};
+
+template <typename Type_>
+struct IndexOfFirstOccurrence_f<EmptyTypeList,Type_>
+{
+    // this makes the index of a type that doesn't occur equal to the length of the list.
+    static Uint32 const V = 0;
+};
+
+MAKE_2_ARY_VALUE_EVALUATOR(IndexOfFirstOccurrence, Uint32, typename, Type_);
+
+template <typename TypeList_, Uint32 START_INDEX_>
+struct TrailingTypeList_f
+{
+    typedef typename If<START_INDEX_ == 0,
+                        TypeList_,
+                        typename TrailingTypeList_f<typename TypeList_::BodyTypeList,START_INDEX_-1>::T>::T T;
+};
+
+template <Uint32 START_INDEX_>
+struct TrailingTypeList_f<EmptyTypeList,START_INDEX_>
+{
+    //enum { STATIC_ASSERT_IN_ENUM(START_INDEX_ == 0, INDEX_OUT_OF_RANGE) };
+    typedef EmptyTypeList T;
+};
+
+MAKE_2_ARY_TYPE_EVALUATOR(TrailingTypeList, Uint32, START_INDEX_);
+
+template <typename TypeList_, Uint32 END_INDEX_>
+struct LeadingTypeList_f
+{
+private:
+    static Uint32 const E = (END_INDEX_ == 0) ? 0 : END_INDEX_-1;
+public:
+    typedef typename If<END_INDEX_ == 0,
+                        EmptyTypeList,
+                        TypeList_t<typename TypeList_::HeadType,
+                                   typename LeadingTypeList_f<typename TypeList_::BodyTypeList,E>::T> >::T T;
+};
+
+template <Uint32 END_INDEX_>
+struct LeadingTypeList_f<EmptyTypeList,END_INDEX_>
+{
+    //enum { STATIC_ASSERT_IN_ENUM(END_INDEX_ == 0, INDEX_OUT_OF_RANGE) };
+    typedef EmptyTypeList T;
+};
+
+MAKE_2_ARY_TYPE_EVALUATOR(LeadingTypeList, Uint32, END_INDEX_);
+
+template <typename TypeList_, Uint32 START_INDEX_, Uint32 END_INDEX_>
+struct TypeListRange_f
+{
+private:
+    enum { STATIC_ASSERT_IN_ENUM(START_INDEX_ <= END_INDEX_, INVALID_RANGE_INDICES) };
+    static Uint32 const RANGE_LENGTH = END_INDEX_ - START_INDEX_;
+public:
+    typedef typename LeadingTypeList_f<typename TrailingTypeList_f<TypeList_,START_INDEX_>::T,RANGE_LENGTH>::T T;
+};
+
+MAKE_3_ARY_TYPE_EVALUATOR(TypeListRange, Uint32, START_INDEX_, Uint32, END_INDEX_);
 
 } // end of namespace Tenh
 
