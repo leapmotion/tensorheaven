@@ -48,7 +48,7 @@ public:
     static std::string type_as_string () { return "Map_t( " + domain_codomain_element_pairs_as_string() + " )"; }
     static std::string domain_codomain_element_pairs_as_string ()
     {
-        std::string retval('(' + TypeStringOf_t<DomainElement>::eval() + " |-> " + TypeStringOf_t<CodomainElement>::eval() + ')');
+        std::string retval('(' + type_string_of<DomainElement>() + " |-> " + type_string_of<CodomainElement>() + ')');
         if (RestOfMap::DomainCodomainElementPairTypeList::LENGTH > 0)
             retval += ", " + RestOfMap::domain_codomain_element_pairs_as_string();
         return retval;
@@ -67,7 +67,7 @@ struct Map_t<DomainElement,CodomainElement,EmptyMap>
     static std::string type_as_string () { return "Map_t( " + domain_codomain_element_pairs_as_string() + " )"; }
     static std::string domain_codomain_element_pairs_as_string ()
     {
-        return '(' + TypeStringOf_t<DomainElement>::eval() + " |-> " + TypeStringOf_t<CodomainElement>::eval() + ')';
+        return '(' + type_string_of<DomainElement>() + " |-> " + type_string_of<CodomainElement>() + ')';
     }
 };
 
@@ -337,8 +337,8 @@ struct Monoid_c
 
     static std::string type_as_string ()
     {
-        return "Monoid_c<" + TypeStringOf_t<Identity>::eval() + ','
-                           + TypeStringOf_t<Operation>::eval() + ','
+        return "Monoid_c<" + type_string_of<Identity>() + ','
+                           + type_string_of<Operation>() + ','
                            + (IS_ABELIAN ? "IS_ABELIAN" : "IS_NOT_ABELIAN") + '>';
     }
 };
@@ -376,9 +376,9 @@ public:
 
     static std::string type_as_string ()
     {
-        return "Group_c<" + TypeStringOf_t<Identity>::eval() + ','
-                          + TypeStringOf_t<Operation>::eval() + ','
-                          + TypeStringOf_t<Inversion>::eval() + ','
+        return "Group_c<" + type_string_of<Identity>() + ','
+                          + type_string_of<Operation>() + ','
+                          + type_string_of<Inversion>() + ','
                           + (IS_ABELIAN ? "IS_ABELIAN" : "IS_NOT_ABELIAN") + '>';
     }
 };
@@ -428,11 +428,11 @@ public:
 
     static std::string type_as_string ()
     {
-        return "Ring_c<" + TypeStringOf_t<AdditiveIdentity>::eval() + ','
-                         + TypeStringOf_t<Addition>::eval() + ','
-                         + TypeStringOf_t<AdditiveInversion>::eval() + ','
-                         + TypeStringOf_t<MultiplicativeIdentity>::eval() + ','
-                         + TypeStringOf_t<Multiplication>::eval() + ','
+        return "Ring_c<" + type_string_of<AdditiveIdentity>() + ','
+                         + type_string_of<Addition>() + ','
+                         + type_string_of<AdditiveInversion>() + ','
+                         + type_string_of<MultiplicativeIdentity>() + ','
+                         + type_string_of<Multiplication>() + ','
                          + (IS_COMMUTATIVE ? "IS_COMMUTATIVE" : "IS_NOT_COMMUTATIVE") + '>';
     }
 };
@@ -492,12 +492,12 @@ public:
 
     static std::string type_as_string ()
     {
-        return "Field_c<" + TypeStringOf_t<AdditiveIdentity>::eval() + ','
-                          + TypeStringOf_t<Addition>::eval() + ','
-                          + TypeStringOf_t<AdditiveInversion>::eval() + ','
-                          + TypeStringOf_t<MultiplicativeIdentity>::eval() + ','
-                          + TypeStringOf_t<Multiplication>::eval() + ','
-                          + TypeStringOf_t<MultiplicativeInverse>::eval() + '>';
+        return "Field_c<" + type_string_of<AdditiveIdentity>() + ','
+                          + type_string_of<Addition>() + ','
+                          + type_string_of<AdditiveInversion>() + ','
+                          + type_string_of<MultiplicativeIdentity>() + ','
+                          + type_string_of<Multiplication>() + ','
+                          + type_string_of<MultiplicativeInverse>() + '>';
     }
 };
 
@@ -544,9 +544,9 @@ int main (int argc, char **argv)
     typedef Ring_c<ZeroMatrix,Add,Negate,IdentityMatrix,Multiply,false> Ring;
     typedef Field_c<Zero,Add,Negate,One,Multiply,Invert> Field;
 
-    cout << FORMAT_VALUE(TypeStringOf_t<Monoid>::eval()) << '\n';
-    cout << FORMAT_VALUE(TypeStringOf_t<Group>::eval()) << '\n';
-    cout << FORMAT_VALUE(TypeStringOf_t<Ring>::eval()) << '\n';
+    cout << FORMAT_VALUE(type_string_of<Monoid>()) << '\n';
+    cout << FORMAT_VALUE(type_string_of<Group>()) << '\n';
+    cout << FORMAT_VALUE(type_string_of<Ring>()) << '\n';
     cout << '\n';
 
     cout << FORMAT_VALUE(IsMonoid_f<Monoid>::V) << '\n';
@@ -570,100 +570,100 @@ int main (int argc, char **argv)
     typedef AncestorsOf_f<Monoid>::T AncestorsOfMonoid;
     typedef AncestorsOf_f<Group>::T AncestorsOfGroup;
     typedef AncestorsOf_f<Ring>::T AncestorsOfRing;
-    cout << FORMAT_VALUE(TypeStringOf_t<AncestorsOfMonoid>::eval()) << '\n';
-    cout << FORMAT_VALUE(TypeStringOf_t<AncestorsOfGroup>::eval()) << '\n';
-    cout << FORMAT_VALUE(TypeStringOf_t<AncestorsOfRing>::eval()) << '\n';
+    cout << FORMAT_VALUE(type_string_of<AncestorsOfMonoid>()) << '\n';
+    cout << FORMAT_VALUE(type_string_of<AncestorsOfGroup>()) << '\n';
+    cout << FORMAT_VALUE(type_string_of<AncestorsOfRing>()) << '\n';
     cout << '\n';
 
-    cout << FORMAT_VALUE((TypeStringOf_t<AncestorsSatisfyingPredicate_f<Monoid,IsMonoid_p>::T>::eval())) << '\n';
-    cout << FORMAT_VALUE((TypeStringOf_t<AncestorsSatisfyingPredicate_f<Group,IsMonoid_p>::T>::eval())) << '\n';
-    cout << FORMAT_VALUE((TypeStringOf_t<AncestorsSatisfyingPredicate_f<Ring,IsMonoid_p>::T>::eval())) << '\n';
+    cout << FORMAT_VALUE((type_string_of<AncestorsSatisfyingPredicate_f<Monoid,IsMonoid_p>::T>())) << '\n';
+    cout << FORMAT_VALUE((type_string_of<AncestorsSatisfyingPredicate_f<Group,IsMonoid_p>::T>())) << '\n';
+    cout << FORMAT_VALUE((type_string_of<AncestorsSatisfyingPredicate_f<Ring,IsMonoid_p>::T>())) << '\n';
     cout << '\n';
 
-    cout << FORMAT_VALUE((TypeStringOf_t<ConceptualStructuresOf_f<Monoid,IsMonoid_p>::T>::eval())) << '\n';
+    cout << FORMAT_VALUE((type_string_of<ConceptualStructuresOf_f<Monoid,IsMonoid_p>::T>())) << '\n';
     cout << FORMAT_VALUE((HasConceptualStructure_f<Monoid,IsMonoid_p>::V)) << '\n';
     cout << FORMAT_VALUE((HasUniqueConceptualStructure_f<Monoid,IsMonoid_p>::V)) << '\n';
-    cout << FORMAT_VALUE((TypeStringOf_t<UniqueConceptualStructureOf_f<Monoid,IsMonoid_p>::T>::eval())) << '\n';
+    cout << FORMAT_VALUE((type_string_of<UniqueConceptualStructureOf_f<Monoid,IsMonoid_p>::T>())) << '\n';
     cout << '\n';
 
-    cout << FORMAT_VALUE((TypeStringOf_t<MonoidStructuresOf_f<Monoid>::T>::eval())) << '\n';
+    cout << FORMAT_VALUE((type_string_of<MonoidStructuresOf_f<Monoid>::T>())) << '\n';
     cout << FORMAT_VALUE((HasMonoidStructure_f<Monoid>::V)) << '\n';
     cout << FORMAT_VALUE((HasUniqueMonoidStructure_f<Monoid>::V)) << '\n';
-    cout << FORMAT_VALUE((TypeStringOf_t<UniqueMonoidStructureOf_f<Monoid>::T>::eval())) << '\n';
+    cout << FORMAT_VALUE((type_string_of<UniqueMonoidStructureOf_f<Monoid>::T>())) << '\n';
     cout << '\n';
 
     cout << FORMAT_VALUE(IS_MONOID_UNIQUELY(Monoid)) << '\n';
-    cout << FORMAT_VALUE(TypeStringOf_t<AS_MONOID(Monoid)>::eval()) << '\n';
+    cout << FORMAT_VALUE(type_string_of<AS_MONOID(Monoid)>()) << '\n';
     cout << '\n';
 
-    cout << FORMAT_VALUE((TypeStringOf_t<ConceptualStructuresOf_f<Monoid,IsGroup_p>::T>::eval())) << '\n';
+    cout << FORMAT_VALUE((type_string_of<ConceptualStructuresOf_f<Monoid,IsGroup_p>::T>())) << '\n';
     cout << FORMAT_VALUE((HasConceptualStructure_f<Monoid,IsGroup_p>::V)) << '\n';
     cout << FORMAT_VALUE((HasUniqueConceptualStructure_f<Monoid,IsGroup_p>::V)) << '\n';
     cout << '\n';
 
-    cout << FORMAT_VALUE((TypeStringOf_t<ConceptualStructuresOf_f<Group,IsMonoid_p>::T>::eval())) << '\n';
+    cout << FORMAT_VALUE((type_string_of<ConceptualStructuresOf_f<Group,IsMonoid_p>::T>())) << '\n';
     cout << FORMAT_VALUE((HasConceptualStructure_f<Group,IsMonoid_p>::V)) << '\n';
     cout << FORMAT_VALUE((HasUniqueConceptualStructure_f<Group,IsMonoid_p>::V)) << '\n';
-    cout << FORMAT_VALUE((TypeStringOf_t<UniqueConceptualStructureOf_f<Group,IsMonoid_p>::T>::eval())) << '\n';
+    cout << FORMAT_VALUE((type_string_of<UniqueConceptualStructureOf_f<Group,IsMonoid_p>::T>())) << '\n';
     cout << '\n';
 
     cout << FORMAT_VALUE(IS_MONOID_UNIQUELY(Group)) << '\n';
-    cout << FORMAT_VALUE(TypeStringOf_t<AS_MONOID(Group)>::eval()) << '\n';
+    cout << FORMAT_VALUE(type_string_of<AS_MONOID(Group)>()) << '\n';
     cout << '\n';
 
-    cout << FORMAT_VALUE((TypeStringOf_t<ConceptualStructuresOf_f<Ring,IsMonoid_p>::T>::eval())) << '\n';
+    cout << FORMAT_VALUE((type_string_of<ConceptualStructuresOf_f<Ring,IsMonoid_p>::T>())) << '\n';
     cout << FORMAT_VALUE((HasConceptualStructure_f<Ring,IsMonoid_p>::V)) << '\n';
     cout << FORMAT_VALUE((HasUniqueConceptualStructure_f<Ring,IsMonoid_p>::V)) << '\n';
     cout << '\n';
 
-    cout << FORMAT_VALUE((TypeStringOf_t<ConceptualStructuresOf_f<Field,IsGroup_p>::T>::eval())) << '\n';
+    cout << FORMAT_VALUE((type_string_of<ConceptualStructuresOf_f<Field,IsGroup_p>::T>())) << '\n';
     cout << FORMAT_VALUE((HasConceptualStructure_f<Field,IsGroup_p>::V)) << '\n';
     cout << FORMAT_VALUE((HasUniqueConceptualStructure_f<Field,IsGroup_p>::V)) << '\n';
     cout << '\n';
 
     // some test usage to get various properties of conceptual structures
     {
-        cout << FORMAT_VALUE(TypeStringOf_t<UniqueGroupStructureOf_f<Ring>::T>::eval()) << '\n';
-        cout << FORMAT_VALUE(TypeStringOf_t<AS_GROUP(Ring)>::eval()) << '\n';
-        cout << FORMAT_VALUE(TypeStringOf_t<UniqueGroupStructureOf_f<Ring>::T::Identity>::eval()) << '\n';
-        cout << FORMAT_VALUE(TypeStringOf_t<AS_GROUP(Ring)::Identity>::eval()) << '\n';
+        cout << FORMAT_VALUE(type_string_of<UniqueGroupStructureOf_f<Ring>::T>()) << '\n';
+        cout << FORMAT_VALUE(type_string_of<AS_GROUP(Ring)>()) << '\n';
+        cout << FORMAT_VALUE(type_string_of<UniqueGroupStructureOf_f<Ring>::T::Identity>()) << '\n';
+        cout << FORMAT_VALUE(type_string_of<AS_GROUP(Ring)::Identity>()) << '\n';
         // typedef UniqueGroupStructureOf_f<Ring>::T::Identity MultiplicativeIdentity;
         typedef AS_GROUP(Ring)::Identity MultiplicativeIdentity;
-        cout << FORMAT_VALUE(TypeStringOf_t<MultiplicativeIdentity>::eval()) << '\n';
+        cout << FORMAT_VALUE(type_string_of<MultiplicativeIdentity>()) << '\n';
         cout << '\n';
     }
 
     {
         cout << "testing StructureDisambiguationMapsOf_f\n";
-        cout << FORMAT_VALUE(TypeStringOf_t<StructureDisambiguationMapsOf_f<Monoid>::T>::eval()) << '\n';
-        cout << FORMAT_VALUE(TypeStringOf_t<StructureDisambiguationMapsOf_f<Group>::T>::eval()) << '\n';
-        cout << FORMAT_VALUE(TypeStringOf_t<StructureDisambiguationMapsOf_f<Ring>::T>::eval()) << '\n';
-        cout << FORMAT_VALUE(TypeStringOf_t<StructureDisambiguationMapsOf_f<Field>::T>::eval()) << '\n';
+        cout << FORMAT_VALUE(type_string_of<StructureDisambiguationMapsOf_f<Monoid>::T>()) << '\n';
+        cout << FORMAT_VALUE(type_string_of<StructureDisambiguationMapsOf_f<Group>::T>()) << '\n';
+        cout << FORMAT_VALUE(type_string_of<StructureDisambiguationMapsOf_f<Ring>::T>()) << '\n';
+        cout << FORMAT_VALUE(type_string_of<StructureDisambiguationMapsOf_f<Field>::T>()) << '\n';
         cout << '\n';
     }
 
     {
         cout << "testing TotalStructureDisambiguationMapOf_f\n";
-        cout << FORMAT_VALUE(TypeStringOf_t<TotalStructureDisambiguationMapOf_f<Monoid>::T>::eval()) << '\n';
-        cout << FORMAT_VALUE(TypeStringOf_t<TotalStructureDisambiguationMapOf_f<Group>::T>::eval()) << '\n';
-        cout << FORMAT_VALUE(TypeStringOf_t<TotalStructureDisambiguationMapOf_f<Ring>::T>::eval()) << '\n';
-        cout << FORMAT_VALUE(TypeStringOf_t<TotalStructureDisambiguationMapOf_f<Field>::T>::eval()) << '\n';
+        cout << FORMAT_VALUE(type_string_of<TotalStructureDisambiguationMapOf_f<Monoid>::T>()) << '\n';
+        cout << FORMAT_VALUE(type_string_of<TotalStructureDisambiguationMapOf_f<Group>::T>()) << '\n';
+        cout << FORMAT_VALUE(type_string_of<TotalStructureDisambiguationMapOf_f<Ring>::T>()) << '\n';
+        cout << FORMAT_VALUE(type_string_of<TotalStructureDisambiguationMapOf_f<Field>::T>()) << '\n';
         cout << '\n';
     }
 
     // testing Map_t
     {
         {
-            cout << FORMAT_VALUE(TypeStringOf_t<EmptyMap>::eval()) << '\n';
+            cout << FORMAT_VALUE(type_string_of<EmptyMap>()) << '\n';
             // typedef EvalMap_t<EmptyMap,int>::T ThisShouldCauseACompileError;
         }
 
         {
             typedef Map_t<int,float> SimpleMap;
-            cout << FORMAT_VALUE(TypeStringOf_t<SimpleMap>::eval()) << '\n';
+            cout << FORMAT_VALUE(type_string_of<SimpleMap>()) << '\n';
 
             typedef EvalMap_t<SimpleMap,int>::T ShouldBe_float;
-            cout << FORMAT_VALUE(TypeStringOf_t<ShouldBe_float>::eval()) << '\n';
+            cout << FORMAT_VALUE(type_string_of<ShouldBe_float>()) << '\n';
             Assert<(TypesAreEqual<ShouldBe_float,float>::V)>();
             // typedef EvalMap_t<SimpleMap,bool>::T ThisShouldCauseACompileError;
 
@@ -673,12 +673,12 @@ int main (int argc, char **argv)
 
         {
             typedef Map_t<int,float,Map_t<char,double> > TwoElementMap;
-            cout << FORMAT_VALUE(TypeStringOf_t<TwoElementMap>::eval()) << '\n';
+            cout << FORMAT_VALUE(type_string_of<TwoElementMap>()) << '\n';
 
             typedef EvalMap_t<TwoElementMap,int>::T ShouldBe_float;
             typedef EvalMap_t<TwoElementMap,char>::T ShouldBe_double;
-            cout << FORMAT_VALUE(TypeStringOf_t<ShouldBe_float>::eval()) << '\n';
-            cout << FORMAT_VALUE(TypeStringOf_t<ShouldBe_double>::eval()) << '\n';
+            cout << FORMAT_VALUE(type_string_of<ShouldBe_float>()) << '\n';
+            cout << FORMAT_VALUE(type_string_of<ShouldBe_double>()) << '\n';
             Assert<(TypesAreEqual<ShouldBe_float,float>::V)>();
             Assert<(TypesAreEqual<ShouldBe_double,double>::V)>();
             // typedef EvalMap_t<TwoElementMap,bool>::T ThisShouldCauseACompileError;
@@ -688,44 +688,44 @@ int main (int argc, char **argv)
         {
             cout << "testing MapConstructor_t\n";
             typedef Map_t<int,float> Map;
-            cout << FORMAT_VALUE(TypeStringOf_t<Map>::eval()) << '\n';
-            cout << FORMAT_VALUE((TypeStringOf_t<MapConstructor_t<EmptyTypeList,EmptyTypeList,EmptyMap>::T>::eval())) << '\n';
-            cout << FORMAT_VALUE((TypeStringOf_t<MapConstructor_t<EmptyTypeList,EmptyTypeList,Map>::T>::eval())) << '\n';
+            cout << FORMAT_VALUE(type_string_of<Map>()) << '\n';
+            cout << FORMAT_VALUE((type_string_of<MapConstructor_t<EmptyTypeList,EmptyTypeList,EmptyMap>::T>())) << '\n';
+            cout << FORMAT_VALUE((type_string_of<MapConstructor_t<EmptyTypeList,EmptyTypeList,Map>::T>())) << '\n';
 
             typedef TypeList_t<char,TypeList_t<bool> > Domain;
             typedef TypeList_t<float,TypeList_t<double> > Codomain;
-            cout << FORMAT_VALUE(TypeStringOf_t<Domain>::eval()) << '\n';
-            cout << FORMAT_VALUE(TypeStringOf_t<Codomain>::eval()) << '\n';
-            cout << FORMAT_VALUE((TypeStringOf_t<MapConstructor_t<Domain,Codomain,EmptyMap>::T>::eval())) << '\n';
-            cout << FORMAT_VALUE((TypeStringOf_t<MapConstructor_t<Domain,Codomain,Map>::T>::eval())) << '\n';
+            cout << FORMAT_VALUE(type_string_of<Domain>()) << '\n';
+            cout << FORMAT_VALUE(type_string_of<Codomain>()) << '\n';
+            cout << FORMAT_VALUE((type_string_of<MapConstructor_t<Domain,Codomain,EmptyMap>::T>())) << '\n';
+            cout << FORMAT_VALUE((type_string_of<MapConstructor_t<Domain,Codomain,Map>::T>())) << '\n';
             cout << '\n';
         }
 
         {
             cout << "testing MapUnion_t\n";
             typedef MapUnion_t<EmptyTypeList>::T M;
-            cout << FORMAT_VALUE(TypeStringOf_t<M>::eval()) << '\n';
+            cout << FORMAT_VALUE(type_string_of<M>()) << '\n';
             typedef Map_t<int,float,Map_t<bool,char> > Map1;
             typedef Map_t<int,float,Map_t<char,double> > Map2;
             typedef Map_t<int,double,Map_t<char,double> > Map3;
-            cout << FORMAT_VALUE(TypeStringOf_t<Map1>::eval()) << '\n';
-            cout << FORMAT_VALUE(TypeStringOf_t<Map2>::eval()) << '\n';
-            cout << FORMAT_VALUE(TypeStringOf_t<MapUnion_t<TypeList_t<Map1> >::T>::eval()) << '\n';
-            cout << FORMAT_VALUE((TypeStringOf_t<MapUnion_t<TypeList_t<Map1,TypeList_t<Map2> > >::T>::eval())) << '\n';
+            cout << FORMAT_VALUE(type_string_of<Map1>()) << '\n';
+            cout << FORMAT_VALUE(type_string_of<Map2>()) << '\n';
+            cout << FORMAT_VALUE(type_string_of<MapUnion_t<TypeList_t<Map1> >::T>()) << '\n';
+            cout << FORMAT_VALUE((type_string_of<MapUnion_t<TypeList_t<Map1,TypeList_t<Map2> > >::T>())) << '\n';
             // typedef MapUnion_t<TypeList_t<Map1,TypeList_t<Map3> > >::T ThisShouldCauseACompileError;
             cout << '\n';
         }
 
         {
             cout << "testing AS_NAMED_STRUCTURE\n";
-            cout << FORMAT_VALUE(TypeStringOf_t<AS_NAMED_STRUCTURE(Ring,AdditiveMonoid)>::eval()) << '\n';
-            cout << FORMAT_VALUE(TypeStringOf_t<AS_NAMED_STRUCTURE(Ring,MultiplicativeMonoid)>::eval()) << '\n';
+            cout << FORMAT_VALUE(type_string_of<AS_NAMED_STRUCTURE(Ring,AdditiveMonoid)>()) << '\n';
+            cout << FORMAT_VALUE(type_string_of<AS_NAMED_STRUCTURE(Ring,MultiplicativeMonoid)>()) << '\n';
             cout << '\n';
 
-            cout << FORMAT_VALUE(TypeStringOf_t<AS_NAMED_STRUCTURE(Field,AdditiveMonoid)>::eval()) << '\n';
-            cout << FORMAT_VALUE(TypeStringOf_t<AS_NAMED_STRUCTURE(Field,MultiplicativeMonoid)>::eval()) << '\n';
-            cout << FORMAT_VALUE(TypeStringOf_t<AS_NAMED_STRUCTURE(Field,AdditiveGroup)>::eval()) << '\n';
-            cout << FORMAT_VALUE(TypeStringOf_t<AS_NAMED_STRUCTURE(Field,MultiplicativeGroup)>::eval()) << '\n';
+            cout << FORMAT_VALUE(type_string_of<AS_NAMED_STRUCTURE(Field,AdditiveMonoid)>()) << '\n';
+            cout << FORMAT_VALUE(type_string_of<AS_NAMED_STRUCTURE(Field,MultiplicativeMonoid)>()) << '\n';
+            cout << FORMAT_VALUE(type_string_of<AS_NAMED_STRUCTURE(Field,AdditiveGroup)>()) << '\n';
+            cout << FORMAT_VALUE(type_string_of<AS_NAMED_STRUCTURE(Field,MultiplicativeGroup)>()) << '\n';
             cout << '\n';
         }
     }

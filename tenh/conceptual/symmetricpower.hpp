@@ -28,7 +28,7 @@ struct SymmetricPower_c
 
     static std::string type_as_string ()
     {
-        return "SymmetricPower_c<" + AS_STRING(ORDER) + ',' + TypeStringOf_t<Factor>::eval() + '>';
+        return "SymmetricPower_c<" + AS_STRING(ORDER) + ',' + type_string_of<Factor>() + '>';
     }
 };
 
@@ -63,7 +63,7 @@ public:
 
     static std::string type_as_string ()
     {
-        return "SymmetricPowerOfVectorSpace_c<" + AS_STRING(ORDER_) + ',' + TypeStringOf_t<Factor>::eval() + '>';
+        return "SymmetricPowerOfVectorSpace_c<" + AS_STRING(ORDER_) + ',' + type_string_of<Factor>() + '>';
     }
 };
 
@@ -98,7 +98,7 @@ public:
 
     static std::string type_as_string ()
     {
-        return "SymmetricPowerOfBasis_c<" + AS_STRING(ORDER) + ',' + TypeStringOf_t<Factor>::eval() + '>';
+        return "SymmetricPowerOfBasis_c<" + AS_STRING(ORDER) + ',' + type_string_of<Factor>() + '>';
     }
 };
 
@@ -134,8 +134,8 @@ public:
 
     static std::string type_as_string ()
     {
-        return "BasedSymmetricPowerOfVectorSpace_c<" + TypeStringOf_t<SymmetricPowerOfVectorSpace_>::eval() + ','
-                                                     + TypeStringOf_t<Basis_>::eval() + '>';
+        return "BasedSymmetricPowerOfVectorSpace_c<" + type_string_of<SymmetricPowerOfVectorSpace_>() + ','
+                                                     + type_string_of<Basis_>() + '>';
     }
 };
 
@@ -179,7 +179,7 @@ public:
 
     static std::string type_as_string ()
     {
-        return "SymmetricPowerOfBasedVectorSpace_c<" + AS_STRING(ORDER_) + ',' + TypeStringOf_t<Factor_>::eval() + '>';
+        return "SymmetricPowerOfBasedVectorSpace_c<" + AS_STRING(ORDER_) + ',' + type_string_of<Factor_>() + '>';
     }
 };
 

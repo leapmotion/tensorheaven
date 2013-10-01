@@ -133,9 +133,9 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
 
     static std::string type_as_string ()
     {
-        return "ImplementationOf_t<" + TypeStringOf_t<BasedVectorSpace>::eval() + ','
-                                     + TypeStringOf_t<Scalar>::eval() + ','
-                                     + TypeStringOf_t<UseArrayType_>::eval() + '>';
+        return "ImplementationOf_t<" + type_string_of<BasedVectorSpace>() + ','
+                                     + type_string_of<Scalar>() + ','
+                                     + type_string_of<UseArrayType_>() + '>';
     }
 };
 

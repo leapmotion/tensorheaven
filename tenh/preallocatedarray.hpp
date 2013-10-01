@@ -126,7 +126,7 @@ struct PreallocatedArray_t
 
     static std::string type_as_string ()
     {
-        return "PreallocatedArray_t<" + TypeStringOf_t<Component>::eval() + ',' + AS_STRING(COMPONENT_COUNT) + '>';
+        return "PreallocatedArray_t<" + type_string_of<Component>() + ',' + AS_STRING(COMPONENT_COUNT) + '>';
     }
 
 protected:

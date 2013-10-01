@@ -32,9 +32,9 @@ struct VectorSpace_c
 
     static std::string type_as_string ()
     {
-        return "VectorSpace_c<" + TypeStringOf_t<ScalarField_>::eval() + ','
+        return "VectorSpace_c<" + type_string_of<ScalarField_>() + ','
                                 + AS_STRING(DIMENSION_) + ','
-                                + TypeStringOf_t<Id_>::eval() + '>';
+                                + type_string_of<Id_>() + '>';
     }
 };
 
@@ -112,7 +112,7 @@ public:
 
     static std::string type_as_string ()
     {
-        return "BasedVectorSpace_c<" + TypeStringOf_t<VectorSpace_>::eval() + ',' + TypeStringOf_t<Basis_>::eval() + '>';
+        return "BasedVectorSpace_c<" + type_string_of<VectorSpace_>() + ',' + type_string_of<Basis_>() + '>';
     }
 };
 

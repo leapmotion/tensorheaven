@@ -84,7 +84,7 @@ struct MemberArray_t
 
     static std::string type_as_string ()
     {
-        return "MemberArray_t<" + TypeStringOf_t<Component>::eval() + ',' + AS_STRING(COMPONENT_COUNT) + '>';
+        return "MemberArray_t<" + type_string_of<Component>() + ',' + AS_STRING(COMPONENT_COUNT) + '>';
     }
 
 protected:

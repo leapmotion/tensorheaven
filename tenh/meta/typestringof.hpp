@@ -58,6 +58,28 @@ struct TypeStringOf_t<Value<T_,VALUE_> >
 };
 /// @endcond
 
+/// @brief Overload for operator<< to stream objects of type TypeStringOf_t
+template <typename T_>
+std::ostream &operator << (std::ostream &out, TypeStringOf_t<T_> const &)
+{
+    return out << TypeStringOf_t<T_>::eval();
+}
+
+/// @brief Returns the type string of the given type instance.
+template <typename T_>
+std::string type_string_of (T_ const &)
+{
+    return TypeStringOf_t<T_>::eval();
+}
+
+/// @brief Returns the type string of the given explicitly specified type T_.
+/// @tparam T_ The type for which to generate the type string.
+template <typename T_>
+std::string type_string_of ()
+{
+    return TypeStringOf_t<T_>::eval();
+}
+
 /// @struct Pretty typestringof.hpp "tenh/meta/typestringof.hpp"
 /// @brief Used as a tag for "pretty" printing of type strings.
 /// @details Exists in order to allow an overload of operator<< for TypeStringOf_t which uses print_pretty_typestring

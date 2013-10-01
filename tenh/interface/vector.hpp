@@ -142,9 +142,9 @@ struct Vector_i
 
     static std::string type_as_string ()
     {
-        return "Vector_i<" + TypeStringOf_t<Derived>::eval() + ','
-                           + TypeStringOf_t<Scalar>::eval() + ','
-                           + TypeStringOf_t<BasedVectorSpace>::eval() + ','
+        return "Vector_i<" + type_string_of<Derived>() + ','
+                           + type_string_of<Scalar>() + ','
+                           + type_string_of<BasedVectorSpace>() + ','
                            + AS_STRING((COMPONENTS_ARE_IMMUTABLE_ ? "IMMUTABLE_COMPONENTS" : "MUTABLE_COMPONENTS")) + '>';
     }
 };

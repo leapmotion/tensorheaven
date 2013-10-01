@@ -35,7 +35,7 @@ template <typename Factor>
 void add_particular_self_adjoint_eigen_decomp_test (Directory *parent)
 {
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent,
-                                     "test_self_adjoint_eigen_decomp<" + Tenh::TypeStringOf_t<Factor>::eval() + '>',
+                                     "test_self_adjoint_eigen_decomp<" + Tenh::type_string_of<Factor>() + '>',
                                      test_self_adjoint_eigen_decomp,
                                      RESULT_NO_ERROR);
 }

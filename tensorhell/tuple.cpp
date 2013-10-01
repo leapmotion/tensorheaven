@@ -8,16 +8,16 @@ using namespace std;
 
 int main (int argc, char **argv)
 {
-    cout << TypeStringOf_t<List_t<EmptyTypeList> >::eval() << '\n';
-    cout << TypeStringOf_t<Tuple_t<> >::eval() << '\n'; // better way
-    cout << TypeStringOf_t<Tuple_t<int> >::eval() << '\n';
-    cout << TypeStringOf_t<Tuple_t<int,char> >::eval() << '\n';
-    cout << TypeStringOf_t<Tuple_t<int,char,float> >::eval() << '\n';
-    cout << TypeStringOf_t<Tuple_t<int,char,float,bool> >::eval() << '\n';
-    cout << TypeStringOf_t<Tuple_t<int,char,float,bool,double> >::eval() << '\n';
-    cout << TypeStringOf_t<Tuple_t<int,char,float,bool,double,unsigned char> >::eval() << '\n';
-    cout << TypeStringOf_t<Tuple_t<int,char,float,bool,double,unsigned char,string> >::eval() << '\n';
-    cout << TypeStringOf_t<Tuple_t<int,char,float,bool,double,unsigned char,string,short int> >::eval() << '\n';
+    cout << type_string_of<List_t<EmptyTypeList> >() << '\n';
+    cout << type_string_of<Tuple_t<> >() << '\n'; // better way
+    cout << type_string_of<Tuple_t<int> >() << '\n';
+    cout << type_string_of<Tuple_t<int,char> >() << '\n';
+    cout << type_string_of<Tuple_t<int,char,float> >() << '\n';
+    cout << type_string_of<Tuple_t<int,char,float,bool> >() << '\n';
+    cout << type_string_of<Tuple_t<int,char,float,bool,double> >() << '\n';
+    cout << type_string_of<Tuple_t<int,char,float,bool,double,unsigned char> >() << '\n';
+    cout << type_string_of<Tuple_t<int,char,float,bool,double,unsigned char,string> >() << '\n';
+    cout << type_string_of<Tuple_t<int,char,float,bool,double,unsigned char,string,short int> >() << '\n';
     cout << '\n';
 
     cout << Tuple_t<>() << '\n';

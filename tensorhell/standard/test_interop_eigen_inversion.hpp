@@ -91,7 +91,7 @@ template <typename Tensor2Type, typename InverseTensor2Type>
 void add_inversion_test_for_Tensor2Type (Directory *parent)
 {
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent,
-                                     Tenh::TypeStringOf_t<Tensor2Type>::eval(),
+                                     Tenh::type_string_of<Tensor2Type>(),
                                      test_invert_tensor2<Tensor2Type,InverseTensor2Type>,
                                      RESULT_NO_ERROR);
 }

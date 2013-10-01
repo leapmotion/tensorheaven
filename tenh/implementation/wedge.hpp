@@ -129,9 +129,9 @@ struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scal
 
     static std::string type_as_string ()
     {
-        return "ImplementationOf_t<" + TypeStringOf_t<ExteriorPowerOfBasedVectorSpace>::eval() + ','
-                                     + TypeStringOf_t<Scalar>::eval() + ','
-                                     + TypeStringOf_t<UseArrayType_>::eval() + '>';
+        return "ImplementationOf_t<" + type_string_of<ExteriorPowerOfBasedVectorSpace>() + ','
+                                     + type_string_of<Scalar>() + ','
+                                     + type_string_of<UseArrayType_>() + '>';
     }
 
 private:

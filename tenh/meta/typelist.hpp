@@ -156,7 +156,7 @@ struct TypeList_t
     static std::string type_as_string (bool with_angle_brackets = true)
     {
         return std::string(with_angle_brackets ? "TypeList_t<" : "") +
-               TypeStringOf_t<HeadType>::eval() +
+               type_string_of<HeadType>() +
                std::string(BodyTypeList::LENGTH > 0 ? "," : "") +
                BodyTypeList::type_as_string(false) + // no brackets, so it's not cluttered from nesting
                std::string(with_angle_brackets ? ">" : "");

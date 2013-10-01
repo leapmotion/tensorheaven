@@ -27,7 +27,7 @@ struct Basis_c
 
     static std::string type_as_string ()
     {
-        return "Basis_c<" + TypeStringOf_t<Id_>::eval() + '>';
+        return "Basis_c<" + type_string_of<Id_>() + '>';
     }
 };
 
@@ -62,7 +62,7 @@ struct OrthonormalBasis_c
 
     static std::string type_as_string ()
     {
-        return "OrthonormalBasis_c<" + TypeStringOf_t<Id_>::eval() + '>';
+        return "OrthonormalBasis_c<" + type_string_of<Id_>() + '>';
     }
 };
 

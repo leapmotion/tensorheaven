@@ -60,8 +60,8 @@ struct Array_i
 
     static std::string type_as_string ()
     {
-        return "Array_i<" + TypeStringOf_t<Derived>::eval() + ','
-                          + TypeStringOf_t<Component>::eval() + ','
+        return "Array_i<" + type_string_of<Derived>() + ','
+                          + type_string_of<Component>() + ','
                           + AS_STRING(COMPONENT_COUNT) + ','
                           + AS_STRING((COMPONENTS_ARE_IMMUTABLE_ ? "IMMUTABLE_COMPONENTS" : "MUTABLE_COMPONENTS")) + '>';
     }

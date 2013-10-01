@@ -177,9 +177,9 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,F
 
     static std::string type_as_string ()
     {
-        return "ImplementationOf_t<" + TypeStringOf_t<Diagonal2TensorProductOfBasedVectorSpaces>::eval() + ','
-                                     + TypeStringOf_t<Scalar>::eval() + ','
-                                     + TypeStringOf_t<UseArrayType_>::eval() + '>';
+        return "ImplementationOf_t<" + type_string_of<Diagonal2TensorProductOfBasedVectorSpaces>() + ','
+                                     + type_string_of<Scalar>() + ','
+                                     + type_string_of<UseArrayType_>() + '>';
     }
 };
 

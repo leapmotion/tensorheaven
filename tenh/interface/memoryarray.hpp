@@ -82,8 +82,8 @@ struct MemoryArray_i
 
     static std::string type_as_string ()
     {
-        return "MemoryArray_i<" + TypeStringOf_t<Derived>::eval() + ','
-                                + TypeStringOf_t<Component>::eval() + ','
+        return "MemoryArray_i<" + type_string_of<Derived>() + ','
+                                + type_string_of<Component>() + ','
                                 + AS_STRING(COMPONENT_COUNT) + '>';
     }
 };

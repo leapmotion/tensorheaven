@@ -105,9 +105,9 @@ struct EmbeddableAsTensor_i
 
     static std::string type_as_string ()
     {
-        return "EmbeddableAsTensor_i<" + TypeStringOf_t<Derived>::eval() + ','
-                                       + TypeStringOf_t<Scalar>::eval() + ','
-                                       + TypeStringOf_t<EmbeddableInTensorProductOfBasedVectorSpaces>::eval() + ','
+        return "EmbeddableAsTensor_i<" + type_string_of<Derived>() + ','
+                                       + type_string_of<Scalar>() + ','
+                                       + type_string_of<EmbeddableInTensorProductOfBasedVectorSpaces>() + ','
                                        + AS_STRING((COMPONENTS_ARE_IMMUTABLE_ ? "IMMUTABLE_COMPONENTS" : "MUTABLE_COMPONENTS")) + '>';
     }
 };

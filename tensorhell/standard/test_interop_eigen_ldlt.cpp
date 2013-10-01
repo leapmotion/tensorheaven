@@ -65,28 +65,28 @@ void add_particular_tests (Directory *parent)
     typedef Tenh::Tensor2Antisymmetric_t<Tensor2Antisymmetric> DoubleAntisymmetric;
 
     Directory *vector
-        = new Directory(Tenh::TypeStringOf_t<V>::eval(), parent);
+        = new Directory(Tenh::type_string_of<V>(), parent);
 
     Directory *tensor2
-        = new Directory(Tenh::TypeStringOf_t<Tensor2>::eval(), parent);
+        = new Directory(Tenh::type_string_of<Tensor2>(), parent);
 
     Directory *tensor2antisymmetric
-        = new Directory(Tenh::TypeStringOf_t<Tensor2Antisymmetric>::eval(), parent);
+        = new Directory(Tenh::type_string_of<Tensor2Antisymmetric>(), parent);
 
     Directory *tensor2symmetric
-        = new Directory(Tenh::TypeStringOf_t<Tensor2Symmetric>::eval(), parent);
+        = new Directory(Tenh::type_string_of<Tensor2Symmetric>(), parent);
 
     Directory *doublesymmetric
-        = new Directory(Tenh::TypeStringOf_t<DoubleSymmetric>::eval(), parent);
+        = new Directory(Tenh::type_string_of<DoubleSymmetric>(), parent);
 
     Directory *symmetricantisymmetric
-        = new Directory(Tenh::TypeStringOf_t<SymmetricAntisymmetric>::eval(), parent);
+        = new Directory(Tenh::type_string_of<SymmetricAntisymmetric>(), parent);
 
     Directory *antisymmetricsymmetric
-        = new Directory(Tenh::TypeStringOf_t<AntisymmetricSymmetric>::eval(), parent);
+        = new Directory(Tenh::type_string_of<AntisymmetricSymmetric>(), parent);
 
     Directory *doubleantisymmetric
-        = new Directory(Tenh::TypeStringOf_t<DoubleAntisymmetric>::eval(), parent);
+        = new Directory(Tenh::type_string_of<DoubleAntisymmetric>(), parent);
 
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(vector, "test",
         TestLDLTSolve<V>, RESULT_NO_ERROR);

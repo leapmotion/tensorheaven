@@ -158,7 +158,7 @@ struct List_t
             out << ')';
     }
 
-    static std::string type_as_string () { return "List_t<" + TypeStringOf_t<TypeList>::eval() + '>'; }
+    static std::string type_as_string () { return "List_t<" + type_string_of<TypeList>() + '>'; }
 
 private:
 
@@ -284,7 +284,7 @@ struct List_t<EmptyTypeList>
             out << "()";
     }
 
-    static std::string type_as_string () { return "List_t<" + TypeStringOf_t<TypeList>::eval() + '>'; }
+    static std::string type_as_string () { return "List_t<" + type_string_of<TypeList>() + '>'; }
 };
 
 // you can use this to access the static const singleton as Static<EmptyList>::SINGLETON
@@ -426,7 +426,7 @@ struct List_t<TypeList_t<HeadType_> >
             out << ')';
     }
 
-    static std::string type_as_string () { return "List_t<" + TypeStringOf_t<TypeList>::eval() + '>'; }
+    static std::string type_as_string () { return "List_t<" + type_string_of<TypeList>() + '>'; }
 
 private:
 

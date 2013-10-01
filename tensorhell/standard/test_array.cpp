@@ -56,7 +56,7 @@ void check_filled_values (Context const &context)
 template <typename Component, Uint32 DIM>
 void add_particular_tests (Directory *parent)
 {
-    Directory *array = new Directory(FORMAT("MemberArray_t<" << Tenh::TypeStringOf_t<Component>::eval() << ',' << DIM << '>'), parent);
+    Directory *array = new Directory(FORMAT("MemberArray_t<" << Tenh::type_string_of<Component>() << ',' << DIM << '>'), parent);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(array, "constructor_without_initialization", constructor_without_initialization<Component,DIM>, RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(array, "constructor_fill_with", constructor_fill_with<Component,DIM>, new Context::Data<Component>(42), RESULT_NO_ERROR);
 }
@@ -67,7 +67,7 @@ void add_particular_tests_for_scalar (Directory *parent)
     add_particular_tests<Component,1>(parent);
     add_particular_tests<Component,2>(parent);
     add_particular_tests<Component,100>(parent);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent, FORMAT("check_filled_values<" << Tenh::TypeStringOf_t<Component>::eval() << ">"), check_filled_values<Component>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent, FORMAT("check_filled_values<" << Tenh::type_string_of<Component>() << ">"), check_filled_values<Component>, RESULT_NO_ERROR);
 }
 
 void AddTests (Directory *parent)

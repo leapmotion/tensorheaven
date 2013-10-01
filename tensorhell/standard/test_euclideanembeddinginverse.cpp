@@ -45,7 +45,7 @@ void e_inv_e_composition (Context const &context)
     // NOTE: the following comments contain an important case motivating compile error message improvement
 //     Tenh::Tensor2Diagonal_t<typename V::WithStandardEuclideanBasis,
 //                             typename V::WithStandardEuclideanBasis> inner_product_on_V(1);
-//     std::cerr << "\tEuclideanEmbeddingInverse - e_inv_e_composition<" << Tenh::TypeStringOf_t<V>::eval() << '\n';
+//     std::cerr << "\tEuclideanEmbeddingInverse - e_inv_e_composition<" << Tenh::type_string_of<V>() << '\n';
 //     std::cerr << FORMAT_VALUE(e_inv(q|r)*e(r|s) - identity_on_V(q|s)) << '\n';
     // the following line produces THE worst compile error i have ever seen (over 20000 lines in GCC)
 //     std::cerr << FORMAT_VALUE(e_inv(q|r)*e(r|s) - inner_product_on_V(q|s)) << '\n';
@@ -96,7 +96,7 @@ void e_e_inv_composition (Context const &context)
 template <typename VectorType>
 void add_test_for_each_composition (Directory *parent)
 {
-    Directory *d = new Directory(Tenh::TypeStringOf_t<VectorType>::eval(), parent);
+    Directory *d = new Directory(Tenh::type_string_of<VectorType>(), parent);
 
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(d, "e_inv_e_composition", e_inv_e_composition<VectorType>, RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(d, "e_e_inv_composition", e_e_inv_composition<VectorType>, RESULT_NO_ERROR);

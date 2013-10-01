@@ -426,9 +426,9 @@ void test_symmetric_and_antisymmetric_2_tensors ()
     typedef Tensor2_t<Vector,Vector> Tensor2;
     typedef Tensor2Symmetric_t<Vector> Tensor2Symmetric;
     typedef Tensor2Antisymmetric_t<Vector> Tensor2Antisymmetric;
-    std::cout << FORMAT_VALUE(TypeStringOf_t<Tensor2>::eval()) << '\n';
-    std::cout << FORMAT_VALUE(TypeStringOf_t<Tensor2Symmetric>::eval()) << '\n';
-    std::cout << FORMAT_VALUE(TypeStringOf_t<Tensor2Antisymmetric>::eval()) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of<Tensor2>()) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of<Tensor2Symmetric>()) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of<Tensor2Antisymmetric>()) << '\n';
 
     Tensor2Symmetric s(Static<WithoutInitialization>::SINGLETON);
     Tensor2Antisymmetric a(Static<WithoutInitialization>::SINGLETON);
@@ -477,9 +477,9 @@ void test_scalar_multiplication_and_division ()
     typedef Vector_t<float,FACTOR1_DIM> Factor1;
     typedef Vector_t<float,FACTOR2_DIM> Factor2;
     typedef Tensor2_t<Factor1,Factor2> Tensor2;
-    std::cout << FORMAT_VALUE(TypeStringOf_t<Factor1>::eval()) << '\n';
-    std::cout << FORMAT_VALUE(TypeStringOf_t<Factor2>::eval()) << '\n';
-    std::cout << FORMAT_VALUE(TypeStringOf_t<Tensor2>::eval()) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of<Factor1>()) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of<Factor2>()) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of<Tensor2>()) << '\n';
     std::cout << '\n';
 
     Factor1 u1(Static<WithoutInitialization>::SINGLETON);
@@ -1040,9 +1040,9 @@ int main (int argc, char **argv)
 
     // a few type strings
     {
-        std::cout << FORMAT_VALUE(TypeStringOf_t<float>::eval()) << '\n';
-        std::cout << FORMAT_VALUE(TypeStringOf_t<Float3>::eval()) << '\n';
-        std::cout << FORMAT_VALUE(TypeStringOf_t<Float3x3>::eval()) << '\n';
+        std::cout << FORMAT_VALUE(type_string_of<float>()) << '\n';
+        std::cout << FORMAT_VALUE(type_string_of<Float3>()) << '\n';
+        std::cout << FORMAT_VALUE(type_string_of<Float3x3>()) << '\n';
         std::cout << '\n';
     }
 
@@ -1101,7 +1101,7 @@ int main (int argc, char **argv)
             EM e(u(i), v(i));
             Float3::Index k;
             std::cout << FORMAT_VALUE(k.COMPONENT_COUNT) << '\n';
-            std::cout << FORMAT_VALUE(TypeStringOf_t<EE::MultiIndex>::eval()) << '\n';
+            std::cout << FORMAT_VALUE(type_string_of<EE::MultiIndex>()) << '\n';
             std::cout << "expression template value:\n";
             std::cout << FORMAT_VALUE(e[EM::MultiIndex()]) << '\n';
             std::cout << "hand-calculated value:\n";
@@ -1119,9 +1119,9 @@ int main (int argc, char **argv)
             typedef ExpressionTemplate_IndexedObject_t<Float3,TypeList_t<J>,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EJ;
             typedef ExpressionTemplate_Multiplication_t<EI,EJ> EM;
             EM e(u(i), v(j));
-            std::cout << FORMAT_VALUE(TypeStringOf_t<EM::MultiIndex>::eval()) << '\n';
-            std::cout << FORMAT_VALUE(TypeStringOf_t<EM::FreeIndexTypeList>::eval()) << '\n';
-            std::cout << FORMAT_VALUE(TypeStringOf_t<EM::SummedIndexTypeList>::eval()) << '\n';
+            std::cout << FORMAT_VALUE(type_string_of<EM::MultiIndex>()) << '\n';
+            std::cout << FORMAT_VALUE(type_string_of<EM::FreeIndexTypeList>()) << '\n';
+            std::cout << FORMAT_VALUE(type_string_of<EM::SummedIndexTypeList>()) << '\n';
             std::cout << FORMAT_VALUE(u) << '\n';
             std::cout << FORMAT_VALUE(v) << '\n';
             std::cout << "expression template value:\n";
@@ -1148,9 +1148,9 @@ int main (int argc, char **argv)
             typedef ExpressionTemplate_Multiplication_t<EI,EJ> EM;
             typedef ExpressionTemplate_Multiplication_t<EM,EJ> EMJ;
             EMJ e(EM(u(i), v(j)), w(j));
-            std::cout << FORMAT_VALUE(TypeStringOf_t<EMJ::MultiIndex>::eval()) << '\n';
-            std::cout << FORMAT_VALUE(TypeStringOf_t<EMJ::FreeIndexTypeList>::eval()) << '\n';
-            std::cout << FORMAT_VALUE(TypeStringOf_t<EMJ::SummedIndexTypeList>::eval()) << '\n';
+            std::cout << FORMAT_VALUE(type_string_of<EMJ::MultiIndex>()) << '\n';
+            std::cout << FORMAT_VALUE(type_string_of<EMJ::FreeIndexTypeList>()) << '\n';
+            std::cout << FORMAT_VALUE(type_string_of<EMJ::SummedIndexTypeList>()) << '\n';
             std::cout << "expression template value:\n";
             for (EMJ::MultiIndex k; k.is_not_at_end(); ++k)
                 std::cout << e[k] << ", ";

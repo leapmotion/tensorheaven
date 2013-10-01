@@ -159,9 +159,9 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
 
     static std::string type_as_string ()
     {
-        return "ImplementationOf_t<" + TypeStringOf_t<TensorProductOfBasedVectorSpaces>::eval() + ','
-                                     + TypeStringOf_t<Scalar>::eval() + ','
-                                     + TypeStringOf_t<UseArrayType_>::eval() + '>';
+        return "ImplementationOf_t<" + type_string_of<TensorProductOfBasedVectorSpaces>() + ','
+                                     + type_string_of<Scalar>() + ','
+                                     + type_string_of<UseArrayType_>() + '>';
     }
 };
 

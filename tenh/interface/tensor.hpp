@@ -174,9 +174,9 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
 
     static std::string type_as_string ()
     {
-        return "Tensor_i<" + TypeStringOf_t<Derived>::eval() + ','
-                           + TypeStringOf_t<Scalar>::eval() + ','
-                           + TypeStringOf_t<TensorProductOfBasedVectorSpaces>::eval() + ','
+        return "Tensor_i<" + type_string_of<Derived>() + ','
+                           + type_string_of<Scalar>() + ','
+                           + type_string_of<TensorProductOfBasedVectorSpaces>() + ','
                            + AS_STRING((COMPONENTS_ARE_IMMUTABLE_ ? "IMMUTABLE_COMPONENTS" : "MUTABLE_COMPONENTS")) + '>';
     }
 };

@@ -35,7 +35,7 @@ struct UseImmutableArray_t
 
     static std::string type_as_string ()
     {
-        return "UseImmutableArray_t<" + TypeStringOf_t<ComponentGenerator_>::eval() + '>';
+        return "UseImmutableArray_t<" + type_string_of<ComponentGenerator_>() + '>';
     }
 };
 

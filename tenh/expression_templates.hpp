@@ -100,13 +100,13 @@ struct ExpressionTemplate_IndexedObject_t
 
     static std::string type_as_string ()
     {
-        return "ExpressionTemplate_IndexedObject_t<" + TypeStringOf_t<Object>::eval() + ','
-                                                     + TypeStringOf_t<FactorTypeList>::eval() + ','
-                                                     + TypeStringOf_t<DimIndexTypeList>::eval() + ','
-                                                     + TypeStringOf_t<SummedDimIndexTypeList_>::eval() + ','
+        return "ExpressionTemplate_IndexedObject_t<" + type_string_of<Object>() + ','
+                                                     + type_string_of<FactorTypeList>() + ','
+                                                     + type_string_of<DimIndexTypeList>() + ','
+                                                     + type_string_of<SummedDimIndexTypeList_>() + ','
                                                      + AS_STRING(FORCE_CONST_) + ','
                                                      + AS_STRING(CHECK_FOR_ALIASING_) + ','
-                                                     + TypeStringOf_t<Derived_>::eval() + '>';
+                                                     + type_string_of<Derived_>() + '>';
     }
 
 private:
@@ -211,13 +211,13 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList
 
     static std::string type_as_string ()
     {
-        return "ExpressionTemplate_IndexedObject_t<" + TypeStringOf_t<Object>::eval() + ','
-                                                     + TypeStringOf_t<FactorTypeList>::eval() + ','
-                                                     + TypeStringOf_t<DimIndexTypeList>::eval() + ','
-                                                     + TypeStringOf_t<EmptyTypeList>::eval() + ','
+        return "ExpressionTemplate_IndexedObject_t<" + type_string_of<Object>() + ','
+                                                     + type_string_of<FactorTypeList>() + ','
+                                                     + type_string_of<DimIndexTypeList>() + ','
+                                                     + type_string_of<EmptyTypeList>() + ','
                                                      + AS_STRING(DONT_FORCE_CONST) + ','
                                                      + AS_STRING(CHECK_FOR_ALIASING_) + ','
-                                                     + TypeStringOf_t<Derived_>::eval() + '>';
+                                                     + type_string_of<Derived_>() + '>';
     }
 
 private:
@@ -306,8 +306,8 @@ struct ExpressionTemplate_Addition_t
 
     static std::string type_as_string ()
     {
-        return "ExpressionTemplate_Addition_t<" + TypeStringOf_t<LeftOperand>::eval() + ','
-                                                + TypeStringOf_t<RightOperand>::eval() + ','
+        return "ExpressionTemplate_Addition_t<" + type_string_of<LeftOperand>() + ','
+                                                + type_string_of<RightOperand>() + ','
                                                 + '\'' + AS_STRING(OPERATOR) + '\'' + '>';
     }
 
@@ -385,8 +385,8 @@ struct ExpressionTemplate_ScalarMultiplication_t
 
     static std::string type_as_string ()
     {
-        return "ExpressionTemplate_ScalarMultiplication_t<" + TypeStringOf_t<Operand>::eval() + ','
-                                                            + TypeStringOf_t<Scalar>::eval() + ','
+        return "ExpressionTemplate_ScalarMultiplication_t<" + type_string_of<Operand>() + ','
+                                                            + type_string_of<Scalar>() + ','
                                                             + '\'' + AS_STRING(OPERATOR) + '\'' + '>';
     }
 
@@ -472,8 +472,8 @@ struct ExpressionTemplate_Multiplication_t
 
     static std::string type_as_string ()
     {
-        return "ExpressionTemplate_Multiplication_t<" + TypeStringOf_t<LeftOperand>::eval() + ','
-                                                      + TypeStringOf_t<RightOperand>::eval() + '>';
+        return "ExpressionTemplate_Multiplication_t<" + type_string_of<LeftOperand>() + ','
+                                                      + type_string_of<RightOperand>() + '>';
     }
 
 private:
@@ -543,10 +543,10 @@ public:
 
     static std::string type_as_string ()
     {
-        return "ExpressionTemplate_IndexBundle_t<" + TypeStringOf_t<Operand>::eval() + ','
-                                                   + TypeStringOf_t<BundleAbstractIndexTypeList>::eval() + ','
-                                                   + TypeStringOf_t<ResultingFactorType>::eval() + ','
-                                                   + TypeStringOf_t<ResultingAbstractIndexType>::eval() + '>';
+        return "ExpressionTemplate_IndexBundle_t<" + type_string_of<Operand>() + ','
+                                                   + type_string_of<BundleAbstractIndexTypeList>() + ','
+                                                   + type_string_of<ResultingFactorType>() + ','
+                                                   + type_string_of<ResultingAbstractIndexType>() + '>';
     }
 
 private:
@@ -620,9 +620,9 @@ public:
 
     static std::string type_as_string ()
     {
-        return "ExpressionTemplate_IndexSplit_t<" + TypeStringOf_t<Operand>::eval() + ','
-                                                  + TypeStringOf_t<SourceAbstractIndexType>::eval() + ','
-                                                  + TypeStringOf_t<SplitAbstractIndexTypeList>::eval() + '>';
+        return "ExpressionTemplate_IndexSplit_t<" + type_string_of<Operand>() + ','
+                                                  + type_string_of<SourceAbstractIndexType>() + ','
+                                                  + type_string_of<SplitAbstractIndexTypeList>() + '>';
     }
 
 private:
@@ -697,9 +697,9 @@ public:
 
     static std::string type_as_string ()
     {
-        return "ExpressionTemplate_IndexSplitToIndex_t<" + TypeStringOf_t<Operand>::eval() + ','
-                                                         + TypeStringOf_t<SourceAbstractIndexType>::eval() + ','
-                                                         + TypeStringOf_t<SplitAbstractIndexType>::eval() + '>';
+        return "ExpressionTemplate_IndexSplitToIndex_t<" + type_string_of<Operand>() + ','
+                                                         + type_string_of<SourceAbstractIndexType>() + ','
+                                                         + type_string_of<SplitAbstractIndexType>() + '>';
     }
 
 private:

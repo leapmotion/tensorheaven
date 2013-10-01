@@ -62,7 +62,7 @@ template <typename Tensor2Type>
 void add_euclidean_embedding_tests_for_Tensor2Type (Directory *parent)
 {
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent,
-                                     Tenh::TypeStringOf_t<Tensor2Type>::eval(),
+                                     Tenh::type_string_of<Tensor2Type>(),
                                      test_euclideanly_embedded_EigenMatrix_from_and_to<Tensor2Type>,
                                      RESULT_NO_ERROR);
 }

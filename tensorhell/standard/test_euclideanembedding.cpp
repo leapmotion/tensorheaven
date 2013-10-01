@@ -74,7 +74,7 @@ template <typename VectorType>
 void add_test_for_verify_on_vector_type (Directory *parent)
 {
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent,
-                                     Tenh::TypeStringOf_t<VectorType>::eval(),
+                                     Tenh::type_string_of<VectorType>(),
                                      verify_on_vector_type<VectorType>,
                                      RESULT_NO_ERROR);
 }
@@ -163,7 +163,7 @@ template <typename TensorType>
 void add_test_for_verify_on_tensor_type (Directory *parent)
 {
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent,
-                                     Tenh::TypeStringOf_t<TensorType>::eval(),
+                                     Tenh::type_string_of<TensorType>(),
                                      verify_on_tensor_type<TensorType>,
                                      RESULT_NO_ERROR);
 }

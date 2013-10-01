@@ -34,10 +34,10 @@ struct ComponentGenerator_t
 
     static std::string type_as_string ()
     {
-        return "ComponentGenerator_t<" + TypeStringOf_t<Component_>::eval() + ','
+        return "ComponentGenerator_t<" + type_string_of<Component_>() + ','
                                        + AS_STRING(COMPONENT_COUNT_) + ','
                                        //+ AS_STRING(evaluate) + ',' // TODO (?): print function pointer somehow
-                                       + TypeStringOf_t<Id_>::eval() + '>';
+                                       + type_string_of<Id_>() + '>';
     }
 };
 
@@ -125,9 +125,9 @@ struct ImmutableArray_t
     static std::string type_as_string ()
     {
         // TODO: figure out how to provide stringified type info for the component_generator_ template param.
-        return "ImmutableArray_t<" + TypeStringOf_t<Component_>::eval() + ','
+        return "ImmutableArray_t<" + type_string_of<Component_>() + ','
                                    + AS_STRING(COMPONENT_COUNT_) + ','
-                                   + TypeStringOf_t<ComponentGenerator_>::eval() + '>';
+                                   + type_string_of<ComponentGenerator_>() + '>';
     }
 };
 

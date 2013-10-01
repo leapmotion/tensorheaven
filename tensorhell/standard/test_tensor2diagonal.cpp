@@ -136,7 +136,7 @@ void add_particular_tests (Directory *parent)
     typedef Tenh::Tensor2Diagonal_t<V1, V2> Tensor2Diagonal;
 
     Directory *tensor2diagonal
-        = new Directory(Tenh::TypeStringOf_t<Tenh::Tensor2Diagonal_t<V1,V2> >::eval(), parent);
+        = new Directory(Tenh::type_string_of<Tenh::Tensor2Diagonal_t<V1,V2> >(), parent);
 
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(tensor2diagonal, "constructor_without_initialization",
         constructor_without_initialization<Tensor2Diagonal>, RESULT_NO_ERROR);

@@ -69,7 +69,7 @@ Scalar_ alt (ComponentIndex_t<COMPONENT_COUNT_> const &i)
 template <Uint32 ORDER_, typename Factor_>
 struct AltId_t
 {
-    static std::string type_as_string () { return "Alt<" + AS_STRING(ORDER_) + ',' + TypeStringOf_t<Factor_>::eval() + '>'; }
+    static std::string type_as_string () { return "Alt<" + AS_STRING(ORDER_) + ',' + type_string_of<Factor_>() + '>'; }
 };
 
 // template specialization for standard inner product on a based vector space having orthonormal basis

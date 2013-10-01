@@ -484,7 +484,7 @@ using namespace std;
 template <typename Scalar>
 void test_constants ()
 {
-	cout << "running test_constants<" << TypeStringOf_t<Scalar>::eval() << ">() ----------------------------\n";
+	cout << "running test_constants<" << type_string_of<Scalar>() << ">() ----------------------------\n";
 	cout << '\n';
 
 	cout << FORMAT_VALUE(evaluate<Scalar>(Pi())) << '\n';
@@ -516,7 +516,7 @@ void test_constants ()
 template <typename Scalar>
 void test_complex_specific_constants ()
 {
-	cout << "running test_complex_specific_constants<" << TypeStringOf_t<Scalar>::eval() << ">() ----------------------------\n";
+	cout << "running test_complex_specific_constants<" << type_string_of<Scalar>() << ">() ----------------------------\n";
 	cout << '\n';
 
 	cout << FORMAT_VALUE(evaluate<Scalar>(I())) << '\n';
@@ -526,7 +526,7 @@ void test_complex_specific_constants ()
 template <typename Scalar>
 void test_factorial ()
 {
-	cout << "running test_factorial<" << TypeStringOf_t<Scalar>::eval() << ">() ----------------------------\n";
+	cout << "running test_factorial<" << type_string_of<Scalar>() << ">() ----------------------------\n";
 	cout << '\n';
 
 	cout << FORMAT_VALUE(evaluate<Scalar>(Factorial_t<0>())) << '\n';
@@ -542,7 +542,7 @@ void test_factorial ()
 template <typename Scalar>
 void test_exp_log ()
 {
-	cout << "running test_exp_log<" << TypeStringOf_t<Scalar>::eval() << ">() ----------------------------\n";
+	cout << "running test_exp_log<" << type_string_of<Scalar>() << ">() ----------------------------\n";
 	cout << '\n';
 
 	cout << FORMAT_VALUE(evaluate<Scalar>(exp(UInt_t<1>()))) << '\n';
@@ -558,7 +558,7 @@ void test_exp_log ()
 template <typename Scalar>
 void test_pow_log ()
 {
-	cout << "running test_pow_log<" << TypeStringOf_t<Scalar>::eval() << ">() ----------------------------\n";
+	cout << "running test_pow_log<" << type_string_of<Scalar>() << ">() ----------------------------\n";
 	cout << '\n';
 
 	cout << FORMAT_VALUE(evaluate<Scalar>(pow(UInt_t<3>(), UFrac_t<2,1>()))) << '\n';
@@ -584,7 +584,7 @@ void test_pow_log ()
 template <typename Scalar, typename Operand>
 void test_unary_operations ()
 {
-	cout << "running test_unary_operations<" + TypeStringOf_t<Scalar>::eval() + ", ...>() ----------------------------\n";
+	cout << "running test_unary_operations<" + type_string_of<Scalar>() + ", ...>() ----------------------------\n";
 	cout << '\n';
 
 	cout << FORMAT_VALUE(evaluate<Scalar>(+Operand())) << '\n';
@@ -597,7 +597,7 @@ void test_unary_operations ()
 template <typename Scalar, typename LeftOperand, typename RightOperand>
 void test_binary_operations ()
 {
-	cout << "running test_binary_operations<" + TypeStringOf_t<Scalar>::eval() + ", ...>() ----------------------------\n";
+	cout << "running test_binary_operations<" + type_string_of<Scalar>() + ", ...>() ----------------------------\n";
 	cout << '\n';
 
 	cout << FORMAT_VALUE(evaluate<Scalar>(LeftOperand() + RightOperand())) << '\n';
@@ -612,7 +612,7 @@ void test_binary_operations ()
 template <typename Scalar>
 void test_fancy_expressions ()
 {
-	cout << "running test_fancy_expressions<" + TypeStringOf_t<Scalar>::eval() + ">() ----------------------------\n";
+	cout << "running test_fancy_expressions<" + type_string_of<Scalar>() + ">() ----------------------------\n";
 	cout << '\n';
 
 	cout << FORMAT_VALUE(evaluate<Scalar>(pow(UInt_t<1>() / Factorial_t<2>(), UFrac_t<1,2>()))) << '\n';

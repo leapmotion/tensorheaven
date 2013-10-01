@@ -45,7 +45,7 @@ int main (int argc, char **argv)
         ListB b(42, 'a');
         ListC c(true, 3.4f);
         ListA a(b |= c);
-//         std::cout << FORMAT_VALUE(TypeStringOf_t<typeof(b |= c)>::eval()) << '\n'; // GCC extension
+//         std::cout << FORMAT_VALUE(type_string_of<typeof(b |= c)>()) << '\n'; // GCC extension
         std::cout << FORMAT_VALUE(b) << ", " << FORMAT_VALUE(c) << ", (b,c) = " << a << '\n';
     }
 

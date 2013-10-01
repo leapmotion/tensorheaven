@@ -100,7 +100,7 @@ void add_particular_tests (Directory *parent)
     typedef Tenh::Tensor2_t<V1, V2> Tensor2;
 
     Directory *tensor2
-        = new Directory(Tenh::TypeStringOf_t<Tenh::Tensor2_t<V1,V2> >::eval(), parent);
+        = new Directory(Tenh::type_string_of<Tenh::Tensor2_t<V1,V2> >(), parent);
 
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(tensor2, "constructor_without_initialization",
         constructor_without_initialization<Tensor2>, RESULT_NO_ERROR);

@@ -151,7 +151,7 @@ struct TypedValue_t
     typedef T_ T;
     static T_ const V = V_;
 
-    static std::string type_as_string () { return "TypedValue_t<" + TypeStringOf_t<T_>::eval() + ',' + AS_STRING(V_) + '>'; }
+    static std::string type_as_string () { return "TypedValue_t<" + type_string_of<T_>() + ',' + AS_STRING(V_) + '>'; }
 };
 
 // sentinel "value" type

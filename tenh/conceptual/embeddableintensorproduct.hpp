@@ -28,7 +28,7 @@ struct EmbeddableInTensorProductOfVectorSpaces_c
 
     static std::string type_as_string ()
     {
-        return "EmbeddableInTensorProductOfVectorSpaces_c<" + TypeStringOf_t<Exactly_TensorProductOfVectorSpaces_>::eval() + '>';
+        return "EmbeddableInTensorProductOfVectorSpaces_c<" + type_string_of<Exactly_TensorProductOfVectorSpaces_>() + '>';
     }
 };
 
@@ -69,8 +69,8 @@ public:
 
     static std::string type_as_string ()
     {
-        return "EmbeddableInTensorProductOfBasedVectorSpaces_c<" + TypeStringOf_t<Exactly_TensorProductOfBasedVectorSpaces_>::eval() + ','
-                                                                 + TypeStringOf_t<Exactly_TensorProductOfVectorSpaces_>::eval() + '>';
+        return "EmbeddableInTensorProductOfBasedVectorSpaces_c<" + type_string_of<Exactly_TensorProductOfBasedVectorSpaces_>() + ','
+                                                                 + type_string_of<Exactly_TensorProductOfVectorSpaces_>() + '>';
     }
 };
 

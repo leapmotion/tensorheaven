@@ -58,13 +58,13 @@ void add_particular_tests (Directory *parent)
     typedef Tenh::Tensor2Symmetric_t<V, V> Tensor2Symmetric;
 
     Directory *tensor2
-        = new Directory(Tenh::TypeStringOf_t<Tensor2>::eval(), parent);
+        = new Directory(Tenh::type_string_of<Tensor2>(), parent);
 
     Directory *tensor2antisymmetric
-        = new Directory(Tenh::TypeStringOf_t<Tensor2Antisymmetric>::eval(), parent);
+        = new Directory(Tenh::type_string_of<Tensor2Antisymmetric>(), parent);
 
     Directory *tensor2symmetric
-        = new Directory(Tenh::TypeStringOf_t<Tensor2Symmetric>::eval(), parent);
+        = new Directory(Tenh::type_string_of<Tensor2Symmetric>(), parent);
 
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(tensor2, "test",
         test_Tensor2_t<Tensor2>, RESULT_NO_ERROR);

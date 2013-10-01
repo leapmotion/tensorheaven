@@ -37,7 +37,7 @@ void test_length (Context const &context)
 template <typename TypeList, Uint32 EXPECTED_LENGTH>
 void add_particular_tests_for_typelist (Directory *parent)
 {
-    Directory *typelist = new Directory(Tenh::TypeStringOf_t<TypeList>::eval(), parent);
+    Directory *typelist = new Directory(Tenh::type_string_of<TypeList>(), parent);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(typelist, "test_length", test_length<TypeList>, new Context::Data<Uint32>(EXPECTED_LENGTH), RESULT_NO_ERROR);
 }
 
@@ -57,11 +57,11 @@ template <typename TypeList, Uint32 INDEX, typename ExpectedLeadingTypeList, typ
 void add_leading_and_trailing_type_list_test (Directory *parent)
 {
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent,
-                                     FORMAT(Tenh::TypeStringOf_t<TypeList>::eval() << "::LeadingTypeList_t<" << INDEX << '>'),
+                                     FORMAT(Tenh::type_string_of<TypeList>() << "::LeadingTypeList_t<" << INDEX << '>'),
                                      test_leading_type_list<TypeList,INDEX,ExpectedLeadingTypeList>,
                                      RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent,
-                                     FORMAT(Tenh::TypeStringOf_t<TypeList>::eval() << "::TrailingTypeList_t<" << INDEX << '>'),
+                                     FORMAT(Tenh::type_string_of<TypeList>() << "::TrailingTypeList_t<" << INDEX << '>'),
                                      test_trailing_type_list<TypeList,INDEX,ExpectedTrailingTypeList>,
                                      RESULT_NO_ERROR);
 }
@@ -131,7 +131,7 @@ void AddTests (Directory *parent)
 {
     Directory *typelist = new Directory("TypeList_t", parent);
 
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(typelist, Tenh::TypeStringOf_t<Tenh::EmptyTypeList>::eval(), test_EmptyTypeList, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(typelist, Tenh::type_string_of<Tenh::EmptyTypeList>(), test_EmptyTypeList, RESULT_NO_ERROR);
     add_particular_tests_for_typelist<Tenh::TypeList_t<Sint32>,1>(typelist);
     add_particular_tests_for_typelist<Tenh::TypeList_t<Sint32,Tenh::TypeList_t<Sint8> >,2>(typelist);
 
