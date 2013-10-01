@@ -1643,7 +1643,7 @@ int main (int, char **)
         w[PolyType::SymDual::ComponentIndex(8, CHECK_RANGE)] = 6; // zw
         w[PolyType::SymDual::ComponentIndex(9, CHECK_RANGE)] = 3; // w^2
         std::cout << FORMAT_VALUE(w) << '\n';
-        PolyType roly(w,MultivariatePolynomial<1,4,X>(x,3)), poly(0);
+        PolyType roly(w,MultivariatePolynomial<1,4,X>(x,3)), poly(Static<WithoutInitialization>::SINGLETON);
 
         poly.as_array().copy_from(roly.as_array());
         std::cout << FORMAT_VALUE(roly) << '\n';

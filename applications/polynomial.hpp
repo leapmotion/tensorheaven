@@ -196,14 +196,6 @@ private:
     //    There is no lower degree possible, so we only need add_eq here.
     MultivariatePolynomial add_eq (MultivariatePolynomial const &other) const { return MultivariatePolynomial(m_term + other.m_term); }
 
-    template<Uint32 Term_Degree>
-    MultivariatePolynomial<Term_Degree, DIMENSION_, Id_, Scalar_> monomial_multiply (Tenh::ImplementationOf_t<Tenh::SymmetricPowerOfBasedVectorSpace_c<Term_Degree,typename Tenh::DualOf_f<VectorSpace>::T>,Scalar_> const &monomial) const
-    {
-        Tenh::AbstractIndex_c<'i'> i;
-        Tenh::ImplementationOf_t<Tenh::SymmetricPowerOfBasedVectorSpace_c<Term_Degree,typename Tenh::DualOf_f<VectorSpace>::T>,Scalar_> term(Scalar_(0));
-        term(i) = m_term*monomial(i);
-        return MultivariatePolynomial<Term_Degree, DIMENSION_, Id_, Scalar_>(term);
-    }
 
     template<Uint32,Uint32,typename,typename>
     friend struct MultivariatePolynomial;
@@ -264,6 +256,13 @@ MultivariatePolynomial<DEG,DIM,Id,Scalar> operator* (Scalar const &lhs, Multivar
     return rhs*lhs;
 }
 
+
+//    operator* for HomogeneousPolynomials
+template <Uint32 DEG1, Uint32 DEG2, Uint32 DIM, typename Id, typename Scalar>
+MultivariatePolynomial<DEG1+DEG2,DIM,Id,Scalar> operator* (HomogeneousPolynomial<DEG1,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG2,DIM,Id,Scalar> const &rhs)
+{
+    return MultivariatePolynomial<DEG1+DEG2,DIM,Id,Scalar>(rhs*lhs);
+}
 
 //    operator*
 template<Uint32 DEG1, Uint32 DEG2, Uint32 DIM, typename Id, typename Scalar>
