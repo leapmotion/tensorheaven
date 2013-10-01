@@ -8,6 +8,8 @@
 
 #include "tenh/core.hpp"
 
+#include <cstring>
+
 #include "tenh/interface/array.hpp"
 
 namespace Tenh {
