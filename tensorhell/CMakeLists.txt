@@ -114,3 +114,14 @@ set(test_SRCS
     standard/test_vector.cpp)
 add_executable(test standard/test.cpp ${test_SRCS})
 include_directories(${tensorheaven_test_SOURCE_DIR}/.. ${tensorheaven_test_SOURCE_DIR}/lvd ${tensorheaven_test_SOURCE_DIR}/standard)
+
+set(applications_SRCS
+    lvd/lvd_callstack.cpp
+    lvd/lvd_commandlineparser.cpp
+    lvd/lvd_spawner.cpp
+    lvd/lvd_testsystem.cpp
+    standard/randomize.cpp
+    applications_test/test_homogeneouspolynomials.cpp
+    applications_test/test_multivariatepolynomials.cpp)
+add_executable(applications_test applications_test/test.cpp ${applications_SRCS})
+include_directories(${tensorheaven_test_SOURCE_DIR}/.. ${tensorheaven_test_SOURCE_DIR}/lvd ${tensorheaven_test_SOURCE_DIR}/standard ${tensorheaven_test_SOURCE_DIR}/applications_test)

@@ -77,7 +77,7 @@ std::string symbol_string_of_abstract_index_type_list (TypeList_t<AbstractIndex_
                           std::string());
 }
 
-std::string symbol_string_of_abstract_index_type_list (EmptyTypeList)
+inline std::string symbol_string_of_abstract_index_type_list (EmptyTypeList)
 {
     return std::string();
 }

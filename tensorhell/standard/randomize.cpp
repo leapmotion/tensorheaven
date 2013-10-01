@@ -14,38 +14,32 @@
 #include <boost/random/uniform_int_distribution.hpp>
 
 #include "tenh/core.hpp"
-#include "tenh/interface/vector.hpp"
-#include "tenh/tensor2.hpp"
-#include "tenh/tensor2antisymmetric.hpp"
-#include "tenh/tensor2diagonal.hpp"
-#include "tenh/tensor2symmetric.hpp"
-#include "tenh/vector.hpp"
 
 namespace Tenh {
 
 boost::random::mt19937 gen;
 
-void randomize (Lvd::Sint8 & i, Lvd::Sint8 mean, Lvd::Sint8 sigma)
+void randomize (Sint8 & i, Sint8 mean, Sint8 sigma)
 {
-    boost::random::uniform_int_distribution<Lvd::Sint8> dist(static_cast<int>(mean - 2.5*sigma), static_cast<int>(mean + 2.5*sigma));
+    boost::random::uniform_int_distribution<Sint8> dist(static_cast<int>(mean - 2.5*sigma), static_cast<int>(mean + 2.5*sigma));
     i = dist(gen);
 }
 
-void randomize (Lvd::Sint16 & i, Lvd::Sint16 mean, Lvd::Sint16 sigma)
+void randomize (Sint16 & i, Sint16 mean, Sint16 sigma)
 {
-    boost::random::uniform_int_distribution<Lvd::Sint16> dist(static_cast<int>(mean - 2.5*sigma), static_cast<int>(mean + 2.5*sigma));
+    boost::random::uniform_int_distribution<Sint16> dist(static_cast<int>(mean - 2.5*sigma), static_cast<int>(mean + 2.5*sigma));
     i = dist(gen);
 }
 
-void randomize (Lvd::Sint32 & i, Lvd::Sint32 mean, Lvd::Sint32 sigma)
+void randomize (Sint32 & i, Sint32 mean, Sint32 sigma)
 {
-    boost::random::uniform_int_distribution<Lvd::Sint32> dist(static_cast<int>(mean - 2.5*sigma), static_cast<int>(mean + 2.5*sigma));
+    boost::random::uniform_int_distribution<Sint32> dist(static_cast<int>(mean - 2.5*sigma), static_cast<int>(mean + 2.5*sigma));
     i = dist(gen);
 }
 
-void randomize (Lvd::Sint64 & i, Lvd::Sint64 mean, Lvd::Sint64 sigma)
+void randomize (Sint64 & i, Sint64 mean, Sint64 sigma)
 {
-    boost::random::uniform_int_distribution<Lvd::Sint64> dist(static_cast<int>(mean - 2.5*sigma), static_cast<int>(mean + 2.5*sigma));
+    boost::random::uniform_int_distribution<Sint64> dist(static_cast<int>(mean - 2.5*sigma), static_cast<int>(mean + 2.5*sigma));
     i = dist(gen);
 }
 

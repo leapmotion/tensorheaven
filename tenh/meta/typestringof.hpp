@@ -108,11 +108,11 @@ struct Pretty
 /// @param shortify_depth is the depth at which "template arguments" are replaced with an ellipsis;
 ///         a shortify_depth of 0 means that no ellipsis-collapsing will be done, and e.g. a
 ///         shortify_depth of 1 will produce something like FooBar<...>.
-void print_pretty_typestring (std::ostream &out,
-                              std::string const &typestring,
-                              Uint32 indent_level = 0,
-                              Uint32 indent_size = 4,
-                              Uint32 shortify_depth = 0)
+inline void print_pretty_typestring (std::ostream &out,
+                                     std::string const &typestring,
+                                     Uint32 indent_level = 0,
+                                     Uint32 indent_size = 4,
+                                     Uint32 shortify_depth = 0)
 {
     Uint32 template_argument_depth = 0;
     for (std::string::const_iterator it = typestring.begin(), it_end = typestring.end(); it != it_end; ++it)

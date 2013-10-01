@@ -11,7 +11,7 @@
 // TODO: Decide if/how this code should be split amongst files.
 namespace Tenh {
 
-Uint32 factorial(Uint32 x)
+inline Uint32 factorial(Uint32 x)
 {
     return (x > 0) ? factorial(x-1) * x : 1;
 }
@@ -28,7 +28,7 @@ struct Factorial_t<0>
     static const Uint32 V = 1;
 };
 
-Uint32 binomial_coefficient(Uint32 n, Uint32 k)
+inline Uint32 binomial_coefficient(Uint32 n, Uint32 k)
 {
     return (k > n) ? 0 : (k == 0) ? 1 : binomial_coefficient(n,k-1) * (n + 1 - k) / k;
 }
@@ -51,7 +51,7 @@ struct BinomialCoefficient_t
 	static const Uint32 V = If_f<(K > N), Value_t<Uint32,0>, BinomialCoefficientImpl_t<N,K> >::T::V;
 };
 
-Uint32 index_of_greatest_triangular_number_less_than(Uint32 x, Uint32 d, Uint32 iteration = 0)
+inline Uint32 index_of_greatest_triangular_number_less_than(Uint32 x, Uint32 d, Uint32 iteration = 0)
 {
     return (binomial_coefficient(iteration,d) > x) ?
            iteration - 1 :
