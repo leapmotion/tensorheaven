@@ -32,8 +32,8 @@ struct Array_i
     static Uint32 const COMPONENT_COUNT = COMPONENT_COUNT_;
     static bool const COMPONENTS_ARE_IMMUTABLE = COMPONENTS_ARE_IMMUTABLE_;
     typedef ComponentIndex_t<COMPONENT_COUNT> ComponentIndex;
-    typedef typename If<COMPONENTS_ARE_IMMUTABLE_,Component_,Component_ const &>::T ComponentAccessConstReturnType;
-    typedef typename If<COMPONENTS_ARE_IMMUTABLE_,Component_,Component_ &>::T ComponentAccessNonConstReturnType;
+    typedef typename If_f<COMPONENTS_ARE_IMMUTABLE_,Component_,Component_ const &>::T ComponentAccessConstReturnType;
+    typedef typename If_f<COMPONENTS_ARE_IMMUTABLE_,Component_,Component_ &>::T ComponentAccessNonConstReturnType;
 
     ComponentAccessConstReturnType operator [] (ComponentIndex const &i) const { return as_derived().Derived::operator[](i); }
     ComponentAccessNonConstReturnType operator [] (ComponentIndex const &i) { return as_derived().Derived::operator[](i); }

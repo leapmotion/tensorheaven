@@ -85,9 +85,9 @@ static bool const DONT_CHECK_POINTER = false;
 template <typename Derived, typename DefaultType>
 struct DerivedType_t
 {
-    typedef typename If<TypesAreEqual_f<Derived,NullType>::V,
-                        DefaultType,
-                        Derived>::T T;
+    typedef typename If_f<TypesAreEqual_f<Derived,NullType>::V,
+                          DefaultType,
+                          Derived>::T T;
 };
 
 // provide an implementation of this for any custom scalar type (e.g. an arbitrary-precision

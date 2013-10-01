@@ -33,15 +33,15 @@ struct ArraySize_f<0>
 template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_ = NullType>
 struct MemberArray_t
     :
-    public MemoryArray_i<typename If<(TypesAreEqual_f<Derived_,NullType>::V),
-                                     MemberArray_t<Component_,COMPONENT_COUNT_,Derived_>,
-                                     Derived_>::T,
+    public MemoryArray_i<typename If_f<(TypesAreEqual_f<Derived_,NullType>::V),
+                                       MemberArray_t<Component_,COMPONENT_COUNT_,Derived_>,
+                                       Derived_>::T,
                          Component_,
                          COMPONENT_COUNT_>
 {
-    typedef MemoryArray_i<typename If<(TypesAreEqual_f<Derived_,NullType>::V),
-                                      MemberArray_t<Component_,COMPONENT_COUNT_,Derived_>,
-                                      Derived_>::T,
+    typedef MemoryArray_i<typename If_f<(TypesAreEqual_f<Derived_,NullType>::V),
+                                        MemberArray_t<Component_,COMPONENT_COUNT_,Derived_>,
+                                        Derived_>::T,
                           Component_,
                           COMPONENT_COUNT_> Parent_MemoryArray_i;
 

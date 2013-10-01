@@ -85,9 +85,9 @@ struct BaseProperty_f<TensorProduct_c<FactorTypeList_>,TensorPowerFactor>
 private:
     static bool const THERE_IS_A_UNIQUE_FACTOR = FactorTypeList_::LENGTH >= 1 &&
                                                  TypeListIsUniform_t<FactorTypeList_>::V;
-    typedef typename If<THERE_IS_A_UNIQUE_FACTOR,
-                        typename FactorTypeList_::HeadType,
-                        NullValue>::T T;
+    typedef typename If_f<THERE_IS_A_UNIQUE_FACTOR,
+                          typename FactorTypeList_::HeadType,
+                          NullValue>::T T;
 };
 
 // named property accessors

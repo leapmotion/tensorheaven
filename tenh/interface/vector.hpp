@@ -47,8 +47,8 @@ struct Vector_i
 
     // these definitions must coincide with the Array_i ones (if used in conjunction with Array_i)
     static bool const COMPONENTS_ARE_IMMUTABLE = COMPONENTS_ARE_IMMUTABLE_;
-    typedef typename If<COMPONENTS_ARE_IMMUTABLE_,Scalar_,Scalar_ const &>::T ComponentAccessConstReturnType;
-    typedef typename If<COMPONENTS_ARE_IMMUTABLE_,Scalar_,Scalar_ &>::T ComponentAccessNonConstReturnType;
+    typedef typename If_f<COMPONENTS_ARE_IMMUTABLE_,Scalar_,Scalar_ const &>::T ComponentAccessConstReturnType;
+    typedef typename If_f<COMPONENTS_ARE_IMMUTABLE_,Scalar_,Scalar_ &>::T ComponentAccessNonConstReturnType;
 
     static Uint32 dim () { return DIM; }
 

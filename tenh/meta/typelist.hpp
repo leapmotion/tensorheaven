@@ -106,7 +106,7 @@ struct TypeList_t
         enum { STATIC_ASSERT_IN_ENUM((INDEX_ < LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END) };
         static Uint32 const I = (INDEX_ == 0) ? 0 : INDEX_-1;
     public:
-        typedef typename If<(INDEX_ == 0), HeadType, typename BodyTypeList::template El_t<I>::T >::T T;
+        typedef typename If_f<(INDEX_ == 0), HeadType, typename BodyTypeList::template El_t<I>::T >::T T;
     };
 
     /// @brief Returns the TypeList_t which ends at the INDEXth element.
@@ -117,7 +117,7 @@ struct TypeList_t
     private:
         static Uint32 const I = (INDEX_ == 0) ? 0 : INDEX_-1;
     public:
-        typedef typename If<(INDEX_ == 0), EmptyTypeList, TypeList_t<HeadType,typename BodyTypeList::template LeadingTypeList_t<I>::T> >::T T;
+        typedef typename If_f<(INDEX_ == 0), EmptyTypeList, TypeList_t<HeadType,typename BodyTypeList::template LeadingTypeList_t<I>::T> >::T T;
     };
 
     /// @brief Returns the TypeList_t which starts at the INDEXth element.
@@ -128,7 +128,7 @@ struct TypeList_t
     private:
         static Uint32 const I = (INDEX_ == 0) ? 0 : INDEX_-1;
     public:
-        typedef typename If<(INDEX_ == 0), TypeList_t, typename BodyTypeList::template TrailingTypeList_t<I>::T >::T T;
+        typedef typename If_f<(INDEX_ == 0), TypeList_t, typename BodyTypeList::template TrailingTypeList_t<I>::T >::T T;
     };
 
     /// @brief Returns the TypeList_t which is the range [START_INDEX_, END_INDEX_) (right endpoint not included).

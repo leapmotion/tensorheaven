@@ -24,9 +24,9 @@ struct NullValue { };
 template <typename T0_, typename T1_> struct TypesAreEqual_f { static bool const V = false; operator bool () const { return V; } };
 template <typename T_> struct TypesAreEqual_f<T_,T_> { static bool const V = true; operator bool () const { return V; } };
 
-template <bool condition_, typename Then_, typename Else_> struct If;
-template <typename Then_, typename Else_> struct If<true, Then_, Else_> { typedef Then_ T; };
-template <typename Then_, typename Else_> struct If<false, Then_, Else_> { typedef Else_ T; };
+template <bool condition_, typename Then_, typename Else_> struct If_f;
+template <typename Then_, typename Else_> struct If_f<true, Then_, Else_> { typedef Then_ T; };
+template <typename Then_, typename Else_> struct If_f<false, Then_, Else_> { typedef Else_ T; };
 
 // ///////////////////////////////////////////////////////////////////////////
 // setup for int type templates
@@ -61,7 +61,7 @@ struct Integer
     typedef typename IntegerType_::Next Next;
 
     typedef
-        typename If<
+        typename If_f<
             (bit_size_ == IntegerType_::bit_size),
             Current,
             Integer<bit_size_, Next>
@@ -183,8 +183,8 @@ enum
         Assert<!TypesAreEqual_f<int*,int>::V>::V &&
         Assert<!TypesAreEqual_f<int*,float*>::V>::V &&
 
-        Assert<If<true,Value_t<int,0>,Value_t<int,1> >::T::V == 0>::V &&
-        Assert<If<false,Value_t<int,0>,Value_t<int,1> >::T::V == 1>::V
+        Assert<If_f<true,Value_t<int,0>,Value_t<int,1> >::T::V == 0>::V &&
+        Assert<If_f<false,Value_t<int,0>,Value_t<int,1> >::T::V == 1>::V
 };
 
 } // end of namespace Tenh

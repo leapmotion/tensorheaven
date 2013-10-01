@@ -125,9 +125,9 @@ private:
     typedef typename UniqueTypesIn_t<BodyTypeList,NextUsedTypeList>::T RemainingUniqueTypeList;
 public:
     /// A typelist containing the unique types in TypeList_.
-    typedef typename If<(UsedTypeList_::template Contains_t<HeadType>::V),
-                        RemainingUniqueTypeList,
-                        TypeList_t<HeadType,RemainingUniqueTypeList> >::T T;
+    typedef typename If_f<(UsedTypeList_::template Contains_t<HeadType>::V),
+                          RemainingUniqueTypeList,
+                          TypeList_t<HeadType,RemainingUniqueTypeList> >::T T;
 };
 
 /// @cond false
@@ -172,9 +172,9 @@ struct FirstMatchingIn_t
 private:
     enum { STATIC_ASSERT_IN_ENUM((Occurrence_t<TypeList_,Type_>::COUNT > 0), TYPE_MUST_APPEAR_IN_TYPELIST) };
 public:
-    static Uint32 const INDEX = If<TypesAreEqual_f<typename TypeList_::HeadType,Type_>::V,
-                                   FirstMatchingIn_t<TypeList_t<typename TypeList_::HeadType>,typename TypeList_::HeadType>,
-                                   FirstMatchingIn_t<typename TypeList_::BodyTypeList,Type_> >::T::INDEX
+    static Uint32 const INDEX = If_f<TypesAreEqual_f<typename TypeList_::HeadType,Type_>::V,
+                                     FirstMatchingIn_t<TypeList_t<typename TypeList_::HeadType>,typename TypeList_::HeadType>,
+                                     FirstMatchingIn_t<typename TypeList_::BodyTypeList,Type_> >::T::INDEX
                                 +
                                 (TypesAreEqual_f<typename TypeList_::HeadType,Type_>::V ? 0 : 1);
                                 // this offset is what gets past HeadType if there is no match here
@@ -203,9 +203,9 @@ struct ElementsOfTypeListHavingMultiplicity_t
 private:
     typedef typename ElementsOfTypeListHavingMultiplicity_t<TypeList_,typename UniqueTypeList_::BodyTypeList,MULTIPLICITY_>::T InBody;
 public:
-    typedef typename If<(Occurrence_t<TypeList_,typename UniqueTypeList_::HeadType>::COUNT == MULTIPLICITY_),
-                        TypeList_t<typename UniqueTypeList_::HeadType,InBody>,
-                        InBody>::T T;
+    typedef typename If_f<(Occurrence_t<TypeList_,typename UniqueTypeList_::HeadType>::COUNT == MULTIPLICITY_),
+                          TypeList_t<typename UniqueTypeList_::HeadType,InBody>,
+                          InBody>::T T;
 };
 
 /// @cond false
@@ -242,18 +242,18 @@ struct ElementsOfTypeListSatisfyingPredicate_t
 private:
     typedef typename ElementsOfTypeListSatisfyingPredicate_t<typename TypeList_::BodyTypeList,Predicate_>::T ElementsInBodyTypeListSatisfyingPredicate;
 public:
-    typedef typename If<Predicate_::template Eval_t<typename TypeList_::HeadType>::V,
-                        TypeList_t<typename TypeList_::HeadType,ElementsInBodyTypeListSatisfyingPredicate>,
-                        ElementsInBodyTypeListSatisfyingPredicate>::T T;
+    typedef typename If_f<Predicate_::template Eval_t<typename TypeList_::HeadType>::V,
+                          TypeList_t<typename TypeList_::HeadType,ElementsInBodyTypeListSatisfyingPredicate>,
+                          ElementsInBodyTypeListSatisfyingPredicate>::T T;
 };
 
 /// @cond false
 template <typename HeadType_, typename Predicate_>
 struct ElementsOfTypeListSatisfyingPredicate_t<TypeList_t<HeadType_>,Predicate_>
 {
-    typedef typename If<Predicate_::template Eval_t<HeadType_>::V,
-                        TypeList_t<HeadType_>,
-                        EmptyTypeList>::T T;
+    typedef typename If_f<Predicate_::template Eval_t<HeadType_>::V,
+                          TypeList_t<HeadType_>,
+                          EmptyTypeList>::T T;
 };
 
 template <typename Predicate_>
@@ -366,9 +366,9 @@ struct IntersectionAsSets_t
 private:
     typedef typename IntersectionAsSets_t<typename TypeListA_::BodyTypeList,TypeListB_>::T RecursionTypeList;
 public:
-    typedef typename If<TypeListB_::template Contains_t<typename TypeListA_::HeadType>::V,
-                        TypeList_t<typename TypeListA_::HeadType,RecursionTypeList>,
-                        RecursionTypeList>::T T;
+    typedef typename If_f<TypeListB_::template Contains_t<typename TypeListA_::HeadType>::V,
+                          TypeList_t<typename TypeListA_::HeadType,RecursionTypeList>,
+                          RecursionTypeList>::T T;
 };
 
 /// @cond false
@@ -389,9 +389,9 @@ template <typename TypeListA_, typename TypeListB_>
 struct SetSubtraction_t
 {
 private:
-    typedef typename If<TypeListB_::template Contains_t<typename TypeListA_::HeadType>::V,
-                        EmptyTypeList,
-                        TypeList_t<typename TypeListA_::HeadType> >::T HeadTypeList;
+    typedef typename If_f<TypeListB_::template Contains_t<typename TypeListA_::HeadType>::V,
+                          EmptyTypeList,
+                          TypeList_t<typename TypeListA_::HeadType> >::T HeadTypeList;
 public:
     typedef typename ConcatenationOfTypeLists_t<HeadTypeList,typename SetSubtraction_t<typename TypeListA_::BodyTypeList,TypeListB_>::T>::T T;
 };
@@ -844,9 +844,9 @@ struct Element_f
 private:
     static Uint32 const I = (INDEX_ == 0) ? 0 : INDEX_-1;
 public:
-    typedef typename If<INDEX_ == 0,
-                        typename TypeList_::HeadType,
-                        typename Element_f<typename TypeList_::BodyTypeList,I>::T>::T T;
+    typedef typename If_f<INDEX_ == 0,
+                          typename TypeList_::HeadType,
+                          typename Element_f<typename TypeList_::BodyTypeList,I>::T>::T T;
 };
 
 // base case
@@ -897,9 +897,9 @@ MAKE_2_ARY_VALUE_EVALUATOR(IndexOfFirstOccurrence, Uint32, typename, Type_);
 template <typename TypeList_, Uint32 START_INDEX_>
 struct TrailingTypeList_f
 {
-    typedef typename If<START_INDEX_ == 0,
-                        TypeList_,
-                        typename TrailingTypeList_f<typename TypeList_::BodyTypeList,START_INDEX_-1>::T>::T T;
+    typedef typename If_f<START_INDEX_ == 0,
+                          TypeList_,
+                          typename TrailingTypeList_f<typename TypeList_::BodyTypeList,START_INDEX_-1>::T>::T T;
 };
 
 template <Uint32 START_INDEX_>
@@ -917,10 +917,10 @@ struct LeadingTypeList_f
 private:
     static Uint32 const E = (END_INDEX_ == 0) ? 0 : END_INDEX_-1;
 public:
-    typedef typename If<END_INDEX_ == 0,
-                        EmptyTypeList,
-                        TypeList_t<typename TypeList_::HeadType,
-                                   typename LeadingTypeList_f<typename TypeList_::BodyTypeList,E>::T> >::T T;
+    typedef typename If_f<END_INDEX_ == 0,
+                          EmptyTypeList,
+                          TypeList_t<typename TypeList_::HeadType,
+                                     typename LeadingTypeList_f<typename TypeList_::BodyTypeList,E>::T> >::T T;
 };
 
 template <Uint32 END_INDEX_>
