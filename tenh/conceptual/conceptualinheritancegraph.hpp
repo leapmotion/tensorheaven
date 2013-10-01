@@ -170,7 +170,7 @@ private:
     Edges m_edges;
 };
 
-std::ostream &operator << (std::ostream &out, Graph::Node const &n)
+inline std::ostream &operator << (std::ostream &out, Graph::Node const &n)
 {
     if (n.m_shortified_name == n.m_full_name)
         return out << "Node(" << n.m_full_name << ')';
@@ -178,12 +178,12 @@ std::ostream &operator << (std::ostream &out, Graph::Node const &n)
         return out << "Node(" << n.m_shortified_name << ',' << n.m_full_name << ')';
 }
 
-std::ostream &operator << (std::ostream &out, Graph::Edge const &e)
+inline std::ostream &operator << (std::ostream &out, Graph::Edge const &e)
 {
     return out << "Edge(" << e.m_source << " -> " << e.m_target << ')';
 }
 
-std::ostream &operator << (std::ostream &out, Graph const &g)
+inline std::ostream &operator << (std::ostream &out, Graph const &g)
 {
     out << "Graph(\n";
     for (Graph::Nodes::const_iterator it = g.nodes().begin(), it_end = g.nodes().end(); it != it_end; ++it)

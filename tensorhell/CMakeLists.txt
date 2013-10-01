@@ -68,7 +68,6 @@ endif()
 add_executable(algebraic_expression_prototype algebraic_expression_prototype.cpp)
 add_executable(asm_exam asm_exam.cpp asm_exam_separate_functions.cpp)
 add_executable(conceptual_inheritance_prototype conceptual_inheritance_prototype.cpp)
-add_executable(conceptual_prototype conceptual_prototype.cpp)
 add_executable(contraction_prototype contraction_prototype.cpp)
 add_executable(eigen_interop_prototype eigen_interop_prototype.cpp)
 add_executable(list list.cpp)
@@ -76,6 +75,22 @@ add_executable(strongly_typed_vector_prototype strongly_typed_vector_prototype.c
 add_executable(tuple tuple.cpp)
 add_executable(typelist typelist.cpp)
 add_executable(typetuple typetuple.cpp)
+
+set(conceptual_prototype_SRCS
+    conceptual_prototype.cpp
+    conceptual_prototype_00.cpp
+    conceptual_prototype_01.cpp
+    conceptual_prototype_02.cpp
+    conceptual_prototype_03.cpp
+    conceptual_prototype_04.cpp
+    conceptual_prototype_05.cpp
+    conceptual_prototype_06.cpp
+    conceptual_prototype_07.cpp
+    conceptual_prototype_08.cpp
+    conceptual_prototype_09.cpp
+    conceptual_prototype_10.cpp
+    conceptual_prototype_11.cpp)
+add_executable(conceptual_prototype ${conceptual_prototype_SRCS})
 
 # test-framework-using tests
 set(test_SRCS
