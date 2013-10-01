@@ -28,7 +28,7 @@ struct EmptyTypeList
 
     static Uint32 length () { return LENGTH; } // this is necessary to avoid a linker error complaining about undefined LENGTH member
 
-    template <typename Type>
+    template <typename Type_>
     struct Contains_t
     {
         static bool const V = false;
@@ -60,7 +60,7 @@ struct EmptyTypeList
         typedef EmptyTypeList T;
     };
 
-    template <typename Type>
+    template <typename Type_>
     struct IndexOf_t
     {
         static Uint32 const V = 0; // this is past the end of the indexing

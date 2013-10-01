@@ -679,7 +679,7 @@ struct NegationOfPredicate_e
     template <typename T_>
     struct Eval_f
     {
-        typedef Value<bool,!Predicate_::template Eval_f<T_>::T::V> T;
+        typedef Value_t<bool,!Predicate_::template Eval_f<T_>::T::V> T;
     };
     /// @endcond
 };
@@ -688,7 +688,7 @@ template <typename TypeList_>
 struct And_f
 {
 private:
-    // TODO: assert that each type is a Value<bool,...>
+    // TODO: assert that each type is a Value_t<bool,...>
 public:
     static bool const V = TypeList_::HeadType::V && And_f<typename TypeList_::BodyTypeList>::V;
 };
@@ -703,7 +703,7 @@ template <typename TypeList_>
 struct Or_f
 {
 private:
-    // TODO: assert that each type is a Value<bool,...>
+    // TODO: assert that each type is a Value_t<bool,...>
 public:
     static bool const V = TypeList_::HeadType::V || Or_f<typename TypeList_::BodyTypeList>::V;
 };
@@ -722,7 +722,7 @@ template <typename TypeList_, typename OperandType_>
 struct Sum_f
 {
 private:
-    // TODO: assert that each type is a Value<OperandType_,...>
+    // TODO: assert that each type is a Value_t<OperandType_,...>
 public:
     static OperandType_ const V = TypeList_::HeadType::V + Sum_f<typename TypeList_::BodyTypeList,OperandType_>::V;
 };
@@ -737,7 +737,7 @@ template <typename TypeList_, typename OperandType_>
 struct Product_f
 {
 private:
-    // TODO: assert that each type is a Value<OperandType_,...>
+    // TODO: assert that each type is a Value_t<OperandType_,...>
 public:
     static OperandType_ const V = TypeList_::HeadType::V * Product_f<typename TypeList_::BodyTypeList,OperandType_>::V;
 };
@@ -755,7 +755,7 @@ template <typename HeadType_, typename NextHeadType_, typename NextBodyTypeList_
 struct Min_f<TypeList_t<HeadType_,TypeList_t<NextHeadType_,NextBodyTypeList_> >,OperandType_>
 {
 private:
-    // TODO: assert that each type is a Value<OperandType_,...>
+    // TODO: assert that each type is a Value_t<OperandType_,...>
     typedef TypeList_t<NextHeadType_,NextBodyTypeList_> BodyTypeList;
     static OperandType_ const HEAD_V = HeadType_::V;
     static OperandType_ const BODY_V = Min_f<BodyTypeList,OperandType_>::V;
@@ -767,7 +767,7 @@ template <typename HeadType_, typename OperandType_>
 struct Min_f<TypeList_t<HeadType_>,OperandType_>
 {
 private:
-    // TODO: assert that each type is a Value<OperandType_,...>
+    // TODO: assert that each type is a Value_t<OperandType_,...>
 public:
     static OperandType_ const V = HeadType_::V;
 };
@@ -779,7 +779,7 @@ template <typename HeadType_, typename NextHeadType_, typename NextBodyTypeList_
 struct Max_f<TypeList_t<HeadType_,TypeList_t<NextHeadType_,NextBodyTypeList_> >,OperandType_>
 {
 private:
-    // TODO: assert that each type is a Value<OperandType_,...>
+    // TODO: assert that each type is a Value_t<OperandType_,...>
     typedef TypeList_t<NextHeadType_,NextBodyTypeList_> BodyTypeList;
     static OperandType_ const HEAD_V = HeadType_::V;
     static OperandType_ const BODY_V = Max_f<BodyTypeList,OperandType_>::V;
@@ -791,7 +791,7 @@ template <typename HeadType_, typename OperandType_>
 struct Max_f<TypeList_t<HeadType_>,OperandType_>
 {
 private:
-    // TODO: assert that each type is a Value<OperandType_,...>
+    // TODO: assert that each type is a Value_t<OperandType_,...>
 public:
     static OperandType_ const V = HeadType_::V;
 };

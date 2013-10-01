@@ -143,24 +143,10 @@ template <typename Concept> struct Unique##ConceptName##StructureOf_f \
 // conceptual property accessor machinery
 // ///////////////////////////////////////////////////////////////////////////
 
-// TODO: consolidate this with Value and Ted's int-carrying value.
-// this should go in with the meta code.
-template <typename T_, T_ V_>
-struct TypedValue_t
-{
-    typedef T_ T;
-    static T_ const V = V_;
-
-    static std::string type_as_string () { return "TypedValue_t<" + type_string_of<T_>() + ',' + AS_STRING(V_) + '>'; }
-};
-
-// sentinel "value" type
-struct NullValue { static std::string type_as_string () { return "NullValue"; } };
-
 // default definition of the given property of exactly the given concept (but
 // NOT its ancestors).  particular concepts should specialize this to provide
 // definitions.  if the property is a value (e.g. Uint32), then the type should
-// be TypedValue_t<...>
+// be Value_t<...>
 template <typename Concept_, typename PropertyId_>
 struct BaseProperty_f
 {
@@ -202,7 +188,7 @@ public:
     typedef typename MultiProperty::HeadType T;
 };
 
-// if Property_f is a TypedValue_t, returns the value.
+// if Property_f is a Value_t, returns the value.
 template <typename Concept_, typename PropertyId_>
 struct PropertyValue_f
 {

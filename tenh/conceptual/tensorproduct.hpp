@@ -69,7 +69,7 @@ struct TensorPowerFactor { }; // could this be a forward declaration?
 template <typename FactorTypeList_>
 struct BaseProperty_f<TensorProduct_c<FactorTypeList_>,Order>
 {
-    typedef TypedValue_t<Uint32,FactorTypeList_::LENGTH> T;
+    typedef Value_t<Uint32,FactorTypeList_::LENGTH> T;
 };
 
 template <typename FactorTypeList_>

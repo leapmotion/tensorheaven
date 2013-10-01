@@ -48,7 +48,7 @@ struct BinomialCoefficientImpl_t<N,0>
 template<Uint32 N, Uint32 K>
 struct BinomialCoefficient_t
 {
-	static const Uint32 V = If<(K > N), Value<Uint32,0>, BinomialCoefficientImpl_t<N,K> >::T::V;
+	static const Uint32 V = If<(K > N), Value_t<Uint32,0>, BinomialCoefficientImpl_t<N,K> >::T::V;
 };
 
 Uint32 index_of_greatest_triangular_number_less_than(Uint32 x, Uint32 d, Uint32 iteration = 0)
@@ -62,7 +62,7 @@ template<Uint32 X, Uint32 D, Uint32 iteration=0>
 struct IndexOfGreatestTriangularNumberLessThan_t
 {
     static const Uint32 V = If<(BinomialCoefficient_t<iteration,D>::V > X),
-                               Value<Uint32,iteration-1>,
+                               Value_t<Uint32,iteration-1>,
                                IndexOfGreatestTriangularNumberLessThan_t<X,D,iteration+1> >::T::V;
 };
 

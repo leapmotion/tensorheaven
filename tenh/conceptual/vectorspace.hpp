@@ -67,7 +67,7 @@ struct ScalarField { }; // could this be a forward declaration?
 template <typename ScalarField_, Uint32 DIMENSION_, typename Id_>
 struct BaseProperty_f<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,Dimension>
 {
-    typedef TypedValue_t<Uint32,DIMENSION_> T;
+    typedef Value_t<Uint32,DIMENSION_> T;
 };
 
 template <typename ScalarField_, Uint32 DIMENSION_, typename Id_>

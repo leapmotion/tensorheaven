@@ -15,10 +15,11 @@ namespace Tenh {
 template <bool condition_> struct Assert;
 template <> struct Assert<true> { static bool const V = true; operator bool () const { return V; } };
 
-template <typename T_> struct Type { typedef T_ T; };
-
 // the type string for this is defined in typestringof.hpp
-template <typename T_, T_ VALUE_> struct Value { typedef T_ T; static T_ const V = VALUE_; operator T_ () const { return VALUE_; } };
+template <typename T_, T_ VALUE_> struct Value_t { typedef T_ T; static T_ const V = VALUE_; operator T_ () const { return VALUE_; } };
+
+// sentinel "value" type
+struct NullValue { };
 
 template <typename T0_, typename T1_> struct TypesAreEqual_f { static bool const V = false; operator bool () const { return V; } };
 template <typename T_> struct TypesAreEqual_f<T_,T_> { static bool const V = true; operator bool () const { return V; } };
@@ -132,7 +133,7 @@ struct MetaFunctionName##_e \
     template <typename TypeList_> \
     struct Eval_f \
     { \
-        typedef Value<MetaFunctionValueType,MetaFunctionName##_f<TypeList_>::V> T; \
+        typedef Value_t<MetaFunctionValueType,MetaFunctionName##_f<TypeList_>::V> T; \
     }; \
 }
 
@@ -143,7 +144,7 @@ struct MetaFunctionName##_e \
     template <typename TypeList_> \
     struct Eval_f \
     { \
-        typedef Value<MetaFunctionValueType,MetaFunctionName##_f<TypeList_,Name2>::V> T; \
+        typedef Value_t<MetaFunctionValueType,MetaFunctionName##_f<TypeList_,Name2>::V> T; \
     }; \
 }
 
@@ -154,7 +155,7 @@ struct MetaFunctionName##_e \
     template <typename TypeList_> \
     struct Eval_f \
     { \
-        typedef Value<MetaFunctionValueType,MetaFunctionName##_f<TypeList_,Name2,Name3>::V> T; \
+        typedef Value_t<MetaFunctionValueType,MetaFunctionName##_f<TypeList_,Name2,Name3>::V> T; \
     }; \
 }
 
@@ -170,14 +171,11 @@ enum
         Assert<true>::V &&
         Assert<Assert<true>::V>::V &&
 
-        Assert<Value<int,0>::V == 0>::V &&
-        Assert<Value<int,1>::V == 1>::V &&
+        Assert<Value_t<int,0>::V == 0>::V &&
+        Assert<Value_t<int,1>::V == 1>::V &&
 
         Assert<TypesAreEqual_f<int,int>::V>::V &&
         Assert<!TypesAreEqual_f<int,float>::V>::V &&
-
-        Assert<TypesAreEqual_f<Type<int>::T,int>::V>::V &&
-        Assert<!TypesAreEqual_f<Type<int>,int>::V>::V &&
 
         Assert<TypesAreEqual_f<int,signed>::V>::V &&
 
@@ -185,8 +183,8 @@ enum
         Assert<!TypesAreEqual_f<int*,int>::V>::V &&
         Assert<!TypesAreEqual_f<int*,float*>::V>::V &&
 
-        Assert<If<true,Value<int,0>,Value<int,1> >::T::V == 0>::V &&
-        Assert<If<false,Value<int,0>,Value<int,1> >::T::V == 1>::V
+        Assert<If<true,Value_t<int,0>,Value_t<int,1> >::T::V == 0>::V &&
+        Assert<If<false,Value_t<int,0>,Value_t<int,1> >::T::V == 1>::V
 };
 
 } // end of namespace Tenh

@@ -24,35 +24,35 @@ using namespace TestSystem;
 namespace Test {
 namespace Tensor2Diagonal {
 
-template <typename Type>
+template <typename Type_>
 void constructor_without_initialization (Context const &context)
 {
-    Type d(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Type_ d(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
 }
 
-template <typename Type>
+template <typename Type_>
 void constructor_fill_with (Context const &context)
 {
-    typedef typename Type::Scalar Scalar;
+    typedef typename Type_::Scalar Scalar;
 
     Scalar fill = context.DataAs<Scalar>();
-    Type d(fill);
+    Type_ d(fill);
 
-    for (typename Type::Index i; i.is_not_at_end(); ++i)
+    for (typename Type_::Index i; i.is_not_at_end(); ++i)
     {
         assert_eq(d[i], fill);
     }
 }
 
-template <typename Type>
+template <typename Type_>
 void test_read_access (Context const &context)
 {
-    typedef typename Type::Scalar Scalar;
-    typedef typename Type::Factor1 V1;
-    typedef typename Type::Factor2 V2;
+    typedef typename Type_::Scalar Scalar;
+    typedef typename Type_::Factor1 V1;
+    typedef typename Type_::Factor2 V2;
 
-    std::pair<Type,Scalar> p = context.DataAs<std::pair<Type,Scalar> >();
-    Type t = p.first;
+    std::pair<Type_,Scalar> p = context.DataAs<std::pair<Type_,Scalar> >();
+    Type_ t = p.first;
     Scalar s = p.second;
 
     for (typename V1::Index i; i.is_not_at_end(); ++i)
@@ -78,15 +78,15 @@ void test_read_access (Context const &context)
     }
 }
 
-template <typename Type>
+template <typename Type_>
 void test_write_on_diagonal (Context const &context)
 {
-    typedef typename Type::Scalar Scalar;
-    typedef typename Type::Factor1 V1;
-    typedef typename Type::Factor2 V2;
+    typedef typename Type_::Scalar Scalar;
+    typedef typename Type_::Factor1 V1;
+    typedef typename Type_::Factor2 V2;
 
-    std::pair<Type,Scalar> p = context.DataAs<std::pair<Type,Scalar> >();
-    Type t = p.first;
+    std::pair<Type_,Scalar> p = context.DataAs<std::pair<Type_,Scalar> >();
+    Type_ t = p.first;
 
     typename V1::Index i;
     typename V2::Index j;
@@ -98,15 +98,15 @@ void test_write_on_diagonal (Context const &context)
     assert_eq(t.component(i,j), Scalar(2));
 }
 
-template <typename Type>
+template <typename Type_>
 void test_write_off_diagonal (Context const &context)
 {
-    typedef typename Type::Scalar Scalar;
-    typedef typename Type::Factor1 V1;
-    typedef typename Type::Factor2 V2;
+    typedef typename Type_::Scalar Scalar;
+    typedef typename Type_::Factor1 V1;
+    typedef typename Type_::Factor2 V2;
 
-    std::pair<Type,Scalar> p = context.DataAs<std::pair<Type,Scalar> >();
-    Type t = p.first;
+    std::pair<Type_,Scalar> p = context.DataAs<std::pair<Type_,Scalar> >();
+    Type_ t = p.first;
 
     typename V1::Index i;
     typename V2::Index j;
