@@ -142,7 +142,7 @@ private:
     typedef typename EvalMapOnTypeList_t<HeadMapType,DomainIntersectionTypeList>::T HeadMapEvaluation;
     typedef typename EvalMapOnTypeList_t<MapUnionOfBodyTypeList,DomainIntersectionTypeList>::T MapUnionOfBodyTypeListEvaluation;
     // ensure that the maps act identically on the domains' intersection.
-    enum { __ = Assert<(TypesAreEqual<HeadMapEvaluation,MapUnionOfBodyTypeListEvaluation>::V)>::V };
+    enum { __ = Assert<(TypesAreEqual_f<HeadMapEvaluation,MapUnionOfBodyTypeListEvaluation>::V)>::V };
 
     typedef typename SetSubtraction_t<typename HeadMapType::DomainElementTypeList,DomainIntersectionTypeList>::T HeadMapTypeOnlyDomain;
     typedef typename EvalMapOnTypeList_t<HeadMapType,HeadMapTypeOnlyDomain>::T HeadMapTypeOnlyDomainEvaluation;
@@ -664,7 +664,7 @@ int main (int argc, char **argv)
 
             typedef EvalMap_t<SimpleMap,int>::T ShouldBe_float;
             cout << FORMAT_VALUE(type_string_of<ShouldBe_float>()) << '\n';
-            Assert<(TypesAreEqual<ShouldBe_float,float>::V)>();
+            Assert<(TypesAreEqual_f<ShouldBe_float,float>::V)>();
             // typedef EvalMap_t<SimpleMap,bool>::T ThisShouldCauseACompileError;
 
             cout << FORMAT_VALUE((MapDomainContains_t<SimpleMap,int>::V)) << '\n';
@@ -679,8 +679,8 @@ int main (int argc, char **argv)
             typedef EvalMap_t<TwoElementMap,char>::T ShouldBe_double;
             cout << FORMAT_VALUE(type_string_of<ShouldBe_float>()) << '\n';
             cout << FORMAT_VALUE(type_string_of<ShouldBe_double>()) << '\n';
-            Assert<(TypesAreEqual<ShouldBe_float,float>::V)>();
-            Assert<(TypesAreEqual<ShouldBe_double,double>::V)>();
+            Assert<(TypesAreEqual_f<ShouldBe_float,float>::V)>();
+            Assert<(TypesAreEqual_f<ShouldBe_double,double>::V)>();
             // typedef EvalMap_t<TwoElementMap,bool>::T ThisShouldCauseACompileError;
             cout << '\n';
         }

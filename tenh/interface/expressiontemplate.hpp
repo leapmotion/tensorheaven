@@ -51,8 +51,8 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
 {
     enum
     {
-        //DERIVED_MUST_NOT_BE_NULL_TYPE = Assert<!TypesAreEqual<Derived_,NullType>::V>::V
-        STATIC_ASSERT_IN_ENUM((!TypesAreEqual<Derived_,NullType>::V), DERIVED_MUST_NOT_BE_NULL_TYPE),
+        //DERIVED_MUST_NOT_BE_NULL_TYPE = Assert<!TypesAreEqual_f<Derived_,NullType>::V>::V
+        STATIC_ASSERT_IN_ENUM((!TypesAreEqual_f<Derived_,NullType>::V), DERIVED_MUST_NOT_BE_NULL_TYPE),
         STATIC_ASSERT_IN_ENUM__UNIQUE((EachTypeSatisfies_f<FreeDimIndexTypeList_,IsDimIndex_p>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, FREEDIMINDEXTYPELIST),
         STATIC_ASSERT_IN_ENUM__UNIQUE((EachTypeSatisfies_f<UsedDimIndexTypeList_,IsDimIndex_p>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, USEDDIMINDEXTYPELIST)
     };
@@ -149,16 +149,16 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
 
 // will print any order expression template in a nice-looking justified way.  if the order is greater
 // than 1, this will print newlines, notably including the first character.
-template <typename Derived,
-          typename Scalar,
-          typename FreeFactorTypeList,
-          typename FreeDimIndexTypeList,
-          typename UsedDimIndexTypeList>
-std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived,Scalar,FreeFactorTypeList,FreeDimIndexTypeList,UsedDimIndexTypeList> const &e)
+template <typename Derived_,
+          typename Scalar_,
+          typename FreeFactorTypeList_,
+          typename FreeDimIndexTypeList_,
+          typename UsedDimIndexTypeList_>
+std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &e)
 {
-    typedef ExpressionTemplate_i<Derived,Scalar,FreeFactorTypeList,FreeDimIndexTypeList,UsedDimIndexTypeList> ExpressionTemplate;
-    print_multiindexable(out, e, FreeDimIndexTypeList());
-    typedef typename AbstractIndicesOfDimIndexTypeList_t<FreeDimIndexTypeList>::T AbstractIndexTypeList;
+    typedef ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> ExpressionTemplate;
+    print_multiindexable(out, e, FreeDimIndexTypeList_());
+    typedef typename AbstractIndicesOfDimIndexTypeList_t<FreeDimIndexTypeList_>::T AbstractIndexTypeList;
     // print the abstract index symbols
     if (AbstractIndexTypeList::LENGTH > 0)
         out << '(' << symbol_string_of_abstract_index_type_list(AbstractIndexTypeList()) << ')';

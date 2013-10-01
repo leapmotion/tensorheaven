@@ -85,7 +85,7 @@ static bool const DONT_CHECK_POINTER = false;
 template <typename Derived, typename DefaultType>
 struct DerivedType_t
 {
-    typedef typename If<TypesAreEqual<Derived,NullType>::V,
+    typedef typename If<TypesAreEqual_f<Derived,NullType>::V,
                         DefaultType,
                         Derived>::T T;
 };

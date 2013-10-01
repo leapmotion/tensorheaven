@@ -264,6 +264,10 @@
     QUESTION: Is there some reasonable generalization of diagonal 2-tensors to higher order
     tensors?  The answer to this question would likely be informed by results in higher
     order SVDs.
+    NOTE: this generalizes to an optimization for contraction with any tensor-with-symmetry;
+    contracting "upstairs" via split is (with the appropriate choice of bases) equivalent
+    to contracting "downstairs" via a projection (which can often be implemented with an
+    operation that is analogously sparse).
 - x implement analog of Eigen's "map" (providing a vector/tensor/ext-pow/sym-pow/everything
     implementations which uses some separate, specified block of memory, which could e.g.
     coincide with an Eigen::Matrix).  Maybe do this via abstracting some aspects of Array_t

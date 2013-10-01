@@ -312,7 +312,7 @@ struct Tensor_t : public Vector_t<typename Factor1_::Scalar,
                                   Factor1_::DIM * Factor2_::DIM,
                                   Tensor_TypeID_t<Factor1_,Factor2_> >
 {
-    enum { _ = TypesAreEqual<typename Factor1_::Scalar,typename Factor2_::Scalar>::V }; // ensure the vectors have the same scalar
+    enum { _ = TypesAreEqual_f<typename Factor1_::Scalar,typename Factor2_::Scalar>::V }; // ensure the vectors have the same scalar
     typedef Vector_t<typename Factor1_::Scalar,
                      Factor1_::DIM * Factor2_::DIM,
                      Tensor_TypeID_t<Factor1_,Factor2_> > ParentVector;

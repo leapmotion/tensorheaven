@@ -20,8 +20,8 @@ template <typename T_> struct Type { typedef T_ T; };
 // the type string for this is defined in typestringof.hpp
 template <typename T_, T_ VALUE_> struct Value { typedef T_ T; static T_ const V = VALUE_; operator T_ () const { return VALUE_; } };
 
-template <typename T0_, typename T1_> struct TypesAreEqual { static bool const V = false; operator bool () const { return V; } };
-template <typename T_> struct TypesAreEqual<T_,T_> { static bool const V = true; operator bool () const { return V; } };
+template <typename T0_, typename T1_> struct TypesAreEqual_f { static bool const V = false; operator bool () const { return V; } };
+template <typename T_> struct TypesAreEqual_f<T_,T_> { static bool const V = true; operator bool () const { return V; } };
 
 template <bool condition_, typename Then_, typename Else_> struct If;
 template <typename Then_, typename Else_> struct If<true, Then_, Else_> { typedef Then_ T; };
@@ -173,17 +173,17 @@ enum
         Assert<Value<int,0>::V == 0>::V &&
         Assert<Value<int,1>::V == 1>::V &&
 
-        Assert<TypesAreEqual<int,int>::V>::V &&
-        Assert<!TypesAreEqual<int,float>::V>::V &&
+        Assert<TypesAreEqual_f<int,int>::V>::V &&
+        Assert<!TypesAreEqual_f<int,float>::V>::V &&
 
-        Assert<TypesAreEqual<Type<int>::T,int>::V>::V &&
-        Assert<!TypesAreEqual<Type<int>,int>::V>::V &&
+        Assert<TypesAreEqual_f<Type<int>::T,int>::V>::V &&
+        Assert<!TypesAreEqual_f<Type<int>,int>::V>::V &&
 
-        Assert<TypesAreEqual<int,signed>::V>::V &&
+        Assert<TypesAreEqual_f<int,signed>::V>::V &&
 
-        Assert<TypesAreEqual<int*,int*>::V>::V &&
-        Assert<!TypesAreEqual<int*,int>::V>::V &&
-        Assert<!TypesAreEqual<int*,float*>::V>::V &&
+        Assert<TypesAreEqual_f<int*,int*>::V>::V &&
+        Assert<!TypesAreEqual_f<int*,int>::V>::V &&
+        Assert<!TypesAreEqual_f<int*,float*>::V>::V &&
 
         Assert<If<true,Value<int,0>,Value<int,1> >::T::V == 0>::V &&
         Assert<If<false,Value<int,0>,Value<int,1> >::T::V == 1>::V

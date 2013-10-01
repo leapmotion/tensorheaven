@@ -20,8 +20,8 @@ struct EmptyTypeList;
 // the purpose of STATIC_ASSERT_IN_ENUM__UNIQUE is so that the same assert message can be used
 // multiple times in the same enum without a compile error -- however the AUX_MSG must be unique.
 #define STATIC_ASSERT_IN_ENUM__UNIQUE(CONDITION,MESSAGE,AUX_MSG) MESSAGE_##AUX_MSG = Tenh::StaticAssert<bool(CONDITION)>::MESSAGE
-#define STATIC_ASSERT_TYPELIST_IS_EMPTY(TYPELIST) STATIC_ASSERT((TypesAreEqual<TYPELIST,Tenh::EmptyTypeList>::V), TYPELIST_MUST_BE_EMPTY)
-#define STATIC_ASSERT_TYPES_ARE_EQUAL(TYPE1,TYPE2) STATIC_ASSERT((TypesAreEqual<TYPE1,TYPE2>::V), TYPES_MUST_BE_EQUAL)
+#define STATIC_ASSERT_TYPELIST_IS_EMPTY(TYPELIST) STATIC_ASSERT((TypesAreEqual_f<TYPELIST,Tenh::EmptyTypeList>::V), TYPELIST_MUST_BE_EMPTY)
+#define STATIC_ASSERT_TYPES_ARE_EQUAL(TYPE1,TYPE2) STATIC_ASSERT((TypesAreEqual_f<TYPE1,TYPE2>::V), TYPES_MUST_BE_EQUAL)
 
 namespace Tenh {
 

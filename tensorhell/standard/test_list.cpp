@@ -22,10 +22,10 @@ namespace List {
 
 void test_EmptyList (Context const &context)
 {
-    assert((TypesAreEqual<Tenh::EmptyList::BodyTypeList,Tenh::EmptyTypeList>()));
+    assert((TypesAreEqual_f<Tenh::EmptyList::BodyTypeList,Tenh::EmptyTypeList>()));
     assert_eq(Tenh::EmptyList::length(), 0);
-    assert((TypesAreEqual<Tenh::EmptyList::LeadingListType_t<0>::T,Tenh::EmptyList>()));
-    assert((TypesAreEqual<Tenh::EmptyList::TrailingListType_t<0>::T,Tenh::EmptyList>()));
+    assert((TypesAreEqual_f<Tenh::EmptyList::LeadingListType_t<0>::T,Tenh::EmptyList>()));
+    assert((TypesAreEqual_f<Tenh::EmptyList::TrailingListType_t<0>::T,Tenh::EmptyList>()));
 }
 
 template <typename TypeList>
@@ -58,7 +58,7 @@ void test_leading_list (Context const &context)
     typedef typename TypeList::template LeadingTypeList_t<INDEX>::T LeadingTypeList;
     typedef Tenh::List_t<LeadingTypeList> LeadingList;
 
-    assert((TypesAreEqual<typename List::template LeadingListType_t<INDEX>::T,LeadingList>()));
+    assert((TypesAreEqual_f<typename List::template LeadingListType_t<INDEX>::T,LeadingList>()));
 
     typedef pair<List,LeadingList> TestData;
     TestData const &d = context.DataAs<TestData>();
@@ -74,7 +74,7 @@ void test_trailing_list (Context const &context)
     typedef typename TypeList::template TrailingTypeList_t<INDEX>::T TrailingTypeList;
     typedef Tenh::List_t<TrailingTypeList> TrailingList;
 
-    assert((TypesAreEqual<typename List::template TrailingListType_t<INDEX>::T,TrailingList>()));
+    assert((TypesAreEqual_f<typename List::template TrailingListType_t<INDEX>::T,TrailingList>()));
 
     typedef pair<List,TrailingList> TestData;
     TestData const &d = context.DataAs<TestData>();

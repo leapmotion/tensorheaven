@@ -78,7 +78,7 @@ template <typename Component_,
           typename Derived_ = NullType>
 struct ImmutableArray_t
     :
-    public Array_i<typename If<(TypesAreEqual<Derived_,NullType>::V),
+    public Array_i<typename If<(TypesAreEqual_f<Derived_,NullType>::V),
                                ImmutableArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_>,
                                Derived_>::T,
                    Component_,
@@ -87,7 +87,7 @@ struct ImmutableArray_t
 {
     enum { STATIC_ASSERT_IN_ENUM(IsComponentGenerator_t<ComponentGenerator_>::V, MUST_BE_COMPONENT_GENERATOR) };
 
-    typedef Array_i<typename If<(TypesAreEqual<Derived_,NullType>::V),
+    typedef Array_i<typename If<(TypesAreEqual_f<Derived_,NullType>::V),
                                 ImmutableArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_>,
                                 Derived_>::T,
                     Component_,

@@ -367,9 +367,9 @@ int main (int, char **)
                   << "DualOf_f<Basis>::T = " << type_string_of<DualOf_f<Basis>::T>() << '\n'
                   << "DualDualBasis = " << type_string_of<DualDualBasis>() << '\n' << '\n';
         // make sure the basis is reflexive (self-double-dual)
-        assert((TypesAreEqual<Basis,DualDualBasis>::V));
+        assert((TypesAreEqual_f<Basis,DualDualBasis>::V));
         // make sure that DualOf_f<Basis>::T and DualOf_f<Basis>::T are the same
-        assert((TypesAreEqual<DualBasis,DualOf_f<Basis>::T>::V));
+        assert((TypesAreEqual_f<DualBasis,DualOf_f<Basis>::T>::V));
     }
 
     {
@@ -381,9 +381,9 @@ int main (int, char **)
                   << "DualOf_f<VectorSpace>::T = " << type_string_of<DualOf_f<VectorSpace>::T>() << '\n'
                   << "DualDualVectorSpace = " << type_string_of<DualDualVectorSpace>() << '\n' << '\n';
         // make sure the vector space is reflexive (self-double-dual)
-        assert((TypesAreEqual<VectorSpace,DualDualVectorSpace>::V));
+        assert((TypesAreEqual_f<VectorSpace,DualDualVectorSpace>::V));
         // make sure that DualOf_f<VectorSpace>::T and DualOf_f<VectorSpace>::T are the same
-        assert((TypesAreEqual<DualVectorSpace,DualOf_f<VectorSpace>::T>::V));
+        assert((TypesAreEqual_f<DualVectorSpace,DualOf_f<VectorSpace>::T>::V));
         // make sure VectorSpace is actually a VectorSpace
         assert(HasVectorSpaceStructure_f<VectorSpace>::V);
     }
@@ -403,11 +403,11 @@ int main (int, char **)
                   << "DualOf_f<BasedVectorSpace>::T = " << type_string_of<DualOf_f<BasedVectorSpace>::T>() << '\n'
                   << "DualDualBasedVectorSpace = " << type_string_of<DualDualBasedVectorSpace>() << '\n' << '\n';
         // make sure the vector space is reflexive (self-double-dual)
-        assert((TypesAreEqual<BasedVectorSpace,DualDualBasedVectorSpace>::V));
+        assert((TypesAreEqual_f<BasedVectorSpace,DualDualBasedVectorSpace>::V));
         // make sure that DualOf_f<BasedVectorSpace>::T and DualOf_f<BasedVectorSpace>::T are the same
-        assert((TypesAreEqual<DualBasedVectorSpace,DualOf_f<BasedVectorSpace>::T>::V));
+        assert((TypesAreEqual_f<DualBasedVectorSpace,DualOf_f<BasedVectorSpace>::T>::V));
         // make sure that DualOf_f<BasedVectorSpace>::T::Index and DualOf_f<BasedVectorSpace>::T::Index are the same
-        // assert((TypesAreEqual<DualOf_f<BasedVectorSpace>::T::Index,DualOf_f<BasedVectorSpace::Index>::T>::V));
+        // assert((TypesAreEqual_f<DualOf_f<BasedVectorSpace>::T::Index,DualOf_f<BasedVectorSpace::Index>::T>::V));
         // make sure BasedVectorSpace is actually a VectorSpace_c and a BasedVectorSpace_c
         assert(HasVectorSpaceStructure_f<BasedVectorSpace>::V);
         assert(HasBasedVectorSpaceStructure_f<BasedVectorSpace>::V);
@@ -423,9 +423,9 @@ int main (int, char **)
                   << "DualOf_f<TensorProduct>::T = " << type_string_of<DualOf_f<TensorProduct>::T>() << '\n'
                   << "DualDualTensorProduct = " << type_string_of<DualDualTensorProduct>() << '\n' << '\n';
         // make sure the tensor product is reflexive (self-double-dual)
-        assert((TypesAreEqual<TensorProduct,DualDualTensorProduct>::V));
+        assert((TypesAreEqual_f<TensorProduct,DualDualTensorProduct>::V));
         // make sure that DualOf_f<TensorProduct>::T and DualOf_f<TensorProduct>::T are the same
-        assert((TypesAreEqual<DualTensorProduct,DualOf_f<TensorProduct>::T>::V));
+        assert((TypesAreEqual_f<DualTensorProduct,DualOf_f<TensorProduct>::T>::V));
     }
 
     {
@@ -440,9 +440,9 @@ int main (int, char **)
                   << "DualOf_f<TensorProductOfVectorSpaces>::T = " << type_string_of<DualOf_f<T>::T>() << '\n'
                   << "DualDualTensorProductOfVectorSpaces = " << type_string_of<DualDualT>() << '\n' << '\n';
         // make sure the tensor product of vector spaces is reflexive (self-double-dual)
-        assert((TypesAreEqual<T,DualDualT>::V));
+        assert((TypesAreEqual_f<T,DualDualT>::V));
         // make sure that DualOf_f<T>::T and DualOf_f<T>::T are the same
-        assert((TypesAreEqual<DualT,DualOf_f<T>::T>::V));
+        assert((TypesAreEqual_f<DualT,DualOf_f<T>::T>::V));
     }
 
     {
@@ -457,9 +457,9 @@ int main (int, char **)
                   << "DualOf_f<TensorProductOfBases>::T = " << type_string_of<DualOf_f<T>::T>() << '\n'
                   << "DualDualTensorProductOfBases = " << type_string_of<DualDualT>() << '\n' << '\n';
         // make sure the tensor product of bases is reflexive (self-double-dual)
-        assert((TypesAreEqual<T,DualDualT>::V));
+        assert((TypesAreEqual_f<T,DualDualT>::V));
         // make sure that DualOf_f<T>::T and DualOf_f<T>::T are the same
-        assert((TypesAreEqual<DualT,DualOf_f<T>::T>::V));
+        assert((TypesAreEqual_f<DualT,DualOf_f<T>::T>::V));
     }
 
     {
@@ -500,9 +500,9 @@ int main (int, char **)
                       << "DualOf_f<BasedTensorProductOfVectorSpaces>::T = " << type_string_of<DualOf_f<T>::T>() << '\n'
                       << "DualDualBasedTensorProductOfVectorSpaces = " << type_string_of<DualDualT>() << '\n' << '\n';
             // make sure the based tensor product of vector spaces is reflexive (self-double-dual)
-            assert((TypesAreEqual<T,DualDualT>::V));
+            assert((TypesAreEqual_f<T,DualDualT>::V));
             // make sure that DualOf_f<T>::T and DualOf_f<T>::T are the same
-            assert((TypesAreEqual<DualT,DualOf_f<T>::T>::V));
+            assert((TypesAreEqual_f<DualT,DualOf_f<T>::T>::V));
         }
 
         {
@@ -521,9 +521,9 @@ int main (int, char **)
                       << "DualOf_f<TensorProductOfBasedVectorSpaces>::T = " << type_string_of<DualOf_f<T>::T>() << '\n'
                       << "DualDualTensorProductOfBasedVectorSpaces = " << type_string_of<DualDualT>() << '\n' << '\n';
             // make sure the tensor product of based vector spaces is reflexive (self-double-dual)
-            assert((TypesAreEqual<T,DualDualT>::V));
+            assert((TypesAreEqual_f<T,DualDualT>::V));
             // make sure that DualOf_f<T>::T and DualOf_f<T>::T are the same
-            assert((TypesAreEqual<DualT,DualOf_f<T>::T>::V));
+            assert((TypesAreEqual_f<DualT,DualOf_f<T>::T>::V));
         }
 
         {
@@ -543,9 +543,9 @@ int main (int, char **)
                       << "DualOf_f<Diagonal2TensorProductOfBasedVectorSpaces>::T = " << type_string_of<DualOf_f<T>::T>() << '\n'
                       << "DualDualDiagonal2TensorProductOfBasedVectorSpaces = " << type_string_of<DualDualT>() << '\n' << '\n';
             // make sure the diagonal 2 tensor product of based vector spaces is reflexive (self-double-dual)
-            assert((TypesAreEqual<T,DualDualT>::V));
+            assert((TypesAreEqual_f<T,DualDualT>::V));
             // make sure that DualOf_f<T>::T and DualOf_f<T>::T are the same
-            assert((TypesAreEqual<DualT,DualOf_f<T>::T>::V));
+            assert((TypesAreEqual_f<DualT,DualOf_f<T>::T>::V));
         }
     }
 
@@ -560,9 +560,9 @@ int main (int, char **)
                   << "DualOf_f<SymmetricPower>::T = " << type_string_of<DualOf_f<SymmetricPower>::T>() << '\n'
                   << "DualDualSymmetricPower = " << type_string_of<DualDualSymmetricPower>() << '\n' << '\n';
         // make sure the tensor power is reflexive (self-double-dual)
-        assert((TypesAreEqual<SymmetricPower,DualDualSymmetricPower>::V));
+        assert((TypesAreEqual_f<SymmetricPower,DualDualSymmetricPower>::V));
         // make sure that DualOf_f<SymmetricPower>::T and DualOf_f<SymmetricPower>::T are the same
-        assert((TypesAreEqual<DualSymmetricPower,DualOf_f<SymmetricPower>::T>::V));
+        assert((TypesAreEqual_f<DualSymmetricPower,DualOf_f<SymmetricPower>::T>::V));
     }
 
     {
@@ -575,9 +575,9 @@ int main (int, char **)
                   << "DualOf_f<SymmetricPowerOfVectorSpace>::T = " << type_string_of<DualOf_f<T>::T>() << '\n'
                   << "DualDualSymmetricPowerOfVectorSpace = " << type_string_of<DualDualT>() << '\n' << '\n';
         // make sure the tensor power of vector spaces is reflexive (self-double-dual)
-        assert((TypesAreEqual<T,DualDualT>::V));
+        assert((TypesAreEqual_f<T,DualDualT>::V));
         // make sure that DualOf_f<T>::T and DualOf_f<T>::T are the same
-        assert((TypesAreEqual<DualT,DualOf_f<T>::T>::V));
+        assert((TypesAreEqual_f<DualT,DualOf_f<T>::T>::V));
     }
 
     {
@@ -590,9 +590,9 @@ int main (int, char **)
                   << "DualOf_f<SymmetricPowerOfBasis>::T = " << type_string_of<DualOf_f<T>::T>() << '\n'
                   << "DualDualSymmetricPowerOfBasis = " << type_string_of<DualDualT>() << '\n' << '\n';
         // make sure the tensor power of bases is reflexive (self-double-dual)
-        assert((TypesAreEqual<T,DualDualT>::V));
+        assert((TypesAreEqual_f<T,DualDualT>::V));
         // make sure that DualOf_f<T>::T and DualOf_f<T>::T are the same
-        assert((TypesAreEqual<DualT,DualOf_f<T>::T>::V));
+        assert((TypesAreEqual_f<DualT,DualOf_f<T>::T>::V));
     }
 
     {
@@ -625,9 +625,9 @@ int main (int, char **)
                       << "DualOf_f<BasedSymmetricPowerOfVectorSpace>::T = " << type_string_of<DualOf_f<T>::T>() << '\n'
                       << "DualDualBasedSymmetricPowerOfVectorSpace = " << type_string_of<DualDualT>() << '\n' << '\n';
             // make sure the based tensor power of vector spaces is reflexive (self-double-dual)
-            assert((TypesAreEqual<T,DualDualT>::V));
+            assert((TypesAreEqual_f<T,DualDualT>::V));
             // make sure that DualOf_f<T>::T and DualOf_f<T>::T are the same
-            assert((TypesAreEqual<DualT,DualOf_f<T>::T>::V));
+            assert((TypesAreEqual_f<DualT,DualOf_f<T>::T>::V));
         }
 */
         {
@@ -645,9 +645,9 @@ int main (int, char **)
                       << "DualOf_f<SymmetricPowerOfBasedVectorSpace>::T = " << type_string_of<DualOf_f<T>::T>() << '\n'
                       << "DualDualSymmetricPowerOfBasedVectorSpace = " << type_string_of<DualDualT>() << '\n' << '\n';
             // make sure the tensor power of based vector spaces is reflexive (self-double-dual)
-            assert((TypesAreEqual<T,DualDualT>::V));
+            assert((TypesAreEqual_f<T,DualDualT>::V));
             // make sure that DualOf_f<T>::T and DualOf_f<T>::T are the same
-            assert((TypesAreEqual<DualT,DualOf_f<T>::T>::V));
+            assert((TypesAreEqual_f<DualT,DualOf_f<T>::T>::V));
         }
     }
 
@@ -1492,28 +1492,28 @@ int main (int, char **)
         test_split_index_to_index_order_3<float,ExteriorPower>();
     }
 
-    // {
-    //     std::cout << "Polynomials in 0 dimensions." << '\n';
-    //     typedef MultivariatePolynomial<2,0,X> PolyType;
-    //     PolyType::SymDual w(0.0f);
-    //     MultivariatePolynomial<1,0,X>::SymDual x(1);
-    //     std::cout << FORMAT_VALUE(w) << '\n';
-    //     PolyType roly(w,MultivariatePolynomial<1,0,X>(x,3)), poly(Static<WithoutInitialization>::SINGLETON);
-    //     poly = poly + MultivariatePolynomial<1,0,X>(x,3);
-    //     PolyType::Vector v(0.0f);
-    //     std::cout << FORMAT_VALUE(roly) << '\n';
-    //     roly.as_array().print(std::cout);
-    //     std::cout << '\n';
-    //     std::cout << FORMAT_VALUE(poly) << '\n';
-    //     std::cout << FORMAT_VALUE(v) << '\n';
-    //     std::cout << FORMAT_VALUE(roly.evaluate(v)) << '\n';
-    //     std::cout << FORMAT_VALUE(poly.evaluate(v)) << '\n';
-    //     std::cout << FORMAT_VALUE((poly - roly).evaluate(v)) << '\n';
-    //     std::cout << FORMAT_VALUE((3.0f*roly).evaluate(v)) << '\n';
-    //     std::cout << FORMAT_VALUE(roly*poly) << '\n';
-    //     std::cout << FORMAT_VALUE((roly*poly).evaluate(v)) << '\n';
-    //     std::cout << '\n';
-    // }
+    {
+        std::cout << "Polynomials in 0 dimensions." << '\n';
+        typedef MultivariatePolynomial<2,0,X> PolyType;
+        PolyType::SymDual w(0.0f);
+        MultivariatePolynomial<1,0,X>::SymDual x(1);
+        std::cout << FORMAT_VALUE(w) << '\n';
+        PolyType roly(w,MultivariatePolynomial<1,0,X>(x,3)), poly(Static<WithoutInitialization>::SINGLETON);
+        poly = poly + MultivariatePolynomial<1,0,X>(x,3);
+        PolyType::Vector v(0.0f);
+        std::cout << FORMAT_VALUE(roly) << '\n';
+        roly.as_array().print(std::cout);
+        std::cout << '\n';
+        std::cout << FORMAT_VALUE(poly) << '\n';
+        std::cout << FORMAT_VALUE(v) << '\n';
+        std::cout << FORMAT_VALUE(roly.evaluate(v)) << '\n';
+        std::cout << FORMAT_VALUE(poly.evaluate(v)) << '\n';
+        std::cout << FORMAT_VALUE((poly - roly).evaluate(v)) << '\n';
+        std::cout << FORMAT_VALUE((3.0f*roly).evaluate(v)) << '\n';
+        std::cout << FORMAT_VALUE(roly*poly) << '\n';
+        std::cout << FORMAT_VALUE((roly*poly).evaluate(v)) << '\n';
+        std::cout << '\n';
+    }
 
     {
         std::cout << "Polynomials in 1 dimension." << '\n';
@@ -1522,7 +1522,7 @@ int main (int, char **)
         MultivariatePolynomial<1,1,X>::SymDual x(1);
         w[PolyType::SymDual::ComponentIndex(0, CHECK_RANGE)] = 1; // x^2
         std::cout << FORMAT_VALUE(w) << '\n';
-        PolyType roly(w,MultivariatePolynomial<1,1,X>(x,3)), poly(0);
+        PolyType roly(w,MultivariatePolynomial<1,1,X>(x,3)), poly(Static<WithoutInitialization>::SINGLETON);
         poly = poly + MultivariatePolynomial<1,1,X>(x,3);
         PolyType::Vector v(1.0f);
         std::cout << FORMAT_VALUE(roly) << '\n';
@@ -1548,7 +1548,7 @@ int main (int, char **)
         w[PolyType::SymDual::ComponentIndex(1, CHECK_RANGE)] = 1; // xy
         w[PolyType::SymDual::ComponentIndex(2, CHECK_RANGE)] = 0; // y^2
         std::cout << FORMAT_VALUE(w) << '\n';
-        PolyType roly(w,MultivariatePolynomial<1,2,X>(x,1)), poly(0);
+        PolyType roly(w,MultivariatePolynomial<1,2,X>(x,1)), poly(Static<WithoutInitialization>::SINGLETON);
         poly = poly + MultivariatePolynomial<1,2,X>(x,1);
         PolyType::Vector v(1.0f,2.0f);
         std::cout << FORMAT_VALUE(roly) << '\n';
@@ -1577,7 +1577,7 @@ int main (int, char **)
         w[PolyType::SymDual::ComponentIndex(4, CHECK_RANGE)] = 6; // yz
         w[PolyType::SymDual::ComponentIndex(5, CHECK_RANGE)] = 3; // z^2
         std::cout << FORMAT_VALUE(w) << '\n';
-        PolyType roly(w,MultivariatePolynomial<1,3,X>(x,3)), poly(0);
+        PolyType roly(w,MultivariatePolynomial<1,3,X>(x,3)), poly(Static<WithoutInitialization>::SINGLETON);
         poly = poly + MultivariatePolynomial<1,3,X>(x,3);
         PolyType::Vector v(1.0f,2.0f,3.0f);
         std::cout << FORMAT_VALUE(roly) << '\n';
@@ -1610,7 +1610,7 @@ int main (int, char **)
         w[PolyType::SymDual::ComponentIndex(8, CHECK_RANGE)] = 6; // zw
         w[PolyType::SymDual::ComponentIndex(9, CHECK_RANGE)] = 3; // w^2
         std::cout << FORMAT_VALUE(w) << '\n';
-        PolyType roly(w,MultivariatePolynomial<1,4,X>(x,3)), poly(0);
+        PolyType roly(w,MultivariatePolynomial<1,4,X>(x,3)), poly(Static<WithoutInitialization>::SINGLETON);
         poly = poly + MultivariatePolynomial<1,4,X>(x,3);
         PolyType::Vector v(1.0f,2.0f,3.0f,4.0f);
         std::cout << FORMAT_VALUE(roly) << '\n';
@@ -1660,14 +1660,14 @@ int main (int, char **)
 
         PolyType X(x,0), Y(y,0);
 
-        std::cout << FORMAT_VALUE(X) << '\n';
-        std::cout << FORMAT_VALUE(Y) << '\n';
-        std::cout << FORMAT_VALUE(X*X) << '\n';
-        std::cout << FORMAT_VALUE(Y*Y) << '\n';
-        std::cout << FORMAT_VALUE(X*Y) << '\n';
-        std::cout << FORMAT_VALUE((X*X)*(Y*Y) + 3) << '\n';
-        std::cout << FORMAT_VALUE((X*Y)*(X*Y)) << '\n';
-        std::cout << FORMAT_VALUE(17 + X*X*Y*Y) << '\n';
+        std::cout << X << '\n';
+        std::cout << Y << '\n';
+        std::cout << X*X << '\n';
+        std::cout << Y*Y << '\n';
+        std::cout << X*Y << '\n';
+        std::cout << (X*X)*(Y*Y) + 3 << '\n';
+        std::cout << (X*Y)*(X*Y) << '\n';
+        std::cout << 17 + X*X*Y*Y << '\n';
     }
 
     return 0;

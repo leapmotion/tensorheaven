@@ -148,7 +148,7 @@ struct Occurrence_t
 {
     /// How many occurrences of Type_ are there in TypeList_.
     static Uint32 const COUNT =
-        (TypesAreEqual<typename TypeList_::HeadType,Type_>::V ? 1 : 0)
+        (TypesAreEqual_f<typename TypeList_::HeadType,Type_>::V ? 1 : 0)
         + Occurrence_t<typename TypeList_::BodyTypeList,Type_>::COUNT;
 };
 
@@ -172,11 +172,11 @@ struct FirstMatchingIn_t
 private:
     enum { STATIC_ASSERT_IN_ENUM((Occurrence_t<TypeList_,Type_>::COUNT > 0), TYPE_MUST_APPEAR_IN_TYPELIST) };
 public:
-    static Uint32 const INDEX = If<TypesAreEqual<typename TypeList_::HeadType,Type_>::V,
+    static Uint32 const INDEX = If<TypesAreEqual_f<typename TypeList_::HeadType,Type_>::V,
                                    FirstMatchingIn_t<TypeList_t<typename TypeList_::HeadType>,typename TypeList_::HeadType>,
                                    FirstMatchingIn_t<typename TypeList_::BodyTypeList,Type_> >::T::INDEX
                                 +
-                                (TypesAreEqual<typename TypeList_::HeadType,Type_>::V ? 0 : 1);
+                                (TypesAreEqual_f<typename TypeList_::HeadType,Type_>::V ? 0 : 1);
                                 // this offset is what gets past HeadType if there is no match here
 };
 
@@ -185,7 +185,7 @@ template <typename HeadType_, typename Type_>
 struct FirstMatchingIn_t<TypeList_t<HeadType_>,Type_>
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM((TypesAreEqual<HeadType_,Type_>::V), TYPE_MUST_APPEAR_IN_TYPELIST) };
+    enum { STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<HeadType_,Type_>::V), TYPE_MUST_APPEAR_IN_TYPELIST) };
 public:
     static Uint32 const INDEX = 0;
 };
@@ -606,7 +606,7 @@ template <typename TypeList_> struct TypeListIsUniform_t;
 template <typename HeadType_, typename BodyTypeList_>
 struct TypeListIsUniform_t<TypeList_t<HeadType_,BodyTypeList_> >
 {
-    static bool const V = TypesAreEqual<HeadType_,typename BodyTypeList_::HeadType>::V &&
+    static bool const V = TypesAreEqual_f<HeadType_,typename BodyTypeList_::HeadType>::V &&
                           TypeListIsUniform_t<BodyTypeList_>::V;
 };
 
@@ -863,7 +863,7 @@ MAKE_2_ARY_TYPE_EVALUATOR(Element, Uint32, INDEX_);
 template <typename TypeList_, typename Type_>
 struct Contains_f
 {
-    static bool const V = TypesAreEqual<typename TypeList_::HeadType,Type_>::V ||
+    static bool const V = TypesAreEqual_f<typename TypeList_::HeadType,Type_>::V ||
                           Contains_f<typename TypeList_::BodyTypeList,Type_>::V;
 };
 
@@ -880,7 +880,7 @@ MAKE_2_ARY_VALUE_EVALUATOR(Contains, bool, typename, Type_);
 template <typename TypeList_, typename Type_>
 struct IndexOfFirstOccurrence_f
 {
-    static Uint32 const V = TypesAreEqual<typename TypeList_::HeadType,Type_>::V ?
+    static Uint32 const V = TypesAreEqual_f<typename TypeList_::HeadType,Type_>::V ?
                             0 :
                             1 + IndexOfFirstOccurrence_f<typename TypeList_::BodyTypeList,Type_>::V;
 };

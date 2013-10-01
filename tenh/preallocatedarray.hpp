@@ -21,13 +21,13 @@ namespace Tenh {
 template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_ = NullType>
 struct PreallocatedArray_t
     :
-    public MemoryArray_i<typename If<(TypesAreEqual<Derived_,NullType>::V),
+    public MemoryArray_i<typename If<(TypesAreEqual_f<Derived_,NullType>::V),
                                      PreallocatedArray_t<Component_,COMPONENT_COUNT_,Derived_>,
                                      Derived_>::T,
                          Component_,
                          COMPONENT_COUNT_>
 {
-    typedef MemoryArray_i<typename If<(TypesAreEqual<Derived_,NullType>::V),
+    typedef MemoryArray_i<typename If<(TypesAreEqual_f<Derived_,NullType>::V),
                                       PreallocatedArray_t<Component_,COMPONENT_COUNT_,Derived_>,
                                       Derived_>::T,
                           Component_,
