@@ -10,7 +10,6 @@
 
 #include "tenh/conceptual/concept.hpp"
 #include "tenh/conceptual/dual.hpp"
-#include "tenh/meta/static_assert.hpp"
 
 namespace Tenh {
 

@@ -2,7 +2,12 @@
 // tenh/meta/static_assert.hpp by Ted Nitz, created 2013/04/12
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
-
+/// @file static_assert.hpp
+/// @headerfile static_assert.hpp "tenh/meta/static_assert.hpp"
+/// @brief Contains macros and a template class for performing static asserts without C++11.
+/// @details All error messages used in a static assert this way must be added to the anonymous
+///  enum contained in `StaticAssert<true>`.
+/// @todo TODO: Replace with C++11 static_assert.
 #ifndef TENH_META_STATIC_ASSERT_HPP_
 #define TENH_META_STATIC_ASSERT_HPP_
 
@@ -14,25 +19,35 @@ struct EmptyTypeList;
 
 }
 
+/// @brief Macro to perform a static assert within functions.
 #define STATIC_ASSERT(CONDITION,MESSAGE) do { if(Tenh::StaticAssert<bool(CONDITION)>::MESSAGE) {} } while (false)
-#define STATIC_ASSERT_AS_RVALUE(CONDITION,MESSAGE) Tenh::StaticAssert<bool(CONDITION)>::MESSAGE
+//#define STATIC_ASSERT_AS_RVALUE(CONDITION,MESSAGE) Tenh::StaticAssert<bool(CONDITION)>::MESSAGE
+/// @brief Macro to perform a static assert within an enum. Typically an anonymous enum in the private section of a class.
 #define STATIC_ASSERT_IN_ENUM(CONDITION,MESSAGE) MESSAGE = Tenh::StaticAssert<bool(CONDITION)>::MESSAGE
-// the purpose of STATIC_ASSERT_IN_ENUM__UNIQUE is so that the same assert message can be used
-// multiple times in the same enum without a compile error -- however the AUX_MSG must be unique.
+/// @brief The purpose of STATIC_ASSERT_IN_ENUM__UNIQUE is so that the same assert message can be used
+///  multiple times in the same enum without a compile error -- however the AUX_MSG must be unique.
 #define STATIC_ASSERT_IN_ENUM__UNIQUE(CONDITION,MESSAGE,AUX_MSG) MESSAGE_##AUX_MSG = Tenh::StaticAssert<bool(CONDITION)>::MESSAGE
+/// @brief Asserts that a TypeList_t is the EmptyTypeList using STATIC_ASSERT.
 #define STATIC_ASSERT_TYPELIST_IS_EMPTY(TYPELIST) STATIC_ASSERT((TypesAreEqual_f<TYPELIST,Tenh::EmptyTypeList>::V), TYPELIST_MUST_BE_EMPTY)
+/// @brief Asserts that two types are equal using STATIC_ASSERT.
 #define STATIC_ASSERT_TYPES_ARE_EQUAL(TYPE1,TYPE2) STATIC_ASSERT((TypesAreEqual_f<TYPE1,TYPE2>::V), TYPES_MUST_BE_EQUAL)
 
 namespace Tenh {
 
+/// @cond false
 template <bool condition>
 struct StaticAssert {};
+/// @endcond
 
+/// @brief Implementation detail for the static assert macros.
+/// @headerfile static_assert.hpp "tenh/meta/static_assert.hpp"
 template <>
 struct StaticAssert<true>
 {
+    /// @brief Every error message issued in a static assert macro must exist within this enum.
     enum
     {
+        /// @cond false
         ABSTRACTINDEX_SYMBOL_MUST_NOT_BE_NULL,
         ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL,
         ALL_FACTORS_MUST_BE_BASED_VECTOR_SPACES,
@@ -131,6 +146,7 @@ struct StaticAssert<true>
         TYPES_MUST_BE_EQUAL,
         TYPELIST_MUST_BE_EMPTY,
         UNSPECIFIED_MESSAGE // for when it doesn't fucking matter.
+        /// @endcond
     };
 };
 

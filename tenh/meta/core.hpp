@@ -2,7 +2,9 @@
 // tenh/meta/core.hpp by Victor Dods, created 2006/11/29
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
-
+/// @file meta/core.hpp
+/// @headerfile core.hpp "tenh/meta/core.hpp"
+/// @brief Contains essential template metafunction building blocks.
 #ifndef TENH_META_CORE_HPP_
 #define TENH_META_CORE_HPP_
 
@@ -12,31 +14,46 @@ namespace Tenh {
 // general template metaprogramming stuff
 // ///////////////////////////////////////////////////////////////////////////
 
+/// @brief Compile time assertion struct, only used within tenh/meta/core.hpp.
+/// @headerfile core.hpp "tenh/meta/core.hpp"
 template <bool condition_> struct Assert;
+/// @cond false
 template <> struct Assert<true> { static bool const V = true; operator bool () const { return V; } };
+/// @endcond
 
-// the type string for this is defined in typestringof.hpp
+/// @brief Wrapper type to contain a compile time constant of any template value parameter type.
+/// @headerfile core.hpp "tenh/meta/core.hpp"
+/// @note The type string for this is defined in typestringof.hpp.
 template <typename T_, T_ VALUE_> struct Value_t { typedef T_ T; static T_ const V = VALUE_; operator T_ () const { return VALUE_; } };
 
-// sentinel "value" type
+/// @brief Sentinel "value" type.
+/// @headerfile core.hpp "tenh/meta/core.hpp"
 struct NullValue { };
 
+/// @brief Template metafunction to test whether two types are identical.
+/// @headerfile core.hpp "tenh/meta/core.hpp"
 template <typename T0_, typename T1_> struct TypesAreEqual_f { static bool const V = false; operator bool () const { return V; } };
+/// @cond false
 template <typename T_> struct TypesAreEqual_f<T_,T_> { static bool const V = true; operator bool () const { return V; } };
+/// @endcond
 
+
+/// @brief Compile-time conditional. Contains one of two types depending upon the boolean passed in.
+/// @headerfile core.hpp "tenh/meta/core.hpp"
 template <bool condition_, typename Then_, typename Else_> struct If_f;
+/// @cond false
 template <typename Then_, typename Else_> struct If_f<true, Then_, Else_> { typedef Then_ T; };
 template <typename Then_, typename Else_> struct If_f<false, Then_, Else_> { typedef Else_ T; };
+/// @endcond
 
 // ///////////////////////////////////////////////////////////////////////////
 // setup for int type templates
 // ///////////////////////////////////////////////////////////////////////////
 
-// This series of macro calls creates a linked list of integer types via
-// typedefs which will be used by Integer<> to typedef integers of specific
-// bit-widths.  If the requested bit-width is not available, it will produce
-// a compile error involving "struct NoSuchInteger".
-
+/// This series of macro calls creates a linked list of integer types via
+/// typedefs which will be used by Integer<> to typedef integers of specific
+/// bit-widths.  If the requested bit-width is not available, it will produce
+/// a compile error involving "struct NoSuchInteger".
 #define TENH_META_CORE_HPP_INTEGER(Name, CurrentType, NextType) \
     struct NextType; \
     struct Name \
@@ -54,6 +71,9 @@ TENH_META_CORE_HPP_INTEGER(LongLong, long long, NoSuchInteger);
 
 #undef TENH_META_CORE_HPP_INTEGER
 
+/// @brief Uses the linked list built with TENH_META_CORE_HPP_INTEGER to find an integer
+///  type with a specified bit width.
+/// @headerfile core.hpp "tenh/meta/core.hpp"
 template <unsigned int bit_size_, typename IntegerType_ = Char>
 struct Integer
 {
@@ -164,6 +184,7 @@ struct MetaFunctionName##_e \
 // compile-time asserts for the above code (only basic asserts for BinXX)
 // ///////////////////////////////////////////////////////////////////////////
 
+/// Assertions to test the functionality of the code in this file.
 enum
 {
     TENH_META_CORE_HPP_COMPILE_TIME_ASSERTS =
