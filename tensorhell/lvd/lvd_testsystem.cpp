@@ -718,7 +718,7 @@ unsigned int Directory::RunScheduled ()
         // set up a Context object for each test case
         Context context(test_case_name, this, test_case.m_data);
 
-        PRINT_DEBUG_MESSAGE("*** RUNNER DEBUG MESSAGE *** : RUNNING TEST CASE \"" << Path() << test_case_name << '"');
+        PRINT_DEBUG_MESSAGE("*** RUNNER DEBUG MESSAGE *** : RUNNING TEST CASE \"" << Path() << test_case_name << "\"\n");
 
         // if the test case is a method, then we have to run Initialize and
         // Shutdown before and after the test body, respectively.
