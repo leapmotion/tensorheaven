@@ -453,51 +453,36 @@ inline MultiIndex_t<TypeList_t<HeadType,BodyTypeList> > operator >>= (HeadType c
 }
 
 
-
-// concatenate two lists (where both are empty)
-inline MultiIndex_t<EmptyTypeList> operator |= (MultiIndex_t<EmptyTypeList> const &, MultiIndex_t<EmptyTypeList> const &)
+// base case
+inline MultiIndex_t<EmptyTypeList> operator | (MultiIndex_t<EmptyTypeList> const &, MultiIndex_t<EmptyTypeList> const &)
 {
     return MultiIndex_t<EmptyTypeList>();
 }
 
-// concatenate two lists (where the second is empty)
-template <typename LeadingHeadType, typename LeadingBodyTypeList>
-inline MultiIndex_t<TypeList_t<LeadingHeadType,LeadingBodyTypeList> > operator |= (
-    MultiIndex_t<TypeList_t<LeadingHeadType,LeadingBodyTypeList> > const &leading_list,
-    MultiIndex_t<EmptyTypeList> const &)
+// base case
+template <typename TypeList_>
+MultiIndex_t<TypeList_> operator | (MultiIndex_t<TypeList_> const &lhs, MultiIndex_t<EmptyTypeList> const &)
 {
-    return leading_list;
+    return lhs;
 }
 
-// concatenate two lists (where the first is empty)
-template <typename TrailingHeadType, typename TrailingBodyTypeList>
-inline MultiIndex_t<TypeList_t<TrailingHeadType,TrailingBodyTypeList> > operator |= (
-    MultiIndex_t<EmptyTypeList> const &,
-    MultiIndex_t<TypeList_t<TrailingHeadType,TrailingBodyTypeList> > const &trailing_type_list)
+// base case
+template <typename TypeList_>
+MultiIndex_t<TypeList_> operator | (MultiIndex_t<EmptyTypeList> const &, MultiIndex_t<TypeList_> const &rhs)
 {
-    return trailing_type_list;
+    return rhs;
 }
 
-// concatenate two lists (where the first has only one element)
-template <typename LeadingHeadType, typename TrailingHeadType, typename TrailingBodyTypeList>
-inline MultiIndex_t<TypeList_t<LeadingHeadType,TypeList_t<TrailingHeadType,TrailingBodyTypeList> > > operator |= (
-    MultiIndex_t<TypeList_t<LeadingHeadType> > const &leading_list,
-    MultiIndex_t<TypeList_t<TrailingHeadType,TrailingBodyTypeList> > const &trailing_list)
+// this allows you to do stuff like
+// tuple(1, 2, 3) | tuple(4, 5, 6) | tuple(7, 8, 9)
+// to get the 9-tuple (1, 2, 3, 4, 5, 6, 7, 8, 9) without having to make a 9-tuple function explicitly.
+template <typename Lhs_TypeList_,
+          typename Rhs_TypeList_>
+MultiIndex_t<typename ConcatenationOfTypeLists_t<Lhs_TypeList_,Rhs_TypeList_>::T>
+    operator | (MultiIndex_t<Lhs_TypeList_> const &lhs,
+                MultiIndex_t<Rhs_TypeList_> const &rhs)
 {
-    return MultiIndex_t<TypeList_t<LeadingHeadType,TypeList_t<TrailingHeadType,TrailingBodyTypeList> > >(
-        leading_list.head(),
-        trailing_list);
-}
-
-// concatenate two lists (catch-all case)
-template <typename LeadingTypeList, typename TrailingTypeList>
-inline MultiIndex_t<typename ConcatenationOfTypeLists_t<LeadingTypeList,TrailingTypeList>::T> operator |= (
-    MultiIndex_t<LeadingTypeList> const &leading_list,
-    MultiIndex_t<TrailingTypeList> const &trailing_list)
-{
-    return MultiIndex_t<typename ConcatenationOfTypeLists_t<LeadingTypeList,TrailingTypeList>::T>(
-        leading_list.head(),
-        (leading_list.body() |= trailing_list));
+    return MultiIndex_t<typename ConcatenationOfTypeLists_t<Lhs_TypeList_,Rhs_TypeList_>::T>(lhs.head(), lhs.body() | rhs);
 }
 
 

@@ -8,6 +8,7 @@
 #include <complex>
 
 #include "tenh/memberarray.hpp"
+#include "tenh/meta/tuple.hpp"
 
 // this is included last because it redefines the `assert` macro,
 // which would be bad for the above includes.
@@ -46,7 +47,7 @@ void check_filled_values (Context const &context)
 {
     typedef Tenh::MemberArray_t<Component,4> Array;
 
-    Array a(0,2,4,6);
+    Array a(Tenh::tuple(Component(0),Component(2),Component(4),Component(6)).as_member_array());
     for (typename Array::ComponentIndex i; i.is_not_at_end(); ++i)
     {
         assert_eq(a[i], Component(2*i.value()));

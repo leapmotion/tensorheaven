@@ -62,9 +62,11 @@ struct MemberArray_t
 #pragma GCC diagnostic pop
 #endif // __clang_version__
 
-    MemberArray_t (Component const &x0, Component const &x1) { STATIC_ASSERT((COMPONENT_COUNT == 2),COMPONENT_COUNT_DOES_NOT_MATCH_ARGUMENT_COUNT); m_component[0] = x0; m_component[1] = x1; }
-    MemberArray_t (Component const &x0, Component const &x1, Component const &x2) { STATIC_ASSERT((COMPONENT_COUNT == 3),COMPONENT_COUNT_DOES_NOT_MATCH_ARGUMENT_COUNT); m_component[0] = x0; m_component[1] = x1; m_component[2] = x2; }
-    MemberArray_t (Component const &x0, Component const &x1, Component const &x2, Component const &x3) { STATIC_ASSERT((COMPONENT_COUNT == 4),COMPONENT_COUNT_DOES_NOT_MATCH_ARGUMENT_COUNT); m_component[0] = x0; m_component[1] = x1; m_component[2] = x2; m_component[3] = x3; }
+    template <typename OtherDerived_>
+    MemberArray_t (MemberArray_t<Component_,COMPONENT_COUNT_,OtherDerived_> const &m)
+    {
+        memcpy(&m_component[0], m.pointer_to_allocation(), allocation_size_in_bytes());
+    }
 
     Component const &operator [] (ComponentIndex const &i) const
     {

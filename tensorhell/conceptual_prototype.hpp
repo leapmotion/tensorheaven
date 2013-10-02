@@ -471,5 +471,6 @@ void test_poly_in_3_dim ();
 void test_poly_in_4_dim ();
 void test_polynomial_serialization ();
 void test_polynomial_multiplication ();
+void test_tuple_initialization ();
 
 #endif // TENSORHELL_CONCEPTUAL_PROTOTYPE_HPP_

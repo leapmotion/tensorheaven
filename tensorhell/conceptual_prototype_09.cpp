@@ -16,7 +16,7 @@ void test_poly_in_2_dim ()
     std::cout << FORMAT_VALUE(w) << '\n';
     PolyType roly(w,MultivariatePolynomial<1,2,X>(x,1)), poly(Static<WithoutInitialization>::SINGLETON);
     poly = poly + MultivariatePolynomial<1,2,X>(x,1);
-    PolyType::Vector v(1.0f,2.0f);
+    PolyType::Vector v(tuple(1.0f,2.0f));
     std::cout << FORMAT_VALUE(roly) << '\n';
     roly.as_array().print(std::cout);
     std::cout << '\n';

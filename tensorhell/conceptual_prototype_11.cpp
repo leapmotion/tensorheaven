@@ -23,7 +23,7 @@ void test_poly_in_4_dim ()
     std::cout << FORMAT_VALUE(w) << '\n';
     PolyType roly(w,MultivariatePolynomial<1,4,X>(x,3)), poly(Static<WithoutInitialization>::SINGLETON);
     poly = poly + MultivariatePolynomial<1,4,X>(x,3);
-    PolyType::Vector v(1.0f,2.0f,3.0f,4.0f);
+    PolyType::Vector v(tuple(1.0f,2.0f,3.0f,4.0f));
     std::cout << FORMAT_VALUE(roly) << '\n';
     roly.as_array().print(std::cout);
     std::cout << '\n';
@@ -81,4 +81,18 @@ void test_polynomial_multiplication ()
     std::cout << (X*X)*(Y*Y) + 3 << '\n';
     std::cout << (X*Y)*(X*Y) << '\n';
     std::cout << 17 + X*X*Y*Y << '\n';
+}
+
+void test_tuple_initialization ()
+{
+    std::cout << "testing tuple-based initialization\n";
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,12,X>,Basis_c<X> > BVS;
+    typedef ImplementationOf_t<BVS,float,UseMemberArray> U;
+    float array[12];
+    typedef ImplementationOf_t<BVS,float,UsePreallocatedArray> V;
+    U u(tuple(1.0f, 2.0f, 3.0f, 4.0f) | tuple(5.0f, 6.0f, 7.0f, 8.0f) | tuple(9.0f, 10.0f, 11.0f, 12.0f));
+    V v(tuple(1.0f, 2.0f, 3.0f, 4.0f) | tuple(5.0f, 6.0f, 7.0f, 8.0f) | tuple(9.0f, 10.0f, 11.0f, 12.0f), &array[0]);
+    std::cout << FORMAT_VALUE(u) << '\n';
+    std::cout << FORMAT_VALUE(v) << '\n';
+    std::cout << '\n';
 }

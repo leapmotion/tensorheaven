@@ -48,6 +48,7 @@ int main (int, char **)
     test_poly_in_4_dim();
     test_polynomial_serialization();
     test_polynomial_multiplication();
+    test_tuple_initialization();
 
     return 0;
 }

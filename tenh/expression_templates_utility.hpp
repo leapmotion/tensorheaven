@@ -444,8 +444,9 @@ struct IndexBundle_t
         typedef MultiIndexMap_t<UnpackedDimIndexTypeList,typename Operand::FreeDimIndexTypeList> OperandIndexMap;
         static typename OperandIndexMap::EvalMapType const operand_index_map = OperandIndexMap::eval;
         static typename BundleIndexMap::T const bundle_index_map = BundleIndexMap::V;
-        // |= is concatenation of MultiIndex_t instances
-        return m_operand[operand_index_map(m.template leading_list<MultiIndex::LENGTH-1>() |=
+        // | is concatenation of MultiIndex_t instances
+        return m_operand[operand_index_map(m.template leading_list<MultiIndex::LENGTH-1>()
+                                           |
                                            bundle_index_map(m.template el<MultiIndex::LENGTH-1>()))];
     }
 
@@ -526,7 +527,8 @@ struct IndexSplitter_t
 
         SourceFactorComponentIndex i(ImplementationOfSourceFactor::vector_index_of(s));
         // this replaces the SplitAbstractIndexTypeList portion with SourceAbstractIndexType
-        typename Operand::MultiIndex c_rebundled(m.template leading_list<SOURCE_INDEX_TYPE_INDEX>() |=
+        typename Operand::MultiIndex c_rebundled(m.template leading_list<SOURCE_INDEX_TYPE_INDEX>()
+                                                 |
                                                  (i >>= m.template trailing_list<SOURCE_INDEX_TYPE_INDEX+SplitAbstractIndexTypeList::LENGTH>()));
         return ImplementationOfSourceFactor::scalar_factor_for_component(s) * m_operand[c_rebundled];
     }
@@ -537,7 +539,7 @@ struct IndexSplitter_t
 private:
 
     void operator = (IndexSplitter_t const &);
-    
+
     Operand const &m_operand;
 };
 
@@ -601,7 +603,8 @@ struct IndexSplitToIndex_t
 
         SourceFactorComponentIndex i(ImplementationOfSourceFactor::vector_index_of(s));
         // this replaces the SplitAbstractIndexTypeList portion with SourceAbstractIndexType
-        typename Operand::MultiIndex c_rebundled(m.template leading_list<SOURCE_INDEX_TYPE_INDEX>() |=
+        typename Operand::MultiIndex c_rebundled(m.template leading_list<SOURCE_INDEX_TYPE_INDEX>()
+                                                 |
                                                  (i >>= m.template trailing_list<SOURCE_INDEX_TYPE_INDEX+1>()));
         return ImplementationOfSourceFactor::scalar_factor_for_component(s) * m_operand[c_rebundled];
     }

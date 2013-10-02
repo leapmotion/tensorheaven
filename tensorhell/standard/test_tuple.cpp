@@ -146,6 +146,73 @@ void test_8_tuple (Context const &context)
     assert_eq(t.el<7>(), x7);
 }
 
+void test_uniform_tuples (Context const &context)
+{
+    Tenh::UniformTuple_f<int,0>::T t0(Tenh::uniform_tuple());
+    Tenh::UniformTuple_f<int,1>::T t1(Tenh::uniform_tuple(0));
+    Tenh::UniformTuple_f<int,2>::T t2(Tenh::uniform_tuple(0, 1));
+    Tenh::UniformTuple_f<int,3>::T t3(Tenh::uniform_tuple(0, 1, 2));
+    Tenh::UniformTuple_f<int,4>::T t4(Tenh::uniform_tuple(0, 1, 2, 3));
+    Tenh::UniformTuple_f<int,5>::T t5(Tenh::uniform_tuple(0, 1, 2, 3, 4));
+    Tenh::UniformTuple_f<int,6>::T t6(Tenh::uniform_tuple(0, 1, 2, 3, 4, 5));
+    Tenh::UniformTuple_f<int,7>::T t7(Tenh::uniform_tuple(0, 1, 2, 3, 4, 5, 6));
+    Tenh::UniformTuple_f<int,8>::T t8(Tenh::uniform_tuple(0, 1, 2, 3, 4, 5, 6, 7));
+
+    assert_eq(t0.length(), 0);
+
+    assert_eq(t1.length(), 1);
+    assert_eq(t1.el<0>(), 0);
+
+    assert_eq(t2.length(), 2);
+    assert_eq(t2.el<0>(), 0);
+    assert_eq(t2.el<1>(), 1);
+
+    assert_eq(t3.length(), 3);
+    assert_eq(t3.el<0>(), 0);
+    assert_eq(t3.el<1>(), 1);
+    assert_eq(t3.el<2>(), 2);
+
+    assert_eq(t4.length(), 4);
+    assert_eq(t4.el<0>(), 0);
+    assert_eq(t4.el<1>(), 1);
+    assert_eq(t4.el<2>(), 2);
+    assert_eq(t4.el<3>(), 3);
+
+    assert_eq(t5.length(), 5);
+    assert_eq(t5.el<0>(), 0);
+    assert_eq(t5.el<1>(), 1);
+    assert_eq(t5.el<2>(), 2);
+    assert_eq(t5.el<3>(), 3);
+    assert_eq(t5.el<4>(), 4);
+
+    assert_eq(t6.length(), 6);
+    assert_eq(t6.el<0>(), 0);
+    assert_eq(t6.el<1>(), 1);
+    assert_eq(t6.el<2>(), 2);
+    assert_eq(t6.el<3>(), 3);
+    assert_eq(t6.el<4>(), 4);
+    assert_eq(t6.el<5>(), 5);
+
+    assert_eq(t7.length(), 7);
+    assert_eq(t7.el<0>(), 0);
+    assert_eq(t7.el<1>(), 1);
+    assert_eq(t7.el<2>(), 2);
+    assert_eq(t7.el<3>(), 3);
+    assert_eq(t7.el<4>(), 4);
+    assert_eq(t7.el<5>(), 5);
+    assert_eq(t7.el<6>(), 6);
+
+    assert_eq(t8.length(), 8);
+    assert_eq(t8.el<0>(), 0);
+    assert_eq(t8.el<1>(), 1);
+    assert_eq(t8.el<2>(), 2);
+    assert_eq(t8.el<3>(), 3);
+    assert_eq(t8.el<4>(), 4);
+    assert_eq(t8.el<5>(), 5);
+    assert_eq(t8.el<6>(), 6);
+    assert_eq(t8.el<7>(), 7);
+}
+
 void AddTests (Directory *parent)
 {
     Directory *list = new Directory("tuple", parent);
@@ -159,6 +226,8 @@ void AddTests (Directory *parent)
     LVD_ADD_TEST_CASE_FUNCTION(list, test_6_tuple, RESULT_NO_ERROR);
     LVD_ADD_TEST_CASE_FUNCTION(list, test_7_tuple, RESULT_NO_ERROR);
     LVD_ADD_TEST_CASE_FUNCTION(list, test_8_tuple, RESULT_NO_ERROR);
+
+    LVD_ADD_TEST_CASE_FUNCTION(list, test_uniform_tuples, RESULT_NO_ERROR);
 }
 
 } // end of namespace Tuple

@@ -133,6 +133,41 @@ void add_leading_and_trailing_list_tests (Directory *parent)
     add_leading_and_trailing_list_length_1_test(parent);
 }
 
+void test_list_concatenation (Context const &context)
+{
+    Tenh::List_t<Tenh::EmptyTypeList> empty_list;
+    Tenh::List_t<Tenh::TypeList_t<float> > list_1(3.0f);
+    Tenh::List_t<Tenh::TypeList_t<char,
+                 Tenh::TypeList_t<bool> > > list_2('a', true);
+
+    Tenh::List_t<Tenh::TypeList_t<float,
+                 Tenh::TypeList_t<float> > > list_1__list_1(3.0f, list_1);
+    Tenh::List_t<Tenh::TypeList_t<float,
+                 Tenh::TypeList_t<char,
+                 Tenh::TypeList_t<bool> > > > list_1__list_2(3.0f, list_2);
+    Tenh::List_t<Tenh::TypeList_t<char,
+                 Tenh::TypeList_t<bool,
+                 Tenh::TypeList_t<float> > > >
+        list_2__list_1('a', Tenh::List_t<Tenh::TypeList_t<bool,
+                                         Tenh::TypeList_t<float> > >(true, 3.0f));
+    Tenh::List_t<Tenh::TypeList_t<char,
+                 Tenh::TypeList_t<bool,
+                 Tenh::TypeList_t<char,
+                 Tenh::TypeList_t<bool> > > > >
+        list_2__list_2('a', Tenh::List_t<Tenh::TypeList_t<bool,
+                                         Tenh::TypeList_t<char,
+                                         Tenh::TypeList_t<bool> > > >(true, list_2));
+
+    assert_eq(empty_list, empty_list);
+    assert_eq((empty_list|empty_list), empty_list);
+    assert_eq((list_1|empty_list), list_1);
+    assert_eq((list_2|empty_list), list_2);
+    assert_eq((list_1|list_1), list_1__list_1);
+    assert_eq((list_1|list_2), list_1__list_2);
+    assert_eq((list_2|list_1), list_2__list_1);
+    assert_eq((list_2|list_2), list_2__list_2);
+}
+
 void AddTests (Directory *parent)
 {
     Directory *list = new Directory("List_t", parent);
@@ -142,6 +177,7 @@ void AddTests (Directory *parent)
     add_particular_tests_for_list<Tenh::TypeList_t<Sint32> >(list);
     add_particular_tests_for_list<Tenh::TypeList_t<Sint32,Tenh::TypeList_t<Sint8> > >(list);
     add_leading_and_trailing_list_tests(list);
+    LVD_ADD_TEST_CASE_FUNCTION(list, test_list_concatenation, RESULT_NO_ERROR);
 }
 
 } // end of namespace List

@@ -11,8 +11,8 @@ void test_vector_contraction ()
     typedef BasedVectorSpace_c<VSX,B> BasedX;
 
     typedef ImplementationOf_t<BasedX,float> V;
-    V v(1.0f, 2.0f, 3.0f);
-    V w(8.0f, -2.0f, 6.0f);
+    V v(tuple(1.0f, 2.0f, 3.0f));
+    V w(tuple(8.0f, -2.0f, 6.0f));
     std::cout << type_string_of<V>() << '\n';
     std::cout << FORMAT_VALUE(v) << '\n';
     std::cout << FORMAT_VALUE(w) << '\n';
@@ -24,7 +24,7 @@ void test_vector_contraction ()
     std::cout << FORMAT_VALUE(v(i) + w(i)) << '\n';
     std::cout << FORMAT_VALUE(v(i) - w(i)) << '\n';
 
-    DualOf_f<V>::T a(0.0f, 2.0f, -3.0f);
+    DualOf_f<V>::T a(tuple(0.0f, 2.0f, -3.0f));
     std::cout << type_string_of<DualOf_f<V>::T>() << '\n';
     std::cout << FORMAT_VALUE(a) << '\n';
     std::cout << FORMAT_VALUE(a(i)*v(i)) << '\n';
@@ -66,14 +66,14 @@ void test_tensor_contraction ()
     t[T::MultiIndex(2,1)] = 5.0f;
     std::cout << "after assignment: " << FORMAT_VALUE(t) << '\n';
 
-    V v(2.0f, 7.0f);
+    V v(tuple(2.0f, 7.0f));
     std::cout << FORMAT_VALUE(v) << '\n';
 
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
     std::cout << FORMAT_VALUE(t(i|j)*v(j)) << '\n';
 
-    U u(1.0f, 0.0f, -1.0f);
+    U u(tuple(1.0f, 0.0f, -1.0f));
     std::cout << FORMAT_VALUE(u) << '\n';
     // this should cause a compile error due to the non-naturality of the pairing
     // std::cout << FORMAT_VALUE(u(i)*t(i|j)) << '\n';
@@ -86,7 +86,7 @@ void test_tensor_contraction ()
         e[it] = static_cast<float>(it.value());
     std::cout << FORMAT_VALUE(e(i)) << '\n'; // this has problems: TODO: fix -- ExpressionTemplate_i may need a vector-indexable operator[]
 
-    V w(1.0f, 3.0f);
+    V w(tuple(1.0f, 3.0f));
 
     AbstractIndex_c<'k'> k;
     std::cout << FORMAT_VALUE(w) << '\n';

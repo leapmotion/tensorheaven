@@ -143,6 +143,95 @@ typename Tuple_f<T0_,T1_,T2_,T3_,T4_,T5_,T6_,T7_>::T
     return typename Tuple_f<T0_,T1_,T2_,T3_,T4_,T5_,T6_,T7_>::T(x0, tuple(x1, x2, x3, x4, x5, x6, x7));
 }
 
+// sort of hacky way to get limited variadic template behavior
+template <typename T_, Uint32 LENGTH_>
+struct UniformTuple_f
+{
+    typedef typename UniformListOfLength_f<T_,LENGTH_>::T T;
+};
+
+// identical to tuple()
+inline UniformTuple_f<NullType,0>::T uniform_tuple ()
+{
+    return UniformTuple_f<NullType,0>::T();
+}
+
+template <typename T_>
+typename UniformTuple_f<T_,1>::T uniform_tuple (T_ const &x0)
+{
+    return typename UniformTuple_f<T_,1>::T(x0);
+}
+
+template <typename T_>
+typename UniformTuple_f<T_,2>::T uniform_tuple (T_ const &x0,
+                                                T_ const &x1)
+{
+    return typename UniformTuple_f<T_,2>::T(x0, uniform_tuple<T_>(x1));
+}
+
+template <typename T_>
+typename UniformTuple_f<T_,3>::T uniform_tuple (T_ const &x0,
+                                                T_ const &x1,
+                                                T_ const &x2)
+{
+    return typename UniformTuple_f<T_,3>::T(x0, uniform_tuple<T_>(x1, x2));
+}
+
+template <typename T_>
+typename UniformTuple_f<T_,4>::T uniform_tuple (T_ const &x0,
+                                                T_ const &x1,
+                                                T_ const &x2,
+                                                T_ const &x3)
+{
+    return typename UniformTuple_f<T_,4>::T(x0, uniform_tuple<T_>(x1, x2, x3));
+}
+
+template <typename T_>
+typename UniformTuple_f<T_,5>::T uniform_tuple (T_ const &x0,
+                                                T_ const &x1,
+                                                T_ const &x2,
+                                                T_ const &x3,
+                                                T_ const &x4)
+{
+    return typename UniformTuple_f<T_,5>::T(x0, uniform_tuple<T_>(x1, x2, x3, x4));
+}
+
+template <typename T_>
+typename UniformTuple_f<T_,6>::T uniform_tuple (T_ const &x0,
+                                                T_ const &x1,
+                                                T_ const &x2,
+                                                T_ const &x3,
+                                                T_ const &x4,
+                                                T_ const &x5)
+{
+    return typename UniformTuple_f<T_,6>::T(x0, uniform_tuple<T_>(x1, x2, x3, x4, x5));
+}
+
+template <typename T_>
+typename UniformTuple_f<T_,7>::T uniform_tuple (T_ const &x0,
+                                                T_ const &x1,
+                                                T_ const &x2,
+                                                T_ const &x3,
+                                                T_ const &x4,
+                                                T_ const &x5,
+                                                T_ const &x6)
+{
+    return typename UniformTuple_f<T_,7>::T(x0, uniform_tuple<T_>(x1, x2, x3, x4, x5, x6));
+}
+
+template <typename T_>
+typename UniformTuple_f<T_,8>::T uniform_tuple (T_ const &x0,
+                                                T_ const &x1,
+                                                T_ const &x2,
+                                                T_ const &x3,
+                                                T_ const &x4,
+                                                T_ const &x5,
+                                                T_ const &x6,
+                                                T_ const &x7)
+{
+    return typename UniformTuple_f<T_,8>::T(x0, uniform_tuple<T_>(x1, x2, x3, x4, x5, x6, x7));
+}
+
 } // end of namespace Tenh
 
 #endif // TENH_META_TUPLE_HPP_

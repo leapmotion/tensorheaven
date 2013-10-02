@@ -10,6 +10,7 @@
 #include <string>
 
 #include "tenh/core.hpp"
+#include "tenh/memberarray.hpp"
 #include "tenh/meta/typelist.hpp"
 #include "tenh/meta/typelist_utility.hpp"
 
@@ -53,6 +54,17 @@ struct List_t
     HeadType &head () { return m_head; }
     BodyList const &body () const { return m_body; }
     BodyList &body () { return m_body; }
+
+    MemberArray_t<HeadType,LENGTH> const &as_member_array () const
+    {
+        STATIC_ASSERT(TypeListIsUniform_t<TypeList_>::V, TYPELIST_MUST_BE_UNIFORM);
+        return *reinterpret_cast<MemberArray_t<HeadType,LENGTH> const *>(this);
+    }
+    MemberArray_t<HeadType,LENGTH> &as_member_array ()
+    {
+        STATIC_ASSERT(TypeListIsUniform_t<TypeList_>::V, TYPELIST_MUST_BE_UNIFORM);
+        return *reinterpret_cast<MemberArray_t<HeadType,LENGTH> *>(this);
+    }
 
     // returns the type of the INDEXth element of this List_t
     template <Uint32 INDEX>
@@ -188,6 +200,9 @@ struct List_t<EmptyTypeList>
     List_t<EmptyTypeList> const &body () const { return Static<List_t<EmptyTypeList> >::SINGLETON; }
     // the const_cast doesn't matter because an empty list has no state to modify.
     List_t<EmptyTypeList> &body () { return *const_cast<List_t<EmptyTypeList> *>(&Static<List_t<EmptyTypeList> >::SINGLETON); }
+
+    MemberArray_t<NullType,0> const &as_member_array () const { return *reinterpret_cast<MemberArray_t<NullType,0> const *>(this); }
+    MemberArray_t<NullType,0> &as_member_array () { return *reinterpret_cast<MemberArray_t<NullType,0> *>(this); }
 
     template <Uint32 INDEX>
     struct Type_t
@@ -325,6 +340,9 @@ struct List_t<TypeList_t<HeadType_> >
     List_t<EmptyTypeList> const &body () const { return Static<List_t<EmptyTypeList> >::SINGLETON; }
     // the const_cast doesn't matter because an empty list has no state to modify.
     List_t<EmptyTypeList> &body () { return *const_cast<List_t<EmptyTypeList> *>(&Static<List_t<EmptyTypeList> >::SINGLETON); }
+
+    MemberArray_t<HeadType,1> const &as_member_array () const { return *reinterpret_cast<MemberArray_t<HeadType,1> const *>(this); }
+    MemberArray_t<HeadType,1> &as_member_array () { return *reinterpret_cast<MemberArray_t<HeadType,1> *>(this); }
 
     // type cast operator for HeadType?
 
@@ -502,8 +520,11 @@ struct ListHelper_t<TypeList,0>
 
 
 
-
-
+template <typename Type_, Uint32 LENGTH_>
+struct UniformListOfLength_f
+{
+    typedef List_t<typename UniformTypeListOfLength_t<Type_,LENGTH_>::T> T;
+};
 
 
 // tack an element onto the beginning of a list (where the list is empty)
@@ -521,54 +542,37 @@ inline List_t<TypeList_t<HeadType,BodyTypeList> > operator >>= (HeadType const &
 }
 
 
-
-// concatenate two lists (where both are empty)
-inline List_t<EmptyTypeList> operator |= (List_t<EmptyTypeList> const &, List_t<EmptyTypeList> const &)
+// base case
+inline EmptyList operator | (EmptyList const &, EmptyList const &)
 {
-    return List_t<EmptyTypeList>();
+    return EmptyList();
 }
 
-// concatenate two lists (where the second is empty)
-template <typename LeadingHeadType, typename LeadingBodyTypeList>
-inline List_t<TypeList_t<LeadingHeadType,LeadingBodyTypeList> > operator |= (
-    List_t<TypeList_t<LeadingHeadType,LeadingBodyTypeList> > const &leading_list,
-    List_t<EmptyTypeList> const &)
+// base case
+template <typename TypeList_>
+List_t<TypeList_> operator | (List_t<TypeList_> const &lhs, EmptyList const &)
 {
-    return leading_list;
+    return lhs;
 }
 
-// concatenate two lists (where the first is empty)
-template <typename TrailingHeadType, typename TrailingBodyTypeList>
-inline List_t<TypeList_t<TrailingHeadType,TrailingBodyTypeList> > operator |= (
-    List_t<EmptyTypeList> const &,
-    List_t<TypeList_t<TrailingHeadType,TrailingBodyTypeList> > const &trailing_type_list)
+// base case
+template <typename TypeList_>
+List_t<TypeList_> operator | (EmptyList const &, List_t<TypeList_> const &rhs)
 {
-    return trailing_type_list;
+    return rhs;
 }
 
-// concatenate two lists (where the first has only one element)
-template <typename LeadingHeadType, typename TrailingHeadType, typename TrailingBodyTypeList>
-inline List_t<TypeList_t<LeadingHeadType,TypeList_t<TrailingHeadType,TrailingBodyTypeList> > > operator |= (
-    List_t<TypeList_t<LeadingHeadType> > const &leading_list,
-    List_t<TypeList_t<TrailingHeadType,TrailingBodyTypeList> > const &trailing_list)
+// this allows you to do stuff like
+// tuple(1, 2, 3) | tuple(4, 5, 6) | tuple(7, 8, 9)
+// to get the 9-tuple (1, 2, 3, 4, 5, 6, 7, 8, 9) without having to make a 9-tuple function explicitly.
+template <typename Lhs_TypeList_,
+          typename Rhs_TypeList_>
+List_t<typename ConcatenationOfTypeLists_t<Lhs_TypeList_,Rhs_TypeList_>::T>
+    operator | (List_t<Lhs_TypeList_> const &lhs,
+                List_t<Rhs_TypeList_> const &rhs)
 {
-    return List_t<TypeList_t<LeadingHeadType,TypeList_t<TrailingHeadType,TrailingBodyTypeList> > >(
-        leading_list.head(),
-        trailing_list);
+    return List_t<typename ConcatenationOfTypeLists_t<Lhs_TypeList_,Rhs_TypeList_>::T>(lhs.head(), lhs.body() | rhs);
 }
-
-// concatenate two lists (catch-all case)
-template <typename LeadingTypeList, typename TrailingTypeList>
-inline List_t<typename ConcatenationOfTypeLists_t<LeadingTypeList,TrailingTypeList>::T> operator |= (
-    List_t<LeadingTypeList> const &leading_list,
-    List_t<TrailingTypeList> const &trailing_list)
-{
-    return List_t<typename ConcatenationOfTypeLists_t<LeadingTypeList,TrailingTypeList>::T>(
-        leading_list.head(),
-        (leading_list.body() |= trailing_list));
-}
-
-
 
 /*
 // the operator associativity for <<= is semantically wrong for this operation

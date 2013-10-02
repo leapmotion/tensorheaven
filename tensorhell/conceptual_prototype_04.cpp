@@ -17,7 +17,7 @@ void test_vector_power_thingy ()
     AbstractIndex_c<'l'> l;
     AbstractIndex_c<'p'> p;
 
-    Vec v(1,2,3,4);
+    Vec v(tuple(1.0f,2.0f,3.0f,4.0f));
 
     std::cout << test_vector_power<4,BasedX,float>(v) << '\n';
     std::cout << test_vector_power<4,BasedX,float>(v)(i).split(i,j|k|l|p) << '\n';
@@ -33,7 +33,7 @@ void test_a_bunch_of_stuff ()
     {
         std::cout << "member array\n";
         typedef ImplementationOf_t<BasedX,float,UseMemberArray> V;
-        V v(1.0f, 2.0f, 4.0f);
+        V v(tuple(1.0f, 2.0f, 4.0f));
         std::cout << FORMAT_VALUE(v) << '\n';
         std::cout << '\n';
 
@@ -90,7 +90,7 @@ void test_a_bunch_of_stuff ()
         // using default template parameter for UseArrayType_
         typedef ImplementationOf_t<BasedX,float> V;
         typedef ImplementationOf_t<YTensorXDual,float> T;
-        V v(8.0f, 10.0f, 11.0f);
+        V v(tuple(8.0f, 10.0f, 11.0f));
         T t(2.0f);
         t[T::MultiIndex(0,1)] = -1.0f;
         t[T::MultiIndex(1,2)] = 3.0f;
@@ -123,7 +123,7 @@ void test_a_bunch_of_stuff ()
         typedef ImplementationOf_t<Diag_YTensorXDual,float,UseMemberArray> T;
         float components[3] = {8.0f, 10.0f, 11.0f};
         V v(&components[0], CHECK_POINTER); // v must live no longer than components[]
-        T t(2.0f, -3.0f);
+        T t(tuple(2.0f, -3.0f));
         std::cout << FORMAT_VALUE(t) << '\n';
         std::cout << FORMAT_VALUE(v) << '\n';
         AbstractIndex_c<'i'> i;
@@ -142,7 +142,7 @@ void test_a_bunch_of_stuff ()
         typedef ImplementationOf_t<Sym,float,UseMemberArray> S;
         typedef ImplementationOf_t<Sym,float,UsePreallocatedArray> S_;
         S s(Static<WithoutInitialization>::SINGLETON);
-        V v(3.0f, 4.0f, 7.0f);
+        V v(tuple(3.0f, 4.0f, 7.0f));
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
         AbstractIndex_c<'k'> k;
@@ -165,9 +165,9 @@ void test_a_bunch_of_stuff ()
         typedef ImplementationOf_t<Alt,float,UseMemberArray> A;
         typedef ImplementationOf_t<Alt,float,UsePreallocatedArray> A_;
         A a(Static<WithoutInitialization>::SINGLETON);
-        V u(3.0f, 4.0f, 7.0f, 0.0f);
-        V v(1.0f, -2.0f, 4.0f, -1.0f);
-        V w(0.0f, 1.0f, 2.0f, 3.0f);
+        V u(tuple(3.0f, 4.0f, 7.0f, 0.0f));
+        V v(tuple(1.0f, -2.0f, 4.0f, -1.0f));
+        V w(tuple(0.0f, 1.0f, 2.0f, 3.0f));
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
         AbstractIndex_c<'k'> k;

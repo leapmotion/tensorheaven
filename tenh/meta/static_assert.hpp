@@ -145,6 +145,7 @@ struct StaticAssert<true>
         TYPE_MUST_BE_TENSOR2SYMMETRIC_T,
         TYPES_MUST_BE_EQUAL,
         TYPELIST_MUST_BE_EMPTY,
+        TYPELIST_MUST_BE_UNIFORM,
         UNSPECIFIED_MESSAGE // for when it doesn't fucking matter.
         /// @endcond
     };

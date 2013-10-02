@@ -14,6 +14,7 @@
 #include "tenh/conceptual/symmetricpower.hpp"
 #include "tenh/implementation/implementationof.hpp"
 #include "tenh/interface/embeddableastensor.hpp"
+#include "tenh/meta/tuple.hpp"
 
 namespace Tenh {
 
@@ -74,6 +75,14 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
     {
         STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemberArray);
     }
+    // this is the tuple-based constructor
+    template <typename HeadType_, typename BodyTypeList_>
+    ImplementationOf_t (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x)
+        :
+        Parent_Array_i(x.as_member_array())
+    {
+        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemberArray);
+    }
 
     // only use these if UsePreallocatedArray is specified
 
@@ -87,6 +96,15 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
                         Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Array_i(fill_with, pointer_to_allocation, check_pointer)
+    {
+        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
+    }
+    // this is the tuple-based constructor
+    template <typename HeadType_, typename BodyTypeList_>
+    ImplementationOf_t (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x,
+                        Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+        :
+        Parent_Array_i(x, pointer_to_allocation, check_pointer)
     {
         STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
     }

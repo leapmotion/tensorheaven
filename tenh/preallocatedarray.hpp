@@ -11,6 +11,7 @@
 #include "tenh/core.hpp"
 
 #include "tenh/interface/array.hpp"
+#include "tenh/list.hpp"
 
 namespace Tenh {
 
@@ -66,41 +67,19 @@ struct PreallocatedArray_t
 #pragma GCC diagnostic pop
 #endif // __clang_version__
 
-    PreallocatedArray_t (Component const &x0, Component const &x1,
+    template <typename HeadType_, typename BodyTypeList_>
+    PreallocatedArray_t (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x,
                          Component *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         m_pointer_to_allocation(pointer_to_allocation)
     {
-        STATIC_ASSERT((COMPONENT_COUNT == 2), COMPONENT_COUNT_DOES_NOT_MATCH_ARGUMENT_COUNT);
+        typedef TypeList_t<HeadType_,BodyTypeList_> TypeList;
+        STATIC_ASSERT((TypeListIsUniform_t<TypeList>::V), TYPELIST_MUST_BE_UNIFORM);
+        STATIC_ASSERT_TYPES_ARE_EQUAL(HeadType_,Component_);
+        STATIC_ASSERT(TypeList::LENGTH == COMPONENT_COUNT, LENGTHS_MUST_BE_EQUAL);
         if (check_pointer && m_pointer_to_allocation == NULL)
             throw std::invalid_argument("invalid pointer_to_allocation argument (must be non-NULL)");
-        m_pointer_to_allocation[0] = x0;
-        m_pointer_to_allocation[1] = x1;
-    }
-    PreallocatedArray_t (Component const &x0, Component const &x1, Component const &x2,
-                         Component *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
-        :
-        m_pointer_to_allocation(pointer_to_allocation)
-    {
-        STATIC_ASSERT((COMPONENT_COUNT == 3), COMPONENT_COUNT_DOES_NOT_MATCH_ARGUMENT_COUNT);
-        if (check_pointer && m_pointer_to_allocation == NULL)
-            throw std::invalid_argument("invalid pointer_to_allocation argument (must be non-NULL)");
-        m_pointer_to_allocation[0] = x0;
-        m_pointer_to_allocation[1] = x1;
-        m_pointer_to_allocation[2] = x2;
-    }
-    PreallocatedArray_t (Component const &x0, Component const &x1, Component const &x2, Component const &x3,
-                         Component *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
-        :
-        m_pointer_to_allocation(pointer_to_allocation)
-    {
-        STATIC_ASSERT((COMPONENT_COUNT == 4), COMPONENT_COUNT_DOES_NOT_MATCH_ARGUMENT_COUNT);
-        if (check_pointer && m_pointer_to_allocation == NULL)
-            throw std::invalid_argument("invalid pointer_to_allocation argument (must be non-NULL)");
-        m_pointer_to_allocation[0] = x0;
-        m_pointer_to_allocation[1] = x1;
-        m_pointer_to_allocation[2] = x2;
-        m_pointer_to_allocation[3] = x3;
+        memcpy(m_pointer_to_allocation, x.as_member_array().pointer_to_allocation(), allocation_size_in_bytes());
     }
 
     // the existence of this method is a necessary corollary of the WithoutInitialization constructor.

@@ -11,6 +11,7 @@
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/implementation/implementationof.hpp"
 #include "tenh/interface/tensor.hpp"
+#include "tenh/meta/tuple.hpp"
 
 namespace Tenh {
 
@@ -69,21 +70,11 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
     {
         STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemberArray);
     }
-    ImplementationOf_t (Scalar const &x0, Scalar const &x1)
+    // this is the tuple-based constructor
+    template <typename HeadType_, typename BodyTypeList_>
+    ImplementationOf_t (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x)
         :
-        Parent_Array_i(x0, x1)
-    {
-        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemberArray);
-    }
-    ImplementationOf_t (Scalar const &x0, Scalar const &x1, Scalar const &x2)
-        :
-        Parent_Array_i(x0, x1, x2)
-    {
-        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemberArray);
-    }
-    ImplementationOf_t (Scalar const &x0, Scalar const &x1, Scalar const &x2, Scalar const &x3)
-        :
-        Parent_Array_i(x0, x1, x2, x3)
+        Parent_Array_i(x.as_member_array())
     {
         STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemberArray);
     }
@@ -103,24 +94,12 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
     {
         STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
     }
-    ImplementationOf_t (Scalar const &x0, Scalar const &x1,
+    // this is the tuple-based constructor
+    template <typename HeadType_, typename BodyTypeList_>
+    ImplementationOf_t (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x,
                         Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
-        Parent_Array_i(x0, x1, pointer_to_allocation, check_pointer)
-    {
-        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
-    }
-    ImplementationOf_t (Scalar const &x0, Scalar const &x1, Scalar const &x2,
-                        Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
-        :
-        Parent_Array_i(x0, x1, x2, pointer_to_allocation, check_pointer)
-    {
-        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
-    }
-    ImplementationOf_t (Scalar const &x0, Scalar const &x1, Scalar const &x2, Scalar const &x3,
-                        Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
-        :
-        Parent_Array_i(x0, x1, x2, x3, pointer_to_allocation, check_pointer)
+        Parent_Array_i(x, pointer_to_allocation, check_pointer)
     {
         STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
     }

@@ -57,7 +57,7 @@ void test_Diagonal2Tensor ()
     typedef BasedVectorSpace_c<VSX,BasisX> BasedX;
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<DualOf_f<BasedX>::T,DualOf_f<BasedX>::T> Diag;
     typedef ImplementationOf_t<Diag,float> D;
-    D d(2.0f, 1.0f, -3.0f, 5.0f);
+    D d(tuple(2.0f, 1.0f, -3.0f, 5.0f));
     std::cout << FORMAT_VALUE(d) << '\n';
 
     AbstractIndex_c<'i'> i;
@@ -66,7 +66,7 @@ void test_Diagonal2Tensor ()
     std::cout << FORMAT_VALUE(d(i).split(i,j|k)) << '\n';
 
     typedef ImplementationOf_t<BasedX,float> V;
-    V u(1.0f, 2.0f, 10.0f, -2.0f);
+    V u(tuple(1.0f, 2.0f, 10.0f, -2.0f));
     std::cout << FORMAT_VALUE(u) << '\n';
     std::cout << FORMAT_VALUE(u(j) * d(i).split(i,j|k) * u(k)) << '\n';
 
@@ -76,7 +76,7 @@ void test_Diagonal2Tensor ()
         total += u[it] * d(i).split(i,j|k)[D::MultiIndex(it,it)] * u[it];
     std::cout << "computation done by hand: " << total << '\n';
 
-    V v(-1.0f, -1.0f, 2.0f, 2.0f);
+    V v(tuple(-1.0f, -1.0f, 2.0f, 2.0f));
     std::cout << FORMAT_VALUE(v) << '\n';
     std::cout << FORMAT_VALUE(u(j) * d(i).split(i,j|k) * v(k)) << '\n';
 
