@@ -236,18 +236,23 @@ struct Length_f
 
 MAKE_1_ARY_VALUE_EVALUATOR(Length, Uint32);
 
+/// @struct Element_f typelist_utility.hpp "tenh/meta/typelist_utility.hpp"
+/// @brief Returns the INDEX_th element of the given TypeList_.
+/// @tparam TypeList_ the TypeList_t to access elements from.
+/// @tparam INDEX_ the index of the element to access.
 template <typename TypeList_, Uint32 INDEX_>
 struct Element_f
 {
 private:
     static Uint32 const I = (INDEX_ == 0) ? 0 : INDEX_-1;
 public:
+    /// The INDEX_th element of TypeList_.
     typedef typename If_f<INDEX_ == 0,
                           typename TypeList_::HeadType,
                           typename Element_f<typename TypeList_::BodyTypeList,I>::T>::T T;
 };
 
-// base case
+/// @cond false
 template <Uint32 INDEX_>
 struct Element_f<EmptyTypeList,INDEX_>
 {
@@ -255,7 +260,9 @@ struct Element_f<EmptyTypeList,INDEX_>
     typedef NullType T;
 };
 
+// TODO: figure out how to Doxygen-comment this, if at all.
 MAKE_2_ARY_TYPE_EVALUATOR(Element, Uint32, INDEX_);
+/// @endcond
 
 // TODO: could be implemented as Or_f<OnEach_f<TypeList_,TypesAreEqual_e>::T>::V
 template <typename TypeList_, typename Type_>
@@ -463,7 +470,7 @@ struct Occurrence_t<EmptyTypeList,Type_>
 
 /// @struct FirstMatchingIn_t typelist_utility.hpp "tenh/meta/typelist_utility.hpp"
 /// @brief Finds offset of the first occurrence of Type_ in TypeList_. Will static assert if there is no such occurrence.
-/// @details INDEX is the smallest Uint32 such that TypeList_::El_t<INDEX>::T is Type_.
+/// @details INDEX is the smallest Uint32 such that Element_f<TypeList_,INDEX>::T is Type_.
 /// @tparam TypeList_ the typelist to search.
 /// @tparam Type_ the type to search for.
 template <typename TypeList_, typename Type_>

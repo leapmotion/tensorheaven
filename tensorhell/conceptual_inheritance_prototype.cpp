@@ -81,7 +81,7 @@ private:
     enum { _ = Assert<IsMap_t<Map>::V>::V && Assert<(Map::DomainElementTypeList::LENGTH > 0)>::V };
     static Uint32 const INDEX_OF_INPUT_DOMAIN_ELEMENT = FirstMatchingIn_t<typename Map::DomainElementTypeList,InputDomainElement>::INDEX;
 public:
-    typedef typename Map::CodomainElementTypeList::template El_t<INDEX_OF_INPUT_DOMAIN_ELEMENT>::T T;
+    typedef typename Element_f<typename Map::CodomainElementTypeList,INDEX_OF_INPUT_DOMAIN_ELEMENT>::T T;
 };
 
 

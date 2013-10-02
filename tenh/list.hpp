@@ -70,7 +70,7 @@ struct List_t
     template <Uint32 INDEX>
     struct Type_t
     {
-        typedef typename TypeList::template El_t<INDEX>::T T;
+        typedef typename Element_f<TypeList,INDEX>::T T;
     };
 
     // returns the INDEXth element of this List_t
@@ -207,7 +207,7 @@ struct List_t<EmptyTypeList>
     template <Uint32 INDEX>
     struct Type_t
     {
-        typedef typename TypeList::template El_t<INDEX>::T T;
+        typedef typename Element_f<TypeList,INDEX>::T T;
     };
 
     template <Uint32 INDEX>
@@ -349,7 +349,7 @@ struct List_t<TypeList_t<HeadType_> >
     template <Uint32 INDEX>
     struct Type_t
     {
-        typedef typename TypeList::template El_t<INDEX>::T T;
+        typedef typename Element_f<TypeList,INDEX>::T T;
     };
 
     template <Uint32 INDEX>
@@ -468,7 +468,7 @@ struct ListElement_t
 {
     enum { STATIC_ASSERT_IN_ENUM((INDEX < TypeList::LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END) };
     typedef List_t<TypeList> List;
-    typedef typename TypeList::template El_t<INDEX>::T ValueType;
+    typedef typename Element_f<TypeList,INDEX>::T ValueType;
     static ValueType const &el (List const &list)
     {
         return ListElement_t<typename TypeList::BodyTypeList,INDEX-1>::el(list.body());
@@ -484,7 +484,7 @@ struct ListElement_t<TypeList,0>
 {
     enum { STATIC_ASSERT_IN_ENUM((0 < TypeList::LENGTH), ATTEMPTED_ACCESS_PAST_LIST_END) };
     typedef List_t<TypeList> List;
-    typedef typename TypeList::template El_t<0>::T ValueType;
+    typedef typename Element_f<TypeList,0>::T ValueType;
     static ValueType const &el (List const &list) { return list.head(); }
     static ValueType &el (List &list) { return list.head(); }
 };

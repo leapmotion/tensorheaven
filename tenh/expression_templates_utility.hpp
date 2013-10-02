@@ -106,8 +106,8 @@ template <typename FactorTypeList, typename AbstractIndexTypeList, typename Summ
 struct FactorsOfSummation_t
 {
     typedef SummedAbstractIndexPairElementIndices_t<AbstractIndexTypeList,SummedAbstractIndexTypeList,AbstractIndex> Pair;
-    typedef typename FactorTypeList::template El_t<Pair::FIRST>::T FirstFactor;
-    typedef typename FactorTypeList::template El_t<Pair::SECOND>::T SecondFactor;
+    typedef typename Element_f<FactorTypeList,Pair::FIRST>::T FirstFactor;
+    typedef typename Element_f<FactorTypeList,Pair::SECOND>::T SecondFactor;
     enum
     {
         STATIC_ASSERT_IN_ENUM((FactorTypeList::LENGTH == AbstractIndexTypeList::LENGTH), MUST_HAVE_EQUAL_LENGTHS),
@@ -342,7 +342,7 @@ private:
     };
     static Uint32 const INDEX = FirstMatchingIn_t<AbstractIndexTypeList,typename ExtractionAbstractIndexTypeList::HeadType>::INDEX;
 public:
-    typedef TypeList_t<typename FactorTypeList::template El_t<INDEX>::T,
+    typedef TypeList_t<typename Element_f<FactorTypeList,INDEX>::T,
                        typename ExtractFactorsForAbstractIndices_t<AbstractIndexTypeList,
                                                                    FactorTypeList,
                                                                    typename ExtractionAbstractIndexTypeList::BodyTypeList>::T> T;
@@ -477,7 +477,7 @@ struct IndexSplitter_t
     typedef typename Operand::Scalar Scalar;
     // we must replace SourceAbstractIndexType with MultiIndex_t<SplitAbstractIndexTypeList> in the index type list
     static Uint32 const SOURCE_INDEX_TYPE_INDEX = FirstMatchingIn_t<OperandFreeAbstractIndexTypeList,SourceAbstractIndexType>::INDEX;
-    typedef typename Operand::FreeFactorTypeList::template El_t<SOURCE_INDEX_TYPE_INDEX>::T SourceFactor;
+    typedef typename Element_f<typename Operand::FreeFactorTypeList,SOURCE_INDEX_TYPE_INDEX>::T SourceFactor;
 
     typedef typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(SourceFactor)::TensorProductOfBasedVectorSpaces EmbeddingTensorProduct;
 
@@ -561,7 +561,7 @@ struct IndexSplitToIndex_t
     typedef typename Operand::Scalar Scalar;
     // we must replace SourceAbstractIndexType with SplitAbstractIndexType in the index type list
     static Uint32 const SOURCE_INDEX_TYPE_INDEX = FirstMatchingIn_t<OperandFreeAbstractIndexTypeList,SourceAbstractIndexType>::INDEX;
-    typedef typename Operand::FreeFactorTypeList::template El_t<SOURCE_INDEX_TYPE_INDEX>::T SourceFactor;
+    typedef typename Element_f<typename Operand::FreeFactorTypeList,SOURCE_INDEX_TYPE_INDEX>::T SourceFactor;
 
     typedef typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(SourceFactor)::TensorProductOfBasedVectorSpaces EmbeddingTensorProduct;
     typedef typename ConcatenationOfTypeLists_t<

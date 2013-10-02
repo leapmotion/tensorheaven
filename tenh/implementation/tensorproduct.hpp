@@ -182,7 +182,10 @@ template <typename Immutable2TensorImplementationTypeList_> struct ConceptualTyp
 template <Uint32 N_, typename TypeList_>
 struct FactorNOfEachTypeIn_f
 {
-    typedef TypeList_t<typename FactorTypeListOf_f<typename TypeList_::HeadType>::T::template El_t<N_>::T,
+private:
+    typedef typename FactorTypeListOf_f<typename TypeList_::HeadType>::T FactorTypeListOfHead;
+public:
+    typedef TypeList_t<typename Element_f<FactorTypeListOfHead,N_>::T,
                        typename FactorNOfEachTypeIn_f<N_,typename TypeList_::BodyTypeList>::T> T;
 };
 
