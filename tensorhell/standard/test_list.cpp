@@ -71,7 +71,7 @@ template <typename TypeList, Uint32 INDEX>
 void test_trailing_list (Context const &context)
 {
     typedef Tenh::List_t<TypeList> List;
-    typedef typename TypeList::template TrailingTypeList_t<INDEX>::T TrailingTypeList;
+    typedef typename Tenh::TrailingTypeList_f<TypeList,INDEX>::T TrailingTypeList;
     typedef Tenh::List_t<TrailingTypeList> TrailingList;
 
     assert((Tenh::TypesAreEqual_f<typename List::template TrailingListType_t<INDEX>::T,TrailingList>()));

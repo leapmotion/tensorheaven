@@ -28,12 +28,6 @@ struct EmptyTypeList
 
     static Uint32 length () { return LENGTH; } // this is necessary to avoid a linker error complaining about undefined LENGTH member
 
-    template <Uint32 INDEX>
-    struct TrailingTypeList_t
-    {
-        typedef EmptyTypeList T;
-    };
-
     template <typename Type_>
     struct IndexOf_t
     {
@@ -61,17 +55,6 @@ struct TypeList_t
     static Uint32 const LENGTH = 1+BodyTypeList::LENGTH;
 
     static Uint32 length () { return LENGTH; }
-
-    /// @brief Returns the TypeList_t which starts at the INDEXth element.
-    /// @headerfile typelist.hpp "tenh/meta/typelist.hpp"
-    template <Uint32 INDEX_>
-    struct TrailingTypeList_t
-    {
-    private:
-        static Uint32 const I = (INDEX_ == 0) ? 0 : INDEX_-1;
-    public:
-        typedef typename If_f<(INDEX_ == 0), TypeList_t, typename BodyTypeList::template TrailingTypeList_t<I>::T >::T T;
-    };
 
     /// @brief Returns the first index at which a type occurs.
     /// @headerfile typelist.hpp "tenh/meta/typelist.hpp"

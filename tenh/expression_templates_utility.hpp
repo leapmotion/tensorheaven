@@ -91,7 +91,7 @@ struct SummedAbstractIndexPairElementIndices_t
         STATIC_ASSERT_IN_ENUM((Occurrence_t<AbstractIndexTypeList,AbstractIndex>::COUNT == 2), MUST_OCCUR_EXACTLY_TWICE)
     };
     static Uint32 const FIRST = FirstMatchingIn_t<AbstractIndexTypeList,AbstractIndex>::INDEX;
-    static Uint32 const FIRST_MATCHING_IN_REST = FirstMatchingIn_t<typename AbstractIndexTypeList::template TrailingTypeList_t<FIRST+1>::T,AbstractIndex>::INDEX;
+    static Uint32 const FIRST_MATCHING_IN_REST = FirstMatchingIn_t<typename TrailingTypeList_f<AbstractIndexTypeList,FIRST+1>::T,AbstractIndex>::INDEX;
     static Uint32 const SECOND = FIRST + 1 + FIRST_MATCHING_IN_REST;
 };
 
@@ -490,14 +490,14 @@ struct IndexSplitter_t
         typename LeadingTypeList_f<typename Operand::FreeFactorTypeList,SOURCE_INDEX_TYPE_INDEX>::T,
         typename ConcatenationOfTypeLists_t<
             typename FactorTypeListOf_f<EmbeddingTensorProduct>::T,
-            typename Operand::FreeFactorTypeList::template TrailingTypeList_t<SOURCE_INDEX_TYPE_INDEX+1>::T
+            typename TrailingTypeList_f<typename Operand::FreeFactorTypeList,SOURCE_INDEX_TYPE_INDEX+1>::T
             >::T
         >::T FactorTypeList;
     typedef typename ConcatenationOfTypeLists_t<
         typename LeadingTypeList_f<typename Operand::FreeDimIndexTypeList,SOURCE_INDEX_TYPE_INDEX>::T,
         typename ConcatenationOfTypeLists_t<
             SplitAbstractIndexTypeList,
-            typename Operand::FreeDimIndexTypeList::template TrailingTypeList_t<SOURCE_INDEX_TYPE_INDEX+1>::T
+            typename TrailingTypeList_f<typename Operand::FreeDimIndexTypeList,SOURCE_INDEX_TYPE_INDEX+1>::T
             >::T
         >::T AbstractIndexTypeList;
     typedef typename DimIndexTypeListOf_t<FactorTypeList,AbstractIndexTypeList>::T DimIndexTypeList;
@@ -567,12 +567,12 @@ struct IndexSplitToIndex_t
     typedef typename ConcatenationOfTypeLists_t<
         typename LeadingTypeList_f<typename Operand::FreeFactorTypeList,SOURCE_INDEX_TYPE_INDEX>::T,
         TypeList_t<EmbeddingTensorProduct,
-                   typename Operand::FreeFactorTypeList::template TrailingTypeList_t<SOURCE_INDEX_TYPE_INDEX+1>::T>
+                   typename TrailingTypeList_f<typename Operand::FreeFactorTypeList,SOURCE_INDEX_TYPE_INDEX+1>::T>
         >::T FactorTypeList;
     typedef typename ConcatenationOfTypeLists_t<
         typename LeadingTypeList_f<typename Operand::FreeDimIndexTypeList,SOURCE_INDEX_TYPE_INDEX>::T,
         TypeList_t<SplitAbstractIndexType,
-                   typename Operand::FreeDimIndexTypeList::template TrailingTypeList_t<SOURCE_INDEX_TYPE_INDEX+1>::T>
+                   typename TrailingTypeList_f<typename Operand::FreeDimIndexTypeList,SOURCE_INDEX_TYPE_INDEX+1>::T>
         >::T AbstractIndexTypeList;
     typedef typename DimIndexTypeListOf_t<FactorTypeList,AbstractIndexTypeList>::T DimIndexTypeList;
     typedef typename ConcatenationOfTypeLists_t<typename Operand::UsedDimIndexTypeList,TypeList_t<SplitAbstractIndexType> >::T UsedDimIndexTypeList;

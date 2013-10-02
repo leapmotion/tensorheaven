@@ -211,7 +211,7 @@ public:
     template <Uint32 INDEX>
     struct TrailingListType_t
     {
-        typedef MultiIndex_t<typename IndexTypeList::template TrailingTypeList_t<INDEX>::T> T;
+        typedef MultiIndex_t<typename TrailingTypeList_f<IndexTypeList,INDEX>::T> T;
     };
 
     // TODO: rename to trailing_multi_index
@@ -378,7 +378,7 @@ struct MultiIndex_t<TypeList_t<HeadIndexType_> > : public List_t<TypeList_t<Head
     template <Uint32 INDEX>
     struct TrailingListType_t
     {
-        typedef MultiIndex_t<typename IndexTypeList::template TrailingTypeList_t<INDEX>::T> T;
+        typedef MultiIndex_t<typename TrailingTypeList_f<IndexTypeList,INDEX>::T> T;
     };
 
     // returns the trailing MultiIndex_t starting at the INDEXth element
