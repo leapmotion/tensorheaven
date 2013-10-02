@@ -282,20 +282,29 @@ struct Contains_f<EmptyTypeList,Type_>
 MAKE_2_ARY_VALUE_EVALUATOR(Contains, bool, typename, Type_);
 
 // if Type_ doesn't occur in TypeList_, this returns TypeList_::LENGTH.
+/// @struct IndexOfFirstOccurrence_f typelist_utility.hpp "tenh/meta/typelist_utility.hpp"
+/// @brief Returns the index of the first occurrence of Type_ in the TypeList_, or
+/// TypeList_::LENGTH if Type_ does not occur in TypeList_.
+/// @tparam TypeList_ the TypeList_t in which to check the presence of Type_.
+/// @tparam Type_ the type to search for.
 template <typename TypeList_, typename Type_>
 struct IndexOfFirstOccurrence_f
 {
+    /// The index of the first occurrence of Type_ in TypeList_, or TypeList_::LENGTH
+    /// if Type_ doesn't occur in TypeList_.
     static Uint32 const V = TypesAreEqual_f<typename TypeList_::HeadType,Type_>::V ?
                             0 :
                             1 + IndexOfFirstOccurrence_f<typename TypeList_::BodyTypeList,Type_>::V;
 };
 
+/// @cond false
 template <typename Type_>
 struct IndexOfFirstOccurrence_f<EmptyTypeList,Type_>
 {
     // this makes the index of a type that doesn't occur equal to the length of the list.
     static Uint32 const V = 0;
 };
+/// @endcond
 
 MAKE_2_ARY_VALUE_EVALUATOR(IndexOfFirstOccurrence, Uint32, typename, Type_);
 

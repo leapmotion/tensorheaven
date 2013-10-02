@@ -524,7 +524,7 @@ struct MultiIndexMap_t
     typedef CodomainIndex (*EvalMapType) (DomainIndex const &);
     static CodomainIndex eval (DomainIndex const &i)
     {
-        return CodomainIndex(i.template el<DomainIndexTypeList::template IndexOf_t<typename CodomainIndexTypeList::HeadType>::V>(),
+        return CodomainIndex(i.template el<IndexOfFirstOccurrence_f<DomainIndexTypeList,typename CodomainIndexTypeList::HeadType>::V>(),
                              MultiIndexMap_t<DomainIndexTypeList,typename CodomainIndexTypeList::BodyTypeList>::eval(i));
     }
 };
@@ -540,7 +540,7 @@ struct MultiIndexMap_t<DomainIndexTypeList,TypeList_t<CodomainIndexType> >
     typedef CodomainIndex (*EvalMapType) (DomainIndex const &);
     static CodomainIndex eval (DomainIndex const &i)
     {
-        return CodomainIndex(i.template el<DomainIndexTypeList::template IndexOf_t<typename CodomainIndexTypeList::HeadType>::V>());
+        return CodomainIndex(i.template el<IndexOfFirstOccurrence_f<DomainIndexTypeList,typename CodomainIndexTypeList::HeadType>::V>());
     }
 };
 

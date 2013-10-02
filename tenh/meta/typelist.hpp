@@ -28,13 +28,6 @@ struct EmptyTypeList
 
     static Uint32 length () { return LENGTH; } // this is necessary to avoid a linker error complaining about undefined LENGTH member
 
-    template <typename Type_>
-    struct IndexOf_t
-    {
-        static Uint32 const V = 0; // this is past the end of the indexing
-        operator bool () const { return V; }
-    };
-
     static std::string type_as_string (bool with_angle_brackets = true) { return with_angle_brackets ? "TypeList_t<>" : ""; }
     /// @endcond
 };
@@ -55,15 +48,6 @@ struct TypeList_t
     static Uint32 const LENGTH = 1+BodyTypeList::LENGTH;
 
     static Uint32 length () { return LENGTH; }
-
-    /// @brief Returns the first index at which a type occurs.
-    /// @headerfile typelist.hpp "tenh/meta/typelist.hpp"
-    template <typename Type_>
-    struct IndexOf_t
-    {
-        static Uint32 const V = TypesAreEqual_f<Type_,HeadType>::V ? 0 : (1 + BodyTypeList::template IndexOf_t<Type_>::V);
-        operator Uint32 () const { return V; }
-    };
 
     /// For use with TypeStringOf_t.
     static std::string type_as_string (bool with_angle_brackets = true)
