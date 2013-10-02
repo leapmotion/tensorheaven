@@ -186,8 +186,7 @@ public:
     template <Uint32 INDEX>
     struct LeadingListType_t
     {
-//         typedef List_t<typename TypeList::template LeadingTypeList_t<INDEX>::T> T;
-        typedef MultiIndex_t<typename IndexTypeList::template LeadingTypeList_t<INDEX>::T> T;
+        typedef MultiIndex_t<typename LeadingTypeList_f<IndexTypeList,INDEX>::T> T;
     };
 
     // TODO: rename to leading_multi_index
@@ -356,8 +355,7 @@ struct MultiIndex_t<TypeList_t<HeadIndexType_> > : public List_t<TypeList_t<Head
     template <Uint32 INDEX>
     struct LeadingListType_t
     {
-//         typedef List_t<typename TypeList::template LeadingTypeList_t<INDEX>::T> T;
-        typedef MultiIndex_t<typename IndexTypeList::template LeadingTypeList_t<INDEX>::T> T;
+        typedef MultiIndex_t<typename LeadingTypeList_f<IndexTypeList,INDEX>::T> T;
     };
 
     // TODO: rename to leading_multi_index

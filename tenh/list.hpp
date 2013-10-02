@@ -115,7 +115,7 @@ struct List_t
     template <Uint32 INDEX>
     struct LeadingListType_t
     {
-        typedef List_t<typename TypeList::template LeadingTypeList_t<INDEX>::T> T;
+        typedef List_t<typename LeadingTypeList_f<TypeList,INDEX>::T> T;
     };
 
     // returns the leading List_t ending at the INDEXth element.
@@ -251,7 +251,7 @@ struct List_t<EmptyTypeList>
     template <Uint32 INDEX>
     struct LeadingListType_t
     {
-        typedef List_t<typename TypeList::template LeadingTypeList_t<INDEX>::T> T;
+        typedef List_t<typename LeadingTypeList_f<TypeList,INDEX>::T> T;
     };
 
     // returns the leading List_t ending at the INDEXth element.
@@ -393,7 +393,7 @@ struct List_t<TypeList_t<HeadType_> >
     template <Uint32 INDEX>
     struct LeadingListType_t
     {
-        typedef List_t<typename TypeList::template LeadingTypeList_t<INDEX>::T> T;
+        typedef List_t<typename LeadingTypeList_f<TypeList,INDEX>::T> T;
     };
 
     // returns the leading List_t ending at the INDEXth element.
@@ -495,7 +495,7 @@ struct ListHelper_t
 {
     enum { STATIC_ASSERT_IN_ENUM((INDEX > 0), ATTEMPTED_ACCESS_PAST_LIST_END) };
     typedef List_t<TypeList> List;
-    typedef List_t<typename TypeList::template LeadingTypeList_t<INDEX>::T> LeadingListType;
+    typedef List_t<typename LeadingTypeList_f<TypeList,INDEX>::T> LeadingListType;
     typedef List_t<typename TypeList::template TrailingTypeList_t<INDEX>::T> TrailingListType;
     static TrailingListType const &trailing_list (List const &list)
     {

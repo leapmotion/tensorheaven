@@ -487,14 +487,14 @@ struct IndexSplitter_t
     };
 
     typedef typename ConcatenationOfTypeLists_t<
-        typename Operand::FreeFactorTypeList::template LeadingTypeList_t<SOURCE_INDEX_TYPE_INDEX>::T,
+        typename LeadingTypeList_f<typename Operand::FreeFactorTypeList,SOURCE_INDEX_TYPE_INDEX>::T,
         typename ConcatenationOfTypeLists_t<
             typename FactorTypeListOf_f<EmbeddingTensorProduct>::T,
             typename Operand::FreeFactorTypeList::template TrailingTypeList_t<SOURCE_INDEX_TYPE_INDEX+1>::T
             >::T
         >::T FactorTypeList;
     typedef typename ConcatenationOfTypeLists_t<
-        typename Operand::FreeDimIndexTypeList::template LeadingTypeList_t<SOURCE_INDEX_TYPE_INDEX>::T,
+        typename LeadingTypeList_f<typename Operand::FreeDimIndexTypeList,SOURCE_INDEX_TYPE_INDEX>::T,
         typename ConcatenationOfTypeLists_t<
             SplitAbstractIndexTypeList,
             typename Operand::FreeDimIndexTypeList::template TrailingTypeList_t<SOURCE_INDEX_TYPE_INDEX+1>::T
@@ -565,12 +565,12 @@ struct IndexSplitToIndex_t
 
     typedef typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(SourceFactor)::TensorProductOfBasedVectorSpaces EmbeddingTensorProduct;
     typedef typename ConcatenationOfTypeLists_t<
-        typename Operand::FreeFactorTypeList::template LeadingTypeList_t<SOURCE_INDEX_TYPE_INDEX>::T,
+        typename LeadingTypeList_f<typename Operand::FreeFactorTypeList,SOURCE_INDEX_TYPE_INDEX>::T,
         TypeList_t<EmbeddingTensorProduct,
                    typename Operand::FreeFactorTypeList::template TrailingTypeList_t<SOURCE_INDEX_TYPE_INDEX+1>::T>
         >::T FactorTypeList;
     typedef typename ConcatenationOfTypeLists_t<
-        typename Operand::FreeDimIndexTypeList::template LeadingTypeList_t<SOURCE_INDEX_TYPE_INDEX>::T,
+        typename LeadingTypeList_f<typename Operand::FreeDimIndexTypeList,SOURCE_INDEX_TYPE_INDEX>::T,
         TypeList_t<SplitAbstractIndexType,
                    typename Operand::FreeDimIndexTypeList::template TrailingTypeList_t<SOURCE_INDEX_TYPE_INDEX+1>::T>
         >::T AbstractIndexTypeList;

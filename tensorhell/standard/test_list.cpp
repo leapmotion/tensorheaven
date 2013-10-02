@@ -55,7 +55,7 @@ template <typename TypeList, Uint32 INDEX>
 void test_leading_list (Context const &context)
 {
     typedef Tenh::List_t<TypeList> List;
-    typedef typename TypeList::template LeadingTypeList_t<INDEX>::T LeadingTypeList;
+    typedef typename Tenh::LeadingTypeList_f<TypeList,INDEX>::T LeadingTypeList;
     typedef Tenh::List_t<LeadingTypeList> LeadingList;
 
     assert((Tenh::TypesAreEqual_f<typename List::template LeadingListType_t<INDEX>::T,LeadingList>()));

@@ -299,41 +299,57 @@ struct IndexOfFirstOccurrence_f<EmptyTypeList,Type_>
 
 MAKE_2_ARY_VALUE_EVALUATOR(IndexOfFirstOccurrence, Uint32, typename, Type_);
 
+/// @struct TrailingTypeList_f typelist_utility.hpp "tenh/meta/typelist_utility.hpp"
+/// @brief Returns the TypeList_t which is the range [START_INDEX_, TypeList_::LENGTH) (right 
+/// endpoint not included) of TypeList_.
+/// @tparam TypeList_ the TypeList_t from which to extract the range.
+/// @tparam START_INDEX_ the starting index of the range to extract.
 template <typename TypeList_, Uint32 START_INDEX_>
 struct TrailingTypeList_f
 {
+    /// The range [START_INDEX_,TypeList_::LENGTH) of TypeList_.
     typedef typename If_f<START_INDEX_ == 0,
                           TypeList_,
                           typename TrailingTypeList_f<typename TypeList_::BodyTypeList,START_INDEX_-1>::T>::T T;
 };
 
+/// @cond false
 template <Uint32 START_INDEX_>
 struct TrailingTypeList_f<EmptyTypeList,START_INDEX_>
 {
     //enum { STATIC_ASSERT_IN_ENUM(START_INDEX_ == 0, INDEX_OUT_OF_RANGE) };
     typedef EmptyTypeList T;
 };
+/// @endcond
 
 MAKE_2_ARY_TYPE_EVALUATOR(TrailingTypeList, Uint32, START_INDEX_);
 
+/// @struct LeadingTypeList_f typelist_utility.hpp "tenh/meta/typelist_utility.hpp"
+/// @brief Returns the TypeList_t which is the range [0, END_INDEX_) (right 
+/// endpoint not included) of TypeList_.
+/// @tparam TypeList_ the TypeList_t from which to extract the range.
+/// @tparam END_INDEX_ the ending index of the range to extract (non-inclusive)
 template <typename TypeList_, Uint32 END_INDEX_>
 struct LeadingTypeList_f
 {
 private:
     static Uint32 const E = (END_INDEX_ == 0) ? 0 : END_INDEX_-1;
 public:
+    /// The range [0,END_INDEX_) of TypeList_.
     typedef typename If_f<END_INDEX_ == 0,
                           EmptyTypeList,
                           TypeList_t<typename TypeList_::HeadType,
                                      typename LeadingTypeList_f<typename TypeList_::BodyTypeList,E>::T> >::T T;
 };
 
+/// @cond false
 template <Uint32 END_INDEX_>
 struct LeadingTypeList_f<EmptyTypeList,END_INDEX_>
 {
     //enum { STATIC_ASSERT_IN_ENUM(END_INDEX_ == 0, INDEX_OUT_OF_RANGE) };
     typedef EmptyTypeList T;
 };
+/// @endcond
 
 MAKE_2_ARY_TYPE_EVALUATOR(LeadingTypeList, Uint32, END_INDEX_);
 
@@ -350,6 +366,7 @@ private:
     enum { STATIC_ASSERT_IN_ENUM(START_INDEX_ <= END_INDEX_, INVALID_RANGE_INDICES) };
     static Uint32 const RANGE_LENGTH = END_INDEX_ - START_INDEX_;
 public:
+    /// The range [START_INDEX_,END_INDEX_) of TypeList_.
     typedef typename LeadingTypeList_f<typename TrailingTypeList_f<TypeList_,START_INDEX_>::T,RANGE_LENGTH>::T T;
 };
 

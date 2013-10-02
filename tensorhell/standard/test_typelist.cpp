@@ -24,7 +24,7 @@ void test_EmptyTypeList (Context const &context)
     assert((Tenh::TypesAreEqual_f<Tenh::EmptyTypeList::BodyTypeList,Tenh::EmptyTypeList>()));
     assert_eq(Tenh::EmptyTypeList::length(), 0);
     assert((!Tenh::Contains_f<Tenh::EmptyTypeList,int>::V));
-    assert((Tenh::TypesAreEqual_f<Tenh::EmptyTypeList::LeadingTypeList_t<0>::T,Tenh::EmptyTypeList>()));
+    assert((Tenh::TypesAreEqual_f<Tenh::LeadingTypeList_f<Tenh::EmptyTypeList,0>::T,Tenh::EmptyTypeList>()));
     assert((Tenh::TypesAreEqual_f<Tenh::EmptyTypeList::TrailingTypeList_t<0>::T,Tenh::EmptyTypeList>()));
 }
 
@@ -45,7 +45,7 @@ void add_particular_tests_for_typelist (Directory *parent)
 template <typename TypeList, Uint32 INDEX, typename ExpectedLeadingTypeList>
 void test_leading_type_list (Context const &context)
 {
-    assert((Tenh::TypesAreEqual_f<typename TypeList::template LeadingTypeList_t<INDEX>::T,ExpectedLeadingTypeList>()));
+    assert((Tenh::TypesAreEqual_f<typename Tenh::LeadingTypeList_f<TypeList,INDEX>::T,ExpectedLeadingTypeList>()));
 }
 
 template <typename TypeList, Uint32 INDEX, typename ExpectedTrailingTypeList>
@@ -58,7 +58,7 @@ template <typename TypeList, Uint32 INDEX, typename ExpectedLeadingTypeList, typ
 void add_leading_and_trailing_type_list_test (Directory *parent)
 {
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent,
-                                     FORMAT(Tenh::type_string_of<TypeList>() << "::LeadingTypeList_t<" << INDEX << '>'),
+                                     FORMAT("LeadingTypeList_f<" << Tenh::type_string_of<TypeList>() << ',' << INDEX << '>'),
                                      test_leading_type_list<TypeList,INDEX,ExpectedLeadingTypeList>,
                                      RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent,
