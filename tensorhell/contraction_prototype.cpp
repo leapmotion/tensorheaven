@@ -822,7 +822,7 @@ void test_IndexSplit ()
     x(i,j) = s(i,j) + a(i,j);
     std::cout << "recombined: " << FORMAT_VALUE(x) << '\n';
 
-    x(i,j).template bundle<typename TypeTuple_t<I,J>::T,Q>();
+    x(i,j).template bundle<typename TypeTuple_f<I,J>::T,Q>();
 
     typedef TypedIndex_t<Tensor2,'g'> G;
     G g;
@@ -1217,7 +1217,7 @@ int main (int argc, char **argv)
             typedef TypedIndex_t<Float4,'j'> J;
             I i;
             J j;
-            typedef ExpressionTemplate_IndexedObject_t<Float3x4,TypeTuple_t<I,J>::T,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EIJ;
+            typedef ExpressionTemplate_IndexedObject_t<Float3x4,TypeTuple_f<I,J>::T,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EIJ;
             typedef ExpressionTemplate_Addition_t<EIJ,EIJ,'+'> EA;
             Float3x4 u(Static<WithoutInitialization>::SINGLETON);
             Float3x4 v(Static<WithoutInitialization>::SINGLETON);
@@ -1247,8 +1247,8 @@ int main (int argc, char **argv)
             typedef TypedIndex_t<Float3,'j'> J;
             I i;
             J j;
-            typedef ExpressionTemplate_IndexedObject_t<Float3x3,TypeTuple_t<I,J>::T,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EIJ;
-            typedef ExpressionTemplate_IndexedObject_t<Float3x3,TypeTuple_t<J,I>::T,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EJI;
+            typedef ExpressionTemplate_IndexedObject_t<Float3x3,TypeTuple_f<I,J>::T,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EIJ;
+            typedef ExpressionTemplate_IndexedObject_t<Float3x3,TypeTuple_f<J,I>::T,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EJI;
             typedef ExpressionTemplate_Addition_t<EIJ,EIJ,'+'> EA;
             typedef ExpressionTemplate_Addition_t<EIJ,EJI,'+'> EB;
             Float3x3 u(Static<WithoutInitialization>::SINGLETON);
@@ -1269,7 +1269,7 @@ int main (int argc, char **argv)
             std::cout << '\n';
 
             // uncommenting this should cause an error regarding prohibiting repeated indices in sums
-//             typedef ExpressionTemplate_IndexedObject_t<Float3x3,TypeTuple_t<I,I>::T,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EII;
+//             typedef ExpressionTemplate_IndexedObject_t<Float3x3,TypeTuple_f<I,I>::T,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EII;
 //             typedef ExpressionTemplate_Addition_t<EII,EII,'+'> EC;
 //             EC e_bad(u(i,i), u(i,i));
 
@@ -1310,9 +1310,9 @@ int main (int argc, char **argv)
             J j;
             K k;
             L l;
-            typedef ExpressionTemplate_IndexedObject_t<Float3x4,TypeTuple_t<I,J>::T,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EIJ;
-            typedef ExpressionTemplate_IndexedObject_t<Float4x5,TypeTuple_t<J,K>::T,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EJK;
-            typedef ExpressionTemplate_IndexedObject_t<Float5x2,TypeTuple_t<K,L>::T,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EKL;
+            typedef ExpressionTemplate_IndexedObject_t<Float3x4,TypeTuple_f<I,J>::T,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EIJ;
+            typedef ExpressionTemplate_IndexedObject_t<Float4x5,TypeTuple_f<J,K>::T,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EJK;
+            typedef ExpressionTemplate_IndexedObject_t<Float5x2,TypeTuple_f<K,L>::T,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING> EKL;
             typedef ExpressionTemplate_Multiplication_t<EIJ,EJK> EM;
             typedef ExpressionTemplate_Multiplication_t<EM,EKL> EMM;
             std::cout << "expression template contraction u(i,j)*v(j,k):\n";
@@ -1429,7 +1429,7 @@ int main (int argc, char **argv)
             I i;
             J j;
             std::cout << FORMAT_VALUE(u) << '\n';
-            typedef ExpressionTemplate_IndexedObject_t<Float3x3,EmptyTypeList,TypeTuple_t<I>::T,DONT_FORCE_CONST,CHECK_FOR_ALIASING> ET;
+            typedef ExpressionTemplate_IndexedObject_t<Float3x3,EmptyTypeList,TypeTuple_f<I>::T,DONT_FORCE_CONST,CHECK_FOR_ALIASING> ET;
             ET::MultiIndex k;
             std::cout << "trace(u) = " << u(i|i)[k] << '\n';
             std::cout << "trace(u) = " << float(u(i|i)) << '\n';

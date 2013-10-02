@@ -21,7 +21,7 @@ template <typename T0 = NullType,
           typename T5 = NullType,
           typename T6 = NullType,
           typename T7 = NullType>
-struct TypeTuple_t
+struct TypeTuple_f
 {
     typedef TypeList_t<T0,
             TypeList_t<T1,
@@ -34,20 +34,20 @@ struct TypeTuple_t
 };
 
 template <>
-struct TypeTuple_t<NullType,NullType,NullType,NullType,NullType,NullType,NullType,NullType>
+struct TypeTuple_f<NullType,NullType,NullType,NullType,NullType,NullType,NullType,NullType>
 {
     typedef EmptyTypeList T;
 };
 
 template <typename T0>
-struct TypeTuple_t<T0,NullType,NullType,NullType,NullType,NullType,NullType,NullType>
+struct TypeTuple_f<T0,NullType,NullType,NullType,NullType,NullType,NullType,NullType>
 {
     typedef TypeList_t<T0> T;
 };
 
 template <typename T0,
           typename T1>
-struct TypeTuple_t<T0,T1,NullType,NullType,NullType,NullType,NullType,NullType>
+struct TypeTuple_f<T0,T1,NullType,NullType,NullType,NullType,NullType,NullType>
 {
     typedef TypeList_t<T0,
             TypeList_t<T1> > T;
@@ -56,7 +56,7 @@ struct TypeTuple_t<T0,T1,NullType,NullType,NullType,NullType,NullType,NullType>
 template <typename T0,
           typename T1,
           typename T2>
-struct TypeTuple_t<T0,T1,T2,NullType,NullType,NullType,NullType,NullType>
+struct TypeTuple_f<T0,T1,T2,NullType,NullType,NullType,NullType,NullType>
 {
     typedef TypeList_t<T0,
             TypeList_t<T1,
@@ -67,7 +67,7 @@ template <typename T0,
           typename T1,
           typename T2,
           typename T3>
-struct TypeTuple_t<T0,T1,T2,T3,NullType,NullType,NullType,NullType>
+struct TypeTuple_f<T0,T1,T2,T3,NullType,NullType,NullType,NullType>
 {
     typedef TypeList_t<T0,
             TypeList_t<T1,
@@ -80,7 +80,7 @@ template <typename T0,
           typename T2,
           typename T3,
           typename T4>
-struct TypeTuple_t<T0,T1,T2,T3,T4,NullType,NullType,NullType>
+struct TypeTuple_f<T0,T1,T2,T3,T4,NullType,NullType,NullType>
 {
     typedef TypeList_t<T0,
             TypeList_t<T1,
@@ -95,7 +95,7 @@ template <typename T0,
           typename T3,
           typename T4,
           typename T5>
-struct TypeTuple_t<T0,T1,T2,T3,T4,T5,NullType,NullType>
+struct TypeTuple_f<T0,T1,T2,T3,T4,T5,NullType,NullType>
 {
     typedef TypeList_t<T0,
             TypeList_t<T1,
@@ -112,7 +112,7 @@ template <typename T0,
           typename T4,
           typename T5,
           typename T6>
-struct TypeTuple_t<T0,T1,T2,T3,T4,T5,T6,NullType>
+struct TypeTuple_f<T0,T1,T2,T3,T4,T5,T6,NullType>
 {
     typedef TypeList_t<T0,
             TypeList_t<T1,

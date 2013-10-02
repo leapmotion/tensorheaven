@@ -7,299 +7,141 @@
 #define TENH_META_TUPLE_HPP_
 
 #include "tenh/core.hpp"
+
 #include "tenh/list.hpp"
 #include "tenh/meta/typetuple.hpp"
 
 namespace Tenh {
 
-// should match the template params for TypeTuple_t
-template <typename T0 = NullType,
-          typename T1 = NullType,
-          typename T2 = NullType,
-          typename T3 = NullType,
-          typename T4 = NullType,
-          typename T5 = NullType,
-          typename T6 = NullType,
-          typename T7 = NullType>
-struct Tuple_t
-    :
-    public List_t<typename TypeTuple_t<T0,T1,T2,T3,T4,T5,T6,T7>::T>
+// sort of hacky way to get limited variadic template behavior
+template <typename T0_ = NullType,
+          typename T1_ = NullType,
+          typename T2_ = NullType,
+          typename T3_ = NullType,
+          typename T4_ = NullType,
+          typename T5_ = NullType,
+          typename T6_ = NullType,
+          typename T7_ = NullType>
+struct Tuple_f
 {
-    typedef List_t<typename TypeTuple_t<T0,T1,T2,T3,T4,T5,T6,T7>::T> Parent;
-    typedef Tuple_t<T1,T2,T3,T4,T5,T6,T7> BodyTuple;
-    Tuple_t (T0 const &t0,
-             T1 const &t1,
-             T2 const &t2,
-             T3 const &t3,
-             T4 const &t4,
-             T5 const &t5,
-             T6 const &t6,
-             T7 const &t7)
-        :
-        Parent(t0, BodyTuple(t1, t2, t3, t4, t5, t6, t7))
-    { }
+    typedef List_t<typename TypeTuple_f<T0_,T1_,T2_,T3_,T4_,T5_,T6_,T7_>::T> T;
 };
 
-template <>
-struct Tuple_t<NullType,NullType,NullType,NullType,NullType,NullType,NullType,NullType>
-    :
-    public List_t<EmptyTypeList>
+inline Tuple_f<>::T tuple ()
 {
-    typedef List_t<EmptyTypeList> Parent;
-    Tuple_t ()
-        :
-        Parent()
-    { }
-};
+    return Tuple_f<>::T();
+}
 
-template <typename T0>
-struct Tuple_t<T0,NullType,NullType,NullType,NullType,NullType,NullType,NullType>
-    :
-    public List_t<typename TypeTuple_t<T0>::T>
+template <typename T0_>
+typename Tuple_f<T0_>::T tuple (T0_ const &x0)
 {
-    typedef List_t<typename TypeTuple_t<T0>::T> Parent;
-    Tuple_t (T0 const &t0)
-        :
-        Parent(t0)
-    { }
-};
+    return typename Tuple_f<T0_>::T(x0);
+}
 
-template <typename T0, typename T1>
-struct Tuple_t<T0,T1,NullType,NullType,NullType,NullType,NullType,NullType>
-    :
-    public List_t<typename TypeTuple_t<T0,T1>::T>
+template <typename T0_,
+          typename T1_>
+typename Tuple_f<T0_,T1_>::T
+    tuple (T0_ const &x0,
+           T1_ const &x1)
 {
-    typedef List_t<typename TypeTuple_t<T0,T1>::T> Parent;
-    typedef Tuple_t<T1> BodyTuple;
-    Tuple_t (T0 const &t0,
-             T1 const &t1)
-        :
-        Parent(t0, BodyTuple(t1))
-    { }
-};
+    return typename Tuple_f<T0_,T1_>::T(x0, tuple(x1));
+}
 
-template <typename T0, typename T1, typename T2>
-struct Tuple_t<T0,T1,T2,NullType,NullType,NullType,NullType,NullType>
-    :
-    public List_t<typename TypeTuple_t<T0,T1,T2>::T>
+template <typename T0_,
+          typename T1_,
+          typename T2_>
+typename Tuple_f<T0_,T1_,T2_>::T
+    tuple (T0_ const &x0,
+           T1_ const &x1,
+           T2_ const &x2)
 {
-    typedef List_t<typename TypeTuple_t<T0,T1,T2>::T> Parent;
-    typedef Tuple_t<T1,T2> BodyTuple;
-    Tuple_t (T0 const &t0,
-             T1 const &t1,
-             T2 const &t2)
-        :
-        Parent(t0, BodyTuple(t1, t2))
-    { }
-};
+    return typename Tuple_f<T0_,T1_,T2_>::T(x0, tuple(x1, x2));
+}
 
-template <typename T0, typename T1, typename T2, typename T3>
-struct Tuple_t<T0,T1,T2,T3,NullType,NullType,NullType,NullType>
-    :
-    public List_t<typename TypeTuple_t<T0,T1,T2,T3>::T>
+template <typename T0_,
+          typename T1_,
+          typename T2_,
+          typename T3_>
+typename Tuple_f<T0_,T1_,T2_,T3_>::T
+    tuple (T0_ const &x0,
+           T1_ const &x1,
+           T2_ const &x2,
+           T3_ const &x3)
 {
-    typedef List_t<typename TypeTuple_t<T0,T1,T2,T3>::T> Parent;
-    typedef Tuple_t<T1,T2,T3> BodyTuple;
-    Tuple_t (T0 const &t0,
-             T1 const &t1,
-             T2 const &t2,
-             T3 const &t3)
-        :
-        Parent(t0, BodyTuple(t1, t2, t3))
-    { }
-};
+    return typename Tuple_f<T0_,T1_,T2_,T3_>::T(x0, tuple(x1, x2, x3));
+}
 
-template <typename T0, typename T1, typename T2, typename T3, typename T4>
-struct Tuple_t<T0,T1,T2,T3,T4,NullType,NullType,NullType>
-    :
-    public List_t<typename TypeTuple_t<T0,T1,T2,T3,T4>::T>
+template <typename T0_,
+          typename T1_,
+          typename T2_,
+          typename T3_,
+          typename T4_>
+typename Tuple_f<T0_,T1_,T2_,T3_,T4_>::T
+    tuple (T0_ const &x0,
+           T1_ const &x1,
+           T2_ const &x2,
+           T3_ const &x3,
+           T4_ const &x4)
 {
-    typedef List_t<typename TypeTuple_t<T0,T1,T2,T3,T4>::T> Parent;
-    typedef Tuple_t<T1,T2,T3,T4> BodyTuple;
-    Tuple_t (T0 const &t0,
-             T1 const &t1,
-             T2 const &t2,
-             T3 const &t3,
-             T4 const &t4)
-        :
-        Parent(t0, BodyTuple(t1, t2, t3, t4))
-    { }
-};
+    return typename Tuple_f<T0_,T1_,T2_,T3_,T4_>::T(x0, tuple(x1, x2, x3, x4));
+}
 
-template <typename T0, typename T1, typename T2, typename T3, typename T4, typename T5>
-struct Tuple_t<T0,T1,T2,T3,T4,T5,NullType,NullType>
-    :
-    public List_t<typename TypeTuple_t<T0,T1,T2,T3,T4,T5>::T>
+template <typename T0_,
+          typename T1_,
+          typename T2_,
+          typename T3_,
+          typename T4_,
+          typename T5_>
+typename Tuple_f<T0_,T1_,T2_,T3_,T4_,T5_>::T
+    tuple (T0_ const &x0,
+           T1_ const &x1,
+           T2_ const &x2,
+           T3_ const &x3,
+           T4_ const &x4,
+           T5_ const &x5)
 {
-    typedef List_t<typename TypeTuple_t<T0,T1,T2,T3,T4,T5>::T> Parent;
-    typedef Tuple_t<T1,T2,T3,T4,T5> BodyTuple;
-    Tuple_t (T0 const &t0,
-             T1 const &t1,
-             T2 const &t2,
-             T3 const &t3,
-             T4 const &t4,
-             T5 const &t5)
-        :
-        Parent(t0, BodyTuple(t1, t2, t3, t4, t5))
-    { }
-};
+    return typename Tuple_f<T0_,T1_,T2_,T3_,T4_,T5_>::T(x0, tuple(x1, x2, x3, x4, x5));
+}
 
-template <typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6>
-struct Tuple_t<T0,T1,T2,T3,T4,T5,T6,NullType>
-    :
-    public List_t<typename TypeTuple_t<T0,T1,T2,T3,T4,T5,T6>::T>
+template <typename T0_,
+          typename T1_,
+          typename T2_,
+          typename T3_,
+          typename T4_,
+          typename T5_,
+          typename T6_>
+typename Tuple_f<T0_,T1_,T2_,T3_,T4_,T5_,T6_>::T
+    tuple (T0_ const &x0,
+           T1_ const &x1,
+           T2_ const &x2,
+           T3_ const &x3,
+           T4_ const &x4,
+           T5_ const &x5,
+           T6_ const &x6)
 {
-    typedef List_t<typename TypeTuple_t<T0,T1,T2,T3,T4,T5,T6>::T> Parent;
-    typedef Tuple_t<T1,T2,T3,T4,T5,T6> BodyTuple;
-    Tuple_t (T0 const &t0,
-             T1 const &t1,
-             T2 const &t2,
-             T3 const &t3,
-             T4 const &t4,
-             T5 const &t5,
-             T6 const &t6)
-        :
-        Parent(t0, BodyTuple(t1, t2, t3, t4, t5, t6))
-    { }
-};
+    return typename Tuple_f<T0_,T1_,T2_,T3_,T4_,T5_,T6_>::T(x0, tuple(x1, x2, x3, x4, x5, x6));
+}
 
-// template <typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7>
-// struct Tuple_t<T0,T1,T2,T3,T4,T5,T6,T7>
-//     :
-//     public List_t<TypeTuple_t<T0,T1,T2,T3,T4,T5,T6,T7> >
-// {
-//     typedef List_t<TypeTuple_t<T0,T1,T2,T3,T4,T5,T6,T7> > Parent;
-//     typedef Tuple_t<typename Parent::BodyType> BodyTuple;
-//     Tuple_t (T0 const &t0,
-//              T1 const &t1,
-//              T2 const &t2,
-//              T3 const &t3,
-//              T4 const &t4,
-//              T5 const &t5,
-//              T6 const &t6,
-//              T7 const &t7)
-//         :
-//         Parent(t0, BodyTuple(t1, t2, t3, t4, t5, t6, t7))
-//     { }
-// };
-
-/*
-// generic one for when you don't want/can't pass initializers into a constructor
-template <typename TypeList>
-struct Tuple_t : public List_t<TypeList>
+template <typename T0_,
+          typename T1_,
+          typename T2_,
+          typename T3_,
+          typename T4_,
+          typename T5_,
+          typename T6_,
+          typename T7_>
+typename Tuple_f<T0_,T1_,T2_,T3_,T4_,T5_,T6_,T7_>::T
+    tuple (T0_ const &x0,
+           T1_ const &x1,
+           T2_ const &x2,
+           T3_ const &x3,
+           T4_ const &x4,
+           T5_ const &x5,
+           T6_ const &x6,
+           T7_ const &x7)
 {
-    Tuple_t () { } // this only works if all members have default constructors
-};
-
-// specializations for particular numbers of types
-
-template <> // try not to actually construct one of these, because it isn't guaranteed to use 0 memory.
-struct Tuple_t<EmptyTypeList> : public List_t<EmptyTypeList>
-{
-    Tuple_t () : List_t<EmptyTypeList>() { }
-};
-
-template <typename T0>
-struct Tuple_t<TypeList_t<T0> > : public List_t<TypeList_t<T0> >
-{
-    Tuple_t (T0 const &v0)
-        :
-        List_t<TypeList_t<T0> >(v0)
-    { }
-
-    // type cast operator for T0?
-};
-
-template <typename T0, typename T1>
-struct Tuple_t<TypeList_t<T0,
-               TypeList_t<T1> > >
-    : public List_t<TypeList_t<T0,
-                    TypeList_t<T1> > >
-{
-    Tuple_t (T0 const &v0, T1 const &v1)
-        :
-        List_t<TypeList_t<T0,
-               TypeList_t<T1> > >(v0,
-        List_t<TypeList_t<T1> >(v1))
-    { }
-};
-
-template <typename T0, typename T1, typename T2>
-struct Tuple_t<TypeList_t<T0,
-               TypeList_t<T1,
-               TypeList_t<T2> > > >
-    : public List_t<TypeList_t<T0,
-                    TypeList_t<T1,
-                    TypeList_t<T2> > > >
-{
-    Tuple_t (T0 const &v0, T1 const &v1, T2 const &v2)
-        :
-        List_t<TypeList_t<T0,
-               TypeList_t<T1,
-               TypeList_t<T2> > > >(v0,
-        List_t<TypeList_t<T1,
-               TypeList_t<T2> > >(v1,
-        List_t<TypeList_t<T2> >(v2)))
-    { }
-};
-
-template <typename T0, typename T1, typename T2, typename T3>
-struct Tuple_t<TypeList_t<T0,
-               TypeList_t<T1,
-               TypeList_t<T2,
-               TypeList_t<T3> > > > >
-    : public List_t<TypeList_t<T0,
-                    TypeList_t<T1,
-                    TypeList_t<T2,
-                    TypeList_t<T3> > > > >
-{
-    Tuple_t (T0 const &v0, T1 const &v1, T2 const &v2, T3 const &v3)
-        :
-        List_t<TypeList_t<T0,
-               TypeList_t<T1,
-               TypeList_t<T2,
-               TypeList_t<T3> > > > >(v0,
-        List_t<TypeList_t<T1,
-               TypeList_t<T2,
-               TypeList_t<T3> > > >(v1,
-        List_t<TypeList_t<T2,
-               TypeList_t<T3> > >(v2,
-        List_t<TypeList_t<T3> >(v3))))
-    { }
-};
-
-template <typename T0, typename T1, typename T2, typename T3, typename T4>
-struct Tuple_t<TypeList_t<T0,
-               TypeList_t<T1,
-               TypeList_t<T2,
-               TypeList_t<T3,
-               TypeList_t<T4> > > > > >
-    : public List_t<TypeList_t<T0,
-                    TypeList_t<T1,
-                    TypeList_t<T2,
-                    TypeList_t<T3,
-                    TypeList_t<T4> > > > > >
-{
-    Tuple_t (T0 const &v0, T1 const &v1, T2 const &v2, T3 const &v3, T4 const &v4)
-        :
-        List_t<TypeList_t<T0,
-               TypeList_t<T1,
-               TypeList_t<T2,
-               TypeList_t<T3,
-               TypeList_t<T4> > > > > >(v0,
-        List_t<TypeList_t<T1,
-               TypeList_t<T2,
-               TypeList_t<T3,
-               TypeList_t<T4> > > > >(v1,
-        List_t<TypeList_t<T2,
-               TypeList_t<T3,
-               TypeList_t<T4> > > >(v2,
-        List_t<TypeList_t<T3,
-               TypeList_t<T4> > >(v3,
-        List_t<TypeList_t<T4> >(v4)))))
-    { }
-};
-*/
+    return typename Tuple_f<T0_,T1_,T2_,T3_,T4_,T5_,T6_,T7_>::T(x0, tuple(x1, x2, x3, x4, x5, x6, x7));
+}
 
 } // end of namespace Tenh
 

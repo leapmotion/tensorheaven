@@ -9,9 +9,9 @@ using namespace Tenh;
 
 int main (int argc, char **argv)
 {
-    typedef TypeTuple_t<int,char>::T X;
-    typedef TypeTuple_t<int,char,float>::T Y;
-    typedef TypeTuple_t<List_t<X>,List_t<Y> >::T Z;
+    typedef TypeTuple_f<int,char>::T X;
+    typedef TypeTuple_f<int,char,float>::T Y;
+    typedef TypeTuple_f<List_t<X>,List_t<Y> >::T Z;
 
     std::cout << HasNontrivialIntersectionAsSets_t<X,Y>::V << '\n';
     std::cout << HasNontrivialIntersectionAsSets_t<Z,Y>::V << '\n';
@@ -34,9 +34,9 @@ int main (int argc, char **argv)
     std::cout << z << '\n';
 
     {
-        typedef TypeTuple_t<int,char,bool,float>::T A;
-        typedef TypeTuple_t<int,char>::T B;
-        typedef TypeTuple_t<bool,float>::T C;
+        typedef TypeTuple_f<int,char,bool,float>::T A;
+        typedef TypeTuple_f<int,char>::T B;
+        typedef TypeTuple_f<bool,float>::T C;
 
         typedef List_t<A> ListA;
         typedef List_t<B> ListB;
