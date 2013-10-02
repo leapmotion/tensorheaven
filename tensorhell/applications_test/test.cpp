@@ -3,11 +3,10 @@
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "tenh/meta/static_assert.hpp"
 #include "test.hpp"
+
 #include "test_homogeneouspolynomials.hpp"
 #include "test_multivariatepolynomials.hpp"
-
 
 // this is included last because it redefines the `assert` macro,
 // which would be bad for the above includes.

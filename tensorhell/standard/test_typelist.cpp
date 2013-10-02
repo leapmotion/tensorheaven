@@ -20,11 +20,11 @@ namespace TypeList {
 
 void test_EmptyTypeList (Context const &context)
 {
-    assert((TypesAreEqual_f<Tenh::EmptyTypeList::BodyTypeList,Tenh::EmptyTypeList>()));
+    assert((Tenh::TypesAreEqual_f<Tenh::EmptyTypeList::BodyTypeList,Tenh::EmptyTypeList>()));
     assert_eq(Tenh::EmptyTypeList::length(), 0);
     assert(!Tenh::EmptyTypeList::Contains_t<int>());
-    assert((TypesAreEqual_f<Tenh::EmptyTypeList::LeadingTypeList_t<0>::T,Tenh::EmptyTypeList>()));
-    assert((TypesAreEqual_f<Tenh::EmptyTypeList::TrailingTypeList_t<0>::T,Tenh::EmptyTypeList>()));
+    assert((Tenh::TypesAreEqual_f<Tenh::EmptyTypeList::LeadingTypeList_t<0>::T,Tenh::EmptyTypeList>()));
+    assert((Tenh::TypesAreEqual_f<Tenh::EmptyTypeList::TrailingTypeList_t<0>::T,Tenh::EmptyTypeList>()));
 }
 
 template <typename TypeList>
@@ -44,13 +44,13 @@ void add_particular_tests_for_typelist (Directory *parent)
 template <typename TypeList, Uint32 INDEX, typename ExpectedLeadingTypeList>
 void test_leading_type_list (Context const &context)
 {
-    assert((TypesAreEqual_f<typename TypeList::template LeadingTypeList_t<INDEX>::T,ExpectedLeadingTypeList>()));
+    assert((Tenh::TypesAreEqual_f<typename TypeList::template LeadingTypeList_t<INDEX>::T,ExpectedLeadingTypeList>()));
 }
 
 template <typename TypeList, Uint32 INDEX, typename ExpectedTrailingTypeList>
 void test_trailing_type_list (Context const &context)
 {
-    assert((TypesAreEqual_f<typename TypeList::template TrailingTypeList_t<INDEX>::T,ExpectedTrailingTypeList>()));
+    assert((Tenh::TypesAreEqual_f<typename TypeList::template TrailingTypeList_t<INDEX>::T,ExpectedTrailingTypeList>()));
 }
 
 template <typename TypeList, Uint32 INDEX, typename ExpectedLeadingTypeList, typename ExpectedTrailingTypeList>

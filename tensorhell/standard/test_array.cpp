@@ -35,7 +35,7 @@ void constructor_fill_with (Context const &context)
 
     Component fill = context.DataAs<Component>();
     Array v(fill);
-    for (typename Array::Index i; i.is_not_at_end(); ++i)
+    for (typename Array::ComponentIndex i; i.is_not_at_end(); ++i)
     {
         assert_eq(v[i], fill);
     }
@@ -47,7 +47,7 @@ void check_filled_values (Context const &context)
     typedef Tenh::MemberArray_t<Component,4> Array;
 
     Array a(0,2,4,6);
-    for (typename Array::Index i; i.is_not_at_end(); ++i)
+    for (typename Array::ComponentIndex i; i.is_not_at_end(); ++i)
     {
         assert_eq(a[i], Component(2*i.value()));
     }

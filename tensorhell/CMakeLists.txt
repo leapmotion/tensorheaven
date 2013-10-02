@@ -100,35 +100,37 @@ set(test_SRCS
     lvd/lvd_testsystem.cpp
     standard/randomize.cpp
     standard/test_array.cpp
-    standard/test_euclideanembedding.cpp
-    standard/test_euclideanembeddinginverse.cpp
-    standard/test_expressiontemplates.cpp
-    standard/test_interop_eigen_euclideanlyembedded.cpp
-    standard/test_interop_eigen_euclideanlyembedded0.cpp
-    standard/test_interop_eigen_euclideanlyembedded1.cpp
-    standard/test_interop_eigen_euclideanlyembedded2.cpp
-    standard/test_interop_eigen_euclideanlyembedded3.cpp
-    standard/test_interop_eigen_euclideanlyembedded4.cpp
-    standard/test_interop_eigen_euclideanlyembedded5.cpp
-    standard/test_interop_eigen_euclideanlyembedded6.cpp
-    standard/test_interop_eigen_euclideanlyembedded7.cpp
-    standard/test_interop_eigen_inversion.cpp
-    standard/test_interop_eigen_inversion0.cpp
-    standard/test_interop_eigen_inversion1.cpp
-    standard/test_interop_eigen_inversion2.cpp
-    standard/test_interop_eigen_inversion3.cpp
-    standard/test_interop_eigen_inversion4.cpp
-    standard/test_interop_eigen_inversion5.cpp
-    standard/test_interop_eigen_inversion6.cpp
-    standard/test_interop_eigen_inversion7.cpp
-    standard/test_interop_eigen_ldlt.cpp
     standard/test_list.cpp
-    standard/test_tensor2.cpp
-    standard/test_tensor2diagonal.cpp
-    standard/test_typelist.cpp
-    standard/test_vector.cpp)
+    standard/test_typelist.cpp)
 add_executable(test standard/test.cpp ${test_SRCS})
 include_directories(${tensorheaven_test_SOURCE_DIR}/.. ${tensorheaven_test_SOURCE_DIR}/lvd ${tensorheaven_test_SOURCE_DIR}/standard)
+
+#     standard/test_euclideanembedding.cpp
+#     standard/test_euclideanembeddinginverse.cpp
+#     standard/test_expressiontemplates.cpp
+#     standard/test_interop_eigen_euclideanlyembedded.cpp
+#     standard/test_interop_eigen_euclideanlyembedded0.cpp
+#     standard/test_interop_eigen_euclideanlyembedded1.cpp
+#     standard/test_interop_eigen_euclideanlyembedded2.cpp
+#     standard/test_interop_eigen_euclideanlyembedded3.cpp
+#     standard/test_interop_eigen_euclideanlyembedded4.cpp
+#     standard/test_interop_eigen_euclideanlyembedded5.cpp
+#     standard/test_interop_eigen_euclideanlyembedded6.cpp
+#     standard/test_interop_eigen_euclideanlyembedded7.cpp
+#     standard/test_interop_eigen_inversion.cpp
+#     standard/test_interop_eigen_inversion0.cpp
+#     standard/test_interop_eigen_inversion1.cpp
+#     standard/test_interop_eigen_inversion2.cpp
+#     standard/test_interop_eigen_inversion3.cpp
+#     standard/test_interop_eigen_inversion4.cpp
+#     standard/test_interop_eigen_inversion5.cpp
+#     standard/test_interop_eigen_inversion6.cpp
+#     standard/test_interop_eigen_inversion7.cpp
+#     standard/test_interop_eigen_ldlt.cpp
+#     standard/test_tensor2.cpp
+#     standard/test_tensor2diagonal.cpp
+#     standard/test_vector.cpp)
+
 
 set(applications_SRCS
     lvd/lvd_callstack.cpp

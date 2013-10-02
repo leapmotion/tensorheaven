@@ -8,6 +8,15 @@
 
 // this file should be included in all test source files
 
-#define FORMAT(x) static_cast<ostringstream &>(ostringstream().flush() << x).str()
+#include "tenh/core.hpp"
+
+using Tenh::Sint8;
+using Tenh::Uint8;
+using Tenh::Sint16;
+using Tenh::Uint16;
+using Tenh::Sint32;
+using Tenh::Uint32;
+using Tenh::Sint64;
+using Tenh::Uint64;
 
 #endif // !defined(TEST_HPP_)
