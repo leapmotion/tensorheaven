@@ -281,7 +281,6 @@ struct Contains_f<EmptyTypeList,Type_>
 
 MAKE_2_ARY_VALUE_EVALUATOR(Contains, bool, typename, Type_);
 
-// if Type_ doesn't occur in TypeList_, this returns TypeList_::LENGTH.
 /// @struct IndexOfFirstOccurrence_f typelist_utility.hpp "tenh/meta/typelist_utility.hpp"
 /// @brief Returns the index of the first occurrence of Type_ in the TypeList_, or
 /// TypeList_::LENGTH if Type_ does not occur in TypeList_.
@@ -290,8 +289,7 @@ MAKE_2_ARY_VALUE_EVALUATOR(Contains, bool, typename, Type_);
 template <typename TypeList_, typename Type_>
 struct IndexOfFirstOccurrence_f
 {
-    /// The index of the first occurrence of Type_ in TypeList_, or TypeList_::LENGTH
-    /// if Type_ doesn't occur in TypeList_.
+    /// The return value of the metafunction.
     static Uint32 const V = TypesAreEqual_f<typename TypeList_::HeadType,Type_>::V ?
                             0 :
                             1 + IndexOfFirstOccurrence_f<typename TypeList_::BodyTypeList,Type_>::V;
@@ -309,14 +307,14 @@ struct IndexOfFirstOccurrence_f<EmptyTypeList,Type_>
 MAKE_2_ARY_VALUE_EVALUATOR(IndexOfFirstOccurrence, Uint32, typename, Type_);
 
 /// @struct TrailingTypeList_f typelist_utility.hpp "tenh/meta/typelist_utility.hpp"
-/// @brief Returns the TypeList_t which is the range [START_INDEX_, TypeList_::LENGTH) (right 
+/// @brief Returns the TypeList_t which is the range [START_INDEX_, TypeList_::LENGTH) (right
 /// endpoint not included) of TypeList_.
 /// @tparam TypeList_ the TypeList_t from which to extract the range.
 /// @tparam START_INDEX_ the starting index of the range to extract.
 template <typename TypeList_, Uint32 START_INDEX_>
 struct TrailingTypeList_f
 {
-    /// The range [START_INDEX_,TypeList_::LENGTH) of TypeList_.
+    /// The return value of the metafunction.
     typedef typename If_f<START_INDEX_ == 0,
                           TypeList_,
                           typename TrailingTypeList_f<typename TypeList_::BodyTypeList,START_INDEX_-1>::T>::T T;
@@ -334,7 +332,7 @@ struct TrailingTypeList_f<EmptyTypeList,START_INDEX_>
 MAKE_2_ARY_TYPE_EVALUATOR(TrailingTypeList, Uint32, START_INDEX_);
 
 /// @struct LeadingTypeList_f typelist_utility.hpp "tenh/meta/typelist_utility.hpp"
-/// @brief Returns the TypeList_t which is the range [0, END_INDEX_) (right 
+/// @brief Returns the TypeList_t which is the range [0, END_INDEX_) (right
 /// endpoint not included) of TypeList_.
 /// @tparam TypeList_ the TypeList_t from which to extract the range.
 /// @tparam END_INDEX_ the ending index of the range to extract (non-inclusive)
@@ -344,7 +342,7 @@ struct LeadingTypeList_f
 private:
     static Uint32 const E = (END_INDEX_ == 0) ? 0 : END_INDEX_-1;
 public:
-    /// The range [0,END_INDEX_) of TypeList_.
+    /// The return value of the metafunction.
     typedef typename If_f<END_INDEX_ == 0,
                           EmptyTypeList,
                           TypeList_t<typename TypeList_::HeadType,
@@ -363,7 +361,7 @@ struct LeadingTypeList_f<EmptyTypeList,END_INDEX_>
 MAKE_2_ARY_TYPE_EVALUATOR(LeadingTypeList, Uint32, END_INDEX_);
 
 /// @struct TypeListRange_f typelist_utility.hpp "tenh/meta/typelist_utility.hpp"
-/// @brief Returns the TypeList_t which is the range [START_INDEX_, END_INDEX_) (right 
+/// @brief Returns the TypeList_t which is the range [START_INDEX_, END_INDEX_) (right
 /// endpoint not included) of TypeList_.
 /// @tparam TypeList_ the TypeList_t from which to extract the range.
 /// @tparam START_INDEX_ the starting index of the range to extract.
@@ -375,7 +373,7 @@ private:
     enum { STATIC_ASSERT_IN_ENUM(START_INDEX_ <= END_INDEX_, INVALID_RANGE_INDICES) };
     static Uint32 const RANGE_LENGTH = END_INDEX_ - START_INDEX_;
 public:
-    /// The range [START_INDEX_,END_INDEX_) of TypeList_.
+    /// The return value of the metafunction.
     typedef typename LeadingTypeList_f<typename TrailingTypeList_f<TypeList_,START_INDEX_>::T,RANGE_LENGTH>::T T;
 };
 
@@ -394,9 +392,8 @@ struct TailOfTypeList_t
 {
 private:
     enum { STATIC_ASSERT_IN_ENUM((TypeList_::LENGTH > 0), LENGTH_MUST_BE_POSITIVE) };
-
 public:
-    /// The tail type of TypeList_
+    /// The return value of the metafunction.
     typedef typename TailOfTypeList_t<typename TypeList_::BodyTypeList>::T T;
 };
 
@@ -417,8 +414,8 @@ struct AllButTailOfTypeList_t
 {
 private:
     enum { STATIC_ASSERT_IN_ENUM((TypeList_::LENGTH > 0), LENGTH_MUST_BE_POSITIVE) };
-
 public:
+    /// The return value of the metafunction.
     typedef TypeList_t<typename TypeList_::HeadType,typename AllButTailOfTypeList_t<typename TypeList_::BodyTypeList>::T> T;
 };
 
@@ -437,7 +434,7 @@ struct AllButTailOfTypeList_t<TypeList_t<HeadType_> >
 template <typename TypeList_>
 struct ReversedTypeList_t
 {
-    /// The reversed TypeList_t.
+    /// The return value of the metafunction.
     typedef TypeList_t<typename TailOfTypeList_t<TypeList_>::T,typename ReversedTypeList_t<typename AllButTailOfTypeList_t<TypeList_>::T>::T> T;
 };
 
@@ -463,7 +460,7 @@ private:
     typedef TypeList_t<HeadType,UsedTypeList_> NextUsedTypeList;
     typedef typename UniqueTypesIn_t<BodyTypeList,NextUsedTypeList>::T RemainingUniqueTypeList;
 public:
-    /// A typelist containing the unique types in TypeList_.
+    /// The return value of the metafunction.
     typedef typename If_f<(Contains_f<UsedTypeList_,HeadType>::V),
                           RemainingUniqueTypeList,
                           TypeList_t<HeadType,RemainingUniqueTypeList> >::T T;
@@ -485,7 +482,7 @@ struct UniqueTypesIn_t<EmptyTypeList,UsedTypeList>
 template <typename TypeList_, typename Type_>
 struct Occurrence_t
 {
-    /// How many occurrences of Type_ are there in TypeList_.
+    /// The return value of the metafunction.
     static Uint32 const COUNT =
         (TypesAreEqual_f<typename TypeList_::HeadType,Type_>::V ? 1 : 0)
         + Occurrence_t<typename TypeList_::BodyTypeList,Type_>::COUNT;
@@ -496,37 +493,6 @@ template <typename Type_>
 struct Occurrence_t<EmptyTypeList,Type_>
 {
     static Uint32 const COUNT = 0;
-};
-/// @endcond
-
-
-/// @struct FirstMatchingIn_t typelist_utility.hpp "tenh/meta/typelist_utility.hpp"
-/// @brief Finds offset of the first occurrence of Type_ in TypeList_. Will static assert if there is no such occurrence.
-/// @details INDEX is the smallest Uint32 such that Element_f<TypeList_,INDEX>::T is Type_.
-/// @tparam TypeList_ the typelist to search.
-/// @tparam Type_ the type to search for.
-template <typename TypeList_, typename Type_>
-struct FirstMatchingIn_t
-{
-private:
-    enum { STATIC_ASSERT_IN_ENUM((Occurrence_t<TypeList_,Type_>::COUNT > 0), TYPE_MUST_APPEAR_IN_TYPELIST) };
-public:
-    static Uint32 const INDEX = If_f<TypesAreEqual_f<typename TypeList_::HeadType,Type_>::V,
-                                     FirstMatchingIn_t<TypeList_t<typename TypeList_::HeadType>,typename TypeList_::HeadType>,
-                                     FirstMatchingIn_t<typename TypeList_::BodyTypeList,Type_> >::T::INDEX
-                                +
-                                (TypesAreEqual_f<typename TypeList_::HeadType,Type_>::V ? 0 : 1);
-                                // this offset is what gets past HeadType if there is no match here
-};
-
-/// @cond false
-template <typename HeadType_, typename Type_>
-struct FirstMatchingIn_t<TypeList_t<HeadType_>,Type_>
-{
-private:
-    enum { STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<HeadType_,Type_>::V), TYPE_MUST_APPEAR_IN_TYPELIST) };
-public:
-    static Uint32 const INDEX = 0;
 };
 /// @endcond
 

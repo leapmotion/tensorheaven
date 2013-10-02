@@ -79,7 +79,7 @@ struct EvalMap_t
 {
 private:
     enum { _ = Assert<IsMap_t<Map>::V>::V && Assert<(Map::DomainElementTypeList::LENGTH > 0)>::V };
-    static Uint32 const INDEX_OF_INPUT_DOMAIN_ELEMENT = FirstMatchingIn_t<typename Map::DomainElementTypeList,InputDomainElement>::INDEX;
+    static Uint32 const INDEX_OF_INPUT_DOMAIN_ELEMENT = IndexOfFirstOccurrence_f<typename Map::DomainElementTypeList,InputDomainElement>::V;
 public:
     typedef typename Element_f<typename Map::CodomainElementTypeList,INDEX_OF_INPUT_DOMAIN_ELEMENT>::T T;
 };
