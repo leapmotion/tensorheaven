@@ -19,16 +19,16 @@
 namespace Tenh {
 
 // IndexTypeList should be a TypeList_t containing ComponentIndex_t types
-// TODO: rename MultiIndex_t to ComponentMultiIndex_t
 template <typename IndexTypeList_>
 struct MultiIndex_t : List_t<IndexTypeList_>
 {
-    // TODO: assert that each type in the list is an Index_t
+private:
     enum
     {
         STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<IndexTypeList_,IsComponentIndex_p>::V), EACH_TYPE_MUST_BE_INDEX)
     };
 
+public:
     typedef List_t<IndexTypeList_> Parent;
     using Parent::LENGTH;
     typedef IndexTypeList_ IndexTypeList;
@@ -79,11 +79,15 @@ struct MultiIndex_t : List_t<IndexTypeList_>
         Parent(leading_multi_index)
     { }
 
+private:
+    static Uint32 const BODY_COMPONENT_COUNT_OR_ONE = If_f<BodyMultiIndex::COMPONENT_COUNT==0,Value_t<Uint32,1>,Value_t<Uint32,BodyMultiIndex::COMPONENT_COUNT> >::T::V;
+
+public:
     // for converting a vector index into a multi-index via row-major ordering (most significant is head).
     MultiIndex_t (ComponentIndex_t<COMPONENT_COUNT> const &i)
         :
-        Parent(HeadIndexType(i.value() / BodyMultiIndex::COMPONENT_COUNT),
-               BodyMultiIndex(ComponentIndex_t<BodyMultiIndex::COMPONENT_COUNT>(i.value() % BodyMultiIndex::COMPONENT_COUNT)))
+        Parent(HeadIndexType(i.value() / BODY_COMPONENT_COUNT_OR_ONE),
+               BodyMultiIndex(ComponentIndex_t<BodyMultiIndex::COMPONENT_COUNT>(i.value() % BODY_COMPONENT_COUNT_OR_ONE)))
     { }
 
     bool operator == (MultiIndex_t const &m) const { return this->head() == m.head() && body() == m.body(); }
