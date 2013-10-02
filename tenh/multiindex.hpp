@@ -164,7 +164,7 @@ public:
     template <Uint32 START_INDEX, Uint32 END_INDEX>
     struct RangeType_t
     {
-        typedef MultiIndex_t<typename IndexTypeList::template Range_t<START_INDEX,END_INDEX>::T> T;
+        typedef MultiIndex_t<typename TypeListRange_f<IndexTypeList,START_INDEX,END_INDEX>::T> T;
     };
 
     // returns the MultiIndex_t which is the given range of elements
@@ -334,7 +334,7 @@ struct MultiIndex_t<TypeList_t<HeadIndexType_> > : public List_t<TypeList_t<Head
     template <Uint32 START_INDEX, Uint32 END_INDEX>
     struct RangeType_t
     {
-        typedef MultiIndex_t<typename IndexTypeList::template Range_t<START_INDEX,END_INDEX>::T> T;
+        typedef MultiIndex_t<typename TypeListRange_f<IndexTypeList,START_INDEX,END_INDEX>::T> T;
     };
 
     // returns the MultiIndex_t which is the given range of elements

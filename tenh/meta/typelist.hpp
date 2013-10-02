@@ -28,13 +28,6 @@ struct EmptyTypeList
 
     static Uint32 length () { return LENGTH; } // this is necessary to avoid a linker error complaining about undefined LENGTH member
 
-    // returns the TypeList_t which is the range [START_INDEX, END_INDEX) (right endpoint not included)
-    template <Uint32 START_INDEX, Uint32 END_INDEX>
-    struct Range_t
-    {
-        typedef EmptyTypeList T;
-    };
-
     template <Uint32 INDEX>
     struct LeadingTypeList_t
     {
@@ -95,18 +88,6 @@ struct TypeList_t
         static Uint32 const I = (INDEX_ == 0) ? 0 : INDEX_-1;
     public:
         typedef typename If_f<(INDEX_ == 0), TypeList_t, typename BodyTypeList::template TrailingTypeList_t<I>::T >::T T;
-    };
-
-    /// @brief Returns the TypeList_t which is the range [START_INDEX_, END_INDEX_) (right endpoint not included).
-    /// @headerfile typelist.hpp "tenh/meta/typelist.hpp"
-    template <Uint32 START_INDEX_, Uint32 END_INDEX_>
-    struct Range_t
-    {
-    private:
-        enum { STATIC_ASSERT_IN_ENUM((START_INDEX_ <= END_INDEX_), START_INDEX_MUST_NOT_EXCEED_END_INDEX) };
-        typedef typename TypeList_t::template TrailingTypeList_t<START_INDEX_>::T LeadingRange;
-    public:
-        typedef typename LeadingRange::template LeadingTypeList_t<END_INDEX_-START_INDEX_>::T T;
     };
 
     /// @brief Returns the first index at which a type occurs.

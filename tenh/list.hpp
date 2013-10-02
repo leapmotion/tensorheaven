@@ -91,7 +91,7 @@ struct List_t
     template <Uint32 START_INDEX, Uint32 END_INDEX>
     struct RangeType_t
     {
-        typedef List_t<typename TypeList::template Range_t<START_INDEX,END_INDEX>::T> T;
+        typedef List_t<typename TypeListRange_f<TypeList,START_INDEX,END_INDEX>::T> T;
     };
 
     // returns the List_t which is the given range of elements
@@ -227,7 +227,7 @@ struct List_t<EmptyTypeList>
     template <Uint32 START_INDEX, Uint32 END_INDEX>
     struct RangeType_t
     {
-        typedef List_t<typename TypeList::template Range_t<START_INDEX,END_INDEX>::T> T;
+        typedef List_t<typename TypeListRange_f<TypeList,START_INDEX,END_INDEX>::T> T;
     };
 
     // returns the List_t which is the given range of elements
@@ -369,7 +369,7 @@ struct List_t<TypeList_t<HeadType_> >
     template <Uint32 START_INDEX, Uint32 END_INDEX>
     struct RangeType_t
     {
-        typedef List_t<typename TypeList::template Range_t<START_INDEX,END_INDEX>::T> T;
+        typedef List_t<typename TypeListRange_f<TypeList,START_INDEX,END_INDEX>::T> T;
     };
 
     // returns the List_t which is the given range of elements

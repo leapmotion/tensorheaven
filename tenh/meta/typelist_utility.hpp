@@ -259,10 +259,10 @@ struct Element_f<EmptyTypeList,INDEX_>
     // seems to be necessary
     typedef NullType T;
 };
+/// @endcond
 
 // TODO: figure out how to Doxygen-comment this, if at all.
 MAKE_2_ARY_TYPE_EVALUATOR(Element, Uint32, INDEX_);
-/// @endcond
 
 // TODO: could be implemented as Or_f<OnEach_f<TypeList_,TypesAreEqual_e>::T>::V
 template <typename TypeList_, typename Type_>
@@ -337,6 +337,12 @@ struct LeadingTypeList_f<EmptyTypeList,END_INDEX_>
 
 MAKE_2_ARY_TYPE_EVALUATOR(LeadingTypeList, Uint32, END_INDEX_);
 
+/// @struct TypeListRange_f typelist_utility.hpp "tenh/meta/typelist_utility.hpp"
+/// @brief Returns the TypeList_t which is the range [START_INDEX_, END_INDEX_) (right 
+/// endpoint not included) of TypeList_.
+/// @tparam TypeList_ the TypeList_t from which to extract the range.
+/// @tparam START_INDEX_ the starting index of the range to extract.
+/// @tparam END_INDEX_ the ending index of the range to extract (non-inclusive)
 template <typename TypeList_, Uint32 START_INDEX_, Uint32 END_INDEX_>
 struct TypeListRange_f
 {
