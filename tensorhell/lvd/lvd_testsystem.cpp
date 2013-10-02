@@ -8,9 +8,11 @@
 #include <cstring>
 #include <exception>
 #include <sstream>
+#if !defined(_WIN32)
 #include <sys/wait.h>
 
 #include "lvd_callstack.hpp"
+#endif
 #include "lvd_commandlineparser.hpp"
 #include "lvd_spawner.hpp"
 
@@ -205,10 +207,16 @@ string const &StageString (Stage stage)
         return s_invalid;
 }
 
+#if !defined(_WIN32)
 enum { LOWEST_CAUGHT_SIGNAL = SIGHUP, HIGHEST_CAUGHT_SIGNAL = SIGTERM };
+#endif
 
 string const &SignalString (int signum)
 {
+#if defined(_WIN32)
+	static string const s_retval("unspecified-signal (message not implemented in WIN32)");
+	return s_retval;
+#else
     static string const s_signal_string[HIGHEST_CAUGHT_SIGNAL+1] =
     {
         "UNKNOWN", // no signal for index 0
@@ -232,6 +240,7 @@ string const &SignalString (int signum)
         return s_signal_string[signum];
     else
         return s_signal_string[0];
+#endif
 }
 
 void EmitStatusMessage (Result result, Stage stage, int signum, string const &message)
@@ -261,6 +270,7 @@ void EmitStatusMessage (Result result, Stage stage, int signum, string const &me
     cerr.flush();
 }
 
+#if !defined(_WIN32)
 void SignalHandler (int signum)
 {
     PRINT_DEBUG_MESSAGE("*** RUNNER DEBUG MESSAGE *** : caught signal " << SignalString(signum) << '\n');
@@ -284,7 +294,7 @@ void SignalHandler (int signum)
     // SA_RESETHAND flag was specified when we called sigaction originally.
     raise(signum);
 }
-
+#endif
 } // end of unnamed namespace
 
 int Spawner (int argc, char **argv, char **envp, std::string const &child_indicator_token)
@@ -331,6 +341,7 @@ int Runner (int argc, char **argv, char **envp)
     assert(!g_executable_filename.empty() && "you must call SetExecutableFilename() during setup");
     assert(g_root_directory != NULL);
 
+#if !defined(_WIN32)
     // set up the signal handler for various signals
     struct sigaction sa;
     sa.sa_handler = SignalHandler;
@@ -344,6 +355,7 @@ int Runner (int argc, char **argv, char **envp)
     sigaction(SIGFPE,  &sa, NULL); // floating point exception (e.g. divide by zero)
     sigaction(SIGSEGV, &sa, NULL); // segmentation fault (naughty programmer!)
     sigaction(SIGTERM, &sa, NULL); // someone kindly asks this process to terminate.
+#endif
 
     // parse the options
     Options options(*g_root_directory, argv[0], "TODO: program description");
@@ -370,15 +382,23 @@ int RunScheduled (int argc, char **argv, char **envp, Directory &root_directory)
 {
     SetExecutableFilename(argv[0]);
     g_root_directory = &root_directory;
+
+#if defined(_WIN32)
+    // TEMP HACK: just call ChildMain
+    return Runner(argc, argv, envp);
+#else // !defined(_WIN32)
     return SpawnerMain(argc, argv, envp, Spawner, Runner);
+#endif
 }
 
 int FailAssert (std::string const &description)
 {
     ostringstream out;
     out << "assertion `" << description << "` failed" << endl;
+#if !defined(_WIN32)
     // skip the top 2 (framework) stack frames, as they are unnecessary.
     PrintCallstack(out, g_executable_filename.c_str(), CHOMP_DOT_DOT, 2);
+#endif
     g_premade_caught_signal_message = out.str();
     // raise the SIGABRT signal
     abort();
@@ -537,6 +557,10 @@ void Directory::AddTestCaseMethod (
 
 unsigned int Directory::SpawnScheduled (char *argv0, char **envp, string const &child_indicator_token)
 {
+#if defined(_WIN32)
+	assert(false && "not implemented in WIN32");
+	return 0;
+#else // !defined(_WIN32)
     unsigned int failure_count = 0;
 
     // spawn each scheduled test, one by one, waiting for each result
@@ -667,6 +691,7 @@ unsigned int Directory::SpawnScheduled (char *argv0, char **envp, string const &
     }
 
     return failure_count;
+#endif
 }
 
 unsigned int Directory::RunScheduled ()
@@ -692,6 +717,8 @@ unsigned int Directory::RunScheduled ()
 
         // set up a Context object for each test case
         Context context(test_case_name, this, test_case.m_data);
+
+        PRINT_DEBUG_MESSAGE("*** RUNNER DEBUG MESSAGE *** : RUNNING TEST CASE \"" << Path() << test_case_name << '"');
 
         // if the test case is a method, then we have to run Initialize and
         // Shutdown before and after the test body, respectively.

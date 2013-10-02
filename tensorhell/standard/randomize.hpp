@@ -31,8 +31,17 @@ void randomize (long double & d, long double mean = 0, long double sigma = 10);
 template <typename T>
 void randomize (std::complex<T> & z, std::complex<T> mean = 0, std::complex<T> sigma = 10)
 {
+#if defined(_WIN32)
+	// windows' std::complex real and imag methods return by value, not reference like they should.
+	T temp;
+    randomize(temp, mean.real(), abs(sigma));
+	z.real(temp);
+    randomize(temp, mean.imag(), abs(sigma));
+	z.imag(temp);
+#else
     randomize(z.real(), mean.real(), abs(sigma));
     randomize(z.imag(), mean.imag(), abs(sigma));
+#endif
 }
 
 }

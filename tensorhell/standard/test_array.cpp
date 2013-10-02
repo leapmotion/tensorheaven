@@ -45,7 +45,7 @@ template <typename Component>
 void check_filled_values (Context const &context)
 {
     typedef Tenh::MemberArray_t<Component,4> Array;
-
+	assert(false && "blah");
     Array a(0,2,4,6);
     for (typename Array::ComponentIndex i; i.is_not_at_end(); ++i)
     {

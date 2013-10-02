@@ -3,6 +3,8 @@
 // Copyright Victor Dods, licensed for use by Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
+#if !defined(_WIN32)
+
 #include <cassert>
 #include <cerrno>
 #include <csignal>
@@ -174,3 +176,5 @@ void PrintCallstack (
 }
 
 } // end of namespace Lvd
+
+#endif

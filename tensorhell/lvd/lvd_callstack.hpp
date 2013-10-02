@@ -6,6 +6,8 @@
 #if !defined(LVD_CALLSTACK_HPP_)
 #define LVD_CALLSTACK_HPP_
 
+#if !defined(_WIN32)
+
 #include <ostream>
 
 namespace Lvd {
@@ -19,5 +21,7 @@ void PrintCallstack (
     unsigned int frame_skip_count = 0);
 
 } // end of namespace Lvd
+
+#endif
 
 #endif // !defined(LVD_CALLSTACK_HPP_)

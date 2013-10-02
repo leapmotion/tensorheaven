@@ -143,6 +143,7 @@ struct Directory
     unsigned int SubordinateTestCaseCount (bool count_only_scheduled = false) const;
     bool TestPathIsValid (std::string const &test_path) const;
     void Print (std::ostream &out) const { Print(out, "/"); }
+	std::string const &Path () const { return m_path; }
 
     // don't call these methods directly -- use the LVD_ADD_TEST_CASE_FUNCTION
     // or the LVD_ADD_NAMED_TEST_CASE_FUNCTION macros instead.

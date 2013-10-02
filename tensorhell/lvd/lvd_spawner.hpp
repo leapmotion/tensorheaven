@@ -6,6 +6,8 @@
 #if !defined(LVD_SPAWNER_HPP_)
 #define LVD_SPAWNER_HPP_
 
+#if !defined(_WIN32)
+
 #include <string>
 
 namespace Lvd {
@@ -33,5 +35,7 @@ Pid SpawnChild (int argc,
                 std::string const &child_indicator_token);
 
 } // end of namespace Lvd
+
+#endif
 
 #endif // !defined(LVD_SPAWNER_HPP_)

@@ -7,11 +7,15 @@
 #include <cstring>
 #include <iostream>
 #include <stdexcept>
+#if !defined(_WIN32)
 #include <sys/types.h>
 #include <unistd.h>
+#endif
 #include <cerrno>
 
 #include "lvd_spawner.hpp"
+
+#if !defined(_WIN32)
 
 using namespace std;
 
@@ -136,3 +140,5 @@ Pid SpawnChild (int argc,
 }
 
 } // end of namespace Lvd
+
+#endif

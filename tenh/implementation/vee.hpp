@@ -8,6 +8,8 @@
 
 #include "tenh/core.hpp"
 
+#include <functional>
+
 #include "tenh/mathutil.hpp"
 #include "tenh/conceptual/symmetricpower.hpp"
 #include "tenh/implementation/implementationof.hpp"
