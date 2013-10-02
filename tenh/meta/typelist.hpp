@@ -28,13 +28,6 @@ struct EmptyTypeList
 
     static Uint32 length () { return LENGTH; } // this is necessary to avoid a linker error complaining about undefined LENGTH member
 
-    template <typename Type_>
-    struct Contains_t
-    {
-        static bool const V = false;
-        operator bool () const { return V; }
-    };
-
     template <Uint32 INDEX>
     struct El_t
     {
@@ -87,15 +80,6 @@ struct TypeList_t
     static Uint32 const LENGTH = 1+BodyTypeList::LENGTH;
 
     static Uint32 length () { return LENGTH; }
-
-    /// @brief Determine if this TypeList_t contains a given type.
-    /// @headerfile typelist.hpp "tenh/meta/typelist.hpp"
-    template <typename Type_>
-    struct Contains_t
-    {
-        static bool const V = TypesAreEqual_f<HeadType_,Type_>::V || BodyTypeList::template Contains_t<Type_>::V;
-        operator bool () const { return V; }
-    };
 
     /// @brief Find the type at a given index into this TypeList_t.
     /// @headerfile typelist.hpp "tenh/meta/typelist.hpp"

@@ -109,7 +109,7 @@ struct MapConstructor_t<EmptyTypeList,EmptyTypeList,RestOfMap>
 template <typename Map, typename CandidateDomainElement>
 struct MapDomainContains_t
 {
-    static bool const V = Map::DomainElementTypeList::template Contains_t<CandidateDomainElement>::V;
+    static bool const V = Contains_f<typename Map::DomainElementTypeList,CandidateDomainElement>::V;
 };
 
 

@@ -50,7 +50,7 @@ struct IndexIsFree_t
         };
         typedef typename T::HeadType Factor;
         typedef typename T::BodyTypeList::HeadType Index;
-        static bool const V = FreeIndexTypeList::template Contains_t<Index>::V;
+        static bool const V = Contains_f<FreeIndexTypeList,Index>::V;
     };
 };
 
@@ -377,7 +377,7 @@ struct IndexBundle_t
     {
         STATIC_ASSERT_IN_ENUM(IsAbstractIndex_f<ResultingAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX),
         STATIC_ASSERT_IN_ENUM((IsASubsetOf_t<BundleAbstractIndexTypeList,OperandFreeAbstractIndexTypeList>::V), BUNDLE_INDICES_MUST_BE_FREE),
-        STATIC_ASSERT_IN_ENUM((!BundleAbstractIndexTypeList::template Contains_t<ResultingAbstractIndexType>::V), BUNDLE_AND_RESULTING_MUST_BE_DISTINCT),
+        STATIC_ASSERT_IN_ENUM((!Contains_f<BundleAbstractIndexTypeList,ResultingAbstractIndexType>::V), BUNDLE_AND_RESULTING_MUST_BE_DISTINCT),
         STATIC_ASSERT_IN_ENUM(Operand::IS_EXPRESSION_TEMPLATE_I, OPERAND_IS_EXPRESSION_TEMPLATE)
         // TODO: check that the factor types specified by BundleAbstractIndexTypeList can actually be
         // bundled into ResultingFactorType
@@ -469,7 +469,7 @@ struct IndexSplitter_t
     enum
     {
         STATIC_ASSERT_IN_ENUM(IsAbstractIndex_f<SourceAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX),
-        STATIC_ASSERT_IN_ENUM((OperandFreeAbstractIndexTypeList::template Contains_t<SourceAbstractIndexType>::V), SOURCE_INDEX_MUST_BE_FREE),
+        STATIC_ASSERT_IN_ENUM((Contains_f<OperandFreeAbstractIndexTypeList,SourceAbstractIndexType>::V), SOURCE_INDEX_MUST_BE_FREE),
         STATIC_ASSERT_IN_ENUM((!HasNontrivialIntersectionAsSets_t<TypeList_t<SourceAbstractIndexType>,SplitAbstractIndexTypeList>::V), SOURCE_AND_SPLIT_MUST_BE_DISTINCT),
         STATIC_ASSERT_IN_ENUM(Operand::IS_EXPRESSION_TEMPLATE_I, OPERAND_IS_EXPRESSION_TEMPLATE)
     };
@@ -553,7 +553,7 @@ struct IndexSplitToIndex_t
     {
         STATIC_ASSERT_IN_ENUM__UNIQUE(IsAbstractIndex_f<SourceAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX, SOURCE),
         STATIC_ASSERT_IN_ENUM__UNIQUE(IsAbstractIndex_f<SplitAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX, SPLIT),
-        STATIC_ASSERT_IN_ENUM((OperandFreeAbstractIndexTypeList::template Contains_t<SourceAbstractIndexType>::V), SOURCE_INDEX_MUST_BE_FREE),
+        STATIC_ASSERT_IN_ENUM((Contains_f<OperandFreeAbstractIndexTypeList,SourceAbstractIndexType>::V), SOURCE_INDEX_MUST_BE_FREE),
         STATIC_ASSERT_IN_ENUM((!TypesAreEqual_f<SourceAbstractIndexType,SplitAbstractIndexType>::V), SOURCE_AND_SPLIT_MUST_BE_DISTINCT),
         STATIC_ASSERT_IN_ENUM(Operand::IS_EXPRESSION_TEMPLATE_I, OPERAND_IS_EXPRESSION_TEMPLATE)
     };

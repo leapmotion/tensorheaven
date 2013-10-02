@@ -6,6 +6,7 @@
 #include "test_typelist.hpp"
 
 #include "tenh/meta/typelist.hpp"
+#include "tenh/meta/typelist_utility.hpp"
 
 // this is included last because it redefines the `assert` macro,
 // which would be bad for the above includes.
@@ -22,7 +23,7 @@ void test_EmptyTypeList (Context const &context)
 {
     assert((Tenh::TypesAreEqual_f<Tenh::EmptyTypeList::BodyTypeList,Tenh::EmptyTypeList>()));
     assert_eq(Tenh::EmptyTypeList::length(), 0);
-    assert(!Tenh::EmptyTypeList::Contains_t<int>());
+    assert((!Tenh::Contains_f<Tenh::EmptyTypeList,int>::V));
     assert((Tenh::TypesAreEqual_f<Tenh::EmptyTypeList::LeadingTypeList_t<0>::T,Tenh::EmptyTypeList>()));
     assert((Tenh::TypesAreEqual_f<Tenh::EmptyTypeList::TrailingTypeList_t<0>::T,Tenh::EmptyTypeList>()));
 }
