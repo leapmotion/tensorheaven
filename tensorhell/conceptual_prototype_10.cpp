@@ -17,7 +17,8 @@ void test_poly_in_3_dim ()
     w[PolyType::SymDual::ComponentIndex(4, CHECK_RANGE)] = 6; // yz
     w[PolyType::SymDual::ComponentIndex(5, CHECK_RANGE)] = 3; // z^2
     std::cout << FORMAT_VALUE(w) << '\n';
-    PolyType roly(w,MultivariatePolynomial<1,3,X>(x,3)), poly(Static<WithoutInitialization>::SINGLETON);
+    PolyType roly(w,MultivariatePolynomial<1,3,X>(x,3));
+    PolyType poly(0);
     poly = poly + MultivariatePolynomial<1,3,X>(x,3);
     PolyType::Vector v(tuple(1.0f,2.0f,3.0f));
     std::cout << FORMAT_VALUE(roly) << '\n';

@@ -11,7 +11,8 @@ void test_poly_in_0_dim ()
     PolyType::SymDual w(0.0f);
     MultivariatePolynomial<1,0,X>::SymDual x(1);
     std::cout << FORMAT_VALUE(w) << '\n';
-    PolyType roly(w,MultivariatePolynomial<1,0,X>(x,3)), poly(Static<WithoutInitialization>::SINGLETON);
+    PolyType roly(w,MultivariatePolynomial<1,0,X>(x,3));
+    PolyType poly(0);
     poly = poly + MultivariatePolynomial<1,0,X>(x,3);
     PolyType::Vector v(0.0f);
     std::cout << FORMAT_VALUE(roly) << '\n';
@@ -36,7 +37,8 @@ void test_poly_in_1_dim ()
     MultivariatePolynomial<1,1,X>::SymDual x(1);
     w[PolyType::SymDual::ComponentIndex(0, CHECK_RANGE)] = 1; // x^2
     std::cout << FORMAT_VALUE(w) << '\n';
-    PolyType roly(w,MultivariatePolynomial<1,1,X>(x,3)), poly(Static<WithoutInitialization>::SINGLETON);
+    PolyType roly(w,MultivariatePolynomial<1,1,X>(x,3));
+    PolyType poly(0);
     poly = poly + MultivariatePolynomial<1,1,X>(x,3);
     PolyType::Vector v(1.0f);
     std::cout << FORMAT_VALUE(roly) << '\n';

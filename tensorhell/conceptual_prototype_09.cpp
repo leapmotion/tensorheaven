@@ -14,7 +14,8 @@ void test_poly_in_2_dim ()
     w[PolyType::SymDual::ComponentIndex(1, CHECK_RANGE)] = 1; // xy
     w[PolyType::SymDual::ComponentIndex(2, CHECK_RANGE)] = 0; // y^2
     std::cout << FORMAT_VALUE(w) << '\n';
-    PolyType roly(w,MultivariatePolynomial<1,2,X>(x,1)), poly(Static<WithoutInitialization>::SINGLETON);
+    PolyType roly(w,MultivariatePolynomial<1,2,X>(x,1));
+    PolyType poly(0);
     poly = poly + MultivariatePolynomial<1,2,X>(x,1);
     PolyType::Vector v(tuple(1.0f,2.0f));
     std::cout << FORMAT_VALUE(roly) << '\n';
