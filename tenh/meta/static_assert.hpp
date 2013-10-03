@@ -48,7 +48,7 @@ struct StaticAssert<true>
     enum
     {
         /// @cond false
-        ABSTRACTINDEX_SYMBOL_MUST_NOT_BE_NULL,
+        ABSTRACT_INDEX_SYMBOL_MUST_BE_POSITIVE,
         ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL,
         ALL_FACTORS_MUST_BE_BASED_VECTOR_SPACES,
         ALL_FACTORS_MUST_BE_BASES,

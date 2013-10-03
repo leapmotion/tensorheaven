@@ -5,6 +5,7 @@
 
 #include "test.hpp"
 
+#include "test_abstractindex.hpp"
 #include "test_array.hpp"
 // #include "test_euclideanembedding.hpp"
 // #include "test_euclideanembeddinginverse.hpp"
@@ -31,6 +32,7 @@ int main (int argc, char **argv, char **envp)
 {
     Directory root;
 
+    Test::AbstractIndex::AddTests(&root);
     Test::Array::AddTests(&root);
 //     Test::EigenLDLT::AddTests(&root);
 //     Test::EuclideanEmbedding::AddTests(&root);

@@ -101,34 +101,34 @@ struct Vector_i
     // AbstractIndex_c<'i'> i;
     // AbstractIndex_c<'j'> j;
     // u(i)*v(j)
-    template <char SYMBOL>
+    template <AbstractIndexSymbol SYMBOL_>
     ExpressionTemplate_IndexedObject_t<Vector_i,
                                        TypeList_t<BasedVectorSpace>,
-                                       TypeList_t<DimIndex_t<SYMBOL,DIM> >,
+                                       TypeList_t<DimIndex_t<SYMBOL_,DIM> >,
                                        EmptyTypeList,
                                        FORCE_CONST,
-                                       CHECK_FOR_ALIASING> operator () (AbstractIndex_c<SYMBOL> const &) const
+                                       CHECK_FOR_ALIASING> operator () (AbstractIndex_c<SYMBOL_> const &) const
     {
-        STATIC_ASSERT((SYMBOL != '\0'), ABSTRACTINDEX_SYMBOL_MUST_NOT_BE_NULL);
+        STATIC_ASSERT((SYMBOL_ != '\0'), ABSTRACT_INDEX_SYMBOL_MUST_BE_POSITIVE);
         return ExpressionTemplate_IndexedObject_t<Vector_i,
                                                   TypeList_t<BasedVectorSpace>,
-                                                  TypeList_t<DimIndex_t<SYMBOL,DIM> >,
+                                                  TypeList_t<DimIndex_t<SYMBOL_,DIM> >,
                                                   EmptyTypeList,
                                                   FORCE_CONST,
                                                   CHECK_FOR_ALIASING>(as_derived());
     }
-    template <char SYMBOL>
+    template <AbstractIndexSymbol SYMBOL_>
     ExpressionTemplate_IndexedObject_t<Vector_i,
                                        TypeList_t<BasedVectorSpace>,
-                                       TypeList_t<DimIndex_t<SYMBOL,DIM> >,
+                                       TypeList_t<DimIndex_t<SYMBOL_,DIM> >,
                                        EmptyTypeList,
                                        DONT_FORCE_CONST,
-                                       CHECK_FOR_ALIASING> operator () (AbstractIndex_c<SYMBOL> const &)
+                                       CHECK_FOR_ALIASING> operator () (AbstractIndex_c<SYMBOL_> const &)
     {
-        STATIC_ASSERT((SYMBOL != '\0'), ABSTRACTINDEX_SYMBOL_MUST_NOT_BE_NULL);
+        STATIC_ASSERT((SYMBOL_ != '\0'), ABSTRACT_INDEX_SYMBOL_MUST_BE_POSITIVE);
         return ExpressionTemplate_IndexedObject_t<Vector_i,
                                                   TypeList_t<BasedVectorSpace>,
-                                                  TypeList_t<DimIndex_t<SYMBOL,DIM> >,
+                                                  TypeList_t<DimIndex_t<SYMBOL_,DIM> >,
                                                   EmptyTypeList,
                                                   DONT_FORCE_CONST,
                                                   CHECK_FOR_ALIASING>(as_derived());

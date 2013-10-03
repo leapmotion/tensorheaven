@@ -99,6 +99,7 @@ set(test_SRCS
     lvd/lvd_spawner.cpp
     lvd/lvd_testsystem.cpp
     standard/randomize.cpp
+    standard/test_abstractindex.cpp
     standard/test_array.cpp
     standard/test_list.cpp
     standard/test_tuple.cpp

@@ -20,7 +20,7 @@ namespace Tenh {
 /// @tparam SYMBOL_ the symbol for the associated AbstractIndex_c index.
 /// @tparam DIM_ the dimension for the associated ComponentIndex_t.
 /// @headerfile dimindex.hpp "tenh/dimindex.hpp"
-template <char SYMBOL_, Uint32 DIM_>
+template <AbstractIndexSymbol SYMBOL_, Uint32 DIM_>
 struct DimIndex_t
     :
     public ComponentIndex_t<DIM_>,
@@ -48,10 +48,10 @@ struct DimIndex_t
 /// @headerfile dimindex.hpp "tenh/dimindex.hpp"
 template <typename T> struct IsDimIndex_f { static bool const V = false; };
 /// @cond false
-template <char SYMBOL, Uint32 DIM> struct IsDimIndex_f<DimIndex_t<SYMBOL,DIM> > { static bool const V = true; };
+template <AbstractIndexSymbol SYMBOL, Uint32 DIM> struct IsDimIndex_f<DimIndex_t<SYMBOL,DIM> > { static bool const V = true; };
 
-template <char SYMBOL, Uint32 DIM> struct IsComponentIndex_f<DimIndex_t<SYMBOL,DIM> > { static bool const V = true; };
-template <char SYMBOL, Uint32 DIM> struct IsAbstractIndex_f<DimIndex_t<SYMBOL,DIM> > { static bool const V = true; };
+template <AbstractIndexSymbol SYMBOL, Uint32 DIM> struct IsComponentIndex_f<DimIndex_t<SYMBOL,DIM> > { static bool const V = true; };
+template <AbstractIndexSymbol SYMBOL, Uint32 DIM> struct IsAbstractIndex_f<DimIndex_t<SYMBOL,DIM> > { static bool const V = true; };
 /// @endcond
 
 /// @brief Predicate version of IsDimIndex_f.

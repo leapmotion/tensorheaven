@@ -215,19 +215,19 @@ void test_uniform_tuples (Context const &context)
 
 void AddTests (Directory *parent)
 {
-    Directory *list = new Directory("tuple", parent);
+    Directory *tuple_dir = new Directory("tuple", parent);
 
-    LVD_ADD_TEST_CASE_FUNCTION(list, test_0_tuple, RESULT_NO_ERROR);
-    LVD_ADD_TEST_CASE_FUNCTION(list, test_1_tuple, RESULT_NO_ERROR);
-    LVD_ADD_TEST_CASE_FUNCTION(list, test_2_tuple, RESULT_NO_ERROR);
-    LVD_ADD_TEST_CASE_FUNCTION(list, test_3_tuple, RESULT_NO_ERROR);
-    LVD_ADD_TEST_CASE_FUNCTION(list, test_4_tuple, RESULT_NO_ERROR);
-    LVD_ADD_TEST_CASE_FUNCTION(list, test_5_tuple, RESULT_NO_ERROR);
-    LVD_ADD_TEST_CASE_FUNCTION(list, test_6_tuple, RESULT_NO_ERROR);
-    LVD_ADD_TEST_CASE_FUNCTION(list, test_7_tuple, RESULT_NO_ERROR);
-    LVD_ADD_TEST_CASE_FUNCTION(list, test_8_tuple, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(tuple_dir, test_0_tuple, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(tuple_dir, test_1_tuple, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(tuple_dir, test_2_tuple, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(tuple_dir, test_3_tuple, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(tuple_dir, test_4_tuple, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(tuple_dir, test_5_tuple, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(tuple_dir, test_6_tuple, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(tuple_dir, test_7_tuple, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(tuple_dir, test_8_tuple, RESULT_NO_ERROR);
 
-    LVD_ADD_TEST_CASE_FUNCTION(list, test_uniform_tuples, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(tuple_dir, test_uniform_tuples, RESULT_NO_ERROR);
 }
 
 } // end of namespace Tuple
