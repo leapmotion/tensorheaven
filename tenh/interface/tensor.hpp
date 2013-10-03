@@ -137,21 +137,23 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
 
     // the two separate head/body template arguments are necessary to disambiguate this method
     // from one that takes a single index (i.e. the index-by-vector-index one).
-    template <typename AbstractIndexTypeList_>
-    typename IndexedExpressionConstType_f<AbstractIndexTypeList_>::T
-        operator () (AbstractIndexTypeList_ const &) const
+    template <typename AbstractIndexHeadType_, typename AbstractIndexBodyTypeList_>
+    typename IndexedExpressionConstType_f<TypeList_t<AbstractIndexHeadType_,AbstractIndexBodyTypeList_> >::T
+        operator () (TypeList_t<AbstractIndexHeadType_,AbstractIndexBodyTypeList_> const &) const
     {
-        STATIC_ASSERT((EachTypeSatisfies_f<AbstractIndexTypeList_,IsAbstractIndex_p>::V), EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
-        STATIC_ASSERT((AbstractIndexTypeList_::LENGTH == ORDER), ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
-        return typename IndexedExpressionConstType_f<AbstractIndexTypeList_>::T(as_derived());
+        typedef TypeList_t<AbstractIndexHeadType_,AbstractIndexBodyTypeList_> AbstractIndexTypeList;
+        STATIC_ASSERT((EachTypeSatisfies_f<AbstractIndexTypeList,IsAbstractIndex_p>::V), EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
+        STATIC_ASSERT((AbstractIndexTypeList::LENGTH == ORDER), ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
+        return typename IndexedExpressionConstType_f<TypeList_t<AbstractIndexHeadType_,AbstractIndexBodyTypeList_> >::T(as_derived());
     }
-    template <typename AbstractIndexTypeList_>
-    typename IndexedExpressionNonConstType_f<AbstractIndexTypeList_>::T
-        operator () (AbstractIndexTypeList_ const &)
+    template <typename AbstractIndexHeadType_, typename AbstractIndexBodyTypeList_>
+    typename IndexedExpressionNonConstType_f<TypeList_t<AbstractIndexHeadType_,AbstractIndexBodyTypeList_> >::T
+        operator () (TypeList_t<AbstractIndexHeadType_,AbstractIndexBodyTypeList_> const &)
     {
-        STATIC_ASSERT((EachTypeSatisfies_f<AbstractIndexTypeList_,IsAbstractIndex_p>::V), EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
-        STATIC_ASSERT((AbstractIndexTypeList_::LENGTH == ORDER), ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
-        return typename IndexedExpressionNonConstType_f<AbstractIndexTypeList_>::T(as_derived());
+        typedef TypeList_t<AbstractIndexHeadType_,AbstractIndexBodyTypeList_> AbstractIndexTypeList;
+        STATIC_ASSERT((EachTypeSatisfies_f<AbstractIndexTypeList,IsAbstractIndex_p>::V), EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
+        STATIC_ASSERT((AbstractIndexTypeList::LENGTH == ORDER), ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
+        return typename IndexedExpressionNonConstType_f<TypeList_t<AbstractIndexHeadType_,AbstractIndexBodyTypeList_> >::T(as_derived());
     }
 
     static bool component_is_immutable_zero (MultiIndex const &) { return false; }
