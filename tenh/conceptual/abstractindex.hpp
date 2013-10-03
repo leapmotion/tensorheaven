@@ -129,62 +129,6 @@ inline std::string symbol_string_of_abstract_index_type_list (EmptyTypeList)
     return std::string();
 }
 
-// ///////////////////////////////////////////////////////////////////////////
-// metafunctions for renaming sets of abstract indices
-// ///////////////////////////////////////////////////////////////////////////
-
-// this is really Map_e but without a domain check (has nothing to do with indices)
-template <typename DomainIndexTypeList_, typename CodomainIndexTypeList_>
-struct BaseIndexRenamer_e
-{
-private:
-    enum { STATIC_ASSERT_IN_ENUM(!ContainsDuplicates_t<DomainIndexTypeList_>::V, DOMAIN_INDICES_MUST_NOT_CONTAIN_DUPLICATES) };
-public:
-    template <typename AbstractIndex_>
-    struct Eval_f
-    {
-        // don't actually check that AbstractIndex_ is in DomainIndexTypeList_, since
-        // the If_f below instantiates this type even if the type isn't "used" by the If_f.
-        typedef typename Element_f<CodomainIndexTypeList_,IndexOfFirstOccurrence_f<DomainIndexTypeList_,AbstractIndex_>::V>::T T;
-    };
-};
-
-// if AbstractIndex_ (which should be AbstractIndex_c<SYMBOL> for some
-// value of SYMBOL) is in DomainIndexTypeList_, map it to the corresponding
-// element of CodomainIndexTypeList_.  Otherwise, map it to
-// AbstractIndex_c<Max-of-symbols-of(CodomainIndexTypeList) + SYMBOL>,
-// noting that SYMBOL is necessarily greater than one.  This maps everything
-// outside of DomainIndexTypeList_ injectively onto a range "above"
-// DomainIndexTypeList_.
-template <typename DomainIndexTypeList_, typename CodomainIndexTypeList_>
-struct IndexRenamer_e
-{
-private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM__UNIQUE((And_f<typename OnEach_f<DomainIndexTypeList_,IsAbstractIndex_e>::T>::V),
-                                      MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES,
-                                      DOMAIN),
-        STATIC_ASSERT_IN_ENUM__UNIQUE((And_f<typename OnEach_f<CodomainIndexTypeList_,IsAbstractIndex_e>::T>::V),
-                                      MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES,
-                                      CODOMAIN)
-    };
-    static AbstractIndexSymbol const OFFSET = Max_f<typename OnEach_f<CodomainIndexTypeList_,SymbolOf_e>::T,
-                                                    AbstractIndexSymbol>::V;
-public:
-    template <typename AbstractIndex_>
-    struct Eval_f
-    {
-    private:
-        enum { STATIC_ASSERT_IN_ENUM(IsAbstractIndex_f<AbstractIndex_>::V, MUST_BE_ABSTRACT_INDEX) };
-        typedef BaseIndexRenamer_e<DomainIndexTypeList_,CodomainIndexTypeList_> BaseIndexRenamer;
-    public:
-        typedef typename If_f<Contains_f<DomainIndexTypeList_,AbstractIndex_>::V,
-                              typename BaseIndexRenamer::template Eval_f<AbstractIndex_>::T,
-                              AbstractIndex_c<OFFSET + SymbolOf_f<AbstractIndex_>::V> >::T T;
-    };
-};
-
 } // end of namespace Tenh
 
 #endif // TENH_CONCEPTUAL_ABSTRACTINDEX_HPP_

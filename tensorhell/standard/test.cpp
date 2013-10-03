@@ -7,6 +7,7 @@
 
 #include "test_abstractindex.hpp"
 #include "test_array.hpp"
+#include "test_dimindex.hpp"
 // #include "test_euclideanembedding.hpp"
 // #include "test_euclideanembeddinginverse.hpp"
 // #include "test_interop_eigen_euclideanlyembedded.hpp"
@@ -34,6 +35,7 @@ int main (int argc, char **argv, char **envp)
 
     Test::AbstractIndex::AddTests(&root);
     Test::Array::AddTests(&root);
+    Test::DimIndex::AddTests(&root);
 //     Test::EigenLDLT::AddTests(&root);
 //     Test::EuclideanEmbedding::AddTests(&root);
 //     Test::EuclideanEmbeddingInverse::AddTests(&root);

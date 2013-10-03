@@ -12,6 +12,7 @@
 
 #include "tenh/componentindex.hpp"
 #include "tenh/conceptual/abstractindex.hpp"
+#include "tenh/conceptual/vectorspace.hpp"
 #include "tenh/meta/typestringof.hpp"
 
 namespace Tenh {
@@ -24,7 +25,7 @@ template <AbstractIndexSymbol SYMBOL_, Uint32 DIM_>
 struct DimIndex_t
     :
     public ComponentIndex_t<DIM_>,
-    public AbstractIndex_c<SYMBOL_>
+    public AbstractIndex_c<SYMBOL_> // NOTE: this should probably not be inherited in C++, but via ParentTypeList (i.e. through concepts)
 {
     /// Accessor for parent type.
     typedef ComponentIndex_t<DIM_> Parent_ComponentIndex_t;
@@ -125,7 +126,6 @@ struct AbstractIndicesOfDimIndexTypeList_t<EmptyTypeList>
     typedef EmptyTypeList T;
 };
 /// @endcond
-
 
 } // end of namespace Tenh
 
