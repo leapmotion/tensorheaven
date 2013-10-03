@@ -249,24 +249,62 @@ private:
 
 
 //TODO: think more about error bounds.
-template <typename T>
-bool about_equal(T lhs, T rhs)
-{
-    T bound = (lhs == T(0) || rhs == T(0)) ?
-        2*std::numeric_limits<T>::epsilon() :
-        std::max(std::abs(lhs), std::abs(rhs))*8*std::numeric_limits<T>::epsilon();
+// template <typename T>
+// bool about_equal(T lhs, T rhs)
+// {
+//     T bound = (lhs == T(0) || rhs == T(0)) ?
+//         2*std::numeric_limits<T>::epsilon() :
+//         std::max(std::abs(lhs), std::abs(rhs))*8*std::numeric_limits<T>::epsilon();
+//
+//     return std::abs(lhs - rhs) <= bound;
+// }
 
-    return std::abs(lhs - rhs) <= bound;
+inline bool about_equal(float lhs, float rhs)
+{
+    assert(sizeof(float) == sizeof(Tenh::Uint32));
+    if (lhs == rhs)
+    {
+        return true;
+    }
+    else if(((lhs > rhs) && (rhs > 0)) || ((lhs < rhs) && (rhs < 0)))
+    {
+        return (*reinterpret_cast<Tenh::Uint32 *>(&lhs) - *reinterpret_cast<Tenh::Uint32 *>(&rhs)) < 32;
+    }
+    else if(((rhs > lhs) && (lhs > 0)) || ((rhs < lhs) && (lhs < 0)))
+    {
+        return (*reinterpret_cast<Tenh::Uint32 *>(&rhs) - *reinterpret_cast<Tenh::Uint32 *>(&lhs)) < 32;
+    }
+    else
+    {
+        return (std::abs(lhs) < 7*std::numeric_limits<float>::epsilon()) && (std::abs(rhs) < 7*std::numeric_limits<float>::epsilon());
+    }
+}
+
+inline bool about_equal(double lhs, double rhs)
+{
+    assert(sizeof(double) == sizeof(Tenh::Uint64));
+    if (lhs == rhs)
+    {
+        return true;
+    }
+    else if(((lhs > rhs) && (rhs > 0)) || ((lhs < rhs) && (rhs < 0)))
+    {
+        return (*reinterpret_cast<Tenh::Uint64 *>(&lhs) - *reinterpret_cast<Tenh::Uint64 *>(&rhs)) < 1024;
+    }
+    else if(((rhs > lhs) && (lhs > 0)) || ((rhs < lhs) && (lhs < 0)))
+    {
+        return (*reinterpret_cast<Tenh::Uint64 *>(&rhs) - *reinterpret_cast<Tenh::Uint64 *>(&lhs)) < 1024;
+    }
+    else
+    {
+        return (std::abs(lhs) < 511*std::numeric_limits<double>::epsilon()) && (std::abs(rhs) < 511*std::numeric_limits<double>::epsilon());
+    }
 }
 
 template <typename T> // oveload to use the epsilon for the underlying value type for a complex type
 bool about_equal(std::complex<T> lhs, std::complex<T> rhs)
 {
-    T bound = (lhs == std::complex<T>(0) || rhs == std::complex<T>(0)) ?
-        2*std::numeric_limits<T>::epsilon() :
-        std::max(std::abs(lhs), std::abs(rhs))*8*std::numeric_limits<T>::epsilon();
-
-    return std::abs(lhs - rhs) <= bound;
+    return about_equal(lhs.real(),rhs.real()) && about_equal(lhs.imag(),rhs.imag());
 }
 
 // ///////////////////////////////////////////////////////////////////////////

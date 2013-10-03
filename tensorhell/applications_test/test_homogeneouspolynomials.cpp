@@ -88,7 +88,7 @@ void add_particular_tests_for_dimension (Directory *parent)
 {
     add_particular_tests_for_dimension_and_degree<Scalar,DIM,1>(parent);
     add_particular_tests_for_dimension_and_degree<Scalar,DIM,2>(parent);
-    add_particular_tests_for_dimension_and_degree<Scalar,DIM,4>(parent);
+    add_particular_tests_for_dimension_and_degree<Scalar,DIM,3>(parent);
 
 }
 
@@ -97,7 +97,7 @@ void add_particular_tests_for_scalar (Directory *parent)
 {
     add_particular_tests_for_dimension<Scalar,1>(parent);
     add_particular_tests_for_dimension<Scalar,2>(parent);
-    add_particular_tests_for_dimension<Scalar,4>(parent);
+    add_particular_tests_for_dimension<Scalar,3>(parent);
 
 }
 
