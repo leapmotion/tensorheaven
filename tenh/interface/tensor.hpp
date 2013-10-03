@@ -109,63 +109,49 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
     }
 
     using Parent_Vector_i::operator();
+
+    // because the return type for "operator () (...) const" is an abomination, use this helper.
+    template <typename AbstractIndexTypeList_>
+    struct IndexedExpressionConstType_f
+    {
+        typedef ExpressionTemplate_IndexedObject_t<
+                    Derived, // have to use Derived instead of Tensor_i, so that the return-a-reference operator[] is used
+                    FactorTypeList,
+                    typename DimIndexTypeListOf_t<FactorTypeList,AbstractIndexTypeList_>::T,
+                    typename SummedIndexTypeList_t<typename DimIndexTypeListOf_t<FactorTypeList,AbstractIndexTypeList_>::T>::T,
+                    FORCE_CONST,
+                    CHECK_FOR_ALIASING> T;
+    };
+    // because the return type for "operator () (...)" is an abomination, use this helper.
+    template <typename AbstractIndexTypeList_>
+    struct IndexedExpressionNonConstType_f
+    {
+        typedef ExpressionTemplate_IndexedObject_t<
+                    Derived, // have to use Derived instead of Tensor_i, so that the return-a-reference operator[] is used
+                    FactorTypeList,
+                    typename DimIndexTypeListOf_t<FactorTypeList,AbstractIndexTypeList_>::T,
+                    typename SummedIndexTypeList_t<typename DimIndexTypeListOf_t<FactorTypeList,AbstractIndexTypeList_>::T>::T,
+                    DONT_FORCE_CONST,
+                    CHECK_FOR_ALIASING> T;
+    };
+
     // the two separate head/body template arguments are necessary to disambiguate this method
     // from one that takes a single index (i.e. the index-by-vector-index one).
-    template <typename AbstractIndexTypeListHeadType, typename AbstractIndexTypeListBodyTypeList>
-    ExpressionTemplate_IndexedObject_t<
-        Derived, // have to use Derived instead of Tensor_i, so that the return-a-reference operator[] is used
-        FactorTypeList,
-        typename DimIndexTypeListOf_t<FactorTypeList,
-                                      TypeList_t<AbstractIndexTypeListHeadType,
-                                                 AbstractIndexTypeListBodyTypeList> >::T,
-        typename SummedIndexTypeList_t<typename DimIndexTypeListOf_t<FactorTypeList,
-                                                                     TypeList_t<AbstractIndexTypeListHeadType,
-                                                                                AbstractIndexTypeListBodyTypeList> >::T>::T,
-        FORCE_CONST,
-        CHECK_FOR_ALIASING> operator () (TypeList_t<AbstractIndexTypeListHeadType,AbstractIndexTypeListBodyTypeList> const &) const
+    template <typename AbstractIndexTypeList_>
+    typename IndexedExpressionConstType_f<AbstractIndexTypeList_>::T
+        operator () (AbstractIndexTypeList_ const &) const
     {
-        typedef TypeList_t<AbstractIndexTypeListHeadType,AbstractIndexTypeListBodyTypeList> ArgumentAbstractIndexTypeList;
-        STATIC_ASSERT((EachTypeSatisfies_f<ArgumentAbstractIndexTypeList, IsAbstractIndex_p>::V), EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
-        STATIC_ASSERT((ArgumentAbstractIndexTypeList::LENGTH == ORDER), ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
-        return ExpressionTemplate_IndexedObject_t<
-            Derived, // have to use Derived instead of Tensor_i, so that the return-a-reference operator[] is used
-            FactorTypeList,
-            typename DimIndexTypeListOf_t<FactorTypeList,
-                                          TypeList_t<AbstractIndexTypeListHeadType,
-                                                     AbstractIndexTypeListBodyTypeList> >::T,
-            typename SummedIndexTypeList_t<typename DimIndexTypeListOf_t<FactorTypeList,
-                                                                         TypeList_t<AbstractIndexTypeListHeadType,
-                                                                                    AbstractIndexTypeListBodyTypeList> >::T>::T,
-            FORCE_CONST,
-            CHECK_FOR_ALIASING>(as_derived());
+        STATIC_ASSERT((EachTypeSatisfies_f<AbstractIndexTypeList_,IsAbstractIndex_p>::V), EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
+        STATIC_ASSERT((AbstractIndexTypeList_::LENGTH == ORDER), ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
+        return typename IndexedExpressionConstType_f<AbstractIndexTypeList_>::T(as_derived());
     }
-    template <typename AbstractIndexTypeListHeadType, typename AbstractIndexTypeListBodyTypeList>
-    ExpressionTemplate_IndexedObject_t<
-        Derived, // have to use Derived instead of Tensor_i, so that the return-a-reference operator[] is used
-        FactorTypeList,
-        typename DimIndexTypeListOf_t<FactorTypeList,
-                                      TypeList_t<AbstractIndexTypeListHeadType,
-                                                 AbstractIndexTypeListBodyTypeList> >::T,
-        typename SummedIndexTypeList_t<typename DimIndexTypeListOf_t<FactorTypeList,
-                                                                     TypeList_t<AbstractIndexTypeListHeadType,
-                                                                                AbstractIndexTypeListBodyTypeList> >::T>::T,
-        DONT_FORCE_CONST,
-        CHECK_FOR_ALIASING> operator () (TypeList_t<AbstractIndexTypeListHeadType,AbstractIndexTypeListBodyTypeList> const &)
+    template <typename AbstractIndexTypeList_>
+    typename IndexedExpressionNonConstType_f<AbstractIndexTypeList_>::T
+        operator () (AbstractIndexTypeList_ const &)
     {
-        typedef TypeList_t<AbstractIndexTypeListHeadType,AbstractIndexTypeListBodyTypeList> ArgumentAbstractIndexTypeList;
-        STATIC_ASSERT((EachTypeSatisfies_f<ArgumentAbstractIndexTypeList, IsAbstractIndex_p>::V), EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
-        STATIC_ASSERT((ArgumentAbstractIndexTypeList::LENGTH == ORDER), ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
-        return ExpressionTemplate_IndexedObject_t<
-            Derived, // have to use Derived instead of Tensor_i, so that the return-a-reference operator[] is used
-            FactorTypeList,
-            typename DimIndexTypeListOf_t<FactorTypeList,
-                                          TypeList_t<AbstractIndexTypeListHeadType,
-                                                     AbstractIndexTypeListBodyTypeList> >::T,
-            typename SummedIndexTypeList_t<typename DimIndexTypeListOf_t<FactorTypeList,
-                                                                         TypeList_t<AbstractIndexTypeListHeadType,
-                                                                                    AbstractIndexTypeListBodyTypeList> >::T>::T,
-            DONT_FORCE_CONST,
-            CHECK_FOR_ALIASING>(as_derived());
+        STATIC_ASSERT((EachTypeSatisfies_f<AbstractIndexTypeList_,IsAbstractIndex_p>::V), EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
+        STATIC_ASSERT((AbstractIndexTypeList_::LENGTH == ORDER), ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
+        return typename IndexedExpressionNonConstType_f<AbstractIndexTypeList_>::T(as_derived());
     }
 
     static bool component_is_immutable_zero (MultiIndex const &) { return false; }

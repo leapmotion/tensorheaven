@@ -94,6 +94,29 @@ struct Vector_i
     template <typename Index_>
     ComponentAccessNonConstReturnType operator [] (MultiIndex_t<TypeList_t<Index_> > const &m) { return as_derived().Derived::operator[](m.head()); }
 
+    // because the return type for "operator () (...) const" is an abomination, use this helper.
+    template <AbstractIndexSymbol SYMBOL_>
+    struct IndexedExpressionConstType_f
+    {
+        typedef ExpressionTemplate_IndexedObject_t<Vector_i,
+                                                   TypeList_t<BasedVectorSpace>,
+                                                   TypeList_t<DimIndex_t<SYMBOL_,DIM> >,
+                                                   EmptyTypeList,
+                                                   FORCE_CONST,
+                                                   CHECK_FOR_ALIASING> T;
+    };
+    // because the return type for "operator () (...)" is an abomination, use this helper.
+    template <AbstractIndexSymbol SYMBOL_>
+    struct IndexedExpressionNonConstType_f
+    {
+        typedef ExpressionTemplate_IndexedObject_t<Vector_i,
+                                                   TypeList_t<BasedVectorSpace>,
+                                                   TypeList_t<DimIndex_t<SYMBOL_,DIM> >,
+                                                   EmptyTypeList,
+                                                   DONT_FORCE_CONST,
+                                                   CHECK_FOR_ALIASING> T;
+    };
+
     // the argument is technically unnecessary, as its value is not used.  however,
     // this allows the template system to deduce the SYMBOL of the AbstractIndex_c, so
     // it doesn't need to be specified explicitly.
@@ -102,36 +125,16 @@ struct Vector_i
     // AbstractIndex_c<'j'> j;
     // u(i)*v(j)
     template <AbstractIndexSymbol SYMBOL_>
-    ExpressionTemplate_IndexedObject_t<Vector_i,
-                                       TypeList_t<BasedVectorSpace>,
-                                       TypeList_t<DimIndex_t<SYMBOL_,DIM> >,
-                                       EmptyTypeList,
-                                       FORCE_CONST,
-                                       CHECK_FOR_ALIASING> operator () (AbstractIndex_c<SYMBOL_> const &) const
+    typename IndexedExpressionConstType_f<SYMBOL_>::T operator () (AbstractIndex_c<SYMBOL_> const &) const
     {
         STATIC_ASSERT((SYMBOL_ != '\0'), ABSTRACT_INDEX_SYMBOL_MUST_BE_POSITIVE);
-        return ExpressionTemplate_IndexedObject_t<Vector_i,
-                                                  TypeList_t<BasedVectorSpace>,
-                                                  TypeList_t<DimIndex_t<SYMBOL_,DIM> >,
-                                                  EmptyTypeList,
-                                                  FORCE_CONST,
-                                                  CHECK_FOR_ALIASING>(as_derived());
+        return typename IndexedExpressionConstType_f<SYMBOL_>::T(as_derived());
     }
     template <AbstractIndexSymbol SYMBOL_>
-    ExpressionTemplate_IndexedObject_t<Vector_i,
-                                       TypeList_t<BasedVectorSpace>,
-                                       TypeList_t<DimIndex_t<SYMBOL_,DIM> >,
-                                       EmptyTypeList,
-                                       DONT_FORCE_CONST,
-                                       CHECK_FOR_ALIASING> operator () (AbstractIndex_c<SYMBOL_> const &)
+    typename IndexedExpressionNonConstType_f<SYMBOL_>::T operator () (AbstractIndex_c<SYMBOL_> const &)
     {
         STATIC_ASSERT((SYMBOL_ != '\0'), ABSTRACT_INDEX_SYMBOL_MUST_BE_POSITIVE);
-        return ExpressionTemplate_IndexedObject_t<Vector_i,
-                                                  TypeList_t<BasedVectorSpace>,
-                                                  TypeList_t<DimIndex_t<SYMBOL_,DIM> >,
-                                                  EmptyTypeList,
-                                                  DONT_FORCE_CONST,
-                                                  CHECK_FOR_ALIASING>(as_derived());
+        return typename IndexedExpressionNonConstType_f<SYMBOL_>::T(as_derived());
     }
 
     // NOTE: these are sort of part of the Tensor_i interface, but need Vector_i's cooperation.
