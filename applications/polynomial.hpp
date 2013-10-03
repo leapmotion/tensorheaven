@@ -116,6 +116,11 @@ struct MultivariatePolynomial
         return Tenh::PreallocatedArray_t<Scalar_,DIMENSION>(reinterpret_cast<Scalar_ *>(&m_body), Tenh::DONT_CHECK_POINTER);
     }
 
+    bool is_exactly_zero() const
+    {
+        return m_term.is_exactly_zero() && m_body.is_exactly_zero();
+    }
+
 private:
     MultivariatePolynomial<DEGREE_-1,DIMENSION_,Id_,Scalar_> m_body;
     LeadingTermType m_term;
@@ -188,6 +193,11 @@ struct MultivariatePolynomial<0,DIMENSION_,Id_,Scalar_>
     Tenh::PreallocatedArray_t<Scalar_,DIMENSION> as_array ()
     {
         return Tenh::PreallocatedArray_t<Scalar_,DIMENSION>(reinterpret_cast<Scalar_ *>(&m_term), Tenh::DONT_CHECK_POINTER);
+    }
+
+    bool is_exactly_zero() const
+    {
+        return m_term == Scalar_(0);
     }
 
 private:

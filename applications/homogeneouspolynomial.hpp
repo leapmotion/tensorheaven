@@ -110,9 +110,22 @@ struct HomogeneousPolynomial
         return result;
     }
 
-    const SymDual Coefficients() const
+    const SymDual coefficients() const
     {
         return m_coefficients;
+    }
+
+    bool is_exactly_zero() const
+    {
+        for (typename SymDual::ComponentIndex it; it.is_not_at_end(); ++it)
+        {
+            if (m_coefficients[it] != Scalar(0))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     // NOTE: the PreallocatedArray_t returned from this is valid only as long as
@@ -149,8 +162,6 @@ private:
     }
 
     template<Uint32,Uint32,typename,typename> friend struct HomogeneousPolynomial;
-    template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar> friend
-    std::ostream &operator << (std::ostream &out, HomogeneousPolynomial<DEG,DIM,Id,Scalar> const &m);
 };
 
 

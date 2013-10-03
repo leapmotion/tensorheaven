@@ -53,7 +53,7 @@ struct VariableStringComputer
 template<Uint32 DEG, typename Id, typename Scalar>
 struct VariableStringComputer<DEG,0,Id,Scalar>
 {
-    static std::string compute(typename MultivariatePolynomial<DEG,0,Id,Scalar>::Sym::MultiIndex const &n)
+    static std::string compute(typename HomogeneousPolynomial<DEG,0,Id,Scalar>::Sym::MultiIndex const &n)
     {
         return "";
     }
@@ -63,9 +63,9 @@ struct VariableStringComputer<DEG,0,Id,Scalar>
 template<Uint32 DEG, typename Id, typename Scalar>
 struct VariableStringComputer<DEG,1,Id,Scalar>
 {
-    static std::string compute(typename MultivariatePolynomial<DEG,1,Id,Scalar>::Sym::MultiIndex const &n)
+    static std::string compute(typename HomogeneousPolynomial<DEG,1,Id,Scalar>::Sym::MultiIndex const &n)
     {
-        typedef typename MultivariatePolynomial<DEG,1,Id,Scalar>::Sym::MultiIndex MultiIndex;
+        typedef typename HomogeneousPolynomial<DEG,1,Id,Scalar>::Sym::MultiIndex MultiIndex;
         return "x" + ((MultiIndex::LENGTH > 1) ? "^" + AS_STRING(MultiIndex::LENGTH) : "");
     }
 };
@@ -73,9 +73,9 @@ struct VariableStringComputer<DEG,1,Id,Scalar>
 template<Uint32 DEG, typename Id, typename Scalar>
 struct VariableStringComputer<DEG,2,Id,Scalar>
 {
-    static std::string compute(typename MultivariatePolynomial<DEG,2,Id,Scalar>::Sym::MultiIndex const &n)
+    static std::string compute(typename HomogeneousPolynomial<DEG,2,Id,Scalar>::Sym::MultiIndex const &n)
     {
-        typedef typename MultivariatePolynomial<DEG,2,Id,Scalar>::Sym::MultiIndex MultiIndex;
+        typedef typename HomogeneousPolynomial<DEG,2,Id,Scalar>::Sym::MultiIndex MultiIndex;
         MultiIndex m = Tenh::sorted<typename MultiIndex::IndexTypeList,std::less<Uint32> >(n);
         char vars[3] = "xy";
         Uint32 last = m.value_of_index(0, Tenh::DONT_CHECK_RANGE);
@@ -112,9 +112,9 @@ struct VariableStringComputer<DEG,2,Id,Scalar>
 template<Uint32 DEG, typename Id, typename Scalar>
 struct VariableStringComputer<DEG,3,Id,Scalar>
 {
-    static std::string compute(typename MultivariatePolynomial<DEG,3,Id,Scalar>::Sym::MultiIndex const &n)
+    static std::string compute(typename HomogeneousPolynomial<DEG,3,Id,Scalar>::Sym::MultiIndex const &n)
     {
-        typedef typename MultivariatePolynomial<DEG,3,Id,Scalar>::Sym::MultiIndex MultiIndex;
+        typedef typename HomogeneousPolynomial<DEG,3,Id,Scalar>::Sym::MultiIndex MultiIndex;
         MultiIndex m = Tenh::sorted<typename MultiIndex::IndexTypeList,std::less<Uint32> >(n);
         char vars[4] = "xyz";
         Uint32 last = m.value_of_index(0, Tenh::DONT_CHECK_RANGE);
@@ -150,30 +150,79 @@ struct VariableStringComputer<DEG,3,Id,Scalar>
 };
 
 template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar>
+std::ostream &operator << (std::ostream &out, HomogeneousPolynomial<DEG,DIM,Id,Scalar> const &poly)
+{
+    typedef HomogeneousPolynomial<DEG,DIM,Id,Scalar> PolyType;
+    typedef typename PolyType::Sym::ComponentIndex ComponentIndex;
+    typedef typename PolyType::Sym::MultiIndex MultiIndex;
+
+    bool first_loop = true;
+
+    for (ComponentIndex it; it.is_not_at_end(); ++it)
+    {
+
+        MultiIndex m = PolyType::Sym::template bundle_index_map<typename MultiIndex::IndexTypeList, ComponentIndex>(it);
+        Scalar coeff = poly.coefficients()[it] * Scalar(Tenh::Factorial_t<DEG>::V / (Tenh::MultiIndexMultiplicity_t<MultiIndex>::eval(m)));
+        if (coeff == Scalar(1))
+        {
+            if (first_loop)
+            {
+                first_loop = false;
+            }
+            else
+            {
+                out << " + ";
+            }
+            out << VariableStringComputer<DEG,DIM,Id,Scalar>::compute(m);
+        }
+        else if (coeff != Scalar(0))
+        {
+            if (first_loop)
+            {
+                first_loop = false;
+            }
+            else
+            {
+                out << " + ";
+            }
+            out << coeff
+                << "*"
+                <<  VariableStringComputer<DEG,DIM,Id,Scalar>::compute(m);
+        }
+    }
+
+    return out;
+}
+
+template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar>
 std::ostream &operator << (std::ostream &out, MultivariatePolynomial<DEG,DIM,Id,Scalar> const &poly)
 {
     typedef MultivariatePolynomial<DEG,DIM,Id,Scalar> PolyType;
     typedef typename PolyType::Sym::ComponentIndex ComponentIndex;
     typedef typename PolyType::Sym::MultiIndex MultiIndex;
-    for (ComponentIndex it; it.is_not_at_end(); ++it)
+
+    if (poly.m_term.is_exactly_zero())
     {
-        MultiIndex m = PolyType::Sym::template bundle_index_map<typename MultiIndex::IndexTypeList, ComponentIndex>(it);
-        Scalar coeff = poly.m_term.Coefficients()[it] * Tenh::Factorial_t<DEG>::V / (Tenh::MultiIndexMultiplicity_t<MultiIndex>::eval(m));
-        if (coeff == Scalar(1))
+        if (poly.m_body.is_exactly_zero())
         {
-            out << VariableStringComputer<DEG,DIM,Id,Scalar>::compute(m)
-                << " + ";
+            return out;
         }
-        else if (coeff != Scalar(0))
+        else
         {
-            out << coeff
-                << "*"
-                <<  VariableStringComputer<DEG,DIM,Id,Scalar>::compute(m)
-                << " + ";
+            return out << poly.m_body;
         }
     }
-
-    return out << poly.m_body;
+    else
+    {
+        if (poly.m_body.is_exactly_zero())
+        {
+            return out << poly.m_term;
+        }
+        else
+        {
+            return out << poly.m_term << " + " << poly.m_body;
+        }
+    }
 }
 
 template<Uint32 DIM, typename Id, typename Scalar>
