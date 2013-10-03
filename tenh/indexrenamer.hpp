@@ -52,7 +52,12 @@ public:
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
 struct IndexRenamer_e
 {
-    template <typename AbstractIndex_> struct Eval_f; // forward declaration -- to be specialized
+    // the default definition is to do nothing
+    template <typename ThingThatHasIndices_>
+    struct Eval_f
+    {
+        typedef ThingThatHasIndices_ T;
+    };
 };
 
 // ///////////////////////////////////////////////////////////////////////////

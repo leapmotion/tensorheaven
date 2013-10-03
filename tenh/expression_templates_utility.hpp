@@ -10,6 +10,8 @@
 
 #include "tenh/componentindex.hpp"
 #include "tenh/conceptual/abstractindex.hpp"
+#include "tenh/conceptual/embeddableintensorproduct.hpp"
+#include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/dimindex.hpp"
 #include "tenh/implementation/implementationof.hpp"
 #include "tenh/meta/typelist.hpp"
