@@ -57,14 +57,16 @@ struct IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList
                                                 CHECK_FOR_ALIASING_,
                                                 Derived_> >
 {
+private:
+    typedef IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> IndexRenamer;
 public:
-    typedef ExpressionTemplate_IndexedObject_t<typename IndexRenamer_e::Eval_f<Object>::T,
+    typedef ExpressionTemplate_IndexedObject_t<typename IndexRenamer::template Eval_f<Object>::T,
                                                FactorTypeList,
-                                               typename IndexRenamer_e::Eval_f<DimIndexTypeList>::T,
-                                               typename IndexRenamer_e::Eval_f<SummedDimIndexTypeList_>::T,
+                                               typename IndexRenamer::template Eval_f<DimIndexTypeList>::T,
+                                               typename IndexRenamer::template Eval_f<SummedDimIndexTypeList_>::T,
                                                FORCE_CONST_,
                                                CHECK_FOR_ALIASING_,
-                                               typename IndexRenamer_e::Eval_f<Derived_>::T> T;
+                                               typename IndexRenamer::template Eval_f<Derived_>::T> T;
 };
 
 template <typename DomainAbstractIndexTypeList_,
@@ -144,9 +146,11 @@ template <typename LeftOperand, typename RightOperand, char OPERATOR>
 struct IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
     ::Eval_f<ExpressionTemplate_Addition_t<LeftOperand,RightOperand,OPERATOR> >
 {
+private:
+    typedef IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> IndexRenamer;
 public:
-    typedef ExpressionTemplate_Addition_t<typename IndexRenamer_e::Eval_f<LeftOperand>::T,
-                                          typename IndexRenamer_e::Eval_f<RightOperand>::T,OPERATOR> T;
+    typedef ExpressionTemplate_Addition_t<typename IndexRenamer::template Eval_f<LeftOperand>::T,
+                                          typename IndexRenamer::template Eval_f<RightOperand>::T,OPERATOR> T;
 };
 
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
@@ -154,8 +158,10 @@ template <typename Operand, typename Scalar_, char OPERATOR>
 struct IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
     ::Eval_f<ExpressionTemplate_ScalarMultiplication_t<Operand,Scalar_,OPERATOR> >
 {
+private:
+    typedef IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> IndexRenamer;
 public:
-    typedef ExpressionTemplate_ScalarMultiplication_t<typename IndexRenamer_e::Eval_f<Operand>::T,Scalar_,OPERATOR> T;
+    typedef ExpressionTemplate_ScalarMultiplication_t<typename IndexRenamer::template Eval_f<Operand>::T,Scalar_,OPERATOR> T;
 };
 
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
@@ -163,9 +169,11 @@ template <typename LeftOperand, typename RightOperand>
 struct IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
     ::Eval_f<ExpressionTemplate_Multiplication_t<LeftOperand,RightOperand> >
 {
+private:
+    typedef IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> IndexRenamer;
 public:
-    typedef ExpressionTemplate_Multiplication_t<typename IndexRenamer_e::Eval_f<LeftOperand>::T,
-                                                typename IndexRenamer_e::Eval_f<RightOperand>::T> T;
+    typedef ExpressionTemplate_Multiplication_t<typename IndexRenamer::template Eval_f<LeftOperand>::T,
+                                                typename IndexRenamer::template Eval_f<RightOperand>::T> T;
 };
 
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
@@ -173,11 +181,13 @@ template <typename Operand, typename BundleAbstractIndexTypeList, typename Resul
 struct IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
     ::Eval_f<ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType> >
 {
+private:
+    typedef IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> IndexRenamer;
 public:
-    typedef ExpressionTemplate_IndexBundle_t<typename IndexRenamer_e::Eval_f<Operand>::T,
-                                             typename IndexRenamer_e::Eval_f<BundleAbstractIndexTypeList>::T,
+    typedef ExpressionTemplate_IndexBundle_t<typename IndexRenamer::template Eval_f<Operand>::T,
+                                             typename IndexRenamer::template Eval_f<BundleAbstractIndexTypeList>::T,
                                              ResultingFactorType,
-                                             typename IndexRenamer_e::Eval_f<ResultingAbstractIndexType>::T> T;
+                                             typename IndexRenamer::template Eval_f<ResultingAbstractIndexType>::T> T;
 };
 
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
@@ -185,10 +195,12 @@ template <typename Operand, typename SourceAbstractIndexType, typename SplitAbst
 struct IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
     ::Eval_f<ExpressionTemplate_IndexSplit_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList> >
 {
+private:
+    typedef IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> IndexRenamer;
 public:
-    typedef ExpressionTemplate_IndexSplit_t<typename IndexRenamer_e::Eval_f<Operand>::T,
-                                            typename IndexRenamer_e::Eval_f<SourceAbstractIndexType>::T,
-                                            typename IndexRenamer_e::Eval_f<SplitAbstractIndexTypeList>::T> T;
+    typedef ExpressionTemplate_IndexSplit_t<typename IndexRenamer::template Eval_f<Operand>::T,
+                                            typename IndexRenamer::template Eval_f<SourceAbstractIndexType>::T,
+                                            typename IndexRenamer::template Eval_f<SplitAbstractIndexTypeList>::T> T;
 };
 
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
@@ -196,10 +208,12 @@ template <typename Operand, typename SourceAbstractIndexType, typename SplitAbst
 struct IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
     ::Eval_f<ExpressionTemplate_IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType> >
 {
+private:
+    typedef IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> IndexRenamer;
 public:
-    typedef ExpressionTemplate_IndexSplitToIndex_t<typename IndexRenamer_e::Eval_f<Operand>::T,
-                                                   typename IndexRenamer_e::Eval_f<SourceAbstractIndexType>::T,
-                                                   typename IndexRenamer_e::Eval_f<SplitAbstractIndexType>::T> T;
+    typedef ExpressionTemplate_IndexSplitToIndex_t<typename IndexRenamer::template Eval_f<Operand>::T,
+                                                   typename IndexRenamer::template Eval_f<SourceAbstractIndexType>::T,
+                                                   typename IndexRenamer::template Eval_f<SplitAbstractIndexType>::T> T;
 };
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -212,10 +226,12 @@ template <typename Tensor, typename TensorDimIndexTypeList, typename SummedDimIn
 struct IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
     ::Eval_f<UnarySummation_t<Tensor,TensorDimIndexTypeList,SummedDimIndexTypeList> >
 {
+private:
+    typedef IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> IndexRenamer;
 public:
-    typedef UnarySummation_t<typename IndexRenamer_e::Eval_f<Tensor>::T,
-                             typename IndexRenamer_e::Eval_f<TensorDimIndexTypeList>::T,
-                             typename IndexRenamer_e::Eval_f<SummedDimIndexTypeList>::T> T;
+    typedef UnarySummation_t<typename IndexRenamer::template Eval_f<Tensor>::T,
+                             typename IndexRenamer::template Eval_f<TensorDimIndexTypeList>::T,
+                             typename IndexRenamer::template Eval_f<SummedDimIndexTypeList>::T> T;
 };
 
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
@@ -223,11 +239,13 @@ template <typename LeftOperand, typename RightOperand, typename FreeDimIndexType
 struct IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
     ::Eval_f<BinarySummation_t<LeftOperand,RightOperand,FreeDimIndexTypeList,SummedDimIndexTypeList> >
 {
+private:
+    typedef IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> IndexRenamer;
 public:
-    typedef BinarySummation_t<typename IndexRenamer_e::Eval_f<LeftOperand>::T,
-                              typename IndexRenamer_e::Eval_f<RightOperand>::T,
-                              typename IndexRenamer_e::Eval_f<FreeDimIndexTypeList>::T,
-                              typename IndexRenamer_e::Eval_f<SummedDimIndexTypeList>::T> T;
+    typedef BinarySummation_t<typename IndexRenamer::template Eval_f<LeftOperand>::T,
+                              typename IndexRenamer::template Eval_f<RightOperand>::T,
+                              typename IndexRenamer::template Eval_f<FreeDimIndexTypeList>::T,
+                              typename IndexRenamer::template Eval_f<SummedDimIndexTypeList>::T> T;
 };
 
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
@@ -235,11 +253,13 @@ template <typename Operand, typename BundleAbstractIndexTypeList, typename Resul
 struct IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
     ::Eval_f<IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType> >
 {
+private:
+    typedef IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> IndexRenamer;
 public:
-    typedef IndexBundle_t<typename IndexRenamer_e::Eval_f<Operand>::T,
-                          typename IndexRenamer_e::Eval_f<BundleAbstractIndexTypeList>::T,
-                          typename IndexRenamer_e::Eval_f<ResultingFactorType>::T,
-                          typename IndexRenamer_e::Eval_f<ResultingAbstractIndexType>::T> T;
+    typedef IndexBundle_t<typename IndexRenamer::template Eval_f<Operand>::T,
+                          typename IndexRenamer::template Eval_f<BundleAbstractIndexTypeList>::T,
+                          typename IndexRenamer::template Eval_f<ResultingFactorType>::T,
+                          typename IndexRenamer::template Eval_f<ResultingAbstractIndexType>::T> T;
 };
 
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
@@ -247,10 +267,12 @@ template <typename Operand, typename SourceAbstractIndexType, typename SplitAbst
 struct IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
     ::Eval_f<IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList> >
 {
+private:
+    typedef IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> IndexRenamer;
 public:
-    typedef IndexSplitter_t<typename IndexRenamer_e::Eval_f<Operand>::T,
-                            typename IndexRenamer_e::Eval_f<SourceAbstractIndexType>::T,
-                            typename IndexRenamer_e::Eval_f<SplitAbstractIndexTypeList>::T> T;
+    typedef IndexSplitter_t<typename IndexRenamer::template Eval_f<Operand>::T,
+                            typename IndexRenamer::template Eval_f<SourceAbstractIndexType>::T,
+                            typename IndexRenamer::template Eval_f<SplitAbstractIndexTypeList>::T> T;
 };
 
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
@@ -258,10 +280,12 @@ template <typename Operand, typename SourceAbstractIndexType, typename SplitAbst
 struct IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
     ::Eval_f<IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType> >
 {
+private:
+    typedef IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> IndexRenamer;
 public:
-    typedef IndexSplitToIndex_t<typename IndexRenamer_e::Eval_f<Operand>::T,
-                                typename IndexRenamer_e::Eval_f<SourceAbstractIndexType>::T,
-                                typename IndexRenamer_e::Eval_f<SplitAbstractIndexType>::T> T;
+    typedef IndexSplitToIndex_t<typename IndexRenamer::template Eval_f<Operand>::T,
+                                typename IndexRenamer::template Eval_f<SourceAbstractIndexType>::T,
+                                typename IndexRenamer::template Eval_f<SplitAbstractIndexType>::T> T;
 };
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -273,8 +297,10 @@ template <typename Operand>
 struct IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
     ::Eval_f<ExpressionTemplate_Eval_t<Operand> >
 {
+private:
+    typedef IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> IndexRenamer;
 public:
-    typedef ExpressionTemplate_Eval_t<typename IndexRenamer_e::Eval_f<Operand>::T> T;
+    typedef ExpressionTemplate_Eval_t<typename IndexRenamer::template Eval_f<Operand>::T> T;
 };
 
 } // end of namespace Tenh

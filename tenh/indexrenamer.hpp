@@ -88,7 +88,8 @@ template <AbstractIndexSymbol SYMBOL_, Uint32 DIM_>
 struct IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>::Eval_f<DimIndex_t<SYMBOL_,DIM_> >
 {
 private:
-    typedef typename IndexRenamer_e::Eval_f<AbstractIndex_c<SYMBOL_> >::T MappedAbstractIndex;
+    typedef IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> IndexRenamer;
+    typedef typename IndexRenamer::template Eval_f<AbstractIndex_c<SYMBOL_> >::T MappedAbstractIndex;
 public:
     typedef DimIndex_t<SymbolOf_f<MappedAbstractIndex>::V,DIM_> T;
 };
@@ -102,9 +103,10 @@ template <typename HeadType_, typename BodyTypeList_>
 struct IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>::Eval_f<TypeList_t<HeadType_,BodyTypeList_> >
 {
 private:
+    typedef IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> IndexRenamer;
     typedef TypeList_t<HeadType_,BodyTypeList_> TypeList;
 public:
-    typedef typename OnEach_f<TypeList,IndexRenamer_e>::T T;
+    typedef typename OnEach_f<TypeList,IndexRenamer>::T T;
 };
 
 } // end of namespace Tenh
