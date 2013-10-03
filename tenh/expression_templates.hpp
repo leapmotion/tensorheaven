@@ -11,6 +11,7 @@
 #include "tenh/core.hpp"
 
 #include "tenh/expression_templates_utility.hpp"
+#include "tenh/indexrenamer.hpp"
 #include "tenh/interface/expressiontemplate.hpp"
 
 namespace Tenh {
@@ -97,6 +98,8 @@ struct ExpressionTemplate_IndexedObject_t
         // is an explicit type-check at compiletime (TypesAreEqual_f)
         return TypesAreEqual_f<OtherTensor,Object>::V && reinterpret_cast<Object const *>(&t) == &m_object;
     }
+
+    Object const &object () const { return m_object; }
 
     static std::string type_as_string ()
     {
@@ -208,6 +211,8 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList
         // is an explicit type-check at compiletime (TypesAreEqual_f)
         return TypesAreEqual_f<OtherTensor,Object>::V && reinterpret_cast<Object const *>(&t) == &m_object;
     }
+
+    Object &object () const { return m_object; }
 
     static std::string type_as_string ()
     {

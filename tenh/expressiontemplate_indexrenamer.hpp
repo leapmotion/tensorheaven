@@ -16,6 +16,26 @@
 namespace Tenh {
 
 // ///////////////////////////////////////////////////////////////////////////
+// function which reindexes actual instances -- default definition is a no-op.
+// ///////////////////////////////////////////////////////////////////////////
+
+template <typename DomainAbstractIndexTypeList_,
+          typename CodomainAbstractIndexTypeList_,
+          typename ThingThatHasIndices_>
+ThingThatHasIndices_ const &reindexed (ThingThatHasIndices_ const &x)
+{
+    return x;
+}
+
+template <typename DomainAbstractIndexTypeList_,
+          typename CodomainAbstractIndexTypeList_,
+          typename ThingThatHasIndices_>
+ThingThatHasIndices_ &reindexed (ThingThatHasIndices_ &x)
+{
+    return x;
+}
+
+// ///////////////////////////////////////////////////////////////////////////
 // IndexRenamer_e<...>::Eval_f template specializations for all the templates
 // in tenh/expression_templates.hpp -- they parallel each expression template
 // ///////////////////////////////////////////////////////////////////////////
@@ -46,6 +66,78 @@ public:
                                                CHECK_FOR_ALIASING_,
                                                typename IndexRenamer_e::Eval_f<Derived_>::T> T;
 };
+
+template <typename DomainAbstractIndexTypeList_,
+          typename CodomainAbstractIndexTypeList_,
+          typename Object,
+          typename FactorTypeList,
+          typename DimIndexTypeList,
+          typename SummedDimIndexTypeList_,
+          bool FORCE_CONST_,
+          bool CHECK_FOR_ALIASING_,
+          typename Derived_>
+typename IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_IndexedObject_t<Object,
+                                                              FactorTypeList,
+                                                              DimIndexTypeList,
+                                                              SummedDimIndexTypeList_,
+                                                              FORCE_CONST_,
+                                                              CHECK_FOR_ALIASING_,
+                                                              Derived_> >::T
+    reindexed (ExpressionTemplate_IndexedObject_t<Object,
+                                                  FactorTypeList,
+                                                  DimIndexTypeList,
+                                                  SummedDimIndexTypeList_,
+                                                  FORCE_CONST_,
+                                                  CHECK_FOR_ALIASING_,
+                                                  Derived_> const &e)
+{
+    typedef typename IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+                     ::template Eval_f<ExpressionTemplate_IndexedObject_t<Object,
+                                                                          FactorTypeList,
+                                                                          DimIndexTypeList,
+                                                                          SummedDimIndexTypeList_,
+                                                                          FORCE_CONST_,
+                                                                          CHECK_FOR_ALIASING_,
+                                                                          Derived_> >::T Reindexed;
+    return Reindexed(reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.object()));
+}
+
+template <typename DomainAbstractIndexTypeList_,
+          typename CodomainAbstractIndexTypeList_,
+          typename Object,
+          typename FactorTypeList,
+          typename DimIndexTypeList,
+          typename SummedDimIndexTypeList_,
+          bool FORCE_CONST_,
+          bool CHECK_FOR_ALIASING_,
+          typename Derived_>
+typename IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_IndexedObject_t<Object,
+                                                              FactorTypeList,
+                                                              DimIndexTypeList,
+                                                              SummedDimIndexTypeList_,
+                                                              FORCE_CONST_,
+                                                              CHECK_FOR_ALIASING_,
+                                                              Derived_> >::T
+    reindexed (ExpressionTemplate_IndexedObject_t<Object,
+                                                  FactorTypeList,
+                                                  DimIndexTypeList,
+                                                  SummedDimIndexTypeList_,
+                                                  FORCE_CONST_,
+                                                  CHECK_FOR_ALIASING_,
+                                                  Derived_> &e)
+{
+    typedef typename IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+                     ::template Eval_f<ExpressionTemplate_IndexedObject_t<Object,
+                                                                          FactorTypeList,
+                                                                          DimIndexTypeList,
+                                                                          SummedDimIndexTypeList_,
+                                                                          FORCE_CONST_,
+                                                                          CHECK_FOR_ALIASING_,
+                                                                          Derived_> >::T Reindexed;
+    return Reindexed(reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.object()));
+}
 
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
 template <typename LeftOperand, typename RightOperand, char OPERATOR>

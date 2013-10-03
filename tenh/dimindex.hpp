@@ -41,7 +41,11 @@ struct DimIndex_t
     DimIndex_t (ComponentIndex_t<DIM> const &i) : Parent_ComponentIndex_t(i), Parent_AbstractIndex_c() { }
 
     /// For use with TypeStringOf_t.
-    static std::string type_as_string () { return std::string("DimIndex_t<'") + SYMBOL + "'," + AS_STRING(DIM) + '>'; }
+    static std::string type_as_string ()
+    {
+        return std::string("DimIndex_t<") + abstract_index_symbol_as_string(SYMBOL) + ',' 
+                                          + AS_STRING(DIM) + '>';
+    }
 };
 
 /// @brief Test to see if a type is a DimIndex_t.

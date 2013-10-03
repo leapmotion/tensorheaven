@@ -30,14 +30,14 @@ void test_vector_based_IndexedObject_t (Context const &context)
     typedef Tenh::ImplementationOf_t<BasedVectorSpace,float> Vector;
 
     // create an ExpressionTemplate_IndexedObject_t
-    typedef Tenh::AbstractIndex_c<'j'> j;
-    typedef Tenh::AbstractIndex_c<'k'> k;
+    typedef Tenh::AbstractIndex_c<'j'> J;
+    typedef Tenh::AbstractIndex_c<'k'> K;
 
     // set up the abstract index mapping
-    typedef Tenh::TypeTuple_f<j>::T DomainIndexTypeList;
-    typedef Tenh::TypeTuple_f<k>::T CodomainIndexTypeList;
+    typedef Tenh::TypeTuple_f<J>::T DomainIndexTypeList;
+    typedef Tenh::TypeTuple_f<K>::T CodomainIndexTypeList;
     typedef Tenh::IndexRenamer_e<DomainIndexTypeList,CodomainIndexTypeList> IndexRenamer;
-    assert((Tenh::TypesAreEqual_f<IndexRenamer::Eval_f<j>::T,k>::V));
+    assert((Tenh::TypesAreEqual_f<IndexRenamer::Eval_f<J>::T,K>::V));
 
     // ensure that the indices are mapped properly, including ones that aren't used in the expression
     {
@@ -58,6 +58,23 @@ void test_vector_based_IndexedObject_t (Context const &context)
         typedef IndexRenamer::Eval_f<IndexedExpression>::T ActualIndexedExpression;
         assert((Tenh::TypesAreEqual_f<ActualIndexedExpression,ExpectedIndexedExpression>::V));
     }
+
+    // test reindexing an actual instance of an indexed expression -- compare the types only,
+    // not the contents of the expression template AST (this is just too much trouble).
+    {
+        J j;
+        K k;
+        typedef Tenh::AbstractIndex_c<'p'> P;
+        P p;
+        Vector v(0.0f);
+        // hacky, but effective, way of ensuring the reindexed expression template is what it's supposed to be.
+        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(v(j))).type_as_string(),
+                  v(k).type_as_string()); // expected value
+        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(v(k))).type_as_string(),
+                  v(Tenh::AbstractIndex_c<'k'+'k'>()).type_as_string()); // expected value
+        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(v(p))).type_as_string(),
+                  v(Tenh::AbstractIndex_c<'k'+'p'>()).type_as_string()); // expected value
+    }
 }
 
 void test_tensor_based_IndexedObject_t (Context const &context)
@@ -70,25 +87,25 @@ void test_tensor_based_IndexedObject_t (Context const &context)
     typedef Tenh::ImplementationOf_t<TensorProduct,float> Tensor;
 
     // create an ExpressionTemplate_IndexedObject_t
-    typedef Tenh::AbstractIndex_c<'j'> j;
-    typedef Tenh::AbstractIndex_c<'k'> k;
+    typedef Tenh::AbstractIndex_c<'j'> J;
+    typedef Tenh::AbstractIndex_c<'k'> K;
 
     // set up the abstract index mapping
-    typedef Tenh::TypeTuple_f<j>::T DomainIndexTypeList;
-    typedef Tenh::TypeTuple_f<k>::T CodomainIndexTypeList;
+    typedef Tenh::TypeTuple_f<J>::T DomainIndexTypeList;
+    typedef Tenh::TypeTuple_f<K>::T CodomainIndexTypeList;
     typedef Tenh::IndexRenamer_e<DomainIndexTypeList,CodomainIndexTypeList> IndexRenamer;
-    assert((Tenh::TypesAreEqual_f<IndexRenamer::Eval_f<j>::T,k>::V));
+    assert((Tenh::TypesAreEqual_f<IndexRenamer::Eval_f<J>::T,K>::V));
 
     // ensure that the indices are mapped properly, including ones that aren't used in the expression
     {
-        typedef Tensor::IndexedExpressionConstType_f<Tenh::TypeTuple_f<j,k>::T>::T IndexedExpression;
-        typedef Tensor::IndexedExpressionConstType_f<Tenh::TypeTuple_f<k,Tenh::AbstractIndex_c<'k'+'k'> >::T>::T ExpectedIndexedExpression;
+        typedef Tensor::IndexedExpressionConstType_f<Tenh::TypeTuple_f<J,K>::T>::T IndexedExpression;
+        typedef Tensor::IndexedExpressionConstType_f<Tenh::TypeTuple_f<K,Tenh::AbstractIndex_c<'k'+'k'> >::T>::T ExpectedIndexedExpression;
         typedef IndexRenamer::Eval_f<IndexedExpression>::T ActualIndexedExpression;
         assert((Tenh::TypesAreEqual_f<ActualIndexedExpression,ExpectedIndexedExpression>::V));
     }
     {
-        typedef Tensor::IndexedExpressionConstType_f<Tenh::TypeTuple_f<j,j>::T>::T IndexedExpression;
-        typedef Tensor::IndexedExpressionConstType_f<Tenh::TypeTuple_f<k,k>::T>::T ExpectedIndexedExpression;
+        typedef Tensor::IndexedExpressionConstType_f<Tenh::TypeTuple_f<J,J>::T>::T IndexedExpression;
+        typedef Tensor::IndexedExpressionConstType_f<Tenh::TypeTuple_f<K,K>::T>::T ExpectedIndexedExpression;
         typedef IndexRenamer::Eval_f<IndexedExpression>::T ActualIndexedExpression;
         assert((Tenh::TypesAreEqual_f<ActualIndexedExpression,ExpectedIndexedExpression>::V));
     }
@@ -97,6 +114,29 @@ void test_tensor_based_IndexedObject_t (Context const &context)
         typedef Tensor::IndexedExpressionConstType_f<Tenh::TypeTuple_f<Tenh::AbstractIndex_c<'k'+'a'>,Tenh::AbstractIndex_c<'k'+'b'> >::T>::T ExpectedIndexedExpression;
         typedef IndexRenamer::Eval_f<IndexedExpression>::T ActualIndexedExpression;
         assert((Tenh::TypesAreEqual_f<ActualIndexedExpression,ExpectedIndexedExpression>::V));
+    }
+
+    // test reindexing an actual instance of an indexed expression -- compare the types only,
+    // not the contents of the expression template AST (this is just too much trouble).
+    {
+        J j;
+        K k;
+        typedef Tenh::AbstractIndex_c<'p'> P;
+        P p;
+        Tensor t(0.0f);
+        // hacky, but effective, way of ensuring the reindexed expression template is what it's supposed to be.
+        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(j|k))).type_as_string(),
+                  t(k|Tenh::AbstractIndex_c<'k'+'k'>()).type_as_string()); // expected value
+        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(k|p))).type_as_string(),
+                  t(Tenh::AbstractIndex_c<'k'+'k'>()|Tenh::AbstractIndex_c<'k'+'p'>()).type_as_string()); // expected value
+
+        // single-indexed expressions
+        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(j))).type_as_string(),
+                  t(k).type_as_string()); // expected value
+        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(k))).type_as_string(),
+                  t(Tenh::AbstractIndex_c<'k'+'k'>()).type_as_string()); // expected value
+        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(p))).type_as_string(),
+                  t(Tenh::AbstractIndex_c<'k'+'p'>()).type_as_string()); // expected value
     }
 }
 

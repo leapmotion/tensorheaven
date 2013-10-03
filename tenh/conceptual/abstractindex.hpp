@@ -29,9 +29,9 @@ inline std::string abstract_index_symbol_as_string (AbstractIndexSymbol symbol)
     // for alphabetical chars, use the ascii representation.
     if ((symbol >= 'a' && symbol <= 'z') || (symbol >= 'A' && symbol <= 'Z'))
         return std::string(1, char(symbol));
-    // otherwise use the numerical representation
+    // otherwise use i_###, where ### is the symbol value
     else
-        return AS_STRING(Uint32(symbol));
+        return "i_" + AS_STRING(Uint32(symbol));
 }
 
 // for use in operator () for creation of expression templates (indexed tensor expressions)
