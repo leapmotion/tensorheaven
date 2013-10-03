@@ -446,3 +446,7 @@
       Because of the commercial licensing, we would have to have them give up the rights
       to the source code changes.
 
+###Interesting Facts
+- On 2013.10.03,
+  `find . -name "*.hpp" -exec grep -vE "^[ ]*$|^[ ]*//.*|^[ ]*\{$|^[ ]*\};?$|^[ ]*:$" {} \; | wc -l`
+  produced 6289 (lines of meaningful code)

@@ -85,31 +85,14 @@ MAKE_1_ARY_VALUE_EVALUATOR(SymbolOf, AbstractIndexSymbol);
 // ///////////////////////////////////////////////////////////////////////////
 
 // operator overloads for stringing together type lists of abstract indices.
+// the rest of the operator overloads (involving TypeList_t and EmptyTypeList)
+// are in typelist.hpp.  this function just bootstraps the process.
 template <AbstractIndexSymbol SYMBOL1, AbstractIndexSymbol SYMBOL2>
 TypeList_t<AbstractIndex_c<SYMBOL1>,TypeList_t<AbstractIndex_c<SYMBOL2> > > operator | (
     AbstractIndex_c<SYMBOL1> const &,
     AbstractIndex_c<SYMBOL2> const &)
 {
     return TypeList_t<AbstractIndex_c<SYMBOL1>,TypeList_t<AbstractIndex_c<SYMBOL2> > >();
-}
-
-template <typename HeadType, typename BodyTypeList, AbstractIndexSymbol SYMBOL>
-typename ConcatenationOfTypeLists_t<TypeList_t<HeadType,BodyTypeList>,TypeList_t<AbstractIndex_c<SYMBOL> > >::T operator | (
-    TypeList_t<HeadType,BodyTypeList> const &,
-    AbstractIndex_c<SYMBOL> const &)
-{
-    STATIC_ASSERT((EachTypeSatisfies_f<TypeList_t<HeadType,BodyTypeList>,IsAbstractIndex_p>::V), EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
-    // appending to a TypeList_t is a nontrivial operation, hence the use of ConcatenationOfTypeLists_t
-    return typename ConcatenationOfTypeLists_t<TypeList_t<HeadType,BodyTypeList>,TypeList_t<AbstractIndex_c<SYMBOL> > >::T();
-}
-
-// base case
-template <AbstractIndexSymbol SYMBOL>
-TypeList_t<AbstractIndex_c<SYMBOL> > operator | (
-    EmptyTypeList const &,
-    AbstractIndex_c<SYMBOL> const &)
-{
-    return TypeList_t<AbstractIndex_c<SYMBOL> >();
 }
 
 // ///////////////////////////////////////////////////////////////////////////

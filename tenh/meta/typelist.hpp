@@ -71,6 +71,64 @@ template <typename HeadType> struct IsTypeList_f<TypeList_t<HeadType> > { static
 template <> struct IsTypeList_f<EmptyTypeList> { static bool const V = true; };
 /// @endcond
 
+// ///////////////////////////////////////////////////////////////////////////
+// operator overloads for creating instances of TypeList_t at runtime
+// (e.g. abstract multiindices, like in expression templates)
+// ///////////////////////////////////////////////////////////////////////////
+
+template <typename FirstTypeList_, typename SecondTypeList_>
+struct ConcatenationOfTypeLists_t;
+
+
+template <typename LhsHeadType_, typename LhsBodyTypeList_, typename RhsHeadType_, typename RhsBodyTypeList_>
+typename ConcatenationOfTypeLists_t<TypeList_t<LhsHeadType_,LhsBodyTypeList_>,TypeList_t<RhsHeadType_,RhsBodyTypeList_> >::T
+    operator | (TypeList_t<LhsHeadType_,LhsBodyTypeList_> const &, TypeList_t<RhsHeadType_,RhsBodyTypeList_> const &)
+{
+    return typename ConcatenationOfTypeLists_t<TypeList_t<LhsHeadType_,LhsBodyTypeList_>,TypeList_t<RhsHeadType_,RhsBodyTypeList_> >::T();
+}
+
+template <typename RhsHeadType_, typename RhsBodyTypeList_>
+TypeList_t<RhsHeadType_,RhsBodyTypeList_> operator | (EmptyTypeList const &, TypeList_t<RhsHeadType_,RhsBodyTypeList_> const &)
+{
+    return TypeList_t<RhsHeadType_,RhsBodyTypeList_>();
+}
+
+template <typename LhsHeadType_, typename LhsBodyTypeList_>
+TypeList_t<LhsHeadType_,LhsBodyTypeList_> operator | (TypeList_t<LhsHeadType_,LhsBodyTypeList_> const &, EmptyTypeList const &)
+{
+    return TypeList_t<LhsHeadType_,LhsBodyTypeList_>();
+}
+
+inline EmptyTypeList operator | (EmptyTypeList const &, EmptyTypeList const &)
+{
+    return EmptyTypeList();
+}
+
+template <typename Lhs_, typename RhsHeadType_, typename RhsBodyTypeList_>
+TypeList_t<Lhs_,TypeList_t<RhsHeadType_,RhsBodyTypeList_> > operator | (Lhs_ const &, TypeList_t<RhsHeadType_,RhsBodyTypeList_> const &)
+{
+    return TypeList_t<Lhs_,TypeList_t<RhsHeadType_,RhsBodyTypeList_> >();
+}
+
+template <typename LhsHeadType_, typename LhsBodyTypeList_, typename Rhs_>
+typename ConcatenationOfTypeLists_t<TypeList_t<LhsHeadType_,LhsBodyTypeList_>,TypeList_t<Rhs_> >::T
+    operator | (TypeList_t<LhsHeadType_,LhsBodyTypeList_> const &, Rhs_ const &)
+{
+    return typename ConcatenationOfTypeLists_t<TypeList_t<LhsHeadType_,LhsBodyTypeList_>,TypeList_t<Rhs_> >::T();
+}
+
+template <typename Rhs_>
+TypeList_t<Rhs_> operator | (EmptyTypeList const &, Rhs_ const &)
+{
+    return TypeList_t<Rhs_>();
+}
+
+template <typename Lhs_>
+TypeList_t<Lhs_> operator | (TypeList_t<Lhs_> const &, EmptyTypeList const &)
+{
+    return TypeList_t<Lhs_>();
+}
+
 } // end of namespace Tenh
 
 #endif // TENH_META_TYPELIST_HPP_
