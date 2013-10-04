@@ -85,6 +85,13 @@ struct ExpressionTemplate_Eval_t
     template <typename OtherTensor>
     bool uses_tensor (OtherTensor const &t) const { return false; }
 
+    Operand const &operand () const { return m_operand; }
+
+    static std::string type_as_string ()
+    {
+        return "ExpressionTemplate_Eval_t<" + type_string_of<Operand>() + '>';
+    }
+
 private:
 
     void ensure_tensor_is_cached () const

@@ -455,6 +455,8 @@ struct IndexBundle_t
     template <typename OtherTensor>
     bool uses_tensor (OtherTensor const &t) const { return m_operand.uses_tensor(t); }
 
+    Operand const &operand () const { return m_operand; }
+
 private:
 
     void operator = (IndexBundle_t const &);
@@ -538,6 +540,8 @@ struct IndexSplitter_t
     template <typename OtherTensor>
     bool uses_tensor (OtherTensor const &t) const { return m_operand.uses_tensor(t); }
 
+    Operand const &operand () const { return m_operand; }
+
 private:
 
     void operator = (IndexSplitter_t const &);
@@ -613,6 +617,8 @@ struct IndexSplitToIndex_t
 
     template <typename OtherTensor>
     bool uses_tensor (OtherTensor const &t) const { return m_operand.uses_tensor(t); }
+
+    Operand const &operand () const { return m_operand; }
 
 private:
 

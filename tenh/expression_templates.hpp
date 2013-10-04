@@ -391,6 +391,9 @@ struct ExpressionTemplate_ScalarMultiplication_t
         return m_operand.uses_tensor(t);
     }
 
+    Operand const &operand () const { return m_operand; }
+    Scalar const &scalar_operand () const { return m_scalar_operand; }
+
     static std::string type_as_string ()
     {
         return "ExpressionTemplate_ScalarMultiplication_t<" + type_string_of<Operand>() + ','
@@ -478,6 +481,9 @@ struct ExpressionTemplate_Multiplication_t
         return m_left_operand.uses_tensor(t) || m_right_operand.uses_tensor(t);
     }
 
+    LeftOperand const &left_operand () const { return m_left_operand; }
+    RightOperand const &right_operand () const { return m_right_operand; }
+
     static std::string type_as_string ()
     {
         return "ExpressionTemplate_Multiplication_t<" + type_string_of<LeftOperand>() + ','
@@ -548,6 +554,8 @@ public:
 
     template <typename OtherTensor>
     bool uses_tensor (OtherTensor const &t) const { return m_bundler.uses_tensor(t); }
+
+    Operand const &operand () const { return m_bundler.operand(); }
 
     static std::string type_as_string ()
     {
@@ -626,6 +634,8 @@ public:
     template <typename OtherTensor>
     bool uses_tensor (OtherTensor const &t) const { return m_splitter.uses_tensor(t); }
 
+    Operand const &operand () const { return m_splitter.operand(); }
+
     static std::string type_as_string ()
     {
         return "ExpressionTemplate_IndexSplit_t<" + type_string_of<Operand>() + ','
@@ -702,6 +712,8 @@ public:
 
     template <typename OtherTensor>
     bool uses_tensor (OtherTensor const &t) const { return m_splitter.uses_tensor(t); }
+
+    Operand const &operand () const { return m_splitter.operand(); }
 
     static std::string type_as_string ()
     {

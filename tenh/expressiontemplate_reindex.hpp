@@ -16,8 +16,12 @@
 namespace Tenh {
 
 // ///////////////////////////////////////////////////////////////////////////
-// Reindex_e<...>::Eval_f template specializations for all the templates
+// Reindex_e<...>::Eval_f and reindexed<...>() for all the templates
 // in tenh/expression_templates.hpp -- they parallel each expression template
+// ///////////////////////////////////////////////////////////////////////////
+
+// ///////////////////////////////////////////////////////////////////////////
+// ExpressionTemplate_IndexedObject_t
 // ///////////////////////////////////////////////////////////////////////////
 
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
@@ -123,6 +127,10 @@ typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
     return Reindexed(reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.object()));
 }
 
+// ///////////////////////////////////////////////////////////////////////////
+// ExpressionTemplate_Addition_t
+// ///////////////////////////////////////////////////////////////////////////
+
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
 template <typename LeftOperand, typename RightOperand, char OPERATOR>
 struct Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
@@ -161,6 +169,10 @@ typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
                      reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.right_operand()));
 }
 
+// ///////////////////////////////////////////////////////////////////////////
+// ExpressionTemplate_ScalarMultiplication_t
+// ///////////////////////////////////////////////////////////////////////////
+
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
 template <typename Operand, typename Scalar_, char OPERATOR>
 struct Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
@@ -171,6 +183,36 @@ private:
 public:
     typedef ExpressionTemplate_ScalarMultiplication_t<typename Reindex::template Eval_f<Operand>::T,Scalar_,OPERATOR> T;
 };
+
+// unfortunately you have to make a const and a non-const version of each
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename Operand, typename Scalar_, char OPERATOR>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_ScalarMultiplication_t<Operand,Scalar_,OPERATOR> >::T
+    reindexed (ExpressionTemplate_ScalarMultiplication_t<Operand,Scalar_,OPERATOR> const &e)
+{
+    typedef typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+                     ::template Eval_f<ExpressionTemplate_ScalarMultiplication_t<Operand,Scalar_,OPERATOR> >::T Reindexed;
+    return Reindexed(reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.operand()),
+                     reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.scalar_operand()));
+}
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename Operand, typename Scalar_, char OPERATOR>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_ScalarMultiplication_t<Operand,Scalar_,OPERATOR> >::T
+    reindexed (ExpressionTemplate_ScalarMultiplication_t<Operand,Scalar_,OPERATOR> &e)
+{
+    typedef typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+                     ::template Eval_f<ExpressionTemplate_ScalarMultiplication_t<Operand,Scalar_,OPERATOR> >::T Reindexed;
+    return Reindexed(reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.operand()),
+                     reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.scalar_operand()));
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+// ExpressionTemplate_Multiplication_t
+// ///////////////////////////////////////////////////////////////////////////
 
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
 template <typename LeftOperand, typename RightOperand>
@@ -183,6 +225,36 @@ public:
     typedef ExpressionTemplate_Multiplication_t<typename Reindex::template Eval_f<LeftOperand>::T,
                                                 typename Reindex::template Eval_f<RightOperand>::T> T;
 };
+
+// unfortunately you have to make a const and a non-const version of each
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename LeftOperand, typename RightOperand>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_Multiplication_t<LeftOperand,RightOperand> >::T
+    reindexed (ExpressionTemplate_Multiplication_t<LeftOperand,RightOperand> const &e)
+{
+    typedef typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+                     ::template Eval_f<ExpressionTemplate_Multiplication_t<LeftOperand,RightOperand> >::T Reindexed;
+    return Reindexed(reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.left_operand()),
+                     reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.right_operand()));
+}
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename LeftOperand, typename RightOperand>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_Multiplication_t<LeftOperand,RightOperand> >::T
+    reindexed (ExpressionTemplate_Multiplication_t<LeftOperand,RightOperand> &e)
+{
+    typedef typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+                     ::template Eval_f<ExpressionTemplate_Multiplication_t<LeftOperand,RightOperand> >::T Reindexed;
+    return Reindexed(reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.left_operand()),
+                     reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.right_operand()));
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+// ExpressionTemplate_IndexBundle_t
+// ///////////////////////////////////////////////////////////////////////////
 
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
 template <typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType>
@@ -198,6 +270,34 @@ public:
                                              typename Reindex::template Eval_f<ResultingAbstractIndexType>::T> T;
 };
 
+// unfortunately you have to make a const and a non-const version of each
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType> >::T
+    reindexed (ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType> const &e)
+{
+    typedef typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+                     ::template Eval_f<ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType> >::T Reindexed;
+    return Reindexed(reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.operand()));
+}
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType> >::T
+    reindexed (ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType> &e)
+{
+    typedef typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+                     ::template Eval_f<ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType> >::T Reindexed;
+    return Reindexed(reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.operand()));
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+// ExpressionTemplate_IndexSplit_t
+// ///////////////////////////////////////////////////////////////////////////
+
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
 template <typename Operand, typename SourceAbstractIndexType, typename SplitAbstractIndexTypeList>
 struct Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
@@ -210,6 +310,34 @@ public:
                                             typename Reindex::template Eval_f<SourceAbstractIndexType>::T,
                                             typename Reindex::template Eval_f<SplitAbstractIndexTypeList>::T> T;
 };
+
+// unfortunately you have to make a const and a non-const version of each
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename Operand, typename SourceAbstractIndexType, typename SplitAbstractIndexTypeList>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_IndexSplit_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList> >::T
+    reindexed (ExpressionTemplate_IndexSplit_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList> const &e)
+{
+    typedef typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+                     ::template Eval_f<ExpressionTemplate_IndexSplit_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList> >::T Reindexed;
+    return Reindexed(reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.operand()));
+}
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename Operand, typename SourceAbstractIndexType, typename SplitAbstractIndexTypeList>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_IndexSplit_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList> >::T
+    reindexed (ExpressionTemplate_IndexSplit_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList> &e)
+{
+    typedef typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+                     ::template Eval_f<ExpressionTemplate_IndexSplit_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList> >::T Reindexed;
+    return Reindexed(reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.operand()));
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+// ExpressionTemplate_IndexSplitToIndex_t
+// ///////////////////////////////////////////////////////////////////////////
 
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
 template <typename Operand, typename SourceAbstractIndexType, typename SplitAbstractIndexType>
@@ -224,9 +352,37 @@ public:
                                                    typename Reindex::template Eval_f<SplitAbstractIndexType>::T> T;
 };
 
+// unfortunately you have to make a const and a non-const version of each
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename Operand, typename SourceAbstractIndexType, typename SplitAbstractIndexType>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType> >::T
+    reindexed (ExpressionTemplate_IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType> const &e)
+{
+    typedef typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+                     ::template Eval_f<ExpressionTemplate_IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType> >::T Reindexed;
+    return Reindexed(reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.operand()));
+}
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename Operand, typename SourceAbstractIndexType, typename SplitAbstractIndexType>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType> >::T
+    reindexed (ExpressionTemplate_IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType> &e)
+{
+    typedef typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+                     ::template Eval_f<ExpressionTemplate_IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType> >::T Reindexed;
+    return Reindexed(reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.operand()));
+}
+
 // ///////////////////////////////////////////////////////////////////////////
-// Reindex_e<...>::Eval_f template specializations for all the relevant
-// templates (e.g. IndexBundle_t) in tenh/expression_templates_utility.hpp
+// Reindex_e<...>::Eval_f for all the relevant templates (e.g. IndexBundle_t)
+// in tenh/expression_templates_utility.hpp
+// ///////////////////////////////////////////////////////////////////////////
+
+// ///////////////////////////////////////////////////////////////////////////
+// UnarySummation_t
 // ///////////////////////////////////////////////////////////////////////////
 
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
@@ -242,6 +398,12 @@ public:
                              typename Reindex::template Eval_f<SummedDimIndexTypeList>::T> T;
 };
 
+// no reindex<...> function is necessary because this is made by the expression template
+
+// ///////////////////////////////////////////////////////////////////////////
+// BinarySummation_t
+// ///////////////////////////////////////////////////////////////////////////
+
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
 template <typename LeftOperand, typename RightOperand, typename FreeDimIndexTypeList, typename SummedDimIndexTypeList>
 struct Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
@@ -255,6 +417,12 @@ public:
                               typename Reindex::template Eval_f<FreeDimIndexTypeList>::T,
                               typename Reindex::template Eval_f<SummedDimIndexTypeList>::T> T;
 };
+
+// no reindex<...> function is necessary because this is made by the expression template
+
+// ///////////////////////////////////////////////////////////////////////////
+// IndexBundle_t
+// ///////////////////////////////////////////////////////////////////////////
 
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
 template <typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType>
@@ -270,6 +438,12 @@ public:
                           typename Reindex::template Eval_f<ResultingAbstractIndexType>::T> T;
 };
 
+// no reindex<...> function is necessary because this is made by the expression template
+
+// ///////////////////////////////////////////////////////////////////////////
+// IndexSplitter_t
+// ///////////////////////////////////////////////////////////////////////////
+
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
 template <typename Operand, typename SourceAbstractIndexType, typename SplitAbstractIndexTypeList>
 struct Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
@@ -282,6 +456,12 @@ public:
                             typename Reindex::template Eval_f<SourceAbstractIndexType>::T,
                             typename Reindex::template Eval_f<SplitAbstractIndexTypeList>::T> T;
 };
+
+// no reindex<...> function is necessary because this is made by the expression template
+
+// ///////////////////////////////////////////////////////////////////////////
+// IndexSplitToIndex_t
+// ///////////////////////////////////////////////////////////////////////////
 
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
 template <typename Operand, typename SourceAbstractIndexType, typename SplitAbstractIndexType>
@@ -296,8 +476,14 @@ public:
                                 typename Reindex::template Eval_f<SplitAbstractIndexType>::T> T;
 };
 
+// no reindex<...> function is necessary because this is made by the expression template
+
 // ///////////////////////////////////////////////////////////////////////////
-// Reindex_e<...>::Eval_f specialization for ExpressionTemplate_Eval_t
+// Reindex_e<...>::Eval_f and reindexed<...>() for ExpressionTemplate_Eval_t
+// ///////////////////////////////////////////////////////////////////////////
+
+// ///////////////////////////////////////////////////////////////////////////
+// ExpressionTemplate_Eval_t
 // ///////////////////////////////////////////////////////////////////////////
 
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
@@ -310,6 +496,30 @@ private:
 public:
     typedef ExpressionTemplate_Eval_t<typename Reindex::template Eval_f<Operand>::T> T;
 };
+
+// unfortunately you have to make a const and a non-const version of each
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename Operand>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_Eval_t<Operand> >::T
+    reindexed (ExpressionTemplate_Eval_t<Operand> const &e)
+{
+    typedef typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+                     ::template Eval_f<ExpressionTemplate_Eval_t<Operand> >::T Reindexed;
+    return Reindexed(reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.operand()));
+}
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename Operand>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_Eval_t<Operand> >::T
+    reindexed (ExpressionTemplate_Eval_t<Operand> &e)
+{
+    typedef typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+                     ::template Eval_f<ExpressionTemplate_Eval_t<Operand> >::T Reindexed;
+    return Reindexed(reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.operand()));
+}
 
 } // end of namespace Tenh
 
