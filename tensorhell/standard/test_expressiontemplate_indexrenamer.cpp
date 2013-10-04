@@ -67,13 +67,16 @@ void test_vector_based_IndexedObject_t (Context const &context)
         typedef Tenh::AbstractIndex_c<'p'> P;
         P p;
         Vector v(0.0f);
-        // hacky, but effective, way of ensuring the reindexed expression template is what it's supposed to be.
+        // hacky, but effective, way of ensuring the reindexed expression template is what
+        // it's supposed to be (via type_as_string).  what's being tested is essentially
+        // the commutativity of the operations of creating an ExpressionTemplate_IndexedObject_t
+        // and reindexing.
         assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(v(j))).type_as_string(),
-                  v(k).type_as_string()); // expected value
+                  v(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j)).type_as_string()); // expected value
         assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(v(k))).type_as_string(),
-                  v(Tenh::AbstractIndex_c<'k'+'k'>()).type_as_string()); // expected value
+                  v(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(k)).type_as_string()); // expected value
         assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(v(p))).type_as_string(),
-                  v(Tenh::AbstractIndex_c<'k'+'p'>()).type_as_string()); // expected value
+                  v(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(p)).type_as_string()); // expected value
     }
 }
 
@@ -86,7 +89,6 @@ void test_tensor_based_IndexedObject_t (Context const &context)
     typedef Tenh::TensorProductOfBasedVectorSpaces_c<FactorTypeList> TensorProduct;
     typedef Tenh::ImplementationOf_t<TensorProduct,float> Tensor;
 
-    // create an ExpressionTemplate_IndexedObject_t
     typedef Tenh::AbstractIndex_c<'j'> J;
     typedef Tenh::AbstractIndex_c<'k'> K;
 
@@ -126,18 +128,54 @@ void test_tensor_based_IndexedObject_t (Context const &context)
         Tensor t(0.0f);
         // hacky, but effective, way of ensuring the reindexed expression template is what it's supposed to be.
         assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(j|k))).type_as_string(),
-                  t(k|Tenh::AbstractIndex_c<'k'+'k'>()).type_as_string()); // expected value
+                  t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j|k)).type_as_string()); // expected value
         assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(k|p))).type_as_string(),
-                  t(Tenh::AbstractIndex_c<'k'+'k'>()|Tenh::AbstractIndex_c<'k'+'p'>()).type_as_string()); // expected value
+                  t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(k|p)).type_as_string()); // expected value
 
         // single-indexed expressions
         assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(j))).type_as_string(),
-                  t(k).type_as_string()); // expected value
+                  t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j)).type_as_string()); // expected value
         assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(k))).type_as_string(),
-                  t(Tenh::AbstractIndex_c<'k'+'k'>()).type_as_string()); // expected value
+                  t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(k)).type_as_string()); // expected value
         assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(p))).type_as_string(),
-                  t(Tenh::AbstractIndex_c<'k'+'p'>()).type_as_string()); // expected value
+                  t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(p)).type_as_string()); // expected value
     }
+}
+
+void test_Addition_t (Context const &context)
+{
+    static Uint32 const DIM = 3;
+    typedef int DummyId;
+    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId> > BasedVectorSpace;
+    typedef Tenh::ImplementationOf_t<BasedVectorSpace,float> Vector;
+
+    typedef Tenh::AbstractIndex_c<'i'> I;
+    typedef Tenh::AbstractIndex_c<'j'> J;
+    typedef Tenh::AbstractIndex_c<'k'> K;
+
+    // set up the abstract index mapping
+    typedef Tenh::TypeTuple_f<I>::T DomainIndexTypeList;
+    typedef Tenh::TypeTuple_f<J>::T CodomainIndexTypeList;
+    typedef Tenh::IndexRenamer_e<DomainIndexTypeList,CodomainIndexTypeList> IndexRenamer;
+    assert((Tenh::TypesAreEqual_f<IndexRenamer::Eval_f<I>::T,J>::V));
+
+    Vector x(3.0f);
+    Vector y(4.0f);
+
+    I i;
+    J j;
+    K k;
+    // hacky, but effective, way of ensuring the reindexed expression template is what it's supposed to be.
+    // verify that the operations of index-expression-addition and reindexing commute.
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(i) + y(i))).type_as_string(),
+              (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(i)) +
+               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(i))).type_as_string()); // expected value
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(j) + y(j))).type_as_string(),
+              (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(j)) +
+               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(j))).type_as_string()); // expected value
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(k) + y(k))).type_as_string(),
+              (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(k)) +
+               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(k))).type_as_string()); // expected value
 }
 
 void AddTests (Directory *parent)
@@ -146,6 +184,7 @@ void AddTests (Directory *parent)
 
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_vector_based_IndexedObject_t, RESULT_NO_ERROR);
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_tensor_based_IndexedObject_t, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, test_Addition_t, RESULT_NO_ERROR);
 }
 
 } // end of namespace ExpressionTemplate_IndexRenamer

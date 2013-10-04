@@ -10,6 +10,7 @@
 
 #include "tenh/conceptual/abstractindex.hpp"
 #include "tenh/dimindex.hpp"
+#include "tenh/list.hpp"
 #include "tenh/meta/typelist.hpp"
 
 namespace Tenh {
@@ -98,6 +99,8 @@ public:
 // IndexRenamer_e for TypeList_t -- applies IndexRenamer_e to each element
 // ///////////////////////////////////////////////////////////////////////////
 
+// this is defined so that the operations of renaming indices and constructing
+// a TypeList_t commute.
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
 template <typename HeadType_, typename BodyTypeList_>
 struct IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>::Eval_f<TypeList_t<HeadType_,BodyTypeList_> >
@@ -109,6 +112,194 @@ public:
     typedef typename OnEach_f<TypeList,IndexRenamer>::T T;
 };
 
+// NOTE: the default implementation of IndexRenamer_e<...>::Eval_f<T> is correct for EmptyTypeList
+
+// ///////////////////////////////////////////////////////////////////////////
+// function which reindexes actual instances -- default definition is a no-op.
+// ///////////////////////////////////////////////////////////////////////////
+
+// unfortunately you have to make a const and a non-const version of each
+
+template <typename DomainAbstractIndexTypeList_,
+          typename CodomainAbstractIndexTypeList_,
+          typename ThingThatHasIndices_>
+ThingThatHasIndices_ const &reindexed (ThingThatHasIndices_ const &x)
+{
+    return x;
+}
+
+template <typename DomainAbstractIndexTypeList_,
+          typename CodomainAbstractIndexTypeList_,
+          typename ThingThatHasIndices_>
+ThingThatHasIndices_ &reindexed (ThingThatHasIndices_ &x)
+{
+    return x;
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+// overload to reindex AbstractIndex_c objects
+// ///////////////////////////////////////////////////////////////////////////
+
+// unfortunately you have to make a const and a non-const version of each
+
+template <typename DomainAbstractIndexTypeList_,
+          typename CodomainAbstractIndexTypeList_,
+          AbstractIndexSymbol SYMBOL_>
+typename IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<AbstractIndex_c<SYMBOL_> >::T
+    reindexed (AbstractIndex_c<SYMBOL_> const &i)
+{
+    return typename IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+                    ::template Eval_f<AbstractIndex_c<SYMBOL_> >::T();
+}
+
+template <typename DomainAbstractIndexTypeList_,
+          typename CodomainAbstractIndexTypeList_,
+          AbstractIndexSymbol SYMBOL_>
+typename IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<AbstractIndex_c<SYMBOL_> >::T
+    reindexed (AbstractIndex_c<SYMBOL_> &i)
+{
+    return typename IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+                    ::template Eval_f<AbstractIndex_c<SYMBOL_> >::T();
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+// overload to reindex DimIndex_t objects
+// ///////////////////////////////////////////////////////////////////////////
+
+// unfortunately you have to make a const and a non-const version of each
+
+template <typename DomainAbstractIndexTypeList_,
+          typename CodomainAbstractIndexTypeList_,
+          AbstractIndexSymbol SYMBOL_,
+          Uint32 DIM_>
+typename IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<DimIndex_t<SYMBOL_,DIM_> >::T
+    reindexed (DimIndex_t<SYMBOL_,DIM_> const &i)
+{
+    return typename IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+                    ::template Eval_f<DimIndex_t<SYMBOL_,DIM_> >::T(i.value(), DONT_CHECK_RANGE);
+}
+
+template <typename DomainAbstractIndexTypeList_,
+          typename CodomainAbstractIndexTypeList_,
+          AbstractIndexSymbol SYMBOL_,
+          Uint32 DIM_>
+typename IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<DimIndex_t<SYMBOL_,DIM_> >::T
+    reindexed (DimIndex_t<SYMBOL_,DIM_> &i)
+{
+    return typename IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+                    ::template Eval_f<DimIndex_t<SYMBOL_,DIM_> >::T(i.value(), DONT_CHECK_RANGE);
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+// overload to reindex TypeList_t INSTANCES -- applies reindexed to each element
+// ///////////////////////////////////////////////////////////////////////////
+
+// unfortunately you have to make a const and a non-const version of each
+
+// this is defined so that the operations of TypeList_t construction and reindexing commute.
+template <typename DomainAbstractIndexTypeList_,
+          typename CodomainAbstractIndexTypeList_,
+          typename HeadType_,
+          typename BodyTypeList_>
+typename IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<TypeList_t<HeadType_,BodyTypeList_> >::T
+    reindexed (TypeList_t<HeadType_,BodyTypeList_> const &)
+{
+    return typename IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+                    ::template Eval_f<TypeList_t<HeadType_,BodyTypeList_> >::T();
+}
+
+template <typename DomainAbstractIndexTypeList_,
+          typename CodomainAbstractIndexTypeList_,
+          typename HeadType_,
+          typename BodyTypeList_>
+typename IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<TypeList_t<HeadType_,BodyTypeList_> >::T
+    reindexed (TypeList_t<HeadType_,BodyTypeList_> &)
+{
+    return typename IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+                    ::template Eval_f<TypeList_t<HeadType_,BodyTypeList_> >::T();
+}
+
+template <typename DomainAbstractIndexTypeList_,
+          typename CodomainAbstractIndexTypeList_,
+          typename HeadType_,
+          typename BodyTypeList_>
+typename IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<EmptyTypeList>::T
+    reindexed (EmptyTypeList const &)
+{
+    return typename IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+                    ::template Eval_f<EmptyTypeList>::T();
+}
+
+template <typename DomainAbstractIndexTypeList_,
+          typename CodomainAbstractIndexTypeList_,
+          typename HeadType_,
+          typename BodyTypeList_>
+typename IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<TypeList_t<HeadType_,BodyTypeList_> >::T
+    reindexed (EmptyTypeList &)
+{
+    return typename IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+                    ::template Eval_f<EmptyTypeList>::T();
+}
+
+/*
+// ///////////////////////////////////////////////////////////////////////////
+// overload to reindex List_t types -- applies reindexed to each element
+// ///////////////////////////////////////////////////////////////////////////
+
+// unfortunately you have to make a const and a non-const version of each
+
+// this is defined so that the operations of list construction and reindexing commute.
+template <typename DomainAbstractIndexTypeList_,
+          typename CodomainAbstractIndexTypeList_,
+          typename TypeList_>
+typename IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<List_t<TypeList_> >::T
+    reindexed (List_t<TypeList_> const &list)
+{
+    return reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(list.head()) |
+           reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(list.body());
+}
+
+template <typename DomainAbstractIndexTypeList_,
+          typename CodomainAbstractIndexTypeList_,
+          typename TypeList_>
+typename IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<List_t<TypeList_> >::T
+    reindexed (List_t<TypeList_> &list)
+{
+    return reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(list.head()) |
+           reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(list.body());
+}
+
+template <typename DomainAbstractIndexTypeList_,
+          typename CodomainAbstractIndexTypeList_>
+typename IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<EmptyList>::T
+    reindexed (EmptyList const &list)
+{
+    return typename IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+                    ::template Eval_f<EmptyList>::T();
+}
+
+template <typename DomainAbstractIndexTypeList_,
+          typename CodomainAbstractIndexTypeList_>
+typename IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<EmptyList>::T
+    reindexed (EmptyList &list)
+{
+    return typename IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+                    ::template Eval_f<EmptyList>::T();
+}
+
+*/
 } // end of namespace Tenh
 
 #endif // TENH_INDEXRENAMER_HPP_

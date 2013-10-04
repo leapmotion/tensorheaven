@@ -16,26 +16,6 @@
 namespace Tenh {
 
 // ///////////////////////////////////////////////////////////////////////////
-// function which reindexes actual instances -- default definition is a no-op.
-// ///////////////////////////////////////////////////////////////////////////
-
-template <typename DomainAbstractIndexTypeList_,
-          typename CodomainAbstractIndexTypeList_,
-          typename ThingThatHasIndices_>
-ThingThatHasIndices_ const &reindexed (ThingThatHasIndices_ const &x)
-{
-    return x;
-}
-
-template <typename DomainAbstractIndexTypeList_,
-          typename CodomainAbstractIndexTypeList_,
-          typename ThingThatHasIndices_>
-ThingThatHasIndices_ &reindexed (ThingThatHasIndices_ &x)
-{
-    return x;
-}
-
-// ///////////////////////////////////////////////////////////////////////////
 // IndexRenamer_e<...>::Eval_f template specializations for all the templates
 // in tenh/expression_templates.hpp -- they parallel each expression template
 // ///////////////////////////////////////////////////////////////////////////
@@ -68,6 +48,8 @@ public:
                                                CHECK_FOR_ALIASING_,
                                                typename IndexRenamer::template Eval_f<Derived_>::T> T;
 };
+
+// unfortunately you have to make a const and a non-const version of each
 
 template <typename DomainAbstractIndexTypeList_,
           typename CodomainAbstractIndexTypeList_,
@@ -152,6 +134,32 @@ public:
     typedef ExpressionTemplate_Addition_t<typename IndexRenamer::template Eval_f<LeftOperand>::T,
                                           typename IndexRenamer::template Eval_f<RightOperand>::T,OPERATOR> T;
 };
+
+// unfortunately you have to make a const and a non-const version of each
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename LeftOperand, typename RightOperand, char OPERATOR>
+typename IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_Addition_t<LeftOperand,RightOperand,OPERATOR> >::T
+    reindexed (ExpressionTemplate_Addition_t<LeftOperand,RightOperand,OPERATOR> const &e)
+{
+    typedef typename IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+                     ::template Eval_f<ExpressionTemplate_Addition_t<LeftOperand,RightOperand,OPERATOR> >::T Reindexed;
+    return Reindexed(reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.left_operand()),
+                     reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.right_operand()));
+}
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename LeftOperand, typename RightOperand, char OPERATOR>
+typename IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_Addition_t<LeftOperand,RightOperand,OPERATOR> >::T
+    reindexed (ExpressionTemplate_Addition_t<LeftOperand,RightOperand,OPERATOR> &e)
+{
+    typedef typename IndexRenamer_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+                     ::template Eval_f<ExpressionTemplate_Addition_t<LeftOperand,RightOperand,OPERATOR> >::T Reindexed;
+    return Reindexed(reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.left_operand()),
+                     reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.right_operand()));
+}
 
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
 template <typename Operand, typename Scalar_, char OPERATOR>

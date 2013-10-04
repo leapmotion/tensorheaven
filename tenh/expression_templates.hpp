@@ -309,6 +309,9 @@ struct ExpressionTemplate_Addition_t
         return m_left_operand.uses_tensor(t) || m_right_operand.uses_tensor(t);
     }
 
+    LeftOperand const &left_operand () const { return m_left_operand; }
+    RightOperand const &right_operand () const { return m_right_operand; }
+
     static std::string type_as_string ()
     {
         return "ExpressionTemplate_Addition_t<" + type_string_of<LeftOperand>() + ','
