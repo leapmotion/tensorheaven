@@ -39,6 +39,9 @@ struct MultivariatePolynomial
     typedef MultivariatePolynomial<DEGREE_-1,DIMENSION_,Id_,Scalar_> BodyPolynomial;
     static Uint32 const DIMENSION = LeadingTermType::DIMENSION + BodyPolynomial::DIMENSION;
 
+    typedef Tenh::PreallocatedArray_t<Scalar_ ,DIMENSION> CoefficientArray;
+    typedef Tenh::PreallocatedArray_t<Scalar_ const,DIMENSION> ConstCoefficientArray;
+
     MultivariatePolynomial (Scalar_ const &fill_with) : m_body(fill_with), m_term(fill_with) { }
     MultivariatePolynomial (Tenh::WithoutInitialization const &w) : m_body(w), m_term(w) { }
     MultivariatePolynomial (LeadingTermType const &leading_term, BodyPolynomial const &body)
@@ -101,19 +104,19 @@ struct MultivariatePolynomial
 
     // NOTE: the PreallocatedArray_t returned from this is valid only as long as
     // this object is alive -- this is effectively a shallow copy.
-    Tenh::PreallocatedArray_t<Scalar_ const,DIMENSION> as_array () const
+    ConstCoefficientArray as_array () const
     {
         assert(reinterpret_cast<Tenh::Uint8 const *>(&m_body) + sizeof(m_body) == reinterpret_cast<Tenh::Uint8 const *>(&m_term) &&
                "for this to work, the members must be layed out contiguously in memory");
-        return Tenh::PreallocatedArray_t<Scalar_ const,DIMENSION>(reinterpret_cast<Scalar_ const *>(&m_body), Tenh::DONT_CHECK_POINTER);
+        return ConstCoefficientArray(reinterpret_cast<Scalar_ const *>(&m_body), Tenh::DONT_CHECK_POINTER);
     }
     // NOTE: the PreallocatedArray_t returned from this is valid only as long as
     // this object is alive -- this is effectively a shallow copy.
-    Tenh::PreallocatedArray_t<Scalar_,DIMENSION> as_array ()
+    CoefficientArray as_array ()
     {
         assert(reinterpret_cast<Tenh::Uint8 const *>(&m_body) + sizeof(m_body) == reinterpret_cast<Tenh::Uint8 const *>(&m_term) &&
                "for this to work, the members must be layed out contiguously in memory");
-        return Tenh::PreallocatedArray_t<Scalar_,DIMENSION>(reinterpret_cast<Scalar_ *>(&m_body), Tenh::DONT_CHECK_POINTER);
+        return CoefficientArray(reinterpret_cast<Scalar_ *>(&m_body), Tenh::DONT_CHECK_POINTER);
     }
 
     bool is_exactly_zero() const
@@ -153,6 +156,9 @@ struct MultivariatePolynomial<0,DIMENSION_,Id_,Scalar_>
 
     static Uint32 const DIMENSION = 1;
 
+    typedef Tenh::PreallocatedArray_t<Scalar_ ,DIMENSION> CoefficientArray;
+    typedef Tenh::PreallocatedArray_t<Scalar_ const,DIMENSION> ConstCoefficientArray;
+
     MultivariatePolynomial (Scalar_ const &leading_term) : m_term(leading_term) { }
     MultivariatePolynomial (Tenh::WithoutInitialization const &w) { }
     MultivariatePolynomial (MultivariatePolynomial const &other) : m_term(other.m_term) { }
@@ -184,15 +190,15 @@ struct MultivariatePolynomial<0,DIMENSION_,Id_,Scalar_>
 
     // NOTE: the PreallocatedArray_t returned from this is valid only as long as
     // this object is alive -- this is effectively a shallow copy.
-    Tenh::PreallocatedArray_t<Scalar_ const,DIMENSION> as_array () const
+    ConstCoefficientArray as_array () const
     {
-        return Tenh::PreallocatedArray_t<Scalar_ const,DIMENSION>(reinterpret_cast<Scalar_ const *>(&m_term), Tenh::DONT_CHECK_POINTER);
+        return ConstCoefficientArray(reinterpret_cast<Scalar_ const *>(&m_term), Tenh::DONT_CHECK_POINTER);
     }
     // NOTE: the PreallocatedArray_t returned from this is valid only as long as
     // this object is alive -- this is effectively a shallow copy.
-    Tenh::PreallocatedArray_t<Scalar_,DIMENSION> as_array ()
+    CoefficientArray as_array ()
     {
-        return Tenh::PreallocatedArray_t<Scalar_,DIMENSION>(reinterpret_cast<Scalar_ *>(&m_term), Tenh::DONT_CHECK_POINTER);
+        return CoefficientArray(reinterpret_cast<Scalar_ *>(&m_term), Tenh::DONT_CHECK_POINTER);
     }
 
     bool is_exactly_zero() const

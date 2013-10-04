@@ -39,6 +39,9 @@ struct HomogeneousPolynomial
 
     static Uint32 const DIMENSION = SymDual::DIM;
 
+    typedef Tenh::PreallocatedArray_t<Scalar_ ,DIMENSION> CoefficientArray;
+    typedef Tenh::PreallocatedArray_t<Scalar_ const,DIMENSION> ConstCoefficientArray;
+
     HomogeneousPolynomial (Scalar_ const &fill_with) : m_coefficients(fill_with) { }
     HomogeneousPolynomial (Tenh::WithoutInitialization const &w) : m_coefficients(w) { }
     HomogeneousPolynomial (SymDual const &term) : m_coefficients(term) { }
@@ -130,15 +133,15 @@ struct HomogeneousPolynomial
 
     // NOTE: the PreallocatedArray_t returned from this is valid only as long as
     // this object is alive -- this is effectively a shallow copy.
-    Tenh::PreallocatedArray_t<Scalar_ const,DIMENSION> as_array () const
+    ConstCoefficientArray as_array () const
     {
-        return Tenh::PreallocatedArray_t<Scalar_ const,DIMENSION>(reinterpret_cast<Scalar_ const *>(&m_coefficients), Tenh::DONT_CHECK_POINTER);
+        return ConstCoefficientArray(reinterpret_cast<Scalar_ const *>(&m_coefficients), Tenh::DONT_CHECK_POINTER);
     }
     // NOTE: the PreallocatedArray_t returned from this is valid only as long as
     // this object is alive -- this is effectively a shallow copy.
-    Tenh::PreallocatedArray_t<Scalar_,DIMENSION> as_array ()
+    CoefficientArray as_array ()
     {
-        return Tenh::PreallocatedArray_t<Scalar_,DIMENSION>(reinterpret_cast<Scalar_ *>(&m_coefficients), Tenh::DONT_CHECK_POINTER);
+        return CoefficientArray(reinterpret_cast<Scalar_ *>(&m_coefficients), Tenh::DONT_CHECK_POINTER);
     }
 
 private:
