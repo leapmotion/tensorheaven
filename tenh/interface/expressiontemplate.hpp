@@ -145,6 +145,15 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     {
         return ExpressionTemplate_Eval_t<Derived>(as_derived());
     }
+
+    static std::string type_as_string ()
+    {
+        return "ExpressionTemplate_i<" + type_string_of<Derived_>() + ','
+                                       + type_string_of<Scalar_>() + ','
+                                       + type_string_of<FreeFactorTypeList_>() + ','
+                                       + type_string_of<FreeDimIndexTypeList_>() + ','
+                                       + type_string_of<UsedDimIndexTypeList_>() + '>';
+    }
 };
 
 // will print any order expression template in a nice-looking justified way.  if the order is greater

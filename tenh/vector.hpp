@@ -8,11 +8,15 @@
 
 #include "tenh/core.hpp"
 
+#include <iostream> // HIPPO TEMP
+
+#include "tenh/expressiontemplate_reindex.hpp"
 #include "tenh/implementation/diagonal2tensor.hpp"
 #include "tenh/implementation/tensor.hpp"
 #include "tenh/implementation/vector.hpp"
 #include "tenh/implementation/vee.hpp"
 #include "tenh/implementation/wedge.hpp"
+#include "tenh/reindex.hpp"
 
 namespace Tenh {
 
@@ -32,7 +36,7 @@ public:
     // only use these if UseMemberArray is specified
 
     // probably only useful for zero element (because this is basis-dependent)
-    explicit Vector (Scalar const &fill_with)
+    explicit Vector (Scalar_ const &fill_with)
         :
         Parent_Implementation(fill_with)
     {
@@ -49,14 +53,14 @@ public:
 
     // only use these if UsePreallocatedArray is specified
 
-    explicit Vector (Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+    explicit Vector (Scalar_ *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Implementation(pointer_to_allocation, check_pointer)
     {
         STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
     }
-    Vector (Scalar const &fill_with,
-            Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+    Vector (Scalar_ const &fill_with,
+            Scalar_ *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Implementation(fill_with, pointer_to_allocation, check_pointer)
     {
@@ -65,7 +69,7 @@ public:
     // this is the tuple-based constructor
     template <typename HeadType_, typename BodyTypeList_>
     Vector (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x,
-            Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+            Scalar_ *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Implementation(x, pointer_to_allocation, check_pointer)
     {
@@ -77,8 +81,28 @@ public:
         :
         Parent_Implementation(WithoutInitialization()) // sort of meaningless constructor
     {
-        STATIC_ASSERT(IsUseImmutableArray_f<UseArrayType_>::V || DIM == 0, MUST_BE_USE_IMMUTABLE_ARRAY_OR_BE_ZERO_DIMENSIONAL);
+        STATIC_ASSERT(IsUseImmutableArray_f<UseArrayType_>::V || DimensionOf_f<BasedVectorSpace_>::V == 0,
+                      MUST_BE_USE_IMMUTABLE_ARRAY_OR_BE_ZERO_DIMENSIONAL);
     }
+
+    template <typename Derived_,
+              typename FreeFactorTypeList_,
+              typename FreeDimIndexTypeList_,
+              typename UsedDimIndexTypeList_>
+    void operator = (ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &rhs)
+    {
+        std::cerr << "Vector::operator = (" << type_string_of(rhs) << ")\n";
+        STATIC_ASSERT(Length_f<FreeDimIndexTypeList_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
+        typedef typename Head_f<FreeDimIndexTypeList_>::T RhsDimIndex;
+        typedef AbstractIndex_c<RhsDimIndex::SYMBOL> IndexToRename;
+        typedef AbstractIndex_c<'i'> I;
+        typedef TypeList_t<IndexToRename> DomainAbstractIndexTypeList;
+        typedef TypeList_t<I> CodomainAbstractIndexTypeList;
+        I i;
+        std::cerr << FORMAT_VALUE((reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(rhs.as_derived()).uses_tensor(*this))) << '\n';
+        (*this)(i) = reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(rhs.as_derived());
+    }
+    // TODO: a "no alias" version of operator= -- this probably requires adding a no_alias() method to this class.
 
     static std::string type_as_string ()
     {
@@ -94,34 +118,18 @@ struct DualOf_f<Vector<BasedVectorSpace_,Scalar_,UseArrayType_> >
     typedef Vector<typename DualOf_f<BasedVectorSpace_>::T,Scalar_,typename DualOf_f<UseArrayType_>::T> T;
 };
 
-template <typename BasedVectorSpace_,
-          typename Scalar_,
-          typename UseArrayType_,
-          typename Derived_,
-          typename FreeFactorTypeList_,
-          typename FreeDimIndexTypeList_,
-          typename UsedDimIndexTypeList_>
-void operator = (Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &lhs,
-                        ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &rhs)
-{
-    AbstractIndex_c<'i'> i;
-    // TODO: rename rhs's indices so its sole free index is 'i'
-    // TODO: assert that rhs has exactly one free index
-    lhs(i) = rhs;
-}
-
-// TODO: a "no alias" version of operator=
-
-
-// TODO: figure out the return type (yugh).
 template <typename BasedVectorSpace_, typename Scalar_, typename Lhs_UseArrayType_, typename Rhs_UseArrayType_>
-XYZ operator + (Vector<BasedVectorSpace_,Scalar_,Lhs_UseArrayType_> const &lhs,
+ExpressionTemplate_Addition_t<
+    typename Vector<BasedVectorSpace_,Scalar_,Lhs_UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+    typename Vector<BasedVectorSpace_,Scalar_,Rhs_UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+    '+'>
+    operator + (Vector<BasedVectorSpace_,Scalar_,Lhs_UseArrayType_> const &lhs,
                 Vector<BasedVectorSpace_,Scalar_,Rhs_UseArrayType_> const &rhs)
 {
     AbstractIndex_c<'i'> i;
     return lhs(i) + rhs(i);
 }
-
+/*
 // TODO: figure out the return type (yugh).
 template <typename BasedVectorSpace_,
           typename Scalar_,
@@ -349,7 +357,7 @@ XYZ operator % (ExpressionTemplate_OuterProduct_t<Lhs_Derived_,Scalar_,Lhs_FreeF
 {
     // TODO: return a new outer product expression template
 }
-
+*/
 } // end of namespace Tenh
 
 #endif // TENH_VECTOR_HPP_

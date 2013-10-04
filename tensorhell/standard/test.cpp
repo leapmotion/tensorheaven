@@ -17,7 +17,7 @@
 #include "test_list.hpp"
 #include "test_tuple.hpp"
 #include "test_typelist.hpp"
-// #include "test_vector.hpp"
+#include "test_vector.hpp"
 // #include "test_tensor2.hpp"
 // #include "test_tensor2diagonal.hpp"
 // #include "test_expressiontemplates.hpp"
@@ -50,7 +50,7 @@ int main (int argc, char **argv, char **envp)
     Test::List::AddTests(&root);
     Test::Tuple::AddTests(&root);
     Test::TypeList::AddTests(&root);
-//     Test::Vector::AddTests(&root);
+    Test::Vector::AddTests(&root);
 //     Test::Tensor2::AddTests(&root);
 //     Test::Tensor2Diagonal::AddTests(&root);
 

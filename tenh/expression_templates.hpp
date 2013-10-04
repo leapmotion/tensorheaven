@@ -178,7 +178,7 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList
 
         // TODO: replace with memcpy? (this would require that Scalar is a POD type)
         for (typename Object::ComponentIndex i; i.is_not_at_end(); ++i)
-            m_object[i] = right_operand[i];
+            m_object[i] = right_operand[typename ExpressionTemplate_IndexedObject_t::MultiIndex(i)];
     }
     template <typename RightOperand>
     void operator = (RightOperand const &right_operand)

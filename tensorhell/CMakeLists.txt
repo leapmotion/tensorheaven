@@ -105,7 +105,8 @@ set(test_SRCS
     standard/test_expressiontemplate_reindex.cpp
     standard/test_list.cpp
     standard/test_tuple.cpp
-    standard/test_typelist.cpp)
+    standard/test_typelist.cpp
+    standard/test_vector.cpp)
 add_executable(test standard/test.cpp ${test_SRCS})
 include_directories(${tensorheaven_test_SOURCE_DIR}/.. ${tensorheaven_test_SOURCE_DIR}/lvd ${tensorheaven_test_SOURCE_DIR}/standard)
 
