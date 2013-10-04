@@ -102,7 +102,7 @@ set(test_SRCS
     standard/test_abstractindex.cpp
     standard/test_array.cpp
     standard/test_dimindex.cpp
-    standard/test_expressiontemplate_indexrenamer.cpp
+    standard/test_expressiontemplate_reindex.cpp
     standard/test_list.cpp
     standard/test_tuple.cpp
     standard/test_typelist.cpp)

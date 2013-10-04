@@ -11,8 +11,8 @@
 #include "tenh/core.hpp"
 
 #include "tenh/expression_templates_utility.hpp"
-#include "tenh/indexrenamer.hpp"
 #include "tenh/interface/expressiontemplate.hpp"
+#include "tenh/reindex.hpp"
 
 namespace Tenh {
 

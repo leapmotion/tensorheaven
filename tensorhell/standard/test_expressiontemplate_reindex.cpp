@@ -1,11 +1,11 @@
 // ///////////////////////////////////////////////////////////////////////////
-// test_expressiontemplate_indexrenamer.cpp by Victor Dods, created 2013/10/02
+// test_expressiontemplate_reindex.cpp by Victor Dods, created 2013/10/02
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "test_expressiontemplate_indexrenamer.hpp"
+#include "test_expressiontemplate_reindex.hpp"
 
-#include "tenh/expressiontemplate_indexrenamer.hpp"
+#include "tenh/expressiontemplate_reindex.hpp"
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/conceptual/vectorspace.hpp"
 #include "tenh/implementation/tensor.hpp"
@@ -20,7 +20,7 @@ using namespace std;
 using namespace TestSystem;
 
 namespace Test {
-namespace ExpressionTemplate_IndexRenamer {
+namespace ExpressionTemplate_Reindex {
 
 void test_vector_based_IndexedObject_t (Context const &context)
 {
@@ -36,26 +36,26 @@ void test_vector_based_IndexedObject_t (Context const &context)
     // set up the abstract index mapping
     typedef Tenh::TypeTuple_f<J>::T DomainIndexTypeList;
     typedef Tenh::TypeTuple_f<K>::T CodomainIndexTypeList;
-    typedef Tenh::IndexRenamer_e<DomainIndexTypeList,CodomainIndexTypeList> IndexRenamer;
-    assert((Tenh::TypesAreEqual_f<IndexRenamer::Eval_f<J>::T,K>::V));
+    typedef Tenh::Reindex_e<DomainIndexTypeList,CodomainIndexTypeList> Reindex;
+    assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<J>::T,K>::V));
 
     // ensure that the indices are mapped properly, including ones that aren't used in the expression
     {
         typedef Vector::IndexedExpressionConstType_f<'j'>::T IndexedExpression;
         typedef Vector::IndexedExpressionConstType_f<'k'>::T ExpectedIndexedExpression;
-        typedef IndexRenamer::Eval_f<IndexedExpression>::T ActualIndexedExpression;
+        typedef Reindex::Eval_f<IndexedExpression>::T ActualIndexedExpression;
         assert((Tenh::TypesAreEqual_f<ActualIndexedExpression,ExpectedIndexedExpression>::V));
     }
     {
         typedef Vector::IndexedExpressionConstType_f<'k'>::T IndexedExpression;
         typedef Vector::IndexedExpressionConstType_f<'k'+'k'>::T ExpectedIndexedExpression;
-        typedef IndexRenamer::Eval_f<IndexedExpression>::T ActualIndexedExpression;
+        typedef Reindex::Eval_f<IndexedExpression>::T ActualIndexedExpression;
         assert((Tenh::TypesAreEqual_f<ActualIndexedExpression,ExpectedIndexedExpression>::V));
     }
     {
         typedef Vector::IndexedExpressionConstType_f<'r'>::T IndexedExpression;
         typedef Vector::IndexedExpressionConstType_f<'k'+'r'>::T ExpectedIndexedExpression;
-        typedef IndexRenamer::Eval_f<IndexedExpression>::T ActualIndexedExpression;
+        typedef Reindex::Eval_f<IndexedExpression>::T ActualIndexedExpression;
         assert((Tenh::TypesAreEqual_f<ActualIndexedExpression,ExpectedIndexedExpression>::V));
     }
 
@@ -95,26 +95,26 @@ void test_tensor_based_IndexedObject_t (Context const &context)
     // set up the abstract index mapping
     typedef Tenh::TypeTuple_f<J>::T DomainIndexTypeList;
     typedef Tenh::TypeTuple_f<K>::T CodomainIndexTypeList;
-    typedef Tenh::IndexRenamer_e<DomainIndexTypeList,CodomainIndexTypeList> IndexRenamer;
-    assert((Tenh::TypesAreEqual_f<IndexRenamer::Eval_f<J>::T,K>::V));
+    typedef Tenh::Reindex_e<DomainIndexTypeList,CodomainIndexTypeList> Reindex;
+    assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<J>::T,K>::V));
 
     // ensure that the indices are mapped properly, including ones that aren't used in the expression
     {
         typedef Tensor::IndexedExpressionConstType_f<Tenh::TypeTuple_f<J,K>::T>::T IndexedExpression;
         typedef Tensor::IndexedExpressionConstType_f<Tenh::TypeTuple_f<K,Tenh::AbstractIndex_c<'k'+'k'> >::T>::T ExpectedIndexedExpression;
-        typedef IndexRenamer::Eval_f<IndexedExpression>::T ActualIndexedExpression;
+        typedef Reindex::Eval_f<IndexedExpression>::T ActualIndexedExpression;
         assert((Tenh::TypesAreEqual_f<ActualIndexedExpression,ExpectedIndexedExpression>::V));
     }
     {
         typedef Tensor::IndexedExpressionConstType_f<Tenh::TypeTuple_f<J,J>::T>::T IndexedExpression;
         typedef Tensor::IndexedExpressionConstType_f<Tenh::TypeTuple_f<K,K>::T>::T ExpectedIndexedExpression;
-        typedef IndexRenamer::Eval_f<IndexedExpression>::T ActualIndexedExpression;
+        typedef Reindex::Eval_f<IndexedExpression>::T ActualIndexedExpression;
         assert((Tenh::TypesAreEqual_f<ActualIndexedExpression,ExpectedIndexedExpression>::V));
     }
     {
         typedef Tensor::IndexedExpressionConstType_f<Tenh::TypeTuple_f<Tenh::AbstractIndex_c<'a'>,Tenh::AbstractIndex_c<'b'> >::T>::T IndexedExpression;
         typedef Tensor::IndexedExpressionConstType_f<Tenh::TypeTuple_f<Tenh::AbstractIndex_c<'k'+'a'>,Tenh::AbstractIndex_c<'k'+'b'> >::T>::T ExpectedIndexedExpression;
-        typedef IndexRenamer::Eval_f<IndexedExpression>::T ActualIndexedExpression;
+        typedef Reindex::Eval_f<IndexedExpression>::T ActualIndexedExpression;
         assert((Tenh::TypesAreEqual_f<ActualIndexedExpression,ExpectedIndexedExpression>::V));
     }
 
@@ -156,8 +156,8 @@ void test_Addition_t (Context const &context)
     // set up the abstract index mapping
     typedef Tenh::TypeTuple_f<I>::T DomainIndexTypeList;
     typedef Tenh::TypeTuple_f<J>::T CodomainIndexTypeList;
-    typedef Tenh::IndexRenamer_e<DomainIndexTypeList,CodomainIndexTypeList> IndexRenamer;
-    assert((Tenh::TypesAreEqual_f<IndexRenamer::Eval_f<I>::T,J>::V));
+    typedef Tenh::Reindex_e<DomainIndexTypeList,CodomainIndexTypeList> Reindex;
+    assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<I>::T,J>::V));
 
     Vector x(3.0f);
     Vector y(4.0f);
@@ -180,12 +180,12 @@ void test_Addition_t (Context const &context)
 
 void AddTests (Directory *parent)
 {
-    Directory *dir = new Directory("expressiontemplate_indexrenamer", parent);
+    Directory *dir = new Directory("expressiontemplate_reindex", parent);
 
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_vector_based_IndexedObject_t, RESULT_NO_ERROR);
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_tensor_based_IndexedObject_t, RESULT_NO_ERROR);
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_Addition_t, RESULT_NO_ERROR);
 }
 
-} // end of namespace ExpressionTemplate_IndexRenamer
+} // end of namespace ExpressionTemplate_Reindex
 } // end of namespace Test
