@@ -268,11 +268,29 @@ inline bool about_equal(float lhs, float rhs)
     }
     else if(((lhs > rhs) && (rhs > 0)) || ((lhs < rhs) && (rhs < 0)))
     {
-        return (*reinterpret_cast<Tenh::Uint32 *>(&lhs) - *reinterpret_cast<Tenh::Uint32 *>(&rhs)) < 32;
+        Tenh::Uint32 result = (*reinterpret_cast<Tenh::Uint32 *>(&lhs) - *reinterpret_cast<Tenh::Uint32 *>(&rhs));
+        if (result < 32)
+        {
+            return true;
+        }
+        else
+        {
+            std::cerr << result << std::endl;
+            return false;
+        }
     }
     else if(((rhs > lhs) && (lhs > 0)) || ((rhs < lhs) && (lhs < 0)))
     {
-        return (*reinterpret_cast<Tenh::Uint32 *>(&rhs) - *reinterpret_cast<Tenh::Uint32 *>(&lhs)) < 32;
+        Tenh::Uint32 result = (*reinterpret_cast<Tenh::Uint32 *>(&rhs) - *reinterpret_cast<Tenh::Uint32 *>(&lhs));
+        if (result < 32)
+        {
+            return true;
+        }
+        else
+        {
+            std::cerr << result << std::endl;
+            return false;
+        }
     }
     else
     {
@@ -289,11 +307,29 @@ inline bool about_equal(double lhs, double rhs)
     }
     else if(((lhs > rhs) && (rhs > 0)) || ((lhs < rhs) && (rhs < 0)))
     {
-        return (*reinterpret_cast<Tenh::Uint64 *>(&lhs) - *reinterpret_cast<Tenh::Uint64 *>(&rhs)) < 1024;
+        Tenh::Uint64 result = (*reinterpret_cast<Tenh::Uint64 *>(&lhs) - *reinterpret_cast<Tenh::Uint64 *>(&rhs));
+        if (result < 1024)
+        {
+            return true;
+        }
+        else
+        {
+            std::cerr << result << std::endl;
+            return false;
+        }
     }
     else if(((rhs > lhs) && (lhs > 0)) || ((rhs < lhs) && (lhs < 0)))
     {
-        return (*reinterpret_cast<Tenh::Uint64 *>(&rhs) - *reinterpret_cast<Tenh::Uint64 *>(&lhs)) < 1024;
+        Tenh::Uint64 result = (*reinterpret_cast<Tenh::Uint64 *>(&rhs) - *reinterpret_cast<Tenh::Uint64 *>(&lhs));
+        if (result < 1024)
+        {
+            return true;
+        }
+        else
+        {
+            std::cerr << result << std::endl;
+            return false;
+        }
     }
     else
     {
