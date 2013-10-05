@@ -6,9 +6,9 @@
 #ifndef TENH_EXPRESSION_TEMPLATES_HPP_
 #define TENH_EXPRESSION_TEMPLATES_HPP_
 
-#include <stdexcept>
-
 #include "tenh/core.hpp"
+
+#include <stdexcept>
 
 #include "tenh/expression_templates_utility.hpp"
 #include "tenh/interface/expressiontemplate.hpp"
@@ -51,6 +51,7 @@ struct ExpressionTemplate_IndexedObject_t
 {
     enum
     {
+        // TODO: assert that Object is NOT an expression template (it could be e.g. an IndexBundle_t though)
         // TODO: assert that FactorTypeList is a TypeList of BasedVectorSpace_c types.
         STATIC_ASSERT_IN_ENUM__UNIQUE((EachTypeSatisfies_f<DimIndexTypeList,IsDimIndex_p>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, DIMINDEXTYPELIST),
         STATIC_ASSERT_IN_ENUM__UNIQUE((EachTypeSatisfies_f<SummedDimIndexTypeList_,IsDimIndex_p>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, SUMMEDDIMINDEXTYPELIST)
@@ -77,7 +78,10 @@ struct ExpressionTemplate_IndexedObject_t
     using Parent::IS_EXPRESSION_TEMPLATE_I; // TODO: deprecate
     typedef SummedDimIndexTypeList_ SummedDimIndexTypeList;
 
+    // object must be a "terminal" instance (e.g. an ImplementationOf_t type) which will live
+    // at least as long as the relevant indexed expression.
     ExpressionTemplate_IndexedObject_t (Object const &object) : m_object(object) { }
+    ExpressionTemplate_IndexedObject_t (ExpressionTemplate_IndexedObject_t const &e) : m_object(e.m_object) { }
 
     operator Scalar () const
     {
@@ -146,7 +150,10 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList
     typedef typename Parent::MultiIndex MultiIndex;
     using Parent::IS_EXPRESSION_TEMPLATE_I;
 
+    // object must be a "terminal" instance (e.g. an ImplementationOf_t type) which will live
+    // at least as long as the relevant indexed expression.
     ExpressionTemplate_IndexedObject_t (Object &object) : m_object(object) { }
+    ExpressionTemplate_IndexedObject_t (ExpressionTemplate_IndexedObject_t const &e) : m_object(e.m_object) { }
 
     // call this on the left-hand side (LHS) of an indexed assignment to avoid the run-time
     // aliasing check.  this should only be done when the human can guarantee that there is
@@ -176,7 +183,7 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList
         if (&right_operand.m_object == &m_object)
             return;
 
-        // TODO: replace with memcpy? (this would require that Scalar is a POD type)
+        // can't do a memcpy because the right operand might be an immutable vector and have no memory
         for (typename Object::ComponentIndex i; i.is_not_at_end(); ++i)
             m_object[i] = right_operand[typename ExpressionTemplate_IndexedObject_t::MultiIndex(i)];
     }
@@ -280,6 +287,11 @@ struct ExpressionTemplate_Addition_t
         m_left_operand(left_operand),
         m_right_operand(right_operand)
     { }
+    ExpressionTemplate_Addition_t (ExpressionTemplate_Addition_t const &e)
+        :
+        m_left_operand(e.m_left_operand),
+        m_right_operand(e.m_right_operand)
+    { }
 
     operator Scalar () const
     {
@@ -323,8 +335,8 @@ private:
 
     void operator = (ExpressionTemplate_Addition_t const &);
 
-    LeftOperand const &m_left_operand;
-    RightOperand const &m_right_operand;
+    LeftOperand m_left_operand;
+    RightOperand m_right_operand;
 };
 
 // ////////////////////////////////////////////////////////////////////////////
@@ -405,7 +417,7 @@ private:
 
     void operator = (ExpressionTemplate_ScalarMultiplication_t const &);
 
-    Operand const &m_operand;
+    Operand m_operand;
     Scalar m_scalar_operand;
 };
 
@@ -494,8 +506,8 @@ private:
 
     void operator = (ExpressionTemplate_Multiplication_t const &);
 
-    LeftOperand const &m_left_operand;
-    RightOperand const &m_right_operand;
+    LeftOperand m_left_operand;
+    RightOperand m_right_operand;
 };
 
 // ////////////////////////////////////////////////////////////////////////////

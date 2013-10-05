@@ -8,8 +8,6 @@
 
 #include "tenh/core.hpp"
 
-#include <iostream> // HIPPO TEMP
-
 #include "tenh/expressiontemplate_reindex.hpp"
 #include "tenh/implementation/diagonal2tensor.hpp"
 #include "tenh/implementation/tensor.hpp"
@@ -91,7 +89,6 @@ public:
               typename UsedDimIndexTypeList_>
     void operator = (ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &rhs)
     {
-        std::cerr << "Vector::operator = (" << type_string_of(rhs) << ")\n";
         STATIC_ASSERT(Length_f<FreeDimIndexTypeList_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
         typedef typename Head_f<FreeDimIndexTypeList_>::T RhsDimIndex;
         typedef AbstractIndex_c<RhsDimIndex::SYMBOL> IndexToRename;
@@ -99,7 +96,6 @@ public:
         typedef TypeList_t<IndexToRename> DomainAbstractIndexTypeList;
         typedef TypeList_t<I> CodomainAbstractIndexTypeList;
         I i;
-        std::cerr << FORMAT_VALUE((reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(rhs.as_derived()).uses_tensor(*this))) << '\n';
         (*this)(i) = reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(rhs.as_derived());
     }
     // TODO: a "no alias" version of operator= -- this probably requires adding a no_alias() method to this class.

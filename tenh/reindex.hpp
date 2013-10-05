@@ -233,6 +233,7 @@ typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
          ::template Eval_f<EmptyTypeList>::T
     reindexed (EmptyTypeList const &)
 {
+    // this is always EmptyTypeList, but I don't want to put Reindex_e's "guts" here redundantly
     return typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
                     ::template Eval_f<EmptyTypeList>::T();
 }
@@ -245,6 +246,7 @@ typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
          ::template Eval_f<TypeList_t<HeadType_,BodyTypeList_> >::T
     reindexed (EmptyTypeList &)
 {
+    // this is always EmptyTypeList, but I don't want to put Reindex_e's "guts" here redundantly
     return typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
                     ::template Eval_f<EmptyTypeList>::T();
 }

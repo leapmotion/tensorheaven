@@ -86,11 +86,7 @@ void addition (Context const &context)
         w[i] = 3*i.value() + 4;
     }
 
-    std::cerr << FORMAT_VALUE(v) << '\n';
-    std::cerr << FORMAT_VALUE(w) << '\n';
     u = v + w;
-//     std::cerr << FORMAT_VALUE(type_string_of(v + w)) << '\n';
-    std::cerr << FORMAT_VALUE(u) << '\n';
     for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
         assert_eq(u[i], v[i]+w[i]);
 }

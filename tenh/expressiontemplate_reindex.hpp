@@ -45,7 +45,7 @@ private:
     typedef Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> Reindex;
 public:
     typedef ExpressionTemplate_IndexedObject_t<typename Reindex::template Eval_f<Object>::T,
-                                               FactorTypeList,
+                                               typename Reindex::template Eval_f<FactorTypeList>::T, // will just be FactorTypeList, since it has no indices
                                                typename Reindex::template Eval_f<DimIndexTypeList>::T,
                                                typename Reindex::template Eval_f<SummedDimIndexTypeList_>::T,
                                                FORCE_CONST_,
@@ -140,7 +140,8 @@ private:
     typedef Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> Reindex;
 public:
     typedef ExpressionTemplate_Addition_t<typename Reindex::template Eval_f<LeftOperand>::T,
-                                          typename Reindex::template Eval_f<RightOperand>::T,OPERATOR> T;
+                                          typename Reindex::template Eval_f<RightOperand>::T,
+                                          OPERATOR> T;
 };
 
 // unfortunately you have to make a const and a non-const version of each

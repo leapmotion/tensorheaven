@@ -168,7 +168,7 @@ Stage g_test_stage = STAGE_FRAMEWORK_INTERNAL_PRE_INITIALIZE;
 string g_executable_filename;
 Directory *g_root_directory = NULL;
 string g_premade_caught_signal_message;
-static string::size_type const gs_max_message_length = 4096; // arbitrary
+static string::size_type const gs_max_message_length = 0x8000; // arbitrary
 
 string const &ResultString (Result result)
 {
