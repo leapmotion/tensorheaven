@@ -5,7 +5,8 @@ project(tensorheaven_test)
 find_path(EIGEN_INCLUDE_DIR "eigen" PATHS $ENV{EIGEN_INCLUDE_DIR} NO_DEFAULT_PATH)
 find_path(BOOST_INCLUDE_DIR "boost" PATHS $ENV{BOOST_INCLUDE_DIR} NO_DEFAULT_PATH)
 
-OPTION(ASM_EXAM "Keep ASM intermedearies for inspection of compiler optimizations." OFF)
+OPTION(ASM_EXAM "Keep ASM intermediaries for inspection of compiler optimizations." OFF)
+OPTION(NO_OPTIMIZE "Compile without optimization (useful for debugging; not implemented for MSVC currently)." OFF)
 
 # the root directory of the project (the one containing the tenh/ dir) is the only necessary include dir
 include_directories(${tensorheaven_test_SOURCE_DIR} ${EIGEN_INCLUDE_DIR} ${BOOST_INCLUDE_DIR})
@@ -24,6 +25,9 @@ set(PRODUCTION_GCC_FLAGS "")
 if(BUILD_WINDOWS)
   set(COMPILER_DEBUG_FLAGS /Zi /D_DEBUG /MDd /Od /fp:except /D_CRT_SECURE_NO_WARNINGS /D_SCL_SECURE_NO_WARNINGS=1 /RTC1 /MP)
   set(COMPILER_RELEASE_FLAGS /Zi /D NDEBUG /D _CRT_SECURE_NO_WARNINGS /MD /O2 /fp:fast /WX /MP)
+  if(NO_OPTIMIZE)
+    # TODO: implement NO_OPTIMIZE for windows
+  endif()
   # USE_PRODUCTION_FLAGS will replace /Od or /O2 with /Ox /Ob2 /Oi /Ot, adds ~20% compile time
   set(COMPILER_NOPRODUCTION_FLAGS /Zi )
   set(BASE_LINKER_FLAGS /NODEFAULTLIB:LIBCMT /ignore:4099 /DEBUG )
@@ -32,8 +36,9 @@ if(BUILD_WINDOWS)
   set(PRODUCTION_LINKER_FLAGS /LTCG )
   add_definitions(-DNOMINMAX)
 else() # clang or gcc
-  set(COMPILER_DEBUG_FLAGS -g )
-  set(COMPILER_RELEASE_FLAGS -O3 -g -DNDEBUG )
+  set(COMPILER_DEBUG_FLAGS -g3 )
+  set(COMPILER_DEBUG_NO_OPTIMIZE_FLAGS -O0 -g3 )
+  set(COMPILER_RELEASE_FLAGS -O3 -g0 -DNDEBUG )
   set(COMPILER_NOPRODUCTION_FLAGS "")
   set(BASE_LINKER_FLAGS "")
   set(NOPRODUCTION_LINKER_FLAGS "")
@@ -47,6 +52,12 @@ else() # clang or gcc
     set(COMPILER_DEBUG_FLAGS ${COMPILER_DEBUG_FLAGS} -fvisibility=hidden)
     set(COMPILER_RELEASE_FLAGS ${COMPILER_RELEASE_FLAGS} -fvisibility=hidden)
   endif()
+  if(ASM_EXAM)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -save-temps") # this uses -O0, which avoids inlined code being optimized out
+  endif()
+  if(NO_OPTIMIZE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -O0") # this uses -O0, which avoids inlined code being optimized out
+  endif()
 endif()
 
 if(BUILD_WINDOWS)
@@ -57,13 +68,6 @@ else() # Linux
   set(COMPILER_FLAGS ${COMPILER_FLAGS} ${BASE_GCC_FLAGS})
 endif()
 
-# # TODO: build options for other compilers
-# set(CMAKE_CXX_FLAGS "-Wall -Werror") # -Werror can give problems under clang due to -Wtautological-compare see pragma in array.hpp and componentindex.hpp to disable it as needed.
-# set(CMAKE_CXX_FLAGS_DEBUG "-g -O3") # this uses -O3 so that the tests run reasonably quickly, even though the inlining may interfere with step-debugging.
-# set(CMAKE_CXX_FLAGS_DEBUG_NO_OPTIMIZE "-g -O0") # this uses -O0, which is useful for step-debugging sometimes.
-# set(CMAKE_CXX_FLAGS_RELEASE "-g -O3 -DNDEBUG")
-# set(CMAKE_CXX_FLAGS_ASMEXAM "-g0 -O3 -save-temps -DNDEBUG")
-
 # temp tests
 add_executable(algebraic_expression_prototype algebraic_expression_prototype.cpp)
 add_executable(asm_exam asm_exam.cpp asm_exam_separate_functions.cpp)
@@ -72,7 +76,6 @@ add_executable(contraction_prototype contraction_prototype.cpp)
 add_executable(eigen_interop_prototype eigen_interop_prototype.cpp)
 add_executable(list list.cpp)
 add_executable(strongly_typed_vector_prototype strongly_typed_vector_prototype.cpp)
-add_executable(tuple tuple.cpp)
 add_executable(typelist typelist.cpp)
 add_executable(typetuple typetuple.cpp)
 
