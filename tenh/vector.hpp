@@ -125,8 +125,7 @@ ExpressionTemplate_Addition_t<
     AbstractIndex_c<'i'> i;
     return lhs(i) + rhs(i);
 }
-/*
-// TODO: figure out the return type (yugh).
+
 template <typename BasedVectorSpace_,
           typename Scalar_,
           typename UseArrayType_,
@@ -134,16 +133,23 @@ template <typename BasedVectorSpace_,
           typename FreeFactorTypeList_,
           typename FreeDimIndexTypeList_,
           typename UsedDimIndexTypeList_>
-XYZ operator + (Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &lhs,
+ExpressionTemplate_Addition_t<
+    typename Vector<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+    Derived_,
+    '+'>
+    operator + (Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &lhs,
                 ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &rhs)
 {
-    AbstractIndex_c<'i'> i;
-    // TODO: rename rhs's indices so its sole free index is 'i'
-    // TODO: assert that rhs has exactly one free index
-    return lhs(i) + rhs;
+    STATIC_ASSERT(Length_f<FreeDimIndexTypeList_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
+    typedef typename Head_f<FreeDimIndexTypeList_>::T RhsDimIndex;
+    typedef AbstractIndex_c<RhsDimIndex::SYMBOL> IndexToRename;
+    typedef AbstractIndex_c<'i'> I;
+    typedef TypeList_t<IndexToRename> DomainAbstractIndexTypeList;
+    typedef TypeList_t<I> CodomainAbstractIndexTypeList;
+    I i;
+    return lhs(i) + reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(rhs.as_derived());
 }
 
-// TODO: figure out the return type (yugh).
 template <typename BasedVectorSpace_,
           typename Scalar_,
           typename UseArrayType_,
@@ -151,28 +157,38 @@ template <typename BasedVectorSpace_,
           typename FreeFactorTypeList_,
           typename FreeDimIndexTypeList_,
           typename UsedDimIndexTypeList_>
-XYZ operator + (ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &lhs,
+ExpressionTemplate_Addition_t<
+    Derived_,
+    typename Vector<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+    '+'>
+    operator + (ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &lhs,
                 Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &rhs)
 {
-    AbstractIndex_c<'i'> i;
-    // TODO: rename lhs's indices so its sole free index is 'i'
-    // TODO: assert that lhs has exactly one free index
-    return lhs + rhs(i);
+    STATIC_ASSERT(Length_f<FreeDimIndexTypeList_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
+    typedef typename Head_f<FreeDimIndexTypeList_>::T RhsDimIndex;
+    typedef AbstractIndex_c<RhsDimIndex::SYMBOL> IndexToRename;
+    typedef AbstractIndex_c<'i'> I;
+    typedef TypeList_t<IndexToRename> DomainAbstractIndexTypeList;
+    typedef TypeList_t<I> CodomainAbstractIndexTypeList;
+    I i;
+    return reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(lhs.as_derived()) + rhs(i);
 }
 
 // the "ExpressionTemplate_i + ExpressionTemplate_i" situation is already handled
 // by the existing expression template code.
 
-// TODO: figure out the return type (yugh).
 template <typename BasedVectorSpace_, typename Scalar_, typename Lhs_UseArrayType_, typename Rhs_UseArrayType_>
-XYZ operator - (Vector<BasedVectorSpace_,Scalar_,Lhs_UseArrayType_> const &lhs,
+ExpressionTemplate_Addition_t<
+    typename Vector<BasedVectorSpace_,Scalar_,Lhs_UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+    typename Vector<BasedVectorSpace_,Scalar_,Rhs_UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+    '-'>
+    operator - (Vector<BasedVectorSpace_,Scalar_,Lhs_UseArrayType_> const &lhs,
                 Vector<BasedVectorSpace_,Scalar_,Rhs_UseArrayType_> const &rhs)
 {
     AbstractIndex_c<'i'> i;
     return lhs(i) - rhs(i);
 }
 
-// TODO: figure out the return type (yugh).
 template <typename BasedVectorSpace_,
           typename Scalar_,
           typename UseArrayType_,
@@ -180,16 +196,23 @@ template <typename BasedVectorSpace_,
           typename FreeFactorTypeList_,
           typename FreeDimIndexTypeList_,
           typename UsedDimIndexTypeList_>
-XYZ operator - (Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &lhs,
+ExpressionTemplate_Addition_t<
+    typename Vector<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+    Derived_,
+    '-'>
+    operator - (Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &lhs,
                 ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &rhs)
 {
-    AbstractIndex_c<'i'> i;
-    // TODO: rename rhs's indices so its sole free index is 'i'
-    // TODO: assert that rhs has exactly one free index
-    return lhs(i) - rhs;
+    STATIC_ASSERT(Length_f<FreeDimIndexTypeList_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
+    typedef typename Head_f<FreeDimIndexTypeList_>::T RhsDimIndex;
+    typedef AbstractIndex_c<RhsDimIndex::SYMBOL> IndexToRename;
+    typedef AbstractIndex_c<'i'> I;
+    typedef TypeList_t<IndexToRename> DomainAbstractIndexTypeList;
+    typedef TypeList_t<I> CodomainAbstractIndexTypeList;
+    I i;
+    return lhs(i) - reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(rhs.as_derived());
 }
 
-// TODO: figure out the return type (yugh).
 template <typename BasedVectorSpace_,
           typename Scalar_,
           typename UseArrayType_,
@@ -197,51 +220,92 @@ template <typename BasedVectorSpace_,
           typename FreeFactorTypeList_,
           typename FreeDimIndexTypeList_,
           typename UsedDimIndexTypeList_>
-XYZ operator - (ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &lhs,
+ExpressionTemplate_Addition_t<
+    Derived_,
+    typename Vector<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+    '-'>
+    operator - (ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &lhs,
                 Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &rhs)
 {
-    AbstractIndex_c<'i'> i;
-    // TODO: rename lhs's indices so its sole free index is 'i'
-    // TODO: assert that lhs has exactly one free index
-    return lhs - rhs(i);
+    STATIC_ASSERT(Length_f<FreeDimIndexTypeList_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
+    typedef typename Head_f<FreeDimIndexTypeList_>::T RhsDimIndex;
+    typedef AbstractIndex_c<RhsDimIndex::SYMBOL> IndexToRename;
+    typedef AbstractIndex_c<'i'> I;
+    typedef TypeList_t<IndexToRename> DomainAbstractIndexTypeList;
+    typedef TypeList_t<I> CodomainAbstractIndexTypeList;
+    I i;
+    return reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(lhs.as_derived()) - rhs(i);
 }
 
 // the "ExpressionTemplate_i - ExpressionTemplate_i" situation is already handled
 // by the existing expression template code.
 
-// TODO: figure out the return type (yugh).
-// ScalarOperand_ could be Scalar_ or int (see the operator overloads in expression_templates.hpp)
-template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_, typename ScalarOperand_>
-XYZ operator * (Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &lhs,
-                ScalarOperand_ const &rhs)
+template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
+ExpressionTemplate_ScalarMultiplication_t<
+    typename Vector<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+    Scalar_,
+    '*'>
+    operator * (Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &lhs,
+                Scalar_ const &rhs)
 {
     AbstractIndex_c<'i'> i;
     return lhs(i) * rhs;
 }
 
-// TODO: figure out the return type (yugh).
-// ScalarOperand_ could be Scalar_ or int (see the operator overloads in expression_templates.hpp)
-template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_, typename ScalarOperand_>
-XYZ operator * (ScalarOperand_ const &lhs,
-                Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &rhs
+template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
+ExpressionTemplate_ScalarMultiplication_t<
+    typename Vector<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+    Scalar_,
+    '*'>
+    operator * (Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &lhs,
+                int rhs)
+{
+    AbstractIndex_c<'i'> i;
+    return lhs(i) * rhs;
+}
+
+template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
+ExpressionTemplate_ScalarMultiplication_t<
+    typename Vector<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+    Scalar_,
+    '*'>
+    operator * (Scalar_ const &lhs,
+                Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &rhs)
 {
     AbstractIndex_c<'i'> i;
     return lhs * rhs(i);
 }
 
-// TODO: figure out the return type (yugh).
-// ScalarOperand_ could be Scalar_ or int (see the operator overloads in expression_templates.hpp)
+template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
+ExpressionTemplate_ScalarMultiplication_t<
+    typename Vector<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+    Scalar_,
+    '*'>
+    operator * (int lhs,
+                Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &rhs)
+{
+    AbstractIndex_c<'i'> i;
+    return lhs * rhs(i);
+}
+
 template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_, typename ScalarOperand_>
-XYZ operator / (Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &lhs,
+ExpressionTemplate_ScalarMultiplication_t<
+    typename Vector<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+    Scalar_,
+    '/'>
+    operator / (Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &lhs,
                 ScalarOperand_ const &rhs)
 {
     AbstractIndex_c<'i'> i;
     return lhs(i) / rhs;
 }
 
-// TODO: figure out the return type (yugh).
 template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
-XYZ operator - (Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &v)
+ExpressionTemplate_ScalarMultiplication_t<
+    typename Vector<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+    Scalar_,
+    '*'>
+    operator - (Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &v)
 {
     AbstractIndex_c<'i'> i;
     return -v(i);
@@ -256,7 +320,7 @@ Scalar_ operator * (Vector<Lhs_BasedVectorSpace_,Scalar_,Lhs_UseArrayType_> cons
     return lhs(i) * rhs(i);
 }
 
-// TODO: figure out the return type (yugh).
+// this only allows natural pairings of vectors with covectors (via the existing expression template code)
 template <typename BasedVectorSpace_,
           typename Scalar_,
           typename UseArrayType_,
@@ -264,16 +328,20 @@ template <typename BasedVectorSpace_,
           typename FreeFactorTypeList_,
           typename FreeDimIndexTypeList_,
           typename UsedDimIndexTypeList_>
-XYZ operator * (Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &lhs,
-                ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &rhs)
+Scalar_ operator * (Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &lhs,
+                    ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &rhs)
 {
-    AbstractIndex_c<'i'> i;
-    // TODO: assert that rhs has either 1 or 2 free indices
-    // TODO: rename rhs's indices so its "leftmost" free index is 'i'
-    return lhs(i) * rhs;
+    STATIC_ASSERT(Length_f<FreeDimIndexTypeList_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
+    typedef typename Head_f<FreeDimIndexTypeList_>::T RhsDimIndex;
+    typedef AbstractIndex_c<RhsDimIndex::SYMBOL> IndexToRename;
+    typedef AbstractIndex_c<'i'> I;
+    typedef TypeList_t<IndexToRename> DomainAbstractIndexTypeList;
+    typedef TypeList_t<I> CodomainAbstractIndexTypeList;
+    I i;
+    return lhs(i) * reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(rhs.as_derived());
 }
 
-// TODO: figure out the return type (yugh).
+// this only allows natural pairings of vectors with covectors (via the existing expression template code)
 template <typename BasedVectorSpace_,
           typename Scalar_,
           typename UseArrayType_,
@@ -281,17 +349,23 @@ template <typename BasedVectorSpace_,
           typename FreeFactorTypeList_,
           typename FreeDimIndexTypeList_,
           typename UsedDimIndexTypeList_>
-XYZ operator * (ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &lhs,
-                Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &rhs,
+Scalar_ operator * (ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &lhs,
+                    Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &rhs)
 {
-    AbstractIndex_c<'i'> i;
-    // TODO: assert that lhs has either 1 or 2 free indices
-    // TODO: rename lhs's indices so its "rightmost" free index is 'i'
-    return lhs * rhs(i);
+    STATIC_ASSERT(Length_f<FreeDimIndexTypeList_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
+    typedef typename Head_f<FreeDimIndexTypeList_>::T RhsDimIndex;
+    typedef AbstractIndex_c<RhsDimIndex::SYMBOL> IndexToRename;
+    typedef AbstractIndex_c<'i'> I;
+    typedef TypeList_t<IndexToRename> DomainAbstractIndexTypeList;
+    typedef TypeList_t<I> CodomainAbstractIndexTypeList;
+    I i;
+    return reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(lhs.as_derived()) * rhs(i);
 }
 
 // the "ExpressionTemplate_i * ExpressionTemplate_i" situation is already handled
 // by the existing expression template code.
+
+/*
 
 // TODO: figure out the return type (yugh).
 // this is the outer product

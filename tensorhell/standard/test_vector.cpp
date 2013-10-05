@@ -80,15 +80,179 @@ void addition (Context const &context)
     Vector u(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
     Vector v(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
     Vector w(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Vector x(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Vector y(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
     for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
     {
         v[i] = i.value();
         w[i] = 3*i.value() + 4;
+        x[i] = 8*i.value() - 3;
+        y[i] = i.value()*i.value();
     }
 
     u = v + w;
     for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
         assert_eq(u[i], v[i]+w[i]);
+
+    u = v + (w + x);
+    for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
+        assert_eq(u[i], v[i]+(w[i]+x[i]));
+
+    u = (v + w) + x;
+    for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
+        assert_eq(u[i], (v[i]+w[i])+x[i]);
+
+    u = (v + w) + (x + y);
+    for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
+        assert_eq(u[i], (v[i]+w[i])+(x[i]+y[i]));
+}
+
+template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
+void subtraction (Context const &context)
+{
+    typedef Tenh::Vector<BasedVectorSpace_,Scalar_,UseArrayType_> Vector;
+
+    Vector u(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Vector v(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Vector w(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Vector x(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Vector y(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
+    {
+        v[i] = i.value();
+        w[i] = 3*i.value() + 4;
+        x[i] = 8*i.value() - 3;
+        y[i] = i.value()*i.value();
+    }
+
+    u = v - w;
+    for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
+        assert_eq(u[i], v[i]-w[i]);
+
+    u = v - (w - x);
+    for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
+        assert_eq(u[i], v[i]-(w[i]-x[i]));
+
+    u = (v - w) - x;
+    for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
+        assert_eq(u[i], (v[i]-w[i])-x[i]);
+
+    u = (v - w) - (x - y);
+    for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
+        assert_eq(u[i], (v[i]-w[i])-(x[i]-y[i]));
+}
+
+template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
+void scalar_multiplication (Context const &context)
+{
+    typedef Tenh::Vector<BasedVectorSpace_,Scalar_,UseArrayType_> Vector;
+
+    Vector u(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Vector v(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
+        v[i] = i.value();
+
+    u = v * 3;
+    for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
+        assert_eq(u[i], v[i]*Scalar_(3));
+
+    u = 3 * v;
+    for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
+        assert_eq(u[i], v[i]*Scalar_(3));
+
+    u = v * Scalar_(3.14);
+    for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
+        assert_eq(u[i], v[i]*Scalar_(3.14));
+
+    u = Scalar_(3.14) * v;
+    for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
+        assert_eq(u[i], v[i]*Scalar_(3.14));
+
+    u = v / 3;
+    for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
+        assert_eq(u[i], v[i]/Scalar_(3));
+
+    u = v / Scalar_(3.14);
+    for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
+        assert_eq(u[i], v[i]/Scalar_(3.14));
+}
+
+template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
+void negation (Context const &context)
+{
+    typedef Tenh::Vector<BasedVectorSpace_,Scalar_,UseArrayType_> Vector;
+
+    Vector u(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Vector v(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
+        v[i] = i.value();
+
+    u = -v;
+    for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
+        assert_eq(u[i], -v[i]);
+}
+
+template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
+void natural_pairing (Context const &context)
+{
+    typedef Tenh::Vector<BasedVectorSpace_,Scalar_,UseArrayType_> Vector;
+    typedef typename Tenh::DualOf_f<Tenh::Vector<BasedVectorSpace_,Scalar_,UseArrayType_> >::T Covector;
+
+    Covector a(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Covector b(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Vector v(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Vector w(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
+    {
+        a[i] = i.value();
+        b[i] = 2*i.value() + 17;
+        v[i] = 3*i.value() + 4;
+        w[i] = i.value()*i.value();
+    }
+
+    // covector on left
+
+    {
+        Scalar_ actual_result = a * v;
+        Scalar_ expected_result(0);
+        for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
+            expected_result += a[i] * v[i];
+        assert_eq(actual_result, expected_result);
+    }
+
+    {
+        Scalar_ actual_result = a * (v + w);
+        Scalar_ expected_result(0);
+        for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
+            expected_result += a[i] * (v[i] + w[i]);
+        assert_eq(actual_result, expected_result);
+    }
+
+    {
+        Scalar_ actual_result = (a + b) * v;
+        Scalar_ expected_result(0);
+        for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
+            expected_result += (a[i] + b[i]) * v[i];
+        assert_eq(actual_result, expected_result);
+    }
+
+    {
+        Scalar_ actual_result = (a + b) * (v + w);
+        Scalar_ expected_result(0);
+        for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
+            expected_result += (a[i] + b[i]) * (v[i] + w[i]);
+        assert_eq(actual_result, expected_result);
+    }
+
+    // vector on left
+    {
+        Scalar_ actual_result = v * a;
+        Scalar_ expected_result(0);
+        for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
+            expected_result += v[i] * a[i];
+        assert_eq(actual_result, expected_result);
+    }
+
 }
 
 template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
@@ -100,6 +264,10 @@ void add_particular_tests (Directory *parent)
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "constructor_fill_with", constructor_fill_with<BasedVectorSpace_,Scalar_,UseArrayType_>, new Context::Data<Scalar_>(42), RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "assignment", assignment<BasedVectorSpace_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "addition", addition<BasedVectorSpace_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "subtraction", subtraction<BasedVectorSpace_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "scalar_multiplication", scalar_multiplication<BasedVectorSpace_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "negation", negation<BasedVectorSpace_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "natural_pairing", natural_pairing<BasedVectorSpace_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
 }
 
 template <typename Scalar_, typename UseArrayType_>
