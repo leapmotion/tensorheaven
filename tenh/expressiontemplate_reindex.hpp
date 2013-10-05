@@ -15,6 +15,144 @@
 
 namespace Tenh {
 
+// unfortunately GCC 4.2.1 required that there be forward declarations of all these
+// reindexed functions.  Clang and later versions of GCC didn't, so they may be
+// something we can take out later.
+
+template <typename DomainAbstractIndexTypeList_,
+          typename CodomainAbstractIndexTypeList_,
+          typename Object,
+          typename FactorTypeList,
+          typename DimIndexTypeList,
+          typename SummedDimIndexTypeList_,
+          bool FORCE_CONST_,
+          bool CHECK_FOR_ALIASING_,
+          typename Derived_>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_IndexedObject_t<Object,
+                                                              FactorTypeList,
+                                                              DimIndexTypeList,
+                                                              SummedDimIndexTypeList_,
+                                                              FORCE_CONST_,
+                                                              CHECK_FOR_ALIASING_,
+                                                              Derived_> >::T
+    reindexed (ExpressionTemplate_IndexedObject_t<Object,
+                                                  FactorTypeList,
+                                                  DimIndexTypeList,
+                                                  SummedDimIndexTypeList_,
+                                                  FORCE_CONST_,
+                                                  CHECK_FOR_ALIASING_,
+                                                  Derived_> const &e);
+
+template <typename DomainAbstractIndexTypeList_,
+          typename CodomainAbstractIndexTypeList_,
+          typename Object,
+          typename FactorTypeList,
+          typename DimIndexTypeList,
+          typename SummedDimIndexTypeList_,
+          bool FORCE_CONST_,
+          bool CHECK_FOR_ALIASING_,
+          typename Derived_>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_IndexedObject_t<Object,
+                                                              FactorTypeList,
+                                                              DimIndexTypeList,
+                                                              SummedDimIndexTypeList_,
+                                                              FORCE_CONST_,
+                                                              CHECK_FOR_ALIASING_,
+                                                              Derived_> >::T
+    reindexed (ExpressionTemplate_IndexedObject_t<Object,
+                                                  FactorTypeList,
+                                                  DimIndexTypeList,
+                                                  SummedDimIndexTypeList_,
+                                                  FORCE_CONST_,
+                                                  CHECK_FOR_ALIASING_,
+                                                  Derived_> &e);
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename LeftOperand, typename RightOperand, char OPERATOR>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_Addition_t<LeftOperand,RightOperand,OPERATOR> >::T
+    reindexed (ExpressionTemplate_Addition_t<LeftOperand,RightOperand,OPERATOR> const &e);
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename LeftOperand, typename RightOperand, char OPERATOR>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_Addition_t<LeftOperand,RightOperand,OPERATOR> >::T
+    reindexed (ExpressionTemplate_Addition_t<LeftOperand,RightOperand,OPERATOR> &e);
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename Operand, typename Scalar_, char OPERATOR>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_ScalarMultiplication_t<Operand,Scalar_,OPERATOR> >::T
+    reindexed (ExpressionTemplate_ScalarMultiplication_t<Operand,Scalar_,OPERATOR> const &e);
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename Operand, typename Scalar_, char OPERATOR>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_ScalarMultiplication_t<Operand,Scalar_,OPERATOR> >::T
+    reindexed (ExpressionTemplate_ScalarMultiplication_t<Operand,Scalar_,OPERATOR> &e);
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename LeftOperand, typename RightOperand>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_Multiplication_t<LeftOperand,RightOperand> >::T
+    reindexed (ExpressionTemplate_Multiplication_t<LeftOperand,RightOperand> const &e);
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename LeftOperand, typename RightOperand>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_Multiplication_t<LeftOperand,RightOperand> >::T
+    reindexed (ExpressionTemplate_Multiplication_t<LeftOperand,RightOperand> &e);
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType> >::T
+    reindexed (ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType> const &e);
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType> >::T
+    reindexed (ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType> &e);
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename Operand, typename SourceAbstractIndexType, typename SplitAbstractIndexTypeList>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_IndexSplit_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList> >::T
+    reindexed (ExpressionTemplate_IndexSplit_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList> const &e);
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename Operand, typename SourceAbstractIndexType, typename SplitAbstractIndexTypeList>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_IndexSplit_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList> >::T
+    reindexed (ExpressionTemplate_IndexSplit_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList> &e);
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename Operand, typename SourceAbstractIndexType, typename SplitAbstractIndexType>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType> >::T
+    reindexed (ExpressionTemplate_IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType> const &e);
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename Operand, typename SourceAbstractIndexType, typename SplitAbstractIndexType>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType> >::T
+    reindexed (ExpressionTemplate_IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType> &e);
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename Operand>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_Eval_t<Operand> >::T
+    reindexed (ExpressionTemplate_Eval_t<Operand> const &e);
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename Operand>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_Eval_t<Operand> >::T
+    reindexed (ExpressionTemplate_Eval_t<Operand> &e);
+
 // ///////////////////////////////////////////////////////////////////////////
 // Reindex_e<...>::Eval_f and reindexed<...>() for all the templates
 // in tenh/expression_templates.hpp -- they parallel each expression template

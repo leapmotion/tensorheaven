@@ -81,7 +81,6 @@ struct ExpressionTemplate_IndexedObject_t
     // object must be a "terminal" instance (e.g. an ImplementationOf_t type) which will live
     // at least as long as the relevant indexed expression.
     ExpressionTemplate_IndexedObject_t (Object const &object) : m_object(object) { }
-    ExpressionTemplate_IndexedObject_t (ExpressionTemplate_IndexedObject_t const &e) : m_object(e.m_object) { }
 
     operator Scalar () const
     {
@@ -153,7 +152,6 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList
     // object must be a "terminal" instance (e.g. an ImplementationOf_t type) which will live
     // at least as long as the relevant indexed expression.
     ExpressionTemplate_IndexedObject_t (Object &object) : m_object(object) { }
-    ExpressionTemplate_IndexedObject_t (ExpressionTemplate_IndexedObject_t const &e) : m_object(e.m_object) { }
 
     // call this on the left-hand side (LHS) of an indexed assignment to avoid the run-time
     // aliasing check.  this should only be done when the human can guarantee that there is
@@ -286,11 +284,6 @@ struct ExpressionTemplate_Addition_t
         :
         m_left_operand(left_operand),
         m_right_operand(right_operand)
-    { }
-    ExpressionTemplate_Addition_t (ExpressionTemplate_Addition_t const &e)
-        :
-        m_left_operand(e.m_left_operand),
-        m_right_operand(e.m_right_operand)
     { }
 
     operator Scalar () const
