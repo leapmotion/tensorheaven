@@ -135,6 +135,16 @@ inline void print_pretty_typestring (std::ostream &out,
                 break;
 
             case ',':
+                // chomp up all whitespace
+                while (true)
+                {
+                    std::string::const_iterator next_it = it;
+                    ++next_it;
+                    char const &next_c = *next_it;
+                    if (next_c != ' ' && next_c != '\t' && next_c != '\n')
+                        break;
+                    ++it;
+                }
                 // only print stuff if we're not shortified
                 if (shortify_depth == 0 || template_argument_depth < shortify_depth)
                 {
@@ -143,12 +153,12 @@ inline void print_pretty_typestring (std::ostream &out,
                 break;
 
             case '>':
-                // presumably the < and > brackets will be balanced, but in case they're not...
-                if (indent_level > 0)
-                    --indent_level;
                 // only print stuff if we're not shortified
                 if (shortify_depth == 0 || template_argument_depth < shortify_depth)
                 {
+                    // presumably the < and > brackets will be balanced, but in case they're not...
+                    if (indent_level > 0)
+                        --indent_level;
                     out << '\n' << std::string(indent_level*indent_size, ' ') << '>';
                 }
                 if (template_argument_depth)

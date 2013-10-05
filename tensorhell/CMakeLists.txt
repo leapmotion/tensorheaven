@@ -75,6 +75,7 @@ add_executable(conceptual_inheritance_prototype conceptual_inheritance_prototype
 add_executable(contraction_prototype contraction_prototype.cpp)
 add_executable(eigen_interop_prototype eigen_interop_prototype.cpp)
 add_executable(list list.cpp)
+add_executable(prettyprint prettyprint.cpp)
 add_executable(strongly_typed_vector_prototype strongly_typed_vector_prototype.cpp)
 add_executable(typelist typelist.cpp)
 add_executable(typetuple typetuple.cpp)
