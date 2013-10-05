@@ -140,13 +140,20 @@ inline void print_pretty_typestring (std::ostream &out,
                 {
                     std::string::const_iterator next_it = it;
                     ++next_it;
+                    if (next_it == it_end)
+                        break;
                     char const &next_c = *next_it;
                     if (next_c != ' ' && next_c != '\t' && next_c != '\n')
                         break;
                     ++it;
                 }
-                // only print stuff if we're not shortified
-                if (shortify_depth == 0 || template_argument_depth < shortify_depth)
+                // if we're not in a template parameter list, just print the ',' as normal
+                if (template_argument_depth == 0)
+                {
+                    out << ',';
+                }
+                // otherwise only print stuff if we're not shortified
+                else if (shortify_depth == 0 || template_argument_depth < shortify_depth)
                 {
                     out << ",\n" << std::string(indent_level*indent_size, ' ');
                 }
