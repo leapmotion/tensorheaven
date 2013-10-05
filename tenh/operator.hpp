@@ -11,6 +11,7 @@
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/conceptual/vectorspace.hpp"
 #include "tenh/expression_templates.hpp"
+#include "tenh/expressiontemplate_reindex.hpp"
 #include "tenh/implementation/tensor.hpp"
 
 namespace Tenh {

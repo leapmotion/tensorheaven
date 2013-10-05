@@ -39,7 +39,7 @@ void constructor_fill_with (Context const &context)
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
         assert_eq(A[i], fill);
 }
-/*
+
 template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
 void assignment (Context const &context)
 {
@@ -73,7 +73,7 @@ void assignment (Context const &context)
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
         assert_eq(A[i], C[i]);
 }
-*/
+
 /*
 template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
 void addition (Context const &context)
@@ -265,7 +265,7 @@ void add_particular_tests (Directory *parent)
     Directory *dir = new Directory(Tenh::type_string_of<Operator>(), parent);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "constructor_without_initialization", constructor_without_initialization<Domain_,Codomain_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "constructor_fill_with", constructor_fill_with<Domain_,Codomain_,Scalar_,UseArrayType_>, new Context::Data<Scalar_>(42), RESULT_NO_ERROR);
-//     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "assignment", assignment<Domain_,Codomain_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "assignment", assignment<Domain_,Codomain_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
 //     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "addition", addition<Domain_,Codomain_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
 //     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "subtraction", subtraction<Domain_,Codomain_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
 //     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "scalar_multiplication", scalar_multiplication<Domain_,Codomain_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);

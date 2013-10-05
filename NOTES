@@ -255,6 +255,9 @@
   AbstractIndex_c<'i'>:  FORMAT_VALUE(e(i).eval()) (this probably has something to do with
   the derived type passed into ExpressionTemplate_IndexedObject_t when the indexed expression
   is created.  Note that FORMAT_VALUE(e(i|j|k).eval()) works normally.
+- TODO: verify that bundle is a left-inverse to split, and then make it so that bundle actually
+  left-cancels split.  verifying that bundle actually left-inverts split will require some
+  special "no optimize" syntax though, or a verification at the reindexing level.
 
 
 ###Features necessary for "version 1.0"
