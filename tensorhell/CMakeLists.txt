@@ -107,6 +107,7 @@ set(test_SRCS
     standard/test_dimindex.cpp
     standard/test_expressiontemplate_reindex.cpp
     standard/test_list.cpp
+    standard/test_operator.cpp
     standard/test_tuple.cpp
     standard/test_typelist.cpp
     standard/test_vector.cpp)

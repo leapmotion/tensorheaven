@@ -15,6 +15,7 @@
 // #include "test_interop_eigen_inversion.hpp"
 // #include "test_interop_eigen_ldlt.hpp"
 #include "test_list.hpp"
+#include "test_operator.hpp"
 #include "test_tuple.hpp"
 #include "test_typelist.hpp"
 #include "test_vector.hpp"
@@ -48,6 +49,7 @@ int main (int argc, char **argv, char **envp)
 //         Test::InteropEigen::Inversion::AddTests(interop_eigen);
 //     }
     Test::List::AddTests(&root);
+    Test::Operator::AddTests(&root);
     Test::Tuple::AddTests(&root);
     Test::TypeList::AddTests(&root);
     Test::Vector::AddTests(&root);
