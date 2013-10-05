@@ -15,22 +15,22 @@ void test_pretty_typestringof ()
     std::cout << '\n' << Pretty<TypeStringOf_t<TensorPower>,3>() << '\n';
     std::cout << '\n';
     std::cout << "shortify_depth = 0\n";
-    std::cout << "OSTRICH 0 "; print_pretty_typestring(std::cout, "Blah<x", 0, 4, 0);          std::cout << '\n' << '\n';
-    std::cout << "OSTRICH 1 "; print_pretty_typestring(std::cout, "Blah<", 0, 4, 0);           std::cout << '\n' << '\n';
-    std::cout << "OSTRICH 2 "; print_pretty_typestring(std::cout, "Blah<x>", 0, 4, 0);         std::cout << '\n' << '\n';
-    std::cout << "OSTRICH 3 "; print_pretty_typestring(std::cout, "Blah<x>x>", 0, 4, 0);       std::cout << '\n' << '\n';
+    std::cout << "OSTRICH 0 "; print_pretty_typestring(std::cout, "Blah<x", 0);          std::cout << '\n' << '\n';
+    std::cout << "OSTRICH 1 "; print_pretty_typestring(std::cout, "Blah<", 0);           std::cout << '\n' << '\n';
+    std::cout << "OSTRICH 2 "; print_pretty_typestring(std::cout, "Blah<x>", 0);         std::cout << '\n' << '\n';
+    std::cout << "OSTRICH 3 "; print_pretty_typestring(std::cout, "Blah<x>x>", 0);       std::cout << '\n' << '\n';
     std::cout << '\n';
     std::cout << "shortify_depth = 1\n";
-    std::cout << "OSTRICH 0 "; print_pretty_typestring(std::cout, "Blah<x", 0, 4, 1);          std::cout << '\n' << '\n';
-    std::cout << "OSTRICH 1 "; print_pretty_typestring(std::cout, "Blah<", 0, 4, 1);           std::cout << '\n' << '\n';
-    std::cout << "OSTRICH 2 "; print_pretty_typestring(std::cout, "Blah<x>", 0, 4, 1);         std::cout << '\n' << '\n';
-    std::cout << "OSTRICH 3 "; print_pretty_typestring(std::cout, "Blah<x>x>", 0, 4, 1);       std::cout << '\n' << '\n';
+    std::cout << "OSTRICH 0 "; print_pretty_typestring(std::cout, "Blah<x", 1);          std::cout << '\n' << '\n';
+    std::cout << "OSTRICH 1 "; print_pretty_typestring(std::cout, "Blah<", 1);           std::cout << '\n' << '\n';
+    std::cout << "OSTRICH 2 "; print_pretty_typestring(std::cout, "Blah<x>", 1);         std::cout << '\n' << '\n';
+    std::cout << "OSTRICH 3 "; print_pretty_typestring(std::cout, "Blah<x>x>", 1);       std::cout << '\n' << '\n';
     std::cout << '\n';
     std::cout << "shortify_depth = 2\n";
-    std::cout << "OSTRICH 0 "; print_pretty_typestring(std::cout, "Blah<x", 0, 4, 2);          std::cout << '\n' << '\n';
-    std::cout << "OSTRICH 1 "; print_pretty_typestring(std::cout, "Blah<", 0, 4, 2);           std::cout << '\n' << '\n';
-    std::cout << "OSTRICH 2 "; print_pretty_typestring(std::cout, "Blah<x>", 0, 4, 2);         std::cout << '\n' << '\n';
-    std::cout << "OSTRICH 3 "; print_pretty_typestring(std::cout, "Blah<x>x>", 0, 4, 2);       std::cout << '\n' << '\n';
+    std::cout << "OSTRICH 0 "; print_pretty_typestring(std::cout, "Blah<x", 2);          std::cout << '\n' << '\n';
+    std::cout << "OSTRICH 1 "; print_pretty_typestring(std::cout, "Blah<", 2);           std::cout << '\n' << '\n';
+    std::cout << "OSTRICH 2 "; print_pretty_typestring(std::cout, "Blah<x>", 2);         std::cout << '\n' << '\n';
+    std::cout << "OSTRICH 3 "; print_pretty_typestring(std::cout, "Blah<x>x>", 2);       std::cout << '\n' << '\n';
     std::cout << '\n';
 }
 
