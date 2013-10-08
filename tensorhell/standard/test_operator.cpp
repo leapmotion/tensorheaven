@@ -74,40 +74,39 @@ void assignment (Context const &context)
         assert_eq(A[i], C[i]);
 }
 
-/*
 template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
 void addition (Context const &context)
 {
     typedef Tenh::Operator<Domain_,Codomain_,Scalar_,UseArrayType_> Operator;
 
-    Operator u(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
     Operator A(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
-    Operator w(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
-    Operator x(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
-    Operator y(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Operator B(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Operator C(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Operator M(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Operator N(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
     {
-        v[i] = i.value();
-        w[i] = 3*i.value() + 4;
-        x[i] = 8*i.value() - 3;
-        y[i] = i.value()*i.value();
+        B[i] = i.value();
+        C[i] = 3*i.value() + 4;
+        M[i] = 8*i.value() - 3;
+        N[i] = i.value()*i.value();
     }
 
-    u = v + w;
+    A = B + C;
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        assert_eq(u[i], v[i]+w[i]);
+        assert_eq(A[i], B[i]+C[i]);
 
-    u = v + (w + x);
+    A = B + (C + M);
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        assert_eq(u[i], v[i]+(w[i]+x[i]));
+        assert_eq(A[i], B[i]+(C[i]+M[i]));
 
-    u = (v + w) + x;
+    A = (B + C) + M;
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        assert_eq(u[i], (v[i]+w[i])+x[i]);
+        assert_eq(A[i], (B[i]+C[i])+M[i]);
 
-    u = (v + w) + (x + y);
+    A = (B + C) + (M + N);
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        assert_eq(u[i], (v[i]+w[i])+(x[i]+y[i]));
+        assert_eq(A[i], (B[i]+C[i])+(M[i]+N[i]));
 }
 
 template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
@@ -115,34 +114,34 @@ void subtraction (Context const &context)
 {
     typedef Tenh::Operator<Domain_,Codomain_,Scalar_,UseArrayType_> Operator;
 
-    Operator u(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
     Operator A(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
-    Operator w(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
-    Operator x(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
-    Operator y(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Operator B(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Operator C(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Operator M(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Operator N(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
     {
-        v[i] = i.value();
-        w[i] = 3*i.value() + 4;
-        x[i] = 8*i.value() - 3;
-        y[i] = i.value()*i.value();
+        B[i] = i.value();
+        C[i] = 3*i.value() + 4;
+        M[i] = 8*i.value() - 3;
+        N[i] = i.value()*i.value();
     }
 
-    u = v - w;
+    A = B - C;
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        assert_eq(u[i], v[i]-w[i]);
+        assert_eq(A[i], B[i]-C[i]);
 
-    u = v - (w - x);
+    A = B - (C - M);
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        assert_eq(u[i], v[i]-(w[i]-x[i]));
+        assert_eq(A[i], B[i]-(C[i]-M[i]));
 
-    u = (v - w) - x;
+    A = (B - C) - M;
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        assert_eq(u[i], (v[i]-w[i])-x[i]);
+        assert_eq(A[i], (B[i]-C[i])-M[i]);
 
-    u = (v - w) - (x - y);
+    A = (B - C) - (M - N);
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        assert_eq(u[i], (v[i]-w[i])-(x[i]-y[i]));
+        assert_eq(A[i], (B[i]-C[i])-(M[i]-N[i]));
 }
 
 template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
@@ -150,34 +149,34 @@ void scalar_multiplication (Context const &context)
 {
     typedef Tenh::Operator<Domain_,Codomain_,Scalar_,UseArrayType_> Operator;
 
-    Operator u(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
     Operator A(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Operator B(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        v[i] = i.value();
+        B[i] = i.value();
 
-    u = v * 3;
+    A = B * 3;
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        assert_eq(u[i], v[i]*Scalar_(3));
+        assert_eq(A[i], B[i]*Scalar_(3));
 
-    u = 3 * v;
+    A = 3 * B;
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        assert_eq(u[i], v[i]*Scalar_(3));
+        assert_eq(A[i], B[i]*Scalar_(3));
 
-    u = v * Scalar_(3.14);
+    A = B * Scalar_(3.14);
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        assert_eq(u[i], v[i]*Scalar_(3.14));
+        assert_eq(A[i], B[i]*Scalar_(3.14));
 
-    u = Scalar_(3.14) * v;
+    A = Scalar_(3.14) * B;
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        assert_eq(u[i], v[i]*Scalar_(3.14));
+        assert_eq(A[i], B[i]*Scalar_(3.14));
 
-    u = v / 3;
+    A = B / 3;
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        assert_eq(u[i], v[i]/Scalar_(3));
+        assert_eq(A[i], B[i]/Scalar_(3));
 
-    u = v / Scalar_(3.14);
+    A = B / Scalar_(3.14);
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        assert_eq(u[i], v[i]/Scalar_(3.14));
+        assert_eq(A[i], B[i]/Scalar_(3.14));
 }
 
 template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
@@ -185,16 +184,16 @@ void negation (Context const &context)
 {
     typedef Tenh::Operator<Domain_,Codomain_,Scalar_,UseArrayType_> Operator;
 
-    Operator u(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
     Operator A(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Operator B(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        v[i] = i.value();
+        B[i] = i.value();
 
-    u = -v;
+    A = -B;
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        assert_eq(u[i], -v[i]);
+        assert_eq(A[i], -B[i]);
 }
-
+/*
 template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
 void natural_pairing (Context const &context)
 {
@@ -266,10 +265,10 @@ void add_particular_tests (Directory *parent)
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "constructor_without_initialization", constructor_without_initialization<Domain_,Codomain_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "constructor_fill_with", constructor_fill_with<Domain_,Codomain_,Scalar_,UseArrayType_>, new Context::Data<Scalar_>(42), RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "assignment", assignment<Domain_,Codomain_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
-//     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "addition", addition<Domain_,Codomain_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
-//     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "subtraction", subtraction<Domain_,Codomain_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
-//     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "scalar_multiplication", scalar_multiplication<Domain_,Codomain_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
-//     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "negation", negation<Domain_,Codomain_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "addition", addition<Domain_,Codomain_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "subtraction", subtraction<Domain_,Codomain_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "scalar_multiplication", scalar_multiplication<Domain_,Codomain_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "negation", negation<Domain_,Codomain_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
 //     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "natural_pairing", natural_pairing<Domain_,Codomain_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
 }
 

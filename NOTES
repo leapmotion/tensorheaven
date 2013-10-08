@@ -258,6 +258,8 @@
 - TODO: verify that bundle is a left-inverse to split, and then make it so that bundle actually
   left-cancels split.  verifying that bundle actually left-inverts split will require some
   special "no optimize" syntax though, or a verification at the reindexing level.
+- TODO: alias check needs to account for PreallocatedArray_t; the check should be done using
+  a memory range, not a pointer to a particular tensor.
 
 
 ###Features necessary for "version 1.0"

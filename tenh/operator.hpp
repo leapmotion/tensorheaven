@@ -131,7 +131,11 @@ struct DualOf_f<Operator<Domain_,Codomain_,Scalar_,UseArrayType_> >
     typedef Operator<typename DualOf_f<Codomain_>::T,typename DualOf_f<Domain_>::T,Scalar_,typename DualOf_f<UseArrayType_>::T> T;
 };
 
-template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_, typename Lhs_UseArrayType_, typename Rhs_UseArrayType_>
+template <typename Domain_,
+          typename Codomain_,
+          typename Scalar_,
+          typename Lhs_UseArrayType_,
+          typename Rhs_UseArrayType_>
 ExpressionTemplate_Addition_t<
     typename Operator<Domain_,Codomain_,Scalar_,Lhs_UseArrayType_>
              ::template IndexedExpressionConstType_f<
@@ -150,8 +154,8 @@ ExpressionTemplate_Addition_t<
     return lhs(i|j) + rhs(i|j);
 }
 
-/*
-template <typename BasedVectorSpace_,
+template <typename Domain_,
+          typename Codomain_,
           typename Scalar_,
           typename UseArrayType_,
           typename Derived_,
@@ -159,23 +163,33 @@ template <typename BasedVectorSpace_,
           typename FreeDimIndexTypeList_,
           typename UsedDimIndexTypeList_>
 ExpressionTemplate_Addition_t<
-    typename Operator<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+    typename Operator<Domain_,Codomain_,Scalar_,UseArrayType_>
+             ::template IndexedExpressionConstType_f<
+                TypeList_t<AbstractIndex_c<'i'>,
+                TypeList_t<AbstractIndex_c<'j'> > > >::T,
     Derived_,
     '+'>
-    operator + (Operator<BasedVectorSpace_,Scalar_,UseArrayType_> const &lhs,
+    operator + (Operator<Domain_,Codomain_,Scalar_,UseArrayType_> const &lhs,
                 ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &rhs)
 {
-    STATIC_ASSERT(Length_f<FreeDimIndexTypeList_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
-    typedef typename Head_f<FreeDimIndexTypeList_>::T RhsDimIndex;
-    typedef AbstractIndex_c<RhsDimIndex::SYMBOL> IndexToRename;
+    STATIC_ASSERT(Length_f<FreeDimIndexTypeList_>::V == 2, LENGTH_MUST_BE_EXACTLY_2);
+    typedef typename Head_f<FreeDimIndexTypeList_>::T RhsDimIndex1;
+    typedef typename Head_f<typename Body_f<FreeDimIndexTypeList_>::T>::T RhsDimIndex2;
+    typedef AbstractIndex_c<RhsDimIndex1::SYMBOL> IndexToRename1;
+    typedef AbstractIndex_c<RhsDimIndex2::SYMBOL> IndexToRename2;
     typedef AbstractIndex_c<'i'> I;
-    typedef TypeList_t<IndexToRename> DomainAbstractIndexTypeList;
-    typedef TypeList_t<I> CodomainAbstractIndexTypeList;
+    typedef AbstractIndex_c<'j'> J;
+    typedef TypeList_t<IndexToRename1,
+            TypeList_t<IndexToRename2> > DomainAbstractIndexTypeList;
+    typedef TypeList_t<I,
+            TypeList_t<J> > CodomainAbstractIndexTypeList;
     I i;
-    return lhs(i) + reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(rhs.as_derived());
+    J j;
+    return lhs(i|j) + reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(rhs.as_derived());
 }
 
-template <typename BasedVectorSpace_,
+template <typename Domain_,
+          typename Codomain_,
           typename Scalar_,
           typename UseArrayType_,
           typename Derived_,
@@ -184,37 +198,58 @@ template <typename BasedVectorSpace_,
           typename UsedDimIndexTypeList_>
 ExpressionTemplate_Addition_t<
     Derived_,
-    typename Operator<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+    typename Operator<Domain_,Codomain_,Scalar_,UseArrayType_>
+             ::template IndexedExpressionConstType_f<
+                TypeList_t<AbstractIndex_c<'i'>,
+                TypeList_t<AbstractIndex_c<'j'> > > >::T,
     '+'>
     operator + (ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &lhs,
-                Operator<BasedVectorSpace_,Scalar_,UseArrayType_> const &rhs)
+                Operator<Domain_,Codomain_,Scalar_,UseArrayType_> const &rhs)
 {
-    STATIC_ASSERT(Length_f<FreeDimIndexTypeList_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
-    typedef typename Head_f<FreeDimIndexTypeList_>::T RhsDimIndex;
-    typedef AbstractIndex_c<RhsDimIndex::SYMBOL> IndexToRename;
+    STATIC_ASSERT(Length_f<FreeDimIndexTypeList_>::V == 2, LENGTH_MUST_BE_EXACTLY_2);
+    typedef typename Head_f<FreeDimIndexTypeList_>::T RhsDimIndex1;
+    typedef typename Head_f<typename Body_f<FreeDimIndexTypeList_>::T>::T RhsDimIndex2;
+    typedef AbstractIndex_c<RhsDimIndex1::SYMBOL> IndexToRename1;
+    typedef AbstractIndex_c<RhsDimIndex2::SYMBOL> IndexToRename2;
     typedef AbstractIndex_c<'i'> I;
-    typedef TypeList_t<IndexToRename> DomainAbstractIndexTypeList;
-    typedef TypeList_t<I> CodomainAbstractIndexTypeList;
+    typedef AbstractIndex_c<'j'> J;
+    typedef TypeList_t<IndexToRename1,
+            TypeList_t<IndexToRename2> > DomainAbstractIndexTypeList;
+    typedef TypeList_t<I,
+            TypeList_t<J> > CodomainAbstractIndexTypeList;
     I i;
-    return reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(lhs.as_derived()) + rhs(i);
+    J j;
+    return reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(lhs.as_derived()) + rhs(i|j);
 }
 
 // the "ExpressionTemplate_i + ExpressionTemplate_i" situation is already handled
 // by the existing expression template code.
 
-template <typename BasedVectorSpace_, typename Scalar_, typename Lhs_UseArrayType_, typename Rhs_UseArrayType_>
+template <typename Domain_,
+          typename Codomain_,
+          typename Scalar_,
+          typename Lhs_UseArrayType_,
+          typename Rhs_UseArrayType_>
 ExpressionTemplate_Addition_t<
-    typename Operator<BasedVectorSpace_,Scalar_,Lhs_UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
-    typename Operator<BasedVectorSpace_,Scalar_,Rhs_UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+    typename Operator<Domain_,Codomain_,Scalar_,Lhs_UseArrayType_>
+             ::template IndexedExpressionConstType_f<
+                TypeList_t<AbstractIndex_c<'i'>,
+                TypeList_t<AbstractIndex_c<'j'> > > >::T,
+    typename Operator<Domain_,Codomain_,Scalar_,Rhs_UseArrayType_>
+             ::template IndexedExpressionConstType_f<
+                TypeList_t<AbstractIndex_c<'i'>,
+                TypeList_t<AbstractIndex_c<'j'> > > >::T,
     '-'>
-    operator - (Operator<BasedVectorSpace_,Scalar_,Lhs_UseArrayType_> const &lhs,
-                Operator<BasedVectorSpace_,Scalar_,Rhs_UseArrayType_> const &rhs)
+    operator - (Operator<Domain_,Codomain_,Scalar_,Lhs_UseArrayType_> const &lhs,
+                Operator<Domain_,Codomain_,Scalar_,Rhs_UseArrayType_> const &rhs)
 {
     AbstractIndex_c<'i'> i;
-    return lhs(i) - rhs(i);
+    AbstractIndex_c<'j'> j;
+    return lhs(i|j) - rhs(i|j);
 }
 
-template <typename BasedVectorSpace_,
+template <typename Domain_,
+          typename Codomain_,
           typename Scalar_,
           typename UseArrayType_,
           typename Derived_,
@@ -222,23 +257,33 @@ template <typename BasedVectorSpace_,
           typename FreeDimIndexTypeList_,
           typename UsedDimIndexTypeList_>
 ExpressionTemplate_Addition_t<
-    typename Operator<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+    typename Operator<Domain_,Codomain_,Scalar_,UseArrayType_>
+             ::template IndexedExpressionConstType_f<
+                TypeList_t<AbstractIndex_c<'i'>,
+                TypeList_t<AbstractIndex_c<'j'> > > >::T,
     Derived_,
     '-'>
-    operator - (Operator<BasedVectorSpace_,Scalar_,UseArrayType_> const &lhs,
+    operator - (Operator<Domain_,Codomain_,Scalar_,UseArrayType_> const &lhs,
                 ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &rhs)
 {
-    STATIC_ASSERT(Length_f<FreeDimIndexTypeList_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
-    typedef typename Head_f<FreeDimIndexTypeList_>::T RhsDimIndex;
-    typedef AbstractIndex_c<RhsDimIndex::SYMBOL> IndexToRename;
+    STATIC_ASSERT(Length_f<FreeDimIndexTypeList_>::V == 2, LENGTH_MUST_BE_EXACTLY_2);
+    typedef typename Head_f<FreeDimIndexTypeList_>::T RhsDimIndex1;
+    typedef typename Head_f<typename Body_f<FreeDimIndexTypeList_>::T>::T RhsDimIndex2;
+    typedef AbstractIndex_c<RhsDimIndex1::SYMBOL> IndexToRename1;
+    typedef AbstractIndex_c<RhsDimIndex2::SYMBOL> IndexToRename2;
     typedef AbstractIndex_c<'i'> I;
-    typedef TypeList_t<IndexToRename> DomainAbstractIndexTypeList;
-    typedef TypeList_t<I> CodomainAbstractIndexTypeList;
+    typedef AbstractIndex_c<'j'> J;
+    typedef TypeList_t<IndexToRename1,
+            TypeList_t<IndexToRename2> > DomainAbstractIndexTypeList;
+    typedef TypeList_t<I,
+            TypeList_t<J> > CodomainAbstractIndexTypeList;
     I i;
-    return lhs(i) - reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(rhs.as_derived());
+    J j;
+    return lhs(i|j) - reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(rhs.as_derived());
 }
 
-template <typename BasedVectorSpace_,
+template <typename Domain_,
+          typename Codomain_,
           typename Scalar_,
           typename UseArrayType_,
           typename Derived_,
@@ -247,97 +292,162 @@ template <typename BasedVectorSpace_,
           typename UsedDimIndexTypeList_>
 ExpressionTemplate_Addition_t<
     Derived_,
-    typename Operator<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+    typename Operator<Domain_,Codomain_,Scalar_,UseArrayType_>
+             ::template IndexedExpressionConstType_f<
+                TypeList_t<AbstractIndex_c<'i'>,
+                TypeList_t<AbstractIndex_c<'j'> > > >::T,
     '-'>
     operator - (ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &lhs,
-                Operator<BasedVectorSpace_,Scalar_,UseArrayType_> const &rhs)
+                Operator<Domain_,Codomain_,Scalar_,UseArrayType_> const &rhs)
 {
-    STATIC_ASSERT(Length_f<FreeDimIndexTypeList_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
-    typedef typename Head_f<FreeDimIndexTypeList_>::T RhsDimIndex;
-    typedef AbstractIndex_c<RhsDimIndex::SYMBOL> IndexToRename;
+    STATIC_ASSERT(Length_f<FreeDimIndexTypeList_>::V == 2, LENGTH_MUST_BE_EXACTLY_2);
+    typedef typename Head_f<FreeDimIndexTypeList_>::T RhsDimIndex1;
+    typedef typename Head_f<typename Body_f<FreeDimIndexTypeList_>::T>::T RhsDimIndex2;
+    typedef AbstractIndex_c<RhsDimIndex1::SYMBOL> IndexToRename1;
+    typedef AbstractIndex_c<RhsDimIndex2::SYMBOL> IndexToRename2;
     typedef AbstractIndex_c<'i'> I;
-    typedef TypeList_t<IndexToRename> DomainAbstractIndexTypeList;
-    typedef TypeList_t<I> CodomainAbstractIndexTypeList;
+    typedef AbstractIndex_c<'j'> J;
+    typedef TypeList_t<IndexToRename1,
+            TypeList_t<IndexToRename2> > DomainAbstractIndexTypeList;
+    typedef TypeList_t<I,
+            TypeList_t<J> > CodomainAbstractIndexTypeList;
     I i;
-    return reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(lhs.as_derived()) - rhs(i);
+    J j;
+    return reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(lhs.as_derived()) - rhs(i|j);
 }
 
 // the "ExpressionTemplate_i - ExpressionTemplate_i" situation is already handled
 // by the existing expression template code.
 
-template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
+template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
 ExpressionTemplate_ScalarMultiplication_t<
-    typename Operator<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+    typename Operator<Domain_,Codomain_,Scalar_,UseArrayType_>
+             ::template IndexedExpressionConstType_f<
+                TypeList_t<AbstractIndex_c<'i'>,
+                TypeList_t<AbstractIndex_c<'j'> > > >::T,
     Scalar_,
     '*'>
-    operator * (Operator<BasedVectorSpace_,Scalar_,UseArrayType_> const &lhs,
+    operator * (Operator<Domain_,Codomain_,Scalar_,UseArrayType_> const &lhs,
                 Scalar_ const &rhs)
 {
     AbstractIndex_c<'i'> i;
-    return lhs(i) * rhs;
+    AbstractIndex_c<'j'> j;
+    return lhs(i|j) * rhs;
 }
 
-template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
+template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
 ExpressionTemplate_ScalarMultiplication_t<
-    typename Operator<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+    typename Operator<Domain_,Codomain_,Scalar_,UseArrayType_>
+             ::template IndexedExpressionConstType_f<
+                TypeList_t<AbstractIndex_c<'i'>,
+                TypeList_t<AbstractIndex_c<'j'> > > >::T,
     Scalar_,
     '*'>
-    operator * (Operator<BasedVectorSpace_,Scalar_,UseArrayType_> const &lhs,
+    operator * (Operator<Domain_,Codomain_,Scalar_,UseArrayType_> const &lhs,
                 int rhs)
 {
     AbstractIndex_c<'i'> i;
-    return lhs(i) * rhs;
+    AbstractIndex_c<'j'> j;
+    return lhs(i|j) * rhs;
 }
 
-template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
+template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
 ExpressionTemplate_ScalarMultiplication_t<
-    typename Operator<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+    typename Operator<Domain_,Codomain_,Scalar_,UseArrayType_>
+             ::template IndexedExpressionConstType_f<
+                TypeList_t<AbstractIndex_c<'i'>,
+                TypeList_t<AbstractIndex_c<'j'> > > >::T,
     Scalar_,
     '*'>
     operator * (Scalar_ const &lhs,
-                Operator<BasedVectorSpace_,Scalar_,UseArrayType_> const &rhs)
+                Operator<Domain_,Codomain_,Scalar_,UseArrayType_> const &rhs)
 {
     AbstractIndex_c<'i'> i;
-    return lhs * rhs(i);
+    AbstractIndex_c<'j'> j;
+    return lhs * rhs(i|j);
 }
 
-template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
+template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
 ExpressionTemplate_ScalarMultiplication_t<
-    typename Operator<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+    typename Operator<Domain_,Codomain_,Scalar_,UseArrayType_>
+             ::template IndexedExpressionConstType_f<
+                TypeList_t<AbstractIndex_c<'i'>,
+                TypeList_t<AbstractIndex_c<'j'> > > >::T,
     Scalar_,
     '*'>
     operator * (int lhs,
-                Operator<BasedVectorSpace_,Scalar_,UseArrayType_> const &rhs)
+                Operator<Domain_,Codomain_,Scalar_,UseArrayType_> const &rhs)
 {
     AbstractIndex_c<'i'> i;
-    return lhs * rhs(i);
+    AbstractIndex_c<'j'> j;
+    return lhs * rhs(i|j);
 }
 
-template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_, typename ScalarOperand_>
+template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_, typename ScalarOperand_>
 ExpressionTemplate_ScalarMultiplication_t<
-    typename Operator<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+    typename Operator<Domain_,Codomain_,Scalar_,UseArrayType_>
+             ::template IndexedExpressionConstType_f<
+                TypeList_t<AbstractIndex_c<'i'>,
+                TypeList_t<AbstractIndex_c<'j'> > > >::T,
     Scalar_,
     '/'>
-    operator / (Operator<BasedVectorSpace_,Scalar_,UseArrayType_> const &lhs,
+    operator / (Operator<Domain_,Codomain_,Scalar_,UseArrayType_> const &lhs,
                 ScalarOperand_ const &rhs)
 {
     AbstractIndex_c<'i'> i;
-    return lhs(i) / rhs;
+    AbstractIndex_c<'j'> j;
+    return lhs(i|j) / rhs;
 }
 
-template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
+template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
 ExpressionTemplate_ScalarMultiplication_t<
-    typename Operator<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+    typename Operator<Domain_,Codomain_,Scalar_,UseArrayType_>
+             ::template IndexedExpressionConstType_f<
+                TypeList_t<AbstractIndex_c<'i'>,
+                TypeList_t<AbstractIndex_c<'j'> > > >::T,
     Scalar_,
     '*'>
-    operator - (Operator<BasedVectorSpace_,Scalar_,UseArrayType_> const &v)
+    operator - (Operator<Domain_,Codomain_,Scalar_,UseArrayType_> const &v)
 {
     AbstractIndex_c<'i'> i;
-    return -v(i);
+    AbstractIndex_c<'j'> j;
+    return -v(i|j);
 }
 
+// this only allows natural pairings of Operators and Vectors and so forth
+template <typename Domain_,
+          typename Codomain_,
+          typename Scalar_,
+          typename Lhs_UseArrayType_,
+          typename Rhs_UseArrayType_>
+ExpressionTemplate_Multiplication_t<
+    typename Operator<Domain_,Codomain_,Scalar_,Lhs_UseArrayType_>
+             ::template IndexedExpressionConstType_f<
+                TypeList_t<AbstractIndex_c<'i'>,
+                TypeList_t<AbstractIndex_c<'k'> > > >::T,
+    typename Operator<Domain_,Codomain_,Scalar_,Rhs_UseArrayType_>
+             ::template IndexedExpressionConstType_f<
+                TypeList_t<AbstractIndex_c<'k'>,
+                TypeList_t<AbstractIndex_c<'j'> > > >::T>
+    operator * (Operator<Domain_,Codomain_,Scalar_,Lhs_UseArrayType_> const &lhs,
+                Operator<Domain_,Codomain_,Scalar_,Rhs_UseArrayType_> const &rhs)
+{
+    AbstractIndex_c<'i'> i;
+    AbstractIndex_c<'j'> j;
+    AbstractIndex_c<'k'> k;
+    return lhs(i|k) * rhs(k|j);
+}
+
+
+/*
 // this only allows natural pairings of vectors with covectors (via the existing expression template code)
-template <typename Lhs_BasedVectorSpace_, typename Rhs_BasedVectorSpace_, typename Scalar_, typename Lhs_UseArrayType_, typename Rhs_UseArrayType_>
+template <typename Lhs_Domain_,
+          typename Lhs_Codomain_,
+          typename Rhs_Domain_,
+          typename Rhs_Codomain_,
+          typename Scalar_,
+          typename Lhs_UseArrayType_,
+          typename Rhs_UseArrayType_>
 Scalar_ operator * (Operator<Lhs_BasedVectorSpace_,Scalar_,Lhs_UseArrayType_> const &lhs,
                     Operator<Rhs_BasedVectorSpace_,Scalar_,Rhs_UseArrayType_> const &rhs)
 {
@@ -346,14 +456,15 @@ Scalar_ operator * (Operator<Lhs_BasedVectorSpace_,Scalar_,Lhs_UseArrayType_> co
 }
 
 // this only allows natural pairings of vectors with covectors (via the existing expression template code)
-template <typename BasedVectorSpace_,
+template <typename Domain_,
+          typename Codomain_,
           typename Scalar_,
           typename UseArrayType_,
           typename Derived_,
           typename FreeFactorTypeList_,
           typename FreeDimIndexTypeList_,
           typename UsedDimIndexTypeList_>
-Scalar_ operator * (Operator<BasedVectorSpace_,Scalar_,UseArrayType_> const &lhs,
+Scalar_ operator * (Operator<Domain_,Codomain_,Scalar_,UseArrayType_> const &lhs,
                     ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &rhs)
 {
     STATIC_ASSERT(Length_f<FreeDimIndexTypeList_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
@@ -367,7 +478,8 @@ Scalar_ operator * (Operator<BasedVectorSpace_,Scalar_,UseArrayType_> const &lhs
 }
 
 // this only allows natural pairings of vectors with covectors (via the existing expression template code)
-template <typename BasedVectorSpace_,
+template <typename Domain_,
+          typename Codomain_,
           typename Scalar_,
           typename UseArrayType_,
           typename Derived_,
@@ -375,7 +487,7 @@ template <typename BasedVectorSpace_,
           typename FreeDimIndexTypeList_,
           typename UsedDimIndexTypeList_>
 Scalar_ operator * (ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &lhs,
-                    Operator<BasedVectorSpace_,Scalar_,UseArrayType_> const &rhs)
+                    Operator<Domain_,Codomain_,Scalar_,UseArrayType_> const &rhs)
 {
     STATIC_ASSERT(Length_f<FreeDimIndexTypeList_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
     typedef typename Head_f<FreeDimIndexTypeList_>::T RhsDimIndex;
@@ -415,7 +527,7 @@ template <typename BasedVectorSpace_,
           typename FreeFactorTypeList_,
           typename FreeDimIndexTypeList_,
           typename UsedDimIndexTypeList_>
-XYZ operator % (Operator<BasedVectorSpace_,Scalar_,UseArrayType_> const &lhs,
+XYZ operator % (Operator<Domain_,Codomain_,Scalar_,UseArrayType_> const &lhs,
                 ExpressionTemplate_OuterProduct_t<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &rhs)
 {
     // TODO: return a new outer product expression template
@@ -431,7 +543,7 @@ template <typename BasedVectorSpace_,
           typename FreeDimIndexTypeList_,
           typename UsedDimIndexTypeList_>
 XYZ operator % (ExpressionTemplate_OuterProduct_t<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &lhs,
-                Operator<BasedVectorSpace_,Scalar_,UseArrayType_> const &rhs)
+                Operator<Domain_,Codomain_,Scalar_,UseArrayType_> const &rhs)
 {
     // TODO: return a new outer product expression template
 }

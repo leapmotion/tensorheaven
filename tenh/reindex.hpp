@@ -65,6 +65,10 @@ struct Reindex_e
 // Reindex_e for AbstractIndex_c
 // ///////////////////////////////////////////////////////////////////////////
 
+// If AbstractIndexMap_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+// is the identity map on its domain (which basically means that CodomainAbstractIndexTypeList_
+// is identical to DomainAbstractIndexTypeList_), make sure this is the identity
+// map on its domain.
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
 template <AbstractIndexSymbol SYMBOL_>
 struct Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>::Eval_f<AbstractIndex_c<SYMBOL_> >
@@ -72,8 +76,13 @@ struct Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>::E
 private:
     typedef AbstractIndex_c<SYMBOL_> AbstractIndex;
     typedef AbstractIndexMap_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> AbstractIndexMap;
-    static AbstractIndexSymbol const OFFSET = Max_f<typename OnEach_f<CodomainAbstractIndexTypeList_,SymbolOf_e>::T,
-                                                    AbstractIndexSymbol>::V;
+    static bool const ABSTRACT_INDEX_MAP_IS_IDENTITY = TypesAreEqual_f<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>::V;
+    // if AbstractIndexMap is the identity on its domain, then assigning OFFSET to
+    // zero will cause this Reindex_c map to be the identity on its domain.
+    static AbstractIndexSymbol const OFFSET =
+        ABSTRACT_INDEX_MAP_IS_IDENTITY ?
+        0 :
+        Max_f<typename OnEach_f<CodomainAbstractIndexTypeList_,SymbolOf_e>::T,AbstractIndexSymbol>::V;
 public:
     typedef typename If_f<Contains_f<DomainAbstractIndexTypeList_,AbstractIndex>::V,
                           typename AbstractIndexMap::template Eval_f<AbstractIndex>::T,
