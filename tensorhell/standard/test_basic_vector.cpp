@@ -173,7 +173,7 @@ void scalar_multiplication (Context const &context)
     for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
         assert_eq(u[i], Scalar_(v[i]/Scalar_(3.14)));
 }
-/*
+
 template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
 void negation (Context const &context)
 {
@@ -242,6 +242,7 @@ void natural_pairing (Context const &context)
     }
 
     // vector on left
+
     {
         Scalar_ actual_result = v * a;
         Scalar_ expected_result(0);
@@ -250,8 +251,31 @@ void natural_pairing (Context const &context)
         assert_eq(actual_result, expected_result);
     }
 
+    {
+        Scalar_ actual_result = (v + w) * a;
+        Scalar_ expected_result(0);
+        for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
+            expected_result += Scalar_(Scalar_(v[i] + w[i]) * a[i]);
+        assert_eq(actual_result, expected_result);
+    }
+
+    {
+        Scalar_ actual_result = v * (a + b);
+        Scalar_ expected_result(0);
+        for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
+            expected_result += Scalar_(v[i] * Scalar_(a[i] + b[i]));
+        assert_eq(actual_result, expected_result);
+    }
+
+    {
+        Scalar_ actual_result = (v + w) * (a + b);
+        Scalar_ expected_result(0);
+        for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
+            expected_result += Scalar_(Scalar_(v[i] + w[i]) * Scalar_(a[i] + b[i]));
+        assert_eq(actual_result, expected_result);
+    }
 }
-*/
+
 template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
 void add_particular_tests (Directory *parent)
 {
@@ -263,18 +287,18 @@ void add_particular_tests (Directory *parent)
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "addition", addition<BasedVectorSpace_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "subtraction", subtraction<BasedVectorSpace_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "scalar_multiplication", scalar_multiplication<BasedVectorSpace_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
-//     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "negation", negation<BasedVectorSpace_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
-//     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "natural_pairing", natural_pairing<BasedVectorSpace_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "negation", negation<BasedVectorSpace_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "natural_pairing", natural_pairing<BasedVectorSpace_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
 }
 
 template <typename Scalar_, typename UseArrayType_>
 void add_particular_tests_for_scalar_and_use_array_type (Directory *parent)
 {
-//     {
-//         static Uint32 const DIM = 0;
-//         typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,X>,Tenh::Basis_c<X> > BasedVectorSpace;
-//         add_particular_tests<BasedVectorSpace,Scalar_,UseArrayType_>(parent);
-//     }
+    {
+        static Uint32 const DIM = 0;
+        typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,X>,Tenh::Basis_c<X> > BasedVectorSpace;
+        add_particular_tests<BasedVectorSpace,Scalar_,UseArrayType_>(parent);
+    }
 //     {
 //         static Uint32 const DIM = 1;
 //         typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,X>,Tenh::Basis_c<X> > BasedVectorSpace;
