@@ -64,7 +64,6 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     typedef FreeDimIndexTypeList_ FreeDimIndexTypeList;
     typedef UsedDimIndexTypeList_ UsedDimIndexTypeList;
     typedef MultiIndex_t<FreeDimIndexTypeList> MultiIndex;
-    static bool const IS_EXPRESSION_TEMPLATE_I = true; // TODO: make IsAnExpressionTemplate_i<...>
 
     // TODO: some consistency checks on the various types
 
@@ -154,6 +153,21 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
                                        + type_string_of<FreeDimIndexTypeList_>() + ','
                                        + type_string_of<UsedDimIndexTypeList_>() + '>';
     }
+};
+
+template <typename T_> struct IsExpressionTemplate_f { static bool const V = false; };
+template <typename Derived_,
+          typename Scalar_,
+          typename FreeFactorTypeList_,
+          typename FreeDimIndexTypeList_,
+          typename UsedDimIndexTypeList_>
+struct IsExpressionTemplate_f<ExpressionTemplate_i<Derived_,
+                                                   Scalar_,
+                                                   FreeFactorTypeList_,
+                                                   FreeDimIndexTypeList_,
+                                                   UsedDimIndexTypeList_> >
+{
+    static bool const V = true;
 };
 
 // will print any order expression template in a nice-looking justified way.  if the order is greater

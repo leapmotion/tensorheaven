@@ -75,7 +75,6 @@ struct ExpressionTemplate_IndexedObject_t
     typedef typename Parent::FreeDimIndexTypeList FreeDimIndexTypeList;
     typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
     typedef typename Parent::MultiIndex MultiIndex;
-    using Parent::IS_EXPRESSION_TEMPLATE_I; // TODO: deprecate
     typedef SummedDimIndexTypeList_ SummedDimIndexTypeList;
 
     // object must be a "terminal" instance (e.g. an ImplementationOf_t type) which will live
@@ -122,6 +121,24 @@ private:
     Object const &m_object;
 };
 
+template <typename Object_,
+          typename FactorTypeList_,
+          typename DimIndexTypeList_,
+          typename SummedDimIndexTypeList_,
+          bool FORCE_CONST_,
+          bool CHECK_FOR_ALIASING_,
+          typename Derived_>
+struct IsExpressionTemplate_f<ExpressionTemplate_IndexedObject_t<Object_,
+                                                                 FactorTypeList_,
+                                                                 DimIndexTypeList_,
+                                                                 SummedDimIndexTypeList_,
+                                                                 FORCE_CONST_,
+                                                                 CHECK_FOR_ALIASING_,
+                                                                 Derived_> >
+{
+    static bool const V = true;
+};
+
 // this is the "non-const" version of an indexed tensor expression (it has no summed indices, so it makes sense to assign to it)
 template <typename Object,
           typename FactorTypeList,
@@ -147,7 +164,6 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList
     typedef typename Parent::FreeDimIndexTypeList FreeDimIndexTypeList;
     typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
     typedef typename Parent::MultiIndex MultiIndex;
-    using Parent::IS_EXPRESSION_TEMPLATE_I;
 
     // object must be a "terminal" instance (e.g. an ImplementationOf_t type) which will live
     // at least as long as the relevant indexed expression.
@@ -190,7 +206,7 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList
     {
         enum
         {
-            STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE_I, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
+            STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<RightOperand>::V, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
             STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
             STATIC_ASSERT_IN_ENUM((AreEqualAsSets_t<FreeDimIndexTypeList,typename RightOperand::FreeDimIndexTypeList>::V),OPERANDS_HAVE_SAME_FREE_INDICES),
             STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_t<FreeDimIndexTypeList>::V), LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
@@ -260,7 +276,6 @@ struct ExpressionTemplate_Addition_t
     typedef typename Parent::FreeDimIndexTypeList FreeDimIndexTypeList;
     typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
     typedef typename Parent::MultiIndex MultiIndex;
-    using Parent::IS_EXPRESSION_TEMPLATE_I;
 
     // TODO: check that the summed indices from each operand have no indices in common
     // though technically this is unnecessary, because the summed indices are "private"
@@ -270,8 +285,8 @@ struct ExpressionTemplate_Addition_t
     // be good to do the check here so that an error will be more obvious.
     enum
     {
-        STATIC_ASSERT_IN_ENUM(LeftOperand::IS_EXPRESSION_TEMPLATE_I, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
-        STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE_I, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
+        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<LeftOperand>::V, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
+        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<RightOperand>::V, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename LeftOperand::Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
         STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename LeftOperand::FreeFactorTypeList,typename RightOperand::FreeFactorTypeList>::V), OPERANDS_HAVE_SAME_FACTORS),
         STATIC_ASSERT_IN_ENUM((AreEqualAsSets_t<typename LeftOperand::FreeDimIndexTypeList,typename RightOperand::FreeDimIndexTypeList>::V), OPERANDS_HAVE_SAME_FREE_INDICES),
@@ -332,6 +347,12 @@ private:
     RightOperand m_right_operand;
 };
 
+template <typename LeftOperand_, typename RightOperand_, char OPERATOR_>
+struct IsExpressionTemplate_f<ExpressionTemplate_Addition_t<LeftOperand_,RightOperand_,OPERATOR_> >
+{
+    static bool const V = true;
+};
+
 // ////////////////////////////////////////////////////////////////////////////
 // scalar multiplication and division of expression templates
 // ////////////////////////////////////////////////////////////////////////////
@@ -359,11 +380,10 @@ struct ExpressionTemplate_ScalarMultiplication_t
     typedef typename Parent::FreeDimIndexTypeList FreeDimIndexTypeList;
     typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
     typedef typename Parent::MultiIndex MultiIndex;
-    using Parent::IS_EXPRESSION_TEMPLATE_I;
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM(Operand::IS_EXPRESSION_TEMPLATE_I, OPERAND_IS_EXPRESSION_TEMPLATE),
+        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<Operand>::V, OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename Operand::Scalar,Scalar_>::V), OPERAND_SCALAR_MATCHES_SCALAR),
         STATIC_ASSERT_IN_ENUM((OPERATOR == '*' || OPERATOR == '/'), OPERATOR_IS_VALID)
     };
@@ -414,6 +434,12 @@ private:
     Scalar m_scalar_operand;
 };
 
+template <typename Operand_, typename Scalar_, char OPERATOR_>
+struct IsExpressionTemplate_f<ExpressionTemplate_ScalarMultiplication_t<Operand_,Scalar_,OPERATOR_> >
+{
+    static bool const V = true;
+};
+
 // ////////////////////////////////////////////////////////////////////////////
 // multiplication of expression templates (tensor product and contraction)
 // ////////////////////////////////////////////////////////////////////////////
@@ -445,7 +471,6 @@ struct ExpressionTemplate_Multiplication_t
     typedef typename Parent::FreeDimIndexTypeList FreeDimIndexTypeList;
     typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
     typedef typename Parent::MultiIndex MultiIndex;
-    using Parent::IS_EXPRESSION_TEMPLATE_I;
 
     typedef typename SummedDimIndexTypeListOfMultiplication_t<LeftOperand,RightOperand>::T SummedDimIndexTypeList;
 
@@ -455,8 +480,8 @@ struct ExpressionTemplate_Multiplication_t
     // confused by multiple repeated indices that have nothing to do with each other.
     enum
     {
-        STATIC_ASSERT_IN_ENUM(LeftOperand::IS_EXPRESSION_TEMPLATE_I, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
-        STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE_I, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
+        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<LeftOperand>::V, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
+        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<RightOperand>::V, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename LeftOperand::Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
         STATIC_ASSERT_IN_ENUM((!HasNontrivialIntersectionAsSets_t<FreeDimIndexTypeList,UsedDimIndexTypeList>::V), FREE_INDICES_DONT_COLLIDE_WITH_USED)
     };
@@ -503,11 +528,20 @@ private:
     RightOperand m_right_operand;
 };
 
+template <typename LeftOperand_, typename RightOperand_>
+struct IsExpressionTemplate_f<ExpressionTemplate_Multiplication_t<LeftOperand_,RightOperand_> >
+{
+    static bool const V = true;
+};
+
 // ////////////////////////////////////////////////////////////////////////////
 // bundling multiple separate indices into a single vector index (downcasting)
 // ////////////////////////////////////////////////////////////////////////////
 
-template <typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType>
+template <typename Operand,
+          typename BundleAbstractIndexTypeList,
+          typename ResultingFactorType,
+          typename ResultingAbstractIndexType>
 struct ExpressionTemplate_IndexBundle_t
     :
     public ExpressionTemplate_IndexedObject_t<IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType>,
@@ -531,7 +565,6 @@ struct ExpressionTemplate_IndexBundle_t
     typedef typename Parent::FreeDimIndexTypeList FreeDimIndexTypeList;
     typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
     typedef typename Parent::MultiIndex MultiIndex;
-    using Parent::IS_EXPRESSION_TEMPLATE_I;
     typedef typename Parent::SummedDimIndexTypeList SummedDimIndexTypeList;
 
 private:
@@ -577,6 +610,18 @@ private:
     IndexBundle m_bundler;
 };
 
+template <typename Operand_,
+          typename BundleAbstractIndexTypeList_,
+          typename ResultingFactorType_,
+          typename ResultingAbstractIndexType_>
+struct IsExpressionTemplate_f<ExpressionTemplate_IndexBundle_t<Operand_,
+                                                               BundleAbstractIndexTypeList_,
+                                                               ResultingFactorType_,
+                                                               ResultingAbstractIndexType_> >
+{
+    static bool const V = true;
+};
+
 // ////////////////////////////////////////////////////////////////////////////
 // splitting a single vector index into a multiple separate indices (upcasting)
 // ////////////////////////////////////////////////////////////////////////////
@@ -610,7 +655,6 @@ struct ExpressionTemplate_IndexSplit_t
     typedef typename Parent::FreeDimIndexTypeList FreeDimIndexTypeList;
     typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
     typedef typename Parent::MultiIndex MultiIndex;
-    using Parent::IS_EXPRESSION_TEMPLATE_I;
     typedef typename Parent::SummedDimIndexTypeList SummedDimIndexTypeList;
 
 private:
@@ -655,6 +699,16 @@ private:
     IndexSplitter m_splitter;
 };
 
+template <typename Operand_,
+          typename SourceAbstractIndexType_,
+          typename SplitAbstractIndexTypeList_>
+struct IsExpressionTemplate_f<ExpressionTemplate_IndexSplit_t<Operand_,
+                                                              SourceAbstractIndexType_,
+                                                              SplitAbstractIndexTypeList_> >
+{
+    static bool const V = true;
+};
+
 // ////////////////////////////////////////////////////////////////////////////
 // splitting a single vector index into a a single vector index for larger space
 // ////////////////////////////////////////////////////////////////////////////
@@ -689,7 +743,6 @@ struct ExpressionTemplate_IndexSplitToIndex_t
     typedef typename Parent::FreeDimIndexTypeList FreeDimIndexTypeList;
     typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
     typedef typename Parent::MultiIndex MultiIndex;
-    using Parent::IS_EXPRESSION_TEMPLATE_I;
     typedef typename Parent::SummedDimIndexTypeList SummedDimIndexTypeList;
 
 private:
@@ -732,6 +785,16 @@ private:
     void operator = (ExpressionTemplate_IndexSplitToIndex_t const &);
 
     IndexSplitToIndex m_splitter;
+};
+
+template <typename Operand_,
+          typename SourceAbstractIndexType_,
+          typename SplitAbstractIndexTypeList_>
+struct IsExpressionTemplate_f<ExpressionTemplate_IndexSplitToIndex_t<Operand_,
+                                                                     SourceAbstractIndexType_,
+                                                                     SplitAbstractIndexTypeList_> >
+{
+    static bool const V = true;
 };
 
 // ////////////////////////////////////////////////////////////////////////////

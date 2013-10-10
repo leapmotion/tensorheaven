@@ -31,7 +31,7 @@ struct ExpressionTemplate_Eval_t
 {
     enum
     {
-        STATIC_ASSERT_IN_ENUM(Operand::IS_EXPRESSION_TEMPLATE_I, OPERAND_IS_EXPRESSION_TEMPLATE)
+        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<Operand>::V, OPERAND_IS_EXPRESSION_TEMPLATE)
     };
 
     typedef ExpressionTemplate_i<ExpressionTemplate_Eval_t<Operand>,
@@ -45,7 +45,6 @@ struct ExpressionTemplate_Eval_t
     typedef typename Parent::FreeDimIndexTypeList FreeDimIndexTypeList;
     typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
     typedef typename Parent::MultiIndex MultiIndex;
-    using Parent::IS_EXPRESSION_TEMPLATE_I;
 
     ExpressionTemplate_Eval_t (Operand const &operand)
         :
@@ -111,6 +110,12 @@ private:
     Operand const &m_operand;
     mutable bool m_eval_is_cached;
     mutable Tensor m_cached_tensor;
+};
+
+template <typename Operand_>
+struct IsExpressionTemplate_f<ExpressionTemplate_Eval_t<Operand_> >
+{
+    static bool const V = true;
 };
 
 // definitions of the squared_norm and norm methods of ExpressionTemplate_i had to wait until ExpressionTemplate_Eval_t was defined.

@@ -14,6 +14,7 @@
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/dimindex.hpp"
 #include "tenh/implementation/implementationof.hpp"
+#include "tenh/interface/expressiontemplate.hpp"
 #include "tenh/meta/typelist.hpp"
 #include "tenh/multiindex.hpp"
 
@@ -212,8 +213,8 @@ private:
 public:
     enum
     {
-        STATIC_ASSERT_IN_ENUM(LeftOperand::IS_EXPRESSION_TEMPLATE_I, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
-        STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE_I, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
+        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<LeftOperand>::V, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
+        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<RightOperand>::V, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename LeftOperand::Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
         STATIC_ASSERT_IN_ENUM((SummedDimIndexTypeList::LENGTH > 0), LENGTH_MUST_BE_POSITIVE),
         STATIC_ASSERT_IN_ENUM((AssertThatAllSummationsAreNaturalPairings_t<FactorTypeList,
@@ -257,8 +258,8 @@ struct BinarySummation_t<LeftOperand,RightOperand,FreeDimIndexTypeList,EmptyType
 {
     enum
     {
-        STATIC_ASSERT_IN_ENUM(LeftOperand::IS_EXPRESSION_TEMPLATE_I, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
-        STATIC_ASSERT_IN_ENUM(RightOperand::IS_EXPRESSION_TEMPLATE_I, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
+        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<LeftOperand>::V, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
+        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<RightOperand>::V, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename LeftOperand::Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
         STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<FreeDimIndexTypeList,IsDimIndex_p>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES)
         // no summation, so no need to check naturality of pairings
@@ -380,7 +381,7 @@ struct IndexBundle_t
         STATIC_ASSERT_IN_ENUM(IsAbstractIndex_f<ResultingAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX),
         STATIC_ASSERT_IN_ENUM((IsASubsetOf_t<BundleAbstractIndexTypeList,OperandFreeAbstractIndexTypeList>::V), BUNDLE_INDICES_MUST_BE_FREE),
         STATIC_ASSERT_IN_ENUM((!Contains_f<BundleAbstractIndexTypeList,ResultingAbstractIndexType>::V), BUNDLE_AND_RESULTING_MUST_BE_DISTINCT),
-        STATIC_ASSERT_IN_ENUM(Operand::IS_EXPRESSION_TEMPLATE_I, OPERAND_IS_EXPRESSION_TEMPLATE)
+        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<Operand>::V, OPERAND_IS_EXPRESSION_TEMPLATE)
         // TODO: check that the factor types specified by BundleAbstractIndexTypeList can actually be
         // bundled into ResultingFactorType
     };
@@ -475,7 +476,7 @@ struct IndexSplitter_t
         STATIC_ASSERT_IN_ENUM(IsAbstractIndex_f<SourceAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX),
         STATIC_ASSERT_IN_ENUM((Contains_f<OperandFreeAbstractIndexTypeList,SourceAbstractIndexType>::V), SOURCE_INDEX_MUST_BE_FREE),
         STATIC_ASSERT_IN_ENUM((!HasNontrivialIntersectionAsSets_t<TypeList_t<SourceAbstractIndexType>,SplitAbstractIndexTypeList>::V), SOURCE_AND_SPLIT_MUST_BE_DISTINCT),
-        STATIC_ASSERT_IN_ENUM(Operand::IS_EXPRESSION_TEMPLATE_I, OPERAND_IS_EXPRESSION_TEMPLATE)
+        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<Operand>::V, OPERAND_IS_EXPRESSION_TEMPLATE)
     };
 
     typedef typename Operand::Scalar Scalar;
@@ -561,7 +562,7 @@ struct IndexSplitToIndex_t
         STATIC_ASSERT_IN_ENUM__UNIQUE(IsAbstractIndex_f<SplitAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX, SPLIT),
         STATIC_ASSERT_IN_ENUM((Contains_f<OperandFreeAbstractIndexTypeList,SourceAbstractIndexType>::V), SOURCE_INDEX_MUST_BE_FREE),
         STATIC_ASSERT_IN_ENUM((!TypesAreEqual_f<SourceAbstractIndexType,SplitAbstractIndexType>::V), SOURCE_AND_SPLIT_MUST_BE_DISTINCT),
-        STATIC_ASSERT_IN_ENUM(Operand::IS_EXPRESSION_TEMPLATE_I, OPERAND_IS_EXPRESSION_TEMPLATE)
+        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<Operand>::V, OPERAND_IS_EXPRESSION_TEMPLATE)
     };
 
     typedef typename Operand::Scalar Scalar;
