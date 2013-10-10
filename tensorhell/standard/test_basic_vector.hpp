@@ -1,10 +1,10 @@
 // ///////////////////////////////////////////////////////////////////////////
-// test_vector.hpp by Victor Dods, created 2013/04/02
+// test_basic_vector.hpp by Victor Dods, created 2013/04/02
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#if !defined(TEST_VECTOR_HPP_)
-#define TEST_VECTOR_HPP_
+#if !defined(TEST_BASIC_VECTOR_HPP_)
+#define TEST_BASIC_VECTOR_HPP_
 
 #include "test.hpp"
 
@@ -17,11 +17,13 @@ struct Directory;
 } // end of namespace Lvd
 
 namespace Test {
+namespace Basic {
 namespace Vector {
 
 void AddTests (Lvd::TestSystem::Directory *parent);
 
 } // end of namespace Vector
+} // end of namespace Basic
 } // end of namespace Test
 
-#endif // !defined(TEST_VECTOR_HPP_)
+#endif // !defined(TEST_BASIC_VECTOR_HPP_)

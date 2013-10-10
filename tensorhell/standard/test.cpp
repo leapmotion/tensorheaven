@@ -7,6 +7,8 @@
 
 #include "test_abstractindex.hpp"
 #include "test_array.hpp"
+#include "test_basic_operator.hpp"
+#include "test_basic_vector.hpp"
 #include "test_dimindex.hpp"
 #include "test_expressiontemplate_reindex.hpp"
 // #include "test_euclideanembedding.hpp"
@@ -15,10 +17,8 @@
 // #include "test_interop_eigen_inversion.hpp"
 // #include "test_interop_eigen_ldlt.hpp"
 #include "test_list.hpp"
-#include "test_operator.hpp"
 #include "test_tuple.hpp"
 #include "test_typelist.hpp"
-#include "test_vector.hpp"
 // #include "test_tensor2.hpp"
 // #include "test_tensor2diagonal.hpp"
 // #include "test_expressiontemplates.hpp"
@@ -37,6 +37,13 @@ int main (int argc, char **argv, char **envp)
 
     Test::AbstractIndex::AddTests(&root);
     Test::Array::AddTests(&root);
+
+    {
+        Directory *basic_dir = new Directory("basic", &root);
+        Test::Basic::Operator::AddTests(basic_dir);
+        Test::Basic::Vector::AddTests(basic_dir);
+    }
+
     Test::DimIndex::AddTests(&root);
     Test::ExpressionTemplate_Reindex::AddTests(&root);
 //     Test::EigenLDLT::AddTests(&root);
@@ -49,10 +56,8 @@ int main (int argc, char **argv, char **envp)
 //         Test::InteropEigen::Inversion::AddTests(interop_eigen);
 //     }
     Test::List::AddTests(&root);
-    Test::Operator::AddTests(&root);
     Test::Tuple::AddTests(&root);
     Test::TypeList::AddTests(&root);
-    Test::Vector::AddTests(&root);
 //     Test::Tensor2::AddTests(&root);
 //     Test::Tensor2Diagonal::AddTests(&root);
 

@@ -1,13 +1,14 @@
 // ///////////////////////////////////////////////////////////////////////////
-// tenh/operator.hpp by Victor Dods, created 2013/10/04
+// tenh/basic/operator.hpp by Victor Dods, created 2013/10/04
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#ifndef TENH_OPERATOR_HPP_
-#define TENH_OPERATOR_HPP_
+#ifndef TENH_BASIC_OPERATOR_HPP_
+#define TENH_BASIC_OPERATOR_HPP_
 
 #include "tenh/core.hpp"
 
+#include "tenh/basic/vector.hpp"
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/conceptual/vectorspace.hpp"
 #include "tenh/expression_templates.hpp"
@@ -34,6 +35,7 @@ private:
                                                TypeList_t<typename DualOf_f<Domain_>::T> > > TensorProduct;
 public:
     typedef typename Parent_Implementation::ComponentIndex ComponentIndex;
+    typedef typename Parent_Implementation::MultiIndex MultiIndex;
     typedef typename DualOf_f<Operator>::T Dual; // relies on the template specialization below
 
     explicit Operator (WithoutInitialization const &w) : Parent_Implementation(w) { }
@@ -438,7 +440,192 @@ ExpressionTemplate_Multiplication_t<
     return lhs(i|k) * rhs(k|j);
 }
 
+// this only allows natural compositions (in the vector space/dual space sense)
+template <typename Lhs_BasedVectorSpace_,
+          typename Lhs_UseArrayType_,
+          typename Scalar_,
+          typename Rhs_Domain_,
+          typename Rhs_Codomain_,
+          typename Rhs_UseArrayType_>
+ExpressionTemplate_Multiplication_t<
+    typename Vector<Lhs_BasedVectorSpace_,Scalar_,Lhs_UseArrayType_>
+             ::template IndexedExpressionConstType_f<'i'>::T,
+    typename Operator<Rhs_Domain_,Rhs_Codomain_,Scalar_,Rhs_UseArrayType_>
+             ::template IndexedExpressionConstType_f<
+                TypeList_t<AbstractIndex_c<'i'>,
+                TypeList_t<AbstractIndex_c<'j'> > > >::T>
+    operator * (Vector<Lhs_BasedVectorSpace_,Scalar_,Lhs_UseArrayType_> const &lhs,
+                Operator<Rhs_Domain_,Rhs_Codomain_,Scalar_,Rhs_UseArrayType_> const &rhs)
+{
+    AbstractIndex_c<'i'> i;
+    AbstractIndex_c<'j'> j;
+    return lhs(i) * rhs(i|j);
+}
 
+// this only allows natural compositions (in the vector space/dual space sense)
+template <typename Lhs_Domain_,
+          typename Lhs_Codomain_,
+          typename Lhs_UseArrayType_,
+          typename Scalar_,
+          typename Rhs_BasedVectorSpace_,
+          typename Rhs_UseArrayType_>
+ExpressionTemplate_Multiplication_t<
+    typename Operator<Lhs_Domain_,Lhs_Codomain_,Scalar_,Lhs_UseArrayType_>
+             ::template IndexedExpressionConstType_f<
+                TypeList_t<AbstractIndex_c<'i'>,
+                TypeList_t<AbstractIndex_c<'j'> > > >::T,
+    typename Vector<Rhs_BasedVectorSpace_,Scalar_,Rhs_UseArrayType_>
+             ::template IndexedExpressionConstType_f<'j'>::T>
+    operator * (Operator<Lhs_Domain_,Lhs_Codomain_,Scalar_,Lhs_UseArrayType_> const &lhs,
+                Vector<Rhs_BasedVectorSpace_,Scalar_,Rhs_UseArrayType_> const &rhs)
+{
+    AbstractIndex_c<'i'> i;
+    AbstractIndex_c<'j'> j;
+    return lhs(i|j) * rhs(j);
+}
+
+// this only allows natural compositions (in the vector space/dual space sense)
+template <typename Lhs_Domain_,
+          typename Lhs_Codomain_,
+          typename Lhs_UseArrayType_,
+          typename Scalar_,
+          typename Rhs_Domain_,
+          typename Rhs_Codomain_,
+          typename Rhs_UseArrayType_>
+ExpressionTemplate_Multiplication_t<
+    typename Operator<Lhs_Domain_,Lhs_Codomain_,Scalar_,Lhs_UseArrayType_>
+             ::template IndexedExpressionConstType_f<
+                TypeList_t<AbstractIndex_c<'i'>,
+                TypeList_t<AbstractIndex_c<'k'> > > >::T,
+    typename Operator<Rhs_Domain_,Rhs_Codomain_,Scalar_,Rhs_UseArrayType_>
+             ::template IndexedExpressionConstType_f<
+                TypeList_t<AbstractIndex_c<'k'>,
+                TypeList_t<AbstractIndex_c<'j'> > > >::T>
+    operator * (Operator<Lhs_Domain_,Lhs_Codomain_,Scalar_,Lhs_UseArrayType_> const &lhs,
+                Operator<Rhs_Domain_,Rhs_Codomain_,Scalar_,Rhs_UseArrayType_> const &rhs)
+{
+    AbstractIndex_c<'i'> i;
+    AbstractIndex_c<'j'> j;
+    AbstractIndex_c<'k'> k;
+    return lhs(i|k) * rhs(k|j);
+}
+/*
+// this only allows natural compositions (in the vector space/dual space sense)
+template <typename Lhs_Domain_,
+          typename Lhs_Codomain_,
+          typename Lhs_UseArrayType_,
+          typename Scalar_,
+          typename Rhs_Derived_,
+          typename Rhs_UsedDimIndexTypeList_>
+typename ExpressionTemplate_ScalarMultiplication_t<
+    typename Operator<Lhs_Domain_,Lhs_Codomain_,Scalar_,Lhs_UseArrayType_>
+             ::template IndexedExpressionConstType_f<
+                 TypeList_t<AbstractIndex_c<'i'>,
+                 TypeList_t<AbstractIndex_c<'j'> > > >::T,
+    Scalar_,
+    '*'>
+    operator * (Operator<Lhs_Domain_,Lhs_Codomain_,Scalar_,Lhs_UseArrayType_> const &lhs,
+                ExpressionTemplate_i<Rhs_Derived_,Scalar_,EmptyTypeList,EmptyTypeList,Rhs_UsedDimIndexTypeList_> const &rhs)
+{
+    typedef AbstractIndex_c<'i'> i;
+    typedef AbstractIndex_c<'j'> j;
+    // this uses operator Scalar_ () in the expression template
+    return lhs(i|j) * Scalar_(rhs);
+}
+
+
+// metafunctions to help with the type system atrocity that is the next few functions.
+template <typename Lhs_Domain_,
+          typename Lhs_Codomain_,
+          typename Lhs_UseArrayType_,
+          typename Scalar_,
+          typename Rhs_Derived_,
+          typename Rhs_FreeFactorTypeList_,
+          typename Rhs_FreeDimIndexTypeList_,
+          typename Rhs_UsedDimIndexTypeList_>
+struct OperatorTimesExpressionTemplate_Helper_t
+{
+    // NOTE: it's critical that 'k' > 'i' here, so that none of the expression template's
+    // indices are mapped to 'i' and would therefore contract with it.
+    typedef TypeList_t<AbstractIndex_c<'i'>,TypeList_t<AbstractIndex_c<'k'> > Lhs_AbstractIndexTypeList;
+    enum
+    {
+        STATIC_ASSERT_IN_ENUM((Rhs_FreeDimIndexTypeList_::LENGTH >= 1), LENGTH_MUST_BE_AT_LEAST_1)
+    };
+    typedef TypeList_t<AbstractIndex_c<Rhs_FreeDimIndexTypeList_::HeadType::SYMBOL> > DomainAbstractIndexTypeList;
+    typedef TypeList_t<AbstractIndex_c<'k'> > CodomainAbstractIndexTypeList;
+    typedef Reindex_e<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList> Reindex;
+
+    // Dear citizens of Tensor Heaven,
+    //
+    // I am *so* sorry for this type.  One day, when the holy scripture of
+    // C++11 is observed, this will all be made better.
+    //
+    // Sincerely,
+    // Tensor God.
+    typedef typename ExpressionTemplate_Multiplication_t<
+                         typename Operator<Lhs_Domain_,Lhs_Codomain_,Scalar_,Lhs_UseArrayType_>
+                                  ::template IndexedExpressionConstType_f<Lhs_AbstractIndexTypeList>::T,
+                         typename Reindex
+                                  ::template Eval_f<
+                                      ExpressionTemplate_i<Rhs_Derived_,
+                                                           Scalar_,
+                                                           Rhs_FreeFactorTypeList_,
+                                                           Rhs_FreeDimIndexTypeList_,
+                                                           Rhs_UsedDimIndexTypeList_> >::T ReturnType;
+
+};
+
+// this only allows natural compositions (in the vector space/dual space sense)
+template <typename Lhs_Domain_,
+          typename Lhs_Codomain_,
+          typename Lhs_UseArrayType_,
+          typename Scalar_,
+          typename Rhs_Derived_,
+          typename Rhs_FreeFactorTypeList_,
+          typename Rhs_FreeDimIndexTypeList_,
+          typename Rhs_UsedDimIndexTypeList_>
+typename OperatorTimesExpressionTemplate_Helper_t<Lhs_Domain_,
+                                                  Lhs_Codomain_,
+                                                  Lhs_UseArrayType_,
+                                                  Scalar_,
+                                                  Rhs_Derived_,
+                                                  Rhs_FreeFactorTypeList_,
+                                                  Rhs_FreeDimIndexTypeList_,
+                                                  Rhs_UsedDimIndexTypeList_>::ReturnType
+    operator * (Operator<Lhs_Domain_,Lhs_Codomain_,Scalar_,Lhs_UseArrayType_> const &lhs,
+                ExpressionTemplate_i<Rhs_Derived_,Scalar_,Rhs_FreeFactorTypeList_,Rhs_FreeDimIndexTypeList_,Rhs_UsedDimIndexTypeList_> const &rhs)
+{
+    STATIC_ASSERT(Rhs_FreeDimIndexTypeList_::LENGTH == 1 || Rhs_FreeDimIndexTypeList_::LENGTH == 2,
+                  LENGTH_MUST_BE_EXACTLY_1_OR_2);
+
+    typedef OperatorTimesExpressionTemplate_Helper_t<Lhs_Domain_,
+                                                     Lhs_Codomain_,
+                                                     Lhs_UseArrayType_,
+                                                     Scalar_,
+                                                     Rhs_Derived_,
+                                                     Rhs_FreeFactorTypeList_,
+                                                     Rhs_FreeDimIndexTypeList_,
+                                                     Rhs_UsedDimIndexTypeList_> OperatorTimesExpressionTemplate_Helper;
+    typedef typename OperatorTimesExpressionTemplate_Helper::DomainAbstractIndexTypeList DomainAbstractIndexTypeList;
+    typedef typename OperatorTimesExpressionTemplate_Helper::CodomainAbstractIndexTypeList CodomainAbstractIndexTypeList;
+
+
+    typedef typename Head_f<FreeDimIndexTypeList_>::T RhsDimIndex;
+    typedef AbstractIndex_c<RhsDimIndex::SYMBOL> IndexToRename;
+    typedef AbstractIndex_c<'i'> I;
+    typedef TypeList_t<IndexToRename> DomainAbstractIndexTypeList;
+    typedef TypeList_t<I> CodomainAbstractIndexTypeList;
+    I i;
+    return reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(lhs.as_derived()) - rhs(i);
+
+    AbstractIndex_c<'i'> i;
+    AbstractIndex_c<'j'> j;
+    AbstractIndex_c<'k'> k;
+    return lhs(i|k) * rhs(k|j);
+}
+
+*/
 /*
 // this only allows natural pairings of vectors with covectors (via the existing expression template code)
 template <typename Lhs_Domain_,
@@ -567,4 +754,4 @@ XYZ operator % (ExpressionTemplate_OuterProduct_t<Lhs_Derived_,Scalar_,Lhs_FreeF
 */
 } // end of namespace Tenh
 
-#endif // TENH_OPERATOR_HPP_
+#endif // TENH_BASIC_OPERATOR_HPP_

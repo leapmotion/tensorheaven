@@ -105,13 +105,13 @@ set(test_SRCS
     standard/randomize.cpp
     standard/test_abstractindex.cpp
     standard/test_array.cpp
+    standard/test_basic_operator.cpp
+    standard/test_basic_vector.cpp
     standard/test_dimindex.cpp
     standard/test_expressiontemplate_reindex.cpp
     standard/test_list.cpp
-    standard/test_operator.cpp
     standard/test_tuple.cpp
-    standard/test_typelist.cpp
-    standard/test_vector.cpp)
+    standard/test_typelist.cpp)
 add_executable(test standard/test.cpp ${test_SRCS})
 include_directories(${tensorheaven_test_SOURCE_DIR}/.. ${tensorheaven_test_SOURCE_DIR}/lvd ${tensorheaven_test_SOURCE_DIR}/standard)
 

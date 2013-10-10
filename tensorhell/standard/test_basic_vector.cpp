@@ -1,11 +1,11 @@
 // ///////////////////////////////////////////////////////////////////////////
-// test_vector.cpp by Victor Dods, created 2013/04/02
+// test_basic_vector.cpp by Victor Dods, created 2013/04/02
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "test_vector.hpp"
+#include "test_basic_vector.hpp"
 
-#include "tenh/vector.hpp"
+#include "tenh/basic/vector.hpp"
 
 // this is included last because it redefines the `assert` macro,
 // which would be bad for the above includes.
@@ -16,6 +16,7 @@ using namespace std;
 using namespace TestSystem;
 
 namespace Test {
+namespace Basic {
 namespace Vector {
 
 struct X { static std::string type_as_string () { return "X"; } };
@@ -316,4 +317,5 @@ void AddTests (Directory *parent)
 }
 
 } // end of namespace Vector
+} // end of namespace Basic
 } // end of namespace Test

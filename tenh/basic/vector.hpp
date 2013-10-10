@@ -1,10 +1,10 @@
 // ///////////////////////////////////////////////////////////////////////////
-// tenh/vector.hpp by Victor Dods, created 2013/10/01
+// tenh/basic/vector.hpp by Victor Dods, created 2013/10/01
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#ifndef TENH_VECTOR_HPP_
-#define TENH_VECTOR_HPP_
+#ifndef TENH_BASIC_VECTOR_HPP_
+#define TENH_BASIC_VECTOR_HPP_
 
 #include "tenh/core.hpp"
 
@@ -430,4 +430,4 @@ XYZ operator % (ExpressionTemplate_OuterProduct_t<Lhs_Derived_,Scalar_,Lhs_FreeF
 */
 } // end of namespace Tenh
 
-#endif // TENH_VECTOR_HPP_
+#endif // TENH_BASIC_VECTOR_HPP_

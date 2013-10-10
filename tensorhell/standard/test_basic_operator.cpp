@@ -1,11 +1,11 @@
 // ///////////////////////////////////////////////////////////////////////////
-// test_operator.cpp by Victor Dods, created 2013/10/04
+// test_basic_operator.cpp by Victor Dods, created 2013/10/04
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "test_operator.hpp"
+#include "test_basic_operator.hpp"
 
-#include "tenh/operator.hpp"
+#include "tenh/basic/operator.hpp"
 
 // this is included last because it redefines the `assert` macro,
 // which would be bad for the above includes.
@@ -16,10 +16,12 @@ using namespace std;
 using namespace TestSystem;
 
 namespace Test {
+namespace Basic {
 namespace Operator {
 
 struct X { static std::string type_as_string () { return "X"; } };
 struct Y { static std::string type_as_string () { return "Y"; } };
+struct Z { static std::string type_as_string () { return "Z"; } };
 
 template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
 void constructor_without_initialization (Context const &context)
@@ -193,25 +195,99 @@ void negation (Context const &context)
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
         assert_eq(A[i], -B[i]);
 }
-/*
-template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
-void natural_pairing (Context const &context)
-{
-    typedef Tenh::Operator<Domain_,Codomain_,Scalar_,UseArrayType_> Operator;
-    typedef typename Tenh::DualOf_f<Tenh::Operator<Domain_,Codomain_,Scalar_,UseArrayType_> >::T Covector;
 
-    Covector a(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
-    Covector b(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
-    Operator A(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
-    Operator w(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
-    for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
+template <typename BasedVectorSpace1_, typename BasedVectorSpace2_, typename BasedVectorSpace3_, typename Scalar_, typename UseArrayType_>
+void composition (Context const &context)
+{
+    typedef Tenh::Operator<BasedVectorSpace1_,BasedVectorSpace2_,Scalar_,UseArrayType_> Operator12;
+    typedef Tenh::Operator<BasedVectorSpace2_,BasedVectorSpace3_,Scalar_,UseArrayType_> Operator23;
+    typedef Tenh::Vector<BasedVectorSpace1_,Scalar_,UseArrayType_> Vector1;
+    typedef Tenh::Vector<BasedVectorSpace2_,Scalar_,UseArrayType_> Vector2;
+    typedef Tenh::Vector<BasedVectorSpace3_,Scalar_,UseArrayType_> Vector3;
+    typedef typename Tenh::DualOf_f<Vector3>::T Covector3;
+
+    Covector3 a3(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Covector3 b3(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Operator12 M12(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Operator12 N12(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Operator23 M23(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Operator23 N23(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Vector1 v1(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Vector1 w1(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Vector2 v2(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Vector2 w2(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Vector3 v3(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    Vector3 w3(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    for (typename Covector3::ComponentIndex i; i.is_not_at_end(); ++i)
     {
-        a[i] = i.value();
-        b[i] = 2*i.value() + 17;
-        v[i] = 3*i.value() + 4;
-        w[i] = i.value()*i.value();
+        a3[i] = (3*i.value()) % 2;
+        b3[i] = i.value() + 1;
+    }
+    for (typename Operator12::ComponentIndex i; i.is_not_at_end(); ++i)
+    {
+        M12[i] = i.value();
+        N12[i] = 2*i.value() + 17;
+    }
+    for (typename Operator23::ComponentIndex i; i.is_not_at_end(); ++i)
+    {
+        M23[i] = i.value() * i.value();
+        N23[i] = 8*i.value() - 3;
+    }
+    for (typename Vector1::ComponentIndex i; i.is_not_at_end(); ++i)
+    {
+        v1[i] = (5*i.value()) % 3;
+        w1[i] = i.value() + 2;
+    }
+    for (typename Vector2::ComponentIndex i; i.is_not_at_end(); ++i)
+    {
+        v2[i] = i.value() % 3;
+        w2[i] = i.value() + 3;
+    }
+    for (typename Vector3::ComponentIndex i; i.is_not_at_end(); ++i)
+    {
+        v3[i] = i.value() % 2;
+        w3[i] = i.value() + 5;
     }
 
+    // covector on left of operator
+    {
+        for (typename Vector2::ComponentIndex i; i.is_not_at_end(); ++i)
+        {
+            Scalar_ expected_result(0);
+            for (typename Covector3::ComponentIndex j; j.is_not_at_end(); ++j)
+                expected_result += a3[j] * M23[typename Operator23::MultiIndex(j, i)];
+            assert_eq((a3 * M23)[typename Vector2::MultiIndex(i)], expected_result);
+        }
+    }
+
+    // vector on right of operator
+    {
+        for (typename Vector3::ComponentIndex i; i.is_not_at_end(); ++i)
+        {
+            Scalar_ expected_result(0);
+            for (typename Vector2::ComponentIndex j; j.is_not_at_end(); ++j)
+                expected_result += M23[typename Operator23::MultiIndex(i, j)] * v2[j];
+            assert_eq((M23 * v2)[typename Vector3::MultiIndex(i)], expected_result);
+        }
+    }
+
+    // operator composed with operator
+    {
+        for (typename Vector3::ComponentIndex i; i.is_not_at_end(); ++i)
+        {
+            for (typename Vector1::ComponentIndex j; j.is_not_at_end(); ++j)
+            {
+                Scalar_ expected_result(0);
+                for (typename Vector2::ComponentIndex k; k.is_not_at_end(); ++k)
+                    expected_result += M23[typename Operator23::MultiIndex(i, k)] * M12[typename Operator12::MultiIndex(k, j)];
+                typedef Tenh::TypeList_t<typename Vector3::ComponentIndex,
+                        Tenh::TypeList_t<typename Vector1::ComponentIndex> > ResultIndexTypeList;
+                assert_eq((M23 * M12)[Tenh::MultiIndex_t<ResultIndexTypeList>(i, j)], expected_result);
+            }
+        }
+    }
+
+    /*
     // covector on left
 
     {
@@ -254,9 +330,9 @@ void natural_pairing (Context const &context)
             expected_result += v[i] * a[i];
         assert_eq(actual_result, expected_result);
     }
-
-}
 */
+}
+
 template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
 void add_particular_tests (Directory *parent)
 {
@@ -269,8 +345,21 @@ void add_particular_tests (Directory *parent)
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "subtraction", subtraction<Domain_,Codomain_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "scalar_multiplication", scalar_multiplication<Domain_,Codomain_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "negation", negation<Domain_,Codomain_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
-//     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "natural_pairing", natural_pairing<Domain_,Codomain_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
 }
+
+template <typename BasedVectorSpace1_, typename BasedVectorSpace2_, typename BasedVectorSpace3_, typename Scalar_, typename UseArrayType_>
+void add_particular_composition_tests (Directory *dir)
+{
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir,
+                                     FORMAT("composition<" << Tenh::type_string_of<BasedVectorSpace1_>() << ','
+                                                           << Tenh::type_string_of<BasedVectorSpace2_>() << ','
+                                                           << Tenh::type_string_of<BasedVectorSpace3_>() << ','
+                                                           << Tenh::type_string_of<Scalar_>() << ','
+                                                           << Tenh::type_string_of<UseArrayType_>() << '>'),
+                                     composition<BasedVectorSpace1_,BasedVectorSpace2_,BasedVectorSpace3_,Scalar_,UseArrayType_>,
+                                     RESULT_NO_ERROR);
+}
+
 
 template <typename Scalar_, typename UseArrayType_>
 void add_particular_tests_for_scalar_and_use_array_type (Directory *parent)
@@ -278,27 +367,25 @@ void add_particular_tests_for_scalar_and_use_array_type (Directory *parent)
 //     {
 //         static Uint32 const DIM = 0;
 //         typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,X>,Tenh::Basis_c<X> > BasedVectorSpace;
-//         add_particular_tests<BasedVectorSpace,Scalar_,UseArrayType_>(parent);
+//         add_particular_tests<BasedVectorSpace,Scalar_,UseArrayType_>(dir);
 //     }
 //     {
 //         static Uint32 const DIM = 1;
 //         typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,X>,Tenh::Basis_c<X> > BasedVectorSpace;
-//         add_particular_tests<BasedVectorSpace,Scalar_,UseArrayType_>(parent);
+//         add_particular_tests<BasedVectorSpace,Scalar_,UseArrayType_>(dir);
 //     }
     {
-        static Uint32 const DOMAIN_DIM = 3;
-        static Uint32 const CODOMAIN_DIM = 4;
-        typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DOMAIN_DIM,X>,Tenh::Basis_c<X> > BasedVectorSpaceX;
-        typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,CODOMAIN_DIM,Y>,Tenh::Basis_c<Y> > BasedVectorSpaceY;
+        typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,3,X>,Tenh::Basis_c<X> > BasedVectorSpaceX;
+        typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,4,Y>,Tenh::Basis_c<Y> > BasedVectorSpaceY;
+        typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,5,Z>,Tenh::Basis_c<Z> > BasedVectorSpaceZ;
         add_particular_tests<BasedVectorSpaceX,BasedVectorSpaceY,Scalar_,UseArrayType_>(parent);
+        add_particular_composition_tests<BasedVectorSpaceX,BasedVectorSpaceY,BasedVectorSpaceZ,Scalar_,UseArrayType_>(parent);
     }
 //     {
 //         static Uint32 const DIM = 20;
 //         typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,X>,Tenh::Basis_c<X> > BasedVectorSpace;
-//         add_particular_tests<BasedVectorSpace,Scalar_,UseArrayType_>(parent);
+//         add_particular_tests<BasedVectorSpace,Scalar_,UseArrayType_>(dir);
 //     }
-
-//     LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent, FORMAT("check_filled_values<" << Tenh::type_string_of<Scalar>() << ">"), check_filled_values<Scalar>, RESULT_NO_ERROR);
 }
 
 template <typename Scalar_>
@@ -320,4 +407,5 @@ void AddTests (Directory *parent)
 }
 
 } // end of namespace Operator
+} // end of namespace Basic
 } // end of namespace Test
