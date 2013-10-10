@@ -978,12 +978,14 @@ void Directory::CheckTestCase (
     }
     if (m_sub_directory_map.find(test_case_name) != m_sub_directory_map.end())
     {
-        cerr << "TEST CODE PROGRAMMER ERROR in adding a test case: test case name collision with existing subdirectory\n";
+        cerr << "TEST CODE PROGRAMMER ERROR in adding a test case: test case name collision with existing subdirectory \""
+             << test_case_name << "\"\n";
         error_encountered = true;
     }
     if (m_test_case_map.find(test_case_name) != m_test_case_map.end())
     {
-        cerr << "TEST CODE PROGRAMMER ERROR in adding a test case: test case name collision with existing test case\n";
+        cerr << "TEST CODE PROGRAMMER ERROR in adding a test case: test case name collision with existing test case \""
+             << test_case_name << "\"\n";
         error_encountered = true;
     }
     if (expected_result == RESULT_UNSPECIFIED_FAILURE)
