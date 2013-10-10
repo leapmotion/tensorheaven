@@ -829,16 +829,7 @@ ExpressionTemplate_Addition_t<LeftDerived,RightDerived,'-'>
 template <typename Derived, typename FactorTypeList, typename FreeDimIndexTypeList, typename UsedDimIndexTypeList>
 ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
     operator * (ExpressionTemplate_i<Derived,typename Derived::Scalar,FactorTypeList,FreeDimIndexTypeList,UsedDimIndexTypeList> const &operand,
-                typename Derived::Scalar scalar_operand)
-{
-    return ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>(operand.as_derived(), scalar_operand);
-}
-
-// scalar multiplication on the right -- this overload allows integer literals to be used in scalar multiplications
-template <typename Derived, typename FactorTypeList, typename FreeDimIndexTypeList, typename UsedDimIndexTypeList>
-ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
-    operator * (ExpressionTemplate_i<Derived,typename Derived::Scalar,FactorTypeList,FreeDimIndexTypeList,UsedDimIndexTypeList> const &operand,
-                int scalar_operand)
+                typename Derived::Scalar const &scalar_operand)
 {
     return ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>(operand.as_derived(), scalar_operand);
 }
@@ -847,15 +838,6 @@ ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
 template <typename Derived, typename FactorTypeList, typename FreeDimIndexTypeList, typename UsedDimIndexTypeList>
 ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
     operator * (typename Derived::Scalar scalar_operand,
-                ExpressionTemplate_i<Derived,typename Derived::Scalar,FactorTypeList,FreeDimIndexTypeList,UsedDimIndexTypeList> const &operand)
-{
-    return ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>(operand.as_derived(), scalar_operand);
-}
-
-// scalar multiplication on the left -- this overload allows integer literals to be used in scalar multiplications
-template <typename Derived, typename FactorTypeList, typename FreeDimIndexTypeList, typename UsedDimIndexTypeList>
-ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
-    operator * (int scalar_operand,
                 ExpressionTemplate_i<Derived,typename Derived::Scalar,FactorTypeList,FreeDimIndexTypeList,UsedDimIndexTypeList> const &operand)
 {
     return ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>(operand.as_derived(), scalar_operand);

@@ -76,6 +76,10 @@ void assignment (Context const &context)
         assert_eq(A[i], C[i]);
 }
 
+// NOTE: All the bullshit casts to Scalar_ are necessary because the operands
+// *may* be promoted to a larger type (e.g. char -> int).  This is a retarded
+// part of the C standard.
+
 template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
 void addition (Context const &context)
 {
@@ -96,19 +100,23 @@ void addition (Context const &context)
 
     A = B + C;
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        assert_eq(A[i], B[i]+C[i]);
+        assert_eq(A[i], Scalar_(B[i]+C[i]));
+
+    A = C + M;
+    for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
+        assert_eq(A[i], Scalar_(C[i]+M[i]));
 
     A = B + (C + M);
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        assert_eq(A[i], B[i]+(C[i]+M[i]));
+        assert_eq(A[i],Scalar_(B[i]+Scalar_(C[i]+M[i])));
 
     A = (B + C) + M;
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        assert_eq(A[i], (B[i]+C[i])+M[i]);
+        assert_eq(A[i], Scalar_(Scalar_(B[i]+C[i])+M[i]));
 
     A = (B + C) + (M + N);
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        assert_eq(A[i], (B[i]+C[i])+(M[i]+N[i]));
+        assert_eq(A[i], Scalar_(Scalar_(B[i]+C[i])+Scalar_(M[i]+N[i])));
 }
 
 template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
@@ -131,19 +139,19 @@ void subtraction (Context const &context)
 
     A = B - C;
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        assert_eq(A[i], B[i]-C[i]);
+        assert_eq(A[i], Scalar_(B[i]-C[i]));
 
     A = B - (C - M);
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        assert_eq(A[i], B[i]-(C[i]-M[i]));
+        assert_eq(A[i], Scalar_(B[i]-Scalar_(C[i]-M[i])));
 
     A = (B - C) - M;
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        assert_eq(A[i], (B[i]-C[i])-M[i]);
+        assert_eq(A[i], Scalar_(Scalar_(B[i]-C[i])-M[i]));
 
     A = (B - C) - (M - N);
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        assert_eq(A[i], (B[i]-C[i])-(M[i]-N[i]));
+        assert_eq(A[i], Scalar_(Scalar_(B[i]-C[i])-Scalar_(M[i]-N[i])));
 }
 
 template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
@@ -156,29 +164,21 @@ void scalar_multiplication (Context const &context)
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
         B[i] = i.value();
 
-    A = B * 3;
-    for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        assert_eq(A[i], B[i]*Scalar_(3));
-
-    A = 3 * B;
-    for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        assert_eq(A[i], B[i]*Scalar_(3));
-
     A = B * Scalar_(3.14);
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        assert_eq(A[i], B[i]*Scalar_(3.14));
+        assert_eq(A[i], Scalar_(B[i]*Scalar_(3.14)));
 
     A = Scalar_(3.14) * B;
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        assert_eq(A[i], B[i]*Scalar_(3.14));
+        assert_eq(A[i], Scalar_(B[i]*Scalar_(3.14)));
 
     A = B / 3;
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        assert_eq(A[i], B[i]/Scalar_(3));
+        assert_eq(A[i], Scalar_(B[i]/Scalar_(3)));
 
     A = B / Scalar_(3.14);
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        assert_eq(A[i], B[i]/Scalar_(3.14));
+        assert_eq(A[i], Scalar_(B[i]/Scalar_(3.14)));
 }
 
 template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
@@ -193,7 +193,7 @@ void negation (Context const &context)
 
     A = -B;
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-        assert_eq(A[i], -B[i]);
+        assert_eq(A[i], Scalar_(-B[i]));
 }
 
 template <typename BasedVectorSpace1_, typename BasedVectorSpace2_, typename BasedVectorSpace3_, typename Scalar_, typename UseArrayType_>
@@ -255,7 +255,7 @@ void composition (Context const &context)
         {
             Scalar_ expected_result(0);
             for (typename Covector3::ComponentIndex j; j.is_not_at_end(); ++j)
-                expected_result += a3[j] * M23[typename Operator23::MultiIndex(j, i)];
+                expected_result += Scalar_(a3[j] * M23[typename Operator23::MultiIndex(j, i)]);
             assert_eq((a3 * M23)[typename Vector2::MultiIndex(i)], expected_result);
         }
     }
@@ -266,7 +266,7 @@ void composition (Context const &context)
         {
             Scalar_ expected_result(0);
             for (typename Vector2::ComponentIndex j; j.is_not_at_end(); ++j)
-                expected_result += M23[typename Operator23::MultiIndex(i, j)] * v2[j];
+                expected_result += Scalar_(M23[typename Operator23::MultiIndex(i, j)] * v2[j]);
             assert_eq((M23 * v2)[typename Vector3::MultiIndex(i)], expected_result);
         }
     }
@@ -279,7 +279,7 @@ void composition (Context const &context)
             {
                 Scalar_ expected_result(0);
                 for (typename Vector2::ComponentIndex k; k.is_not_at_end(); ++k)
-                    expected_result += M23[typename Operator23::MultiIndex(i, k)] * M12[typename Operator12::MultiIndex(k, j)];
+                    expected_result += Scalar_(M23[typename Operator23::MultiIndex(i, k)] * M12[typename Operator12::MultiIndex(k, j)]);
                 typedef Tenh::TypeList_t<typename Vector3::ComponentIndex,
                         Tenh::TypeList_t<typename Vector1::ComponentIndex> > ResultIndexTypeList;
                 assert_eq((M23 * M12)[Tenh::MultiIndex_t<ResultIndexTypeList>(i, j)], expected_result);
@@ -398,8 +398,13 @@ void AddTests (Directory *parent)
 {
     Directory *dir = new Directory("Operator", parent);
     add_particular_tests_for_scalar<Sint8>(dir);
+    add_particular_tests_for_scalar<Uint8>(dir);
+    add_particular_tests_for_scalar<Sint16>(dir);
+    add_particular_tests_for_scalar<Uint16>(dir);
+    add_particular_tests_for_scalar<Sint32>(dir);
     add_particular_tests_for_scalar<Uint32>(dir);
     add_particular_tests_for_scalar<Sint64>(dir);
+    add_particular_tests_for_scalar<Uint64>(dir);
     add_particular_tests_for_scalar<float>(dir);
     add_particular_tests_for_scalar<double>(dir);
     add_particular_tests_for_scalar<complex<float> >(dir);

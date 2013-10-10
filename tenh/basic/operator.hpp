@@ -345,39 +345,7 @@ ExpressionTemplate_ScalarMultiplication_t<
                 TypeList_t<AbstractIndex_c<'j'> > > >::T,
     Scalar_,
     '*'>
-    operator * (Operator<Domain_,Codomain_,Scalar_,UseArrayType_> const &lhs,
-                int rhs)
-{
-    AbstractIndex_c<'i'> i;
-    AbstractIndex_c<'j'> j;
-    return lhs(i|j) * rhs;
-}
-
-template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
-ExpressionTemplate_ScalarMultiplication_t<
-    typename Operator<Domain_,Codomain_,Scalar_,UseArrayType_>
-             ::template IndexedExpressionConstType_f<
-                TypeList_t<AbstractIndex_c<'i'>,
-                TypeList_t<AbstractIndex_c<'j'> > > >::T,
-    Scalar_,
-    '*'>
     operator * (Scalar_ const &lhs,
-                Operator<Domain_,Codomain_,Scalar_,UseArrayType_> const &rhs)
-{
-    AbstractIndex_c<'i'> i;
-    AbstractIndex_c<'j'> j;
-    return lhs * rhs(i|j);
-}
-
-template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
-ExpressionTemplate_ScalarMultiplication_t<
-    typename Operator<Domain_,Codomain_,Scalar_,UseArrayType_>
-             ::template IndexedExpressionConstType_f<
-                TypeList_t<AbstractIndex_c<'i'>,
-                TypeList_t<AbstractIndex_c<'j'> > > >::T,
-    Scalar_,
-    '*'>
-    operator * (int lhs,
                 Operator<Domain_,Codomain_,Scalar_,UseArrayType_> const &rhs)
 {
     AbstractIndex_c<'i'> i;

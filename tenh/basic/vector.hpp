@@ -8,6 +8,7 @@
 
 #include "tenh/core.hpp"
 
+#include "tenh/basic/reindexable.hpp"
 #include "tenh/expressiontemplate_reindex.hpp"
 #include "tenh/implementation/diagonal2tensor.hpp"
 #include "tenh/implementation/tensor.hpp"
@@ -30,6 +31,8 @@ public:
     typedef typename DualOf_f<Vector>::T Dual; // relies on the template specialization below
 
     explicit Vector (WithoutInitialization const &w) : Parent_Implementation(w) { }
+
+    // TODO: copy constructor and operator= (for appropriate UseArrayType_)
 
     // only use these if UseMemberArray is specified
 
@@ -83,20 +86,13 @@ public:
                       MUST_BE_USE_IMMUTABLE_ARRAY_OR_BE_ZERO_DIMENSIONAL);
     }
 
-    template <typename Derived_,
-              typename FreeFactorTypeList_,
-              typename FreeDimIndexTypeList_,
-              typename UsedDimIndexTypeList_>
-    void operator = (ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &rhs)
+    template <typename ExpressionTemplate_, typename FreeDimIndexTypeList_>
+    void operator = (Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_> const &rhs)
     {
-        STATIC_ASSERT(Length_f<FreeDimIndexTypeList_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
-        typedef typename Head_f<FreeDimIndexTypeList_>::T RhsDimIndex;
-        typedef AbstractIndex_c<RhsDimIndex::SYMBOL> IndexToRename;
-        typedef AbstractIndex_c<'i'> I;
-        typedef TypeList_t<IndexToRename> DomainAbstractIndexTypeList;
-        typedef TypeList_t<I> CodomainAbstractIndexTypeList;
-        I i;
-        (*this)(i) = reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(rhs.as_derived());
+        STATIC_ASSERT(IsExpressionTemplate_f<ExpressionTemplate_>::V, MUST_BE_EXPRESSION_TEMPLATE);
+        STATIC_ASSERT(Length_f<typename ExpressionTemplate_::FreeDimIndexTypeList>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
+        AbstractIndex_c<'i'> i;
+        (*this)(i) = rhs(i);//.as_derived_expression_template();
     }
     // TODO: a "no alias" version of operator= -- this probably requires adding a no_alias() method to this class.
 
@@ -114,205 +110,187 @@ struct DualOf_f<Vector<BasedVectorSpace_,Scalar_,UseArrayType_> >
     typedef Vector<typename DualOf_f<BasedVectorSpace_>::T,Scalar_,typename DualOf_f<UseArrayType_>::T> T;
 };
 
-template <typename BasedVectorSpace_, typename Scalar_, typename Lhs_UseArrayType_, typename Rhs_UseArrayType_>
-ExpressionTemplate_Addition_t<
-    typename Vector<BasedVectorSpace_,Scalar_,Lhs_UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
-    typename Vector<BasedVectorSpace_,Scalar_,Rhs_UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
-    '+'>
+// ///////////////////////////////////////////////////////////////////////////
+// addition
+// ///////////////////////////////////////////////////////////////////////////
+
+template <typename BasedVectorSpace_,
+          typename Scalar_,
+          typename Lhs_UseArrayType_,
+          typename Rhs_UseArrayType_>
+Reindexable_t<
+    ExpressionTemplate_Addition_t<
+        typename Vector<BasedVectorSpace_,Scalar_,Lhs_UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+        typename Vector<BasedVectorSpace_,Scalar_,Rhs_UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+        '+'> >
     operator + (Vector<BasedVectorSpace_,Scalar_,Lhs_UseArrayType_> const &lhs,
                 Vector<BasedVectorSpace_,Scalar_,Rhs_UseArrayType_> const &rhs)
 {
     AbstractIndex_c<'i'> i;
-    return lhs(i) + rhs(i);
+    return lhs(i) + rhs(i); // this should do the conversion to Reindexable_t<...> implicitly
 }
 
 template <typename BasedVectorSpace_,
           typename Scalar_,
           typename UseArrayType_,
-          typename Derived_,
-          typename FreeFactorTypeList_,
-          typename FreeDimIndexTypeList_,
-          typename UsedDimIndexTypeList_>
-ExpressionTemplate_Addition_t<
-    typename Vector<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
-    Derived_,
-    '+'>
+          typename ExpressionTemplate_,
+          typename FreeDimIndexTypeList_>
+Reindexable_t<
+    ExpressionTemplate_Addition_t<
+        typename Vector<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+        typename ExpressionTemplate_::Derived,
+        '+'> >
     operator + (Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &lhs,
-                ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &rhs)
+                Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_> const &rhs)
 {
-    STATIC_ASSERT(Length_f<FreeDimIndexTypeList_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
-    typedef typename Head_f<FreeDimIndexTypeList_>::T RhsDimIndex;
-    typedef AbstractIndex_c<RhsDimIndex::SYMBOL> IndexToRename;
-    typedef AbstractIndex_c<'i'> I;
-    typedef TypeList_t<IndexToRename> DomainAbstractIndexTypeList;
-    typedef TypeList_t<I> CodomainAbstractIndexTypeList;
-    I i;
-    return lhs(i) + reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(rhs.as_derived());
+    AbstractIndex_c<'i'> i;
+    return lhs(i) + rhs(i); // this should do the conversion to Reindexable_t<...> implicitly
 }
 
 template <typename BasedVectorSpace_,
           typename Scalar_,
           typename UseArrayType_,
-          typename Derived_,
-          typename FreeFactorTypeList_,
-          typename FreeDimIndexTypeList_,
-          typename UsedDimIndexTypeList_>
-ExpressionTemplate_Addition_t<
-    Derived_,
-    typename Vector<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
-    '+'>
-    operator + (ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &lhs,
+          typename ExpressionTemplate_,
+          typename FreeDimIndexTypeList_>
+Reindexable_t<
+    ExpressionTemplate_Addition_t<
+        typename ExpressionTemplate_::Derived,
+        typename Vector<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+        '+'> >
+    operator + (Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_> const &lhs,
                 Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &rhs)
 {
-    STATIC_ASSERT(Length_f<FreeDimIndexTypeList_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
-    typedef typename Head_f<FreeDimIndexTypeList_>::T RhsDimIndex;
-    typedef AbstractIndex_c<RhsDimIndex::SYMBOL> IndexToRename;
-    typedef AbstractIndex_c<'i'> I;
-    typedef TypeList_t<IndexToRename> DomainAbstractIndexTypeList;
-    typedef TypeList_t<I> CodomainAbstractIndexTypeList;
-    I i;
-    return reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(lhs.as_derived()) + rhs(i);
+    AbstractIndex_c<'i'> i;
+    return lhs(i) + rhs(i); // this should do the conversion to Reindexable_t<...> implicitly
 }
 
-// the "ExpressionTemplate_i + ExpressionTemplate_i" situation is already handled
-// by the existing expression template code.
+// the "Reindexable_t + Reindexable_t" situation is handled in reindexable.hpp
 
-template <typename BasedVectorSpace_, typename Scalar_, typename Lhs_UseArrayType_, typename Rhs_UseArrayType_>
-ExpressionTemplate_Addition_t<
-    typename Vector<BasedVectorSpace_,Scalar_,Lhs_UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
-    typename Vector<BasedVectorSpace_,Scalar_,Rhs_UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
-    '-'>
+// ///////////////////////////////////////////////////////////////////////////
+// subtraction
+// ///////////////////////////////////////////////////////////////////////////
+
+template <typename BasedVectorSpace_,
+          typename Scalar_,
+          typename Lhs_UseArrayType_,
+          typename Rhs_UseArrayType_>
+Reindexable_t<
+    ExpressionTemplate_Addition_t<
+        typename Vector<BasedVectorSpace_,Scalar_,Lhs_UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+        typename Vector<BasedVectorSpace_,Scalar_,Rhs_UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+        '-'> >
     operator - (Vector<BasedVectorSpace_,Scalar_,Lhs_UseArrayType_> const &lhs,
                 Vector<BasedVectorSpace_,Scalar_,Rhs_UseArrayType_> const &rhs)
 {
     AbstractIndex_c<'i'> i;
-    return lhs(i) - rhs(i);
+    return lhs(i) - rhs(i); // this should do the conversion to Reindexable_t<...> implicitly
 }
 
 template <typename BasedVectorSpace_,
           typename Scalar_,
           typename UseArrayType_,
-          typename Derived_,
-          typename FreeFactorTypeList_,
-          typename FreeDimIndexTypeList_,
-          typename UsedDimIndexTypeList_>
-ExpressionTemplate_Addition_t<
-    typename Vector<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
-    Derived_,
-    '-'>
+          typename ExpressionTemplate_,
+          typename FreeDimIndexTypeList_>
+Reindexable_t<
+    ExpressionTemplate_Addition_t<
+        typename Vector<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+        typename ExpressionTemplate_::Derived,
+        '-'> >
     operator - (Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &lhs,
-                ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &rhs)
+                Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_> const &rhs)
 {
-    STATIC_ASSERT(Length_f<FreeDimIndexTypeList_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
-    typedef typename Head_f<FreeDimIndexTypeList_>::T RhsDimIndex;
-    typedef AbstractIndex_c<RhsDimIndex::SYMBOL> IndexToRename;
-    typedef AbstractIndex_c<'i'> I;
-    typedef TypeList_t<IndexToRename> DomainAbstractIndexTypeList;
-    typedef TypeList_t<I> CodomainAbstractIndexTypeList;
-    I i;
-    return lhs(i) - reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(rhs.as_derived());
+    AbstractIndex_c<'i'> i;
+    return lhs(i) - rhs(i); // this should do the conversion to Reindexable_t<...> implicitly
 }
 
 template <typename BasedVectorSpace_,
           typename Scalar_,
           typename UseArrayType_,
-          typename Derived_,
-          typename FreeFactorTypeList_,
-          typename FreeDimIndexTypeList_,
-          typename UsedDimIndexTypeList_>
-ExpressionTemplate_Addition_t<
-    Derived_,
-    typename Vector<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
-    '-'>
-    operator - (ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &lhs,
+          typename ExpressionTemplate_,
+          typename FreeDimIndexTypeList_>
+Reindexable_t<
+    ExpressionTemplate_Addition_t<
+        typename ExpressionTemplate_::Derived,
+        typename Vector<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+        '-'> >
+    operator - (Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_> const &lhs,
                 Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &rhs)
 {
-    STATIC_ASSERT(Length_f<FreeDimIndexTypeList_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
-    typedef typename Head_f<FreeDimIndexTypeList_>::T RhsDimIndex;
-    typedef AbstractIndex_c<RhsDimIndex::SYMBOL> IndexToRename;
-    typedef AbstractIndex_c<'i'> I;
-    typedef TypeList_t<IndexToRename> DomainAbstractIndexTypeList;
-    typedef TypeList_t<I> CodomainAbstractIndexTypeList;
-    I i;
-    return reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(lhs.as_derived()) - rhs(i);
+    AbstractIndex_c<'i'> i;
+    return lhs(i) - rhs(i); // this should do the conversion to Reindexable_t<...> implicitly
 }
 
-// the "ExpressionTemplate_i - ExpressionTemplate_i" situation is already handled
-// by the existing expression template code.
+// the "Reindexable_t - Reindexable_t" situation is handled in reindexable.hpp
+
+// ///////////////////////////////////////////////////////////////////////////
+// scalar multiplication/division
+// ///////////////////////////////////////////////////////////////////////////
 
 template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
-ExpressionTemplate_ScalarMultiplication_t<
-    typename Vector<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
-    Scalar_,
-    '*'>
+Reindexable_t<
+    ExpressionTemplate_ScalarMultiplication_t<
+        typename Vector<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+        Scalar_,
+        '*'> >
     operator * (Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &lhs,
                 Scalar_ const &rhs)
 {
     AbstractIndex_c<'i'> i;
-    return lhs(i) * rhs;
+    return lhs(i) * rhs; // this should do the conversion to Reindexable_t<...> implicitly
 }
 
 template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
-ExpressionTemplate_ScalarMultiplication_t<
-    typename Vector<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
-    Scalar_,
-    '*'>
-    operator * (Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &lhs,
-                int rhs)
-{
-    AbstractIndex_c<'i'> i;
-    return lhs(i) * rhs;
-}
-
-template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
-ExpressionTemplate_ScalarMultiplication_t<
-    typename Vector<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
-    Scalar_,
-    '*'>
+Reindexable_t<
+    ExpressionTemplate_ScalarMultiplication_t<
+        typename Vector<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+        Scalar_,
+        '*'> >
     operator * (Scalar_ const &lhs,
                 Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &rhs)
 {
     AbstractIndex_c<'i'> i;
-    return lhs * rhs(i);
-}
-
-template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
-ExpressionTemplate_ScalarMultiplication_t<
-    typename Vector<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
-    Scalar_,
-    '*'>
-    operator * (int lhs,
-                Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &rhs)
-{
-    AbstractIndex_c<'i'> i;
-    return lhs * rhs(i);
+    return lhs * rhs(i); // this should do the conversion to Reindexable_t<...> implicitly
 }
 
 template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_, typename ScalarOperand_>
-ExpressionTemplate_ScalarMultiplication_t<
-    typename Vector<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
-    Scalar_,
-    '/'>
+Reindexable_t<
+    ExpressionTemplate_ScalarMultiplication_t<
+        typename Vector<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+        Scalar_,
+        '/'> >
     operator / (Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &lhs,
                 ScalarOperand_ const &rhs)
 {
     AbstractIndex_c<'i'> i;
-    return lhs(i) / rhs;
+    return lhs(i) / rhs; // this should do the conversion to Reindexable_t<...> implicitly
 }
 
+// ///////////////////////////////////////////////////////////////////////////
+// negation
+// ///////////////////////////////////////////////////////////////////////////
+
 template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
-ExpressionTemplate_ScalarMultiplication_t<
-    typename Vector<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
-    Scalar_,
-    '*'>
+Reindexable_t<
+    ExpressionTemplate_ScalarMultiplication_t<
+        typename Vector<BasedVectorSpace_,Scalar_,UseArrayType_>::template IndexedExpressionConstType_f<'i'>::T,
+        Scalar_,
+        '*'> >
     operator - (Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &v)
 {
     AbstractIndex_c<'i'> i;
-    return -v(i);
+    return -v(i); // this should do the conversion to Reindexable_t<...> implicitly
 }
 
+// ///////////////////////////////////////////////////////////////////////////
+// natural pairing of vectors with covectors
+// ///////////////////////////////////////////////////////////////////////////
+/*
 // this only allows natural pairings of vectors with covectors (via the existing expression template code)
-template <typename Lhs_BasedVectorSpace_, typename Rhs_BasedVectorSpace_, typename Scalar_, typename Lhs_UseArrayType_, typename Rhs_UseArrayType_>
+template <typename Lhs_BasedVectorSpace_,
+          typename Rhs_BasedVectorSpace_,
+          typename Scalar_,
+          typename Lhs_UseArrayType_,
+          typename Rhs_UseArrayType_>
 Scalar_ operator * (Vector<Lhs_BasedVectorSpace_,Scalar_,Lhs_UseArrayType_> const &lhs,
                     Vector<Rhs_BasedVectorSpace_,Scalar_,Rhs_UseArrayType_> const &rhs)
 {
@@ -324,21 +302,21 @@ Scalar_ operator * (Vector<Lhs_BasedVectorSpace_,Scalar_,Lhs_UseArrayType_> cons
 template <typename BasedVectorSpace_,
           typename Scalar_,
           typename UseArrayType_,
-          typename Derived_,
-          typename FreeFactorTypeList_,
-          typename FreeDimIndexTypeList_,
-          typename UsedDimIndexTypeList_>
+          typename ExpressionTemplate_,
+          typename FreeDimIndexTypeList_>
 Scalar_ operator * (Vector<BasedVectorSpace_,Scalar_,UseArrayType_> const &lhs,
-                    ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &rhs)
+                    Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_> const &rhs)
 {
-    STATIC_ASSERT(Length_f<FreeDimIndexTypeList_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
-    typedef typename Head_f<FreeDimIndexTypeList_>::T RhsDimIndex;
-    typedef AbstractIndex_c<RhsDimIndex::SYMBOL> IndexToRename;
-    typedef AbstractIndex_c<'i'> I;
-    typedef TypeList_t<IndexToRename> DomainAbstractIndexTypeList;
-    typedef TypeList_t<I> CodomainAbstractIndexTypeList;
-    I i;
-    return lhs(i) * reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(rhs.as_derived());
+    STATIC_ASSERT(IsExpressionTemplate_f<ExpressionTemplate_>::V, MUST_BE_EXPRESSION_TEMPLATE);
+    STATIC_ASSERT(Length_f<typename ExpressionTemplate_::FreeDimIndexTypeList>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
+//     typedef typename Head_f<FreeDimIndexTypeList_>::T RhsDimIndex;
+//     typedef AbstractIndex_c<RhsDimIndex::SYMBOL> IndexToRename;
+//     typedef AbstractIndex_c<'i'> I;
+//     typedef TypeList_t<IndexToRename> DomainAbstractIndexTypeList;
+//     typedef TypeList_t<I> CodomainAbstractIndexTypeList;
+//     I i;
+//     return lhs(i) * reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(rhs.as_derived());
+    return lhs(i) *
 }
 
 // this only allows natural pairings of vectors with covectors (via the existing expression template code)
@@ -364,7 +342,7 @@ Scalar_ operator * (ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,Fr
 
 // the "ExpressionTemplate_i * ExpressionTemplate_i" situation is already handled
 // by the existing expression template code.
-
+*/
 /*
 
 // TODO: figure out the return type (yugh).
