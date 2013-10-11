@@ -52,6 +52,8 @@ struct Vector_i
 
     static Uint32 dim () { return DIM; }
 
+    // TODO: add "operator Scalar () const { return as_derived().operator Scalar(); }" with a static assert that DIM == 1
+
     // TODO: only allow when Basis = Euclidean once strongly-typed vectors are implemented
     // type conversion operator for canonical coercion to Scalar type when the vector is 1-dimensional
     operator ComponentAccessConstReturnType () const

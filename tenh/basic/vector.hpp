@@ -90,9 +90,10 @@ public:
     void operator = (Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_> const &rhs)
     {
         STATIC_ASSERT(IsExpressionTemplate_f<ExpressionTemplate_>::V, MUST_BE_EXPRESSION_TEMPLATE);
-        STATIC_ASSERT(Length_f<typename ExpressionTemplate_::FreeDimIndexTypeList>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
+        STATIC_ASSERT_TYPES_ARE_EQUAL(typename ExpressionTemplate_::FreeDimIndexTypeList,FreeDimIndexTypeList_);
+        STATIC_ASSERT(Length_f<FreeDimIndexTypeList_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
         AbstractIndex_c<'i'> i;
-        (*this)(i) = rhs(i);//.as_derived_expression_template();
+        (*this)(i) = rhs(i);
     }
     // TODO: a "no alias" version of operator= -- this probably requires adding a no_alias() method to this class.
 

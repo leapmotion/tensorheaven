@@ -85,6 +85,13 @@ private:
     DerivedExpressionTemplate m_derived_expression_template;
 };
 
+// an easy way to construct a Reindexable_t from an expression template without having to type a shitty typename
+template <typename ExpressionTemplate_>
+Reindexable_t<ExpressionTemplate_> reindexable (ExpressionTemplate_ const &e)
+{
+    return Reindexable_t<ExpressionTemplate_>(e);
+}
+
 // ///////////////////////////////////////////////////////////////////////////
 // operator overloads involving only Reindexable_t types
 // ///////////////////////////////////////////////////////////////////////////
@@ -94,15 +101,39 @@ private:
 // ///////////////////////////////////////////////////////////////////////////
 
 template <typename Lhs_ExpressionTemplate_,
-          typename Lhs_FreeDimIndexTypeList_,
-          typename Rhs_ExpressionTemplate_,
-          typename Rhs_FreeDimIndexTypeList_>
+          typename Rhs_ExpressionTemplate_>
 Reindexable_t<ExpressionTemplate_Addition_t<Lhs_ExpressionTemplate_,Rhs_ExpressionTemplate_,'+'> >
-    operator + (Reindexable_t<Lhs_ExpressionTemplate_,Lhs_FreeDimIndexTypeList_> const &lhs,
-                Reindexable_t<Rhs_ExpressionTemplate_,Rhs_FreeDimIndexTypeList_> const &rhs)
+    operator + (Reindexable_t<Lhs_ExpressionTemplate_,EmptyTypeList> const &lhs,
+                Reindexable_t<Rhs_ExpressionTemplate_,EmptyTypeList> const &rhs)
+{
+    return lhs() + rhs();
+}
+
+template <typename Lhs_ExpressionTemplate_,
+          typename Lhs_DimIndex_,
+          typename Rhs_ExpressionTemplate_,
+          typename Rhs_DimIndex_>
+Reindexable_t<ExpressionTemplate_Addition_t<Lhs_ExpressionTemplate_,Rhs_ExpressionTemplate_,'+'> >
+    operator + (Reindexable_t<Lhs_ExpressionTemplate_,TypeList_t<Lhs_DimIndex_> > const &lhs,
+                Reindexable_t<Rhs_ExpressionTemplate_,TypeList_t<Rhs_DimIndex_> > const &rhs)
 {
     AbstractIndex_c<'i'> i;
     return lhs(i) + rhs(i);
+}
+
+template <typename Lhs_ExpressionTemplate_,
+          typename Lhs_DimIndex0_,
+          typename Lhs_DimIndex1_,
+          typename Rhs_ExpressionTemplate_,
+          typename Rhs_DimIndex0_,
+          typename Rhs_DimIndex1_>
+Reindexable_t<ExpressionTemplate_Addition_t<Lhs_ExpressionTemplate_,Rhs_ExpressionTemplate_,'+'> >
+    operator + (Reindexable_t<Lhs_ExpressionTemplate_,TypeList_t<Lhs_DimIndex0_,TypeList_t<Lhs_DimIndex1_> > > const &lhs,
+                Reindexable_t<Rhs_ExpressionTemplate_,TypeList_t<Rhs_DimIndex0_,TypeList_t<Rhs_DimIndex1_> > > const &rhs)
+{
+    AbstractIndex_c<'i'> i;
+    AbstractIndex_c<'j'> j;
+    return lhs(i|j) + rhs(i|j);
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -110,15 +141,39 @@ Reindexable_t<ExpressionTemplate_Addition_t<Lhs_ExpressionTemplate_,Rhs_Expressi
 // ///////////////////////////////////////////////////////////////////////////
 
 template <typename Lhs_ExpressionTemplate_,
-          typename Lhs_FreeDimIndexTypeList_,
-          typename Rhs_ExpressionTemplate_,
-          typename Rhs_FreeDimIndexTypeList_>
+          typename Rhs_ExpressionTemplate_>
 Reindexable_t<ExpressionTemplate_Addition_t<Lhs_ExpressionTemplate_,Rhs_ExpressionTemplate_,'-'> >
-    operator - (Reindexable_t<Lhs_ExpressionTemplate_,Lhs_FreeDimIndexTypeList_> const &lhs,
-                Reindexable_t<Rhs_ExpressionTemplate_,Rhs_FreeDimIndexTypeList_> const &rhs)
+    operator - (Reindexable_t<Lhs_ExpressionTemplate_,EmptyTypeList> const &lhs,
+                Reindexable_t<Rhs_ExpressionTemplate_,EmptyTypeList> const &rhs)
+{
+    return lhs() - rhs();
+}
+
+template <typename Lhs_ExpressionTemplate_,
+          typename Lhs_DimIndex_,
+          typename Rhs_ExpressionTemplate_,
+          typename Rhs_DimIndex_>
+Reindexable_t<ExpressionTemplate_Addition_t<Lhs_ExpressionTemplate_,Rhs_ExpressionTemplate_,'-'> >
+    operator - (Reindexable_t<Lhs_ExpressionTemplate_,TypeList_t<Lhs_DimIndex_> > const &lhs,
+                Reindexable_t<Rhs_ExpressionTemplate_,TypeList_t<Rhs_DimIndex_> > const &rhs)
 {
     AbstractIndex_c<'i'> i;
     return lhs(i) - rhs(i);
+}
+
+template <typename Lhs_ExpressionTemplate_,
+          typename Lhs_DimIndex0_,
+          typename Lhs_DimIndex1_,
+          typename Rhs_ExpressionTemplate_,
+          typename Rhs_DimIndex0_,
+          typename Rhs_DimIndex1_>
+Reindexable_t<ExpressionTemplate_Addition_t<Lhs_ExpressionTemplate_,Rhs_ExpressionTemplate_,'-'> >
+    operator - (Reindexable_t<Lhs_ExpressionTemplate_,TypeList_t<Lhs_DimIndex0_,TypeList_t<Lhs_DimIndex1_> > > const &lhs,
+                Reindexable_t<Rhs_ExpressionTemplate_,TypeList_t<Rhs_DimIndex0_,TypeList_t<Rhs_DimIndex1_> > > const &rhs)
+{
+    AbstractIndex_c<'i'> i;
+    AbstractIndex_c<'j'> j;
+    return lhs(i|j) - rhs(i|j);
 }
 
 // ///////////////////////////////////////////////////////////////////////////

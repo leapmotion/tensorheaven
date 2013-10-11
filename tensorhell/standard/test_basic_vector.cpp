@@ -61,16 +61,16 @@ void assignment (Context const &context)
     for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
         assert_eq(u[i], w[i]);
 
-//     // expression template assignment
-//     Tenh::AbstractIndex_c<'j'> j;
-//     u = v(j);
-//     for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
-//         assert_eq(u[i], v[i]);
-//
-//     // expression template assignment
-//     u = w(j);
-//     for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
-//         assert_eq(u[i], w[i]);
+    // expression template assignment
+    Tenh::AbstractIndex_c<'j'> j;
+    u = Tenh::reindexable(v(j));
+    for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
+        assert_eq(u[i], v[i]);
+
+    // expression template assignment
+    u = Tenh::reindexable(w(j));
+    for (typename Vector::ComponentIndex i; i.is_not_at_end(); ++i)
+        assert_eq(u[i], w[i]);
 }
 
 // NOTE: All the bullshit casts to Scalar_ are necessary because the operands

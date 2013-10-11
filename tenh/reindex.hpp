@@ -27,6 +27,10 @@ struct AbstractIndexMap_e
 private:
     enum
     {
+        STATIC_ASSERT_IN_ENUM(Length_f<DomainAbstractIndexTypeList_>::V == Length_f<CodomainAbstractIndexTypeList_>::V,
+                              LENGTHS_MUST_BE_EQUAL),
+        STATIC_ASSERT_IN_ENUM__UNIQUE((Length_f<DomainAbstractIndexTypeList_>::V > 0), LENGTH_MUST_BE_POSITIVE, DOMAIN_LENGTH),
+        STATIC_ASSERT_IN_ENUM__UNIQUE((Length_f<CodomainAbstractIndexTypeList_>::V > 0), LENGTH_MUST_BE_POSITIVE, CODOMAIN_LENGTH),
         STATIC_ASSERT_IN_ENUM__UNIQUE((And_f<typename OnEach_f<DomainAbstractIndexTypeList_,IsAbstractIndex_e>::T>::V),
                                       MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES,
                                       DOMAIN),
