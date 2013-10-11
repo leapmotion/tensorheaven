@@ -6,6 +6,8 @@
 
 void test_vector_contraction ()
 {
+    std::cout << "testing vector contraction\n";
+
     typedef VectorSpace_c<RealField,3,X> VSX;
     typedef Basis_c<X> B;
     typedef BasedVectorSpace_c<VSX,B> BasedX;
@@ -37,11 +39,17 @@ void test_vector_contraction ()
     // this should cause a compile error due to a mismatch of factor types
     // std::cout << FORMAT_VALUE(a(i) + v(i)) << '\n';
 
+    // testing 1-multiindex indexing of vectors
+    std::cout << FORMAT_VALUE(a(EmptyTypeList()|i)) << '\n';
+    std::cout << FORMAT_VALUE(v(EmptyTypeList()|i)) << '\n';
+
     std::cout << '\n' << '\n';
 }
 
 void test_tensor_contraction ()
 {
+    std::cout << "testing tensor contraction\n";
+
     typedef VectorSpace_c<RealField,3,X> VSX;
     typedef Basis_c<X> BX;
     typedef BasedVectorSpace_c<VSX,BX> BasedX;
@@ -128,6 +136,8 @@ void test_tensor_contraction ()
     std::cout << FORMAT_VALUE(e(i|j|k).bundle(j|k,PartOfH(),P)) << '\n';
     std::cout << FORMAT_VALUE(f(i|j|k).bundle(j|k,DualOf_f<PartOfH>::T(),P)) << '\n';
     std::cout << FORMAT_VALUE(e(i|j|k).bundle(j|k,PartOfH(),P) * f(i|j|k).bundle(j|k,DualOf_f<PartOfH>::T(),P)) << '\n';
+
+    std::cout << FORMAT_VALUE(e(EmptyTypeList()|i)) << '\n';
 
     std::cout << '\n' << '\n';
 }

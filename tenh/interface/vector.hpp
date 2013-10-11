@@ -139,6 +139,19 @@ struct Vector_i
         return typename IndexedExpressionNonConstType_f<SYMBOL_>::T(as_derived());
     }
 
+    template <AbstractIndexSymbol SYMBOL_>
+    typename IndexedExpressionConstType_f<SYMBOL_>::T operator () (TypeList_t<AbstractIndex_c<SYMBOL_> > const &) const
+    {
+        STATIC_ASSERT((SYMBOL_ != '\0'), ABSTRACT_INDEX_SYMBOL_MUST_BE_POSITIVE);
+        return typename IndexedExpressionConstType_f<SYMBOL_>::T(as_derived());
+    }
+    template <AbstractIndexSymbol SYMBOL_>
+    typename IndexedExpressionNonConstType_f<SYMBOL_>::T operator () (TypeList_t<AbstractIndex_c<SYMBOL_> > const &)
+    {
+        STATIC_ASSERT((SYMBOL_ != '\0'), ABSTRACT_INDEX_SYMBOL_MUST_BE_POSITIVE);
+        return typename IndexedExpressionNonConstType_f<SYMBOL_>::T(as_derived());
+    }
+
     // NOTE: these are sort of part of the Tensor_i interface, but need Vector_i's cooperation.
     // if the return value for a particular MultiIndex is false, then that component is understood to be zero.
     static bool component_is_immutable_zero (MultiIndex const &m) { return false; }

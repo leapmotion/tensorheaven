@@ -110,30 +110,35 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
 
     using Parent_Vector_i::operator();
 
-    // because the return type for "operator () (...) const" is an abomination, use this helper.
+    // Because the return type for "operator () (...) const" is an abomination, use this helper.
+    // This metafunction also serves to allow a 1-multiindex (i.e. a typelist of abstract indices
+    // having 1 element) to create vector-indexed expressions.
     template <typename AbstractIndexTypeList_>
-    struct IndexedExpressionConstType_f
-    {
-        typedef ExpressionTemplate_IndexedObject_t<
-                    Derived, // have to use Derived instead of Tensor_i, so that the return-a-reference operator[] is used
-                    FactorTypeList,
-                    typename DimIndexTypeListOf_t<FactorTypeList,AbstractIndexTypeList_>::T,
-                    typename SummedIndexTypeList_t<typename DimIndexTypeListOf_t<FactorTypeList,AbstractIndexTypeList_>::T>::T,
-                    FORCE_CONST,
-                    CHECK_FOR_ALIASING> T;
-    };
-    // because the return type for "operator () (...)" is an abomination, use this helper.
+    struct IndexedExpressionConstType_f;
+    // Because the return type for "operator () (...) const" is an abomination, use this helper.
+    // This metafunction also serves to allow a 1-multiindex (i.e. a typelist of abstract indices
+    // having 1 element) to create vector-indexed expressions.
     template <typename AbstractIndexTypeList_>
-    struct IndexedExpressionNonConstType_f
+    struct IndexedExpressionNonConstType_f;
+
+    // specialization for indexed expressions using 1-multiindices, effectively indexing this
+    // Tensor_i as a Vector_i
+    template <typename AbstractIndexHeadType_>
+    typename IndexedExpressionConstType_f<TypeList_t<AbstractIndexHeadType_> >::T
+        operator () (TypeList_t<AbstractIndexHeadType_> const &) const
     {
-        typedef ExpressionTemplate_IndexedObject_t<
-                    Derived, // have to use Derived instead of Tensor_i, so that the return-a-reference operator[] is used
-                    FactorTypeList,
-                    typename DimIndexTypeListOf_t<FactorTypeList,AbstractIndexTypeList_>::T,
-                    typename SummedIndexTypeList_t<typename DimIndexTypeListOf_t<FactorTypeList,AbstractIndexTypeList_>::T>::T,
-                    DONT_FORCE_CONST,
-                    CHECK_FOR_ALIASING> T;
-    };
+        STATIC_ASSERT(IsAbstractIndex_f<AbstractIndexHeadType_>::V, MUST_BE_ABSTRACT_INDEX);
+        return typename IndexedExpressionConstType_f<TypeList_t<AbstractIndexHeadType_> >::T(as_derived());
+    }
+    // specialization for indexed expressions using 1-multiindices, effectively indexing this
+    // Tensor_i as a Vector_i
+    template <typename AbstractIndexHeadType_>
+    typename IndexedExpressionNonConstType_f<TypeList_t<AbstractIndexHeadType_> >::T
+        operator () (TypeList_t<AbstractIndexHeadType_> const &)
+    {
+        STATIC_ASSERT(IsAbstractIndex_f<AbstractIndexHeadType_>::V, MUST_BE_ABSTRACT_INDEX);
+        return typename IndexedExpressionNonConstType_f<TypeList_t<AbstractIndexHeadType_> >::T(as_derived());
+    }
 
     // the two separate head/body template arguments are necessary to disambiguate this method
     // from one that takes a single index (i.e. the index-by-vector-index one).
@@ -179,6 +184,50 @@ std::ostream &operator << (std::ostream &out, Tensor_i<Derived_,Scalar_,TensorPr
     print_multiindexable(out, t, IndexTypeList());
     return out;
 }
+
+// the general definition indexes this Tensor_i as a tensor (using a multiindex)
+template <typename Derived_, typename Scalar_, typename TensorProductOfBasedVectorSpaces_, bool COMPONENTS_ARE_IMMUTABLE_>
+template <typename AbstractIndexTypeList_>
+struct Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_>::IndexedExpressionConstType_f
+{
+    typedef ExpressionTemplate_IndexedObject_t<
+                Derived, // have to use Derived instead of Tensor_i, so that the return-a-reference operator[] is used
+                FactorTypeList,
+                typename DimIndexTypeListOf_t<FactorTypeList,AbstractIndexTypeList_>::T,
+                typename SummedIndexTypeList_t<typename DimIndexTypeListOf_t<FactorTypeList,AbstractIndexTypeList_>::T>::T,
+                FORCE_CONST,
+                CHECK_FOR_ALIASING> T;
+};
+
+// the special definition (for 1-multiindices) indexes this Tensor_i as a Vector_i
+template <typename Derived_, typename Scalar_, typename TensorProductOfBasedVectorSpaces_, bool COMPONENTS_ARE_IMMUTABLE_>
+template <typename AbstractIndexHeadType_>
+struct Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_>::IndexedExpressionConstType_f<TypeList_t<AbstractIndexHeadType_> >
+{
+    typedef typename Parent_Vector_i::template IndexedExpressionConstType_f<SymbolOf_f<AbstractIndexHeadType_>::V>::T T;
+};
+
+// the general definition indexes this Tensor_i as a tensor (using a multiindex)
+template <typename Derived_, typename Scalar_, typename TensorProductOfBasedVectorSpaces_, bool COMPONENTS_ARE_IMMUTABLE_>
+template <typename AbstractIndexTypeList_>
+struct Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_>::IndexedExpressionNonConstType_f
+{
+    typedef ExpressionTemplate_IndexedObject_t<
+                Derived, // have to use Derived instead of Tensor_i, so that the return-a-reference operator[] is used
+                FactorTypeList,
+                typename DimIndexTypeListOf_t<FactorTypeList,AbstractIndexTypeList_>::T,
+                typename SummedIndexTypeList_t<typename DimIndexTypeListOf_t<FactorTypeList,AbstractIndexTypeList_>::T>::T,
+                DONT_FORCE_CONST,
+                CHECK_FOR_ALIASING> T;
+};
+
+// the special definition (for 1-multiindices) indexes this Tensor_i as a Vector_i
+template <typename Derived_, typename Scalar_, typename TensorProductOfBasedVectorSpaces_, bool COMPONENTS_ARE_IMMUTABLE_>
+template <typename AbstractIndexHeadType_>
+struct Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_>::IndexedExpressionNonConstType_f<TypeList_t<AbstractIndexHeadType_> >
+{
+    typedef typename Parent_Vector_i::template IndexedExpressionNonConstType_f<SymbolOf_f<AbstractIndexHeadType_>::V>::T T;
+};
 
 } // end of namespace Tenh
 
