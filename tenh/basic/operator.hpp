@@ -9,6 +9,7 @@
 #include "tenh/core.hpp"
 
 #include "tenh/basic/expressionoperand.hpp"
+#include "tenh/basic/overloads.hpp"
 #include "tenh/basic/reindexable.hpp"
 #include "tenh/basic/vector.hpp"
 #include "tenh/conceptual/tensorproduct.hpp"
@@ -126,6 +127,41 @@ struct DualOf_f<Operator<Domain_,Codomain_,Scalar_,UseArrayType_> >
     // A : V --> W, then A* : W* --> V*, where * denotes the dual functor.
     typedef Operator<typename DualOf_f<Codomain_>::T,typename DualOf_f<Domain_>::T,Scalar_,typename DualOf_f<UseArrayType_>::T> T;
 };
+
+// template specialization for how to uniformly index an Operator (e.g. for addition/subtraction/etc)
+template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
+struct UniformlyIndexedExpressionTemplate_f<Operator<Domain_,Codomain_,Scalar_,UseArrayType_>,2>
+{
+private:
+    typedef Operator<Domain_,Codomain_,Scalar_,UseArrayType_> Op;
+    typedef typename UniformAbstractIndexTypeList_f<2>::T AbstractIndexTypeList;
+public:
+    typedef typename Op::template IndexedExpressionConstType_f<AbstractIndexTypeList>::T T;
+};
+
+// template specialization for how to lhs-index an Operator for contraction
+template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
+struct LhsIndexedContractionExpressionTemplate_f<Operator<Domain_,Codomain_,Scalar_,UseArrayType_>,2>
+{
+private:
+    typedef Operator<Domain_,Codomain_,Scalar_,UseArrayType_> Op;
+    typedef typename LhsOfContractionAbstractIndexTypeList_f<2>::T AbstractIndexTypeList;
+public:
+    typedef typename Op::template IndexedExpressionConstType_f<AbstractIndexTypeList>::T T;
+};
+
+// template specialization for how to rhs-index an Operator for contraction
+template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
+struct RhsIndexedContractionExpressionTemplate_f<Operator<Domain_,Codomain_,Scalar_,UseArrayType_>,2>
+{
+private:
+    typedef Operator<Domain_,Codomain_,Scalar_,UseArrayType_> Op;
+    typedef typename RhsOfContractionAbstractIndexTypeList_f<2>::T AbstractIndexTypeList;
+public:
+    typedef typename Op::template IndexedExpressionConstType_f<AbstractIndexTypeList>::T T;
+};
+
+
 /*
 
 // TODO: figure out the return type (yugh).

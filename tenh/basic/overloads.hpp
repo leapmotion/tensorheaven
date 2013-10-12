@@ -9,9 +9,7 @@
 #include "tenh/core.hpp"
 
 #include "tenh/basic/expressionoperand.hpp"
-#include "tenh/basic/operator.hpp"
 #include "tenh/basic/reindexable.hpp"
-#include "tenh/basic/vector.hpp"
 #include "tenh/expressiontemplate_reindex.hpp"
 
 namespace Tenh {
@@ -46,16 +44,6 @@ struct UniformAbstractIndexTypeList_f<2>
 template <typename Derived_, Uint32 FREE_INDEX_COUNT_>
 struct UniformlyIndexedExpressionTemplate_f;
 
-template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
-struct UniformlyIndexedExpressionTemplate_f<Operator<Domain_,Codomain_,Scalar_,UseArrayType_>,2>
-{
-private:
-    typedef Operator<Domain_,Codomain_,Scalar_,UseArrayType_> Op;
-    typedef typename UniformAbstractIndexTypeList_f<2>::T AbstractIndexTypeList;
-public:
-    typedef typename Op::template IndexedExpressionConstType_f<AbstractIndexTypeList>::T T;
-};
-
 template <typename ExpressionTemplate_, typename FreeDimIndexTypeList_, Uint32 FREE_INDEX_COUNT_>
 struct UniformlyIndexedExpressionTemplate_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_>,FREE_INDEX_COUNT_>
 {
@@ -68,17 +56,6 @@ private:
     typedef typename ExpressionTemplate_::Derived DerivedExpressionTemplate;
 public:
     typedef typename Reindex::template Eval_f<DerivedExpressionTemplate>::T T;
-};
-
-template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
-struct UniformlyIndexedExpressionTemplate_f<Vector<BasedVectorSpace_,Scalar_,UseArrayType_>,1>
-{
-private:
-    typedef Vector<BasedVectorSpace_,Scalar_,UseArrayType_> Vec;
-    typedef typename UniformAbstractIndexTypeList_f<1>::T AbstractIndexTypeList;
-    static AbstractIndexSymbol const SYMBOL = SymbolOf_f<typename Head_f<AbstractIndexTypeList>::T>::V;
-public:
-    typedef typename Vec::template IndexedExpressionConstType_f<SYMBOL>::T T;
 };
 
 template <typename Derived_, Uint32 FREE_INDEX_COUNT_>
@@ -119,16 +96,6 @@ struct LhsOfContractionAbstractIndexTypeList_f<2>
 template <typename Derived_, Uint32 FREE_INDEX_COUNT_>
 struct LhsIndexedContractionExpressionTemplate_f;
 
-template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
-struct LhsIndexedContractionExpressionTemplate_f<Operator<Domain_,Codomain_,Scalar_,UseArrayType_>,2>
-{
-private:
-    typedef Operator<Domain_,Codomain_,Scalar_,UseArrayType_> Op;
-    typedef typename LhsOfContractionAbstractIndexTypeList_f<2>::T AbstractIndexTypeList;
-public:
-    typedef typename Op::template IndexedExpressionConstType_f<AbstractIndexTypeList>::T T;
-};
-
 template <typename ExpressionTemplate_, typename FreeDimIndexTypeList_, Uint32 FREE_INDEX_COUNT_>
 struct LhsIndexedContractionExpressionTemplate_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_>,FREE_INDEX_COUNT_>
 {
@@ -141,17 +108,6 @@ private:
     typedef typename ExpressionTemplate_::Derived DerivedExpressionTemplate;
 public:
     typedef typename Reindex::template Eval_f<DerivedExpressionTemplate>::T T;
-};
-
-template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
-struct LhsIndexedContractionExpressionTemplate_f<Vector<BasedVectorSpace_,Scalar_,UseArrayType_>,1>
-{
-private:
-    typedef Vector<BasedVectorSpace_,Scalar_,UseArrayType_> Vec;
-    typedef typename LhsOfContractionAbstractIndexTypeList_f<1>::T AbstractIndexTypeList;
-    static AbstractIndexSymbol const SYMBOL = SymbolOf_f<typename Head_f<AbstractIndexTypeList>::T>::V;
-public:
-    typedef typename Vec::template IndexedExpressionConstType_f<SYMBOL>::T T;
 };
 
 template <typename Derived_, Uint32 FREE_INDEX_COUNT_>
@@ -192,16 +148,6 @@ struct RhsOfContractionAbstractIndexTypeList_f<2>
 template <typename Derived_, Uint32 FREE_INDEX_COUNT_>
 struct RhsIndexedContractionExpressionTemplate_f;
 
-template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
-struct RhsIndexedContractionExpressionTemplate_f<Operator<Domain_,Codomain_,Scalar_,UseArrayType_>,2>
-{
-private:
-    typedef Operator<Domain_,Codomain_,Scalar_,UseArrayType_> Op;
-    typedef typename RhsOfContractionAbstractIndexTypeList_f<2>::T AbstractIndexTypeList;
-public:
-    typedef typename Op::template IndexedExpressionConstType_f<AbstractIndexTypeList>::T T;
-};
-
 template <typename ExpressionTemplate_, typename FreeDimIndexTypeList_, Uint32 FREE_INDEX_COUNT_>
 struct RhsIndexedContractionExpressionTemplate_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_>,FREE_INDEX_COUNT_>
 {
@@ -214,17 +160,6 @@ private:
     typedef typename ExpressionTemplate_::Derived DerivedExpressionTemplate;
 public:
     typedef typename Reindex::template Eval_f<DerivedExpressionTemplate>::T T;
-};
-
-template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
-struct RhsIndexedContractionExpressionTemplate_f<Vector<BasedVectorSpace_,Scalar_,UseArrayType_>,1>
-{
-private:
-    typedef Vector<BasedVectorSpace_,Scalar_,UseArrayType_> Vec;
-    typedef typename RhsOfContractionAbstractIndexTypeList_f<1>::T AbstractIndexTypeList;
-    static AbstractIndexSymbol const SYMBOL = SymbolOf_f<typename Head_f<AbstractIndexTypeList>::T>::V;
-public:
-    typedef typename Vec::template IndexedExpressionConstType_f<SYMBOL>::T T;
 };
 
 template <typename Derived_, Uint32 FREE_INDEX_COUNT_>

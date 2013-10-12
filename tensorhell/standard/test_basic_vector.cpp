@@ -5,8 +5,7 @@
 
 #include "test_basic_vector.hpp"
 
-#include "tenh/basic/overloads.hpp"
-#include "tenh/basic/vector.hpp"
+#include "tenh/basic.hpp"
 
 // this is included last because it redefines the `assert` macro,
 // which would be bad for the above includes.

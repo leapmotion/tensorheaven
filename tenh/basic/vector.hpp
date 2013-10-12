@@ -9,6 +9,7 @@
 #include "tenh/core.hpp"
 
 #include "tenh/basic/expressionoperand.hpp"
+#include "tenh/basic/overloads.hpp"
 #include "tenh/basic/reindexable.hpp"
 #include "tenh/expressiontemplate_reindex.hpp"
 #include "tenh/implementation/diagonal2tensor.hpp"
@@ -112,6 +113,43 @@ struct DualOf_f<Vector<BasedVectorSpace_,Scalar_,UseArrayType_> >
 {
     typedef Vector<typename DualOf_f<BasedVectorSpace_>::T,Scalar_,typename DualOf_f<UseArrayType_>::T> T;
 };
+
+// template specialization for how to uniformly index a Vector (e.g. for addition/subtraction/etc)
+template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
+struct UniformlyIndexedExpressionTemplate_f<Vector<BasedVectorSpace_,Scalar_,UseArrayType_>,1>
+{
+private:
+    typedef Vector<BasedVectorSpace_,Scalar_,UseArrayType_> Vec;
+    typedef typename UniformAbstractIndexTypeList_f<1>::T AbstractIndexTypeList;
+    static AbstractIndexSymbol const SYMBOL = SymbolOf_f<typename Head_f<AbstractIndexTypeList>::T>::V;
+public:
+    typedef typename Vec::template IndexedExpressionConstType_f<SYMBOL>::T T;
+};
+
+// template specialization for how to lhs-index a Vector for contraction
+template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
+struct LhsIndexedContractionExpressionTemplate_f<Vector<BasedVectorSpace_,Scalar_,UseArrayType_>,1>
+{
+private:
+    typedef Vector<BasedVectorSpace_,Scalar_,UseArrayType_> Vec;
+    typedef typename LhsOfContractionAbstractIndexTypeList_f<1>::T AbstractIndexTypeList;
+    static AbstractIndexSymbol const SYMBOL = SymbolOf_f<typename Head_f<AbstractIndexTypeList>::T>::V;
+public:
+    typedef typename Vec::template IndexedExpressionConstType_f<SYMBOL>::T T;
+};
+
+// template specialization for how to rhs-index a Vector for contraction
+template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
+struct RhsIndexedContractionExpressionTemplate_f<Vector<BasedVectorSpace_,Scalar_,UseArrayType_>,1>
+{
+private:
+    typedef Vector<BasedVectorSpace_,Scalar_,UseArrayType_> Vec;
+    typedef typename RhsOfContractionAbstractIndexTypeList_f<1>::T AbstractIndexTypeList;
+    static AbstractIndexSymbol const SYMBOL = SymbolOf_f<typename Head_f<AbstractIndexTypeList>::T>::V;
+public:
+    typedef typename Vec::template IndexedExpressionConstType_f<SYMBOL>::T T;
+};
+
 /*
 
 // TODO: figure out the return type (yugh).
