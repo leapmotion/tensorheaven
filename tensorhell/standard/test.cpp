@@ -41,7 +41,12 @@ int main (int argc, char **argv, char **envp)
     {
         Directory *basic_dir = new Directory("basic", &root);
         Test::Basic::Operator::AddTests(basic_dir);
-        Test::Basic::Vector::AddTests(basic_dir);
+        Test::Basic::Vector::AddTests0(basic_dir);
+        Test::Basic::Vector::AddTests1(basic_dir);
+        Test::Basic::Vector::AddTests2(basic_dir);
+        Test::Basic::Vector::AddTests3(basic_dir);
+        Test::Basic::Vector::AddTests4(basic_dir);
+        Test::Basic::Vector::AddTests5(basic_dir);
     }
 
     Test::DimIndex::AddTests(&root);

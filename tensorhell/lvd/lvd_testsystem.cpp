@@ -507,6 +507,18 @@ bool Directory::TestPathIsValid (string const &test_path) const
             it->second->TestPathIsValid(test_path.substr(end_of_path_fragment)));
 }
 
+Directory *Directory::GetSubDirectory (std::string const &subdir_name)
+{
+    assert(!subdir_name.empty() && "only the root directory may have an empty name");
+    assert(subdir_name.find_first_of("/") == string::npos && "name must not contain any forwardslashes");
+    assert(m_test_case_map.find(subdir_name) == m_test_case_map.end() && "name already exists as a test case");
+    SubDirectoryMap::iterator it = m_sub_directory_map.find(subdir_name);
+    if (it == m_sub_directory_map.end())
+        return new Directory(subdir_name, this); // adds itself to this directory
+    else
+        return it->second;
+}
+
 void Directory::AddTestCaseFunction (
     string const &test_case_name,
     Directory::TestCaseFunction TestCaseFunction_,

@@ -145,6 +145,10 @@ struct Directory
     void Print (std::ostream &out) const { Print(out, "/"); }
 	std::string const &Path () const { return m_path; }
 
+    // this method will return a pointer to the requested subdirectory,
+    // creating it if it doesn't exist already.
+    Directory *GetSubDirectory (std::string const &subdir_name);
+
     // don't call these methods directly -- use the LVD_ADD_TEST_CASE_FUNCTION
     // or the LVD_ADD_NAMED_TEST_CASE_FUNCTION macros instead.
     void AddTestCaseFunction (

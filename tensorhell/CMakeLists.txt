@@ -106,7 +106,12 @@ set(test_SRCS
     standard/test_abstractindex.cpp
     standard/test_array.cpp
     standard/test_basic_operator.cpp
-    standard/test_basic_vector.cpp
+    standard/test_basic_vector0.cpp
+    standard/test_basic_vector1.cpp
+    standard/test_basic_vector2.cpp
+    standard/test_basic_vector3.cpp
+    standard/test_basic_vector4.cpp
+    standard/test_basic_vector5.cpp
     standard/test_dimindex.cpp
     standard/test_expressiontemplate_reindex.cpp
     standard/test_list.cpp
