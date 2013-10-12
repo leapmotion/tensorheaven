@@ -41,6 +41,10 @@ public:
 /// @headerfile core.hpp "tenh/core.hpp"
 struct WithoutInitialization { };
 
+/// @brief A type for use as a generic identifier, e.g. in a Basis_c.
+/// @headerfile core.hpp "tenh/core.hpp"
+struct Generic { static std::string type_as_string () { return "Generic"; } };
+
 /// @brief For use when you want to return a const reference to various constants.
 ///  The default implementation is to provide a default-constructed static
 ///  const SINGLETON of the given value.

@@ -236,7 +236,7 @@ template <typename Scalar_, typename VectorSpace_>
 void test_euclidean_embedding_of_standard_euclidean_space ()
 {
     std::cout << "test_euclidean_embedding_of_standard_euclidean_space<" << type_string_of<Scalar_>() << ',' << type_string_of<VectorSpace_>() << ">\n";
-    typedef typename EuclideanEmbedding_f<BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<StandardBasisId> >,StandardInnerProduct,Scalar_>::T EuclideanEmbedding;
+    typedef typename EuclideanEmbedding_f<BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<Generic> >,StandardInnerProduct,Scalar_>::T EuclideanEmbedding;
     EuclideanEmbedding e;
     std::cout << FORMAT_VALUE(e) << '\n';
     AbstractIndex_c<'P'> P;

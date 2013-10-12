@@ -33,12 +33,10 @@ struct EuclideanSpaceId_t
     static std::string type_as_string () { return "EuclideanSpaceId_t<" + AS_STRING(DIMENSION_) + '>'; }
 };
 
-struct StandardBasisId { static std::string type_as_string () { return "StandardBasis"; } };
-
 template <Uint32 DIMENSION_>
 struct BasedEuclideanSpace_f
 {
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,DIMENSION_,EuclideanSpaceId_t<DIMENSION_> >,OrthonormalBasis_c<StandardBasisId> > T;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,DIMENSION_,EuclideanSpaceId_t<DIMENSION_> >,OrthonormalBasis_c<Generic> > T;
 };
 
 // metafunction for easily determining the 2-tensor factors for a Euclidean embedding

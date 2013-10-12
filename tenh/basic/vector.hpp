@@ -30,7 +30,9 @@ struct Vector
 private:
     typedef ImplementationOf_t<BasedVectorSpace_,Scalar_,UseArrayType_> Parent_Implementation;
 public:
+    typedef Scalar_ Scalar;
     typedef typename Parent_Implementation::ComponentIndex ComponentIndex;
+    using Parent_Implementation::DIM;
     typedef typename DualOf_f<Vector>::T Dual; // relies on the template specialization below
 
     explicit Vector (WithoutInitialization const &w) : Parent_Implementation(w) { }

@@ -431,6 +431,8 @@ void AddTests (Directory *parent)
     add_particular_tests_for_scalar<double>(dir);
     add_particular_tests_for_scalar<complex<float> >(dir);
     add_particular_tests_for_scalar<complex<double> >(dir);
+
+    // TODO: refactor all this test code so that Op<...> can be tested in a way analogous to Vec.
 }
 
 } // end of namespace Operator

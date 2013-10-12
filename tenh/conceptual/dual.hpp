@@ -52,6 +52,13 @@ struct DualOf_f<EmptyTypeList>
     typedef EmptyTypeList T;
 };
 
+// template specialization to make the Generic type self-dual
+template <>
+struct DualOf_f<Generic>
+{
+    typedef Generic T;
+};
+
 } // end of namespace Tenh
 
 #endif // TENH_CONCEPTUAL_DUAL_HPP_

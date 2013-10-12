@@ -38,8 +38,10 @@ private:
     typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<Codomain_,
                                                TypeList_t<typename DualOf_f<Domain_>::T> > > TensorProduct;
 public:
+    typedef Scalar_ Scalar;
     typedef typename Parent_Implementation::ComponentIndex ComponentIndex;
     typedef typename Parent_Implementation::MultiIndex MultiIndex;
+    using Parent_Implementation::DIM;
     typedef typename DualOf_f<Operator>::T Dual; // relies on the template specialization below
 
     explicit Operator (WithoutInitialization const &w) : Parent_Implementation(w) { }
