@@ -5,6 +5,7 @@
 
 #include "test_basic_vector.hpp"
 
+#include "tenh/basic/overloads.hpp"
 #include "tenh/basic/vector.hpp"
 
 // this is included last because it redefines the `assert` macro,
@@ -74,7 +75,7 @@ void assignment (Context const &context)
 }
 
 // NOTE: All the bullshit casts to Scalar_ are necessary because the operands
-// *may* be promoted to a larger type (e.g. char -> int).  This is a retarded
+// *may* be promoted to a larger type (e.g. char -> int).  This is an idiotic
 // part of the C standard.
 
 template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
@@ -299,23 +300,16 @@ void add_particular_tests_for_scalar_and_use_array_type (Directory *parent)
         typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,X>,Tenh::Basis_c<X> > BasedVectorSpace;
         add_particular_tests<BasedVectorSpace,Scalar_,UseArrayType_>(parent);
     }
-//     {
-//         static Uint32 const DIM = 1;
-//         typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,X>,Tenh::Basis_c<X> > BasedVectorSpace;
-//         add_particular_tests<BasedVectorSpace,Scalar_,UseArrayType_>(parent);
-//     }
+    {
+        static Uint32 const DIM = 1;
+        typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,X>,Tenh::Basis_c<X> > BasedVectorSpace;
+        add_particular_tests<BasedVectorSpace,Scalar_,UseArrayType_>(parent);
+    }
     {
         static Uint32 const DIM = 3;
         typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,X>,Tenh::Basis_c<X> > BasedVectorSpace;
         add_particular_tests<BasedVectorSpace,Scalar_,UseArrayType_>(parent);
     }
-//     {
-//         static Uint32 const DIM = 20;
-//         typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,X>,Tenh::Basis_c<X> > BasedVectorSpace;
-//         add_particular_tests<BasedVectorSpace,Scalar_,UseArrayType_>(parent);
-//     }
-
-//     LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent, FORMAT("check_filled_values<" << Tenh::type_string_of<Scalar>() << ">"), check_filled_values<Scalar>, RESULT_NO_ERROR);
 }
 
 template <typename Scalar_>

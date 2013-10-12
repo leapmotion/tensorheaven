@@ -6,6 +6,7 @@
 #include "test_basic_operator.hpp"
 
 #include "tenh/basic/operator.hpp"
+#include "tenh/basic/overloads.hpp"
 
 // this is included last because it redefines the `assert` macro,
 // which would be bad for the above includes.
@@ -77,7 +78,7 @@ void assignment (Context const &context)
 }
 
 // NOTE: All the bullshit casts to Scalar_ are necessary because the operands
-// *may* be promoted to a larger type (e.g. char -> int).  This is a retarded
+// *may* be promoted to a larger type (e.g. char -> int).  This is an idiotic
 // part of the C standard.
 
 template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
@@ -195,7 +196,7 @@ void negation (Context const &context)
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
         assert_eq(A[i], Scalar_(-B[i]));
 }
-/*
+
 template <typename BasedVectorSpace1_, typename BasedVectorSpace2_, typename BasedVectorSpace3_, typename Scalar_, typename UseArrayType_>
 void composition (Context const &context)
 {
@@ -258,6 +259,14 @@ void composition (Context const &context)
                 expected_result += Scalar_(a3[j] * M23[typename Operator23::MultiIndex(j, i)]);
             assert_eq((a3 * M23)[typename Vector2::MultiIndex(i)], expected_result);
         }
+
+        for (typename Vector2::ComponentIndex i; i.is_not_at_end(); ++i)
+        {
+            Scalar_ expected_result(0);
+            for (typename Covector3::ComponentIndex j; j.is_not_at_end(); ++j)
+                expected_result += Scalar_(Scalar_(a3[j] + b3[j]) * M23[typename Operator23::MultiIndex(j, i)]);
+            assert_eq(((a3 + b3) * M23)[typename Vector2::MultiIndex(i)], expected_result);
+        }
     }
 
     // vector on right of operator
@@ -268,6 +277,14 @@ void composition (Context const &context)
             for (typename Vector2::ComponentIndex j; j.is_not_at_end(); ++j)
                 expected_result += Scalar_(M23[typename Operator23::MultiIndex(i, j)] * v2[j]);
             assert_eq((M23 * v2)[typename Vector3::MultiIndex(i)], expected_result);
+        }
+
+        for (typename Vector3::ComponentIndex i; i.is_not_at_end(); ++i)
+        {
+            Scalar_ expected_result(0);
+            for (typename Vector2::ComponentIndex j; j.is_not_at_end(); ++j)
+                expected_result += Scalar_(M23[typename Operator23::MultiIndex(i, j)] * Scalar_(v2[j] + w2[j]));
+            assert_eq((M23 * (v2 + w2))[typename Vector3::MultiIndex(i)], expected_result);
         }
     }
 
@@ -285,52 +302,59 @@ void composition (Context const &context)
                 assert_eq((M23 * M12)[Tenh::MultiIndex_t<ResultIndexTypeList>(i, j)], expected_result);
             }
         }
+
+        for (typename Vector3::ComponentIndex i; i.is_not_at_end(); ++i)
+        {
+            for (typename Vector1::ComponentIndex j; j.is_not_at_end(); ++j)
+            {
+                Scalar_ expected_result(0);
+                for (typename Vector2::ComponentIndex k; k.is_not_at_end(); ++k)
+                    expected_result += Scalar_(M23[typename Operator23::MultiIndex(i, k)]
+                                               * Scalar_(M12[typename Operator12::MultiIndex(k, j)] + N12[typename Operator12::MultiIndex(k, j)]));
+                typedef Tenh::TypeList_t<typename Vector3::ComponentIndex,
+                        Tenh::TypeList_t<typename Vector1::ComponentIndex> > ResultIndexTypeList;
+                assert_eq((M23 * (M12 + N12))[Tenh::MultiIndex_t<ResultIndexTypeList>(i, j)], expected_result);
+            }
+        }
+
+        for (typename Vector3::ComponentIndex i; i.is_not_at_end(); ++i)
+        {
+            for (typename Vector1::ComponentIndex j; j.is_not_at_end(); ++j)
+            {
+                Scalar_ expected_result(0);
+                for (typename Vector2::ComponentIndex k; k.is_not_at_end(); ++k)
+                    expected_result += Scalar_(Scalar_(M23[typename Operator23::MultiIndex(i, k)] + N23[typename Operator23::MultiIndex(i, k)])
+                                               * M12[typename Operator12::MultiIndex(k, j)]);
+                typedef Tenh::TypeList_t<typename Vector3::ComponentIndex,
+                        Tenh::TypeList_t<typename Vector1::ComponentIndex> > ResultIndexTypeList;
+                assert_eq(((M23 + N23) * M12)[Tenh::MultiIndex_t<ResultIndexTypeList>(i, j)], expected_result);
+            }
+        }
     }
 
-    // covector on left
-
+    // two compositions
     {
-        Scalar_ actual_result = a * v;
         Scalar_ expected_result(0);
-        for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-            expected_result += a[i] * v[i];
+        for (typename Covector3::ComponentIndex i; i.is_not_at_end(); ++i)
+            for (typename Vector2::ComponentIndex j; j.is_not_at_end(); ++j)
+                expected_result += Scalar_(Scalar_(a3[i] * M23[typename Operator23::MultiIndex(i, j)]) * v2[j]);
+        Scalar_ actual_result = a3 * M23 * v2;
         assert_eq(actual_result, expected_result);
     }
 
+    // three compositions
     {
-        Scalar_ actual_result = a * (v + w);
         Scalar_ expected_result(0);
-        for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-            expected_result += a[i] * (v[i] + w[i]);
-        assert_eq(actual_result, expected_result);
-    }
-
-    {
-        Scalar_ actual_result = (a + b) * v;
-        Scalar_ expected_result(0);
-        for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-            expected_result += (a[i] + b[i]) * v[i];
-        assert_eq(actual_result, expected_result);
-    }
-
-    {
-        Scalar_ actual_result = (a + b) * (v + w);
-        Scalar_ expected_result(0);
-        for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-            expected_result += (a[i] + b[i]) * (v[i] + w[i]);
-        assert_eq(actual_result, expected_result);
-    }
-
-    // vector on left
-    {
-        Scalar_ actual_result = v * a;
-        Scalar_ expected_result(0);
-        for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
-            expected_result += v[i] * a[i];
+        for (typename Covector3::ComponentIndex i; i.is_not_at_end(); ++i)
+            for (typename Vector2::ComponentIndex j; j.is_not_at_end(); ++j)
+                for (typename Vector1::ComponentIndex k; k.is_not_at_end(); ++k)
+                    expected_result += Scalar_(Scalar_(Scalar_(a3[i] * M23[typename Operator23::MultiIndex(i, j)])
+                                                                     * M12[typename Operator12::MultiIndex(j, k)])
+                                                                     * v1[k]);
+        Scalar_ actual_result = a3 * M23 * M12 * v1;
         assert_eq(actual_result, expected_result);
     }
 }
-*/
 
 template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
 void add_particular_tests (Directory *parent)
@@ -349,30 +373,35 @@ void add_particular_tests (Directory *parent)
 template <typename BasedVectorSpace1_, typename BasedVectorSpace2_, typename BasedVectorSpace3_, typename Scalar_, typename UseArrayType_>
 void add_particular_composition_tests (Directory *dir)
 {
-//     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir,
-//                                      FORMAT("composition<" << Tenh::type_string_of<BasedVectorSpace1_>() << ','
-//                                                            << Tenh::type_string_of<BasedVectorSpace2_>() << ','
-//                                                            << Tenh::type_string_of<BasedVectorSpace3_>() << ','
-//                                                            << Tenh::type_string_of<Scalar_>() << ','
-//                                                            << Tenh::type_string_of<UseArrayType_>() << '>'),
-//                                      composition<BasedVectorSpace1_,BasedVectorSpace2_,BasedVectorSpace3_,Scalar_,UseArrayType_>,
-//                                      RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir,
+                                     FORMAT("composition<" << Tenh::type_string_of<BasedVectorSpace1_>() << ','
+                                                           << Tenh::type_string_of<BasedVectorSpace2_>() << ','
+                                                           << Tenh::type_string_of<BasedVectorSpace3_>() << ','
+                                                           << Tenh::type_string_of<Scalar_>() << ','
+                                                           << Tenh::type_string_of<UseArrayType_>() << '>'),
+                                     composition<BasedVectorSpace1_,BasedVectorSpace2_,BasedVectorSpace3_,Scalar_,UseArrayType_>,
+                                     RESULT_NO_ERROR);
 }
 
 
 template <typename Scalar_, typename UseArrayType_>
 void add_particular_tests_for_scalar_and_use_array_type (Directory *parent)
 {
+    // TODO: these tests on 0-dimensional vector spaces aren't working -- fix
 //     {
-//         static Uint32 const DIM = 0;
-//         typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,X>,Tenh::Basis_c<X> > BasedVectorSpace;
-//         add_particular_tests<BasedVectorSpace,Scalar_,UseArrayType_>(dir);
+//         typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,0,X>,Tenh::Basis_c<X> > BasedVectorSpaceX;
+//         typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,1,Y>,Tenh::Basis_c<Y> > BasedVectorSpaceY;
+//         typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,2,Z>,Tenh::Basis_c<Z> > BasedVectorSpaceZ;
+//         add_particular_tests<BasedVectorSpaceX,BasedVectorSpaceY,Scalar_,UseArrayType_>(parent);
+//         add_particular_composition_tests<BasedVectorSpaceX,BasedVectorSpaceY,BasedVectorSpaceZ,Scalar_,UseArrayType_>(parent);
 //     }
-//     {
-//         static Uint32 const DIM = 1;
-//         typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,X>,Tenh::Basis_c<X> > BasedVectorSpace;
-//         add_particular_tests<BasedVectorSpace,Scalar_,UseArrayType_>(dir);
-//     }
+    {
+        typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,1,X>,Tenh::Basis_c<X> > BasedVectorSpaceX;
+        typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,3,Y>,Tenh::Basis_c<Y> > BasedVectorSpaceY;
+        typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,2,Z>,Tenh::Basis_c<Z> > BasedVectorSpaceZ;
+        add_particular_tests<BasedVectorSpaceX,BasedVectorSpaceY,Scalar_,UseArrayType_>(parent);
+        add_particular_composition_tests<BasedVectorSpaceX,BasedVectorSpaceY,BasedVectorSpaceZ,Scalar_,UseArrayType_>(parent);
+    }
     {
         typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,3,X>,Tenh::Basis_c<X> > BasedVectorSpaceX;
         typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,4,Y>,Tenh::Basis_c<Y> > BasedVectorSpaceY;
@@ -380,11 +409,6 @@ void add_particular_tests_for_scalar_and_use_array_type (Directory *parent)
         add_particular_tests<BasedVectorSpaceX,BasedVectorSpaceY,Scalar_,UseArrayType_>(parent);
         add_particular_composition_tests<BasedVectorSpaceX,BasedVectorSpaceY,BasedVectorSpaceZ,Scalar_,UseArrayType_>(parent);
     }
-//     {
-//         static Uint32 const DIM = 20;
-//         typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,X>,Tenh::Basis_c<X> > BasedVectorSpace;
-//         add_particular_tests<BasedVectorSpace,Scalar_,UseArrayType_>(dir);
-//     }
 }
 
 template <typename Scalar_>
