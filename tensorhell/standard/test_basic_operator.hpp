@@ -20,7 +20,7 @@ namespace Test {
 namespace Basic {
 namespace Operator {
 
-void AddTests (Lvd::TestSystem::Directory *parent);
+void AddTests (Lvd::TestSystem::Directory &parent);
 
 } // end of namespace Operator
 } // end of namespace Basic

@@ -44,11 +44,11 @@ void test_default_construction (Context const &context)
 }
 
 template <typename TypeList>
-void add_particular_tests_for_list (Directory *parent)
+void add_particular_tests_for_list (Directory &parent)
 {
-    Directory *list = new Directory(Tenh::type_string_of<Tenh::List_t<TypeList> >(), parent);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(list, "test_length", test_length<TypeList>, RESULT_NO_ERROR);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(list, "test_default_construction", test_default_construction<TypeList>, RESULT_NO_ERROR);
+    Directory &list = parent.GetSubDirectory(Tenh::type_string_of<Tenh::List_t<TypeList> >());
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(list, "length", test_length<TypeList>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(list, "default_construction", test_default_construction<TypeList>, RESULT_NO_ERROR);
 }
 
 template <typename TypeList, Uint32 INDEX>
@@ -83,7 +83,7 @@ void test_trailing_list (Context const &context)
     assert_eq(l.template trailing_list<INDEX>(), expected_trailing_list);
 }
 
-void add_leading_and_trailing_list_length_0_test (Directory *parent)
+void add_leading_and_trailing_list_length_0_test (Directory &parent)
 {
     typedef Tenh::EmptyTypeList TypeList;
     typedef Tenh::List_t<Tenh::EmptyTypeList> List;
@@ -100,7 +100,7 @@ void add_leading_and_trailing_list_length_0_test (Directory *parent)
                                      RESULT_NO_ERROR);
 }
 
-void add_leading_and_trailing_list_length_1_test (Directory *parent)
+void add_leading_and_trailing_list_length_1_test (Directory &parent)
 {
     typedef Tenh::TypeList_t<char> TypeList;
     typedef Tenh::List_t<TypeList> List;
@@ -127,7 +127,7 @@ void add_leading_and_trailing_list_length_1_test (Directory *parent)
                                      RESULT_NO_ERROR);
 }
 
-void add_leading_and_trailing_list_tests (Directory *parent)
+void add_leading_and_trailing_list_tests (Directory &parent)
 {
     add_leading_and_trailing_list_length_0_test(parent);
     add_leading_and_trailing_list_length_1_test(parent);
@@ -168,9 +168,9 @@ void test_list_concatenation (Context const &context)
     assert_eq((list_2|list_2), list_2__list_2);
 }
 
-void AddTests (Directory *parent)
+void AddTests (Directory &parent)
 {
-    Directory *list = new Directory("List_t", parent);
+    Directory &list = parent.GetSubDirectory("List_t");
 
     LVD_ADD_TEST_CASE_FUNCTION(list, test_EmptyList, RESULT_NO_ERROR);
     add_particular_tests_for_list<Tenh::EmptyTypeList>(list);

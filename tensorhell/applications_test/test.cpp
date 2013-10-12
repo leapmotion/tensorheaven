@@ -20,8 +20,8 @@ int main (int argc, char **argv, char **envp)
 {
     Directory root;
 
-    Test::HomogeneousPolynomials::AddTests(&root);
-    Test::MultivariatePolynomials::AddTests(&root);
+    Test::HomogeneousPolynomials::AddTests(root);
+    Test::MultivariatePolynomials::AddTests(root);
 
     int failure_count = RunScheduled(argc, argv, envp, root);
 

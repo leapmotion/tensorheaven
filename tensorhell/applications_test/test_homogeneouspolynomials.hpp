@@ -19,7 +19,7 @@ struct Directory;
 namespace Test {
 namespace HomogeneousPolynomials {
 
-void AddTests (Lvd::TestSystem::Directory *parent);
+void AddTests (Lvd::TestSystem::Directory &parent);
 
 } // end of namespace Vector
 } // end of namespace Test

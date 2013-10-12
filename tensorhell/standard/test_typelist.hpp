@@ -19,7 +19,7 @@ struct Directory;
 namespace Test {
 namespace TypeList {
 
-void AddTests (Lvd::TestSystem::Directory *parent);
+void AddTests (Lvd::TestSystem::Directory &parent);
 
 } // end of namespace TypeList
 } // end of namespace Test

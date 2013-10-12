@@ -35,11 +35,11 @@ int main (int argc, char **argv, char **envp)
 {
     Directory root;
 
-    Test::AbstractIndex::AddTests(&root);
-    Test::Array::AddTests(&root);
+    Test::AbstractIndex::AddTests(root);
+    Test::Array::AddTests(root);
 
     {
-        Directory *basic_dir = new Directory("basic", &root);
+        Directory &basic_dir = root.GetSubDirectory("basic");
         Test::Basic::Operator::AddTests(basic_dir);
         Test::Basic::Vector::AddTests0(basic_dir);
         Test::Basic::Vector::AddTests1(basic_dir);
@@ -49,22 +49,22 @@ int main (int argc, char **argv, char **envp)
         Test::Basic::Vector::AddTests5(basic_dir);
     }
 
-    Test::DimIndex::AddTests(&root);
-    Test::ExpressionTemplate_Reindex::AddTests(&root);
-//     Test::EigenLDLT::AddTests(&root);
-//     Test::EuclideanEmbedding::AddTests(&root);
-//     Test::EuclideanEmbeddingInverse::AddTests(&root);
-//     Test::ExpressionTemplates::AddTests(&root);
+    Test::DimIndex::AddTests(root);
+    Test::ExpressionTemplate_Reindex::AddTests(root);
+//     Test::EigenLDLT::AddTests(root);
+//     Test::EuclideanEmbedding::AddTests(root);
+//     Test::EuclideanEmbeddingInverse::AddTests(root);
+//     Test::ExpressionTemplates::AddTests(root);
 //     {
-//         Directory *interop_eigen = new Directory("interop_eigen", &root);
-//         Test::InteropEigen::EuclideanlyEmbedded::AddTests(interop_eigen);
-//         Test::InteropEigen::Inversion::AddTests(interop_eigen);
+//         Directory &interop_eigen_dir = root.GetSubDirectory("interop_eigen");
+//         Test::InteropEigen::EuclideanlyEmbedded::AddTests(interop_eigen_dir);
+//         Test::InteropEigen::Inversion::AddTests(interop_eigen_dir);
 //     }
-    Test::List::AddTests(&root);
-    Test::Tuple::AddTests(&root);
-    Test::TypeList::AddTests(&root);
-//     Test::Tensor2::AddTests(&root);
-//     Test::Tensor2Diagonal::AddTests(&root);
+    Test::List::AddTests(root);
+    Test::Tuple::AddTests(root);
+    Test::TypeList::AddTests(root);
+//     Test::Tensor2::AddTests(root);
+//     Test::Tensor2Diagonal::AddTests(root);
 
     int failure_count = RunScheduled(argc, argv, envp, root);
 

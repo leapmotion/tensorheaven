@@ -19,7 +19,7 @@ struct Directory;
 namespace Test {
 namespace Tuple {
 
-void AddTests (Lvd::TestSystem::Directory *parent);
+void AddTests (Lvd::TestSystem::Directory &parent);
 
 } // end of namespace Tuple
 } // end of namespace Test

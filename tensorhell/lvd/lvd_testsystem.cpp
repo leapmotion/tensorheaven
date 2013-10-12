@@ -421,17 +421,6 @@ Directory::Directory ()
     m_path("/")
 { }
 
-Directory::Directory (string const &name, Directory *parent)
-    :
-    m_parent_directory(parent),
-    m_path(parent->m_path + name + "/")
-{
-    assert(!name.empty() && "only the root directory may have an empty name");
-    assert(m_parent_directory != NULL && "a non-root directory must have a parent");
-    assert(name.find_first_of("/") == string::npos && "name must not contain any forwardslashes");
-    m_parent_directory->AddSubDirectory(name, *this);
-}
-
 Directory::~Directory ()
 {
     // delete all subdirectories
@@ -507,16 +496,31 @@ bool Directory::TestPathIsValid (string const &test_path) const
             it->second->TestPathIsValid(test_path.substr(end_of_path_fragment)));
 }
 
-Directory *Directory::GetSubDirectory (std::string const &subdir_name)
+Directory &Directory::GetSubDirectory (
+    std::string const &sub_directory_name,
+    bool create_if_necessary)
 {
-    assert(!subdir_name.empty() && "only the root directory may have an empty name");
-    assert(subdir_name.find_first_of("/") == string::npos && "name must not contain any forwardslashes");
-    assert(m_test_case_map.find(subdir_name) == m_test_case_map.end() && "name already exists as a test case");
-    SubDirectoryMap::iterator it = m_sub_directory_map.find(subdir_name);
-    if (it == m_sub_directory_map.end())
-        return new Directory(subdir_name, this); // adds itself to this directory
-    else
-        return it->second;
+    if (sub_directory_name.empty())
+        THROW_STRING("TEST CODE PROGRAMMER ERROR in getting subdirectory (name = \"" << sub_directory_name <<
+                     "\"): every (non-root) Directory name must be non-empty");
+    if (sub_directory_name.find_first_of("/") != string::npos)
+        THROW_STRING("TEST CODE PROGRAMMER ERROR in getting subdirectory (name = \"" << sub_directory_name <<
+                     "\"): every Directory name must not contain any forwardslashes");
+    if (m_test_case_map.find(sub_directory_name) != m_test_case_map.end())
+        THROW_STRING("TEST CODE PROGRAMMER ERROR in getting subdirectory (name = \"" << sub_directory_name <<
+                     "\"): subdirectory name collision with existing test case");
+
+    SubDirectoryMap::iterator it = m_sub_directory_map.find(sub_directory_name);
+    if (it != m_sub_directory_map.end())
+        return *it->second;
+
+    if (!create_if_necessary)
+        THROW_STRING("TEST CODE PROGRAMMER ERROR in getting subdirectory (name = \"" << sub_directory_name <<
+                     "\"): subdirectory doesn't exist, and CREATE_IF_NECESSARY wasn't specified");
+
+    Directory *sub_directory = new Directory(sub_directory_name, *this);
+    m_sub_directory_map[sub_directory_name] = sub_directory;
+    return *sub_directory;
 }
 
 void Directory::AddTestCaseFunction (
@@ -538,7 +542,8 @@ void Directory::AddTestCaseFunction (
     Stage expected_stage,
     int expected_signum)
 {
-    assert(data != NULL && "if you don't want data, use the other AddTestCaseFunction");
+    if (data == NULL)
+        THROW_STRING("if you don't want data, use the other AddTestCaseFunction");
     CheckTestCase(test_case_name, expected_result, expected_stage, expected_signum);
     m_test_case_map[test_case_name] = TestCase(true, TestCaseFunction_, data, expected_result, expected_stage, expected_signum);
 }
@@ -562,9 +567,23 @@ void Directory::AddTestCaseMethod (
     Stage expected_stage,
     int expected_signum)
 {
-    assert(data != NULL && "if you don't want data, use the other AddTestCaseMethod");
+    if (data == NULL)
+        THROW_STRING("if you don't want data, use the other AddTestCaseFunction");
     CheckTestCase(test_case_name, expected_result, expected_stage, expected_signum);
     m_test_case_map[test_case_name] = TestCase(true, TestCaseMethod_, data, expected_result, expected_stage, expected_signum);
+}
+
+Directory::Directory (string const &name, Directory &parent)
+    :
+    m_parent_directory(&parent),
+    m_path(parent.m_path + name + "/")
+{
+    if (name.empty())
+        THROW_STRING("only the root directory may have an empty name");
+    if (m_parent_directory == NULL)
+        THROW_STRING("a non-root directory must have a parent");
+    if (name.find_first_of("/") != string::npos)
+        THROW_STRING("name must not contain any forwardslashes");
 }
 
 unsigned int Directory::SpawnScheduled (char *argv0, char **envp, string const &child_indicator_token)
@@ -728,7 +747,7 @@ unsigned int Directory::RunScheduled ()
         g_premade_caught_signal_message.clear();
 
         // set up a Context object for each test case
-        Context context(test_case_name, this, test_case.m_data);
+        Context context(test_case_name, *this, test_case.m_data);
 
         PRINT_DEBUG_MESSAGE("*** RUNNER DEBUG MESSAGE *** : RUNNING TEST CASE \"" << Path() << test_case_name << "\"\n");
 
@@ -891,36 +910,6 @@ void Directory::SetIsScheduled (std::string const &test_path, bool is_scheduled)
     TestCaseMap::iterator test_case_it = m_test_case_map.find(path_fragment);
     assert(test_case_it != m_test_case_map.end());
     test_case_it->second.m_is_scheduled = is_scheduled;
-}
-
-void Directory::AddSubDirectory (string const &sub_directory_name, Directory &sub_directory)
-{
-    bool error_encountered = false;
-    if (sub_directory_name.empty())
-    {
-        cerr << "TEST CODE PROGRAMMER ERROR in adding a Directory: every (non-root) Directory name must be non-empty\n";
-        error_encountered = true;
-    }
-    if (sub_directory_name.find_first_of("/") != string::npos)
-    {
-        cerr << "TEST CODE PROGRAMMER ERROR in adding a Directory: every Directory name must not contain any forwardslashes \""
-             << sub_directory_name << "\"\n";
-        error_encountered = true;
-    }
-    if (m_test_case_map.find(sub_directory_name) != m_test_case_map.end())
-    {
-        cerr << "TEST CODE PROGRAMMER ERROR in adding a Directory: subdirectory name collision with existing test case \""
-             << sub_directory_name << "\"\n";
-        error_encountered = true;
-    }
-    if (m_sub_directory_map.find(sub_directory_name) != m_sub_directory_map.end())
-    {
-        cerr << "TEST CODE PROGRAMMER ERROR in adding a Directory: subdirectory name collision with existing subdirectory \""
-             << sub_directory_name << "\"\n";
-        error_encountered = true;
-    }
-    assert(!error_encountered && "there was an error in adding the subdirectory (see stderr output for messages)");
-    m_sub_directory_map[sub_directory_name] = &sub_directory;
 }
 
 void Directory::Print (ostream &out, string const &path_prefix) const

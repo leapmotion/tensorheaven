@@ -27,9 +27,9 @@
 #include "tenh/static_scalar_constants.hpp"
 
 #define LVD_ADD_TEST_CASE_FUNCTION(directory, TestFunction, ...) \
-    (directory)->AddTestCaseFunction(#TestFunction, TestFunction, __VA_ARGS__)
+    (directory).AddTestCaseFunction(#TestFunction, TestFunction, __VA_ARGS__)
 #define LVD_ADD_NAMED_TEST_CASE_FUNCTION(directory, test_case_name, TestFunction, ...) \
-    (directory)->AddTestCaseFunction(test_case_name, TestFunction, __VA_ARGS__)
+    (directory).AddTestCaseFunction(test_case_name, TestFunction, __VA_ARGS__)
 
 #define LVD_ADD_TEST_CASE_METHOD(DirectorySubclass, TestMethod, ...) \
     AddTestCaseMethod(#TestMethod, static_cast<Lvd::TestSystem::Directory::TestCaseMethod>(&DirectorySubclass::TestMethod), __VA_ARGS__)
@@ -88,33 +88,38 @@ struct Context
         Data (DataType const &data) : m(data) { }
     }; // end of struct Context::Data<DataType>
 
-    Context (std::string const &test_case_name, Directory const *directory, DataBaseclass const *data)
+    Context (std::string const &test_case_name, Directory const &directory, DataBaseclass const *data)
         :
         m_test_case_name(test_case_name),
         m_directory(directory),
         m_data(data)
     {
         assert(!m_test_case_name.empty());
-        assert(m_directory != NULL);
     }
 
     std::string const &TestCaseName () const { return m_test_case_name; }
-    Directory const *CurrentDirectory () const { return m_directory; }
+    Directory const &CurrentDirectory () const { return m_directory; }
     DataBaseclass const *Base () const { return m_data; }
     template <typename DataType>
     DataType const &DataAs () const
     {
-        assert(m_data != NULL);
-        assert(dynamic_cast<Data<DataType> const *>(m_data) != NULL);
+        if (m_data == NULL)
+            throw std::string("invalid (NULL) TestCase data");
+        if (dynamic_cast<Data<DataType> const *>(m_data) == NULL)
+            throw std::string("invalid TestCase data type cast");
         return dynamic_cast<Data<DataType> const *>(m_data)->m;
     }
 
 private:
 
     std::string m_test_case_name;
-    Directory const *m_directory;
+    Directory const &m_directory;
     DataBaseclass const *m_data;
 }; // end of struct Context
+
+// for use in Directory::GetSubDirectory
+static bool const CREATE_IF_NECESSARY = true;
+static bool const DONT_CREATE         = false;
 
 // organizes test cases hierarchically
 struct Directory
@@ -124,8 +129,6 @@ struct Directory
 
     // default constructor for creating a root directory
     Directory ();
-    // this constructor is for creating a non-root directory
-    Directory (std::string const &name, Directory *parent);
     // deletes all subdirectories
     virtual ~Directory ();
 
@@ -145,9 +148,12 @@ struct Directory
     void Print (std::ostream &out) const { Print(out, "/"); }
 	std::string const &Path () const { return m_path; }
 
-    // this method will return a pointer to the requested subdirectory,
-    // creating it if it doesn't exist already.
-    Directory *GetSubDirectory (std::string const &subdir_name);
+    // return a reference to the requested subdirectory.  if create_if_necessary
+    // is true, then the directory will be created if necessary.  if an
+    // error is encountered, an exception will be thrown.
+    Directory &GetSubDirectory (
+        std::string const &sub_directory_name,
+        bool create_if_necessary = CREATE_IF_NECESSARY);
 
     // don't call these methods directly -- use the LVD_ADD_TEST_CASE_FUNCTION
     // or the LVD_ADD_NAMED_TEST_CASE_FUNCTION macros instead.
@@ -228,10 +234,12 @@ private:
         { }
     }; // end of struct TestCase
 
+    // this constructor is for creating a non-root directory
+    Directory (std::string const &name, Directory &parent);
+
     unsigned int SpawnScheduled (char *argv0, char **envp, std::string const &child_indicator_token);
     unsigned int RunScheduled ();
     void SetIsScheduled (std::string const &test_path, bool is_scheduled);
-    void AddSubDirectory (std::string const &sub_directory_name, Directory &sub_directory);
     void Print (std::ostream &out, std::string const &path_prefix) const;
     void SetAllSubordinateIsScheduled (bool is_scheduled);
     void CheckTestCase (std::string const &test_case_name, Result expected_result, Stage expected_stage, int expected_signum);

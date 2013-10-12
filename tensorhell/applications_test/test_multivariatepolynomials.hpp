@@ -19,7 +19,7 @@ struct Directory;
 namespace Test {
 namespace MultivariatePolynomials {
 
-void AddTests (Lvd::TestSystem::Directory *parent);
+void AddTests (Lvd::TestSystem::Directory &parent);
 
 } // end of namespace MultivariatePolynomials
 } // end of namespace Test

@@ -213,9 +213,9 @@ void test_uniform_tuples (Context const &context)
     assert_eq(t8.el<7>(), 7);
 }
 
-void AddTests (Directory *parent)
+void AddTests (Directory &parent)
 {
-    Directory *tuple_dir = new Directory("tuple", parent);
+    Directory &tuple_dir = parent.GetSubDirectory("tuple");
 
     LVD_ADD_TEST_CASE_FUNCTION(tuple_dir, test_0_tuple, RESULT_NO_ERROR);
     LVD_ADD_TEST_CASE_FUNCTION(tuple_dir, test_1_tuple, RESULT_NO_ERROR);

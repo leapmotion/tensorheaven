@@ -134,75 +134,100 @@ void multiply_random_polynomial_by_scalar_and_check_result (Context const &conte
 }
 
 template <typename Scalar, Uint32 DIM>
-void add_addition_tests_for_dimension (Directory *parent)
+void add_addition_tests_for_dimension (Directory &parent)
 {
-    Directory *poly = new Directory(FORMAT("Addition Tests"), parent);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(poly, "Degree 1", add_random_polynomials_and_check_result<Scalar,DIM,1>, RESULT_NO_ERROR);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(poly, "Degree 2", add_random_polynomials_and_check_result<Scalar,DIM,2>, RESULT_NO_ERROR);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(poly, "Degree 3", add_random_polynomials_and_check_result<Scalar,DIM,3>, RESULT_NO_ERROR);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(poly, "Degree 4", add_random_polynomials_and_check_result<Scalar,DIM,4>, RESULT_NO_ERROR);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(poly, "Degree 5", add_random_polynomials_and_check_result<Scalar,DIM,5>, RESULT_NO_ERROR);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(poly, "Degree 6", add_random_polynomials_and_check_result<Scalar,DIM,6>, RESULT_NO_ERROR);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(poly, "Degree 7", add_random_polynomials_and_check_result<Scalar,DIM,7>, RESULT_NO_ERROR);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(poly, "Degree 8", add_random_polynomials_and_check_result<Scalar,DIM,8>, RESULT_NO_ERROR);
+    Directory &dir = parent.GetSubDirectory(FORMAT("Addition Tests"));
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "Degree 1", add_random_polynomials_and_check_result<Scalar,DIM,1>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "Degree 2", add_random_polynomials_and_check_result<Scalar,DIM,2>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "Degree 3", add_random_polynomials_and_check_result<Scalar,DIM,3>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "Degree 4", add_random_polynomials_and_check_result<Scalar,DIM,4>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "Degree 5", add_random_polynomials_and_check_result<Scalar,DIM,5>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "Degree 6", add_random_polynomials_and_check_result<Scalar,DIM,6>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "Degree 7", add_random_polynomials_and_check_result<Scalar,DIM,7>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "Degree 8", add_random_polynomials_and_check_result<Scalar,DIM,8>, RESULT_NO_ERROR);
 }
 
 template <typename Scalar, Uint32 DIM>
-void add_multiplication_tests_for_dimension (Directory *parent)
+void add_multiplication_tests_for_dimension (Directory &parent)
 {
-    Directory *poly = new Directory(FORMAT("Multiplication Tests"), parent);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(poly, "Degree 1 and 1", multiply_random_polynomials_and_check_result<Scalar,DIM,1,1>, RESULT_NO_ERROR);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(poly, "Degree 1 and 2", multiply_random_polynomials_and_check_result<Scalar,DIM,1,2>, RESULT_NO_ERROR);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(poly, "Degree 1 and 3", multiply_random_polynomials_and_check_result<Scalar,DIM,1,3>, RESULT_NO_ERROR);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(poly, "Degree 1 and 5", multiply_random_polynomials_and_check_result<Scalar,DIM,1,5>, RESULT_NO_ERROR);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(poly, "Degree 2 and 1", multiply_random_polynomials_and_check_result<Scalar,DIM,2,1>, RESULT_NO_ERROR);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(poly, "Degree 2 and 2", multiply_random_polynomials_and_check_result<Scalar,DIM,2,2>, RESULT_NO_ERROR);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(poly, "Degree 2 and 4", multiply_random_polynomials_and_check_result<Scalar,DIM,2,4>, RESULT_NO_ERROR);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(poly, "Degree 3 and 1", multiply_random_polynomials_and_check_result<Scalar,DIM,3,1>, RESULT_NO_ERROR);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(poly, "Degree 3 and 4", multiply_random_polynomials_and_check_result<Scalar,DIM,3,4>, RESULT_NO_ERROR);
+    Directory &dir = parent.GetSubDirectory(FORMAT("Multiplication Tests"));
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "Degree 1 and 1", multiply_random_polynomials_and_check_result<Scalar,DIM,1,1>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "Degree 1 and 2", multiply_random_polynomials_and_check_result<Scalar,DIM,1,2>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "Degree 1 and 3", multiply_random_polynomials_and_check_result<Scalar,DIM,1,3>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "Degree 1 and 5", multiply_random_polynomials_and_check_result<Scalar,DIM,1,5>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "Degree 2 and 1", multiply_random_polynomials_and_check_result<Scalar,DIM,2,1>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "Degree 2 and 2", multiply_random_polynomials_and_check_result<Scalar,DIM,2,2>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "Degree 2 and 4", multiply_random_polynomials_and_check_result<Scalar,DIM,2,4>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "Degree 3 and 1", multiply_random_polynomials_and_check_result<Scalar,DIM,3,1>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "Degree 3 and 4", multiply_random_polynomials_and_check_result<Scalar,DIM,3,4>, RESULT_NO_ERROR);
 }
 
 
 template <typename Scalar, Uint32 DIM, Uint32 DEGREE>
-void add_particular_tests_for_dimension_and_degree (Directory *parent)
+void add_particular_tests (Directory &parent)
 {
-    Directory *poly = new Directory(FORMAT("HomogeneousPolynomial<" << DEGREE << ',' << DIM << ',' << Tenh::type_string_of<PolynomialBasisId>() << ',' << Tenh::type_string_of<Scalar>() << '>'), parent);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(poly, "constructor_without_initialization", constructor_without_initialization<Scalar,DIM,DEGREE>, RESULT_NO_ERROR);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(poly, "constructor_fill_with", constructor_fill_with<Scalar,DIM,DEGREE>, new Context::Data<Scalar>(42), RESULT_NO_ERROR);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(poly, "multiply_random_polynomial_by_scalar_and_check_result", multiply_random_polynomial_by_scalar_and_check_result<Scalar,DIM,DEGREE>, RESULT_NO_ERROR);
+    Directory &scalar_dir = parent.GetSubDirectory(FORMAT("Scalar = " << Tenh::type_string_of<Scalar>()));
+    Directory &dim_dir = scalar_dir.GetSubDirectory(FORMAT("DIM = " << DIM));
+    Directory &degree_dir = dim_dir.GetSubDirectory(FORMAT("HomogeneousPolynomial<" << DEGREE << ',' << DIM << ',' << Tenh::type_string_of<PolynomialBasisId>() << ',' << Tenh::type_string_of<Scalar>() << '>'));
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(degree_dir, "constructor_without_initialization", constructor_without_initialization<Scalar,DIM,DEGREE>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(degree_dir, "constructor_fill_with", constructor_fill_with<Scalar,DIM,DEGREE>, new Context::Data<Scalar>(42), RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(degree_dir, "multiply_random_polynomial_by_scalar_and_check_result", multiply_random_polynomial_by_scalar_and_check_result<Scalar,DIM,DEGREE>, RESULT_NO_ERROR);
 }
 
-template <typename Scalar, Uint32 DIM>
-void add_particular_tests_for_dimension (Directory *parent)
+void AddTests (Directory &parent)
 {
-    Directory *poly = new Directory(FORMAT("DIM = " << DIM), parent);
-    add_particular_tests_for_dimension_and_degree<Scalar,DIM,1>(poly);
-    add_particular_tests_for_dimension_and_degree<Scalar,DIM,2>(poly);
-    add_particular_tests_for_dimension_and_degree<Scalar,DIM,3>(poly);
-    add_addition_tests_for_dimension<Scalar,DIM>(poly);
-    add_multiplication_tests_for_dimension<Scalar,DIM>(poly);
-}
+    Directory &dir = parent.GetSubDirectory("HomogeneousPolynomial");
 
-template <typename Scalar>
-void add_particular_tests_for_scalar (Directory *parent)
-{
-    Directory *poly = new Directory(FORMAT("Scalar = " << Tenh::type_string_of<Scalar>()), parent);
-    add_particular_tests_for_dimension<Scalar,1>(poly);
-    add_particular_tests_for_dimension<Scalar,2>(poly);
-    add_particular_tests_for_dimension<Scalar,3>(poly);
+    // the reason all the different combinations are enumerated by hand is
+    // so that this source file can be easily broken into several source
+    // files, reducing the compilation resources required and allowing
+    // parallel compilation.
 
-}
+    // // add_particular_tests_for_scalar<Tenh::Sint8>(dir);
+    // // add_particular_tests_for_scalar<Tenh::Sint32>(dir);
+    // // add_particular_tests_for_scalar<Tenh::Sint64>(dir);
 
-void AddTests (Directory *parent)
-{
-    Directory *poly = new Directory("HomogeneousPolynomial", parent);
-    // add_particular_tests_for_scalar<Tenh::Sint8>(poly);
-    // add_particular_tests_for_scalar<Tenh::Sint32>(poly);
-    // add_particular_tests_for_scalar<Tenh::Sint64>(poly);
-    add_particular_tests_for_scalar<float>(poly);
-    add_particular_tests_for_scalar<double>(poly);
-    add_particular_tests_for_scalar<complex<float> >(poly);
-    add_particular_tests_for_scalar<complex<double> >(poly);
+    // TODO: re-add tests for integral types once integral types are working
+
+    add_particular_tests<float,1,1>(dir);
+    add_particular_tests<float,1,2>(dir);
+    add_particular_tests<float,1,3>(dir);
+    add_particular_tests<float,2,1>(dir);
+    add_particular_tests<float,2,2>(dir);
+    add_particular_tests<float,2,3>(dir);
+    add_particular_tests<float,3,1>(dir);
+    add_particular_tests<float,3,2>(dir);
+    add_particular_tests<float,3,3>(dir);
+
+    add_particular_tests<double,1,1>(dir);
+    add_particular_tests<double,1,2>(dir);
+    add_particular_tests<double,1,3>(dir);
+    add_particular_tests<double,2,1>(dir);
+    add_particular_tests<double,2,2>(dir);
+    add_particular_tests<double,2,3>(dir);
+    add_particular_tests<double,3,1>(dir);
+    add_particular_tests<double,3,2>(dir);
+    add_particular_tests<double,3,3>(dir);
+
+    add_particular_tests<complex<float>,1,1>(dir);
+    add_particular_tests<complex<float>,1,2>(dir);
+    add_particular_tests<complex<float>,1,3>(dir);
+    add_particular_tests<complex<float>,2,1>(dir);
+    add_particular_tests<complex<float>,2,2>(dir);
+    add_particular_tests<complex<float>,2,3>(dir);
+    add_particular_tests<complex<float>,3,1>(dir);
+    add_particular_tests<complex<float>,3,2>(dir);
+    add_particular_tests<complex<float>,3,3>(dir);
+
+    add_particular_tests<complex<double>,1,1>(dir);
+    add_particular_tests<complex<double>,1,2>(dir);
+    add_particular_tests<complex<double>,1,3>(dir);
+    add_particular_tests<complex<double>,2,1>(dir);
+    add_particular_tests<complex<double>,2,2>(dir);
+    add_particular_tests<complex<double>,2,3>(dir);
+    add_particular_tests<complex<double>,3,1>(dir);
+    add_particular_tests<complex<double>,3,2>(dir);
+    add_particular_tests<complex<double>,3,3>(dir);
 }
 
 } // end of namespace Vector

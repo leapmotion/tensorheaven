@@ -356,10 +356,10 @@ void composition (Context const &context)
 }
 
 template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
-void add_particular_tests (Directory *parent)
+void add_particular_tests (Directory &parent)
 {
     typedef Tenh::Operator<Domain_,Codomain_,Scalar_,UseArrayType_> Operator;
-    Directory *dir = new Directory(Tenh::type_string_of<Operator>(), parent);
+    Directory &dir = parent.GetSubDirectory(Tenh::type_string_of<Operator>());
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "constructor_without_initialization", constructor_without_initialization<Domain_,Codomain_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "constructor_fill_with", constructor_fill_with<Domain_,Codomain_,Scalar_,UseArrayType_>, new Context::Data<Scalar_>(42), RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "assignment", assignment<Domain_,Codomain_,Scalar_,UseArrayType_>, RESULT_NO_ERROR);
@@ -370,7 +370,7 @@ void add_particular_tests (Directory *parent)
 }
 
 template <typename BasedVectorSpace1_, typename BasedVectorSpace2_, typename BasedVectorSpace3_, typename Scalar_, typename UseArrayType_>
-void add_particular_composition_tests (Directory *dir)
+void add_particular_composition_tests (Directory &dir)
 {
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir,
                                      FORMAT("composition<" << Tenh::type_string_of<BasedVectorSpace1_>() << ','
@@ -384,7 +384,7 @@ void add_particular_composition_tests (Directory *dir)
 
 
 template <typename Scalar_, typename UseArrayType_>
-void add_particular_tests_for_scalar_and_use_array_type (Directory *parent)
+void add_particular_tests_for_scalar_and_use_array_type (Directory &parent)
 {
     // TODO: these tests on 0-dimensional vector spaces aren't working -- fix
 //     {
@@ -411,14 +411,14 @@ void add_particular_tests_for_scalar_and_use_array_type (Directory *parent)
 }
 
 template <typename Scalar_>
-void add_particular_tests_for_scalar (Directory *parent)
+void add_particular_tests_for_scalar (Directory &parent)
 {
     add_particular_tests_for_scalar_and_use_array_type<Scalar_,Tenh::UseMemberArray>(parent);
 }
 
-void AddTests (Directory *parent)
+void AddTests (Directory &parent)
 {
-    Directory *dir = new Directory("Operator", parent);
+    Directory &dir = parent.GetSubDirectory("Operator");
     add_particular_tests_for_scalar<Sint8>(dir);
     add_particular_tests_for_scalar<Uint8>(dir);
     add_particular_tests_for_scalar<Sint16>(dir);

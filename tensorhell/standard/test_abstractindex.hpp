@@ -19,7 +19,7 @@ struct Directory;
 namespace Test {
 namespace AbstractIndex {
 
-void AddTests (Lvd::TestSystem::Directory *parent);
+void AddTests (Lvd::TestSystem::Directory &parent);
 
 } // end of namespace AbstractIndex
 } // end of namespace Test

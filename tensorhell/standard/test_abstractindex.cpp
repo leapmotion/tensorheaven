@@ -159,17 +159,17 @@ void test_reindexed_AbstractIndexTypeList (Context const &context)
                Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i)).type_as_string()); // expected value
 }
 
-void AddTests (Directory *parent)
+void AddTests (Directory &parent)
 {
-    Directory *abstractindex_dir = new Directory("abstractindex", parent);
+    Directory &dir = parent.GetSubDirectory("abstractindex");
 
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(abstractindex_dir, "test_SymbolOf_f<AbstractIndex_c<'i'>>", test_SymbolOf_f<Tenh::AbstractIndex_c<'i'>,'i'>, RESULT_NO_ERROR);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(abstractindex_dir, "test_SymbolOf_f<AbstractIndex_c<12345>>", test_SymbolOf_f<Tenh::AbstractIndex_c<12345>,12345>, RESULT_NO_ERROR);
-    LVD_ADD_TEST_CASE_FUNCTION(abstractindex_dir, test_BaseAbstractReindex_e, RESULT_NO_ERROR);
-    LVD_ADD_TEST_CASE_FUNCTION(abstractindex_dir, test_Reindex_e, RESULT_NO_ERROR);
-    LVD_ADD_TEST_CASE_FUNCTION(abstractindex_dir, test_induced_TypeList_Reindex_e, RESULT_NO_ERROR);
-    LVD_ADD_TEST_CASE_FUNCTION(abstractindex_dir, test_reindexed, RESULT_NO_ERROR);
-    LVD_ADD_TEST_CASE_FUNCTION(abstractindex_dir, test_reindexed_AbstractIndexTypeList, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "test_SymbolOf_f<AbstractIndex_c<'i'>>", test_SymbolOf_f<Tenh::AbstractIndex_c<'i'>,'i'>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "test_SymbolOf_f<AbstractIndex_c<12345>>", test_SymbolOf_f<Tenh::AbstractIndex_c<12345>,12345>, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, test_BaseAbstractReindex_e, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, test_Reindex_e, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, test_induced_TypeList_Reindex_e, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, test_reindexed, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, test_reindexed_AbstractIndexTypeList, RESULT_NO_ERROR);
 }
 
 } // end of namespace AbstractIndex

@@ -55,15 +55,15 @@ void check_filled_values (Context const &context)
 }
 
 template <typename Component, Uint32 DIM>
-void add_particular_tests (Directory *parent)
+void add_particular_tests (Directory &parent)
 {
-    Directory *array = new Directory(FORMAT("MemberArray_t<" << Tenh::type_string_of<Component>() << ',' << DIM << '>'), parent);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(array, "constructor_without_initialization", constructor_without_initialization<Component,DIM>, RESULT_NO_ERROR);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(array, "constructor_fill_with", constructor_fill_with<Component,DIM>, new Context::Data<Component>(42), RESULT_NO_ERROR);
+    Directory &dir = parent.GetSubDirectory(FORMAT("MemberArray_t<" << Tenh::type_string_of<Component>() << ',' << DIM << '>'));
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "constructor_without_initialization", constructor_without_initialization<Component,DIM>, RESULT_NO_ERROR);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "constructor_fill_with", constructor_fill_with<Component,DIM>, new Context::Data<Component>(42), RESULT_NO_ERROR);
 }
 
 template <typename Component>
-void add_particular_tests_for_scalar (Directory *parent)
+void add_particular_tests_for_scalar (Directory &parent)
 {
     add_particular_tests<Component,1>(parent);
     add_particular_tests<Component,2>(parent);
@@ -71,16 +71,16 @@ void add_particular_tests_for_scalar (Directory *parent)
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent, FORMAT("check_filled_values<" << Tenh::type_string_of<Component>() << ">"), check_filled_values<Component>, RESULT_NO_ERROR);
 }
 
-void AddTests (Directory *parent)
+void AddTests (Directory &parent)
 {
-    Directory *array = new Directory("MemberArray_t", parent);
-    add_particular_tests_for_scalar<Sint8>(array);
-    add_particular_tests_for_scalar<Uint32>(array);
-    add_particular_tests_for_scalar<Sint64>(array);
-    add_particular_tests_for_scalar<float>(array);
-    add_particular_tests_for_scalar<double>(array);
-    add_particular_tests_for_scalar<complex<float> >(array);
-    add_particular_tests_for_scalar<complex<double> >(array);
+    Directory &dir = parent.GetSubDirectory("MemberArray_t");
+    add_particular_tests_for_scalar<Sint8>(dir);
+    add_particular_tests_for_scalar<Uint32>(dir);
+    add_particular_tests_for_scalar<Sint64>(dir);
+    add_particular_tests_for_scalar<float>(dir);
+    add_particular_tests_for_scalar<double>(dir);
+    add_particular_tests_for_scalar<complex<float> >(dir);
+    add_particular_tests_for_scalar<complex<double> >(dir);
 }
 
 } // end of namespace Array

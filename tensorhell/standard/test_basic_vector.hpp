@@ -280,10 +280,10 @@ void natural_pairing (Context const &context)
 }
 
 template <typename Vector_>
-void add_particular_tests (Directory *parent)
+void add_particular_tests (Directory &parent)
 {
     typedef typename Vector_::Scalar Scalar;
-    Directory *dir = new Directory(Tenh::type_string_of<Vector_>(), parent);
+    Directory &dir = parent.GetSubDirectory(Tenh::type_string_of<Vector_>());
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "constructor_without_initialization", constructor_without_initialization<Vector_>, RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "constructor_fill_with", constructor_fill_with<Vector_>, new Context::Data<Scalar>(42), RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "assignment", assignment<Vector_>, RESULT_NO_ERROR);
@@ -295,7 +295,7 @@ void add_particular_tests (Directory *parent)
 }
 
 template <typename Scalar_, typename UseArrayType_>
-void add_particular_tests_for_scalar_and_use_array_type_Vector (Directory *parent)
+void add_particular_tests_for_scalar_and_use_array_type_Vector (Directory &parent)
 {
     {
         static Uint32 const DIM = 0;
@@ -318,7 +318,7 @@ void add_particular_tests_for_scalar_and_use_array_type_Vector (Directory *paren
 }
 
 template <typename Scalar_, typename UseArrayType_>
-void add_particular_tests_for_scalar_and_use_array_type_Vec (Directory *parent)
+void add_particular_tests_for_scalar_and_use_array_type_Vec (Directory &parent)
 {
     {
         static Uint32 const DIM = 0;
@@ -338,23 +338,23 @@ void add_particular_tests_for_scalar_and_use_array_type_Vec (Directory *parent)
 }
 
 template <typename Scalar_>
-void add_particular_tests_for_scalar_Vector (Directory *parent)
+void add_particular_tests_for_scalar_Vector (Directory &parent)
 {
     add_particular_tests_for_scalar_and_use_array_type_Vector<Scalar_,Tenh::UseMemberArray>(parent);
 }
 
 template <typename Scalar_>
-void add_particular_tests_for_scalar_Vec (Directory *parent)
+void add_particular_tests_for_scalar_Vec (Directory &parent)
 {
     add_particular_tests_for_scalar_and_use_array_type_Vec<Scalar_,Tenh::UseMemberArray>(parent);
 }
 
-void AddTests0 (Lvd::TestSystem::Directory *parent);
-void AddTests1 (Lvd::TestSystem::Directory *parent);
-void AddTests2 (Lvd::TestSystem::Directory *parent);
-void AddTests3 (Lvd::TestSystem::Directory *parent);
-void AddTests4 (Lvd::TestSystem::Directory *parent);
-void AddTests5 (Lvd::TestSystem::Directory *parent);
+void AddTests0 (Lvd::TestSystem::Directory &parent);
+void AddTests1 (Lvd::TestSystem::Directory &parent);
+void AddTests2 (Lvd::TestSystem::Directory &parent);
+void AddTests3 (Lvd::TestSystem::Directory &parent);
+void AddTests4 (Lvd::TestSystem::Directory &parent);
+void AddTests5 (Lvd::TestSystem::Directory &parent);
 
 } // end of namespace Vector
 } // end of namespace Basic

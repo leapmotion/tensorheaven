@@ -36,10 +36,10 @@ void test_length (Context const &context)
 }
 
 template <typename TypeList, Uint32 EXPECTED_LENGTH>
-void add_particular_tests_for_typelist (Directory *parent)
+void add_particular_tests_for_typelist (Directory &parent)
 {
-    Directory *typelist = new Directory(Tenh::type_string_of<TypeList>(), parent);
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(typelist, "test_length", test_length<TypeList>, new Context::Data<Uint32>(EXPECTED_LENGTH), RESULT_NO_ERROR);
+    Directory &dir = parent.GetSubDirectory(Tenh::type_string_of<TypeList>());
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "length", test_length<TypeList>, new Context::Data<Uint32>(EXPECTED_LENGTH), RESULT_NO_ERROR);
 }
 
 template <typename TypeList, Uint32 INDEX, typename ExpectedLeadingTypeList>
@@ -55,7 +55,7 @@ void test_trailing_type_list (Context const &context)
 }
 
 template <typename TypeList, Uint32 INDEX, typename ExpectedLeadingTypeList, typename ExpectedTrailingTypeList>
-void add_leading_and_trailing_type_list_test (Directory *parent)
+void add_leading_and_trailing_type_list_test (Directory &parent)
 {
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent,
                                      FORMAT("LeadingTypeList_f<" << Tenh::type_string_of<TypeList>() << ',' << INDEX << '>'),
@@ -67,7 +67,7 @@ void add_leading_and_trailing_type_list_test (Directory *parent)
                                      RESULT_NO_ERROR);
 }
 
-void add_leading_and_trailing_type_list_tests (Directory *parent)
+void add_leading_and_trailing_type_list_tests (Directory &parent)
 {
     // length 0 type list
     add_leading_and_trailing_type_list_test<Tenh::EmptyTypeList,
@@ -128,15 +128,15 @@ void add_leading_and_trailing_type_list_tests (Directory *parent)
                                             >(parent);
 }
 
-void AddTests (Directory *parent)
+void AddTests (Directory &parent)
 {
-    Directory *typelist = new Directory("TypeList_t", parent);
+    Directory &dir = parent.GetSubDirectory("TypeList_t");
 
-    LVD_ADD_NAMED_TEST_CASE_FUNCTION(typelist, Tenh::type_string_of<Tenh::EmptyTypeList>(), test_EmptyTypeList, RESULT_NO_ERROR);
-    add_particular_tests_for_typelist<Tenh::TypeList_t<Sint32>,1>(typelist);
-    add_particular_tests_for_typelist<Tenh::TypeList_t<Sint32,Tenh::TypeList_t<Sint8> >,2>(typelist);
+    LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, Tenh::type_string_of<Tenh::EmptyTypeList>(), test_EmptyTypeList, RESULT_NO_ERROR);
+    add_particular_tests_for_typelist<Tenh::TypeList_t<Sint32>,1>(dir);
+    add_particular_tests_for_typelist<Tenh::TypeList_t<Sint32,Tenh::TypeList_t<Sint8> >,2>(dir);
 
-    add_leading_and_trailing_type_list_tests(typelist);
+    add_leading_and_trailing_type_list_tests(dir);
 }
 
 } // end of namespace TypeList

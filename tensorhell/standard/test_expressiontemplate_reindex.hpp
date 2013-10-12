@@ -19,7 +19,7 @@ struct Directory;
 namespace Test {
 namespace ExpressionTemplate_Reindex {
 
-void AddTests (Lvd::TestSystem::Directory *parent);
+void AddTests (Lvd::TestSystem::Directory &parent);
 
 } // end of namespace ExpressionTemplate_Reindex
 } // end of namespace Test

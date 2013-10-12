@@ -101,13 +101,13 @@ void test_reindexed (Context const &context)
               (Tenh::DimIndex_t<'k',40>().type_as_string())); // expected value
 }
 
-void AddTests (Directory *parent)
+void AddTests (Directory &parent)
 {
-    Directory *dimindex_dir = new Directory("dimindex", parent);
+    Directory &dir = parent.GetSubDirectory("dimindex");
 
-    LVD_ADD_TEST_CASE_FUNCTION(dimindex_dir, test_Reindex_e, RESULT_NO_ERROR);
-    LVD_ADD_TEST_CASE_FUNCTION(dimindex_dir, test_induced_TypeList_Reindex_e, RESULT_NO_ERROR);
-    LVD_ADD_TEST_CASE_FUNCTION(dimindex_dir, test_reindexed, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, test_Reindex_e, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, test_induced_TypeList_Reindex_e, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, test_reindexed, RESULT_NO_ERROR);
 }
 
 } // end of namespace DimIndex

@@ -15,10 +15,10 @@ namespace Test {
 namespace Basic {
 namespace Vector {
 
-void AddTests1 (Directory *parent)
+void AddTests1 (Directory &parent)
 {
     {
-        Directory *dir = parent->GetSubDirectory("Vector");
+        Directory &dir = parent.GetSubDirectory("Vector");
         add_particular_tests_for_scalar_Vector<Sint32>(dir);
         add_particular_tests_for_scalar_Vector<Uint32>(dir);
         add_particular_tests_for_scalar_Vector<Sint64>(dir);

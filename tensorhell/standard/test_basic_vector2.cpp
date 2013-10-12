@@ -15,10 +15,10 @@ namespace Test {
 namespace Basic {
 namespace Vector {
 
-void AddTests2 (Directory *parent)
+void AddTests2 (Directory &parent)
 {
     {
-        Directory *dir = parent->GetSubDirectory("Vector");
+        Directory &dir = parent.GetSubDirectory("Vector");
         add_particular_tests_for_scalar_Vector<float>(dir);
         add_particular_tests_for_scalar_Vector<double>(dir);
         add_particular_tests_for_scalar_Vector<complex<float> >(dir);

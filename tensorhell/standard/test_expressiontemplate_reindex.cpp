@@ -22,7 +22,7 @@ using namespace TestSystem;
 namespace Test {
 namespace ExpressionTemplate_Reindex {
 
-void test_vector_based_IndexedObject_t (Context const &context)
+void vector_based_IndexedObject_t (Context const &context)
 {
     static Uint32 const DIM = 3;
     typedef int DummyId;
@@ -80,7 +80,7 @@ void test_vector_based_IndexedObject_t (Context const &context)
     }
 }
 
-void test_tensor_based_IndexedObject_t (Context const &context)
+void tensor_based_IndexedObject_t (Context const &context)
 {
     static Uint32 const DIM = 3;
     typedef int DummyId;
@@ -142,7 +142,7 @@ void test_tensor_based_IndexedObject_t (Context const &context)
     }
 }
 
-void test_Addition_t (Context const &context)
+void Addition_t (Context const &context)
 {
     static Uint32 const DIM = 3;
     typedef int DummyId;
@@ -178,7 +178,7 @@ void test_Addition_t (Context const &context)
                Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(k))).type_as_string()); // expected value
 }
 
-void test_ScalarMultiplication_t (Context const &context)
+void ScalarMultiplication_t (Context const &context)
 {
     static Uint32 const DIM = 3;
     typedef int DummyId;
@@ -212,7 +212,7 @@ void test_ScalarMultiplication_t (Context const &context)
               (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(k)) * Scalar(3)).type_as_string()); // expected value
 }
 
-void test_Multiplication_t (Context const &context)
+void Multiplication_t (Context const &context)
 {
     static Uint32 const DIM = 3;
     typedef int DummyId;
@@ -259,7 +259,7 @@ void test_Multiplication_t (Context const &context)
                Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(i))).type_as_string()); // expected value
 }
 
-void test_IndexBundle_t (Context const &context)
+void IndexBundle_t (Context const &context)
 {
     static Uint32 const DIM = 3;
     typedef int DummyId;
@@ -295,7 +295,7 @@ void test_IndexBundle_t (Context const &context)
                        Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(l))).type_as_string()); // expected value
 }
 
-void test_IndexSplit_t (Context const &context)
+void IndexSplit_t (Context const &context)
 {
     static Uint32 const DIM = 3;
     typedef int DummyId;
@@ -330,7 +330,7 @@ void test_IndexSplit_t (Context const &context)
                       Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j|k|l))).type_as_string()); // expected value
 }
 
-void test_IndexSplitToIndex_t (Context const &context)
+void IndexSplitToIndex_t (Context const &context)
 {
     static Uint32 const DIM = 3;
     typedef int DummyId;
@@ -365,7 +365,7 @@ void test_IndexSplitToIndex_t (Context const &context)
                       Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j))).type_as_string()); // expected value
 }
 
-void test_Eval_t (Context const &context)
+void Eval_t (Context const &context)
 {
     static Uint32 const DIM = 3;
     typedef int DummyId;
@@ -398,7 +398,7 @@ void test_Eval_t (Context const &context)
               (t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i)).eval().type_as_string())); // expected value
 }
 
-void test_fancy_expression (Context const &context)
+void fancy_expression (Context const &context)
 {
     static Uint32 const DIM = 3;
     typedef int DummyId;
@@ -438,20 +438,20 @@ void test_fancy_expression (Context const &context)
                          * c(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(l))).type_as_string()); // expected value
 }
 
-void AddTests (Directory *parent)
+void AddTests (Directory &parent)
 {
-    Directory *dir = new Directory("expressiontemplate_reindex", parent);
+    Directory &dir = parent.GetSubDirectory("expressiontemplate_reindex");
 
-    LVD_ADD_TEST_CASE_FUNCTION(dir, test_vector_based_IndexedObject_t, RESULT_NO_ERROR);
-    LVD_ADD_TEST_CASE_FUNCTION(dir, test_tensor_based_IndexedObject_t, RESULT_NO_ERROR);
-    LVD_ADD_TEST_CASE_FUNCTION(dir, test_Addition_t, RESULT_NO_ERROR);
-    LVD_ADD_TEST_CASE_FUNCTION(dir, test_ScalarMultiplication_t, RESULT_NO_ERROR);
-    LVD_ADD_TEST_CASE_FUNCTION(dir, test_Multiplication_t, RESULT_NO_ERROR);
-    LVD_ADD_TEST_CASE_FUNCTION(dir, test_IndexBundle_t, RESULT_NO_ERROR);
-    LVD_ADD_TEST_CASE_FUNCTION(dir, test_IndexSplit_t, RESULT_NO_ERROR);
-    LVD_ADD_TEST_CASE_FUNCTION(dir, test_IndexSplitToIndex_t, RESULT_NO_ERROR);
-    LVD_ADD_TEST_CASE_FUNCTION(dir, test_Eval_t, RESULT_NO_ERROR);
-    LVD_ADD_TEST_CASE_FUNCTION(dir, test_fancy_expression, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, vector_based_IndexedObject_t, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, tensor_based_IndexedObject_t, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, Addition_t, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, ScalarMultiplication_t, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, Multiplication_t, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, IndexBundle_t, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, IndexSplit_t, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, IndexSplitToIndex_t, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, Eval_t, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, fancy_expression, RESULT_NO_ERROR);
 }
 
 } // end of namespace ExpressionTemplate_Reindex
