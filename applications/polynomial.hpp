@@ -16,21 +16,30 @@
 #include "tenh/implementation/sym.hpp"
 #include "tenh/implementation/vector.hpp"
 #include "tenh/implementation/vee.hpp"
+#include "tenh/list.hpp"
+#include "tenh/mathutil.hpp"
+#include "tenh/meta/tuple.hpp"
 #include "tenh/meta/typelist_utility.hpp"
 #include "tenh/multiindex.hpp"
 #include "tenh/preallocatedarray.hpp"
 
 using Tenh::Uint32;
 
+
 template <Uint32 DEGREE_, Uint32 DIMENSION_, typename Id_ = PolynomialBasisId, typename Scalar_ = float>
 struct MultivariatePolynomial
 {
+    typedef typename Tenh::OnEach_f<typename Tenh::EnumeratedRange_f<Uint32,0,DEGREE_>::T,
+                                    GenerateHomogeneousPolynomial_e<DIMENSION_, Id_, Scalar_> >::T TypeList;
+    typedef Tenh::List_t<TypeList> CoefficientList;
+
     typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIMENSION_,Id_>,
                                      Tenh::Basis_c<Id_> > VectorSpace;
     typedef Tenh::ImplementationOf_t<VectorSpace,Scalar_> Vector;
     typedef Tenh::SymmetricPowerOfBasedVectorSpace_c<DEGREE_,VectorSpace> SymmetricPower;
     typedef Tenh::ImplementationOf_t<SymmetricPower,Scalar_> Sym;
     typedef typename Tenh::DualOf_f<Sym>::T SymDual;
+
     typedef Scalar_ Scalar;
     typedef Id_ Id;
 
@@ -42,33 +51,18 @@ struct MultivariatePolynomial
     typedef Tenh::PreallocatedArray_t<Scalar_ ,DIMENSION> CoefficientArray;
     typedef Tenh::PreallocatedArray_t<Scalar_ const,DIMENSION> ConstCoefficientArray;
 
-    MultivariatePolynomial (Scalar_ const &fill_with) : m_body(fill_with), m_term(fill_with) { }
-    MultivariatePolynomial (Tenh::WithoutInitialization const &w) : m_body(w), m_term(w) { }
-    MultivariatePolynomial (LeadingTermType const &leading_term, BodyPolynomial const &body)
-        :
-        m_body(body),
-        m_term(leading_term)
-    { }
-    MultivariatePolynomial (LeadingTermType const &leading_term)
-        :
-        m_body(Scalar(0)),
-        m_term(leading_term)
-    { }
-    MultivariatePolynomial (SymDual const &leading_term, BodyPolynomial const &body)
-        :
-        m_body(body),
-        m_term(leading_term)
-    { }
-    MultivariatePolynomial (SymDual const &leading_term)
-        :
-        m_body(Scalar(0)),
-        m_term(leading_term)
-    { }
-    MultivariatePolynomial (MultivariatePolynomial const &other)
-        :
-        m_body(other.m_body),
-        m_term(other.m_term)
-    { }
+    MultivariatePolynomial (Scalar_ const &fill_with) : m_coefficients(uniform_list_with_length<DEGREE_+1>(fill_with)) { }
+    MultivariatePolynomial (Tenh::WithoutInitialization const &w) : m_coefficients(uniform_list_with_length<DEGREE_+1>(w)) { }
+
+    MultivariatePolynomial (CoefficientList const &list) : m_coefficients(list) { }
+
+    MultivariatePolynomial (LeadingTermType const &leading_term, BodyPolynomial const &body) : m_coefficients(body.m_coefficients | typle(leading_term)) { }
+    MultivariatePolynomial (LeadingTermType const &leading_term) : m_coefficients(uniform_list_with_length<DEGREE_>(Scalar(0)) | tuple(leading_term)) { }
+
+    MultivariatePolynomial (SymDual const &leading_term, BodyPolynomial const &body) : m_coefficients(body.m_coefficients) | typle(leading_term)) { }
+    MultivariatePolynomial (SymDual const &leading_term) : m_coefficients(uniform_list_with_length<DEGREE_>(Scalar(0)) | tuple(leading_term)) { }
+
+    MultivariatePolynomial (MultivariatePolynomial const &other) : m_coefficients(other.m_coefficients) { }
 
     Scalar_ evaluate (Vector const &at) const
     {
@@ -125,8 +119,10 @@ struct MultivariatePolynomial
     }
 
 private:
-    MultivariatePolynomial<DEGREE_-1,DIMENSION_,Id_,Scalar_> m_body;
-    LeadingTermType m_term;
+    // MultivariatePolynomial<DEGREE_-1,DIMENSION_,Id_,Scalar_> m_body;
+    // LeadingTermType m_term;
+    CoefficientList m_coefficients;
+
 
     // Helper members for non-member operators.
     //    add is for adding a polynomial of strictly lower degree to this polynomial
@@ -151,6 +147,8 @@ private:
 template <Uint32 DIMENSION_, typename Id_, typename Scalar_>
 struct MultivariatePolynomial<0,DIMENSION_,Id_,Scalar_>
 {
+    typedef Tenh::TypeList_t<Scalar_> TypeList;
+    typedef Tenh::List_t<TypeList> CoefficientList;
     typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIMENSION_,Id_>,Tenh::Basis_c<Id_> > VectorSpace;
     typedef Tenh::ImplementationOf_t<VectorSpace,Scalar_> Vector;
 

@@ -36,7 +36,9 @@ void test_poly_in_4_dim ()
     std::cout << FORMAT_VALUE((3.0f*roly).evaluate(v)) << '\n';
     std::cout << FORMAT_VALUE(roly*poly) << '\n';
     std::cout << FORMAT_VALUE((roly*poly).evaluate(v)) << '\n';
+    std::cout << type_string_of<PolyType::TypeList>() << '\n';
     std::cout << '\n';
+
 }
 
 void test_polynomial_serialization ()

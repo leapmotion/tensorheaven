@@ -12,7 +12,6 @@
 #ifndef APPLICATIONS_POLYNOMIAL_UTIL_HPP_
 #define APPLICATIONS_POLYNOMIAL_UTIL_HPP_
 
-
 //    operator<< for ostream
 template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar>
 struct VariableStringComputer

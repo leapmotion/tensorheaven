@@ -24,6 +24,7 @@ using Tenh::Uint32;
 
 struct PolynomialBasisId { static std::string type_as_string () { return "StandardPolynomialBasis"; } };
 
+
 template <Uint32 DEGREE_, Uint32 DIMENSION_, typename Id_ = PolynomialBasisId, typename Scalar_ = float>
 struct HomogeneousPolynomial
 {
@@ -144,6 +145,11 @@ struct HomogeneousPolynomial
         return CoefficientArray(reinterpret_cast<Scalar_ *>(&m_coefficients), Tenh::DONT_CHECK_POINTER);
     }
 
+    static std::string type_as_string() { return "HomogeneousPolynomial<" + FORMAT(DEGREE_) + ","
+                                                                          + FORMAT(DIMENSION_) + ","
+                                                                          + Tenh::type_string_of<Id_>() + ","
+                                                                          + Tenh::type_string_of<Scalar_>() + ">"; }
+
 private:
     SymDual m_coefficients;
 
@@ -166,6 +172,30 @@ private:
 
     template<Uint32,Uint32,typename,typename> friend struct HomogeneousPolynomial;
 };
+
+
+template <Uint32 DEGREE_, Uint32 DIMENSION_, typename Id_, typename Scalar_>
+struct HomogeneousPolynomial_f
+{
+    typedef HomogeneousPolynomial<DEGREE_,DIMENSION_,Id_,Scalar_> T;
+};
+
+template <Uint32 DIMENSION_, typename Id_, typename Scalar_>
+struct HomogeneousPolynomial_f<0,DIMENSION_,Id_,Scalar_>
+{
+    typedef Scalar_ T;
+};
+
+template <Uint32 DIMENSION_, typename Id_, typename Scalar_>
+struct GenerateHomogeneousPolynomial_e
+{
+    template <typename DegreeValue_>
+    struct Eval_f
+    {
+        typedef typename HomogeneousPolynomial_f<DegreeValue_::V,DIMENSION_,Id_,Scalar_>::T T;
+    };
+};
+
 
 
 // Non-member operator overloads. These exist because they must be partially specalized, or because they cannot be written as member operator overloads.

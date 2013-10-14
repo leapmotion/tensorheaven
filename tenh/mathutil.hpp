@@ -7,6 +7,7 @@
 #define TENH_MATHUTIL_HPP_
 
 #include "tenh/core.hpp"
+#include "tenh/meta/typelist.hpp"
 
 // TODO: Decide if/how this code should be split amongst files.
 namespace Tenh {
@@ -64,6 +65,21 @@ struct IndexOfGreatestTriangularNumberLessThan_t
     static const Uint32 V = If_f<(BinomialCoefficient_t<iteration,D>::V > X),
                                  Value_t<Uint32,iteration-1>,
                                  IndexOfGreatestTriangularNumberLessThan_t<X,D,iteration+1> >::T::V;
+};
+
+// ValueType_ must be an integral type
+template <typename ValueType_, ValueType_ STARTING_VALUE_, ValueType_ ENDING_VALUE_>
+struct EnumeratedRange_f
+{
+    enum { STATIC_ASSERT_IN_ENUM(STARTING_VALUE_ <= ENDING_VALUE_, UNSPECIFIED_MESSAGE) }; // TODO: real message
+    typedef TypeList_t<Value_t<ValueType_,STARTING_VALUE_>,
+                       typename EnumeratedRange_f<ValueType_,STARTING_VALUE_+1,ENDING_VALUE_>::T> T;
+};
+
+template <typename ValueType_, ValueType_ STARTING_AND_ENDING_VALUE_>
+struct EnumeratedRange_f<ValueType_,STARTING_AND_ENDING_VALUE_,STARTING_AND_ENDING_VALUE_>
+{
+    typedef TypeList_t<Value_t<ValueType_,STARTING_AND_ENDING_VALUE_> > T;
 };
 
 } // end of namespace Tenh

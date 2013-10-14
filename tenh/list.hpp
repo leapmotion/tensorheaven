@@ -574,6 +574,8 @@ List_t<typename ConcatenationOfTypeLists_t<Lhs_TypeList_,Rhs_TypeList_>::T>
     return List_t<typename ConcatenationOfTypeLists_t<Lhs_TypeList_,Rhs_TypeList_>::T>(lhs.head(), lhs.body() | rhs);
 }
 
+
+
 /*
 // the operator associativity for <<= is semantically wrong for this operation
 
