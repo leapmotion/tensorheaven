@@ -341,6 +341,32 @@
   operator can be taken.
 
 
+###Notes for generalized embed/project (generalizations of split/bundle)
+- The "embed" and "project" operations are defined via the following properties:
+    * Accessing components of an "embedded" vector/tensor should be a sparse operation
+      involving no fractions (e.g. direct component access for vees, or plus-or-minus 1
+      times a direct component access for wedges).  This no-fraction constraint is
+      so that integral scalar representations can be used.
+    * "embed" and "project" should be mutually adjoint with respect to the relevent
+      natural pairings.  That is,
+        A(i).embed(i,UpstairsSpace,j)*B(j) - A(i)*B(j).project(j,DownstairsSpace,i)
+      should give the zero scalar.
+- The point of this theory is that doing a natural pairing "upstairs" doesn't take
+  advantage of the symmetries available "downstairs", so it's ostensibly more efficient
+  to project and do the natural pairing "downstairs".
+- The first property essentially amounts to a particular set of basis choices for
+  various spaces.  It is possible that some spaces may not embed nicely (e.g. an
+  arbitrary subspace of a given based vector space), and those cases should probably
+  just use a full embedding 2-tensor (which is the most general way to do it), so
+    B(j)*embedding_2_tensor(j|i)*A(i) - A(i)*projection_2_tensor(i|j)*B(j)
+  should give the zero scalar.
+- If the "embed" and "project" expression templates were formulated as full 2-tensors
+  (i.e. matrices), then their mutual adjointness manifests as their matrices being
+  transposes of one another.
+- The reindexing maps should be done in the conceptual layer, since they are independent
+  of choice of scalar representation (e.g. float).
+
+
 ###Notes for [probable] upgrade to C++11 (to happen after "version 1.0" is reached)
 - TODO: look into C++11 support for embedded (and other) compilers that we might have to
   deal with in the future.
@@ -384,7 +410,8 @@
     * The solution appears to be (though the full solution is yet to be implemented as of 2013.07.21)
       implementing the mathematical relationships in "pure" types (compile-time only, no code) in a
       "conceptual" layer, and put the implementations in its own layer.  This forces the designer
-      not to mix up the two domains, and the division enhances clarity.
+      not to mix up the two domains, and the division enhances clarity.  (Update: 2013.10.12: this
+      is now more or less fully implemented).
 - Template code takes forever to compile in some cases.  This certainly happened in some of the
   Tensor Hell unit tests, where there the same templatized tests were being run on many types.
     * When possible and when it makes sense (such as in unit tests where there are many test cases),
@@ -404,10 +431,11 @@
     * Higher order SVD (implement in C++ with Tenh, then use some C++-to-Matlab layer interface
       library to provide this facility in Matlab for David's use)
     * General cumulants (also uses fully symmetric tensors)
-    * Manifold geometry
+    * Manifold/differential geometry
         - sheaf theory (maps from manifolds to tensors)
         - Young tableaux (for Riemannian curvature tensor)
         - exterior calculus (uses alternating tensors)
+        - covariant calculus (exploiting symmetries in e.g. Christoffel symbols, Riemann tensor, etc)
     * Linear algebra "frontend" for Tensor Heaven -- no indexed expressions; use "Hom" formalism
       so that effectively nothing above a 2-tensor is ever used.  The type system will be traversed
       by explicit notation.
