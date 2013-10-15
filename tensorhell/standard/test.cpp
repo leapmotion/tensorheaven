@@ -17,6 +17,7 @@
 // #include "test_interop_eigen_inversion.hpp"
 // #include "test_interop_eigen_ldlt.hpp"
 #include "test_list.hpp"
+#include "test_split_and_bundle.hpp"
 #include "test_tuple.hpp"
 #include "test_typelist.hpp"
 // #include "test_tensor2.hpp"
@@ -60,7 +61,9 @@ int main (int argc, char **argv, char **envp)
 //         Test::InteropEigen::EuclideanlyEmbedded::AddTests(interop_eigen_dir);
 //         Test::InteropEigen::Inversion::AddTests(interop_eigen_dir);
 //     }
+
     Test::List::AddTests(root);
+    Test::SplitAndBundle::AddTests(&root);
     Test::Tuple::AddTests(root);
     Test::TypeList::AddTests(root);
 //     Test::Tensor2::AddTests(root);
