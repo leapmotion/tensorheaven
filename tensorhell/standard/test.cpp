@@ -63,7 +63,7 @@ int main (int argc, char **argv, char **envp)
 //     }
 
     Test::List::AddTests(root);
-    Test::SplitAndBundle::AddTests(&root);
+    Test::SplitAndBundle::AddTests(root);
     Test::Tuple::AddTests(root);
     Test::TypeList::AddTests(root);
 //     Test::Tensor2::AddTests(root);
