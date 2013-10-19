@@ -1,5 +1,6 @@
 #TENSOR HEAVEN - Tenh (pronounced "tench", similar to hyperbolic tangent tanh)
 
+
 ##NOTES
 - all library code is in tenh/
   * ideally there will be few/no cpp files
@@ -10,109 +11,58 @@
 - the "actual" tensor lib prototype code is in test/contraction_prototype.cpp
 - the prototype code which uses "strongly typed" tensor math is in conceptual_prototype.cpp
 
-###current goals:
-- more frontends for Eigen functionality -- LDLT, QR, linear solve, etc
-- strong typing for vectors -- named vector spaces (including "Generic") and prime/dual distinction (including self-dual)
-    * default values should be "Generic" vector space ID and self-dual
-    * canonical isomorphism for tensor2 -> vector will need to take into account basis
-    * canonical isomorphism for vector -> scalar will need to take into account basis (a 1-dimensional vector space always has a
-      canonical "unit" basis element which is the real number 1 (?))
-    * `template <typename Scalar, Uint32 DIM, typename VectorSpaceId, typename BasisId> struct Vector_t` (NO default values)
-    * `VectorSpaceId` should have the Dual space type (can specify self-dual here), and a static `type_as_string` method
-    * `BasisId` should just be a "name" (a type, e.g. `struct DiagonalizedBasis`)
-    * There should be a generic vector space type -- `EuclideanSpace` (?)
-    * There should be a generic basis type -- `StandardBasis` (?) -- where the inner product is the identity
-- column/row/block extraction/addressing
-    * something like `a(i|c(2))`, where i is a `TypedIndex_t<Vector,'i'>` and c is an `Index_t<Vector>`
-    * will need to somehow distinguish the type of `i|c(2)` from something like `i|j`, because `a(i|c(2))` is an
-      expression template with a particular fixed index plugged in.
-- implement inner products and so forth using `Tensor_i`.
-  this regularizes the implementation and relates to metrics/inner products
-    * contractions will "request" the pairing, and if the type exists, the contraction works
-      this would allow more flexibility in contractions (e.g. contracting a vector space V with itself via an inner product).
-- isometric embedding for various types (e.g. `Tensor2Symmetric_t`, `Tensor2Antisymmetric_t`, so that SVD and other
-  stuff can be used on them meaningfully, as the SVD and so forth depends on the metric of the relevant space,
-  and the way `Tensor2Symmetric_t` is implemented does not use an isometric representation).
-  * the isometric embedding should be the square root of the inner product.
 
 ###future goals:
-- a rigorous test suite, using Lvd test code -- it can handle everything up through seg faults -- and negative compile
-  tests implemented at the build level, so that particular intentional compile errors can be verified to work.
-- standard in-line linear algebra notation
-    * for example, if A is a matrix and v is a vector, `A*v` should be equivalent to `A(i|j)*v(j)`, but obviously
-      without the need to use an indexed expression.
+- positive and negative compile tests
 - optimize evaluation algorithm (ordering operations to do the minimal amount of computation)
 - vectorizing as many operations as possible (in cooperation with loop-unrolling?)
 - template specializations for particular tensor contractions for speed (using mathematical special cases)
     * for example, an antisymmetric 3x3 2-tensor contracted with a 3-vector is just a cross product
     * a diagonal 2-tensor contracted with a vector is just component-wise scaling
-- in strongly typed vector template identifier types, require certain tags (e.g. static member constants)
-  in the template parameters -- vector space identifier, vector space basis, etc.
 - certain linear algebraic expressions simplify greatly when expressed in a particular basis,
   so having a formal mechanism to work with explicit bases may clarify and simplify some calculations
 
+
 ###random TODOs:
-- implement [anti]symmetric contiguous_index_to_rowcol_index as a lookup table for speed.
+- implement all (?) reindexing as a lookup table for speed.
 - allow use of same indices across different terms (distinguishing multiplication and addition)
 - see if it's possible to do strong range check guarantees for indices (`Index_t`) -- this would probably
   require a "for each" construct which would best be accomplished with lambda expressions
-- rename source files to use capitalized names (e.g. NaturalPairing.hpp) (?)
 - move "private" utility functions/metafunctions into the "Tenh::NonPublic" namespace so that they're not in the
   "Tenh" namespace, for at least a little bit of non-public interface hiding.
 - make a nonpublic directory and put all NonPublic code in there (and actually put appropriate stuff in NonPublic namespace)
 - make a wrapper for creating analogous `Eigen::Matrix` types which handles the retarded issue with
   `Eigen::Matrix<Scalar,N,1,RowMajor>` not working because it's a column vector (even though the memory would
   be layed out identically).
-- is it possible to specify the default value for Derived directly?
+- is it possible to specify the default value for Derived (in curiously recurring template pattern) directly?
 - decide on template metaprogramming naming convention.  something along the lines of
     * `Blah_t<...>` for types that actually implement stuff and have significant runtime code (is there
-      something better than _t ?)
+      something better than _t ?) 
     * `Blah_c<...>` for the conceptual layer
     * `Blah_i<...>` for the templatized interface layer (this is somewhere between _c and _i)
-    * `Blah_m<...>` for meta-programmingy things like type lists and related metafunctions
+    * `Blah_m<...>` for meta-programmingy things like type lists, related metafunctions, or are
+      "terminal" metaprogram types that aren't metafunctions (i.e. they are metaprogram values)
     * `Blah_f<...>` for meta-functions which "return" a type T or a value V
-- add `operator std::string ()` to `TypeStringOf_t` (?), so that `TypeStringOf_t<Foo>()` can be used
 - rename `List_t::body()` to `List_t::body_list()`, since the body list type is `BodyList`
 - maybe change array (and array-like) indexing schemes to use signed integers, where negative
-  values index from the end of the array.  this should probably not include vector/tensor indexing.
+  values index from the end of the array (although this would come at a runtime cost).  this
+  should probably not include vector/tensor indexing.
 - Add _ to the end of all template parameters
-- Tensor power of vector space, NOT SPACES.
-- make abbreviated `type_as_string` methods which make types easier to read
 - Make references to Parameter within template classes reference Parameter_ where possible.
 - The non-conceptual `IsBlah_f` metafunctions should really be called `InheritsBlah_f`, since these
   are overloaded to reflect the class inheritance structure.  This is to be contrasted with the
   conceptual layer, where `IsBlah_f<T>::V` is true if and only if T actually is exactly a Blah type.
+  Probably better yet, IsBlah_f should be named IsExactlyBlah_f, and IsBlah_f would mean "inherits".
 - make a bunch of the typedefs in `ImplementationOf_t` classes private, and decide which ones
   to offer publicly, or get rid of.
 - fix tensor products of diagonal 2-tensors on factors having non-equal dimension
+- do slice addressing by providing an "operator ()" for AbstractIndex_c, which returns some
+  distinct type that signifies a slice operation.  correspondingly, "operator |" which creates
+  abstract multi-indices will have to be extended to account for this. 
+- XXX_f types should have a private constructor to prevent actually instantiating them
+  (there are frequent programmer errors involving forgetting to "dereference" a metafunction
+  via ::T or ::V).
 
-###features necessary for version 0.5:
-- x euclidean embedding (using short-term zero-dimensional hack (?))
-- x eval (for 2-tensors)
-- x basis specification (e.g. in diagonalization/SVD, and the orthonormal matrix could/should be called "basis vectors")
-- provide a way to "name" the basis for diagonalization/SVD/etc
-- x stub-out: noalias (?) for situations like a(i) = a(i) + b(i), but also to avoid the runtime check of aliasing, so the human
-  can specify no-alias in a situation like a(i) = b(i) + c(i).
-- additional eigen interop:
-    * 2-tensor inverse            - done and tested
-    * LDLT and LDLT solve
-    * non-self-adjoint eigensolve
-    * LU
-
-###basis considerations for strongly typed vector edition:
-- several choices for bases on induced tensor products exist
-    * "normalized" where square roots of multiplicities occur in both vector space and dual
-      which is a "safe" compromise in the sense that it is uniform between vector space and dual
-      but has the lowest component-to-actual-memory-location correspondence
-    * "dual of induced basis", where the dual space incorporates the multiplicities
-      which has an intermediate level of component-to-actual-memory-location correspondence
-      but natural pairings never involve multiplicities
-    * "induced of dual basis", where the dual space doesn't incorporate multiplicities
-      which (probably) has the highest component-to-actual-memory-location correspondence
-      but natural pairings involve the multiplicities
-- the choice of basis will depend on the particular problem being addressed
-    * some problems are contraction heavy, in which case "dual of induced basis" could be a good choice
-    * some problems are split/bundle heavy, in which case the "induced of dual basis" could be a good choice
 
 ###implemented features/items:
 - x operator overloads for expression templates
@@ -151,8 +101,10 @@
 - x diagonal 2-tensor products of based vector spaces
 - x "mapped" tensors/vectors (using preallocated memory) and "immutable" tensors/vectors (using static
     component-generating functions).
+- x "basic mode", allowing standard linear algebra notation, for easier adoption by non-experts
+- x choice of bases for tensors-with-symmetry rendering significant type-system simplification
+    and computational speedups.
 
----------------------------
 
 ###different multi-indexing schemes
 - "split"                 : if t is `Tensor2<Tensor2Sym<V>,Tensor2Sym<V> >`, then `t(P,Q).split(P,i,j),split(Q,k,l)`
@@ -164,14 +116,6 @@
                             recursive and relatively easy.  "breaking tensor type boxes apart recursively"
 - "barred multi-index"    : `s(i|j|k|l|m|T)`
 
-###handling more general symmetries
-- each "linear" symmetry is an inclusion of a linear subspace into a more general type
-- any type hierarchy can be encoded this way -- e.g. including Tensor2Simple into Tensor2
-- "split" would be used to "use" the inclusions, going to more general types.
-  a split is a more specific type of linear inclusion, where each component of the split corresponds
-  to exactly one component of the space that is split.
-- "bundle" would be used to "reassert" the symmetries, if you know that the expression has that symmetry.
-  would this work for simple tensors?  there would be a nontrivial calculation to assign to a simple tensor.
 
 ###Notes for conceptual layer and refactor
 - In order to incorporate the order-of-operations and diagonal 2-tensor contraction optimizations,
@@ -283,11 +227,11 @@
 - do more assembler code inspection for each of the compilers we use (GCC, Clang, MSVC) to
   make sure that it's generating code that's as efficient as we expect it to be (this is
   really important).  record some analysis of each, noting the compiler versions for each
-- refactoring the unit tests to account for the strongly-typed refactor in general
+- x refactoring the unit tests to account for the strongly-typed refactor in general
 - writing unit tests for the new code (general symmetric and antisymmetric N-tensors)
-- Gabe's "Linear Operator" ("Hom"?) paradigm -- to do non-indexed-expression vector/matrix
-  math like Eigen does (so this library could be used by "laymen" without using abstract
-  index notation)
+- x Gabe's "Linear Operator" ("Hom"?) paradigm -- to do non-indexed-expression vector/matrix
+    math like Eigen does (so this library could be used by "laymen" without using abstract
+    index notation)
 - regularize/clean up the template code naming scheme (suffixes _t, _c, _f, _m, _i, etc)
 - generating documentation (Doxygen comments for the code, Doxygen-generated high-level
   documentation, and LaTeX writeups of the abstract math), and probably most critically,
