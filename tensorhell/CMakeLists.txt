@@ -93,7 +93,8 @@ set(conceptual_prototype_SRCS
     conceptual_prototype_08.cpp
     conceptual_prototype_09.cpp
     conceptual_prototype_10.cpp
-    conceptual_prototype_11.cpp)
+    conceptual_prototype_11.cpp
+    conceptual_prototype_12.cpp)
 add_executable(conceptual_prototype ${conceptual_prototype_SRCS})
 
 # test-framework-using tests

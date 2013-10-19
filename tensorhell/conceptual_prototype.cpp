@@ -50,5 +50,7 @@ int main (int, char **)
     test_polynomial_multiplication();
     test_tuple_initialization();
 
+    test_induced_inner_product();
+
     return 0;
 }
