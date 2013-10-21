@@ -28,6 +28,8 @@ template <typename IndexTypeList>
 struct SummedIndexTypeList_t
 {
     typedef typename ElementsHavingMultiplicity_t<IndexTypeList,2>::T T;
+private:
+    SummedIndexTypeList_t();
 };
 
 // for this to work correctly on DimIndex_t types, the dimensions must be correct (i.e. the
@@ -36,6 +38,8 @@ template <typename IndexTypeList>
 struct FreeIndexTypeList_t
 {
     typedef typename ElementsHavingMultiplicity_t<IndexTypeList,1>::T T;
+private:
+    FreeIndexTypeList_t();
 };
 
 template <typename FreeIndexTypeList>
@@ -55,18 +59,24 @@ struct IndexIsFree_t
         typedef typename T::BodyTypeList::HeadType Index;
         static bool const V = Contains_f<FreeIndexTypeList,Index>::V;
     };
+private:
+    IndexIsFree_t();
 };
 
 template <typename Unzipped>
 struct FreeFactorTypeListHelper_t
 {
     typedef typename Unzipped::HeadType T;
+private:
+    FreeFactorTypeListHelper_t();
 };
 
 template <>
 struct FreeFactorTypeListHelper_t<EmptyTypeList>
 {
     typedef EmptyTypeList T;
+private:
+    FreeFactorTypeListHelper_t();
 };
 
 // for this to work correctly on DimIndex_t types, the dimensions must be correct (i.e. the
@@ -80,6 +90,7 @@ private:
     typedef typename ElementsOfTypeListSatisfyingPredicate_t<FactorAndIndexPairTypeList,IndexIsFree_t<FreeIndexTypeList> >::T FreeFactorAndIndexPairTypeList;
     typedef typename Unzip_t<FreeFactorAndIndexPairTypeList>::T Unzipped;
     enum { STATIC_ASSERT_IN_ENUM((Unzipped::LENGTH == 0 || Unzipped::LENGTH == 2), LENGTH_MUST_BE_EXACTLY_0_OR_2) };
+    FreeFactorTypeList_t();
 public:
     // each pair in FreeFactorAndIndexPairTypeList is a (factor, index) TypeList_t
     typedef typename FreeFactorTypeListHelper_t<Unzipped>::T T;
@@ -88,11 +99,14 @@ public:
 template <typename AbstractIndexTypeList, typename SummedAbstractIndexTypeList, typename AbstractIndex>
 struct SummedAbstractIndexPairElementIndices_t
 {
+private:
     enum
     {
         STATIC_ASSERT_IN_ENUM(IsAbstractIndex_f<AbstractIndex>::V, MUST_BE_ABSTRACT_INDEX),
         STATIC_ASSERT_IN_ENUM((Occurrence_t<AbstractIndexTypeList,AbstractIndex>::COUNT == 2), MUST_OCCUR_EXACTLY_TWICE)
     };
+    SummedAbstractIndexPairElementIndices_t();
+public:
     static Uint32 const FIRST = IndexOfFirstOccurrence_f<AbstractIndexTypeList,AbstractIndex>::V;
     static Uint32 const FIRST_MATCHING_IN_REST = IndexOfFirstOccurrence_f<typename TrailingTypeList_f<AbstractIndexTypeList,FIRST+1>::T,AbstractIndex>::V;
     static Uint32 const SECOND = FIRST + 1 + FIRST_MATCHING_IN_REST;
@@ -101,7 +115,10 @@ struct SummedAbstractIndexPairElementIndices_t
 template <typename FirstFactor, typename SecondFactor>
 struct AssertThatSummationIsNaturalPairing_t
 {
+private:
     enum { STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<FirstFactor,typename DualOf_f<SecondFactor>::T>::V), SUMMATION_MUST_BE_NATURAL_PAIRING) };
+    AssertThatSummationIsNaturalPairing_t();
+public:
     static bool const V = true;
 };
 
@@ -111,17 +128,20 @@ struct FactorsOfSummation_t
     typedef SummedAbstractIndexPairElementIndices_t<AbstractIndexTypeList,SummedAbstractIndexTypeList,AbstractIndex> Pair;
     typedef typename Element_f<FactorTypeList,Pair::FIRST>::T FirstFactor;
     typedef typename Element_f<FactorTypeList,Pair::SECOND>::T SecondFactor;
+private:
     enum
     {
         STATIC_ASSERT_IN_ENUM((FactorTypeList::LENGTH == AbstractIndexTypeList::LENGTH), MUST_HAVE_EQUAL_LENGTHS),
         STATIC_ASSERT_IN_ENUM__UNIQUE(HasBasedVectorSpaceStructure_f<FirstFactor>::V, MUST_BE_BASED_VECTOR_SPACE, FIRSTFACTOR),
         STATIC_ASSERT_IN_ENUM__UNIQUE(HasBasedVectorSpaceStructure_f<SecondFactor>::V, MUST_BE_BASED_VECTOR_SPACE, SECONDFACTOR)
     };
+    FactorsOfSummation_t();
 };
 
 template <typename FactorTypeList, typename AbstractIndexTypeList, typename SummedAbstractIndexTypeList>
 struct AssertThatAllSummationsAreNaturalPairings_t
 {
+private:
     typedef FactorsOfSummation_t<FactorTypeList,
                                  AbstractIndexTypeList,
                                  SummedAbstractIndexTypeList,
@@ -131,6 +151,8 @@ struct AssertThatAllSummationsAreNaturalPairings_t
     typedef AssertThatAllSummationsAreNaturalPairings_t<FactorTypeList,
                                                         AbstractIndexTypeList,
                                                         typename SummedAbstractIndexTypeList::BodyTypeList> A2;
+    AssertThatAllSummationsAreNaturalPairings_t();
+public:
     static bool const V = A1::V && A2::V;
 };
 
@@ -138,6 +160,8 @@ template <typename FactorTypeList, typename AbstractIndexTypeList>
 struct AssertThatAllSummationsAreNaturalPairings_t<FactorTypeList,AbstractIndexTypeList,EmptyTypeList>
 {
     static bool const V = true; // so this can be used in STATIC_ASSERT_IN_ENUM
+private:
+    AssertThatAllSummationsAreNaturalPairings_t();
 };
 
 // this is designed to handle trace-type expression templates, such as u(i,i) or v(i,j,i)
@@ -149,13 +173,13 @@ struct UnarySummation_t
 private:
     typedef typename AbstractIndicesOfDimIndexTypeList_t<TensorDimIndexTypeList>::T AbstractIndexTypeList;
     typedef typename AbstractIndicesOfDimIndexTypeList_t<SummedDimIndexTypeList>::T SummedAbstractIndexTypeList;
-public:
     enum
     {
         STATIC_ASSERT_IN_ENUM((AssertThatAllSummationsAreNaturalPairings_t<typename Tensor::FactorTypeList,
                                                                            AbstractIndexTypeList,
                                                                            SummedAbstractIndexTypeList>::V), ALL_SUMMATIONS_MUST_BE_NATURAL_PAIRINGS)
     };
+public:
 
     typedef typename Tensor::Scalar Scalar;
     typedef typename FreeIndexTypeList_t<TensorDimIndexTypeList>::T FreeDimIndexTypeList;
@@ -210,7 +234,6 @@ private:
                                                 typename RightOperand::FreeDimIndexTypeList>::T DimIndexTypeList;
     typedef typename AbstractIndicesOfDimIndexTypeList_t<DimIndexTypeList>::T AbstractIndexTypeList;
     typedef typename AbstractIndicesOfDimIndexTypeList_t<SummedDimIndexTypeList>::T SummedAbstractIndexTypeList;
-public:
     enum
     {
         STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<LeftOperand>::V, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
@@ -221,7 +244,7 @@ public:
                                                                            AbstractIndexTypeList,
                                                                            SummedAbstractIndexTypeList>::V), ALL_SUMMATIONS_MUST_BE_NATURAL_PAIRINGS)
     };
-
+public:
     typedef typename LeftOperand::Scalar Scalar;
     typedef MultiIndex_t<FreeDimIndexTypeList> MultiIndex;
 
@@ -256,6 +279,7 @@ public:
 template <typename LeftOperand, typename RightOperand, typename FreeDimIndexTypeList>
 struct BinarySummation_t<LeftOperand,RightOperand,FreeDimIndexTypeList,EmptyTypeList>
 {
+private:
     enum
     {
         STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<LeftOperand>::V, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
@@ -264,6 +288,7 @@ struct BinarySummation_t<LeftOperand,RightOperand,FreeDimIndexTypeList,EmptyType
         STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<FreeDimIndexTypeList,IsDimIndex_p>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES)
         // no summation, so no need to check naturality of pairings
     };
+public:
 
     typedef typename LeftOperand::Scalar Scalar;
     typedef MultiIndex_t<FreeDimIndexTypeList> MultiIndex;
@@ -288,6 +313,7 @@ private:
     // list of free indices from the left and right operands
     typedef typename ConcatenationOfTypeLists_t<typename LeftOperand::FreeDimIndexTypeList,
                                                 typename RightOperand::FreeDimIndexTypeList>::T CombinedFreeDimIndexTypeList;
+    FreeDimIndexTypeListOfMultiplication_t();
 public:
     typedef typename ElementsHavingMultiplicity_t<CombinedFreeDimIndexTypeList,1>::T T;
 };
@@ -300,6 +326,7 @@ private:
     // list of free indices from the left and right operands
     typedef typename ConcatenationOfTypeLists_t<typename LeftOperand::FreeDimIndexTypeList,
                                                 typename RightOperand::FreeDimIndexTypeList>::T CombinedFreeDimIndexTypeList;
+    SummedDimIndexTypeListOfMultiplication_t();
 public:
     // the summed indices (at this level) are the double-occurrences indices
     // of the concatenated list of free indices from the left and right operands
@@ -311,6 +338,7 @@ struct UsedDimIndexTypeListOfMultiplication_t
 {
 private:
     typedef typename SummedDimIndexTypeListOfMultiplication_t<LeftOperand,RightOperand>::T SummedDimIndexTypeList;
+    UsedDimIndexTypeListOfMultiplication_t();
 public:
     // typelist of used indices which are prohibited from using higher up in the AST
     typedef typename UniqueTypesIn_t<
@@ -328,6 +356,7 @@ private:
                                                 typename RightOperand::FreeFactorTypeList>::T CombinedFactorTypeList;
     typedef typename ConcatenationOfTypeLists_t<typename LeftOperand::FreeDimIndexTypeList,
                                                 typename RightOperand::FreeDimIndexTypeList>::T CombinedDimIndexTypeList;
+    FreeFactorTypeListOfMultiplication_t();
 public:
     typedef typename FreeFactorTypeList_t<CombinedFactorTypeList,CombinedDimIndexTypeList>::T T;
 };
@@ -344,6 +373,7 @@ private:
         STATIC_ASSERT_IN_ENUM((IsASubsetOf_t<ExtractionAbstractIndexTypeList,AbstractIndexTypeList>::V), MUST_BE_SUBSET_OF)
     };
     static Uint32 const INDEX = IndexOfFirstOccurrence_f<AbstractIndexTypeList,typename ExtractionAbstractIndexTypeList::HeadType>::V;
+    ExtractFactorsForAbstractIndices_t();
 public:
     typedef TypeList_t<typename Element_f<FactorTypeList,INDEX>::T,
                        typename ExtractFactorsForAbstractIndices_t<AbstractIndexTypeList,
@@ -355,6 +385,8 @@ template <typename AbstractIndexTypeList, typename FactorTypeList>
 struct ExtractFactorsForAbstractIndices_t<AbstractIndexTypeList,FactorTypeList,EmptyTypeList>
 {
     typedef EmptyTypeList T;
+private:
+    ExtractFactorsForAbstractIndices_t();
 };
 
 // TODO: Scalar will go away once the bundle map is moved into the conceptual layer.
@@ -363,6 +395,8 @@ struct BundleIndexMap_t
 {
     typedef MultiIndex_t<BundleDimIndexTypeList> (*T) (ResultingDimIndexType const &);
     static T const V;
+private:
+    BundleIndexMap_t();
 };
 
 // TODO: the use of UseMemberArray is somewhat arbitrary -- should this be addressed somehow?

@@ -234,10 +234,12 @@ public:
 template <typename HeadIndexType_>
 struct MultiIndex_t<TypeList_t<HeadIndexType_> > : public List_t<TypeList_t<HeadIndexType_> >
 {
+private:
     enum
     {
         STATIC_ASSERT_IN_ENUM(IsComponentIndex_f<HeadIndexType_>::V, MUST_BE_INDEX)
     };
+public:
 
     typedef List_t<TypeList_t<HeadIndexType_> > Parent;
     typedef HeadIndexType_ HeadIndexType;
@@ -429,8 +431,18 @@ struct MultiIndex_t<EmptyTypeList> : public List_t<EmptyTypeList>
 
 
 
-template <typename T> struct IsAMultiIndex_t { static bool const V = false; };
-template <typename IndexTypeList> struct IsAMultiIndex_t<MultiIndex_t<IndexTypeList> > { static bool const V = true; };
+template <typename T> struct IsAMultiIndex_t
+{
+    static bool const V = false;
+private:
+    IsAMultiIndex_t();
+};
+template <typename IndexTypeList> struct IsAMultiIndex_t<MultiIndex_t<IndexTypeList> >
+{
+    static bool const V = true;
+private:
+    IsAMultiIndex_t();
+};
 
 
 
@@ -517,8 +529,11 @@ MultiIndex_t<IndexTypeList> sorted (MultiIndex_t<IndexTypeList> const &m)
 template <typename DomainIndexTypeList, typename CodomainIndexTypeList>
 struct MultiIndexMap_t
 {
+private:
     enum { STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_t<DomainIndexTypeList>::V), DOMAIN_INDICES_MUST_NOT_CONTAIN_DUPLICATES) };
+    MultiIndexMap_t();
 
+public:
     typedef MultiIndex_t<DomainIndexTypeList> DomainIndex;
     typedef MultiIndex_t<CodomainIndexTypeList> CodomainIndex;
     typedef CodomainIndex (*EvalMapType) (DomainIndex const &);
@@ -532,8 +547,11 @@ struct MultiIndexMap_t
 template <typename DomainIndexTypeList, typename CodomainIndexType>
 struct MultiIndexMap_t<DomainIndexTypeList,TypeList_t<CodomainIndexType> >
 {
+private:
     enum { STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_t<DomainIndexTypeList>::V), DOMAIN_INDICES_MUST_NOT_CONTAIN_DUPLICATES) };
+    MultiIndexMap_t();
 
+public:
     typedef TypeList_t<CodomainIndexType> CodomainIndexTypeList;
     typedef MultiIndex_t<DomainIndexTypeList> DomainIndex;
     typedef MultiIndex_t<CodomainIndexTypeList> CodomainIndex;
@@ -553,6 +571,8 @@ struct MultiIndexMultiplicity_t
 
         return count * ((m.head() == m.body().head()) ? MultiIndexMultiplicity_t<typename MultiIndex::BodyMultiIndex>::eval(m.body(),count + 1) : MultiIndexMultiplicity_t<typename MultiIndex::BodyMultiIndex>::eval(m.body(),1));
     }
+private:
+    MultiIndexMultiplicity_t();
 };
 
 template<typename IndexType>
@@ -562,6 +582,8 @@ struct MultiIndexMultiplicity_t<MultiIndex_t<TypeList_t<IndexType, EmptyTypeList
     {
         return count;
     }
+private:
+    MultiIndexMultiplicity_t();
 };
 
 

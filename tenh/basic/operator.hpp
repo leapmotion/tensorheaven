@@ -128,6 +128,8 @@ struct DualOf_f<Operator<Domain_,Codomain_,Scalar_,UseArrayType_> >
     // the "dual" of a linear operator is its natural adjoint; if
     // A : V --> W, then A* : W* --> V*, where * denotes the dual functor.
     typedef Operator<typename DualOf_f<Codomain_>::T,typename DualOf_f<Domain_>::T,Scalar_,typename DualOf_f<UseArrayType_>::T> T;
+private:
+    DualOf_f();
 };
 
 // template specialization for how to uniformly index an Operator (e.g. for addition/subtraction/etc)
@@ -137,6 +139,7 @@ struct UniformlyIndexedExpressionTemplate_f<Operator<Domain_,Codomain_,Scalar_,U
 private:
     typedef Operator<Domain_,Codomain_,Scalar_,UseArrayType_> Op;
     typedef typename UniformAbstractIndexTypeList_f<2>::T AbstractIndexTypeList;
+    UniformlyIndexedExpressionTemplate_f();
 public:
     typedef typename Op::template IndexedExpressionConstType_f<AbstractIndexTypeList>::T T;
 };
@@ -148,6 +151,7 @@ struct LhsIndexedContractionExpressionTemplate_f<Operator<Domain_,Codomain_,Scal
 private:
     typedef Operator<Domain_,Codomain_,Scalar_,UseArrayType_> Op;
     typedef typename LhsOfContractionAbstractIndexTypeList_f<2>::T AbstractIndexTypeList;
+    LhsIndexedContractionExpressionTemplate_f();
 public:
     typedef typename Op::template IndexedExpressionConstType_f<AbstractIndexTypeList>::T T;
 };
@@ -159,6 +163,7 @@ struct RhsIndexedContractionExpressionTemplate_f<Operator<Domain_,Codomain_,Scal
 private:
     typedef Operator<Domain_,Codomain_,Scalar_,UseArrayType_> Op;
     typedef typename RhsOfContractionAbstractIndexTypeList_f<2>::T AbstractIndexTypeList;
+    RhsIndexedContractionExpressionTemplate_f();
 public:
     typedef typename Op::template IndexedExpressionConstType_f<AbstractIndexTypeList>::T T;
 };

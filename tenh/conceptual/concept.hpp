@@ -48,7 +48,12 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(ConceptExample);
 namespace Tenh {
 
 // a Concept is a struct that has a ParentTypeList (which is a TypeList_t)
-template <typename T> struct IsConcept_f { static bool const V = false; };
+template <typename T> struct IsConcept_f
+{
+    static bool const V = false;
+private:
+    IsConcept_f();
+};
 
 // parent-traversing metafunctions
 
@@ -59,7 +64,10 @@ struct AncestorsOf_Recursive_f;
 template <typename Concept>
 struct AncestorsOf_f
 {
+private:
     enum { STATIC_ASSERT_IN_ENUM(IsConcept_f<Concept>::V, MUST_BE_CONCEPT) };
+    AncestorsOf_f();
+public:
     typedef TypeList_t<Concept,typename AncestorsOf_Recursive_f<typename Concept::ParentTypeList>::T> T;
 };
 
@@ -69,6 +77,8 @@ struct AncestorsOf_Recursive_f
     // depth-first traversal of the ancestor tree
     typedef typename ConcatenationOfTypeLists_t<typename AncestorsOf_f<typename ParentTypeList::HeadType>::T,
                                                 typename AncestorsOf_Recursive_f<typename ParentTypeList::BodyTypeList>::T>::T T;
+private:
+    AncestorsOf_Recursive_f();
 };
 
 template <typename HeadType>
@@ -76,6 +86,8 @@ struct AncestorsOf_Recursive_f<TypeList_t<HeadType> >
 {
     // depth-first traversal of the ancestor tree
     typedef typename AncestorsOf_f<HeadType>::T T;
+private:
+    AncestorsOf_Recursive_f();
 };
 
 template <>
@@ -83,12 +95,16 @@ struct AncestorsOf_Recursive_f<EmptyTypeList>
 {
     // depth-first traversal of the ancestor tree
     typedef EmptyTypeList T;
+private:
+    AncestorsOf_Recursive_f();
 };
 
 template <typename Concept, typename Predicate>
 struct AncestorsSatisfyingPredicate_f
 {
     typedef typename ElementsOfTypeListSatisfyingPredicate_t<typename AncestorsOf_f<Concept>::T,Predicate>::T T;
+private:
+    AncestorsSatisfyingPredicate_f();
 };
 
 // for recursively retrieving various conceptual structures
@@ -96,7 +112,10 @@ struct AncestorsSatisfyingPredicate_f
 template <typename Concept, typename ConceptualStructurePredicate>
 struct ConceptualStructuresOf_f
 {
+private:
     enum { STATIC_ASSERT_IN_ENUM(IsConcept_f<Concept>::V, MUST_BE_CONCEPT) }; // TODO: check that ConceptualStructurePredicate actually is one
+    ConceptualStructuresOf_f();
+public:
     typedef typename UniqueTypesIn_t<typename AncestorsSatisfyingPredicate_f<Concept,ConceptualStructurePredicate>::T>::T T;
 };
 
@@ -104,18 +123,25 @@ template <typename Concept, typename ConceptualStructurePredicate>
 struct HasConceptualStructure_f
 {
     static bool const V = ConceptualStructuresOf_f<Concept,ConceptualStructurePredicate>::T::LENGTH > 0;
+private:
+    HasConceptualStructure_f();
 };
 
 template <typename Concept, typename ConceptualStructurePredicate>
 struct HasUniqueConceptualStructure_f
 {
     static bool const V = ConceptualStructuresOf_f<Concept,ConceptualStructurePredicate>::T::LENGTH == 1;
+private:
+    HasUniqueConceptualStructure_f();
 };
 
 template <typename Concept, typename ConceptualStructurePredicate>
 struct UniqueConceptualStructureOf_f
 {
+private:
     enum { STATIC_ASSERT_IN_ENUM((HasUniqueConceptualStructure_f<Concept,ConceptualStructurePredicate>::V), MUST_HAVE_UNIQUE_CONCEPTUAL_STRUCTURE) };
+    UniqueConceptualStructureOf_f();
+public:
     typedef typename ConceptualStructuresOf_f<Concept,ConceptualStructurePredicate>::T::HeadType T;
 };
 
@@ -127,15 +153,37 @@ struct Is##ConceptName##_p \
     struct Eval_t \
     { \
         static bool const V = Is##ConceptName##_f<T>::V; \
+    private: \
+        Eval_t(); \
     }; \
+private: \
+    Is##ConceptName##_p(); \
 }; \
 \
-template <typename Concept> struct ConceptName##StructuresOf_f { typedef typename ConceptualStructuresOf_f<Concept,Is##ConceptName##_p>::T T; }; \
-template <typename Concept> struct Has##ConceptName##Structure_f { static bool const V = HasConceptualStructure_f<Concept,Is##ConceptName##_p>::V; }; \
-template <typename Concept> struct HasUnique##ConceptName##Structure_f { static bool const V = HasUniqueConceptualStructure_f<Concept,Is##ConceptName##_p>::V; }; \
+template <typename Concept> struct ConceptName##StructuresOf_f \
+{ \
+    typedef typename ConceptualStructuresOf_f<Concept,Is##ConceptName##_p>::T T; \
+private: \
+    ConceptName##StructuresOf_f(); \
+}; \
+template <typename Concept> struct Has##ConceptName##Structure_f \
+{ \
+    static bool const V = HasConceptualStructure_f<Concept,Is##ConceptName##_p>::V; \
+private: \
+    Has##ConceptName##Structure_f(); \
+}; \
+template <typename Concept> struct HasUnique##ConceptName##Structure_f \
+{ \
+    static bool const V = HasUniqueConceptualStructure_f<Concept,Is##ConceptName##_p>::V; \
+private: \
+    HasUnique##ConceptName##Structure_f(); \
+}; \
 template <typename Concept> struct Unique##ConceptName##StructureOf_f \
 { \
+private: \
     enum { STATIC_ASSERT_IN_ENUM(HasUnique##ConceptName##Structure_f<Concept>::V, MUST_HAVE_UNIQUE_CONCEPTUAL_STRUCTURE) }; \
+    Unique##ConceptName##StructureOf_f(); \
+public: \
     typedef typename UniqueConceptualStructureOf_f<Concept,Is##ConceptName##_p>::T T; \
 }
 
@@ -151,6 +199,8 @@ template <typename Concept_, typename PropertyId_>
 struct BaseProperty_f
 {
     typedef NullValue T;
+private:
+    BaseProperty_f();
 };
 
 template <typename TypeList_, typename PropertyId_>
@@ -158,12 +208,16 @@ struct BasePropertyOfEachInTypeList_f
 {
     typedef TypeList_t<typename BaseProperty_f<typename TypeList_::HeadType,PropertyId_>::T,
                        typename BasePropertyOfEachInTypeList_f<typename TypeList_::BodyTypeList,PropertyId_>::T> T;
+private:
+    BasePropertyOfEachInTypeList_f();
 };
 
 template <typename PropertyId_>
 struct BasePropertyOfEachInTypeList_f<EmptyTypeList,PropertyId_>
 {
     typedef EmptyTypeList T;
+private:
+    BasePropertyOfEachInTypeList_f();
 };
 
 // gives a list of the unique values of the given property, taken from all ancestors.
@@ -173,6 +227,7 @@ struct MultiProperty_f
 private:
     typedef typename BasePropertyOfEachInTypeList_f<typename AncestorsOf_f<Concept_>::T,PropertyId_>::T PropertyOfEach;
     typedef typename UniqueTypesIn_t<PropertyOfEach>::T UniquePropertyTypeList;
+    MultiProperty_f();
 public:
     typedef typename SetSubtraction_t<UniquePropertyTypeList,TypeList_t<NullValue> >::T T;
 };
@@ -184,6 +239,7 @@ struct Property_f
 private:
     typedef typename MultiProperty_f<Concept_,PropertyId_>::T MultiProperty;
     enum { STATIC_ASSERT_IN_ENUM(MultiProperty::LENGTH == 1, PROPERTY_IS_NOT_WELL_DEFINED) };
+    Property_f();
 public:
     typedef typename MultiProperty::HeadType T;
 };
@@ -194,6 +250,7 @@ struct PropertyValue_f
 {
 private:
     typedef typename Property_f<Concept_,PropertyId_>::T ValueType;
+    PropertyValue_f();
 public:
     static typename ValueType::T const V = ValueType::V;
 };
@@ -204,6 +261,8 @@ struct PropertyOfEachInTypeList_f
 {
     typedef TypeList_t<typename Property_f<typename TypeList_::HeadType,PropertyId_>::T,
                        typename PropertyOfEachInTypeList_f<typename TypeList_::BodyTypeList,PropertyId_>::T> T;
+private:
+    PropertyOfEachInTypeList_f();
 };
 
 // base case
@@ -211,6 +270,8 @@ template <typename PropertyId_>
 struct PropertyOfEachInTypeList_f<EmptyTypeList,PropertyId_>
 {
     typedef EmptyTypeList T;
+private:
+    PropertyOfEachInTypeList_f();
 };
 
 } // end of namespace Tenh

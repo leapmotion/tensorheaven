@@ -51,12 +51,32 @@ struct DimIndex_t
 /// @brief Test to see if a type is a DimIndex_t.
 /// @tparam T the type to test.
 /// @headerfile dimindex.hpp "tenh/dimindex.hpp"
-template <typename T> struct IsDimIndex_f { static bool const V = false; };
+template <typename T> struct IsDimIndex_f
+{
+    static bool const V = false;
+private:
+    IsDimIndex_f();
+};
 /// @cond false
-template <AbstractIndexSymbol SYMBOL, Uint32 DIM> struct IsDimIndex_f<DimIndex_t<SYMBOL,DIM> > { static bool const V = true; };
+template <AbstractIndexSymbol SYMBOL, Uint32 DIM> struct IsDimIndex_f<DimIndex_t<SYMBOL,DIM> >
+{
+    static bool const V = true;
+private:
+    IsDimIndex_f();
+};
 
-template <AbstractIndexSymbol SYMBOL, Uint32 DIM> struct IsComponentIndex_f<DimIndex_t<SYMBOL,DIM> > { static bool const V = true; };
-template <AbstractIndexSymbol SYMBOL, Uint32 DIM> struct IsAbstractIndex_f<DimIndex_t<SYMBOL,DIM> > { static bool const V = true; };
+template <AbstractIndexSymbol SYMBOL, Uint32 DIM> struct IsComponentIndex_f<DimIndex_t<SYMBOL,DIM> >
+{
+    static bool const V = true;
+private:
+    IsComponentIndex_f();
+};
+template <AbstractIndexSymbol SYMBOL, Uint32 DIM> struct IsAbstractIndex_f<DimIndex_t<SYMBOL,DIM> >
+{
+    static bool const V = true;
+private:
+    IsAbstractIndex_f();
+};
 /// @endcond
 
 /// @brief Predicate version of IsDimIndex_f.
@@ -68,6 +88,8 @@ struct IsDimIndex_p
     {
         static bool const V = IsDimIndex_f<T>::V;
     };
+private:
+    IsDimIndex_p();
 };
 
 /// @brief Takes a TypeList_t of DimIndex_t and returns a TypeList_t of the associated parent ComponentIndex_t.
@@ -78,6 +100,8 @@ struct Parent_ComponentIndex_TypeListOf_t
     enum { STATIC_ASSERT_IN_ENUM(IsDimIndex_f<typename DimIndexTypeList::HeadType>::V, MUST_BE_DIM_INDEX) };
     typedef TypeList_t<typename DimIndexTypeList::HeadType::Parent_Index,
                        typename Parent_ComponentIndex_TypeListOf_t<typename DimIndexTypeList::BodyTypeList>::T> T;
+private:
+    Parent_ComponentIndex_TypeListOf_t();
 };
 
 /// @cond false
@@ -85,6 +109,8 @@ template <>
 struct Parent_ComponentIndex_TypeListOf_t<EmptyTypeList>
 {
     typedef EmptyTypeList T;
+private:
+    Parent_ComponentIndex_TypeListOf_t();
 };
 /// @endcond
 
@@ -102,6 +128,8 @@ struct DimIndexTypeListOf_t
     typedef TypeList_t<DimIndex_t<AbstractIndexTypeList::HeadType::SYMBOL,DimensionOf_f<typename FactorTypeList::HeadType >::V>,
                        typename DimIndexTypeListOf_t<typename FactorTypeList::BodyTypeList,
                                                      typename AbstractIndexTypeList::BodyTypeList>::T> T;
+private:
+    DimIndexTypeListOf_t();
 };
 
 /// @cond false
@@ -109,6 +137,8 @@ template <>
 struct DimIndexTypeListOf_t<EmptyTypeList,EmptyTypeList>
 {
     typedef EmptyTypeList T;
+private:
+    DimIndexTypeListOf_t();
 };
 /// @endcond
 
@@ -121,6 +151,8 @@ struct AbstractIndicesOfDimIndexTypeList_t
     enum { STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<DimIndexTypeList,IsDimIndex_p>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES) };
     typedef TypeList_t<AbstractIndex_c<DimIndexTypeList::HeadType::SYMBOL>,
                        typename AbstractIndicesOfDimIndexTypeList_t<typename DimIndexTypeList::BodyTypeList>::T> T;
+private:
+    AbstractIndicesOfDimIndexTypeList_t();
 };
 
 /// @cond false
@@ -128,6 +160,8 @@ template <>
 struct AbstractIndicesOfDimIndexTypeList_t<EmptyTypeList>
 {
     typedef EmptyTypeList T;
+private:
+    AbstractIndicesOfDimIndexTypeList_t();
 };
 /// @endcond
 

@@ -17,14 +17,18 @@ namespace Tenh {
 template <Uint32 SIZE_>
 struct ArraySize_f
 {
-	static const Uint32 V = SIZE_;
+    static const Uint32 V = SIZE_;
+private:
+    ArraySize_f();
 };
 
 #if _WIN32
 template<>
 struct ArraySize_f<0>
 {
-	static const Uint32 V = 1;
+    static const Uint32 V = 1;
+private:
+    ArraySize_f();
 };
 #endif
 
@@ -99,11 +103,31 @@ private:
     MemberArray_t ();
 };
 
-template <typename T> struct IsMemberArray_t { static bool const V = false; };
-template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_> struct IsMemberArray_t<MemberArray_t<Component_,COMPONENT_COUNT_,Derived_> > { static bool const V = true; };
+template <typename T> struct IsMemberArray_t
+{
+    static bool const V = false;
+private:
+    IsMemberArray_t();
+};
+template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_> struct IsMemberArray_t<MemberArray_t<Component_,COMPONENT_COUNT_,Derived_> >
+{
+    static bool const V = true;
+private:
+    IsMemberArray_t();
+};
 
-template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_> struct IsArray_i<MemberArray_t<Component_,COMPONENT_COUNT_,Derived_> > { static bool const V = true; };
-template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_> struct IsMemoryArray_i<MemberArray_t<Component_,COMPONENT_COUNT_,Derived_> > { static bool const V = true; };
+template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_> struct IsArray_i<MemberArray_t<Component_,COMPONENT_COUNT_,Derived_> >
+{
+    static bool const V = true;
+private:
+    IsArray_i();
+};
+template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_> struct IsMemoryArray_i<MemberArray_t<Component_,COMPONENT_COUNT_,Derived_> >
+{
+    static bool const V = true;
+private:
+    IsMemoryArray_i();
+};
 
 } // end of namespace Tenh
 

@@ -181,6 +181,7 @@ struct Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
 {
 private:
     typedef Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> Reindex;
+    Eval_f();
 public:
     typedef ExpressionTemplate_IndexedObject_t<typename Reindex::template Eval_f<Object>::T,
                                                typename Reindex::template Eval_f<FactorTypeList>::T, // will just be FactorTypeList, since it has no indices
@@ -276,6 +277,7 @@ struct Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
 {
 private:
     typedef Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> Reindex;
+    Eval_f();
 public:
     typedef ExpressionTemplate_Addition_t<typename Reindex::template Eval_f<LeftOperand>::T,
                                           typename Reindex::template Eval_f<RightOperand>::T,
@@ -319,6 +321,7 @@ struct Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
 {
 private:
     typedef Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> Reindex;
+    Eval_f();
 public:
     typedef ExpressionTemplate_ScalarMultiplication_t<typename Reindex::template Eval_f<Operand>::T,Scalar_,OPERATOR> T;
 };
@@ -360,6 +363,7 @@ struct Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
 {
 private:
     typedef Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> Reindex;
+    Eval_f();
 public:
     typedef ExpressionTemplate_Multiplication_t<typename Reindex::template Eval_f<LeftOperand>::T,
                                                 typename Reindex::template Eval_f<RightOperand>::T> T;
@@ -402,6 +406,7 @@ struct Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
 {
 private:
     typedef Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> Reindex;
+    Eval_f();
 public:
     typedef ExpressionTemplate_IndexBundle_t<typename Reindex::template Eval_f<Operand>::T,
                                              typename Reindex::template Eval_f<BundleAbstractIndexTypeList>::T,
@@ -444,6 +449,7 @@ struct Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
 {
 private:
     typedef Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> Reindex;
+    Eval_f();
 public:
     typedef ExpressionTemplate_IndexSplit_t<typename Reindex::template Eval_f<Operand>::T,
                                             typename Reindex::template Eval_f<SourceAbstractIndexType>::T,
@@ -485,6 +491,7 @@ struct Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
 {
 private:
     typedef Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> Reindex;
+    Eval_f();
 public:
     typedef ExpressionTemplate_IndexSplitToIndex_t<typename Reindex::template Eval_f<Operand>::T,
                                                    typename Reindex::template Eval_f<SourceAbstractIndexType>::T,
@@ -531,6 +538,7 @@ struct Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
 {
 private:
     typedef Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> Reindex;
+    Eval_f();
 public:
     typedef UnarySummation_t<typename Reindex::template Eval_f<Tensor>::T,
                              typename Reindex::template Eval_f<TensorDimIndexTypeList>::T,
@@ -550,6 +558,7 @@ struct Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
 {
 private:
     typedef Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> Reindex;
+    Eval_f();
 public:
     typedef BinarySummation_t<typename Reindex::template Eval_f<LeftOperand>::T,
                               typename Reindex::template Eval_f<RightOperand>::T,
@@ -570,6 +579,7 @@ struct Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
 {
 private:
     typedef Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> Reindex;
+    Eval_f();
 public:
     typedef IndexBundle_t<typename Reindex::template Eval_f<Operand>::T,
                           typename Reindex::template Eval_f<BundleAbstractIndexTypeList>::T,
@@ -590,6 +600,7 @@ struct Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
 {
 private:
     typedef Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> Reindex;
+    Eval_f();
 public:
     typedef IndexSplitter_t<typename Reindex::template Eval_f<Operand>::T,
                             typename Reindex::template Eval_f<SourceAbstractIndexType>::T,
@@ -609,6 +620,7 @@ struct Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
 {
 private:
     typedef Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> Reindex;
+    Eval_f();
 public:
     typedef IndexSplitToIndex_t<typename Reindex::template Eval_f<Operand>::T,
                                 typename Reindex::template Eval_f<SourceAbstractIndexType>::T,
@@ -632,6 +644,7 @@ struct Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
 {
 private:
     typedef Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> Reindex;
+    Eval_f();
 public:
     typedef ExpressionTemplate_Eval_t<typename Reindex::template Eval_f<Operand>::T> T;
 };

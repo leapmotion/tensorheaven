@@ -119,11 +119,31 @@ private:
     PreallocatedArray_t ();
 };
 
-template <typename T> struct IsPreallocatedArray_t { static bool const V = false; };
-template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_> struct IsPreallocatedArray_t<PreallocatedArray_t<Component_,COMPONENT_COUNT_,Derived_> > { static bool const V = true; };
+template <typename T> struct IsPreallocatedArray_t
+{
+    static bool const V = false;
+private:
+    IsPreallocatedArray_t();
+};
+template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_> struct IsPreallocatedArray_t<PreallocatedArray_t<Component_,COMPONENT_COUNT_,Derived_> >
+{
+    static bool const V = true;
+private:
+    IsPreallocatedArray_t();
+};
 
-template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_> struct IsArray_i<PreallocatedArray_t<Component_,COMPONENT_COUNT_,Derived_> > { static bool const V = true; };
-template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_> struct IsMemoryArray_i<PreallocatedArray_t<Component_,COMPONENT_COUNT_,Derived_> > { static bool const V = true; };
+template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_> struct IsArray_i<PreallocatedArray_t<Component_,COMPONENT_COUNT_,Derived_> >
+{
+    static bool const V = true;
+private:
+    IsArray_i();
+};
+template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_> struct IsMemoryArray_i<PreallocatedArray_t<Component_,COMPONENT_COUNT_,Derived_> >
+{
+    static bool const V = true;
+private:
+    IsMemoryArray_i();
+};
 
 } // end of namespace Tenh
 

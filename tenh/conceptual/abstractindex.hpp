@@ -50,7 +50,11 @@ public:
 
 template <AbstractIndexSymbol SYMBOL_>
 struct IsConcept_f<AbstractIndex_c<SYMBOL_> >
-{ static bool const V = true; };
+{
+    static bool const V = true;
+private:
+    IsConcept_f();
+};
 
 template <typename T> struct IsAbstractIndex_f { static bool const V = false; };
 template <AbstractIndexSymbol SYMBOL> struct IsAbstractIndex_f<AbstractIndex_c<SYMBOL> > { static bool const V = true; };

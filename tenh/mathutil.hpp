@@ -20,12 +20,16 @@ template<Uint32 X>
 struct Factorial_t
 {
     static const Uint32 V = Factorial_t<X-1>::V * X;
+private:
+    Factorial_t();
 };
 
 template<>
 struct Factorial_t<0>
 {
     static const Uint32 V = 1;
+private:
+    Factorial_t();
 };
 
 inline Uint32 binomial_coefficient(Uint32 n, Uint32 k)
@@ -37,18 +41,24 @@ template<Uint32 N, Uint32 K>
 struct BinomialCoefficientImpl_t
 {
     static const Uint32 V = BinomialCoefficientImpl_t<N,K-1>::V * (N + 1 - K) / K;
+private:
+    BinomialCoefficientImpl_t();
 };
 
 template<Uint32 N>
 struct BinomialCoefficientImpl_t<N,0>
 {
     static const Uint32 V = 1;
+private:
+    BinomialCoefficientImpl_t();
 };
 
 template<Uint32 N, Uint32 K>
 struct BinomialCoefficient_t
 {
 	static const Uint32 V = If_f<(K > N), Value_t<Uint32,0>, BinomialCoefficientImpl_t<N,K> >::T::V;
+private:
+    BinomialCoefficient_t();
 };
 
 inline Uint32 index_of_greatest_triangular_number_less_than(Uint32 x, Uint32 d, Uint32 iteration = 0)
@@ -64,6 +74,8 @@ struct IndexOfGreatestTriangularNumberLessThan_t
     static const Uint32 V = If_f<(BinomialCoefficient_t<iteration,D>::V > X),
                                  Value_t<Uint32,iteration-1>,
                                  IndexOfGreatestTriangularNumberLessThan_t<X,D,iteration+1> >::T::V;
+private:
+    IndexOfGreatestTriangularNumberLessThan_t();
 };
 
 } // end of namespace Tenh

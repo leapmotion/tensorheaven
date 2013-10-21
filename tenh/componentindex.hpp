@@ -82,7 +82,12 @@ private:
 /// @tparam T the type to test.
 template <typename T> struct IsComponentIndex_f { static bool const V = false; };
 /// @cond false
-template <Uint32 COMPONENT_COUNT> struct IsComponentIndex_f<ComponentIndex_t<COMPONENT_COUNT> > { static bool const V = true; };
+template <Uint32 COMPONENT_COUNT> struct IsComponentIndex_f<ComponentIndex_t<COMPONENT_COUNT> >
+{
+    static bool const V = true;
+private:
+    IsComponentIndex_f();
+};
 /// @endcond
 
 /// @struct IsComponentIndex_p componentindex.hpp "tenh/componentindex.hpp"
@@ -95,6 +100,8 @@ struct IsComponentIndex_p
     {
         static bool const V = IsComponentIndex_f<T>::V;
     };
+private:
+    IsComponentIndex_p();
     /// @endcond
 };
 

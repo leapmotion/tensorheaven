@@ -116,6 +116,8 @@ template <typename Operand_>
 struct IsExpressionTemplate_f<ExpressionTemplate_Eval_t<Operand_> >
 {
     static bool const V = true;
+private:
+    IsExpressionTemplate_f();
 };
 
 // definitions of the squared_norm and norm methods of ExpressionTemplate_i had to wait until ExpressionTemplate_Eval_t was defined.

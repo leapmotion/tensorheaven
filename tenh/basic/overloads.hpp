@@ -26,12 +26,16 @@ template <>
 struct UniformAbstractIndexTypeList_f<0>
 {
     typedef EmptyTypeList T;
+private:
+    UniformAbstractIndexTypeList_f();
 };
 
 template <>
 struct UniformAbstractIndexTypeList_f<1>
 {
     typedef TypeList_t<AbstractIndex_c<'i'> > T;
+private:
+    UniformAbstractIndexTypeList_f();
 };
 
 template <>
@@ -39,6 +43,8 @@ struct UniformAbstractIndexTypeList_f<2>
 {
     typedef TypeList_t<AbstractIndex_c<'i'>,
             TypeList_t<AbstractIndex_c<'j'> > > T;
+private:
+    UniformAbstractIndexTypeList_f();
 };
 
 template <typename Derived_, Uint32 FREE_INDEX_COUNT_>
@@ -54,6 +60,7 @@ private:
     typedef typename UniformAbstractIndexTypeList_f<FREE_INDEX_COUNT_>::T CodomainAbstractIndexTypeList;
     typedef Reindex_e<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList> Reindex;
     typedef typename ExpressionTemplate_::Derived DerivedExpressionTemplate;
+    UniformlyIndexedExpressionTemplate_f();
 public:
     typedef typename Reindex::template Eval_f<DerivedExpressionTemplate>::T T;
 };
@@ -78,12 +85,16 @@ template <>
 struct LhsOfContractionAbstractIndexTypeList_f<0>
 {
     typedef EmptyTypeList T;
+private:
+    LhsOfContractionAbstractIndexTypeList_f();
 };
 
 template <>
 struct LhsOfContractionAbstractIndexTypeList_f<1>
 {
     typedef TypeList_t<AbstractIndex_c<'j'> > T;
+private:
+    LhsOfContractionAbstractIndexTypeList_f();
 };
 
 template <>
@@ -91,6 +102,8 @@ struct LhsOfContractionAbstractIndexTypeList_f<2>
 {
     typedef TypeList_t<AbstractIndex_c<'i'>,
             TypeList_t<AbstractIndex_c<'j'> > > T;
+private:
+    LhsOfContractionAbstractIndexTypeList_f();
 };
 
 template <typename Derived_, Uint32 FREE_INDEX_COUNT_>
@@ -106,6 +119,7 @@ private:
     typedef typename LhsOfContractionAbstractIndexTypeList_f<FREE_INDEX_COUNT_>::T CodomainAbstractIndexTypeList;
     typedef Reindex_e<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList> Reindex;
     typedef typename ExpressionTemplate_::Derived DerivedExpressionTemplate;
+    LhsIndexedContractionExpressionTemplate_f();
 public:
     typedef typename Reindex::template Eval_f<DerivedExpressionTemplate>::T T;
 };
@@ -130,12 +144,16 @@ template <>
 struct RhsOfContractionAbstractIndexTypeList_f<0>
 {
     typedef EmptyTypeList T;
+private:
+    RhsOfContractionAbstractIndexTypeList_f();
 };
 
 template <>
 struct RhsOfContractionAbstractIndexTypeList_f<1>
 {
     typedef TypeList_t<AbstractIndex_c<'j'> > T;
+private:
+    RhsOfContractionAbstractIndexTypeList_f();
 };
 
 template <>
@@ -143,6 +161,8 @@ struct RhsOfContractionAbstractIndexTypeList_f<2>
 {
     typedef TypeList_t<AbstractIndex_c<'j'>,
             TypeList_t<AbstractIndex_c<'k'> > > T;
+private:
+    RhsOfContractionAbstractIndexTypeList_f();
 };
 
 template <typename Derived_, Uint32 FREE_INDEX_COUNT_>
@@ -158,6 +178,7 @@ private:
     typedef typename RhsOfContractionAbstractIndexTypeList_f<FREE_INDEX_COUNT_>::T CodomainAbstractIndexTypeList;
     typedef Reindex_e<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList> Reindex;
     typedef typename ExpressionTemplate_::Derived DerivedExpressionTemplate;
+    RhsIndexedContractionExpressionTemplate_f();
 public:
     typedef typename Reindex::template Eval_f<DerivedExpressionTemplate>::T T;
 };
@@ -187,6 +208,8 @@ struct OperatorAdditionReturnType_f
             typename UniformlyIndexedExpressionTemplate_f<LhsDerived_,LHS_FREE_INDEX_COUNT_>::T,
             typename UniformlyIndexedExpressionTemplate_f<RhsDerived_,RHS_FREE_INDEX_COUNT_>::T,
             '+'> > T;
+private:
+    OperatorAdditionReturnType_f();
 };
 
 template <typename LhsDerived_,
@@ -215,6 +238,8 @@ struct OperatorSubtractionReturnType_f
             typename UniformlyIndexedExpressionTemplate_f<LhsDerived_,LHS_FREE_INDEX_COUNT_>::T,
             typename UniformlyIndexedExpressionTemplate_f<RhsDerived_,RHS_FREE_INDEX_COUNT_>::T,
             '-'> > T;
+private:
+    OperatorSubtractionReturnType_f();
 };
 
 template <typename LhsDerived_,
@@ -242,6 +267,8 @@ struct OperatorScalarMultiplicationReturnType_f
             typename UniformlyIndexedExpressionTemplate_f<Derived_,FREE_INDEX_COUNT_>::T,
             typename Derived_::Scalar,
             OPERATOR_> > T;
+private:
+    OperatorScalarMultiplicationReturnType_f();
 };
 
 template <typename Derived_,
@@ -302,6 +329,8 @@ struct OperatorMultiplicationReturnType_f
         ExpressionTemplate_Multiplication_t<
             typename LhsIndexedContractionExpressionTemplate_f<LhsDerived_,LHS_FREE_INDEX_COUNT_>::T,
             typename RhsIndexedContractionExpressionTemplate_f<RhsDerived_,RHS_FREE_INDEX_COUNT_>::T> > T;
+private:
+    OperatorMultiplicationReturnType_f();
 };
 
 template <typename LhsDerived_,

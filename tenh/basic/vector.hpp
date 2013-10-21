@@ -114,6 +114,8 @@ template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
 struct DualOf_f<Vector<BasedVectorSpace_,Scalar_,UseArrayType_> >
 {
     typedef Vector<typename DualOf_f<BasedVectorSpace_>::T,Scalar_,typename DualOf_f<UseArrayType_>::T> T;
+private:
+    DualOf_f();
 };
 
 // template specialization for how to uniformly index a Vector (e.g. for addition/subtraction/etc)
@@ -124,6 +126,7 @@ private:
     typedef Vector<BasedVectorSpace_,Scalar_,UseArrayType_> Vec;
     typedef typename UniformAbstractIndexTypeList_f<1>::T AbstractIndexTypeList;
     static AbstractIndexSymbol const SYMBOL = SymbolOf_f<typename Head_f<AbstractIndexTypeList>::T>::V;
+    UniformlyIndexedExpressionTemplate_f();
 public:
     typedef typename Vec::template IndexedExpressionConstType_f<SYMBOL>::T T;
 };
@@ -136,6 +139,7 @@ private:
     typedef Vector<BasedVectorSpace_,Scalar_,UseArrayType_> Vec;
     typedef typename LhsOfContractionAbstractIndexTypeList_f<1>::T AbstractIndexTypeList;
     static AbstractIndexSymbol const SYMBOL = SymbolOf_f<typename Head_f<AbstractIndexTypeList>::T>::V;
+    LhsIndexedContractionExpressionTemplate_f();
 public:
     typedef typename Vec::template IndexedExpressionConstType_f<SYMBOL>::T T;
 };
@@ -148,6 +152,7 @@ private:
     typedef Vector<BasedVectorSpace_,Scalar_,UseArrayType_> Vec;
     typedef typename RhsOfContractionAbstractIndexTypeList_f<1>::T AbstractIndexTypeList;
     static AbstractIndexSymbol const SYMBOL = SymbolOf_f<typename Head_f<AbstractIndexTypeList>::T>::V;
+    RhsIndexedContractionExpressionTemplate_f();
 public:
     typedef typename Vec::template IndexedExpressionConstType_f<SYMBOL>::T T;
 };

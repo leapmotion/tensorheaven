@@ -47,12 +47,22 @@ template <typename Component_,
           typename Id_>
 typename ComponentGenerator_t<Component_,COMPONENT_COUNT_,evaluator_,Id_>::Evaluator const ComponentGenerator_t<Component_,COMPONENT_COUNT_,evaluator_,Id_>::evaluate = evaluator_;
 
-template <typename T> struct IsComponentGenerator_t { static bool const V = false; };
+template <typename T> struct IsComponentGenerator_t
+{
+    static bool const V = false;
+private:
+    IsComponentGenerator_t();
+};
 template <typename Component_,
           Uint32 COMPONENT_COUNT_,
           Component_ (*evaluator_)(ComponentIndex_t<COMPONENT_COUNT_> const &),
           typename Id_>
-struct IsComponentGenerator_t<ComponentGenerator_t<Component_,COMPONENT_COUNT_,evaluator_,Id_> > { static bool const V = true; };
+struct IsComponentGenerator_t<ComponentGenerator_t<Component_,COMPONENT_COUNT_,evaluator_,Id_> >
+{
+  static bool const V = true;
+private:
+    IsComponentGenerator_t();
+};
 
 // NOTE: you may need to provide a template specialization for DualOf_f<ComponentGenerator_t<...> >
 
@@ -131,18 +141,33 @@ struct ImmutableArray_t
     }
 };
 
-template <typename T> struct IsImmutableArray_t { static bool const V = false; };
+template <typename T> struct IsImmutableArray_t
+{
+    static bool const V = false;
+private:
+    IsImmutableArray_t();
+};
 template <typename Component_,
           Uint32 COMPONENT_COUNT_,
           typename ComponentGenerator_,
           typename Derived_>
-struct IsImmutableArray_t<ImmutableArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_> > { static bool const V = true; };
+struct IsImmutableArray_t<ImmutableArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_> >
+{
+    static bool const V = true;
+private:
+    IsImmutableArray_t();
+};
 
 template <typename Component_,
           Uint32 COMPONENT_COUNT_,
           typename ComponentGenerator_,
           typename Derived_>
-struct IsArray_i<ImmutableArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_> > { static bool const V = true; };
+struct IsArray_i<ImmutableArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_> >
+{
+    static bool const V = true;
+private:
+    IsArray_i();
+};
 
 } // end of namespace Tenh
 

@@ -118,6 +118,8 @@ struct DualOf_f<Vec<DIMENSION_,Scalar_,Basis_,VectorSpaceId_,UseArrayType_,Scala
                 typename DualOf_f<VectorSpaceId_>::T,
                 typename DualOf_f<UseArrayType_>::T,
                 ScalarField_> T;
+private:
+    DualOf_f();
 };
 
 // Very easy to use templatized linear operator class -- default template parameters are provided
@@ -255,6 +257,8 @@ struct DualOf_f<Op<CODOMAIN_DIMENSION_,
                typename DualOf_f<CodomainId_>::T,
                typename DualOf_f<UseArrayType_>::T,
                ScalarField_> T;
+private:
+    DualOf_f();
 };
 
 } // end of namespace Tenh

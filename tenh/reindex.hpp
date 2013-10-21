@@ -39,6 +39,7 @@ private:
                                       CODOMAIN),
         STATIC_ASSERT_IN_ENUM(!ContainsDuplicates_t<DomainAbstractIndexTypeList_>::V, DOMAIN_INDICES_MUST_NOT_CONTAIN_DUPLICATES)
     };
+    AbstractIndexMap_e();
 public:
     template <typename AbstractIndex_>
     struct Eval_f
@@ -46,6 +47,8 @@ public:
         // don't actually check that AbstractIndex_ is in DomainAbstractIndexTypeList_, since
         // the If_f below instantiates this type even if the type isn't "used" by the If_f.
         typedef typename Element_f<CodomainAbstractIndexTypeList_,IndexOfFirstOccurrence_f<DomainAbstractIndexTypeList_,AbstractIndex_>::V>::T T;
+    private:
+        Eval_f();
     };
 };
 
@@ -62,7 +65,11 @@ struct Reindex_e
     struct Eval_f
     {
         typedef ThingThatHasIndices_ T;
+    private:
+        Eval_f();
     };
+private:
+    Reindex_e();
 };
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -87,6 +94,7 @@ private:
         ABSTRACT_INDEX_MAP_IS_IDENTITY ?
         0 :
         Max_f<typename OnEach_f<CodomainAbstractIndexTypeList_,SymbolOf_e>::T,AbstractIndexSymbol>::V;
+    Eval_f();
 public:
     typedef typename If_f<Contains_f<DomainAbstractIndexTypeList_,AbstractIndex>::V,
                           typename AbstractIndexMap::template Eval_f<AbstractIndex>::T,
@@ -104,6 +112,7 @@ struct Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>::E
 private:
     typedef Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> Reindex;
     typedef typename Reindex::template Eval_f<AbstractIndex_c<SYMBOL_> >::T MappedAbstractIndex;
+    Eval_f();
 public:
     typedef DimIndex_t<SymbolOf_f<MappedAbstractIndex>::V,DIM_> T;
 };
@@ -121,6 +130,7 @@ struct Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>::E
 private:
     typedef Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> Reindex;
     typedef TypeList_t<HeadType_,BodyTypeList_> TypeList;
+    Eval_f();
 public:
     typedef typename OnEach_f<TypeList,Reindex>::T T;
 };

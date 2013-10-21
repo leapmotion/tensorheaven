@@ -137,6 +137,8 @@ struct IsExpressionTemplate_f<ExpressionTemplate_IndexedObject_t<Object_,
                                                                  Derived_> >
 {
     static bool const V = true;
+private:
+    IsExpressionTemplate_f();
 };
 
 // this is the "non-const" version of an indexed tensor expression (it has no summed indices, so it makes sense to assign to it)
@@ -351,6 +353,8 @@ template <typename LeftOperand_, typename RightOperand_, char OPERATOR_>
 struct IsExpressionTemplate_f<ExpressionTemplate_Addition_t<LeftOperand_,RightOperand_,OPERATOR_> >
 {
     static bool const V = true;
+private:
+    IsExpressionTemplate_f();
 };
 
 // ////////////////////////////////////////////////////////////////////////////
@@ -438,6 +442,8 @@ template <typename Operand_, typename Scalar_, char OPERATOR_>
 struct IsExpressionTemplate_f<ExpressionTemplate_ScalarMultiplication_t<Operand_,Scalar_,OPERATOR_> >
 {
     static bool const V = true;
+private:
+    IsExpressionTemplate_f();
 };
 
 // ////////////////////////////////////////////////////////////////////////////
@@ -532,6 +538,8 @@ template <typename LeftOperand_, typename RightOperand_>
 struct IsExpressionTemplate_f<ExpressionTemplate_Multiplication_t<LeftOperand_,RightOperand_> >
 {
     static bool const V = true;
+private:
+    IsExpressionTemplate_f();
 };
 
 // ////////////////////////////////////////////////////////////////////////////
@@ -620,6 +628,8 @@ struct IsExpressionTemplate_f<ExpressionTemplate_IndexBundle_t<Operand_,
                                                                ResultingAbstractIndexType_> >
 {
     static bool const V = true;
+private:
+    IsExpressionTemplate_f();
 };
 
 // ////////////////////////////////////////////////////////////////////////////
@@ -707,6 +717,8 @@ struct IsExpressionTemplate_f<ExpressionTemplate_IndexSplit_t<Operand_,
                                                               SplitAbstractIndexTypeList_> >
 {
     static bool const V = true;
+private:
+    IsExpressionTemplate_f();
 };
 
 // ////////////////////////////////////////////////////////////////////////////
@@ -795,6 +807,8 @@ struct IsExpressionTemplate_f<ExpressionTemplate_IndexSplitToIndex_t<Operand_,
                                                                      SplitAbstractIndexTypeList_> >
 {
     static bool const V = true;
+private:
+    IsExpressionTemplate_f();
 };
 
 // ////////////////////////////////////////////////////////////////////////////

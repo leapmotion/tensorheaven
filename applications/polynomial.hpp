@@ -234,12 +234,16 @@ template<bool DEGREE_OF_LHS_IS_GREATER_THAN_DEGREE_OF_RHS> struct Adder
 {
     template<typename T, typename S>
     static T add (T const &lhs, S const &rhs) { return lhs.add(rhs); }
+private:
+    Adder();
 };
 
 template<> struct Adder<false>
 {
     template<typename T, typename S>
     static S add (T const &lhs, S const &rhs) { return rhs.add(lhs); }
+private:
+    Adder();
 };
 
 template<Uint32 DEG1, Uint32 DEG2, Uint32 DIM, typename Id, typename Scalar>

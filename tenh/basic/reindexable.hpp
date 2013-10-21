@@ -103,6 +103,7 @@ struct Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
 {
 private:
     typedef Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> Reindex;
+    Eval_f();
 public:
     typedef Reindexable_t<typename Reindex::template Eval_f<ExpressionTemplate_>::T,
                           typename Reindex::template Eval_f<FreeDimIndexTypeList_>::T> T;

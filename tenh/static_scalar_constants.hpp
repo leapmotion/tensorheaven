@@ -35,6 +35,8 @@ struct StaticScalar
         else // double
             return 1e-14;
     }
+private:
+    StaticScalar();
 };
 
 template <typename Scalar> Scalar const StaticScalar<Scalar>::ZERO(0);

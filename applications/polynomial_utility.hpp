@@ -48,6 +48,8 @@ struct VariableStringComputer
 
         return result;
     }
+private:
+    VariableStringComputer();
 };
 
 template<Uint32 DEG, typename Id, typename Scalar>
@@ -57,6 +59,8 @@ struct VariableStringComputer<DEG,0,Id,Scalar>
     {
         return "";
     }
+private:
+    VariableStringComputer();
 };
 
 
@@ -68,6 +72,8 @@ struct VariableStringComputer<DEG,1,Id,Scalar>
         typedef typename HomogeneousPolynomial<DEG,1,Id,Scalar>::Sym::MultiIndex MultiIndex;
         return "x" + ((MultiIndex::LENGTH > 1) ? "^" + AS_STRING(MultiIndex::LENGTH) : "");
     }
+private:
+    VariableStringComputer();
 };
 
 template<Uint32 DEG, typename Id, typename Scalar>
@@ -107,6 +113,8 @@ struct VariableStringComputer<DEG,2,Id,Scalar>
 
         return result;
     }
+private:
+    VariableStringComputer();
 };
 
 template<Uint32 DEG, typename Id, typename Scalar>
@@ -147,6 +155,8 @@ struct VariableStringComputer<DEG,3,Id,Scalar>
 
         return result;
     }
+private:
+    VariableStringComputer();
 };
 
 template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar>
