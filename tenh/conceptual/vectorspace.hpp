@@ -40,10 +40,24 @@ struct VectorSpace_c
 
 template <typename ScalarField_, Uint32 DIMENSION_, typename Id_>
 struct IsConcept_f<VectorSpace_c<ScalarField_, DIMENSION_, Id_> >
-{ static bool const V = true; };
+{
+    static bool const V = true;
+private:
+    IsConcept_f();
+};
 
-template <typename T_> struct IsVectorSpace_f { static bool const V = false; };
-template <typename ScalarField_, Uint32 DIMENSION_, typename Id_> struct IsVectorSpace_f<VectorSpace_c<ScalarField_,DIMENSION_,Id_> > { static bool const V = true; };
+template <typename T_> struct IsVectorSpace_f
+{
+    static bool const V = false;
+private:
+    IsVectorSpace_f();
+};
+template <typename ScalarField_, Uint32 DIMENSION_, typename Id_> struct IsVectorSpace_f<VectorSpace_c<ScalarField_,DIMENSION_,Id_> >
+{
+    static bool const V = true;
+private:
+    IsVectorSpace_f();
+};
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(VectorSpace);
 // special convenience macros
@@ -54,13 +68,15 @@ template <typename ScalarField_, Uint32 DIMENSION_, typename Id_>
 struct DualOf_f<VectorSpace_c<ScalarField_,DIMENSION_,Id_> >
 {
     typedef VectorSpace_c<ScalarField_,DIMENSION_,typename DualOf_f<Id_>::T> T;
+private:
+    DualOf_f();
 };
 
 // property IDs
 
-struct Dimension { }; // could this be a forward declaration?
-struct Id { }; // could this be a forward declaration?
-struct ScalarField { }; // could this be a forward declaration?
+struct Dimension; // could this be a forward declaration?
+struct Id; // could this be a forward declaration?
+struct ScalarField; // could this be a forward declaration?
 
 // BaseProperty_f accessors
 
@@ -68,25 +84,46 @@ template <typename ScalarField_, Uint32 DIMENSION_, typename Id_>
 struct BaseProperty_f<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,Dimension>
 {
     typedef Value_t<Uint32,DIMENSION_> T;
+private:
+    BaseProperty_f();
 };
 
 template <typename ScalarField_, Uint32 DIMENSION_, typename Id_>
 struct BaseProperty_f<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,Id>
 {
     typedef Id_ T;
+private:
+    BaseProperty_f();
 };
 
 template <typename ScalarField_, Uint32 DIMENSION_, typename Id_>
 struct BaseProperty_f<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,ScalarField>
 {
     typedef ScalarField_ T;
+private:
+    BaseProperty_f();
 };
 
 // named property accessors
 
-template <typename Concept_> struct DimensionOf_f { static Uint32 const V = PropertyValue_f<Concept_,Dimension>::V; };
-template <typename Concept_> struct IdOf_f { typedef typename Property_f<Concept_,Id>::T T; };
-template <typename Concept_> struct ScalarFieldOf_f { typedef typename Property_f<Concept_,ScalarField>::T T; };
+template <typename Concept_> struct DimensionOf_f
+{
+    static Uint32 const V = PropertyValue_f<Concept_,Dimension>::V;
+private:
+    DimensionOf_f();
+};
+template <typename Concept_> struct IdOf_f
+{
+    typedef typename Property_f<Concept_,Id>::T T;
+private:
+    IdOf_f();
+};
+template <typename Concept_> struct ScalarFieldOf_f
+{
+    typedef typename Property_f<Concept_,ScalarField>::T T;
+private:
+    ScalarFieldOf_f();
+};
 
 // ///////////////////////////////////////////////////////////////////////////
 // BasedVectorSpace_c
@@ -118,10 +155,24 @@ public:
 
 template <typename VectorSpace_, typename Basis_>
 struct IsConcept_f<BasedVectorSpace_c<VectorSpace_, Basis_> >
-{ static bool const V = true; };
+{
+    static bool const V = true;
+private:
+    IsConcept_f();
+};
 
-template <typename T_> struct IsBasedVectorSpace_f { static bool const V = false; };
-template <typename VectorSpace_, typename Basis_> struct IsBasedVectorSpace_f<BasedVectorSpace_c<VectorSpace_,Basis_> > { static bool const V = true; };
+template <typename T_> struct IsBasedVectorSpace_f
+{
+    static bool const V = false;
+private:
+    IsBasedVectorSpace_f();
+};
+template <typename VectorSpace_, typename Basis_> struct IsBasedVectorSpace_f<BasedVectorSpace_c<VectorSpace_,Basis_> >
+{
+    static bool const V = true;
+private:
+    IsBasedVectorSpace_f();
+};
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(BasedVectorSpace);
 // special convenience macros
@@ -132,11 +183,13 @@ template <typename VectorSpace_, typename Basis_>
 struct DualOf_f<BasedVectorSpace_c<VectorSpace_,Basis_> >
 {
     typedef BasedVectorSpace_c<typename DualOf_f<VectorSpace_>::T,typename DualOf_f<Basis_>::T> T;
+private:
+    DualOf_f();
 };
 
 // property IDs
 
-struct Basis { }; // could this be a forward declaration?
+struct Basis; // could this be a forward declaration?
 
 // BaseProperty_f accessors
 
@@ -144,11 +197,18 @@ template <typename VectorSpace_, typename Basis_>
 struct BaseProperty_f<BasedVectorSpace_c<VectorSpace_,Basis_>,Basis>
 {
     typedef Basis_ T;
+private:
+    BaseProperty_f();
 };
 
 // named property accessors
 
-template <typename Concept_> struct BasisOf_f { typedef typename Property_f<Concept_,Basis>::T T; };
+template <typename Concept_> struct BasisOf_f
+{
+    typedef typename Property_f<Concept_,Basis>::T T;
+private:
+    BasisOf_f();
+};
 
 } // end of namespace Tenh
 

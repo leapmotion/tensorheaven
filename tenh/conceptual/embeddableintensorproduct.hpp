@@ -34,10 +34,24 @@ struct EmbeddableInTensorProductOfVectorSpaces_c
 
 template <typename TensorProductOfVectorSpaces_>
 struct IsConcept_f<EmbeddableInTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_> >
-{ static bool const V = true; };
+{
+    static bool const V = true;
+private:
+    IsConcept_f();
+};
 
-template <typename T> struct IsEmbeddableInTensorProductOfVectorSpaces_f { static bool const V = false; };
-template <typename TensorProductOfVectorSpaces_> struct IsEmbeddableInTensorProductOfVectorSpaces_f<EmbeddableInTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_> > { static bool const V = true; };
+template <typename T> struct IsEmbeddableInTensorProductOfVectorSpaces_f
+{
+    static bool const V = false;
+private:
+    IsEmbeddableInTensorProductOfVectorSpaces_f();
+};
+template <typename TensorProductOfVectorSpaces_> struct IsEmbeddableInTensorProductOfVectorSpaces_f<EmbeddableInTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_> >
+{
+    static bool const V = true;
+private:
+    IsEmbeddableInTensorProductOfVectorSpaces_f();
+};
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(EmbeddableInTensorProductOfVectorSpaces);
 // special convenience macros
@@ -76,10 +90,24 @@ public:
 
 template <typename Exactly_TensorProductOfBasedVectorSpaces_, typename Exactly_TensorProductOfVectorSpaces_>
 struct IsConcept_f<EmbeddableInTensorProductOfBasedVectorSpaces_c<Exactly_TensorProductOfBasedVectorSpaces_,Exactly_TensorProductOfVectorSpaces_> >
-{ static bool const V = true; };
+{
+    static bool const V = true;
+private:
+    IsConcept_f();
+};
 
-template <typename T> struct IsEmbeddableInTensorProductOfBasedVectorSpaces_f { static bool const V = false; };
-template <typename Exactly_TensorProductOfBasedVectorSpaces_, typename Exactly_TensorProductOfVectorSpaces_> struct IsEmbeddableInTensorProductOfBasedVectorSpaces_f<EmbeddableInTensorProductOfBasedVectorSpaces_c<Exactly_TensorProductOfBasedVectorSpaces_,Exactly_TensorProductOfVectorSpaces_> > { static bool const V = true; };
+template <typename T> struct IsEmbeddableInTensorProductOfBasedVectorSpaces_f
+{
+    static bool const V = false;
+private:
+    IsEmbeddableInTensorProductOfBasedVectorSpaces_f();
+};
+template <typename Exactly_TensorProductOfBasedVectorSpaces_, typename Exactly_TensorProductOfVectorSpaces_> struct IsEmbeddableInTensorProductOfBasedVectorSpaces_f<EmbeddableInTensorProductOfBasedVectorSpaces_c<Exactly_TensorProductOfBasedVectorSpaces_,Exactly_TensorProductOfVectorSpaces_> >
+{
+    static bool const V = true;
+private:
+    IsEmbeddableInTensorProductOfBasedVectorSpaces_f();
+};
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(EmbeddableInTensorProductOfBasedVectorSpaces);
 // special convenience macros

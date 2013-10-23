@@ -30,6 +30,8 @@ template <typename Primal>
 struct DualOf_f
 {
 	typedef Dual_c<Primal> T;
+private:
+    DualOf_f();
 };
 
 // here is where the self-double-dualness is implemented (as a template specialization)
@@ -37,6 +39,8 @@ template <typename Primal>
 struct DualOf_f<Dual_c<Primal> >
 {
 	typedef Primal T;
+private:
+    DualOf_f();
 };
 
 // template specialization to take dual of each element in a TypeList_t
@@ -44,12 +48,16 @@ template <typename HeadType, typename BodyTypeList>
 struct DualOf_f<TypeList_t<HeadType,BodyTypeList> >
 {
     typedef TypeList_t<typename DualOf_f<HeadType>::T,typename DualOf_f<BodyTypeList>::T> T;
+private:
+    DualOf_f();
 };
 
 template <>
 struct DualOf_f<EmptyTypeList>
 {
     typedef EmptyTypeList T;
+private:
+    DualOf_f();
 };
 
 // template specialization to make the Generic type self-dual
@@ -57,6 +65,8 @@ template <>
 struct DualOf_f<Generic>
 {
     typedef Generic T;
+private:
+    DualOf_f();
 };
 
 } // end of namespace Tenh

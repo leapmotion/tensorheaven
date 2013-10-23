@@ -86,6 +86,7 @@ private:
                                  DimensionOf_f<Projection>::V,
                                  ComponentGeneratorEvaluator::alt<ORDER_,Factor_,DimensionOf_f<Projection>::V,Scalar_>,
                                  AltId_t<ORDER_,Factor_> > ComponentGenerator;
+    Alt_f();
 public:
     typedef ImplementationOf_t<Projection,Scalar_,UseImmutableArray_t<ComponentGenerator> > T;
 };

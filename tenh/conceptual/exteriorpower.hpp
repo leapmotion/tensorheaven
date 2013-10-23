@@ -35,10 +35,24 @@ struct ExteriorPower_c
 
 template <Uint32 ORDER_, typename Factor_>
 struct IsConcept_f<ExteriorPower_c<ORDER_,Factor_> >
-{ static bool const V = true; };
+{
+    static bool const V = true;
+private:
+    IsConcept_f();
+};
 
-template <typename T> struct IsExteriorPower_f { static bool const V = false; };
-template <Uint32 ORDER, typename Factor> struct IsExteriorPower_f<ExteriorPower_c<ORDER,Factor> > { static bool const V = true; };
+template <typename T> struct IsExteriorPower_f
+{
+    static bool const V = false;
+private:
+    IsExteriorPower_f();
+};
+template <Uint32 ORDER, typename Factor> struct IsExteriorPower_f<ExteriorPower_c<ORDER,Factor> >
+{
+    static bool const V = true;
+private:
+    IsExteriorPower_f();
+};
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(ExteriorPower);
 // special convenience macros
@@ -71,10 +85,24 @@ public:
 
 template <Uint32 ORDER_, typename Factor_>
 struct IsConcept_f<ExteriorPowerOfVectorSpace_c<ORDER_,Factor_> >
-{ static bool const V = true; };
+{
+    static bool const V = true;
+private:
+    IsConcept_f();
+};
 
-template <typename T> struct IsExteriorPowerOfVectorSpace_f { static bool const V = false; };
-template <Uint32 ORDER, typename Factor> struct IsExteriorPowerOfVectorSpace_f<ExteriorPowerOfVectorSpace_c<ORDER,Factor> > { static bool const V = true; };
+template <typename T> struct IsExteriorPowerOfVectorSpace_f
+{
+    static bool const V = false;
+private:
+    IsExteriorPowerOfVectorSpace_f();
+};
+template <Uint32 ORDER, typename Factor> struct IsExteriorPowerOfVectorSpace_f<ExteriorPowerOfVectorSpace_c<ORDER,Factor> >
+{
+    static bool const V = true;
+private:
+    IsExteriorPowerOfVectorSpace_f();
+};
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(ExteriorPowerOfVectorSpace);
 // special convenience macros
@@ -105,10 +133,24 @@ public:
 
 template <Uint32 ORDER_, typename Factor_>
 struct IsConcept_f<ExteriorPowerOfBasis_c<ORDER_,Factor_> >
-{ static bool const V = true; };
+{
+    static bool const V = true;
+private:
+    IsConcept_f();
+};
 
-template <typename T> struct IsExteriorPowerOfBasis_f { static bool const V = false; };
-template <Uint32 ORDER, typename Factor> struct IsExteriorPowerOfBasis_f<ExteriorPowerOfBasis_c<ORDER,Factor> > { static bool const V = true; };
+template <typename T> struct IsExteriorPowerOfBasis_f
+{
+    static bool const V = false;
+private:
+    IsExteriorPowerOfBasis_f();
+};
+template <Uint32 ORDER, typename Factor> struct IsExteriorPowerOfBasis_f<ExteriorPowerOfBasis_c<ORDER,Factor> >
+{
+    static bool const V = true;
+private:
+    IsExteriorPowerOfBasis_f();
+};
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(ExteriorPowerOfBasis);
 // special convenience macros
@@ -157,6 +199,8 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(BasedExteriorPowerOfVectorSpace);
 // struct DualOf_f<BasedExteriorPowerOfVectorSpace_c<ExteriorPowerOfVectorSpace,Basis> >
 // {
 //     typedef BasedExteriorPowerOfVectorSpace_c<typename DualOf_f<ExteriorPowerOfVectorSpace>::T,typename DualOf_f<Basis>::T> T;
+// private:
+//     DualOf_f();
 // };
 
 
@@ -187,22 +231,38 @@ public:
 
 template <Uint32 ORDER_, typename Factor_>
 struct IsConcept_f<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_> >
-{ static bool const V = true; };
+{
+    static bool const V = true;
+private:
+    IsConcept_f();
+};
 
-template <typename T_> struct IsExteriorPowerOfBasedVectorSpace_f { static bool const V = false; };
-template <Uint32 ORDER_, typename Factor_> struct IsExteriorPowerOfBasedVectorSpace_f<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_> > { static bool const V = true; };
+template <typename T_> struct IsExteriorPowerOfBasedVectorSpace_f
+{
+    static bool const V = false;
+private:
+    IsExteriorPowerOfBasedVectorSpace_f();
+};
+template <Uint32 ORDER_, typename Factor_> struct IsExteriorPowerOfBasedVectorSpace_f<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_> >
+{
+    static bool const V = true;
+private:
+    IsExteriorPowerOfBasedVectorSpace_f();
+};
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(ExteriorPowerOfBasedVectorSpace);
 // special convenience macros
 #define IS_EXTERIOR_POWER_OF_BASED_VECTOR_SPACE_UNIQUELY(Concept) HasUniqueExteriorPowerOfBasedVectorSpaceStructure_f<Concept>::V
 #define AS_EXTERIOR_POWER_OF_BASED_VECTOR_SPACE(Concept) UniqueExteriorPowerOfBasedVectorSpaceStructureOf_f<Concept>::T
 
-// in the category of based vector spaces, the dual space functor commutes 
+// in the category of based vector spaces, the dual space functor commutes
 // with the kth exterior power functor.
 template <Uint32 ORDER_, typename Factor_>
 struct DualOf_f<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_> >
 {
     typedef ExteriorPowerOfBasedVectorSpace_c<ORDER_,typename DualOf_f<Factor_>::T> T;
+private:
+    DualOf_f();
 };
 
 } // end of namespace Tenh

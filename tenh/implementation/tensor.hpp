@@ -148,6 +148,8 @@ template <typename FactorTypeList_, typename Scalar_, typename UseArrayType_>
 struct DualOf_f<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Scalar_,UseArrayType_> >
 {
     typedef ImplementationOf_t<typename DualOf_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >::T,Scalar_,typename DualOf_f<UseArrayType_>::T> T;
+private:
+    DualOf_f();
 };
 
 } // end of namespace Tenh

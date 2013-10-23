@@ -32,10 +32,24 @@ struct Basis_c
 
 template <typename Id_>
 struct IsConcept_f<Basis_c<Id_> >
-{ static bool const V = true; };
+{
+    static bool const V = true;
+private:
+    IsConcept_f();
+};
 
-template <typename T_> struct IsBasis_f { static bool const V = false; };
-template <typename Id_> struct IsBasis_f<Basis_c<Id_> > { static bool const V = true; };
+template <typename T_> struct IsBasis_f
+{
+    static bool const V = false;
+private:
+    IsBasis_f();
+};
+template <typename Id_> struct IsBasis_f<Basis_c<Id_> >
+{
+    static bool const V = true;
+private:
+    IsBasis_f();
+};
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Basis);
 // special convenience macros
@@ -46,6 +60,8 @@ template <typename Id_>
 struct DualOf_f<Basis_c<Id_> >
 {
     typedef Basis_c<typename DualOf_f<Id_>::T> T;
+private:
+    DualOf_f();
 };
 
 // ////////////////////////////////////////////////////////////////////////////
@@ -67,10 +83,24 @@ struct OrthonormalBasis_c
 
 template <typename Id_>
 struct IsConcept_f<OrthonormalBasis_c<Id_> >
-{ static bool const V = true; };
+{
+    static bool const V = true;
+private:
+    IsConcept_f();
+};
 
-template <typename T_> struct IsOrthonormalBasis_f { static bool const V = false; };
-template <typename Id_> struct IsOrthonormalBasis_f<OrthonormalBasis_c<Id_> > { static bool const V = true; };
+template <typename T_> struct IsOrthonormalBasis_f
+{
+    static bool const V = false;
+private:
+    IsOrthonormalBasis_f();
+};
+template <typename Id_> struct IsOrthonormalBasis_f<OrthonormalBasis_c<Id_> >
+{
+    static bool const V = true;
+private:
+    IsOrthonormalBasis_f();
+};
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(OrthonormalBasis);
 // special convenience macros
@@ -81,6 +111,8 @@ template <typename Id_>
 struct DualOf_f<OrthonormalBasis_c<Id_> >
 {
     typedef OrthonormalBasis_c<typename DualOf_f<Id_>::T> T;
+private:
+    DualOf_f();
 };
 
 } // end of namespace Tenh

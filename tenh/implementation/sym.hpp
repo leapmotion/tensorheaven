@@ -73,6 +73,7 @@ private:
                                  DimensionOf_f<Projection>::V,
                                  ComponentGeneratorEvaluator::sym<ORDER_,Factor_,DimensionOf_f<Projection>::V,Scalar_>,
                                  SymId_t<ORDER_,Factor_> > ComponentGenerator;
+    Sym_f();
 public:
     typedef ImplementationOf_t<Projection,Scalar_,UseImmutableArray_t<ComponentGenerator> > T;
 };

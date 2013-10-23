@@ -35,13 +35,26 @@ struct Diagonal2TensorProduct_c
 
 template <typename Factor1_, typename Factor2_>
 struct IsConcept_f<Diagonal2TensorProduct_c<Factor1_, Factor2_> >
-{ static bool const V = true; };
+{
+    static bool const V = true;
+private:
+    IsConcept_f();
+};
 
-template <typename T> struct IsDiagonal2TensorProduct_f { static bool const V = false; };
+template <typename T> struct IsDiagonal2TensorProduct_f
+{
+    static bool const V = false;
+private:
+    IsDiagonal2TensorProduct_f();
+};
 
 template <typename Factor1_, typename Factor2_>
 struct IsDiagonal2TensorProduct_f<Diagonal2TensorProduct_c<Factor1_, Factor2_> >
-{ static bool const V = true; };
+{
+    static bool const V = true;
+private:
+    IsDiagonal2TensorProduct_f();
+};
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Diagonal2TensorProduct);
 // special convenience macros
@@ -80,13 +93,26 @@ public:
 
 template <typename Factor1_, typename Factor2_>
 struct IsConcept_f<Diagonal2TensorProductOfBases_c<Factor1_, Factor2_> >
-{ static bool const V = true; };
+{
+    static bool const V = true;
+private:
+    IsConcept_f();
+};
 
-template <typename T> struct IsDiagonal2TensorProductOfBases_f { static bool const V = false; };
+template <typename T> struct IsDiagonal2TensorProductOfBases_f
+{
+    static bool const V = false;
+private:
+    IsDiagonal2TensorProductOfBases_f();
+};
 
 template <typename Factor1_, typename Factor2_>
 struct IsDiagonal2TensorProductOfBases_f<Diagonal2TensorProductOfBases_c<Factor1_, Factor2_> >
-{ static bool const V = true; };
+{
+    static bool const V = true;
+private:
+    IsDiagonal2TensorProductOfBases_f();
+};
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Diagonal2TensorProductOfBases);
 // special convenience macros
@@ -134,13 +160,26 @@ public:
 
 template <typename Factor1_, typename Factor2_>
 struct IsConcept_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >
-{ static bool const V = true; };
+{
+    static bool const V = true;
+private:
+    IsConcept_f();
+};
 
-template <typename T> struct IsDiagonal2TensorProductOfBasedVectorSpaces_f { static bool const V = false; };
+template <typename T> struct IsDiagonal2TensorProductOfBasedVectorSpaces_f
+{
+    static bool const V = false;
+private:
+    IsDiagonal2TensorProductOfBasedVectorSpaces_f();
+};
 
 template <typename Factor1_, typename Factor2_>
 struct IsDiagonal2TensorProductOfBasedVectorSpaces_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >
-{ static bool const V = true; };
+{
+    static bool const V = true;
+private:
+    IsDiagonal2TensorProductOfBasedVectorSpaces_f();
+};
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Diagonal2TensorProductOfBasedVectorSpaces);
 // special convenience macros
@@ -152,15 +191,20 @@ template <typename Factor1, typename Factor2>
 struct DualOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1,Factor2> >
 {
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<typename DualOf_f<Factor1>::T,typename DualOf_f<Factor2>::T> T;
+private:
+    DualOf_f();
 };
 
 // convenience metafunction for using a FactorTypeList_ instead of two separate factors
 template <typename FactorTypeList_>
 struct Diagonal2TensorProductOfBasedVectorSpaces_f
 {
+private:
     enum { STATIC_ASSERT_IN_ENUM(FactorTypeList_::LENGTH == 2, LENGTH_MUST_BE_EXACTLY_2) };
     typedef typename FactorTypeList_::HeadType Factor1;
     typedef typename FactorTypeList_::BodyTypeList::HeadType Factor2;
+    Diagonal2TensorProductOfBasedVectorSpaces_f();
+public:
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1,Factor2> T;
 };
 
@@ -169,6 +213,8 @@ template <typename Factor1_, typename Factor2_>
 struct BaseProperty_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,FactorTypeList>
 {
     typedef TypeList_t<Factor1_,TypeList_t<Factor2_> > T;
+private:
+    BaseProperty_f();
 };
 
 } // end of namespace Tenh

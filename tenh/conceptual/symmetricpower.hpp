@@ -34,10 +34,24 @@ struct SymmetricPower_c
 
 template <Uint32 ORDER_, typename Factor_>
 struct IsConcept_f<SymmetricPower_c<ORDER_,Factor_> >
-{ static bool const V = true; };
+{
+    static bool const V = true;
+private:
+    IsConcept_f();
+};
 
-template <typename T> struct IsSymmetricPower_f { static bool const V = false; };
-template <Uint32 ORDER, typename Factor> struct IsSymmetricPower_f<SymmetricPower_c<ORDER,Factor> > { static bool const V = true; };
+template <typename T> struct IsSymmetricPower_f
+{
+    static bool const V = false;
+private:
+    IsSymmetricPower_f();
+};
+template <Uint32 ORDER, typename Factor> struct IsSymmetricPower_f<SymmetricPower_c<ORDER,Factor> >
+{
+    static bool const V = true;
+private:
+    IsSymmetricPower_f();
+};
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(SymmetricPower);
 // special convenience macros
@@ -69,10 +83,24 @@ public:
 
 template <Uint32 ORDER_, typename Factor_>
 struct IsConcept_f<SymmetricPowerOfVectorSpace_c<ORDER_,Factor_> >
-{ static bool const V = true; };
+{
+    static bool const V = true;
+private:
+    IsConcept_f();
+};
 
-template <typename T> struct IsSymmetricPowerOfVectorSpace_f { static bool const V = false; };
-template <Uint32 ORDER, typename Factor> struct IsSymmetricPowerOfVectorSpace_f<SymmetricPowerOfVectorSpace_c<ORDER,Factor> > { static bool const V = true; };
+template <typename T> struct IsSymmetricPowerOfVectorSpace_f
+{
+    static bool const V = false;
+private:
+    IsSymmetricPowerOfVectorSpace_f();
+};
+template <Uint32 ORDER, typename Factor> struct IsSymmetricPowerOfVectorSpace_f<SymmetricPowerOfVectorSpace_c<ORDER,Factor> >
+{
+    static bool const V = true;
+private:
+    IsSymmetricPowerOfVectorSpace_f();
+};
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(SymmetricPowerOfVectorSpace);
 // special convenience macros
@@ -104,10 +132,24 @@ public:
 
 template <Uint32 ORDER_, typename Factor_>
 struct IsConcept_f<SymmetricPowerOfBasis_c<ORDER_,Factor_> >
-{ static bool const V = true; };
+{
+    static bool const V = true;
+private:
+    IsConcept_f();
+};
 
-template <typename T> struct IsSymmetricPowerOfBasis_f { static bool const V = false; };
-template <Uint32 ORDER, typename Factor> struct IsSymmetricPowerOfBasis_f<SymmetricPowerOfBasis_c<ORDER,Factor> > { static bool const V = true; };
+template <typename T> struct IsSymmetricPowerOfBasis_f
+{
+    static bool const V = false;
+private:
+    IsSymmetricPowerOfBasis_f();
+};
+template <Uint32 ORDER, typename Factor> struct IsSymmetricPowerOfBasis_f<SymmetricPowerOfBasis_c<ORDER,Factor> >
+{
+    static bool const V = true;
+private:
+    IsSymmetricPowerOfBasis_f();
+};
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(SymmetricPowerOfBasis);
 // special convenience macros
@@ -141,10 +183,24 @@ public:
 
 template <typename SymmetricPowerOfVectorSpace, typename Basis_>
 struct IsConcept_f<BasedSymmetricPowerOfVectorSpace_c<SymmetricPowerOfVectorSpace, Basis_> >
-{ static bool const V = true; };
+{
+    static bool const V = true;
+private:
+    IsConcept_f();
+};
 
-template <typename T> struct IsBasedSymmetricPowerOfVectorSpace_f { static bool const V = false; };
-template <typename SymmetricPowerOfVectorSpace, typename Basis> struct IsBasedSymmetricPowerOfVectorSpace_f<BasedSymmetricPowerOfVectorSpace_c<SymmetricPowerOfVectorSpace,Basis> > { static bool const V = true; };
+template <typename T> struct IsBasedSymmetricPowerOfVectorSpace_f
+{
+    static bool const V = false;
+private:
+    IsBasedSymmetricPowerOfVectorSpace_f();
+};
+template <typename SymmetricPowerOfVectorSpace, typename Basis> struct IsBasedSymmetricPowerOfVectorSpace_f<BasedSymmetricPowerOfVectorSpace_c<SymmetricPowerOfVectorSpace,Basis> >
+{
+    static bool const V = true;
+private:
+    IsBasedSymmetricPowerOfVectorSpace_f();
+};
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(BasedSymmetricPowerOfVectorSpace);
 // special convenience macros
@@ -185,10 +241,24 @@ public:
 
 template <Uint32 ORDER_, typename Factor_>
 struct IsConcept_f<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> >
-{ static bool const V = true; };
+{
+    static bool const V = true;
+private:
+    IsConcept_f();
+};
 
-template <typename T> struct IsSymmetricPowerOfBasedVectorSpace_f { static bool const V = false; };
-template <Uint32 ORDER_, typename Factor_> struct IsSymmetricPowerOfBasedVectorSpace_f<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> > { static bool const V = true; };
+template <typename T> struct IsSymmetricPowerOfBasedVectorSpace_f
+{
+    static bool const V = false;
+private:
+    IsSymmetricPowerOfBasedVectorSpace_f();
+};
+template <Uint32 ORDER_, typename Factor_> struct IsSymmetricPowerOfBasedVectorSpace_f<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> >
+{
+    static bool const V = true;
+private:
+    IsSymmetricPowerOfBasedVectorSpace_f();
+};
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(SymmetricPowerOfBasedVectorSpace);
 // special convenience macros
@@ -201,6 +271,8 @@ template <Uint32 ORDER_, typename Factor_>
 struct DualOf_f<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> >
 {
     typedef SymmetricPowerOfBasedVectorSpace_c<ORDER_,typename DualOf_f<Factor_>::T> T;
+private:
+    DualOf_f();
 };
 
 

@@ -42,10 +42,24 @@ public:
 
 template <typename FactorTypeList_>
 struct IsConcept_f<TensorProduct_c<FactorTypeList_> >
-{ static bool const V = true; };
+{
+    static bool const V = true;
+private:
+    IsConcept_f();
+};
 
-template <typename T> struct IsTensorProduct_f { static bool const V = false; };
-template <typename FactorTypeList_> struct IsTensorProduct_f<TensorProduct_c<FactorTypeList_> > { static bool const V = true; };
+template <typename T> struct IsTensorProduct_f
+{
+    static bool const V = false;
+private:
+    IsTensorProduct_f();
+};
+template <typename FactorTypeList_> struct IsTensorProduct_f<TensorProduct_c<FactorTypeList_> >
+{
+    static bool const V = true;
+private:
+    IsTensorProduct_f();
+};
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(TensorProduct);
 // special convenience macros
@@ -56,13 +70,15 @@ template <typename FactorTypeList_>
 struct DualOf_f<TensorProduct_c<FactorTypeList_> >
 {
     typedef TensorProduct_c<typename DualOf_f<FactorTypeList_>::T> T;
+private:
+    DualOf_f();
 };
 
 // property IDs
 
-struct Order { }; // could this be a forward declaration?
-struct FactorTypeList { }; // could this be a forward declaration?
-struct TensorPowerFactor { }; // could this be a forward declaration?
+struct Order; // could this be a forward declaration? Looks like yes.
+struct FactorTypeList; // could this be a forward declaration? Looks like yes.
+struct TensorPowerFactor; // could this be a forward declaration? Looks like yes.
 
 // BaseProperty_f accessors
 
@@ -70,12 +86,16 @@ template <typename FactorTypeList_>
 struct BaseProperty_f<TensorProduct_c<FactorTypeList_>,Order>
 {
     typedef Value_t<Uint32,FactorTypeList_::LENGTH> T;
+private:
+    BaseProperty_f();
 };
 
 template <typename FactorTypeList_>
 struct BaseProperty_f<TensorProduct_c<FactorTypeList_>,FactorTypeList>
 {
     typedef FactorTypeList_ T;
+private:
+    BaseProperty_f();
 };
 
 // this function is only well-defined if FactorTypeList_ is uniform and has at least one element
@@ -85,6 +105,8 @@ struct BaseProperty_f<TensorProduct_c<FactorTypeList_>,TensorPowerFactor>
 private:
     static bool const THERE_IS_A_UNIQUE_FACTOR = FactorTypeList_::LENGTH >= 1 &&
                                                  TypeListIsUniform_t<FactorTypeList_>::V;
+    BaseProperty_f();
+public:
     typedef typename If_f<THERE_IS_A_UNIQUE_FACTOR,
                           typename FactorTypeList_::HeadType,
                           NullValue>::T T;
@@ -92,9 +114,24 @@ private:
 
 // named property accessors
 
-template <typename Concept_> struct OrderOf_f { static Uint32 const V = PropertyValue_f<Concept_,Order>::V; };
-template <typename Concept_> struct FactorTypeListOf_f { typedef typename Property_f<Concept_,FactorTypeList>::T T; };
-template <typename Concept_> struct TensorPowerFactorOf_f { typedef typename Property_f<Concept_,TensorPowerFactor>::T T; };
+template <typename Concept_> struct OrderOf_f
+{
+    static Uint32 const V = PropertyValue_f<Concept_,Order>::V;
+private:
+    OrderOf_f();
+};
+template <typename Concept_> struct FactorTypeListOf_f
+{
+    typedef typename Property_f<Concept_,FactorTypeList>::T T;
+private:
+    FactorTypeListOf_f();
+};
+template <typename Concept_> struct TensorPowerFactorOf_f
+{
+    typedef typename Property_f<Concept_,TensorPowerFactor>::T T;
+private:
+    TensorPowerFactorOf_f();
+};
 
 // ///////////////////////////////////////////////////////////////////////////
 // TensorProductOfVectorSpaces_c
@@ -106,12 +143,16 @@ struct AllFactorsAreVectorSpaces_f
 {
     static bool const V = HasVectorSpaceStructure_f<typename FactorTypeList_::HeadType>::V &&
                           AllFactorsAreVectorSpaces_f<typename FactorTypeList_::BodyTypeList>::V;
+private:
+    AllFactorsAreVectorSpaces_f();
 };
 
 template <>
 struct AllFactorsAreVectorSpaces_f<EmptyTypeList>
 {
     static bool const V = true;
+private:
+    AllFactorsAreVectorSpaces_f();
 };
 
 template <typename FactorTypeList_>
@@ -119,19 +160,26 @@ struct AllFactorsAreBases_f
 {
     static bool const V = HasBasisStructure_f<typename FactorTypeList_::HeadType>::V &&
                           AllFactorsAreBases_f<typename FactorTypeList_::BodyTypeList>::V;
+private:
+    AllFactorsAreBases_f();
 };
 
 template <>
 struct AllFactorsAreBases_f<EmptyTypeList>
 {
     static bool const V = true;
+private:
+    AllFactorsAreBases_f();
 };
 
 template <typename FactorTypeList_>
 struct AllFactorsHaveTheSameField_f
 {
+private:
     typedef typename FactorTypeList_::HeadType HeadType;
     typedef typename FactorTypeList_::BodyTypeList BodyTypeList;
+    AllFactorsHaveTheSameField_f();
+public:
     static bool const V = TypesAreEqual_f<typename ScalarFieldOf_f<HeadType>::T,
                                           typename ScalarFieldOf_f<typename BodyTypeList::HeadType>::T>::V &&
                           AllFactorsHaveTheSameField_f<BodyTypeList>::V;
@@ -141,19 +189,25 @@ template <typename HeadType>
 struct AllFactorsHaveTheSameField_f<TypeList_t<HeadType> >
 {
     static bool const V = true;
+private:
+    AllFactorsHaveTheSameField_f();
 };
 
 template <>
 struct AllFactorsHaveTheSameField_f<EmptyTypeList>
 {
     static bool const V = true;
+private:
+    AllFactorsHaveTheSameField_f();
 };
 
 template <typename FactorTypeList_>
 struct ProductOfDimensions_t
 {
+private:
     enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(typename FactorTypeList_::HeadType), MUST_BE_VECTOR_SPACE) };
-
+    ProductOfDimensions_t();
+public:
     static Uint32 const V = DimensionOf_f<typename FactorTypeList_::HeadType>::V *
                             ProductOfDimensions_t<typename FactorTypeList_::BodyTypeList>::V;
 };
@@ -162,6 +216,8 @@ template <>
 struct ProductOfDimensions_t<EmptyTypeList>
 {
     static Uint32 const V = 1; // a 0-tensor is the scalar field by convention
+private:
+    ProductOfDimensions_t();
 };
 
 template <typename TypeList>
@@ -169,12 +225,16 @@ struct IdsOfTypeList_t
 {
     typedef TypeList_t<typename TypeList::HeadType::Id,
                        typename IdsOfTypeList_t<typename TypeList::BodyTypeList>::T> T;
+private:
+    IdsOfTypeList_t();
 };
 
 template <>
 struct IdsOfTypeList_t<EmptyTypeList>
 {
     typedef EmptyTypeList T;
+private:
+    IdsOfTypeList_t();
 };
 
 
@@ -210,10 +270,24 @@ public:
 
 template <typename FactorTypeList_>
 struct IsConcept_f<TensorProductOfVectorSpaces_c<FactorTypeList_> >
-{ static bool const V = true; };
+{
+    static bool const V = true;
+private:
+    IsConcept_f();
+};
 
-template <typename T> struct IsTensorProductOfVectorSpaces_f { static bool const V = false; };
-template <typename FactorTypeList_> struct IsTensorProductOfVectorSpaces_f<TensorProductOfVectorSpaces_c<FactorTypeList_> > { static bool const V = true; };
+template <typename T> struct IsTensorProductOfVectorSpaces_f
+{
+    static bool const V = false;
+private:
+    IsTensorProductOfVectorSpaces_f();
+};
+template <typename FactorTypeList_> struct IsTensorProductOfVectorSpaces_f<TensorProductOfVectorSpaces_c<FactorTypeList_> >
+{
+    static bool const V = true;
+private:
+    IsTensorProductOfVectorSpaces_f();
+};
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(TensorProductOfVectorSpaces);
 // special convenience macros
@@ -224,6 +298,8 @@ template <typename FactorTypeList_>
 struct DualOf_f<TensorProductOfVectorSpaces_c<FactorTypeList_> >
 {
     typedef TensorProductOfVectorSpaces_c<typename DualOf_f<FactorTypeList_>::T> T;
+private:
+    DualOf_f();
 };
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -255,10 +331,24 @@ public:
 
 template <typename FactorTypeList_>
 struct IsConcept_f<TensorProductOfBases_c<FactorTypeList_> >
-{ static bool const V = true; };
+{
+    static bool const V = true;
+private:
+    IsConcept_f();
+};
 
-template <typename T> struct IsTensorProductOfBases_f { static bool const V = false; };
-template <typename FactorTypeList_> struct IsTensorProductOfBases_f<TensorProductOfBases_c<FactorTypeList_> > { static bool const V = true; };
+template <typename T> struct IsTensorProductOfBases_f
+{
+    static bool const V = false;
+private:
+    IsTensorProductOfBases_f();
+};
+template <typename FactorTypeList_> struct IsTensorProductOfBases_f<TensorProductOfBases_c<FactorTypeList_> >
+{
+    static bool const V = true;
+private:
+    IsTensorProductOfBases_f();
+};
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(TensorProductOfBases);
 // special convenience macros
@@ -269,6 +359,8 @@ template <typename FactorTypeList_>
 struct DualOf_f<TensorProductOfBases_c<FactorTypeList_> >
 {
     typedef TensorProductOfBases_c<typename DualOf_f<FactorTypeList_>::T> T;
+private:
+    DualOf_f();
 };
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -303,10 +395,24 @@ public:
 
 template <typename TensorProductOfVectorSpaces_, typename Basis_>
 struct IsConcept_f<BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_, Basis_> >
-{ static bool const V = true; };
+{
+    static bool const V = true;
+private:
+    IsConcept_f();
+};
 
-template <typename T> struct IsBasedTensorProductOfVectorSpaces_f { static bool const V = false; };
-template <typename TensorProductOfVectorSpaces_, typename Basis_> struct IsBasedTensorProductOfVectorSpaces_f<BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_,Basis_> > { static bool const V = true; };
+template <typename T> struct IsBasedTensorProductOfVectorSpaces_f
+{
+    static bool const V = false;
+private:
+    IsBasedTensorProductOfVectorSpaces_f();
+};
+template <typename TensorProductOfVectorSpaces_, typename Basis_> struct IsBasedTensorProductOfVectorSpaces_f<BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_,Basis_> >
+{
+    static bool const V = true;
+private:
+    IsBasedTensorProductOfVectorSpaces_f();
+};
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(BasedTensorProductOfVectorSpaces);
 // special convenience macros
@@ -317,6 +423,8 @@ template <typename TensorProductOfVectorSpaces, typename Basis>
 struct DualOf_f<BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces,Basis> >
 {
     typedef BasedTensorProductOfVectorSpaces_c<typename DualOf_f<TensorProductOfVectorSpaces>::T,typename DualOf_f<Basis>::T> T;
+private:
+    DualOf_f();
 };
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -329,12 +437,16 @@ struct AllFactorsAreBasedVectorSpaces_f
 {
     static bool const V = HasBasedVectorSpaceStructure_f<typename FactorTypeList_::HeadType>::V &&
                           AllFactorsAreBasedVectorSpaces_f<typename FactorTypeList_::BodyTypeList>::V;
+private:
+    AllFactorsAreBasedVectorSpaces_f();
 };
 
 template <>
 struct AllFactorsAreBasedVectorSpaces_f<EmptyTypeList>
 {
     static bool const V = true;
+private:
+    AllFactorsAreBasedVectorSpaces_f();
 };
 
 // FactorTypeList_ must be a TypeList_t of BasedVectorSpace_c types
@@ -366,10 +478,24 @@ public:
 
 template <typename FactorTypeList_>
 struct IsConcept_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >
-{ static bool const V = true; };
+{
+    static bool const V = true;
+private:
+    IsConcept_f();
+};
 
-template <typename T> struct IsTensorProductOfBasedVectorSpaces_f { static bool const V = false; };
-template <typename FactorTypeList_> struct IsTensorProductOfBasedVectorSpaces_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_> > { static bool const V = true; };
+template <typename T> struct IsTensorProductOfBasedVectorSpaces_f
+{
+    static bool const V = false;
+private:
+    IsTensorProductOfBasedVectorSpaces_f();
+};
+template <typename FactorTypeList_> struct IsTensorProductOfBasedVectorSpaces_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >
+{
+    static bool const V = true;
+private:
+    IsTensorProductOfBasedVectorSpaces_f();
+};
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(TensorProductOfBasedVectorSpaces);
 // special convenience macros
@@ -382,6 +508,8 @@ template <typename FactorTypeList_>
 struct DualOf_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >
 {
     typedef TensorProductOfBasedVectorSpaces_c<typename DualOf_f<FactorTypeList_>::T> T;
+private:
+    DualOf_f();
 };
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -392,19 +520,27 @@ template <Uint32 ORDER_, typename Factor_>
 struct TensorPower_f
 {
     typedef TensorProduct_c<typename UniformTypeListOfLength_t<Factor_,ORDER_>::T> T;
+private:
+    TensorPower_f();
 };
 
 template <Uint32 ORDER_, typename Factor_>
 struct TensorPowerOfVectorSpace_f
 {
+private:
     enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_VECTOR_SPACE) };
+    TensorPowerOfVectorSpace_f();
+public:
     typedef TensorProductOfVectorSpaces_c<typename UniformTypeListOfLength_t<Factor_,ORDER_>::T> T;
 };
 
 template <Uint32 ORDER_, typename Factor_>
 struct TensorPowerOfBasedVectorSpace_f
 {
+private:
     enum { STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_BASED_VECTOR_SPACE) };
+    TensorPowerOfBasedVectorSpace_f();
+public:
     typedef TensorProductOfBasedVectorSpaces_c<typename UniformTypeListOfLength_t<Factor_,ORDER_>::T> T;
 };
 

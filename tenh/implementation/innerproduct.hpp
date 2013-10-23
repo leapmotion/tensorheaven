@@ -38,6 +38,7 @@ private:
                                  DimensionOf_f<Diagonal2Tensor>::V,
                                  constant_component_generator_evaluator<Scalar_,DimensionOf_f<Diagonal2Tensor>::V,1>,
                                  StandardInnerProduct> ComponentGenerator;
+    InnerProduct_f();
 public:
     typedef ImplementationOf_t<Diagonal2Tensor,Scalar_,UseImmutableArray_t<ComponentGenerator> > T;
 };
@@ -53,6 +54,7 @@ struct InnerProductOfEachInTypeList_f
 {
 private:
     enum { STATIC_ASSERT_IN_ENUM(FactorTypeList_::LENGTH == InnerProductIdTypeList_::LENGTH, LENGTHS_MUST_BE_EQUAL) };
+    InnerProductOfEachInTypeList_f();
 public:
     typedef TypeList_t<typename InnerProduct_f<typename FactorTypeList_::HeadType,
                                                typename InnerProductIdTypeList_::HeadType,
@@ -66,6 +68,8 @@ template <typename Scalar_>
 struct InnerProductOfEachInTypeList_f<EmptyTypeList,EmptyTypeList,Scalar_>
 {
     typedef EmptyTypeList T;
+private:
+    InnerProductOfEachInTypeList_f();
 };
 
 // induced inner product on TensorProductOfBasedVectorSpaces_c
@@ -74,6 +78,7 @@ struct InnerProduct_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Tensor
 {
 private:
     typedef typename InnerProductOfEachInTypeList_f<FactorTypeList_,InnerProductIdTypeList_,Scalar_>::T InnerProductTypeList;
+    InnerProduct_f();
 public:
     typedef typename TensorProductOfImmutable2Tensors_f<InnerProductTypeList>::T T;
 };

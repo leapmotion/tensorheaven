@@ -21,10 +21,20 @@ namespace Tenh {
 // these are for the UseArrayType parameter in ImplementationOf_t
 
 struct UseMemberArray { static std::string type_as_string () { return "UseMemberArray"; } };
-template <> struct DualOf_f<UseMemberArray> { typedef UseMemberArray T; };
+template <> struct DualOf_f<UseMemberArray>
+{
+    typedef UseMemberArray T;
+private:
+    DualOf_f();
+};
 
 struct UsePreallocatedArray { static std::string type_as_string () { return "UsePreallocatedArray"; } };
-template <> struct DualOf_f<UsePreallocatedArray> { typedef UsePreallocatedArray T; };
+template <> struct DualOf_f<UsePreallocatedArray>
+{
+    typedef UsePreallocatedArray T;
+private:
+    DualOf_f();
+};
 
 template <typename ComponentGenerator_>
 struct UseImmutableArray_t
@@ -39,12 +49,32 @@ struct UseImmutableArray_t
     }
 };
 
-template <typename T> struct IsUseImmutableArray_f { static bool const V = false; };
-template <typename ComponentGenerator_> struct IsUseImmutableArray_f<UseImmutableArray_t<ComponentGenerator_> > { static bool const V = true; };
+template <typename T> struct IsUseImmutableArray_f
+{
+    static bool const V = false;
+private:
+    IsUseImmutableArray_f();
+};
+template <typename ComponentGenerator_> struct IsUseImmutableArray_f<UseImmutableArray_t<ComponentGenerator_> >
+{
+    static bool const V = true;
+private:
+    IsUseImmutableArray_f();
+};
 
 // used by ImplementationOf_t to provide the COMPONENTS_ARE_IMMUTABLE parameter value
-template <typename T> struct ComponentsAreImmutable_f { static bool const V = false; };
-template <typename ComponentGenerator_> struct ComponentsAreImmutable_f<UseImmutableArray_t<ComponentGenerator_> > { static bool const V = true; };
+template <typename T> struct ComponentsAreImmutable_f
+{
+    static bool const V = false;
+private:
+    ComponentsAreImmutable_f();
+};
+template <typename ComponentGenerator_> struct ComponentsAreImmutable_f<UseImmutableArray_t<ComponentGenerator_> >
+{
+    static bool const V = true;
+private:
+    ComponentsAreImmutable_f();
+};
 
 // the default is UseMemberArray (internal storage).  each ImplementationOf_t must
 // have a "typedef Concept_ Concept" and a "typedef UseArrayType_ UseArrayType".
@@ -70,18 +100,24 @@ template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_>
 struct ArrayStorage_f<Component_,COMPONENT_COUNT_,UseMemberArray,Derived_>
 {
     typedef MemberArray_t<Component_,COMPONENT_COUNT_,Derived_> T;
+private:
+    ArrayStorage_f();
 };
 
 template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_>
 struct ArrayStorage_f<Component_,COMPONENT_COUNT_,UsePreallocatedArray,Derived_>
 {
     typedef PreallocatedArray_t<Component_,COMPONENT_COUNT_,Derived_> T;
+private:
+    ArrayStorage_f();
 };
 
 template <typename Component_, Uint32 COMPONENT_COUNT_, typename ComponentGenerator_, typename Derived_>
 struct ArrayStorage_f<Component_,COMPONENT_COUNT_,UseImmutableArray_t<ComponentGenerator_>,Derived_>
 {
     typedef ImmutableArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_> T;
+private:
+    ArrayStorage_f();
 };
 
 } // end of namespace Tenh
