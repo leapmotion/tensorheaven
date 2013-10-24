@@ -210,6 +210,92 @@ private:
     BasisOf_f();
 };
 
+// TODO: Replace with predicate-based thing
+template <typename SummandTypeList_>
+struct AllFactorsAreVectorSpaces_f
+{
+    static bool const V = HasVectorSpaceStructure_f<typename SummandTypeList_::HeadType>::V &&
+                          AllFactorsAreVectorSpaces_f<typename SummandTypeList_::BodyTypeList>::V;
+private:
+    AllFactorsAreVectorSpaces_f();
+};
+
+template <>
+struct AllFactorsAreVectorSpaces_f<EmptyTypeList>
+{
+    static bool const V = true;
+private:
+    AllFactorsAreVectorSpaces_f();
+};
+
+template <typename SummandTypeList_>
+struct AllFactorsHaveTheSameField_f
+{
+private:
+    typedef typename SummandTypeList_::HeadType HeadType;
+    typedef typename SummandTypeList_::BodyTypeList BodyTypeList;
+    AllFactorsHaveTheSameField_f();
+public:
+    static bool const V = TypesAreEqual_f<typename ScalarFieldOf_f<HeadType>::T,
+                                          typename ScalarFieldOf_f<typename BodyTypeList::HeadType>::T>::V &&
+                          AllFactorsHaveTheSameField_f<BodyTypeList>::V;
+};
+
+template <typename HeadType>
+struct AllFactorsHaveTheSameField_f<TypeList_t<HeadType> >
+{
+    static bool const V = true;
+private:
+    AllFactorsHaveTheSameField_f();
+};
+
+template <>
+struct AllFactorsHaveTheSameField_f<EmptyTypeList>
+{
+    static bool const V = true;
+private:
+    AllFactorsHaveTheSameField_f();
+};
+
+template <typename SummandTypeList_>
+struct SumOfDimensions_t
+{
+private:
+    enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(typename SummandTypeList_::HeadType), MUST_BE_VECTOR_SPACE) };
+    SumOfDimensions_t();
+public:
+    static Uint32 const V = DimensionOf_f<typename SummandTypeList_::HeadType>::V +
+                            SumOfDimensions_t<typename SummandTypeList_::BodyTypeList>::V;
+};
+
+template <>
+struct SumOfDimensions_t<EmptyTypeList>
+{
+    static Uint32 const V = 0;
+private:
+    SumOfDimensions_t();
+};
+
+template <typename FactorTypeList_>
+struct ProductOfDimensions_t
+{
+private:
+    enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(typename FactorTypeList_::HeadType), MUST_BE_VECTOR_SPACE) };
+    ProductOfDimensions_t();
+public:
+    static Uint32 const V = DimensionOf_f<typename FactorTypeList_::HeadType>::V *
+                            ProductOfDimensions_t<typename FactorTypeList_::BodyTypeList>::V;
+};
+
+template <>
+struct ProductOfDimensions_t<EmptyTypeList>
+{
+    static Uint32 const V = 1; // a 0-tensor is the scalar field by convention
+private:
+    ProductOfDimensions_t();
+};
+
+
 } // end of namespace Tenh
 
 #endif // TENH_CONCEPTUAL_VECTORSPACE_HPP_

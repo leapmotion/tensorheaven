@@ -115,6 +115,41 @@ private:
     DualOf_f();
 };
 
+template <typename SummandTypeList_>
+struct AllFactorsAreBases_f
+{
+    static bool const V = HasBasisStructure_f<typename SummandTypeList_::HeadType>::V &&
+                          AllFactorsAreBases_f<typename SummandTypeList_::BodyTypeList>::V;
+private:
+    AllFactorsAreBases_f();
+};
+
+template <>
+struct AllFactorsAreBases_f<EmptyTypeList>
+{
+    static bool const V = true;
+private:
+    AllFactorsAreBases_f();
+};
+
+template <typename TypeList>
+struct IdsOfTypeList_t
+{
+    typedef TypeList_t<typename TypeList::HeadType::Id,
+                       typename IdsOfTypeList_t<typename TypeList::BodyTypeList>::T> T;
+private:
+    IdsOfTypeList_t();
+};
+
+template <>
+struct IdsOfTypeList_t<EmptyTypeList>
+{
+    typedef EmptyTypeList T;
+private:
+    IdsOfTypeList_t();
+};
+
+
 } // end of namespace Tenh
 
 #endif // TENH_CONCEPTUAL_BASIS_HPP_
