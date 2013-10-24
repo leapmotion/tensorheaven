@@ -8,6 +8,9 @@
 
 #include "tenh/core.hpp"
 
+#include "tenh/conceptual/abstractindex.hpp"
+#include "tenh/conceptual/diagonalbased2tensorproduct.hpp"
+#include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/implementation/implementationof.hpp"
 #include "tenh/implementation/tensor.hpp"
 #include "tenh/implementation/vector.hpp"

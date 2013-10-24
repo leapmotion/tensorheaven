@@ -11,8 +11,6 @@ using namespace std;
 using namespace Tenh;
 
 
-
-
 namespace Tenh {
 
 template <typename T> struct IsMap_t { static bool const V = false; };

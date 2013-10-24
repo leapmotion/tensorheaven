@@ -8,6 +8,9 @@
 
 #include "tenh/core.hpp"
 
+#include "tenh/conceptual/basis.hpp"
+#include "tenh/conceptual/tensorproduct.hpp"
+#include "tenh/conceptual/vectorspace.hpp"
 #include "tenh/implementation/innerproduct.hpp"
 #include "tenh/implementation/tensorproduct.hpp"
 

@@ -9,6 +9,7 @@
 #include "tenh/core.hpp"
 
 #include "tenh/conceptual/exteriorpower.hpp"
+#include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/implementation/tensor.hpp"
 #include "tenh/implementation/wedge.hpp"
 

@@ -9,6 +9,8 @@
 #include "tenh/core.hpp"
 
 #include "tenh/conceptual/diagonalbased2tensorproduct.hpp"
+#include "tenh/conceptual/vectorspace.hpp"
+#include "tenh/dimindex.hpp"
 #include "tenh/implementation/implementationof.hpp"
 #include "tenh/interface/embeddableastensor.hpp"
 #include "tenh/meta/tuple.hpp"
