@@ -117,7 +117,7 @@ template <typename Concept_> struct SummandCountOf_f
 {
     static Uint32 const V = PropertyValue_f<Concept_,SummandCount>::V;
 private:
-    OrderOf_f();
+    SummandCountOf_f();
 };
 template <typename Concept_> struct SummandTypeListOf_f
 {
@@ -152,11 +152,9 @@ private:
     typedef VectorSpace_c<typename ScalarFieldOf_f<typename SummandTypeList_::HeadType>::T,
                           SumOfDimensions_t<SummandTypeList_>::V,
                           DirectSum_c<typename IdsOfTypeList_t<SummandTypeList_>::T> > As_VectorSpace;
-    typedef EmbeddableInDirectSumOfVectorSpaces_c<DirectSumOfVectorSpaces_c> As_EmbeddableInDirectSumOfVectorSpaces;
 public:
     typedef TypeList_t<As_DirectSum,
-            TypeList_t<As_VectorSpace,
-            TypeList_t<As_EmbeddableInDirectSumOfVectorSpaces> > > ParentTypeList;
+            TypeList_t<As_VectorSpace> > ParentTypeList;
 
     typedef typename As_VectorSpace::Id Id;
 
@@ -329,24 +327,6 @@ private:
 // DirectSumOfBasedVectorSpaces_c
 // ///////////////////////////////////////////////////////////////////////////
 
-// TODO: Predicate thingy
-template <typename SummandTypeList_>
-struct AllFactorsAreBasedVectorSpaces_f
-{
-    static bool const V = HasBasedVectorSpaceStructure_f<typename SummandTypeList_::HeadType>::V &&
-                          AllFactorsAreBasedVectorSpaces_f<typename SummandTypeList_::BodyTypeList>::V;
-private:
-    AllFactorsAreBasedVectorSpaces_f();
-};
-
-template <>
-struct AllFactorsAreBasedVectorSpaces_f<EmptyTypeList>
-{
-    static bool const V = true;
-private:
-    AllFactorsAreBasedVectorSpaces_f();
-};
-
 // SummandTypeList_ must be a TypeList_t of BasedVectorSpace_c types
 template <typename SummandTypeList_>
 struct DirectSumOfBasedVectorSpaces_c
@@ -361,10 +341,8 @@ private:
     typedef typename PropertyOfEachInTypeList_f<SummandTypeList_,Basis>::T BasisTypeList;
     typedef BasedDirectSumOfVectorSpaces_c<DirectSumOfVectorSpaces_c<SummandTypeList_>,
                                                DirectSumOfBases_c<BasisTypeList> > As_BasedDirectSumOfVectorSpaces;
-    typedef EmbeddableInDirectSumOfBasedVectorSpaces_c<DirectSumOfBasedVectorSpaces_c,DirectSumOfVectorSpaces_c<SummandTypeList_> > As_EmbeddableInDirectSumOfBasedVectorSpaces;
 public:
-    typedef TypeList_t<As_BasedDirectSumOfVectorSpaces,
-            TypeList_t<As_EmbeddableInDirectSumOfBasedVectorSpaces> > ParentTypeList;
+    typedef TypeList_t<As_BasedDirectSumOfVectorSpaces> ParentTypeList;
 
     typedef typename As_BasedDirectSumOfVectorSpaces::Id Id;
 

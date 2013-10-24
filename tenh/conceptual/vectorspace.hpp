@@ -228,6 +228,23 @@ private:
     AllFactorsAreVectorSpaces_f();
 };
 
+template <typename FactorTypeList_>
+struct AllFactorsAreBasedVectorSpaces_f
+{
+    static bool const V = HasBasedVectorSpaceStructure_f<typename FactorTypeList_::HeadType>::V &&
+                          AllFactorsAreBasedVectorSpaces_f<typename FactorTypeList_::BodyTypeList>::V;
+private:
+    AllFactorsAreBasedVectorSpaces_f();
+};
+
+template <>
+struct AllFactorsAreBasedVectorSpaces_f<EmptyTypeList>
+{
+    static bool const V = true;
+private:
+    AllFactorsAreBasedVectorSpaces_f();
+};
+
 template <typename SummandTypeList_>
 struct AllFactorsHaveTheSameField_f
 {

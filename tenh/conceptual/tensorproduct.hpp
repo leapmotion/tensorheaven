@@ -331,24 +331,6 @@ private:
 // TensorProductOfBasedVectorSpaces_c
 // ///////////////////////////////////////////////////////////////////////////
 
-// TODO: Predicate thingy
-template <typename FactorTypeList_>
-struct AllFactorsAreBasedVectorSpaces_f
-{
-    static bool const V = HasBasedVectorSpaceStructure_f<typename FactorTypeList_::HeadType>::V &&
-                          AllFactorsAreBasedVectorSpaces_f<typename FactorTypeList_::BodyTypeList>::V;
-private:
-    AllFactorsAreBasedVectorSpaces_f();
-};
-
-template <>
-struct AllFactorsAreBasedVectorSpaces_f<EmptyTypeList>
-{
-    static bool const V = true;
-private:
-    AllFactorsAreBasedVectorSpaces_f();
-};
-
 // FactorTypeList_ must be a TypeList_t of BasedVectorSpace_c types
 template <typename FactorTypeList_>
 struct TensorProductOfBasedVectorSpaces_c
