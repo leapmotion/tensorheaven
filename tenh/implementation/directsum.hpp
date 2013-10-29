@@ -114,16 +114,26 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
 
     static std::string type_as_string ()
     {
-        return "ImplementationOf_t<" + type_string_of<BasedVectorSpace>() + ','
+        return "ImplementationOf_t<" + type_string_of<DirectSumOfBasedVectorSpaces_c<SummandTypeList_> >() + ','
                                      + type_string_of<Scalar>() + ','
                                      + type_string_of<UseArrayType_>() + '>';
     }
 
     template <Uint32 N>
-    ImplementationOf_t<typename Element_f<SummandTypeList_, N>::T, Scalar_, typename If_f<IsUseImmutableArray_f<UseArrayType_>::V,UseArrayType_, UsePreallocatedArray>::T > el()
+    struct ElementType_f
     {
-        typedef ImplementationOf_t<typename Element_f<SummandTypeList_, N>::T, Scalar_, typename If_f<IsUseImmutableArray_f<UseArrayType_>::V,UseArrayType_, UsePreallocatedArray>::T > ReturnType;
-        return ReturnType(pointer_to_allocation() + OffsetForComponent_f<SummandTypeList_,N>::V);
+        typedef ImplementationOf_t<typename Element_f<SummandTypeList_, N>::T,
+                                   Scalar_,
+                                   typename If_f<IsUseImmutableArray_f<UseArrayType_>::V,
+                                                 UseArrayType_,
+                                                 UsePreallocatedArray>::T >
+                T;
+    };
+
+    template <Uint32 N>
+    typename ElementType_f<N>::T el()
+    {
+        return typename ElementType_f<N>::T(pointer_to_allocation() + OffsetForComponent_f<SummandTypeList_,N>::V);
     }
 };
 
