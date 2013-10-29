@@ -122,6 +122,9 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
     template <Uint32 N>
     struct ElementType_f
     {
+    private:
+        enum { STATIC_ASSERT_IN_ENUM((SummandTypeList_::LENGTH > N), ATTEMPTED_ACCESS_PAST_LIST_END) };
+    public:
         typedef ImplementationOf_t<typename Element_f<SummandTypeList_, N>::T,
                                    Scalar_,
                                    typename If_f<IsUseImmutableArray_f<UseArrayType_>::V,
@@ -133,6 +136,7 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
     template <Uint32 N>
     typename ElementType_f<N>::T el()
     {
+        STATIC_ASSERT((SummandTypeList_::LENGTH > N), ATTEMPTED_ACCESS_PAST_LIST_END);
         return typename ElementType_f<N>::T(pointer_to_allocation() + OffsetForComponent_f<SummandTypeList_,N>::V);
     }
 };
