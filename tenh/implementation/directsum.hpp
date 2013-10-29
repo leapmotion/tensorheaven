@@ -112,13 +112,6 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
     using Parent_Implementation::allocation_size_in_bytes;
     using Parent_Implementation::pointer_to_allocation;
 
-    static std::string type_as_string ()
-    {
-        return "ImplementationOf_t<" + type_string_of<DirectSumOfBasedVectorSpaces_c<SummandTypeList_> >() + ','
-                                     + type_string_of<Scalar>() + ','
-                                     + type_string_of<UseArrayType_>() + '>';
-    }
-
     template <Uint32 N>
     struct ElementType_f
     {
@@ -138,6 +131,37 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
     {
         STATIC_ASSERT((SummandTypeList_::LENGTH > N), ATTEMPTED_ACCESS_PAST_LIST_END);
         return typename ElementType_f<N>::T(pointer_to_allocation() + OffsetForComponent_f<SummandTypeList_,N>::V);
+    }
+
+    template <Uint32 N>
+    typename ElementType_f<N>::T const el() const
+    {
+        STATIC_ASSERT((SummandTypeList_::LENGTH > N), ATTEMPTED_ACCESS_PAST_LIST_END);
+        return typename ElementType_f<N>::T(pointer_to_allocation() + OffsetForComponent_f<SummandTypeList_,N>::V);
+    }
+
+    // These versions of el<...> are intended to allow use like el<n>(i) rather than the more clunky el<n>()(i) to get an indexed expression.
+    // Unfortunately the indexed expression type stores a reference to the ImplementationOf_t internally, and in this code that object is
+    // a temporary, and so the behavior is undefined.
+    // template <Uint32 N, AbstractIndexSymbol SYMBOL_>
+    // typename ElementType_f<N>::T::template IndexedExpressionNonConstType_f<SYMBOL_>::T el(AbstractIndex_c<SYMBOL_> const & i)
+    // {
+    //     STATIC_ASSERT((SummandTypeList_::LENGTH > N), ATTEMPTED_ACCESS_PAST_LIST_END);
+    //     return typename ElementType_f<N>::T(pointer_to_allocation() + OffsetForComponent_f<SummandTypeList_,N>::V)(i);
+    // }
+    //
+    // template <Uint32 N, AbstractIndexSymbol SYMBOL_>
+    // typename ElementType_f<N>::T::template IndexedExpressionConstType_f<SYMBOL_>::T el(AbstractIndex_c<SYMBOL_> const & i) const
+    // {
+    //     STATIC_ASSERT((SummandTypeList_::LENGTH > N), ATTEMPTED_ACCESS_PAST_LIST_END);
+    //     return typename ElementType_f<N>::T(pointer_to_allocation() + OffsetForComponent_f<SummandTypeList_,N>::V)(i);
+    // }
+
+    static std::string type_as_string ()
+    {
+        return "ImplementationOf_t<" + type_string_of<DirectSumOfBasedVectorSpaces_c<SummandTypeList_> >() + ','
+                                     + type_string_of<Scalar>() + ','
+                                     + type_string_of<UseArrayType_>() + '>';
     }
 };
 

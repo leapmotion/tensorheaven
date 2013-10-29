@@ -134,17 +134,22 @@ void test_direct_sums ()
     std::cout << FORMAT_VALUE(t.el<1>()) << '\n';
     std::cout << FORMAT_VALUE(t.el<2>()) << '\n';
     std::cout << FORMAT_VALUE(t.el<0>()(i).split(i,j|k)) << '\n';
+    // std::cout << FORMAT_VALUE(t.el<0>(i).split(i,j|k)) << '\n';
     std::cout << FORMAT_VALUE(t.el<1>()(i)) << '\n';
+    // std::cout << FORMAT_VALUE(t.el<1>(i)) << '\n';
     std::cout << FORMAT_VALUE(t.el<2>()(i)) << '\n';
+    // std::cout << FORMAT_VALUE(t.el<2>(i)) << '\n';
 
     t.el<0>()(k) = 0.5f*(s(i)*r(j) + r(i)*s(j)).bundle(i|j,SymmetricSquare(),k);
     std::cout << FORMAT_VALUE(t) << '\n';
     std::cout << FORMAT_VALUE(t.el<0>()) << '\n';
     std::cout << FORMAT_VALUE(t.el<0>()(i).split(i,j|k)) << '\n';
+    // std::cout << FORMAT_VALUE(t.el<0>(i).split(i,j|k)) << '\n';
 
     t.el<1>()(i) = s(i);
     std::cout << FORMAT_VALUE(t) << '\n';
     std::cout << FORMAT_VALUE(t.el<1>()) << '\n';
     std::cout << FORMAT_VALUE(t.el<1>()(i)) << '\n';
+    // std::cout << FORMAT_VALUE(t.el<1>(i)) << '\n';
 
 }
