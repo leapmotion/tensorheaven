@@ -50,7 +50,7 @@ void test_induced_inner_product ()
 
     {
         ImplementationOf_t<S2_T2_star,Scalar> g_T2(Static<WithoutInitialization>::SINGLETON);
-        g_T2(r) = (g(i).split(i,j|k) * 
+        g_T2(r) = (g(i).split(i,j|k) *
                    g(a).split(a,b|c)).bundle(j|b,T2_star(),p)
                                      .bundle(k|c,T2_star(),q)
                                      .bundle(p|q,S2_T2_star(),r);
@@ -74,8 +74,8 @@ void test_induced_inner_product ()
 
     {
         ImplementationOf_t<S2_T3_star,Scalar> g_T3(Static<WithoutInitialization>::SINGLETON);
-        g_T3(r) = (g(i).split(i,j|k) * 
-                   g(a).split(a,b|c) * 
+        g_T3(r) = (g(i).split(i,j|k) *
+                   g(a).split(a,b|c) *
                    g(x).split(x,y|z)).bundle(j|b|y,T3_star(),p)
                                      .bundle(k|c|z,T3_star(),q)
                                      .bundle(p|q,S2_T3_star(),r);
@@ -98,3 +98,53 @@ void test_induced_inner_product ()
     }
 }
 
+
+void test_direct_sums ()
+{
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,Basis_c<X> > BasedVectorSpace;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,1,X>,Basis_c<X> > RealLine;
+    typedef SymmetricPowerOfBasedVectorSpace_c<2, BasedVectorSpace> SymmetricSquare;
+
+    typedef DirectSumOfBasedVectorSpaces_c<TypeList_t<SymmetricSquare, TypeList_t<BasedVectorSpace, TypeList_t<RealLine> > > > DirectSumType;
+    typedef ImplementationOf_t<DirectSumType, float> T;
+    typedef ImplementationOf_t<BasedVectorSpace, float> S;
+
+    T t(0.0f);
+
+    S s(0.0f), r(0.0f);
+
+    for(T::ComponentIndex i; i.is_not_at_end(); ++i)
+    {
+        t[i] = i.value();
+    }
+
+    for(S::ComponentIndex i; i.is_not_at_end(); ++i)
+    {
+        s[i] = i.value();
+        r[i] = 4-i.value()*i.value();
+    }
+
+    AbstractIndex_c<'i'> i;
+    AbstractIndex_c<'j'> j;
+    AbstractIndex_c<'k'> k;
+
+
+    std::cout << FORMAT_VALUE(t) << '\n';
+    std::cout << FORMAT_VALUE(t.el<0>()) << '\n';
+    std::cout << FORMAT_VALUE(t.el<1>()) << '\n';
+    std::cout << FORMAT_VALUE(t.el<2>()) << '\n';
+    std::cout << FORMAT_VALUE(t.el<0>()(i).split(i,j|k)) << '\n';
+    std::cout << FORMAT_VALUE(t.el<1>()(i)) << '\n';
+    std::cout << FORMAT_VALUE(t.el<2>()(i)) << '\n';
+
+    t.el<0>()(k) = 0.5f*(s(i)*r(j) + r(i)*s(j)).bundle(i|j,SymmetricSquare(),k);
+    std::cout << FORMAT_VALUE(t) << '\n';
+    std::cout << FORMAT_VALUE(t.el<0>()) << '\n';
+    std::cout << FORMAT_VALUE(t.el<0>()(i).split(i,j|k)) << '\n';
+
+    t.el<1>()(i) = s(i);
+    std::cout << FORMAT_VALUE(t) << '\n';
+    std::cout << FORMAT_VALUE(t.el<1>()) << '\n';
+    std::cout << FORMAT_VALUE(t.el<1>()(i)) << '\n';
+
+}

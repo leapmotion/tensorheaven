@@ -52,5 +52,7 @@ int main (int, char **)
 
     test_induced_inner_product();
 
+    test_direct_sums();
+
     return 0;
 }

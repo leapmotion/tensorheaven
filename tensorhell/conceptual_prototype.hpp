@@ -20,6 +20,7 @@
 #include "tenh/immutablearray.hpp"
 #include "tenh/implementation/alt.hpp"
 #include "tenh/implementation/diagonal2tensor.hpp"
+#include "tenh/implementation/directsum.hpp"
 #include "tenh/implementation/euclideanembedding.hpp"
 #include "tenh/implementation/innerproduct.hpp"
 #include "tenh/implementation/sym.hpp"
@@ -478,5 +479,7 @@ void test_tuple_initialization ();
 // ///////////////////////////////////////////////////////////////////////////////////////////
 
 void test_induced_inner_product ();
+
+void test_direct_sums ();
 
 #endif // TENSORHELL_CONCEPTUAL_PROTOTYPE_HPP_
