@@ -105,13 +105,26 @@ void test_direct_sums ()
     typedef BasedVectorSpace_c<VectorSpace_c<RealField,1,X>,Basis_c<X> > RealLine;
     typedef SymmetricPowerOfBasedVectorSpace_c<2, BasedVectorSpace> SymmetricSquare;
 
+    typedef DirectSumOfBasedVectorSpaces_c<UniformTypeListOfLength_t<BasedVectorSpace,4>::T> PowerOfVectorSpace;
+
     typedef DirectSumOfBasedVectorSpaces_c<TypeList_t<SymmetricSquare, TypeList_t<BasedVectorSpace, TypeList_t<RealLine> > > > DirectSumType;
     typedef ImplementationOf_t<DirectSumType, float> T;
     typedef ImplementationOf_t<BasedVectorSpace, float> S;
+    typedef ImplementationOf_t<PowerOfVectorSpace, float> R;
 
     T t(0.0f);
 
     S s(0.0f), r(0.0f);
+
+    R q(0.0f);
+
+    for(Uint32 i = 0; i < 4; ++i)
+    {
+        for(S::ComponentIndex j; j.is_not_at_end(); ++j)
+        {
+            q.el(i)[j] = (i+1)*(j.value()+1);
+        }
+    }
 
     for(T::ComponentIndex i; i.is_not_at_end(); ++i)
     {
@@ -151,5 +164,11 @@ void test_direct_sums ()
     std::cout << FORMAT_VALUE(t.el<1>()) << '\n';
     std::cout << FORMAT_VALUE(t.el<1>()(i)) << '\n';
     // std::cout << FORMAT_VALUE(t.el<1>(i)) << '\n';
+
+    std::cout << FORMAT_VALUE(q) << '\n';
+    for(Uint32 i = 0; i < 4; ++i)
+    {
+        std::cout << FORMAT_VALUE(q.el(i)) << '\n';
+    }
 
 }

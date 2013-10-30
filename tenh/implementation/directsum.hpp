@@ -54,7 +54,7 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
 
     typedef typename DualOf_f<ImplementationOf_t>::T Dual; // relies on the template specialization below
 
-    explicit ImplementationOf_t (WithoutInitialization const &w) : Parent_Array_i(w) { }
+    explicit ImplementationOf_t (WithoutInitialization const &w) : Parent_Implementation(w) { }
 
     // only use these if UseMemberArray is specified
 
@@ -102,7 +102,7 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
     // only use this if UseImmutableArray_t<...> is specified or if the vector space is 0-dimensional
     ImplementationOf_t ()
         :
-        Parent_Array_i(WithoutInitialization()) // sort of meaningless constructor
+        Parent_Implementation(WithoutInitialization()) // sort of meaningless constructor
     {
         STATIC_ASSERT(IsUseImmutableArray_f<UseArrayType_>::V || DIM == 0, MUST_BE_USE_IMMUTABLE_ARRAY_OR_BE_ZERO_DIMENSIONAL);
     }
@@ -138,6 +138,18 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
     {
         STATIC_ASSERT((SummandTypeList_::LENGTH > N), ATTEMPTED_ACCESS_PAST_LIST_END);
         return typename ElementType_f<N>::T(pointer_to_allocation() + OffsetForComponent_f<SummandTypeList_,N>::V);
+    }
+
+    typename ElementType_f<0>::T el(const Uint32 &n)
+    {
+        STATIC_ASSERT(TypeListIsUniform_t<SummandTypeList_>::V, TYPELIST_MUST_BE_UNIFORM);
+        return typename ElementType_f<0>::T(pointer_to_allocation() + DimensionOf_f<typename SummandTypeList_::HeadType>::V * n);
+    }
+
+    typename ElementType_f<0>::T const el(const Uint32 &n) const
+    {
+        STATIC_ASSERT(TypeListIsUniform_t<SummandTypeList_>::V, TYPELIST_MUST_BE_UNIFORM);
+        return typename ElementType_f<0>::T(pointer_to_allocation() + DimensionOf_f<typename SummandTypeList_::HeadType>::V * n);
     }
 
     // These versions of el<...> are intended to allow use like el<n>(i) rather than the more clunky el<n>()(i) to get an indexed expression.
