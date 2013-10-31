@@ -26,7 +26,7 @@ void SVD_of_2tensor (ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeL
                                                                            TypeList_t<typename DualOf_f<Factor1_>::T > > >,
                                         Scalar_,
                                         UseArrayTypeU_> &u,
-                     ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,typename DualOf_f<Factor2_>::T >,
+                     ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,
                                         Scalar_,
                                         UseArrayTypeS_> &s,
                      ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor2_,
@@ -51,7 +51,7 @@ void SVD_of_2tensor (ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeL
                                                                            TypeList_t<typename DualOf_f<Factor1_>::T > > >,
                                         Scalar_,
                                         UseArrayTypeU_> &u,
-                     ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,typename DualOf_f<Factor2_>::T >,
+                     ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,
                                         Scalar_,
                                         UseArrayTypeS_> &s)
 {
@@ -67,7 +67,7 @@ void SVD_of_2tensor (ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeL
                                                                            TypeList_t<Factor2_> > >,
                                         Scalar_,
                                         UseArrayTypeT_> const &t,
-                     ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,typename DualOf_f<Factor2_>::T >,
+                     ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,
                                         Scalar_,
                                         UseArrayTypeS_> &s,
                      ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor2_,
@@ -87,7 +87,7 @@ void SVD_of_2tensor (ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeL
                                                                            TypeList_t<Factor2_> > >,
                                         Scalar_,
                                         UseArrayTypeT_> const &t,
-                     ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,typename DualOf_f<Factor2_>::T >,
+                     ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,
                                         Scalar_,
                                         UseArrayTypeS_> &s)
 {
