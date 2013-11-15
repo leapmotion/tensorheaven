@@ -33,7 +33,7 @@ struct InnerProduct_f<BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<Orthono
 private:
     typedef BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<OrthonormalBasisId_> > BasedVectorSpace;
     typedef typename DualOf_f<BasedVectorSpace>::T DualOfBasedVectorSpace;
-    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<BasedVectorSpace,DualOfBasedVectorSpace> Diagonal2Tensor;
+    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<DualOfBasedVectorSpace,DualOfBasedVectorSpace> Diagonal2Tensor;
     typedef ComponentGenerator_t<Scalar_,
                                  DimensionOf_f<Diagonal2Tensor>::V,
                                  constant_component_generator_evaluator<Scalar_,DimensionOf_f<Diagonal2Tensor>::V,1>,
