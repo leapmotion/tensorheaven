@@ -74,11 +74,20 @@ bool invert_2tensor (ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeL
     // create Eigen Maps for each of the parameters -- this way no copying is necessary;
     // the t tensor's components are read directly by Eigen, and t_inverse's components
     // are directly written to by Eigen.
+    typedef Eigen::Matrix<Scalar_, DimensionOf_f<Factor1_>::V, DimensionOf_f<Factor2_>::V, Eigen::RowMajor> EigenMatrixType;
     typename EigenMapOf2Tensor_const_f<Factor1_,Factor2_,Scalar_>::T eigen_map_of_t(EigenMap_of_2tensor(t));
     typename EigenMapOf2Tensor_nonconst_f<typename DualOf_f<Factor2_>::T,typename DualOf_f<Factor1_>::T,Scalar_>::T eigen_map_of_t_inverse(EigenMap_of_2tensor(t_inverse));
-    bool was_invertible = false;
-    eigen_map_of_t.computeInverseWithCheck(eigen_map_of_t_inverse, was_invertible);
-    return was_invertible;
+    Eigen::FullPivLU<EigenMatrixType> lu(eigen_map_of_t);
+
+    if (lu.isInvertible())
+    {
+       eigen_map_of_t_inverse = lu.inverse();
+       return true;
+    }
+    else
+    {
+      return false;
+    }
 }
 
 // TODO: specialization for diagonal 2-tensors
