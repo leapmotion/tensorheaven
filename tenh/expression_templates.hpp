@@ -203,6 +203,19 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList
         for (typename Object::ComponentIndex i; i.is_not_at_end(); ++i)
             m_object[i] = right_operand[typename ExpressionTemplate_IndexedObject_t::MultiIndex(i)];
     }
+
+    void operator += (ExpressionTemplate_IndexedObject_t const &right_operand)
+    {
+      for (typename Object::ComponentIndex i; i.is_not_at_end(); ++i)
+        m_object[i] += right_operand[typename ExpressionTemplate_IndexedObject_t::MultiIndex(i)];
+    }
+
+    void operator -= (ExpressionTemplate_IndexedObject_t const &right_operand)
+    {
+      for (typename Object::ComponentIndex i; i.is_not_at_end(); ++i)
+        m_object[i] -= right_operand[typename ExpressionTemplate_IndexedObject_t::MultiIndex(i)];
+    }
+
     template <typename RightOperand>
     void operator = (RightOperand const &right_operand)
     {
@@ -226,6 +239,55 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList
         for (MultiIndex m; m.is_not_at_end(); ++m)
             m_object[m] = right_operand[right_operand_index_map(m)];
     }
+
+    template <typename RightOperand>
+    void operator += (RightOperand const &right_operand)
+    {
+        enum
+        {
+            STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<RightOperand>::V, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
+            STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
+            STATIC_ASSERT_IN_ENUM((AreEqualAsSets_t<FreeDimIndexTypeList,typename RightOperand::FreeDimIndexTypeList>::V),OPERANDS_HAVE_SAME_FREE_INDICES),
+            STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_t<FreeDimIndexTypeList>::V), LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
+            STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_t<typename RightOperand::FreeDimIndexTypeList>::V), RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES)
+        };
+
+        // check for aliasing (where source and destination memory overlap)
+        if (CHECK_FOR_ALIASING_ && right_operand.uses_tensor(m_object))
+            throw std::invalid_argument("aliased tensor assignment (source and destination memory overlap) -- see eval() and noalias()");
+
+        typedef MultiIndexMap_t<FreeDimIndexTypeList,typename RightOperand::FreeDimIndexTypeList> RightOperandIndexMap;
+        typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
+
+        // component-wise assignment via the free index type.
+        for (MultiIndex m; m.is_not_at_end(); ++m)
+            m_object[m] += right_operand[right_operand_index_map(m)];
+    }
+
+    template <typename RightOperand>
+    void operator -= (RightOperand const &right_operand)
+    {
+        enum
+        {
+            STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<RightOperand>::V, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
+            STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
+            STATIC_ASSERT_IN_ENUM((AreEqualAsSets_t<FreeDimIndexTypeList,typename RightOperand::FreeDimIndexTypeList>::V),OPERANDS_HAVE_SAME_FREE_INDICES),
+            STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_t<FreeDimIndexTypeList>::V), LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
+            STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_t<typename RightOperand::FreeDimIndexTypeList>::V), RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES)
+        };
+
+        // check for aliasing (where source and destination memory overlap)
+        if (CHECK_FOR_ALIASING_ && right_operand.uses_tensor(m_object))
+            throw std::invalid_argument("aliased tensor assignment (source and destination memory overlap) -- see eval() and noalias()");
+
+        typedef MultiIndexMap_t<FreeDimIndexTypeList,typename RightOperand::FreeDimIndexTypeList> RightOperandIndexMap;
+        typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
+
+        // component-wise assignment via the free index type.
+        for (MultiIndex m; m.is_not_at_end(); ++m)
+            m_object[m] -= right_operand[right_operand_index_map(m)];
+    }
+
 
     template <typename OtherTensor>
     bool uses_tensor (OtherTensor const &t) const
