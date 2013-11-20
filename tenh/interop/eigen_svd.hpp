@@ -16,6 +16,18 @@
 
 namespace Tenh {
 
+template <typename T, typename ResultUseArrayType_ = UsePreallocatedArray> struct RowsOfTwoTensor_f;
+
+template <typename Factor1_, typename Factor2_, typename Scalar_, typename UseArrayType_, typename ResultUseArrayType_>
+struct RowsOfTwoTensor_f<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,TypeList_t<Factor2_> > >,Scalar_, UseArrayType_>, ResultUseArrayType_>
+{
+private:
+    enum { STATIC_ASSERT_IN_ENUM((!IsUseImmutableArray_f<UseArrayType_>::V), MUST_NOT_BE_USE_IMMUTABLE_ARRAY) };
+public:
+    typedef ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<typename UniformTypeListOfLength_t<Factor2_, DimensionOf_f<Factor1_>::V>::T>, Scalar_, ResultUseArrayType_> T;
+    typedef ImplementationOf_t<Factor2_, Scalar_, UseArrayType_> RowType;
+};
+
 template <typename T> struct SVDReturnTypesOf_m;
 
 // We must have t(i|l) == u(i|j) * s(j|k) * v(l|k), i.e. t = u * s * v^T. Also u, and v are square matrices.
@@ -56,6 +68,21 @@ struct SVDReturnTypesOf_m<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<
                                    Scalar_,
                                    UseArrayTypeV_> T;
     };
+
+    template <typename UseArrayTypeSol_ = UseArrayTypeT_>
+    struct SolutionVector_f
+    {
+    private:
+      enum { STATIC_ASSERT_IN_ENUM((!IsUseImmutableArray_f<UseArrayTypeSol_>::V), MUST_NOT_BE_USE_IMMUTABLE_ARRAY) };
+    public:
+      typedef ImplementationOf_t<typename DualOf_f<Factor2_>::T, Scalar_, UseArrayTypeSol_> T;
+    };
+
+    template <typename UseArrayTypeConstantTerm_ = UseArrayTypeT_>
+    struct ConstantTerm_f
+    {
+      typedef ImplementationOf_t<Factor1_, Scalar_, UseArrayTypeConstantTerm_> T;
+    };
 };
 
 template <typename T> struct EigenMatrixFor_f;
@@ -65,6 +92,15 @@ struct EigenMatrixFor_f<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<Ty
 {
     typedef Eigen::Matrix<Scalar_,DimensionOf_f<Factor1_>::V,DimensionOf_f<Factor2_>::V,Eigen::RowMajor> T;
 };
+
+template <typename T> struct EigenVectorFor_f;
+
+template <typename Type_, typename Scalar_, typename UseArrayType_>
+struct EigenVectorFor_f<ImplementationOf_t<Type_, Scalar_, UseArrayType_> >
+{
+    typedef Eigen::Matrix<Scalar_,DimensionOf_f<Type_>::V,1,Eigen::RowMajor> T;
+};
+
 
 template <typename TType_, typename UseArrayTypeU_ = UseMemberArray, typename UseArrayTypeS_ = UseMemberArray, typename UseArrayTypeV_ = UseMemberArray>
 void SVD_of_2tensor (TType_ const &t,
@@ -111,6 +147,21 @@ void SVD_of_2tensor (TType_ const &t,
     typedef typename EigenMatrixFor_f<TType_>::T EigenMatrix;
     Eigen::JacobiSVD<EigenMatrix> svd(EigenMap_of_2tensor(t).jacobiSvd());
     memcpy(s.pointer_to_allocation(), &svd.singularValues()(0,0), s.allocation_size_in_bytes());
+}
+
+template <typename TType_, typename UseArrayTypeSol_ = UseMemberArray, typename UseArrayTypeConstantTerm_ = UseMemberArray>
+void SVD_solve (TType_ const &t,
+                typename SVDReturnTypesOf_m<TType_>::template ConstantTerm_f<UseArrayTypeConstantTerm_>::T const &b,
+                typename SVDReturnTypesOf_m<TType_>::template SolutionVector_f<UseArrayTypeSol_>::T &x)
+{
+  typedef typename SVDReturnTypesOf_m<TType_>::template ConstantTerm_f<UseArrayTypeConstantTerm_>::T ConstantTermType;
+  typedef typename SVDReturnTypesOf_m<TType_>::template SolutionVector_f<UseArrayTypeConstantTerm_>::T SolutionType;
+  typedef typename EigenMatrixFor_f<TType_>::T EigenMatrix;
+  typedef typename EigenVectorFor_f<ConstantTermType>::T ConstantTermVector;
+  typedef typename EigenVectorFor_f<SolutionType>::T SolutionVector;
+
+  Eigen::JacobiSVD<EigenMatrix> svd(EigenMap_of_2tensor(t).jacobiSvd(Eigen::ComputeThinU|Eigen::ComputeThinV));
+  EigenMap_of_vector(x) = svd.solve(EigenMap_of_vector(b));
 }
 
 } // end of namespace Tenh
