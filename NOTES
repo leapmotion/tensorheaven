@@ -8,8 +8,6 @@
 - all test code is in tensorhell/ -- there are currectly ad-hoc tests/prototype code (e.g. eigen_interop_prototype.cpp
   and contraction_prototype.cpp), but the "real" tests are in the standard/ subdirectory.  the CMakeLists.txt file
   in the tensorhell/ subdirectory will build all of these.  the executable name for the "real" tests is "test".
-- the "actual" tensor lib prototype code is in test/contraction_prototype.cpp
-- the prototype code which uses "strongly typed" tensor math is in conceptual_prototype.cpp
 
 
 ###future goals:
@@ -34,7 +32,6 @@
 - make a wrapper for creating analogous `Eigen::Matrix` types which handles the retarded issue with
   `Eigen::Matrix<Scalar,N,1,RowMajor>` not working because it's a column vector (even though the memory would
   be layed out identically).
-- is it possible to specify the default value for Derived (in curiously recurring template pattern) directly?
 - decide on template metaprogramming naming convention.  something along the lines of
     * `Blah_t<...>` for types that actually implement stuff and have significant runtime code (is there
       something better than _t ?)

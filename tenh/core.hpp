@@ -98,7 +98,7 @@ static bool const DONT_CHECK_POINTER = false;
 /// @tparam DefaultType_ the default type to use if Derived_ is NullType.
 /// @headerfile core.hpp "tenh/core.hpp"
 template <typename Derived_, typename DefaultType_>
-struct DerivedType_t
+struct DerivedType_f
 {
     typedef typename If_f<TypesAreEqual_f<Derived_,NullType>::V,
                           DefaultType_,

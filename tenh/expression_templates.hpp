@@ -36,7 +36,7 @@ template <typename Object,
           typename Derived_ = NullType>
 struct ExpressionTemplate_IndexedObject_t
     :
-    public ExpressionTemplate_i<typename DerivedType_t<Derived_,
+    public ExpressionTemplate_i<typename DerivedType_f<Derived_,
                                                        ExpressionTemplate_IndexedObject_t<Object,
                                                                                           FactorTypeList,
                                                                                           DimIndexTypeList,
@@ -57,7 +57,7 @@ struct ExpressionTemplate_IndexedObject_t
         STATIC_ASSERT_IN_ENUM__UNIQUE((EachTypeSatisfies_f<SummedDimIndexTypeList_,IsDimIndex_p>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, SUMMEDDIMINDEXTYPELIST)
     };
 
-    typedef ExpressionTemplate_i<typename DerivedType_t<Derived_,
+    typedef ExpressionTemplate_i<typename DerivedType_f<Derived_,
                                                         ExpressionTemplate_IndexedObject_t<Object,
                                                                                            FactorTypeList,
                                                                                            DimIndexTypeList,
