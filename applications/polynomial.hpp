@@ -22,24 +22,21 @@
 
 using Tenh::Uint32;
 
-template <Uint32 DEGREE_, Uint32 DIMENSION_, typename Id_ = PolynomialBasisId, typename Scalar_ = float>
+template <Uint32 DEGREE_, typename BasedVectorSpace_, typename Scalar_ = float>
 struct MultivariatePolynomial
 {
-    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIMENSION_,Id_>,
-                                     Tenh::Basis_c<Id_> > VectorSpace;
-    typedef Tenh::ImplementationOf_t<VectorSpace,Scalar_> Vector;
-    typedef Tenh::SymmetricPowerOfBasedVectorSpace_c<DEGREE_,VectorSpace> SymmetricPower;
+    typedef Tenh::ImplementationOf_t<BasedVectorSpace_,Scalar_> Vector;
+    typedef Tenh::SymmetricPowerOfBasedVectorSpace_c<DEGREE_,BasedVectorSpace_> SymmetricPower;
     typedef Tenh::ImplementationOf_t<SymmetricPower,Scalar_> Sym;
     typedef typename Tenh::DualOf_f<Sym>::T SymDual;
     typedef Scalar_ Scalar;
-    typedef Id_ Id;
 
-    typedef HomogeneousPolynomial<DEGREE_,DIMENSION_,Id_,Scalar_> LeadingTermType;
+    typedef HomogeneousPolynomial<DEGREE_,BasedVectorSpace_,Scalar_> LeadingTermType;
 
-    typedef MultivariatePolynomial<DEGREE_-1,DIMENSION_,Id_,Scalar_> BodyPolynomial;
+    typedef MultivariatePolynomial<DEGREE_-1,BasedVectorSpace_,Scalar_> BodyPolynomial;
     static Uint32 const DIMENSION = LeadingTermType::DIMENSION + BodyPolynomial::DIMENSION;
 
-    typedef Tenh::PreallocatedArray_t<Scalar_ ,DIMENSION> CoefficientArray;
+    typedef Tenh::PreallocatedArray_t<Scalar_,DIMENSION> CoefficientArray;
     typedef Tenh::PreallocatedArray_t<Scalar_ const,DIMENSION> ConstCoefficientArray;
 
     MultivariatePolynomial (Scalar_ const &fill_with) : m_body(fill_with), m_term(fill_with) { }
@@ -76,27 +73,28 @@ struct MultivariatePolynomial
     }
 
     // Member operators
-    MultivariatePolynomial operator* (Scalar_ const &rhs) const
+    MultivariatePolynomial operator * (Scalar_ const &rhs) const
     {
         return MultivariatePolynomial(m_term*rhs, m_body*rhs);
     }
 
-    template <Uint32 Other_Degree>
-    MultivariatePolynomial<DEGREE_+Other_Degree,DIMENSION_,Id_,Scalar_> operator* (const HomogeneousPolynomial<Other_Degree,DIMENSION_,Id_,Scalar_> &rhs) const
+    template <Uint32 OTHER_DEGREE_>
+    MultivariatePolynomial<DEGREE_+OTHER_DEGREE_,BasedVectorSpace_,Scalar_>
+        operator * (const HomogeneousPolynomial<OTHER_DEGREE_,BasedVectorSpace_,Scalar_> &rhs) const
     {
-        return MultivariatePolynomial<DEGREE_+Other_Degree,DIMENSION_,Id_,Scalar_>((m_term * rhs)) + m_body*rhs;
+        return MultivariatePolynomial<DEGREE_+OTHER_DEGREE_,BasedVectorSpace_,Scalar_>((m_term * rhs)) + m_body*rhs;
     }
 
-    MultivariatePolynomial operator+ (Scalar_ const &rhs) const
+    MultivariatePolynomial operator + (Scalar_ const &rhs) const
     {
         return MultivariatePolynomial(m_term, m_body+rhs);
     }
 
-    MultivariatePolynomial operator- () const { return (*this)*Scalar_(-1); }
+    MultivariatePolynomial operator - () const { return (*this)*Scalar_(-1); }
 
-    template<Uint32 DEG>
-    MultivariatePolynomial<(DEG>DEGREE_?DEG:DEGREE_),DIMENSION_,Id_,Scalar_> operator- (
-        MultivariatePolynomial<DEG,DIMENSION_,Id_,Scalar_> const &rhs)
+    template <Uint32 OTHER_DEGREE_>
+    MultivariatePolynomial<(OTHER_DEGREE_>DEGREE_?OTHER_DEGREE_:DEGREE_),BasedVectorSpace_,Scalar_>
+        operator - (MultivariatePolynomial<OTHER_DEGREE_,BasedVectorSpace_,Scalar_> const &rhs)
     {
         // Use operator+
         return *this + (-rhs);
@@ -125,38 +123,45 @@ struct MultivariatePolynomial
     }
 
 private:
-    MultivariatePolynomial<DEGREE_-1,DIMENSION_,Id_,Scalar_> m_body;
+    MultivariatePolynomial<DEGREE_-1,BasedVectorSpace_,Scalar_> m_body;
     LeadingTermType m_term;
 
     // Helper members for non-member operators.
     //    add is for adding a polynomial of strictly lower degree to this polynomial
-    template<Uint32 Other_Degree> MultivariatePolynomial add(MultivariatePolynomial<Other_Degree, DIMENSION_, Id_, Scalar_> const &other) const { return MultivariatePolynomial(m_term, m_body + other); }
+    template<Uint32 OTHER_DEGREE_> MultivariatePolynomial
+        add (MultivariatePolynomial<OTHER_DEGREE_,BasedVectorSpace_,Scalar_> const &other) const
+    {
+        return MultivariatePolynomial(m_term, m_body + other);
+    }
 
     //    add_eq adds a polynomial of the same degree to this polynomial.
-    MultivariatePolynomial add_eq(MultivariatePolynomial const &other) const
+    MultivariatePolynomial add_eq (MultivariatePolynomial const &other) const
     {
         return MultivariatePolynomial(m_term + other.m_term, m_body.add_eq(other.m_body));
     }
 
-    template<Uint32,Uint32,typename,typename> friend struct MultivariatePolynomial;
-    template<bool> friend struct Adder;
-    template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar> friend
-    MultivariatePolynomial<DEG,DIM,Id,Scalar> operator+ (MultivariatePolynomial<DEG,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG,DIM,Id,Scalar> const &rhs);
-    template<Uint32 DEG1, Uint32 DEG2, Uint32 DIM, typename Id, typename Scalar> friend
-    MultivariatePolynomial<DEG1+DEG2,DIM,Id,Scalar> operator* (MultivariatePolynomial<DEG1,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG2,DIM,Id,Scalar> const &rhs);
-    template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar> friend
-    std::ostream &operator << (std::ostream &out, MultivariatePolynomial<DEG,DIM,Id,Scalar> const &m);
+    template <Uint32,typename,typename> friend struct MultivariatePolynomial;
+    template <bool> friend struct Adder;
+    template <Uint32 DEG, typename Scalar> friend
+    MultivariatePolynomial<DEG,BasedVectorSpace_,Scalar>
+        operator + (MultivariatePolynomial<DEG,BasedVectorSpace_,Scalar> const &lhs,
+                    MultivariatePolynomial<DEG,BasedVectorSpace_,Scalar> const &rhs);
+    template <Uint32 DEG1, Uint32 DEG2, typename Scalar> friend
+    MultivariatePolynomial<DEG1+DEG2,BasedVectorSpace_,Scalar>
+        operator * (MultivariatePolynomial<DEG1,BasedVectorSpace_,Scalar> const &lhs,
+                    MultivariatePolynomial<DEG2,BasedVectorSpace_,Scalar> const &rhs);
+    template <Uint32 DEG, typename Scalar> friend
+    std::ostream &operator << (std::ostream &out, MultivariatePolynomial<DEG,BasedVectorSpace_,Scalar> const &m);
 };
 
-template <Uint32 DIMENSION_, typename Id_, typename Scalar_>
-struct MultivariatePolynomial<0,DIMENSION_,Id_,Scalar_>
+template <typename BasedVectorSpace_, typename Scalar_>
+struct MultivariatePolynomial<0,BasedVectorSpace_,Scalar_>
 {
-    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIMENSION_,Id_>,Tenh::Basis_c<Id_> > VectorSpace;
-    typedef Tenh::ImplementationOf_t<VectorSpace,Scalar_> Vector;
+    typedef Tenh::ImplementationOf_t<BasedVectorSpace_,Scalar_> Vector;
 
     static Uint32 const DIMENSION = 1;
 
-    typedef Tenh::PreallocatedArray_t<Scalar_ ,DIMENSION> CoefficientArray;
+    typedef Tenh::PreallocatedArray_t<Scalar_,DIMENSION> CoefficientArray;
     typedef Tenh::PreallocatedArray_t<Scalar_ const,DIMENSION> ConstCoefficientArray;
 
     MultivariatePolynomial (Scalar_ const &leading_term) : m_term(leading_term) { }
@@ -168,25 +173,26 @@ struct MultivariatePolynomial<0,DIMENSION_,Id_,Scalar_>
         return m_term;
     }
 
-    MultivariatePolynomial operator- () const { return (*this)*Scalar_(-1); }
+    MultivariatePolynomial operator - () const { return (*this)*Scalar_(-1); }
 
-    template<Uint32 DEG>
-    MultivariatePolynomial<DEG,DIMENSION_,Id_,Scalar_> operator- (MultivariatePolynomial<DEG,DIMENSION_,Id_,Scalar_> const &rhs)
+    template <Uint32 DEG>
+    MultivariatePolynomial<DEG,BasedVectorSpace_,Scalar_>
+        operator - (MultivariatePolynomial<DEG,BasedVectorSpace_,Scalar_> const &rhs)
     {
         // Use operator+
         return *this + (-rhs);
     }
 
-    MultivariatePolynomial operator* (Scalar_ const &rhs) const { return MultivariatePolynomial(rhs*m_term); }
+    MultivariatePolynomial operator * (Scalar_ const &rhs) const { return MultivariatePolynomial(rhs*m_term); }
 
-    template <Uint32 Other_Degree>
-    MultivariatePolynomial<Other_Degree,DIMENSION_,Id_,Scalar_> operator* (const HomogeneousPolynomial<Other_Degree,DIMENSION_,Id_,Scalar_> &rhs) const
+    template <Uint32 OTHER_DEGREE_>
+    MultivariatePolynomial<OTHER_DEGREE_,BasedVectorSpace_,Scalar_>
+        operator * (const HomogeneousPolynomial<OTHER_DEGREE_,BasedVectorSpace_,Scalar_> &rhs) const
     {
-        return MultivariatePolynomial<Other_Degree,DIMENSION_,Id_,Scalar_>((m_term * rhs));
+        return MultivariatePolynomial<OTHER_DEGREE_,BasedVectorSpace_,Scalar_>((m_term * rhs));
     }
 
-
-    MultivariatePolynomial operator+ (Scalar_ const &rhs) const { return MultivariatePolynomial(rhs+m_term); }
+    MultivariatePolynomial operator + (Scalar_ const &rhs) const { return MultivariatePolynomial(rhs+m_term); }
 
     // NOTE: the PreallocatedArray_t returned from this is valid only as long as
     // this object is alive -- this is effectively a shallow copy.
@@ -213,24 +219,29 @@ private:
     MultivariatePolynomial add_eq (MultivariatePolynomial const &other) const { return MultivariatePolynomial(m_term + other.m_term); }
 
 
-    template<Uint32,Uint32,typename,typename>
+    template <Uint32,typename,typename>
     friend struct MultivariatePolynomial;
-    template<bool>
+    template <bool>
     friend struct Adder;
-    template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar>
-    friend MultivariatePolynomial<DEG,DIM,Id,Scalar> operator+ (MultivariatePolynomial<DEG,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG,DIM,Id,Scalar> const &rhs);
-    template<Uint32 DEG1, Uint32 DEG2, Uint32 DIM, typename Id, typename Scalar>
-    friend MultivariatePolynomial<DEG1+DEG2,DIM,Id,Scalar> operator* (MultivariatePolynomial<DEG1,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG2,DIM,Id,Scalar> const &rhs);
-    template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar>
-    friend MultivariatePolynomial<DEG,DIM,Id,Scalar> operator* (MultivariatePolynomial<0,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG,DIM,Id,Scalar> const &rhs);
-    template<Uint32 DIM, typename Id, typename Scalar>
-    friend std::ostream &operator << (std::ostream &out, MultivariatePolynomial<0,DIM,Id,Scalar> const &m);
+    template <Uint32 DEG_>
+    friend MultivariatePolynomial<DEG_,BasedVectorSpace_,Scalar_>
+        operator + (MultivariatePolynomial<DEG_,BasedVectorSpace_,Scalar_> const &lhs,
+                    MultivariatePolynomial<DEG_,BasedVectorSpace_,Scalar_> const &rhs);
+    template <Uint32 DEG1_, Uint32 DEG2_>
+    friend MultivariatePolynomial<DEG1_+DEG2_,BasedVectorSpace_,Scalar_>
+        operator * (MultivariatePolynomial<DEG1_,BasedVectorSpace_,Scalar_> const &lhs,
+                   MultivariatePolynomial<DEG2_,BasedVectorSpace_,Scalar_> const &rhs);
+    template <Uint32 DEG_>
+    friend MultivariatePolynomial<DEG_,BasedVectorSpace_,Scalar_>
+        operator * (MultivariatePolynomial<0,BasedVectorSpace_,Scalar_> const &lhs,
+                    MultivariatePolynomial<DEG_,BasedVectorSpace_,Scalar_> const &rhs);
+    friend std::ostream &operator << (std::ostream &out, MultivariatePolynomial<0,BasedVectorSpace_,Scalar_> const &m);
 };
 
 
 // Non-member operator overloads. These exist because they must be partially specalized, or because they cannot be written as member operator overloads.
 //    operator+
-template<bool DEGREE_OF_LHS_IS_GREATER_THAN_DEGREE_OF_RHS> struct Adder
+template <bool DEGREE_OF_LHS_IS_GREATER_THAN_DEGREE_OF_RHS> struct Adder
 {
     template<typename T, typename S>
     static T add (T const &lhs, S const &rhs) { return lhs.add(rhs); }
@@ -238,7 +249,7 @@ private:
     Adder();
 };
 
-template<> struct Adder<false>
+template <> struct Adder<false>
 {
     template<typename T, typename S>
     static S add (T const &lhs, S const &rhs) { return rhs.add(lhs); }
@@ -246,53 +257,64 @@ private:
     Adder();
 };
 
-template<Uint32 DEG1, Uint32 DEG2, Uint32 DIM, typename Id, typename Scalar>
-MultivariatePolynomial<(DEG1>DEG2?DEG1:DEG2),DIM,Id,Scalar> operator+ (MultivariatePolynomial<DEG1,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG2,DIM,Id,Scalar> const &rhs)
+template <Uint32 DEG1_, Uint32 DEG2_, typename BasedVectorSpace_, typename Scalar_>
+MultivariatePolynomial<(DEG1_>DEG2_?DEG1_:DEG2_),BasedVectorSpace_,Scalar_>
+    operator + (MultivariatePolynomial<DEG1_,BasedVectorSpace_,Scalar_> const &lhs,
+                MultivariatePolynomial<DEG2_,BasedVectorSpace_,Scalar_> const &rhs)
 {
-    return Adder<(DEG1>DEG2)>::add(lhs,rhs);
+    return Adder<(DEG1_>DEG2_)>::add(lhs,rhs);
 }
 
-template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar>
-MultivariatePolynomial<DEG,DIM,Id,Scalar> operator+ (MultivariatePolynomial<DEG,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG,DIM,Id,Scalar> const &rhs)
+template <Uint32 DEG_, typename BasedVectorSpace_, typename Scalar_>
+MultivariatePolynomial<DEG_,BasedVectorSpace_,Scalar_>
+    operator + (MultivariatePolynomial<DEG_,BasedVectorSpace_,Scalar_> const &lhs,
+                MultivariatePolynomial<DEG_,BasedVectorSpace_,Scalar_> const &rhs)
 {
     return lhs.add_eq(rhs);
 }
 
-
-//    scalar operator+
-template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar, typename T>
-MultivariatePolynomial<DEG,DIM,Id,Scalar> operator+ (T const &lhs, MultivariatePolynomial<DEG,DIM,Id,Scalar> const &rhs)
+//    scalar operator +
+template <Uint32 DEG_, typename BasedVectorSpace_, typename Scalar_, typename T>
+MultivariatePolynomial<DEG_,BasedVectorSpace_,Scalar_>
+    operator + (T const &lhs, MultivariatePolynomial<DEG_,BasedVectorSpace_,Scalar_> const &rhs)
 {
     // Use the member version
-    return rhs+Scalar(lhs);
+    return rhs+Scalar_(lhs);
 }
 
-
-//    scalar operator*
-template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar>
-MultivariatePolynomial<DEG,DIM,Id,Scalar> operator* (Scalar const &lhs, MultivariatePolynomial<DEG,DIM,Id,Scalar> const &rhs)
+//    scalar operator *
+template <Uint32 DEG_, typename BasedVectorSpace_, typename Scalar_>
+MultivariatePolynomial<DEG_,BasedVectorSpace_,Scalar_>
+    operator * (Scalar_ const &lhs, MultivariatePolynomial<DEG_,BasedVectorSpace_,Scalar_> const &rhs)
 {
     // Use the member version
     return rhs*lhs;
 }
 
-
-//    operator* for HomogeneousPolynomials
-template <Uint32 DEG1, Uint32 DEG2, Uint32 DIM, typename Id, typename Scalar>
-MultivariatePolynomial<DEG1+DEG2,DIM,Id,Scalar> operator* (HomogeneousPolynomial<DEG1,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG2,DIM,Id,Scalar> const &rhs)
+//    operator * for HomogeneousPolynomials
+template <Uint32 DEG1_, Uint32 DEG2_, typename BasedVectorSpace_, typename Scalar_>
+MultivariatePolynomial<DEG1_+DEG2_,BasedVectorSpace_,Scalar_>
+    operator * (HomogeneousPolynomial<DEG1_,BasedVectorSpace_,Scalar_> const &lhs,
+                MultivariatePolynomial<DEG2_,BasedVectorSpace_,Scalar_> const &rhs)
 {
-    return MultivariatePolynomial<DEG1+DEG2,DIM,Id,Scalar>(rhs*lhs);
+    return MultivariatePolynomial<DEG1_+DEG2_,BasedVectorSpace_,Scalar_>(rhs*lhs);
 }
 
 //    operator*
-template<Uint32 DEG1, Uint32 DEG2, Uint32 DIM, typename Id, typename Scalar>
-MultivariatePolynomial<DEG1+DEG2,DIM,Id,Scalar> operator* (MultivariatePolynomial<DEG1,DIM,Id,Scalar> const &lhs, MultivariatePolynomial<DEG2,DIM,Id,Scalar> const &rhs)
+template <Uint32 DEG1_, Uint32 DEG2_, typename BasedVectorSpace_, typename Scalar_>
+MultivariatePolynomial<DEG1_+DEG2_,BasedVectorSpace_,Scalar_>
+    operator * (MultivariatePolynomial<DEG1_,BasedVectorSpace_,Scalar_> const &lhs,
+                MultivariatePolynomial<DEG2_,BasedVectorSpace_,Scalar_> const &rhs)
 {
     return (rhs * lhs.m_term) + (lhs.m_body * rhs);
 }
 
-template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar> MultivariatePolynomial<DEG,DIM,Id,Scalar> operator* (MultivariatePolynomial<0,DIM,Id,Scalar> const &lhs,
-MultivariatePolynomial<DEG,DIM,Id,Scalar> const &rhs) { return rhs * lhs.m_term; }
-
+template <Uint32 DEG_, typename BasedVectorSpace_, typename Scalar_>
+MultivariatePolynomial<DEG_,BasedVectorSpace_,Scalar_>
+    operator * (MultivariatePolynomial<0,BasedVectorSpace_,Scalar_> const &lhs,
+                MultivariatePolynomial<DEG_,BasedVectorSpace_,Scalar_> const &rhs)
+{
+    return rhs * lhs.m_term;
+}
 
 #endif // APPLICATIONS_POLYNOMIAL_HPP_

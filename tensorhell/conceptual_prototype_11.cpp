@@ -7,9 +7,10 @@
 void test_poly_in_4_dim ()
 {
     std::cout << "Polynomials in 4 dimensions." << '\n';
-    typedef MultivariatePolynomial<2,4,X> PolyType;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,X>,Basis_c<X> > BasedVectorSpace;
+    typedef MultivariatePolynomial<2,BasedVectorSpace> PolyType;
     PolyType::SymDual w(0.0f);
-    MultivariatePolynomial<1,4,X>::SymDual x(1);
+    MultivariatePolynomial<1,BasedVectorSpace>::SymDual x(1);
     w[PolyType::SymDual::ComponentIndex(0, CHECK_RANGE)] = 1; // x^2
     w[PolyType::SymDual::ComponentIndex(1, CHECK_RANGE)] = 0; // xy
     w[PolyType::SymDual::ComponentIndex(2, CHECK_RANGE)] = 5; // y^2
@@ -21,9 +22,9 @@ void test_poly_in_4_dim ()
     w[PolyType::SymDual::ComponentIndex(8, CHECK_RANGE)] = 6; // zw
     w[PolyType::SymDual::ComponentIndex(9, CHECK_RANGE)] = 3; // w^2
     std::cout << FORMAT_VALUE(w) << '\n';
-    PolyType roly(w,MultivariatePolynomial<1,4,X>(x,3));
+    PolyType roly(w,MultivariatePolynomial<1,BasedVectorSpace>(x,3));
     PolyType poly(0);
-    poly = poly + MultivariatePolynomial<1,4,X>(x,3);
+    poly = poly + MultivariatePolynomial<1,BasedVectorSpace>(x,3);
     PolyType::Vector v(tuple(1.0f,2.0f,3.0f,4.0f));
     std::cout << FORMAT_VALUE(roly) << '\n';
     roly.as_array().print(std::cout);
@@ -42,9 +43,10 @@ void test_poly_in_4_dim ()
 void test_polynomial_serialization ()
 {
     std::cout << "serializing Polynomials in 4 dimensions." << '\n';
-    typedef MultivariatePolynomial<2,4,X> PolyType;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,X>,Basis_c<X> > BasedVectorSpace;
+    typedef MultivariatePolynomial<2,BasedVectorSpace> PolyType;
     PolyType::SymDual w(0.0f);
-    MultivariatePolynomial<1,4,X>::SymDual x(1);
+    MultivariatePolynomial<1,BasedVectorSpace>::SymDual x(1);
     w[PolyType::SymDual::ComponentIndex(0, CHECK_RANGE)] = 1; // x^2
     w[PolyType::SymDual::ComponentIndex(1, CHECK_RANGE)] = 0; // xy
     w[PolyType::SymDual::ComponentIndex(2, CHECK_RANGE)] = 5; // y^2
@@ -56,7 +58,7 @@ void test_polynomial_serialization ()
     w[PolyType::SymDual::ComponentIndex(8, CHECK_RANGE)] = 6; // zw
     w[PolyType::SymDual::ComponentIndex(9, CHECK_RANGE)] = 3; // w^2
     std::cout << FORMAT_VALUE(w) << '\n';
-    PolyType roly(w,MultivariatePolynomial<1,4,X>(x,3));
+    PolyType roly(w,MultivariatePolynomial<1,BasedVectorSpace>(x,3));
     PolyType poly(Static<WithoutInitialization>::SINGLETON);
 
     poly.as_array().copy_from(roly.as_array());
@@ -68,7 +70,8 @@ void test_polynomial_serialization ()
 void test_polynomial_multiplication ()
 {
     std::cout << "Polynomial multiplication tests." << '\n';
-    typedef MultivariatePolynomial<1,2,X> PolyType;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,X>,Basis_c<X> > BasedVectorSpace;
+    typedef MultivariatePolynomial<1,BasedVectorSpace> PolyType;
     PolyType::SymDual x(0.0f),y(0.0f);
     x[PolyType::SymDual::ComponentIndex(0, CHECK_RANGE)] = 1.0f;
     y[PolyType::SymDual::ComponentIndex(1, CHECK_RANGE)] = 1.0f;

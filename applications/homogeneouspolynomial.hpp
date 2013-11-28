@@ -22,24 +22,19 @@
 
 using Tenh::Uint32;
 
-struct PolynomialBasisId { static std::string type_as_string () { return "StandardPolynomialBasis"; } };
-
-template <Uint32 DEGREE_, Uint32 DIMENSION_, typename Id_ = PolynomialBasisId, typename Scalar_ = float>
+template <Uint32 DEGREE_, typename BasedVectorSpace_, typename Scalar_ = float>
 struct HomogeneousPolynomial
 {
-    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIMENSION_,Id_>,
-                                     Tenh::Basis_c<Id_> > VectorSpace;
-    typedef Tenh::ImplementationOf_t<VectorSpace,Scalar_> Vector;
-    typedef Tenh::SymmetricPowerOfBasedVectorSpace_c<DEGREE_,VectorSpace> SymmetricPower;
+    typedef Tenh::ImplementationOf_t<BasedVectorSpace_,Scalar_> Vector;
+    typedef Tenh::SymmetricPowerOfBasedVectorSpace_c<DEGREE_,BasedVectorSpace_> SymmetricPower;
     typedef Tenh::ImplementationOf_t<SymmetricPower,Scalar_> Sym;
     typedef typename Tenh::DualOf_f<Sym>::T SymDual;
 
     typedef Scalar_ Scalar;
-    typedef Id_ Id;
 
     static Uint32 const DIMENSION = SymDual::DIM;
 
-    typedef Tenh::PreallocatedArray_t<Scalar_ ,DIMENSION> CoefficientArray;
+    typedef Tenh::PreallocatedArray_t<Scalar_,DIMENSION> CoefficientArray;
     typedef Tenh::PreallocatedArray_t<Scalar_ const,DIMENSION> ConstCoefficientArray;
 
     HomogeneousPolynomial (Scalar_ const &fill_with) : m_coefficients(fill_with) { }
@@ -54,7 +49,7 @@ struct HomogeneousPolynomial
     }
 
     // Member operators
-    HomogeneousPolynomial operator* (Scalar_ const &rhs) const
+    HomogeneousPolynomial operator * (Scalar_ const &rhs) const
     {
         HomogeneousPolynomial result(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
         Tenh::AbstractIndex_c<'i'> i;
@@ -63,15 +58,15 @@ struct HomogeneousPolynomial
         return result;
     }
 
-    HomogeneousPolynomial operator- () const { return (*this)*Scalar_(-1); }
+    HomogeneousPolynomial operator - () const { return (*this)*Scalar_(-1); }
 
-    HomogeneousPolynomial operator- (HomogeneousPolynomial const &rhs)
+    HomogeneousPolynomial operator - (HomogeneousPolynomial const &rhs)
     {
         // Use operator+
         return *this + (-rhs);
     }
 
-    HomogeneousPolynomial operator+ (HomogeneousPolynomial const &rhs) const
+    HomogeneousPolynomial operator + (HomogeneousPolynomial const &rhs) const
     {
         Tenh::AbstractIndex_c<'i'> i;
         HomogeneousPolynomial result(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
@@ -79,17 +74,17 @@ struct HomogeneousPolynomial
         return result;
     }
 
-    template<Uint32 Other_Degree>
-    HomogeneousPolynomial<Other_Degree + DEGREE_,DIMENSION_,Id_,Scalar_> operator* (HomogeneousPolynomial<Other_Degree,DIMENSION_,Id_,Scalar_> const &rhs) const
+    template<Uint32 OTHER_DEGREE_>
+    HomogeneousPolynomial<OTHER_DEGREE_ + DEGREE_,BasedVectorSpace_,Scalar_>
+        operator * (HomogeneousPolynomial<OTHER_DEGREE_,BasedVectorSpace_,Scalar_> const &rhs) const
     {
-        typedef HomogeneousPolynomial<Other_Degree + DEGREE_,DIMENSION_,Id_,Scalar_> ResultPolynomial;
+        typedef HomogeneousPolynomial<OTHER_DEGREE_ + DEGREE_,BasedVectorSpace_,Scalar_> ResultPolynomial;
         typedef typename ResultPolynomial::SymDual ResultSymDual;
         typedef typename ResultSymDual::MultiIndex ResultMultiIndex;
         typedef typename ResultSymDual::ComponentIndex ResultComponentIndex;
-        typedef typename Tenh::TensorPowerOfBasedVectorSpace_f<Other_Degree + DEGREE_,typename Tenh::DualOf_f<VectorSpace>::T>::T ResultingTensorPowerType;
+        typedef typename Tenh::TensorPowerOfBasedVectorSpace_f<OTHER_DEGREE_ + DEGREE_,typename Tenh::DualOf_f<BasedVectorSpace_>::T>::T ResultingTensorPowerType;
 
-
-        typedef typename Tenh::Sym_f<Other_Degree + DEGREE_,typename Tenh::DualOf_f<VectorSpace>::T,Scalar_>::T SymmetrizeType;
+        typedef typename Tenh::Sym_f<OTHER_DEGREE_ + DEGREE_,typename Tenh::DualOf_f<BasedVectorSpace_>::T,Scalar_>::T SymmetrizeType;
 
         ResultPolynomial result(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
         SymmetrizeType symmetrize;
@@ -107,18 +102,18 @@ struct HomogeneousPolynomial
         {
             ResultMultiIndex m = ResultSymDual::template bundle_index_map<typename ResultMultiIndex::IndexTypeList, ResultComponentIndex>(it);
             result.m_coefficients[it] *= static_cast<Scalar_>(Tenh::MultiIndexMultiplicity_t<ResultMultiIndex>::eval(m))
-                                          / static_cast<Scalar_>(Tenh::Factorial_t<Other_Degree + DEGREE_>::V);
+                                         / static_cast<Scalar_>(Tenh::Factorial_t<OTHER_DEGREE_ + DEGREE_>::V);
         }
 
         return result;
     }
 
-    const SymDual coefficients() const
+    const SymDual coefficients () const
     {
         return m_coefficients;
     }
 
-    bool is_exactly_zero() const
+    bool is_exactly_zero () const
     {
         for (typename SymDual::ComponentIndex it; it.is_not_at_end(); ++it)
         {
@@ -164,26 +159,25 @@ private:
         return result;
     }
 
-    template<Uint32,Uint32,typename,typename> friend struct HomogeneousPolynomial;
+    template<Uint32,typename,typename> friend struct HomogeneousPolynomial;
 };
 
 
 // Non-member operator overloads. These exist because they must be partially specalized, or because they cannot be written as member operator overloads.
-//    scalar operator+
-template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar, typename T>
-HomogeneousPolynomial<DEG,DIM,Id,Scalar> operator+ (T const &lhs, HomogeneousPolynomial<DEG,DIM,Id,Scalar> const &rhs)
+//    scalar operator +
+template <Uint32 DEG_, typename BasedVectorSpace_, typename Scalar_, typename T_>
+HomogeneousPolynomial<DEG_,BasedVectorSpace_,Scalar_> operator + (T_ const &lhs, HomogeneousPolynomial<DEG_,BasedVectorSpace_,Scalar_> const &rhs)
 {
     // Use the member version
-    return rhs+Scalar(lhs);
+    return rhs+Scalar_(lhs);
 }
 
-
-//    scalar operator*
-template<Uint32 DEG, Uint32 DIM, typename Id, typename Scalar, typename T>
-HomogeneousPolynomial<DEG,DIM,Id,Scalar> operator* (T const &lhs, HomogeneousPolynomial<DEG,DIM,Id,Scalar> const &rhs)
+//    scalar operator *
+template <Uint32 DEG_, typename BasedVectorSpace_, typename Scalar_, typename T_>
+HomogeneousPolynomial<DEG_,BasedVectorSpace_,Scalar_> operator * (T_ const &lhs, HomogeneousPolynomial<DEG_,BasedVectorSpace_,Scalar_> const &rhs)
 {
     // Use the member version
-    return rhs*Scalar(lhs);
+    return rhs*Scalar_(lhs);
 }
 
 #endif // APPLICATIONS_HOMOGENEOUSPOLYNOMIAL_HPP_

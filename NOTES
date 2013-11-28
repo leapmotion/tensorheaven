@@ -37,7 +37,7 @@
 - is it possible to specify the default value for Derived (in curiously recurring template pattern) directly?
 - decide on template metaprogramming naming convention.  something along the lines of
     * `Blah_t<...>` for types that actually implement stuff and have significant runtime code (is there
-      something better than _t ?) 
+      something better than _t ?)
     * `Blah_c<...>` for the conceptual layer
     * `Blah_i<...>` for the templatized interface layer (this is somewhere between _c and _i)
     * `Blah_m<...>` for meta-programmingy things like type lists, related metafunctions, or are
@@ -58,10 +58,14 @@
 - fix tensor products of diagonal 2-tensors on factors having non-equal dimension
 - do slice addressing by providing an "operator ()" for AbstractIndex_c, which returns some
   distinct type that signifies a slice operation.  correspondingly, "operator |" which creates
-  abstract multi-indices will have to be extended to account for this. 
+  abstract multi-indices will have to be extended to account for this.
 - XXX_f types should have a private constructor to prevent actually instantiating them
   (there are frequent programmer errors involving forgetting to "dereference" a metafunction
   via ::T or ::V).
+- add "pullback by linear operator" method to polynomial classes, which essentially plug in
+  a given 2-tensor (linear map) into each tensor factor in each summand of a polynomial, so that
+  the polynomial has been pulled back onto the domain of the given linear map (Gabe uses operator %
+  for this purpose).
 
 
 ###implemented features/items:
