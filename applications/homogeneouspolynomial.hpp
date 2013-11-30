@@ -166,7 +166,8 @@ private:
 // Non-member operator overloads. These exist because they must be partially specalized, or because they cannot be written as member operator overloads.
 //    scalar operator +
 template <Uint32 DEG_, typename BasedVectorSpace_, typename Scalar_, typename T_>
-HomogeneousPolynomial<DEG_,BasedVectorSpace_,Scalar_> operator + (T_ const &lhs, HomogeneousPolynomial<DEG_,BasedVectorSpace_,Scalar_> const &rhs)
+HomogeneousPolynomial<DEG_,BasedVectorSpace_,Scalar_>
+    operator + (T_ const &lhs, HomogeneousPolynomial<DEG_,BasedVectorSpace_,Scalar_> const &rhs)
 {
     // Use the member version
     return rhs+Scalar_(lhs);
@@ -174,7 +175,8 @@ HomogeneousPolynomial<DEG_,BasedVectorSpace_,Scalar_> operator + (T_ const &lhs,
 
 //    scalar operator *
 template <Uint32 DEG_, typename BasedVectorSpace_, typename Scalar_, typename T_>
-HomogeneousPolynomial<DEG_,BasedVectorSpace_,Scalar_> operator * (T_ const &lhs, HomogeneousPolynomial<DEG_,BasedVectorSpace_,Scalar_> const &rhs)
+HomogeneousPolynomial<DEG_,BasedVectorSpace_,Scalar_>
+    operator * (T_ const &lhs, HomogeneousPolynomial<DEG_,BasedVectorSpace_,Scalar_> const &rhs)
 {
     // Use the member version
     return rhs*Scalar_(lhs);

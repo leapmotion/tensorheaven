@@ -1,20 +1,18 @@
 // ///////////////////////////////////////////////////////////////////////////
-// applications/polynomial_util.hpp by Ted Nitz, created 2013/09/27
+// applications/polynomial_utility.hpp by Ted Nitz, created 2013/09/27
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
+
+#ifndef APPLICATIONS_POLYNOMIAL_UTILITY_HPP_
+#define APPLICATIONS_POLYNOMIAL_UTILITY_HPP_
+
+#include <ostream>
 
 #include "applications/polynomial.hpp"
 #include "applications/homogeneouspolynomial.hpp"
 
-#include <iostream>
-
-
-#ifndef APPLICATIONS_POLYNOMIAL_UTIL_HPP_
-#define APPLICATIONS_POLYNOMIAL_UTIL_HPP_
-
-
 //    operator<< for ostream
-template<Uint32 DEG, typename BasedVectorSpace_, typename Scalar>
+template <Uint32 DEG, typename BasedVectorSpace_, typename Scalar>
 struct VariableStringComputer
 {
     static std::string compute(typename HomogeneousPolynomial<DEG,BasedVectorSpace_,Scalar>::Sym::MultiIndex const &n)
@@ -52,7 +50,7 @@ private:
     VariableStringComputer();
 };
 
-template<Uint32 DEG, typename ScalarField_, typename VectorSpaceId_, typename Basis_, typename Scalar>
+template <Uint32 DEG, typename ScalarField_, typename VectorSpaceId_, typename Basis_, typename Scalar>
 struct VariableStringComputer<DEG,Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<ScalarField_,0,VectorSpaceId_>,Basis_>,Scalar>
 {
     static std::string compute(typename HomogeneousPolynomial<DEG,Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<ScalarField_,0,VectorSpaceId_>,Basis_>,Scalar>::Sym::MultiIndex const &n)
@@ -64,7 +62,7 @@ private:
 };
 
 
-template<Uint32 DEG, typename ScalarField_, typename VectorSpaceId_, typename Basis_, typename Scalar>
+template <Uint32 DEG, typename ScalarField_, typename VectorSpaceId_, typename Basis_, typename Scalar>
 struct VariableStringComputer<DEG,Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<ScalarField_,1,VectorSpaceId_>,Basis_>,Scalar>
 {
     static std::string compute(typename HomogeneousPolynomial<DEG,Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<ScalarField_,1,VectorSpaceId_>,Basis_>,Scalar>::Sym::MultiIndex const &n)
@@ -76,7 +74,7 @@ private:
     VariableStringComputer();
 };
 
-template<Uint32 DEG, typename ScalarField_, typename VectorSpaceId_, typename Basis_, typename Scalar>
+template <Uint32 DEG, typename ScalarField_, typename VectorSpaceId_, typename Basis_, typename Scalar>
 struct VariableStringComputer<DEG,Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<ScalarField_,2,VectorSpaceId_>,Basis_>,Scalar>
 {
     static std::string compute(typename HomogeneousPolynomial<DEG,Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<ScalarField_,2,VectorSpaceId_>,Basis_>,Scalar>::Sym::MultiIndex const &n)
@@ -117,7 +115,7 @@ private:
     VariableStringComputer();
 };
 
-template<Uint32 DEG, typename ScalarField_, typename VectorSpaceId_, typename Basis_, typename Scalar>
+template <Uint32 DEG, typename ScalarField_, typename VectorSpaceId_, typename Basis_, typename Scalar>
 struct VariableStringComputer<DEG,Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<ScalarField_,3,VectorSpaceId_>,Basis_>,Scalar>
 {
     static std::string compute(typename HomogeneousPolynomial<DEG,Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<ScalarField_,3,VectorSpaceId_>,Basis_>,Scalar>::Sym::MultiIndex const &n)
@@ -159,7 +157,7 @@ private:
     VariableStringComputer();
 };
 
-template<Uint32 DEG, typename BasedVectorSpace_, typename Scalar>
+template <Uint32 DEG, typename BasedVectorSpace_, typename Scalar>
 std::ostream &operator << (std::ostream &out, HomogeneousPolynomial<DEG,BasedVectorSpace_,Scalar> const &poly)
 {
     typedef HomogeneousPolynomial<DEG,BasedVectorSpace_,Scalar> PolyType;
@@ -204,41 +202,41 @@ std::ostream &operator << (std::ostream &out, HomogeneousPolynomial<DEG,BasedVec
     return out;
 }
 
-template<Uint32 DEG, typename BasedVectorSpace_, typename Scalar>
+template <typename BasedVectorSpace_, typename Scalar>
+std::ostream &operator << (std::ostream &out, MultivariatePolynomial<0,BasedVectorSpace_,Scalar> const &m)
+{
+    return out << m.term();
+}
+
+template <Uint32 DEG, typename BasedVectorSpace_, typename Scalar>
 std::ostream &operator << (std::ostream &out, MultivariatePolynomial<DEG,BasedVectorSpace_,Scalar> const &poly)
 {
     typedef MultivariatePolynomial<DEG,BasedVectorSpace_,Scalar> PolyType;
     typedef typename PolyType::Sym::ComponentIndex ComponentIndex;
     typedef typename PolyType::Sym::MultiIndex MultiIndex;
 
-    if (poly.m_term.is_exactly_zero())
+    if (poly.term().is_exactly_zero())
     {
-        if (poly.m_body.is_exactly_zero())
+        if (poly.body().is_exactly_zero())
         {
             return out;
         }
         else
         {
-            return out << poly.m_body;
+            return out << poly.body();
         }
     }
     else
     {
-        if (poly.m_body.is_exactly_zero())
+        if (poly.body().is_exactly_zero())
         {
-            return out << poly.m_term;
+            return out << poly.term();
         }
         else
         {
-            return out << poly.m_term << " + " << poly.m_body;
+            return out << poly.term() << " + " << poly.body();
         }
     }
 }
 
-template<Uint32 DIM, typename BasedVectorSpace_, typename Scalar>
-std::ostream &operator << (std::ostream &out, MultivariatePolynomial<0,BasedVectorSpace_,Scalar> const &m)
-{
-    return out << m.m_term;
-}
-
-#endif // APPLICATIONS_POLYNOMIAL_UTIL_HPP_
+#endif // APPLICATIONS_POLYNOMIAL_UTILITY_HPP_

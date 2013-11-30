@@ -10,6 +10,7 @@
 #include <complex>
 
 #include "applications/polynomial.hpp"
+#include "applications/polynomial_utility.hpp"
 
 // this is included last because it redefines the `assert` macro,
 // which would be bad for the above includes.
@@ -75,6 +76,7 @@ void multiply_random_polynomials_and_check_result (Context const &context)
         Tenh::randomize(v[i]);
     }
 
+    std::cerr << roly*poly << '\n';
     assert_about_eq((roly*poly).evaluate(v), (roly.evaluate(v) * poly.evaluate(v)));
 }
 
@@ -108,6 +110,7 @@ void add_random_polynomials_and_check_result (Context const &context)
         Tenh::randomize(v[i]);
     }
 
+    std::cerr << roly+poly << '\n';
     assert_about_eq((roly+poly).evaluate(v), (roly.evaluate(v) + poly.evaluate(v)));
 }
 
@@ -139,9 +142,11 @@ void multiply_random_polynomial_by_scalar_and_check_result (Context const &conte
 }
 
 template <typename Scalar, typename BasedVectorSpace_>
-void add_addition_tests_for_dimension (Directory &parent)
+void add_addition_tests (Directory &parent)
 {
-    Directory &dir = parent.GetSubDirectory(FORMAT("Addition Tests"));
+    Directory &dir = parent.GetSubDirectory(FORMAT("Addition Tests"))
+                           .GetSubDirectory(Tenh::type_string_of<BasedVectorSpace_>());
+
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "Degree 1 and 0", add_random_polynomials_and_check_result<Scalar,BasedVectorSpace_,1,0>, RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "Degree 1 and 1", add_random_polynomials_and_check_result<Scalar,BasedVectorSpace_,1,1>, RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "Degree 1 and 4", add_random_polynomials_and_check_result<Scalar,BasedVectorSpace_,1,4>, RESULT_NO_ERROR);
@@ -156,9 +161,11 @@ void add_addition_tests_for_dimension (Directory &parent)
 }
 
 template <typename Scalar, typename BasedVectorSpace_>
-void add_multiplication_tests_for_dimension (Directory &parent)
+void add_multiplication_tests (Directory &parent)
 {
-    Directory &dir = parent.GetSubDirectory(FORMAT("Multiplication Tests"));
+    Directory &dir = parent.GetSubDirectory(FORMAT("Multiplication Tests"))
+                           .GetSubDirectory(Tenh::type_string_of<BasedVectorSpace_>());
+
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "Degree 1 and 1", multiply_random_polynomials_and_check_result<Scalar,BasedVectorSpace_,1,1>, RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "Degree 1 and 2", multiply_random_polynomials_and_check_result<Scalar,BasedVectorSpace_,1,2>, RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "Degree 1 and 3", multiply_random_polynomials_and_check_result<Scalar,BasedVectorSpace_,1,3>, RESULT_NO_ERROR);
@@ -174,10 +181,10 @@ void add_multiplication_tests_for_dimension (Directory &parent)
 template <typename Scalar_, Uint32 DIM_, Uint32 DEGREE_>
 void add_particular_tests (Directory &parent)
 {
-    Directory &scalar_dir = parent.GetSubDirectory(FORMAT("Scalar = " << Tenh::type_string_of<Scalar_>()));
-    Directory &dim_dir = scalar_dir.GetSubDirectory(FORMAT("DIM = " << DIM_));
+    // Directory &scalar_dir = parent.GetSubDirectory(FORMAT("Scalar = " << Tenh::type_string_of<Scalar_>()));
+    // Directory &dim_dir = scalar_dir.GetSubDirectory(FORMAT("DIM = " << DIM_));
     typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM_,Tenh::Generic>,Tenh::Basis_c<Tenh::Generic> > BasedVectorSpace;
-    Directory &degree_dir = dim_dir.GetSubDirectory(FORMAT("HomogeneousPolynomial<" << DEGREE_ << ',' << Tenh::type_string_of<BasedVectorSpace>() << ',' << Tenh::type_string_of<Scalar_>() << '>'));
+    Directory &degree_dir = parent.GetSubDirectory(FORMAT("MultivariatePolynomial<" << DEGREE_ << ',' << Tenh::type_string_of<BasedVectorSpace>() << ',' << Tenh::type_string_of<Scalar_>() << '>'));
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(degree_dir, "constructor_without_initialization", constructor_without_initialization<Scalar_,BasedVectorSpace,DEGREE_>, RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(degree_dir, "constructor_fill_with", constructor_fill_with<Scalar_,BasedVectorSpace,DEGREE_>, new Context::Data<Scalar_>(42), RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(degree_dir, "multiply_random_polynomial_by_scalar_and_check_result", multiply_random_polynomial_by_scalar_and_check_result<Scalar_,BasedVectorSpace,DEGREE_>, RESULT_NO_ERROR);
@@ -237,6 +244,22 @@ void AddTests (Directory &parent)
     add_particular_tests<complex<double>,3,1>(dir);
     add_particular_tests<complex<double>,3,2>(dir);
     add_particular_tests<complex<double>,3,3>(dir);
+
+    {
+        static Uint32 const DIM = 1;
+        typedef Tenh::VectorSpace_c<Tenh::RealField,DIM,Tenh::Generic> VectorSpace;
+        typedef Tenh::BasedVectorSpace_c<VectorSpace,Tenh::Basis_c<Tenh::Generic> > BasedVectorSpace;
+        add_addition_tests<float,BasedVectorSpace>(dir);
+        add_multiplication_tests<float,BasedVectorSpace>(dir);
+    }
+
+    {
+        static Uint32 const DIM = 3;
+        typedef Tenh::VectorSpace_c<Tenh::RealField,DIM,Tenh::Generic> VectorSpace;
+        typedef Tenh::BasedVectorSpace_c<VectorSpace,Tenh::Basis_c<Tenh::Generic> > BasedVectorSpace;
+        add_addition_tests<float,BasedVectorSpace>(dir);
+        add_multiplication_tests<float,BasedVectorSpace>(dir);
+    }
 }
 
 } // end of namespace Vector

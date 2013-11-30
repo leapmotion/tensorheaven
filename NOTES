@@ -53,9 +53,9 @@
 - make a bunch of the typedefs in `ImplementationOf_t` classes private, and decide which ones
   to offer publicly, or get rid of.
 - fix tensor products of diagonal 2-tensors on factors having non-equal dimension
-- do slice addressing by providing an "operator ()" for AbstractIndex_c, which returns some
-  distinct type that signifies a slice operation.  correspondingly, "operator |" which creates
-  abstract multi-indices will have to be extended to account for this.
+- do slice addressing by providing an "operator () (ComponentIndex_t<DIM> const &)" for AbstractIndex_c, 
+  which returns some distinct type that signifies a slice operation.  correspondingly, "operator |" which 
+  creates abstract multi-indices will have to be extended to account for this. 
 - XXX_f types should have a private constructor to prevent actually instantiating them
   (there are frequent programmer errors involving forgetting to "dereference" a metafunction
   via ::T or ::V).
@@ -63,6 +63,7 @@
   a given 2-tensor (linear map) into each tensor factor in each summand of a polynomial, so that
   the polynomial has been pulled back onto the domain of the given linear map (Gabe uses operator %
   for this purpose).
+- add a canonical "zero" immutable-array-based ImplementationOf_t for all vector types
 
 
 ###implemented features/items:
@@ -192,10 +193,13 @@
   in defining an inner product space (which is a vector space and a particular tensor).
 - TODO: think about how to use runtime-specified inner products (lazy initialization?), since
   probably the inner product implementation type has to be constructed using the default
-  constructor.
+  constructor.  
 - TODO: allow tensor products of non-immutable tensor/vector implementations -- this would
   amount to providing constructors which would take the tensor product operands as parameters,
   but could use the same code.
+- TODO: lazy-initialized immutable array -- initialized at runtime once -- something that can't
+  easily be done at compile time, e.g. computing the inverse of a given non-diagonal 2-tensor.
+  could make LazilyInitializedArray_t or some such, which inherits MemoryArray_i.
 - MSVC doesn't like the following code, when e is a 3-tensor implementation and i is an
   AbstractIndex_c<'i'>:  FORMAT_VALUE(e(i).eval()) (this probably has something to do with
   the derived type passed into ExpressionTemplate_IndexedObject_t when the indexed expression
