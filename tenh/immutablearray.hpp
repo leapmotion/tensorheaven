@@ -67,7 +67,7 @@ private:
 // NOTE: you may need to provide a template specialization for DualOf_f<ComponentGenerator_t<...> >
 
 // ///////////////////////////////////////////////////////////////////////////
-// some convenience component generator evaluator functions
+// some convenience component generators
 // ///////////////////////////////////////////////////////////////////////////
 
 template <typename Component_, Uint32 COMPONENT_COUNT_, Sint32 VALUE_>
@@ -75,6 +75,42 @@ Component_ constant_component_generator_evaluator (ComponentIndex_t<COMPONENT_CO
 {
     return Component_(VALUE_);
 }
+
+struct ComponentGenerator_ConstantZero { static std::string type_as_string () { return "ComponentGenerator_ConstantZero"; } };
+
+template <typename Component_, Uint32 COMPONENT_COUNT_>
+struct ComponentGenerator_ConstantZero_f
+{
+    typedef ComponentGenerator_t<Component_,
+                                 COMPONENT_COUNT_,
+                                 constant_component_generator_evaluator<Component_,COMPONENT_COUNT_,0>,
+                                 ComponentGenerator_ConstantZero> T;
+private:
+    ComponentGenerator_ConstantZero_f () { }
+};
+
+// ///////////////////////////////////////////////////////////////////////////
+
+// for basis vectors
+template <typename Component_, Uint32 COMPONENT_COUNT_, Uint32 INDEX_>
+Component_ characteristic_component_generator_evaluator (ComponentIndex_t<COMPONENT_COUNT_> const &i)
+{
+    return i.value() == INDEX_ ? Component_(1) : Component_(0);
+}
+
+template <Uint32 INDEX_>
+struct ComponentGenerator_Characteristic { static std::string type_as_string () { return "ComponentGenerator_Characteristic<" + AS_STRING(INDEX_) + '>'; } };
+
+template <typename Component_, Uint32 COMPONENT_COUNT_, Uint32 INDEX_>
+struct ComponentGenerator_Characteristic_f
+{
+    typedef ComponentGenerator_t<Component_,
+                                 COMPONENT_COUNT_,
+                                 characteristic_component_generator_evaluator<Component_,COMPONENT_COUNT_,INDEX_>,
+                                 ComponentGenerator_Characteristic<INDEX_> > T;
+private:
+    ComponentGenerator_Characteristic_f () { }
+};
 
 // ///////////////////////////////////////////////////////////////////////////
 // ImmutableArray_t

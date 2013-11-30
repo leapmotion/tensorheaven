@@ -52,6 +52,24 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
 
     typedef typename DualOf_f<ImplementationOf_t>::T Dual; // relies on the template specialization below
 
+    typedef ImplementationOf_t<Concept,
+                               Scalar_,
+                               UseImmutableArray_t<typename ComponentGenerator_ConstantZero_f<Scalar_,DIM>::T> > Zero;
+    static Zero const ZERO;
+
+    template <Uint32 INDEX_>
+    struct BasisVector_f
+    {
+    private:
+        enum { STATIC_ASSERT_IN_ENUM((INDEX_ < DIM), INDEX_OUT_OF_RANGE) };
+        BasisVector_f () { }
+    public:
+        typedef ImplementationOf_t<Concept,
+                                   Scalar_,
+                                   UseImmutableArray_t<typename ComponentGenerator_Characteristic_f<Scalar_,DIM,INDEX_>::T> > T;
+        static T const V;
+    };
+
     explicit ImplementationOf_t (WithoutInitialization const &w) : Parent_Array_i(w) { }
 
     // only use these if UseMemberArray is specified
@@ -117,6 +135,13 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
                                      + type_string_of<UseArrayType_>() + '>';
     }
 };
+
+template <typename VectorSpace_, typename Basis_, typename Scalar_, typename UseArrayType_>
+typename ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_>::Zero const ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_>::ZERO;
+
+template <typename VectorSpace_, typename Basis_, typename Scalar_, typename UseArrayType_>
+template <Uint32 INDEX_>
+typename ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_>::template BasisVector_f<INDEX_>::T const ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_>::template BasisVector_f<INDEX_>::V;
 
 template <typename VectorSpace_, typename Basis_, typename Scalar_, typename UseArrayType_>
 struct DualOf_f<ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_> >

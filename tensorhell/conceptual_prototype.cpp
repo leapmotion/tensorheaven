@@ -54,5 +54,8 @@ int main (int, char **)
 
     test_direct_sums();
 
+    test_zero_vector();
+    test_basis_vectors();
+
     return 0;
 }

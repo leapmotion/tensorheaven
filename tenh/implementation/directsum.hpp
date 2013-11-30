@@ -48,11 +48,29 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
     typedef typename Parent_Implementation::ComponentIndex ComponentIndex;
     typedef typename Parent_Implementation::MultiIndex MultiIndex;
 
-    using Parent_Implementation::COMPONENTS_ARE_IMMUTABLE;
+    using Parent_Array_i::COMPONENTS_ARE_IMMUTABLE;
     typedef typename Parent_Implementation::ComponentAccessConstReturnType ComponentAccessConstReturnType;
     typedef typename Parent_Implementation::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
 
     typedef typename DualOf_f<ImplementationOf_t>::T Dual; // relies on the template specialization below
+
+    typedef ImplementationOf_t<Concept,
+                               Scalar_,
+                               UseImmutableArray_t<typename ComponentGenerator_ConstantZero_f<Scalar_,DIM>::T> > Zero;
+    static Zero const ZERO;
+
+    template <Uint32 INDEX_>
+    struct BasisVector_f
+    {
+    private:
+        enum { STATIC_ASSERT_IN_ENUM((INDEX_ < DIM), INDEX_OUT_OF_RANGE) };
+        BasisVector_f () { }
+    public:
+        typedef ImplementationOf_t<Concept,
+                                   Scalar_,
+                                   UseImmutableArray_t<typename ComponentGenerator_Characteristic_f<Scalar_,DIM,INDEX_>::T> > T;
+        static T const V;
+    };
 
     explicit ImplementationOf_t (WithoutInitialization const &w) : Parent_Implementation(w) { }
 
@@ -127,26 +145,26 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
     };
 
     template <Uint32 N>
-    typename ElementType_f<N>::T el()
+    typename ElementType_f<N>::T el ()
     {
         STATIC_ASSERT((SummandTypeList_::LENGTH > N), ATTEMPTED_ACCESS_PAST_LIST_END);
         return typename ElementType_f<N>::T(pointer_to_allocation() + OffsetForComponent_f<SummandTypeList_,N>::V);
     }
 
     template <Uint32 N>
-    typename ElementType_f<N>::T const el() const
+    typename ElementType_f<N>::T const el () const
     {
         STATIC_ASSERT((SummandTypeList_::LENGTH > N), ATTEMPTED_ACCESS_PAST_LIST_END);
         return typename ElementType_f<N>::T(pointer_to_allocation() + OffsetForComponent_f<SummandTypeList_,N>::V);
     }
 
-    typename ElementType_f<0>::T el(const Uint32 &n)
+    typename ElementType_f<0>::T el (Uint32 n)
     {
         STATIC_ASSERT(TypeListIsUniform_t<SummandTypeList_>::V, TYPELIST_MUST_BE_UNIFORM);
         return typename ElementType_f<0>::T(pointer_to_allocation() + DimensionOf_f<typename SummandTypeList_::HeadType>::V * n);
     }
 
-    typename ElementType_f<0>::T const el(const Uint32 &n) const
+    typename ElementType_f<0>::T const el (Uint32 n) const
     {
         STATIC_ASSERT(TypeListIsUniform_t<SummandTypeList_>::V, TYPELIST_MUST_BE_UNIFORM);
         return typename ElementType_f<0>::T(pointer_to_allocation() + DimensionOf_f<typename SummandTypeList_::HeadType>::V * n);
@@ -176,6 +194,13 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
                                      + type_string_of<UseArrayType_>() + '>';
     }
 };
+
+template <typename SummandTypeList_, typename Scalar_, typename UseArrayType_>
+typename ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_>::Zero const ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_>::ZERO;
+
+template <typename SummandTypeList_, typename Scalar_, typename UseArrayType_>
+template <Uint32 INDEX_>
+typename ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_>::template BasisVector_f<INDEX_>::T const ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_>::template BasisVector_f<INDEX_>::V;
 
 template <typename SummandTypeList_, typename Scalar_, typename UseArrayType_>
 struct DualOf_f<ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_> >
