@@ -15,7 +15,7 @@ using namespace Tenh;
 // norm and squared norm functions, which require an inner product to use
 // ///////////////////////////////////////////////////////////////////////////
 
-// this is sort of hacky -- it would probably be better to make an 
+// this is sort of hacky -- it would probably be better to make an
 // InnerProductSpace_c conceptual type and make ImplementationOf_t aware
 // of it.
 // NOTE: this won't work for complex types
@@ -39,7 +39,7 @@ template <typename InnerProductId_,
           typename Scalar_,
           typename BasedVectorSpace_,
           bool COMPONENTS_ARE_IMMUTABLE_>
-typename AssociatedFloatingPointType_t<Scalar_>::T 
+typename AssociatedFloatingPointType_t<Scalar_>::T
     norm (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &v)
 {
     return std::sqrt(squared_norm<InnerProductId_>(v));
@@ -70,7 +70,13 @@ void randomize (float &x)
 // uniform distribution in [0,1]
 void randomize (double &x)
 {
-    x = float(rand()) / RAND_MAX;
+    x = double(rand()) / RAND_MAX;
+}
+
+// uniform distribution in [0,1]
+void randomize (long double &x)
+{
+    x = static_cast<long double>(rand()) / RAND_MAX;
 }
 
 // open annulus of given inner and outer radii in the vector space -- false
@@ -140,24 +146,58 @@ struct TaylorPolynomialVerifier_t
              + as_derived().hessian(based_at_point)(p).split(p,i|j)*delta(i)*delta(j)/2;
     }
 
+    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
+              typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
+    Scalar_ evaluate_0th_order_via_delta (Vector_i<Derived0_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
+                                          Vector_i<Derived1_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &delta) const
+    {
+        return as_derived().function(based_at_point);
+    }
+
+    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
+              typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
+    Scalar_ evaluate_1st_order_via_delta (Vector_i<Derived0_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
+                                          Vector_i<Derived1_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &delta) const
+    {
+        AbstractIndex_c<'i'> i;
+        return as_derived().function(based_at_point)
+             + as_derived().gradient(based_at_point)(i)*delta(i);
+    }
+
+    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
+              typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
+    Scalar_ evaluate_2nd_order_via_delta (Vector_i<Derived0_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
+                                          Vector_i<Derived1_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &delta) const
+    {
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        AbstractIndex_c<'p'> p;
+        return as_derived().function(based_at_point)
+             + as_derived().gradient(based_at_point)(i)*delta(i)
+             + as_derived().hessian(based_at_point)(p).split(p,i|j)*delta(i)*delta(j)/2;
+    }
+
     template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE_>
     Scalar_ verify_gradient (Vector_i<Derived0_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &at_point) const
     {
         Scalar_ big_o_bound(0);
-        static Uint32 const SAMPLES = 100;
+        static Uint32 const SAMPLES = 10;
         for (Uint32 i = 0; i < SAMPLES; ++i)
         {
             V delta(Static<WithoutInitialization>::SINGLETON);
             V evaluation_point(Static<WithoutInitialization>::SINGLETON);
             AbstractIndex_c<'j'> j;
-            randomize<StandardInnerProduct>(delta, Scalar_(0), Scalar_(1)/100);
+            randomize<StandardInnerProduct>(delta, Scalar_(1)/100, Scalar_(2)/100);
             evaluation_point(j) = at_point(j) + delta(j);
             // Scalar_ actual_function_value(function(at_point + delta)); // TODO: make this work?
             Scalar_ actual_function_value(as_derived().function(evaluation_point));
-            Scalar_ estimated_function_value(evaluate_1st_order(at_point, evaluation_point));
+//             Scalar_ estimated_function_value(evaluate_1st_order(at_point, evaluation_point));
+            Scalar_ estimated_function_value(evaluate_1st_order_via_delta(at_point, delta));
+//             std::cerr << FORMAT_VALUE(actual_function_value) << ", " << FORMAT_VALUE(estimated_function_value) << '\n';
             Scalar_ asymptotic_ratio = fabs(actual_function_value - estimated_function_value)
                                        /
                                        squared_norm<StandardInnerProduct>(delta);
+//                                        norm<StandardInnerProduct>(delta);
             big_o_bound = std::max(big_o_bound, asymptotic_ratio);
         }
         //std::cerr << "verify_gradient(" << FORMAT_VALUE(at_point) << "): " << FORMAT_VALUE(big_o_bound) << '\n';
@@ -174,15 +214,21 @@ struct TaylorPolynomialVerifier_t
             V delta(Static<WithoutInitialization>::SINGLETON);
             V evaluation_point(Static<WithoutInitialization>::SINGLETON);
             AbstractIndex_c<'j'> j;
-            randomize<StandardInnerProduct>(delta, Scalar_(0), Scalar_(1)/100);
+            // use a solid annulus of radius [1/100, 2/200] around at_point
+            randomize<StandardInnerProduct>(delta, Scalar_(1)/100, Scalar_(2)/100);
             evaluation_point(j) = at_point(j) + delta(j);
             // Scalar_ actual_function_value(function(at_point + delta)); // TODO: make this work?
             Scalar_ actual_function_value(as_derived().function(evaluation_point));
-            Scalar_ estimated_function_value(evaluate_2nd_order(at_point, evaluation_point));
+//             Scalar_ estimated_function_value(evaluate_2nd_order(at_point, evaluation_point));
+            Scalar_ estimated_function_value(evaluate_2nd_order_via_delta(at_point, delta));
+//             std::cerr << FORMAT_VALUE(actual_function_value) << ", " << FORMAT_VALUE(estimated_function_value) << '\n';
             Scalar_ asymptotic_ratio = fabs(actual_function_value - estimated_function_value)
                                        /
                                        cube(norm<StandardInnerProduct>(delta));
+//                                        squared_norm<StandardInnerProduct>(delta);
+
             big_o_bound = std::max(big_o_bound, asymptotic_ratio);
+//             std::cerr << FORMAT_VALUE(at_point) << ", " << FORMAT_VALUE(norm<StandardInnerProduct>(delta)) << ", " << FORMAT_VALUE(big_o_bound) << '\n';
         }
         //std::cerr << "verify_hessian(" << FORMAT_VALUE(at_point) << "): " << FORMAT_VALUE(big_o_bound) << '\n';
         return big_o_bound;
@@ -205,12 +251,28 @@ struct QuadraticFunction_t
 
     QuadraticFunction_t ()
         :
-        m(Static<WithoutInitialization>::SINGLETON)
+//         m(Static<WithoutInitialization>::SINGLETON)
+        m(Scalar_(0))
     {
         // won't necessarily be positive definite or even nondegenerate.
         //randomize<StandardInnerProduct>(m, Scalar_(1), Scalar_(2));
-        for (typename Sym2_DualOfV::ComponentIndex i; i.is_not_at_end(); ++i)
-            randomize(m[i]);
+//         for (typename Sym2_DualOfV::ComponentIndex i; i.is_not_at_end(); ++i)
+//             randomize(m[i]);
+
+//         m[typename Sym2_DualOfV::ComponentIndex(0)] = 1;
+//         m[typename Sym2_DualOfV::ComponentIndex(2)] = 1;
+//         m[typename Sym2_DualOfV::ComponentIndex(5)] = 1;
+
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        AbstractIndex_c<'p'> p;
+        for (Uint32 k = 0; k < V::DIM; ++k)
+        {
+            DualOfV a(Static<WithoutInitialization>::SINGLETON);
+            randomize<StandardInnerProduct>(a, Scalar_(1), Scalar_(2));
+            m(p) += (a(i)*a(j)).bundle(i|j,typename Sym2_DualOfV::Concept(),p);
+        }
+//         std::cerr << FORMAT_VALUE(m(p).split(p,i|j)) << '\n';
     }
 
     template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
@@ -258,16 +320,27 @@ struct SombreroFunction_t
 
     SombreroFunction_t ()
         :
-        m(Static<WithoutInitialization>::SINGLETON)
+//         m(Static<WithoutInitialization>::SINGLETON)
+        m(Scalar_(0))
     {
         // won't necessarily be positive definite or even nondegenerate.
         //randomize<StandardInnerProduct>(m, Scalar_(1), Scalar_(2));
-        for (typename Sym2_DualOfV::ComponentIndex i; i.is_not_at_end(); ++i)
-            randomize(m[i]);
+//         for (typename Sym2_DualOfV::ComponentIndex i; i.is_not_at_end(); ++i)
+//             randomize(m[i]);
+
+//         m[typename Sym2_DualOfV::ComponentIndex(0)] = Scalar_(1);
+//         m[typename Sym2_DualOfV::ComponentIndex(2)] = Scalar_(1);
+//         m[typename Sym2_DualOfV::ComponentIndex(5)] = Scalar_(1);
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
         AbstractIndex_c<'p'> p;
-        std::cerr << FORMAT_VALUE(m(p).split(p,i|j)) << '\n';
+        for (Uint32 k = 0; k < V::DIM; ++k)
+        {
+            DualOfV a(Static<WithoutInitialization>::SINGLETON);
+            randomize<StandardInnerProduct>(a, Scalar_(1), Scalar_(2));
+            m(p) += (a(i)*a(j)).bundle(i|j,typename Sym2_DualOfV::Concept(),p);
+        }
+//         std::cerr << FORMAT_VALUE(m(p).split(p,i|j)) << '\n';
     }
 
     template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
@@ -313,32 +386,35 @@ private:
 
 int main (int argc, char **argv)
 {
-    typedef float Scalar;
+    typedef long double Scalar;
     static Uint32 const DIM = 3;
     typedef BasedVectorSpace_c<VectorSpace_c<RealField,DIM,Generic>,OrthonormalBasis_c<Generic> > BasedVectorSpace;
     typedef ImplementationOf_t<BasedVectorSpace,Scalar> V;
 
     static Uint32 const SAMPLES = 100;
-    // for (Uint32 j = 0; j < 10; ++j)
-    // {
-    //     Scalar big_o_bound(0);
-    //     QuadraticFunction_t<BasedVectorSpace,Scalar> helpy;
-    //     for (Uint32 i = 0; i < SAMPLES; ++i)
-    //     {
-    //         V at_point(Static<WithoutInitialization>::SINGLETON);
-    //         randomize<StandardInnerProduct>(at_point, Scalar(0), Scalar(10));
-    //         big_o_bound = std::max(big_o_bound, helpy.verify_gradient(at_point));
-    //     }
-    //     std::cerr << "max big-o-bound for gradient verification = " << big_o_bound << '\n';
-    //     big_o_bound = Scalar(0);
-    //     for (Uint32 i = 0; i < SAMPLES; ++i)
-    //     {
-    //         V at_point(Static<WithoutInitialization>::SINGLETON);
-    //         randomize<StandardInnerProduct>(at_point, Scalar(0), Scalar(10));
-    //         big_o_bound = std::max(big_o_bound, helpy.verify_hessian(at_point));
-    //     }
-    //     std::cerr << "max big-o-bound for hessian verification = " << big_o_bound << '\n';
-    // }
+    std::cerr << "QuadraticFunction_t\n";
+    for (Uint32 j = 0; j < 10; ++j)
+    {
+        Scalar big_o_bound(0);
+        QuadraticFunction_t<BasedVectorSpace,Scalar> helpy;
+        for (Uint32 i = 0; i < SAMPLES; ++i)
+        {
+            V at_point(Static<WithoutInitialization>::SINGLETON);
+            randomize<StandardInnerProduct>(at_point, Scalar(0), Scalar(10));
+            big_o_bound = std::max(big_o_bound, helpy.verify_gradient(at_point));
+        }
+        std::cerr << "max big-o-bound for gradient verification = " << big_o_bound << '\n';
+        big_o_bound = Scalar(0);
+        for (Uint32 i = 0; i < SAMPLES; ++i)
+        {
+            V at_point(Static<WithoutInitialization>::SINGLETON);
+            randomize<StandardInnerProduct>(at_point, Scalar(0), Scalar(10));
+            big_o_bound = std::max(big_o_bound, helpy.verify_hessian(at_point));
+        }
+        std::cerr << "max big-o-bound for hessian verification = " << big_o_bound << '\n';
+    }
+    std::cerr << '\n';
+    std::cerr << "SombreroFunction_t\n";
     for (Uint32 j = 0; j < 10; ++j)
     {
         Scalar big_o_bound(0);
