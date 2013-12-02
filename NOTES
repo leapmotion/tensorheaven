@@ -43,7 +43,9 @@
 - rename `List_t::body()` to `List_t::body_list()`, since the body list type is `BodyList`
 - maybe change array (and array-like) indexing schemes to use signed integers, where negative
   values index from the end of the array (although this would come at a runtime cost).  this
-  should probably not include vector/tensor indexing.
+  should probably not include vector/tensor indexing.  could do this with some type similar to
+  ComponentIndex_t, like SignedIndex_t -- then provide overloads which accept SignedIndex_t,
+  and the original ComponentIndex_t accessors wouldn't be affected at all.
 - Add _ to the end of all template parameters
 - Make references to Parameter within template classes reference Parameter_ where possible.
 - The non-conceptual `IsBlah_f` metafunctions should really be called `InheritsBlah_f`, since these
@@ -55,7 +57,7 @@
 - fix tensor products of diagonal 2-tensors on factors having non-equal dimension
 - do slice addressing by providing an "operator () (ComponentIndex_t<DIM> const &)" for AbstractIndex_c, 
   which returns some distinct type that signifies a slice operation.  correspondingly, "operator |" which 
-  creates abstract multi-indices will have to be extended to account for this. 
+  creates abstract multi-indices will have to be extended to account for this.  SliceIndex_t ?
 - XXX_f types should have a private constructor to prevent actually instantiating them
   (there are frequent programmer errors involving forgetting to "dereference" a metafunction
   via ::T or ::V).
@@ -304,6 +306,22 @@
 - The point of this theory is that doing a natural pairing "upstairs" doesn't take
   advantage of the symmetries available "downstairs", so it's ostensibly more efficient
   to project and do the natural pairing "downstairs".
+    * for example, if D is a diagonal 2-tensor of type V^* \otimes V^*, and x and y are
+      vectors of type V, then
+        D(i).embed(i,V^* \otimes V^*,j).split(j,a|b)*x(a)*y(b)
+      is the expression for use of D as a bilinear form, but this doesn't use its 
+      symmetry.  This would be more optimally expressed as
+        D(i)*(x(a)*y(b)).bundle(a|b,V \otimes V,j).project(j,Diag2TensorSpace,i),
+      where the projection would essentially compute the vector
+        (x[0]*y[0], x[1]*y[1], ..., x[n-1]*y[n-1]),
+      which would then be naturally paired with the diagonal (as a vector).
+    * another example is similar to the previous, except where D is a scalar 2-tensor,
+      and the projection of x(a)*y(b) would produce the scalar
+        x[0]*y[0] + ... + x[n-1]*y[n-1],
+      which is the standard dot product.  the natural pairing with the scalar 2-tensor
+      is just a scalar multiplication of this value.  this example would actually
+      occur for any standard Euclidean space, and in principle could boil down to
+      the lean-and-mean computation done in standard linear algebraic libraries.
 - The first property essentially amounts to a particular set of basis choices for
   various spaces.  It is possible that some spaces may not embed nicely (e.g. an
   arbitrary subspace of a given based vector space), and those cases should probably
@@ -315,6 +333,13 @@
   transposes of one another.
 - The reindexing maps should be done in the conceptual layer, since they are independent
   of choice of scalar representation (e.g. float).
+- Ideally, if B was a bilinear form on V with symmetry and x and y were V vectors,
+  then the expression
+    x(i)*B(i|j)*y(j)
+  would be replaced with
+    B(p)*(x(i)*y(j)).bundle(i|j,V \otimes V,q).project(q,SpaceWithSymmetry,p),
+  thereby providing optimization without cluttering up the notation/usage from the
+  perspective of the user.
 
 
 ###Notes for [probable] upgrade to C++11 (to happen after "version 1.0" is reached)
@@ -398,7 +423,7 @@
 
               TensorPower<2>(R)*w
 
-    has type W \otimes W, and TensorPower<2>(R) \in Hom(V \otimes V, W \otimes W).
+      has type W \otimes W, and TensorPower<2>(R) \in Hom(V \otimes V, W \otimes W).
 
       The C++ operator* will compute an unambiguous in-line contraction (think box diagrams
       with lines connecting the contracted boxes).  Note that taking the tensor/exterior/symmetric

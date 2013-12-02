@@ -71,6 +71,15 @@ T sqr (T const &t)
     return t*t;
 }
 
+/// @brief Convenient notation for the cube of something without evaluating the expression thrice.
+/// @tparam T the type of the value to cube.
+/// @headerfile core.hpp "tenh/core.hpp"
+template <typename T>
+T cube (T const &t)
+{
+    return t*t*t;
+}
+
 /// @brief These are used in constructors for determining if a range check should be done.
 ///  The default check parameter value should be CHECK_RANGE, which is more expensive,
 ///  but if you know what you're doing, you can pass in DONT_CHECK_RANGE to avoid the

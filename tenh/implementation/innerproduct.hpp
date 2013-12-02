@@ -8,7 +8,9 @@
 
 #include "tenh/core.hpp"
 
+#include "tenh/implementation/diagonal2tensor.hpp"
 #include "tenh/implementation/tensorproduct.hpp"
+#include "tenh/interface/vector.hpp"
 
 namespace Tenh {
 
