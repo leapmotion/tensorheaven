@@ -200,7 +200,7 @@ typename ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Sca
 
 template <typename SummandTypeList_, typename Scalar_, typename UseArrayType_>
 template <Uint32 INDEX_>
-typename ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_>::template BasisVector_f<INDEX_>::T const ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_>::template BasisVector_f<INDEX_>::V;
+typename ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_>::template BasisVector_f<INDEX_>::T const ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_>::BasisVector_f<INDEX_>::V;
 
 template <typename SummandTypeList_, typename Scalar_, typename UseArrayType_>
 struct DualOf_f<ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_> >

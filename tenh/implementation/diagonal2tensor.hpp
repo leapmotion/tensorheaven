@@ -187,7 +187,7 @@ typename ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_
 
 template <typename Factor1_, typename Factor2_, typename Scalar_, typename UseArrayType_>
 template <Uint32 INDEX_>
-typename ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,Scalar_,UseArrayType_>::template BasisVector_f<INDEX_>::T const ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,Scalar_,UseArrayType_>::template BasisVector_f<INDEX_>::V;
+typename ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,Scalar_,UseArrayType_>::template BasisVector_f<INDEX_>::T const ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,Scalar_,UseArrayType_>::BasisVector_f<INDEX_>::V;
 
 template <typename Factor1_, typename Factor2_, typename Scalar_, typename UseArrayType_>
 struct DualOf_f<ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,Scalar_,UseArrayType_> >

@@ -141,7 +141,7 @@ typename ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseA
 
 template <typename VectorSpace_, typename Basis_, typename Scalar_, typename UseArrayType_>
 template <Uint32 INDEX_>
-typename ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_>::template BasisVector_f<INDEX_>::T const ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_>::template BasisVector_f<INDEX_>::V;
+typename ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_>::template BasisVector_f<INDEX_>::T const ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_>::BasisVector_f<INDEX_>::V;
 
 template <typename VectorSpace_, typename Basis_, typename Scalar_, typename UseArrayType_>
 struct DualOf_f<ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_> >

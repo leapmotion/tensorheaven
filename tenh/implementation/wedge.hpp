@@ -187,7 +187,7 @@ typename ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sc
 
 template <Uint32 ORDER_, typename Factor_, typename Scalar_, typename UseArrayType_>
 template <Uint32 INDEX_>
-typename ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_>::template BasisVector_f<INDEX_>::T const ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_>::template BasisVector_f<INDEX_>::V;
+typename ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_>::template BasisVector_f<INDEX_>::T const ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_>::BasisVector_f<INDEX_>::V;
 
 template <Uint32 ORDER_, typename Factor_, typename Scalar_, typename UseArrayType_>
 template <typename BundleIndexTypeList, typename BundledIndex, Uint32 ORD>
