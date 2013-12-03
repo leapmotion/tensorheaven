@@ -59,7 +59,7 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
 
     typedef ImplementationOf_t<Concept,
                                Scalar_,
-                               UseImmutableArray_t<typename ComponentGenerator_ConstantZero_f<Scalar_,DIM>::T> > Zero;
+                               UseImmutableArray_t<typename ComponentGenerator_Constant_f<Scalar_,DIM,0>::T> > Zero;
     static Zero const ZERO;
 
     template <Uint32 INDEX_>

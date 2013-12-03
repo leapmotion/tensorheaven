@@ -76,17 +76,18 @@ Component_ constant_component_generator_evaluator (ComponentIndex_t<COMPONENT_CO
     return Component_(VALUE_);
 }
 
-struct ComponentGenerator_ConstantZero { static std::string type_as_string () { return "ComponentGenerator_ConstantZero"; } };
+template <Sint32 VALUE_>
+struct ComponentGenerator_Constant { static std::string type_as_string () { return "ComponentGenerator_Constant<" + AS_STRING(VALUE_) + '>'; } };
 
-template <typename Component_, Uint32 COMPONENT_COUNT_>
-struct ComponentGenerator_ConstantZero_f
+template <typename Component_, Uint32 COMPONENT_COUNT_, Sint32 VALUE_>
+struct ComponentGenerator_Constant_f
 {
     typedef ComponentGenerator_t<Component_,
                                  COMPONENT_COUNT_,
-                                 constant_component_generator_evaluator<Component_,COMPONENT_COUNT_,0>,
-                                 ComponentGenerator_ConstantZero> T;
+                                 constant_component_generator_evaluator<Component_,COMPONENT_COUNT_,VALUE_>,
+                                 ComponentGenerator_Constant<VALUE_> > T;
 private:
-    ComponentGenerator_ConstantZero_f () { }
+    ComponentGenerator_Constant_f () { }
 };
 
 // ///////////////////////////////////////////////////////////////////////////
