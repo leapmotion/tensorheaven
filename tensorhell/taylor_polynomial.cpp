@@ -5,6 +5,7 @@
 
 #include "applications/polynomial.hpp"
 
+#include "tenh/implementation/identity.hpp"
 #include "tenh/implementation/innerproduct.hpp"
 #include "tenh/implementation/vector.hpp"
 #include "tenh/implementation/vee.hpp"
@@ -382,6 +383,128 @@ struct SombreroFunction_t
 private:
 
     Sym2_DualOfV m;
+};
+
+template <typename BasedVectorSpace_, typename Scalar_>
+struct CayleyTransformParameterizedQuadraticFunction_t
+    :
+    public TaylorPolynomialVerifier_t<BasedVectorSpace_,Scalar_,CayleyTransformParameterizedQuadraticFunction_t<BasedVectorSpace_,Scalar_> >
+{
+private:
+
+    enum { _ = Assert<DimensionOf_f<BasedVectorSpace_>::V == 3>::V };
+
+public:
+
+    typedef TaylorPolynomialVerifier_t<BasedVectorSpace_,Scalar_,CayleyTransformParameterizedQuadraticFunction_t<BasedVectorSpace_,Scalar_> > Parent;
+
+    typedef typename Parent::DualOfBasedVectorSpace DualOfBasedVectorSpace;
+    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_,TypeList_t<DualOfBasedVectorSpace> > > EndomorphismOfBasedVectorSpace;
+    typedef typename Parent::Sym2Dual Sym2Dual;
+
+    typedef typename Parent::V V;
+    typedef typename Parent::DualOfV DualOfV;
+    typedef typename Parent::Sym2_DualOfV Sym2_DualOfV;
+    typedef ImplementationOf_t<EndomorphismOfBasedVectorSpace,Scalar_,UseMemberArray> T;
+
+    CayleyTransformParameterizedQuadraticFunction_t ()
+        :
+        m_constant_term(0),
+        m_linear_term(0),
+        m_quadratic_term(0)
+    { }
+
+    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
+    Scalar_ function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    {
+        AbstractIndex_c<'i'> i;
+        T cayley_transform(Static<WithoutInitialization>::SINGLETON);
+        cayley_transform(i) = K(x) * H(x)(i);
+        return quadratic_function(cayley_transform);
+    }
+
+    // template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
+    // DualOfV gradient (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    // {
+    // }
+
+    // template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
+    // Sym2_DualOfV hessian (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    // {
+    // }
+
+private:
+
+    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
+    Scalar_ objective_function (Tensor_i<Derived_,Scalar_,EndomorphismOfBasedVectorSpace,COMPONENTS_ARE_IMMUTABLE_> const &t) const
+    {
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        AbstractIndex_c<'p'> p;
+        // just take squared norm of the tensor for now.  TODO: real function
+        typedef TypeList_t<StandardInnerProduct,TypeList_t<StandardInnerProduct> > InnerProductFactorList;
+        typedef TensorProduct_c<InnerProductFactorList> InnerProductId;
+        // typedef typename InnerProduct_f<EndomorphismOfBasedVectorSpace,
+        //                                 TensorProduct_c<InnerProductFactorList>,
+        //                                 Scalar_>::T b;
+        // return t(i)*b(p).split(p,i|j)*t(j);
+        return squared_norm<InnerProductId>(t);
+    }
+    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
+    Scalar_ J (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    {
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        AbstractIndex_c<'p'> p;
+        return Scalar_(1) - x(i)*m_inner_product(p).split(p,i|j)*x(j);
+    }
+    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
+    Scalar_ K (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    {
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        AbstractIndex_c<'p'> p;
+        return Scalar_(1) + x(i)*m_inner_product(p).split(p,i|j)*x(j);
+    }
+    // Lie algebra morphism from (R^3, \times) to (so(3), [.,.])
+    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
+    T Hat (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    {
+        // for brevity
+        typedef typename Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_>::ComponentIndex c;
+        typedef typename T::ComponentIndex C;
+        T retval(Static<WithoutInitialization>::SINGLETON);
+        retval[C(0)] = Scalar_(0);
+        retval[C(1)] = -x[c(2)];
+        retval[C(2)] =  x[c(1)];
+        retval[C(3)] =  x[c(2)];
+        retval[C(4)] = Scalar_(0);
+        retval[C(5)] = -x[c(0)];
+        retval[C(6)] = -x[c(1)];
+        retval[C(7)] =  x[c(0)];
+        retval[C(8)] = Scalar_(0);
+        return retval;
+    }
+    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
+    T N (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    {
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        AbstractIndex_c<'k'> k;
+        AbstractIndex_c<'p'> p;
+        AbstractIndex_c<'q'> q;
+        T retval(Static<WithoutInitialization>::SINGLETON);
+        retval(i|k).no_alias() = J(x)*m_identity(p).split(i|k) 
+                               + Scalar_(2) * (x(i)*x(j)*m_inner_product(q).split(q,j|k) + Hat(x));
+        return retval;
+    }
+
+    Scalar_ m_constant_term;
+    DualOfV m_linear_term;
+    Sym2_DualOfV m_quadratic_term;
+    typename Identity_f<BasedVectorSpace_,Scalar_>::T m_identity;
+    typename InnerProduct_f<BasedVectorSpace_,StandardInnerProduct,Scalar_>::T m_inner_product;
+    typename InnerProduct_f<DualOfBasedVectorSpace,StandardInnerProduct,Scalar_>::T m_inner_product_inverse;
 };
 
 int main (int argc, char **argv)
