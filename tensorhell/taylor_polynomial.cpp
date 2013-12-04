@@ -106,8 +106,8 @@ void randomize (Vector_i<Derived_,Scalar_,BasedVectorSpace_,false> &x,
 }
 
 // for arbitrary codomain
-template <typename ParameterSpace_, typename CodomainSpace_, typename CodomainInnerProductId_, typename Scalar_, typename Derived_>
-struct TaylorPolynomialVerifier_t
+template <typename ParameterSpace_, typename CodomainSpace_, typename Scalar_>
+struct FunctionObjectType_m
 {
     typedef typename DualOf_f<ParameterSpace_>::T DualOfBasedVectorSpace;
     typedef SymmetricPowerOfBasedVectorSpace_c<2,DualOfBasedVectorSpace> Sym2Dual;
@@ -122,143 +122,11 @@ struct TaylorPolynomialVerifier_t
     typedef ImplementationOf_t<CodomainSpace_,Scalar_,UseMemberArray> Out;
     typedef ImplementationOf_t<Differential1,Scalar_,UseMemberArray> D1;
     typedef ImplementationOf_t<Differential2,Scalar_,UseMemberArray> D2;
-
-    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
-              typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
-    Out evaluate_0th_order (Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
-                            Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &evaluation_point) const
-    {
-        return as_derived().function(based_at_point);
-    }
-
-    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
-              typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
-    Out evaluate_1st_order (Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
-                            Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &evaluation_point) const
-    {
-        AbstractIndex_c<'i'> i;
-        V delta(Static<WithoutInitialization>::SINGLETON);
-        delta(i).no_alias() = evaluation_point(i) - based_at_point(i);
-        return evaluate_1st_order_via_delta(based_at_point, delta);
-    }
-
-    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
-              typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
-    Out evaluate_2nd_order (Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
-                            Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &evaluation_point) const
-    {
-        AbstractIndex_c<'i'> i;
-        Out retval(Static<WithoutInitialization>::SINGLETON);
-        V delta(Static<WithoutInitialization>::SINGLETON);
-        delta(i).no_alias() = evaluation_point(i) - based_at_point(i);
-        return evaluate_2nd_order_via_delta(based_at_point, delta);
-    }
-
-    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
-              typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
-    Out evaluate_0th_order_via_delta (Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
-                                      Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &delta) const
-    {
-        return as_derived().function(based_at_point);
-    }
-
-    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
-              typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
-    Out evaluate_1st_order_via_delta (Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
-                                      Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &delta) const
-    {
-        AbstractIndex_c<'i'> i;
-        AbstractIndex_c<'j'> j;
-        Out retval(Static<WithoutInitialization>::SINGLETON);
-        retval(i).no_alias() = as_derived().function(based_at_point)(i)
-                             + as_derived().D_function(based_at_point)(i|j)*delta(j);
-        return retval;
-    }
-
-    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
-              typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
-    Out evaluate_2nd_order_via_delta (Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
-                                      Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &delta) const
-    {
-        AbstractIndex_c<'i'> i;
-        AbstractIndex_c<'j'> j;
-        AbstractIndex_c<'k'> k;
-        AbstractIndex_c<'p'> p;
-        Out retval(Static<WithoutInitialization>::SINGLETON);
-        retval(i).no_alias() = as_derived().function(based_at_point)(i)
-                             + as_derived().D_function(based_at_point)(i|j)*delta(j)
-                             + as_derived().D2_function(based_at_point)(i|p).split(p,j|k)*delta(j)*delta(k)/2;
-        return retval;
-    }
-
-    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE_>
-    Scalar_ verify_gradient (Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE_> const &at_point) const
-    {
-        Scalar_ big_o_bound(0);
-        static Uint32 const SAMPLES = 100;
-        for (Uint32 i = 0; i < SAMPLES; ++i)
-        {
-            V delta(Static<WithoutInitialization>::SINGLETON);
-            V evaluation_point(Static<WithoutInitialization>::SINGLETON);
-            AbstractIndex_c<'j'> j;
-            randomize<StandardInnerProduct>(delta, Scalar_(1)/100, Scalar_(2)/100);
-            evaluation_point(j).no_alias() = at_point(j) + delta(j);
-            // Scalar_ actual_function_value(function(at_point + delta)); // TODO: make this work?
-            Out actual_function_value(as_derived().function(evaluation_point));
-//             Scalar_ estimated_function_value(evaluate_1st_order(at_point, evaluation_point));
-            Out estimated_function_value(evaluate_1st_order_via_delta(at_point, delta));
-//             std::cerr << FORMAT_VALUE(actual_function_value) << ", " << FORMAT_VALUE(estimated_function_value) << '\n';
-            Out error(Static<WithoutInitialization>::SINGLETON);
-            error(j).no_alias() = actual_function_value(j) - estimated_function_value(j);
-            Scalar_ asymptotic_ratio = norm<CodomainInnerProductId_>(error)
-                                       /
-                                       squared_norm<StandardInnerProduct>(delta);
-//                                        norm<StandardInnerProduct>(delta);
-            big_o_bound = std::max(big_o_bound, asymptotic_ratio);
-        }
-        //std::cerr << "verify_gradient(" << FORMAT_VALUE(at_point) << "): " << FORMAT_VALUE(big_o_bound) << '\n';
-        return big_o_bound;
-    }
-
-    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE_>
-    Scalar_ verify_hessian (Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE_> const &at_point) const
-    {
-        Scalar_ big_o_bound(0);
-        static Uint32 const SAMPLES = 100;
-        for (Uint32 i = 0; i < SAMPLES; ++i)
-        {
-            V delta(Static<WithoutInitialization>::SINGLETON);
-            V evaluation_point(Static<WithoutInitialization>::SINGLETON);
-            AbstractIndex_c<'j'> j;
-            // use a solid annulus of radius [1/100, 2/200] around at_point
-            randomize<StandardInnerProduct>(delta, Scalar_(1)/100, Scalar_(2)/100);
-            evaluation_point(j).no_alias() = at_point(j) + delta(j);
-            // Scalar_ actual_function_value(function(at_point + delta)); // TODO: make this work?
-            Out actual_function_value(as_derived().function(evaluation_point));
-//             Scalar_ estimated_function_value(evaluate_2nd_order(at_point, evaluation_point));
-            Out estimated_function_value(evaluate_2nd_order_via_delta(at_point, delta));
-            Out error(Static<WithoutInitialization>::SINGLETON);
-            error(j).no_alias() = actual_function_value(j) - estimated_function_value(j);
-//             std::cerr << FORMAT_VALUE(actual_function_value) << ", " << FORMAT_VALUE(estimated_function_value) << '\n';
-            Scalar_ asymptotic_ratio = norm<CodomainInnerProductId_>(error)
-                                       /
-                                       cube(norm<StandardInnerProduct>(delta));
-//                                        squared_norm<StandardInnerProduct>(delta);
-
-            big_o_bound = std::max(big_o_bound, asymptotic_ratio);
-//             std::cerr << FORMAT_VALUE(at_point) << ", " << FORMAT_VALUE(norm<StandardInnerProduct>(delta)) << ", " << FORMAT_VALUE(big_o_bound) << '\n';
-        }
-        //std::cerr << "verify_hessian(" << FORMAT_VALUE(at_point) << "): " << FORMAT_VALUE(big_o_bound) << '\n';
-        return big_o_bound;
-    }
-
-    Derived_ const &as_derived () const { return *static_cast<Derived_ const *>(this); }
-    Derived_ &as_derived () { return *static_cast<Derived_ *>(this); }
 };
 
-// for when the codomain is Scalar_
-template <typename ParameterSpace_, typename Scalar_, typename Derived_>
-struct TaylorPolynomialVerifier_t<ParameterSpace_,Scalar_,StandardInnerProduct,Scalar_,Derived_>
+// template specialization for when CodomainSpace_ is Scalar_
+template <typename ParameterSpace_, typename Scalar_>
+struct FunctionObjectType_m<ParameterSpace_,Scalar_,Scalar_>
 {
     typedef typename DualOf_f<ParameterSpace_>::T DualOfBasedVectorSpace;
     typedef SymmetricPowerOfBasedVectorSpace_c<2,DualOfBasedVectorSpace> Sym2Dual;
@@ -271,75 +139,104 @@ struct TaylorPolynomialVerifier_t<ParameterSpace_,Scalar_,StandardInnerProduct,S
     typedef Scalar_ Out;
     typedef DualOfV D1;
     typedef Sym2_DualOfV D2;
+};
+
+// for arbitrary codomain
+template <typename ParameterSpace_, typename CodomainSpace_, typename CodomainInnerProductId_, typename Scalar_, typename FunctionObject_>
+struct TaylorPolynomialVerifier_t
+{
+    typedef FunctionObjectType_m<ParameterSpace_,CodomainSpace_,Scalar_> FunctionObjectType;
+
+    typedef typename FunctionObjectType::DualOfBasedVectorSpace DualOfBasedVectorSpace;
+    typedef typename FunctionObjectType::Sym2Dual Sym2Dual;
+    typedef typename FunctionObjectType::Differential1 Differential1;
+    typedef typename FunctionObjectType::Differential2 Differential2;
+    typedef typename FunctionObjectType::V V;
+    typedef typename FunctionObjectType::DualOfV DualOfV;
+    typedef typename FunctionObjectType::Out Out;
+    typedef typename FunctionObjectType::D1 D1;
+    typedef typename FunctionObjectType::D2 D2;
 
     template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
               typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
-    Scalar_ evaluate_0th_order (Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
-                                Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &evaluation_point) const
+    Out evaluate_0th_order (FunctionObject_ const &o,
+                            Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
+                            Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &evaluation_point) const
     {
-        return as_derived().function(based_at_point);
+        return o.function(based_at_point);
     }
 
     template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
               typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
-    Scalar_ evaluate_1st_order (Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
-                                Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &evaluation_point) const
+    Out evaluate_1st_order (FunctionObject_ const &o,
+                            Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
+                            Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &evaluation_point) const
     {
         AbstractIndex_c<'i'> i;
         V delta(Static<WithoutInitialization>::SINGLETON);
         delta(i).no_alias() = evaluation_point(i) - based_at_point(i);
-        return evaluate_1st_order_via_delta(based_at_point, delta);
+        return evaluate_1st_order_via_delta(o, based_at_point, delta);
     }
 
     template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
               typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
-    Scalar_ evaluate_2nd_order (Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
-                                Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &evaluation_point) const
+    Out evaluate_2nd_order (FunctionObject_ const &o,
+                            Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
+                            Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &evaluation_point) const
     {
         AbstractIndex_c<'i'> i;
-        AbstractIndex_c<'j'> j;
-        AbstractIndex_c<'p'> p;
+        Out retval(Static<WithoutInitialization>::SINGLETON);
         V delta(Static<WithoutInitialization>::SINGLETON);
         delta(i).no_alias() = evaluation_point(i) - based_at_point(i);
-        return evaluate_2nd_order_via_delta(based_at_point, delta);
+        return evaluate_2nd_order_via_delta(o, based_at_point, delta);
     }
 
     template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
               typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
-    Scalar_ evaluate_0th_order_via_delta (Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
-                                          Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &delta) const
+    Out evaluate_0th_order_via_delta (FunctionObject_ const &o,
+                                      Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
+                                      Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &delta) const
     {
-        return as_derived().function(based_at_point);
+        return o.function(based_at_point);
     }
 
     template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
               typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
-    Scalar_ evaluate_1st_order_via_delta (Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
-                                          Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &delta) const
-    {
-        AbstractIndex_c<'i'> i;
-        return as_derived().function(based_at_point)
-             + as_derived().D_function(based_at_point)(i)*delta(i);
-    }
-
-    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
-              typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
-    Scalar_ evaluate_2nd_order_via_delta (Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
-                                          Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &delta) const
+    Out evaluate_1st_order_via_delta (FunctionObject_ const &o,
+                                      Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
+                                      Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &delta) const
     {
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
+        Out retval(Static<WithoutInitialization>::SINGLETON);
+        retval(i).no_alias() = o.function(based_at_point)(i)
+                             + o.D_function(based_at_point)(i|j)*delta(j);
+        return retval;
+    }
+
+    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
+              typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
+    Out evaluate_2nd_order_via_delta (FunctionObject_ const &o,
+                                      Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
+                                      Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &delta) const
+    {
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        AbstractIndex_c<'k'> k;
         AbstractIndex_c<'p'> p;
-        return as_derived().function(based_at_point)
-             + as_derived().D_function(based_at_point)(i)*delta(i)
-             + as_derived().D2_function(based_at_point)(p).split(p,i|j)*delta(i)*delta(j)/2;
+        Out retval(Static<WithoutInitialization>::SINGLETON);
+        retval(i).no_alias() = o.function(based_at_point)(i)
+                             + o.D_function(based_at_point)(i|j)*delta(j)
+                             + o.D2_function(based_at_point)(i|p).split(p,j|k)*delta(j)*delta(k)/2;
+        return retval;
     }
 
     template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE_>
-    Scalar_ verify_gradient (Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE_> const &at_point) const
+    Scalar_ verify_gradient (FunctionObject_ const &o,
+                             Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE_> const &at_point) const
     {
         Scalar_ big_o_bound(0);
-        static Uint32 const SAMPLES = 10;
+        static Uint32 const SAMPLES = 100;
         for (Uint32 i = 0; i < SAMPLES; ++i)
         {
             V delta(Static<WithoutInitialization>::SINGLETON);
@@ -348,9 +245,158 @@ struct TaylorPolynomialVerifier_t<ParameterSpace_,Scalar_,StandardInnerProduct,S
             randomize<StandardInnerProduct>(delta, Scalar_(1)/100, Scalar_(2)/100);
             evaluation_point(j).no_alias() = at_point(j) + delta(j);
             // Scalar_ actual_function_value(function(at_point + delta)); // TODO: make this work?
-            Scalar_ actual_function_value(as_derived().function(evaluation_point));
+            Out actual_function_value(o.function(evaluation_point));
 //             Scalar_ estimated_function_value(evaluate_1st_order(at_point, evaluation_point));
-            Scalar_ estimated_function_value(evaluate_1st_order_via_delta(at_point, delta));
+            Out estimated_function_value(evaluate_1st_order_via_delta(o, at_point, delta));
+//             std::cerr << FORMAT_VALUE(actual_function_value) << ", " << FORMAT_VALUE(estimated_function_value) << '\n';
+            Out error(Static<WithoutInitialization>::SINGLETON);
+            error(j).no_alias() = actual_function_value(j) - estimated_function_value(j);
+            Scalar_ asymptotic_ratio = norm<CodomainInnerProductId_>(error)
+                                       /
+                                       squared_norm<StandardInnerProduct>(delta);
+//                                        norm<StandardInnerProduct>(delta);
+            big_o_bound = std::max(big_o_bound, asymptotic_ratio);
+        }
+        //std::cerr << "verify_gradient(" << FORMAT_VALUE(at_point) << "): " << FORMAT_VALUE(big_o_bound) << '\n';
+        return big_o_bound;
+    }
+
+    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE_>
+    Scalar_ verify_hessian (FunctionObject_ const &o,
+                            Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE_> const &at_point) const
+    {
+        Scalar_ big_o_bound(0);
+        static Uint32 const SAMPLES = 100;
+        for (Uint32 i = 0; i < SAMPLES; ++i)
+        {
+            V delta(Static<WithoutInitialization>::SINGLETON);
+            V evaluation_point(Static<WithoutInitialization>::SINGLETON);
+            AbstractIndex_c<'j'> j;
+            // use a solid annulus of radius [1/100, 2/200] around at_point
+            randomize<StandardInnerProduct>(delta, Scalar_(1)/100, Scalar_(2)/100);
+            evaluation_point(j).no_alias() = at_point(j) + delta(j);
+            // Scalar_ actual_function_value(function(at_point + delta)); // TODO: make this work?
+            Out actual_function_value(o.function(evaluation_point));
+//             Scalar_ estimated_function_value(evaluate_2nd_order(at_point, evaluation_point));
+            Out estimated_function_value(evaluate_2nd_order_via_delta(o, at_point, delta));
+            Out error(Static<WithoutInitialization>::SINGLETON);
+            error(j).no_alias() = actual_function_value(j) - estimated_function_value(j);
+//             std::cerr << FORMAT_VALUE(actual_function_value) << ", " << FORMAT_VALUE(estimated_function_value) << '\n';
+            Scalar_ asymptotic_ratio = norm<CodomainInnerProductId_>(error)
+                                       /
+                                       cube(norm<StandardInnerProduct>(delta));
+//                                        squared_norm<StandardInnerProduct>(delta);
+
+            big_o_bound = std::max(big_o_bound, asymptotic_ratio);
+//             std::cerr << FORMAT_VALUE(at_point) << ", " << FORMAT_VALUE(norm<StandardInnerProduct>(delta)) << ", " << FORMAT_VALUE(big_o_bound) << '\n';
+        }
+        //std::cerr << "verify_hessian(" << FORMAT_VALUE(at_point) << "): " << FORMAT_VALUE(big_o_bound) << '\n';
+        return big_o_bound;
+    }
+};
+
+// for when CodomainSpace_ is Scalar_
+template <typename ParameterSpace_, typename Scalar_, typename FunctionObject_>
+struct TaylorPolynomialVerifier_t<ParameterSpace_,Scalar_,StandardInnerProduct,Scalar_,FunctionObject_>
+{
+    typedef FunctionObjectType_m<ParameterSpace_,Scalar_,Scalar_> FunctionObjectType;
+
+    typedef typename FunctionObjectType::DualOfBasedVectorSpace DualOfBasedVectorSpace;
+    typedef typename FunctionObjectType::Sym2Dual Sym2Dual;
+    typedef typename FunctionObjectType::Differential1 Differential1;
+    typedef typename FunctionObjectType::Differential2 Differential2;
+    typedef typename FunctionObjectType::V V;
+    typedef typename FunctionObjectType::DualOfV DualOfV;
+    typedef typename FunctionObjectType::Out Out;
+    typedef typename FunctionObjectType::D1 D1;
+    typedef typename FunctionObjectType::D2 D2;
+
+    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
+              typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
+    Scalar_ evaluate_0th_order (FunctionObject_ const &o,
+                                Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
+                                Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &evaluation_point) const
+    {
+        return o.function(based_at_point);
+    }
+
+    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
+              typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
+    Scalar_ evaluate_1st_order (FunctionObject_ const &o,
+                                Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
+                                Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &evaluation_point) const
+    {
+        AbstractIndex_c<'i'> i;
+        V delta(Static<WithoutInitialization>::SINGLETON);
+        delta(i).no_alias() = evaluation_point(i) - based_at_point(i);
+        return evaluate_1st_order_via_delta(o, based_at_point, delta);
+    }
+
+    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
+              typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
+    Scalar_ evaluate_2nd_order (FunctionObject_ const &o,
+                                Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
+                                Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &evaluation_point) const
+    {
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        AbstractIndex_c<'p'> p;
+        V delta(Static<WithoutInitialization>::SINGLETON);
+        delta(i).no_alias() = evaluation_point(i) - based_at_point(i);
+        return evaluate_2nd_order_via_delta(o, based_at_point, delta);
+    }
+
+    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
+              typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
+    Scalar_ evaluate_0th_order_via_delta (FunctionObject_ const &o,
+                                          Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
+                                          Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &delta) const
+    {
+        return o.function(based_at_point);
+    }
+
+    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
+              typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
+    Scalar_ evaluate_1st_order_via_delta (FunctionObject_ const &o,
+                                          Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
+                                          Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &delta) const
+    {
+        AbstractIndex_c<'i'> i;
+        return o.function(based_at_point)
+             + o.D_function(based_at_point)(i)*delta(i);
+    }
+
+    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
+              typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
+    Scalar_ evaluate_2nd_order_via_delta (FunctionObject_ const &o,
+                                          Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
+                                          Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &delta) const
+    {
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        AbstractIndex_c<'p'> p;
+        return o.function(based_at_point)
+             + o.D_function(based_at_point)(i)*delta(i)
+             + o.D2_function(based_at_point)(p).split(p,i|j)*delta(i)*delta(j)/2;
+    }
+
+    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE_>
+    Scalar_ verify_gradient (FunctionObject_ const &o,
+                             Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE_> const &at_point) const
+    {
+        Scalar_ big_o_bound(0);
+        static Uint32 const SAMPLES = 10;
+        for (Uint32 i = 0; i < SAMPLES; ++i)
+        {
+            V delta(Static<WithoutInitialization>::SINGLETON);
+            V evaluation_point(Static<WithoutInitialization>::SINGLETON);
+            AbstractIndex_c<'j'> j;
+            randomize<StandardInnerProduct>(delta, Scalar_(1)/100, Scalar_(10)/100);
+            evaluation_point(j).no_alias() = at_point(j) + delta(j);
+            // Scalar_ actual_function_value(function(at_point + delta)); // TODO: make this work?
+            Scalar_ actual_function_value(o.function(evaluation_point));
+//             Scalar_ estimated_function_value(evaluate_1st_order(at_point, evaluation_point));
+            Scalar_ estimated_function_value(evaluate_1st_order_via_delta(o, at_point, delta));
             Scalar_ error(actual_function_value - estimated_function_value);
 //             std::cerr << FORMAT_VALUE(actual_function_value) << ", " << FORMAT_VALUE(estimated_function_value) << '\n';
             Scalar_ asymptotic_ratio = fabs(error)
@@ -364,7 +410,8 @@ struct TaylorPolynomialVerifier_t<ParameterSpace_,Scalar_,StandardInnerProduct,S
     }
 
     template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE_>
-    Scalar_ verify_hessian (Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE_> const &at_point) const
+    Scalar_ verify_hessian (FunctionObject_ const &o,
+                            Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE_> const &at_point) const
     {
         Scalar_ big_o_bound(0);
         static Uint32 const SAMPLES = 100;
@@ -374,12 +421,12 @@ struct TaylorPolynomialVerifier_t<ParameterSpace_,Scalar_,StandardInnerProduct,S
             V evaluation_point(Static<WithoutInitialization>::SINGLETON);
             AbstractIndex_c<'j'> j;
             // use a solid annulus of radius [1/100, 2/200] around at_point
-            randomize<StandardInnerProduct>(delta, Scalar_(1)/100, Scalar_(2)/100);
+            randomize<StandardInnerProduct>(delta, Scalar_(1)/100, Scalar_(10)/100);
             evaluation_point(j) = at_point(j) + delta(j);
             // Scalar_ actual_function_value(function(at_point + delta)); // TODO: make this work?
-            Scalar_ actual_function_value(as_derived().function(evaluation_point));
+            Scalar_ actual_function_value(o.function(evaluation_point));
 //             Scalar_ estimated_function_value(evaluate_2nd_order(at_point, evaluation_point));
-            Scalar_ estimated_function_value(evaluate_2nd_order_via_delta(at_point, delta));
+            Scalar_ estimated_function_value(evaluate_2nd_order_via_delta(o, at_point, delta));
             Scalar_ error(actual_function_value - estimated_function_value);
 //             std::cerr << FORMAT_VALUE(actual_function_value) << ", " << FORMAT_VALUE(estimated_function_value) << '\n';
             Scalar_ asymptotic_ratio = fabs(error)
@@ -393,160 +440,6 @@ struct TaylorPolynomialVerifier_t<ParameterSpace_,Scalar_,StandardInnerProduct,S
         //std::cerr << "verify_hessian(" << FORMAT_VALUE(at_point) << "): " << FORMAT_VALUE(big_o_bound) << '\n';
         return big_o_bound;
     }
-
-    Derived_ const &as_derived () const { return *static_cast<Derived_ const *>(this); }
-    Derived_ &as_derived () { return *static_cast<Derived_ *>(this); }
-};
-
-template <typename BasedVectorSpace_, typename Scalar_>
-struct QuadraticFunction_t
-    :
-    public TaylorPolynomialVerifier_t<BasedVectorSpace_,Scalar_,StandardInnerProduct,Scalar_,QuadraticFunction_t<BasedVectorSpace_,Scalar_> >
-{
-    typedef TaylorPolynomialVerifier_t<BasedVectorSpace_,Scalar_,StandardInnerProduct,Scalar_,QuadraticFunction_t<BasedVectorSpace_,Scalar_> > Parent;
-
-    typedef typename Parent::V V;
-    typedef typename Parent::DualOfV DualOfV;
-    typedef typename Parent::Sym2_DualOfV Sym2_DualOfV;
-    typedef typename Parent::D1 D1;
-    typedef typename Parent::D2 D2;
-
-    QuadraticFunction_t ()
-        :
-//         m(Static<WithoutInitialization>::SINGLETON)
-        m(Scalar_(0))
-    {
-        // won't necessarily be positive definite or even nondegenerate.
-        //randomize<StandardInnerProduct>(m, Scalar_(1), Scalar_(2));
-//         for (typename Sym2_DualOfV::ComponentIndex i; i.is_not_at_end(); ++i)
-//             randomize(m[i]);
-
-//         m[typename Sym2_DualOfV::ComponentIndex(0)] = 1;
-//         m[typename Sym2_DualOfV::ComponentIndex(2)] = 1;
-//         m[typename Sym2_DualOfV::ComponentIndex(5)] = 1;
-
-        AbstractIndex_c<'i'> i;
-        AbstractIndex_c<'j'> j;
-        AbstractIndex_c<'p'> p;
-        for (Uint32 k = 0; k < V::DIM; ++k)
-        {
-            DualOfV a(Static<WithoutInitialization>::SINGLETON);
-            randomize<StandardInnerProduct>(a, Scalar_(1), Scalar_(2));
-            m(p) += (a(i)*a(j)).bundle(i|j,typename Sym2_DualOfV::Concept(),p);
-        }
-//         std::cerr << FORMAT_VALUE(m(p).split(p,i|j)) << '\n';
-    }
-
-    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    Scalar_ function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
-    {
-        AbstractIndex_c<'i'> i;
-        AbstractIndex_c<'j'> j;
-        AbstractIndex_c<'p'> p;
-        // "canonical" quadratic form whose hessian is equal to m.
-        return x(i)*m(p).split(p,i|j)*x(j) / 2;
-    }
-
-    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
-    {
-        AbstractIndex_c<'i'> i;
-        AbstractIndex_c<'j'> j;
-        AbstractIndex_c<'p'> p;
-        D1 retval(Static<WithoutInitialization>::SINGLETON);
-        retval(j) = x(i)*m(p).split(p,i|j);
-        return retval;
-    }
-
-    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
-    {
-        return m;
-    }
-
-private:
-
-    Sym2_DualOfV m;
-};
-
-template <typename BasedVectorSpace_, typename Scalar_>
-struct SombreroFunction_t
-    :
-    public TaylorPolynomialVerifier_t<BasedVectorSpace_,Scalar_,StandardInnerProduct,Scalar_,SombreroFunction_t<BasedVectorSpace_,Scalar_> >
-{
-    typedef TaylorPolynomialVerifier_t<BasedVectorSpace_,Scalar_,StandardInnerProduct,Scalar_,SombreroFunction_t<BasedVectorSpace_,Scalar_> > Parent;
-
-    typedef typename Parent::V V;
-    typedef typename Parent::DualOfV DualOfV;
-    typedef typename Parent::Sym2_DualOfV Sym2_DualOfV;
-    typedef typename Parent::D1 D1;
-    typedef typename Parent::D2 D2;
-
-    SombreroFunction_t ()
-        :
-//         m(Static<WithoutInitialization>::SINGLETON)
-        m(Scalar_(0))
-    {
-        // won't necessarily be positive definite or even nondegenerate.
-        //randomize<StandardInnerProduct>(m, Scalar_(1), Scalar_(2));
-//         for (typename Sym2_DualOfV::ComponentIndex i; i.is_not_at_end(); ++i)
-//             randomize(m[i]);
-
-//         m[typename Sym2_DualOfV::ComponentIndex(0)] = Scalar_(1);
-//         m[typename Sym2_DualOfV::ComponentIndex(2)] = Scalar_(1);
-//         m[typename Sym2_DualOfV::ComponentIndex(5)] = Scalar_(1);
-        AbstractIndex_c<'i'> i;
-        AbstractIndex_c<'j'> j;
-        AbstractIndex_c<'p'> p;
-        for (Uint32 k = 0; k < V::DIM; ++k)
-        {
-            DualOfV a(Static<WithoutInitialization>::SINGLETON);
-            randomize<StandardInnerProduct>(a, Scalar_(1), Scalar_(2));
-            m(p) += (a(i)*a(j)).bundle(i|j,typename Sym2_DualOfV::Concept(),p);
-        }
-//         std::cerr << FORMAT_VALUE(m(p).split(p,i|j)) << '\n';
-    }
-
-    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    Scalar_ function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
-    {
-        AbstractIndex_c<'i'> i;
-        AbstractIndex_c<'j'> j;
-        AbstractIndex_c<'p'> p;
-        return Scalar_(1) / (Scalar_(1) + x(i)*m(p).split(p,i|j)*x(j) / 2);
-    }
-
-    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
-    {
-        AbstractIndex_c<'i'> i;
-        AbstractIndex_c<'j'> j;
-        AbstractIndex_c<'p'> p;
-        D1 retval(Static<WithoutInitialization>::SINGLETON);
-        retval(j) = -sqr(function(x)) * x(i)*m(p).split(p,i|j);
-        return retval;
-    }
-
-    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
-    {
-        AbstractIndex_c<'i'> i;
-        AbstractIndex_c<'j'> j;
-        AbstractIndex_c<'k'> k;
-        AbstractIndex_c<'l'> l;
-        AbstractIndex_c<'p'> p;
-        AbstractIndex_c<'q'> q;
-        AbstractIndex_c<'r'> r;
-        D2 retval(Static<WithoutInitialization>::SINGLETON);
-        Scalar_ f_of_x(function(x));
-        retval(r) = sqr(f_of_x) * (Scalar_(2) * f_of_x * (m(p).split(p,i|j)*x(j)*x(k)*m(q).split(q,k|l))
-                                                         .bundle(i|l,typename Sym2_DualOfV::Concept(),r) - m(r));
-        return retval;
-    }
-
-private:
-
-    Sym2_DualOfV m;
 };
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -657,8 +550,6 @@ ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpac
 
 template <typename BasedVectorSpace_, typename Scalar_>
 struct J_t
-    :
-    public TaylorPolynomialVerifier_t<BasedVectorSpace_,Scalar_,StandardInnerProduct,Scalar_,J_t<BasedVectorSpace_,Scalar_> >
 {
 private:
 
@@ -666,17 +557,17 @@ private:
 
 public:
 
-    typedef TaylorPolynomialVerifier_t<BasedVectorSpace_,Scalar_,StandardInnerProduct,Scalar_,J_t<BasedVectorSpace_,Scalar_> > Parent;
+    typedef FunctionObjectType_m<BasedVectorSpace_,Scalar_,Scalar_> FunctionObjectType;
 
-    typedef typename Parent::DualOfBasedVectorSpace DualOfBasedVectorSpace;
-    typedef typename Parent::Sym2Dual Sym2Dual;
-
-    typedef typename Parent::V V;
-    typedef typename Parent::DualOfV DualOfV;
-    typedef typename Parent::Sym2_DualOfV Sym2_DualOfV;
-    typedef typename Parent::Out Out;
-    typedef typename Parent::D1 D1;
-    typedef typename Parent::D2 D2;
+    typedef typename FunctionObjectType::DualOfBasedVectorSpace DualOfBasedVectorSpace;
+    typedef typename FunctionObjectType::Sym2Dual Sym2Dual;
+    typedef typename FunctionObjectType::Differential1 Differential1;
+    typedef typename FunctionObjectType::Differential2 Differential2;
+    typedef typename FunctionObjectType::V V;
+    typedef typename FunctionObjectType::DualOfV DualOfV;
+    typedef typename FunctionObjectType::Out Out;
+    typedef typename FunctionObjectType::D1 D1;
+    typedef typename FunctionObjectType::D2 D2;
 
     J_t ()
         :
@@ -728,8 +619,6 @@ private:
 
 template <typename BasedVectorSpace_, typename Scalar_>
 struct K_t
-    :
-    public TaylorPolynomialVerifier_t<BasedVectorSpace_,Scalar_,StandardInnerProduct,Scalar_,K_t<BasedVectorSpace_,Scalar_> >
 {
 private:
 
@@ -737,17 +626,17 @@ private:
 
 public:
 
-    typedef TaylorPolynomialVerifier_t<BasedVectorSpace_,Scalar_,StandardInnerProduct,Scalar_,K_t<BasedVectorSpace_,Scalar_> > Parent;
+    typedef FunctionObjectType_m<BasedVectorSpace_,Scalar_,Scalar_> FunctionObjectType;
 
-    typedef typename Parent::DualOfBasedVectorSpace DualOfBasedVectorSpace;
-    typedef typename Parent::Sym2Dual Sym2Dual;
-
-    typedef typename Parent::V V;
-    typedef typename Parent::DualOfV DualOfV;
-    typedef typename Parent::Sym2_DualOfV Sym2_DualOfV;
-    typedef typename Parent::Out Out;
-    typedef typename Parent::D1 D1;
-    typedef typename Parent::D2 D2;
+    typedef typename FunctionObjectType::DualOfBasedVectorSpace DualOfBasedVectorSpace;
+    typedef typename FunctionObjectType::Sym2Dual Sym2Dual;
+    typedef typename FunctionObjectType::Differential1 Differential1;
+    typedef typename FunctionObjectType::Differential2 Differential2;
+    typedef typename FunctionObjectType::V V;
+    typedef typename FunctionObjectType::DualOfV DualOfV;
+    typedef typename FunctionObjectType::Out Out;
+    typedef typename FunctionObjectType::D1 D1;
+    typedef typename FunctionObjectType::D2 D2;
 
     K_t ()
         :
@@ -805,14 +694,6 @@ private:
 
 template <typename BasedVectorSpace_, typename Scalar_>
 struct N_t
-    :
-    public TaylorPolynomialVerifier_t<BasedVectorSpace_,
-                                      TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_,
-                                                                         TypeList_t<typename DualOf_f<BasedVectorSpace_>::T> > >,
-                                      TensorProduct_c<TypeList_t<StandardInnerProduct,
-                                                      TypeList_t<StandardInnerProduct> > >,
-                                      Scalar_,
-                                      N_t<BasedVectorSpace_,Scalar_> >
 {
 private:
 
@@ -820,23 +701,20 @@ private:
 
 public:
 
-    typedef TaylorPolynomialVerifier_t<BasedVectorSpace_,
-                                       TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_,
-                                                                          TypeList_t<typename DualOf_f<BasedVectorSpace_>::T> > >,
-                                       TensorProduct_c<TypeList_t<StandardInnerProduct,
-                                                       TypeList_t<StandardInnerProduct> > >,
-                                       Scalar_,
-                                       N_t<BasedVectorSpace_,Scalar_> > Parent;
+    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_,
+                                               TypeList_t<typename DualOf_f<BasedVectorSpace_>::T> > > CodomainSpace;
+    typedef FunctionObjectType_m<BasedVectorSpace_,CodomainSpace,Scalar_> FunctionObjectType;
 
-    typedef typename Parent::DualOfBasedVectorSpace DualOfBasedVectorSpace;
-    typedef typename Parent::Sym2Dual Sym2Dual;
-
-    typedef typename Parent::V V;
-    typedef typename Parent::DualOfV DualOfV;
-    typedef typename Parent::Sym2_DualOfV Sym2_DualOfV;
-    typedef typename Parent::Out Out;
-    typedef typename Parent::D1 D1;
-    typedef typename Parent::D2 D2;
+    typedef typename FunctionObjectType::DualOfBasedVectorSpace DualOfBasedVectorSpace;
+    typedef typename FunctionObjectType::Sym2Dual Sym2Dual;
+    typedef typename FunctionObjectType::Differential1 Differential1;
+    typedef typename FunctionObjectType::Differential2 Differential2;
+    typedef typename FunctionObjectType::V V;
+    typedef typename FunctionObjectType::DualOfV DualOfV;
+    typedef typename FunctionObjectType::Sym2_DualOfV Sym2_DualOfV;
+    typedef typename FunctionObjectType::Out Out;
+    typedef typename FunctionObjectType::D1 D1;
+    typedef typename FunctionObjectType::D2 D2;
 
     template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
     Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
@@ -903,14 +781,6 @@ private:
 
 template <typename BasedVectorSpace_, typename Scalar_>
 struct CayleyTransform_t
-    :
-    public TaylorPolynomialVerifier_t<BasedVectorSpace_,
-                                      TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_,
-                                                                         TypeList_t<typename DualOf_f<BasedVectorSpace_>::T> > >,
-                                      TensorProduct_c<TypeList_t<StandardInnerProduct,
-                                                      TypeList_t<StandardInnerProduct> > >,
-                                      Scalar_,
-                                      CayleyTransform_t<BasedVectorSpace_,Scalar_> >
 {
 private:
 
@@ -918,23 +788,20 @@ private:
 
 public:
 
-    typedef TaylorPolynomialVerifier_t<BasedVectorSpace_,
-                                       TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_,
-                                                                          TypeList_t<typename DualOf_f<BasedVectorSpace_>::T> > >,
-                                       TensorProduct_c<TypeList_t<StandardInnerProduct,
-                                                       TypeList_t<StandardInnerProduct> > >,
-                                       Scalar_,
-                                       CayleyTransform_t<BasedVectorSpace_,Scalar_> > Parent;
+    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_,
+                                               TypeList_t<typename DualOf_f<BasedVectorSpace_>::T> > > CodomainSpace;
+    typedef FunctionObjectType_m<BasedVectorSpace_,CodomainSpace,Scalar_> FunctionObjectType;
 
-    typedef typename Parent::DualOfBasedVectorSpace DualOfBasedVectorSpace;
-    typedef typename Parent::Sym2Dual Sym2Dual;
-
-    typedef typename Parent::V V;
-    typedef typename Parent::DualOfV DualOfV;
-    typedef typename Parent::Sym2_DualOfV Sym2_DualOfV;
-    typedef typename Parent::Out Out;
-    typedef typename Parent::D1 D1;
-    typedef typename Parent::D2 D2;
+    typedef typename FunctionObjectType::DualOfBasedVectorSpace DualOfBasedVectorSpace;
+    typedef typename FunctionObjectType::Sym2Dual Sym2Dual;
+    typedef typename FunctionObjectType::Differential1 Differential1;
+    typedef typename FunctionObjectType::Differential2 Differential2;
+    typedef typename FunctionObjectType::V V;
+    typedef typename FunctionObjectType::DualOfV DualOfV;
+    typedef typename FunctionObjectType::Sym2_DualOfV Sym2_DualOfV;
+    typedef typename FunctionObjectType::Out Out;
+    typedef typename FunctionObjectType::D1 D1;
+    typedef typename FunctionObjectType::D2 D2;
 
     template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
     Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
@@ -1018,7 +885,7 @@ int main (int argc, char **argv)
         std::cerr << "this value should be about equal to 0: " << FORMAT_VALUE(squared_norm<TensorProduct_c<InnerProductFactorList> >((cayley_transform(i|j)*inner_product(p).split(p,i|k)*cayley_transform(k|l) - inner_product_inverse(p).split(p,j|l)).eval().tensor_value())) << "\n\n";
     }
 
-    static Uint32 const SAMPLES = 1000;
+    static Uint32 const SAMPLES = 50;
 //     std::cerr << "QuadraticFunction_t\n";
 //     for (Uint32 j = 0; j < 10; ++j)
 //     {
@@ -1065,12 +932,14 @@ int main (int argc, char **argv)
     std::cerr << "J_t\n";
     {
         Scalar big_o_bound(0);
-        J_t<BasedVectorSpace,Scalar> helpy;
+        typedef J_t<BasedVectorSpace,Scalar> J;
+        J j;
+        TaylorPolynomialVerifier_t<BasedVectorSpace,Scalar,StandardInnerProduct,Scalar,J> verifier;
         for (Uint32 i = 0; i < SAMPLES; ++i)
         {
             V at_point(Static<WithoutInitialization>::SINGLETON);
             randomize<StandardInnerProduct>(at_point, Scalar(0), Scalar(100));
-            big_o_bound = std::max(big_o_bound, helpy.verify_gradient(at_point));
+            big_o_bound = std::max(big_o_bound, verifier.verify_gradient(j, at_point));
         }
         std::cerr << "max big-o-bound for gradient verification = " << big_o_bound << '\n';
         big_o_bound = Scalar(0);
@@ -1078,7 +947,7 @@ int main (int argc, char **argv)
         {
             V at_point(Static<WithoutInitialization>::SINGLETON);
             randomize<StandardInnerProduct>(at_point, Scalar(0), Scalar(100));
-            big_o_bound = std::max(big_o_bound, helpy.verify_hessian(at_point));
+            big_o_bound = std::max(big_o_bound, verifier.verify_hessian(j, at_point));
         }
         std::cerr << "max big-o-bound for hessian verification = " << big_o_bound << '\n';
     }
@@ -1086,12 +955,14 @@ int main (int argc, char **argv)
     std::cerr << "K_t\n";
     {
         Scalar big_o_bound(0);
-        K_t<BasedVectorSpace,Scalar> helpy;
+        typedef K_t<BasedVectorSpace,Scalar> K;
+        K k;
+        TaylorPolynomialVerifier_t<BasedVectorSpace,Scalar,StandardInnerProduct,Scalar,K> verifier;
         for (Uint32 i = 0; i < SAMPLES; ++i)
         {
             V at_point(Static<WithoutInitialization>::SINGLETON);
             randomize<StandardInnerProduct>(at_point, Scalar(1)/2, Scalar(100));
-            big_o_bound = std::max(big_o_bound, helpy.verify_gradient(at_point));
+            big_o_bound = std::max(big_o_bound, verifier.verify_gradient(k, at_point));
         }
         std::cerr << "max big-o-bound for gradient verification = " << big_o_bound << '\n';
         big_o_bound = Scalar(0);
@@ -1099,7 +970,7 @@ int main (int argc, char **argv)
         {
             V at_point(Static<WithoutInitialization>::SINGLETON);
             randomize<StandardInnerProduct>(at_point, Scalar(1)/2, Scalar(100));
-            big_o_bound = std::max(big_o_bound, helpy.verify_hessian(at_point));
+            big_o_bound = std::max(big_o_bound, verifier.verify_hessian(k, at_point));
         }
         std::cerr << "max big-o-bound for hessian verification = " << big_o_bound << '\n';
     }
@@ -1107,12 +978,19 @@ int main (int argc, char **argv)
     std::cerr << "N_t\n";
     {
         Scalar big_o_bound(0);
-        N_t<BasedVectorSpace,Scalar> helpy;
+//         N_t<BasedVectorSpace,Scalar> helpy;
+        typedef N_t<BasedVectorSpace,Scalar> N;
+        N n;
+        typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace,
+                                                   TypeList_t<DualOf_f<BasedVectorSpace>::T> > > CodomainSpace;
+        typedef TensorProduct_c<TypeList_t<StandardInnerProduct,
+                                TypeList_t<StandardInnerProduct> > > CodomainInnerProductId;
+        TaylorPolynomialVerifier_t<BasedVectorSpace,CodomainSpace,CodomainInnerProductId,Scalar,N> verifier;
         for (Uint32 i = 0; i < SAMPLES; ++i)
         {
             V at_point(Static<WithoutInitialization>::SINGLETON);
             randomize<StandardInnerProduct>(at_point, Scalar(1)/2, Scalar(100));
-            big_o_bound = std::max(big_o_bound, helpy.verify_gradient(at_point));
+            big_o_bound = std::max(big_o_bound, verifier.verify_gradient(n, at_point));
         }
         std::cerr << "max big-o-bound for gradient verification = " << big_o_bound << '\n';
         big_o_bound = Scalar(0);
@@ -1120,7 +998,7 @@ int main (int argc, char **argv)
         {
             V at_point(Static<WithoutInitialization>::SINGLETON);
             randomize<StandardInnerProduct>(at_point, Scalar(1)/2, Scalar(100));
-            big_o_bound = std::max(big_o_bound, helpy.verify_hessian(at_point));
+            big_o_bound = std::max(big_o_bound, verifier.verify_hessian(n, at_point));
         }
         std::cerr << "max big-o-bound for hessian verification = " << big_o_bound << '\n';
     }
@@ -1128,12 +1006,19 @@ int main (int argc, char **argv)
     std::cerr << "CayleyTransform_t\n";
     {
         Scalar big_o_bound(0);
-        CayleyTransform_t<BasedVectorSpace,Scalar> helpy;
+//         CayleyTransform_t<BasedVectorSpace,Scalar> helpy;
+        typedef CayleyTransform_t<BasedVectorSpace,Scalar> CayleyTransform;
+        CayleyTransform cayley_transform;
+        typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace,
+                                                   TypeList_t<DualOf_f<BasedVectorSpace>::T> > > CodomainSpace;
+        typedef TensorProduct_c<TypeList_t<StandardInnerProduct,
+                                TypeList_t<StandardInnerProduct> > > CodomainInnerProductId;
+        TaylorPolynomialVerifier_t<BasedVectorSpace,CodomainSpace,CodomainInnerProductId,Scalar,CayleyTransform> verifier;
         for (Uint32 i = 0; i < SAMPLES; ++i)
         {
             V at_point(Static<WithoutInitialization>::SINGLETON);
             randomize<StandardInnerProduct>(at_point, Scalar(1)/2, Scalar(100));
-            big_o_bound = std::max(big_o_bound, helpy.verify_gradient(at_point));
+            big_o_bound = std::max(big_o_bound, verifier.verify_gradient(cayley_transform, at_point));
         }
         std::cerr << "max big-o-bound for gradient verification = " << big_o_bound << '\n';
         big_o_bound = Scalar(0);
@@ -1141,7 +1026,7 @@ int main (int argc, char **argv)
         {
             V at_point(Static<WithoutInitialization>::SINGLETON);
             randomize<StandardInnerProduct>(at_point, Scalar(1)/2, Scalar(100));
-            big_o_bound = std::max(big_o_bound, helpy.verify_hessian(at_point));
+            big_o_bound = std::max(big_o_bound, verifier.verify_hessian(cayley_transform, at_point));
         }
         std::cerr << "max big-o-bound for hessian verification = " << big_o_bound << '\n';
     }
