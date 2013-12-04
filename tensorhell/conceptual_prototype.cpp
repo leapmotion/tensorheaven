@@ -51,11 +51,11 @@ int main (int, char **)
     test_tuple_initialization();
 
     test_induced_inner_product();
-
     test_direct_sums();
 
     test_zero_vector();
     test_basis_vectors();
+    test_eval_tensor_value();
 
     return 0;
 }

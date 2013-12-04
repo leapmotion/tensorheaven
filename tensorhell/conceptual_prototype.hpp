@@ -479,7 +479,6 @@ void test_tuple_initialization ();
 // ///////////////////////////////////////////////////////////////////////////////////////////
 
 void test_induced_inner_product ();
-
 void test_direct_sums ();
 
 // ///////////////////////////////////////////////////////////////////////////////////////////
@@ -488,5 +487,6 @@ void test_direct_sums ();
 
 void test_zero_vector ();
 void test_basis_vectors ();
+void test_eval_tensor_value ();
 
 #endif // TENSORHELL_CONCEPTUAL_PROTOTYPE_HPP_

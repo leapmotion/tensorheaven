@@ -132,3 +132,21 @@ void test_basis_vectors ()
     std::cout << FORMAT(A::BasisVector_f<2>::V(P).split(P,i|j)) << '\n';
     std::cout << '\n';
 }
+
+void test_eval_tensor_value ()
+{
+    std::cout << "testing eval().tensor_value()\n";
+    AbstractIndex_c<'i'> i;
+    AbstractIndex_c<'j'> j;
+    AbstractIndex_c<'k'> k;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > BasedVectorSpace;
+    typedef float Scalar;
+    typedef ImplementationOf_t<BasedVectorSpace,Scalar,UseMemberArray> V;
+    V x(uniform_tuple<Scalar>(1, 2, 3));
+    V y(uniform_tuple<Scalar>(4, 8, 9));
+    V z(uniform_tuple<Scalar>(0, 8, 0));
+    std::cout << x(i)*y(j)*z(k) << '\n';
+    std::cout << (x(i)*y(j)*z(k)).eval() << '\n';
+    std::cout << (x(i)*y(j)*z(k)).eval().tensor_value() << '\n';
+}
+

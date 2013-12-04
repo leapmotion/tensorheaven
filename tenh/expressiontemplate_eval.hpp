@@ -80,6 +80,15 @@ struct ExpressionTemplate_Eval_t
         return m_cached_tensor[m];
     }
 
+    typedef TensorProductOfBasedVectorSpaces_c<FreeFactorTypeList> ExpressionTensorType;
+    typedef ImplementationOf_t<ExpressionTensorType,Scalar,UseMemberArray> EvaluatedTensor;
+
+    EvaluatedTensor const &tensor_value () const
+    {
+        this->ensure_tensor_is_cached();
+        return m_cached_tensor;
+    }
+
     // this blocks aliasing, so it doesn't use the tensor in the sense of this method
     template <typename OtherTensor>
     bool uses_tensor (OtherTensor const &t) const { return false; }
@@ -105,11 +114,9 @@ private:
 
     void operator = (ExpressionTemplate_Eval_t const &);
 
-    typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FreeFactorTypeList>,Scalar,UseMemberArray> Tensor;
-
     Operand const &m_operand;
     mutable bool m_eval_is_cached;
-    mutable Tensor m_cached_tensor;
+    mutable EvaluatedTensor m_cached_tensor;
 };
 
 template <typename Operand_>
