@@ -56,7 +56,11 @@ struct MemberArray_t
 #endif // __clang_version__
 
     explicit MemberArray_t (WithoutInitialization const &) { }
-    explicit MemberArray_t (Component const &fill_with) { for (Uint32 i = 0; i < COMPONENT_COUNT; ++i) m_component[i] = fill_with; }
+    MemberArray_t (FillWith_t<Component> const &fill_with)
+    {
+        for (Uint32 i = 0; i < COMPONENT_COUNT; ++i)
+            m_component[i] = fill_with.value();
+    }
 
 #ifdef __clang_version__
 #pragma GCC diagnostic pop

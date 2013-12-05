@@ -80,7 +80,7 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
     // only use these if UseMemberArray is specified
 
     // probably only useful for zero element (because this is basis-dependent)
-    explicit ImplementationOf_t (Scalar const &fill_with)
+    ImplementationOf_t (FillWith_t<Scalar> const &fill_with)
         :
         Parent_Array_i(fill_with)
     {
@@ -103,7 +103,7 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
     {
         STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
     }
-    ImplementationOf_t (Scalar const &fill_with,
+    ImplementationOf_t (FillWith_t<Scalar> const &fill_with,
                         Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Array_i(fill_with, pointer_to_allocation, check_pointer)

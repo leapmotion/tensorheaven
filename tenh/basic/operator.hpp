@@ -52,7 +52,7 @@ public:
     // only use these if UseMemberArray is specified
 
     // probably only useful for zero element (because this is basis-dependent)
-    explicit Operator (Scalar_ const &fill_with)
+    Operator (FillWith_t<Scalar_> const &fill_with)
         :
         Parent_Implementation(fill_with)
     {
@@ -75,7 +75,7 @@ public:
     {
         STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
     }
-    Operator (Scalar_ const &fill_with,
+    Operator (FillWith_t<Scalar_> const &fill_with,
               Scalar_ *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Implementation(fill_with, pointer_to_allocation, check_pointer)

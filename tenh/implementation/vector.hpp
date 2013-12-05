@@ -75,12 +75,12 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
     // only use these if UseMemberArray is specified
 
     // probably only useful for zero element (because this is basis-dependent)
-    explicit ImplementationOf_t (Scalar const &fill_with)
+    ImplementationOf_t (FillWith_t<Scalar> const &fill_with)
         :
         Parent_Array_i(fill_with)
     {
         STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemberArray);
-    }
+    }    
     // this is the tuple-based constructor
     template <typename HeadType_, typename BodyTypeList_>
     ImplementationOf_t (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x)
@@ -98,7 +98,7 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
     {
         STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
     }
-    ImplementationOf_t (Scalar const &fill_with,
+    ImplementationOf_t (FillWith_t<Scalar> const &fill_with,
                         Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Array_i(fill_with, pointer_to_allocation, check_pointer)

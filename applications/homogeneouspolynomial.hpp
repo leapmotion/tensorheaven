@@ -37,7 +37,7 @@ struct HomogeneousPolynomial
     typedef Tenh::PreallocatedArray_t<Scalar_,DIMENSION> CoefficientArray;
     typedef Tenh::PreallocatedArray_t<Scalar_ const,DIMENSION> ConstCoefficientArray;
 
-    HomogeneousPolynomial (Scalar_ const &fill_with) : m_coefficients(fill_with) { }
+    HomogeneousPolynomial (Tenh::FillWith_t<Scalar_> const &fill_with) : m_coefficients(fill_with) { }
     HomogeneousPolynomial (Tenh::WithoutInitialization const &w) : m_coefficients(w) { }
     HomogeneousPolynomial (SymDual const &term) : m_coefficients(term) { }
     HomogeneousPolynomial (HomogeneousPolynomial const &other) : m_coefficients(other.m_coefficients) { }
@@ -145,7 +145,7 @@ private:
     // This should probably be a function in tensor heaven somewhere.
     Sym outer_power_of (Vector const &input) const
     {
-        Sym result(Scalar_(1));
+        Sym result(Tenh::fill_with<Scalar_>(1));
 
         for (typename Sym::ComponentIndex it; it.is_not_at_end(); ++it)
         {

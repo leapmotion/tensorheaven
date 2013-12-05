@@ -35,7 +35,7 @@ void constructor_fill_with (Context const &context)
     typedef Tenh::MemberArray_t<Component,DIM> Array;
 
     Component fill = context.DataAs<Component>();
-    Array v(fill);
+    Array v(Tenh::fill_with(fill));
     for (typename Array::ComponentIndex i; i.is_not_at_end(); ++i)
     {
         assert_eq(v[i], fill);

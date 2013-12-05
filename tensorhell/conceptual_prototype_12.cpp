@@ -112,11 +112,11 @@ void test_direct_sums ()
     typedef ImplementationOf_t<BasedVectorSpace, float> S;
     typedef ImplementationOf_t<PowerOfVectorSpace, float> R;
 
-    T t(0.0f);
+    T t(fill_with<float>(0));
 
-    S s(0.0f), r(0.0f);
+    S s(fill_with<float>(0)), r(fill_with<float>(0));
 
-    R q(0.0f);
+    R q(fill_with<float>(0));
 
     for(Uint32 i = 0; i < 4; ++i)
     {

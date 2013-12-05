@@ -41,6 +41,42 @@ public:
 /// @headerfile core.hpp "tenh/core.hpp"
 struct WithoutInitialization { };
 
+// forward declarations for so that 
+/// @cond false
+template <typename T_>
+std::string type_string_of (T_ const &);
+template <typename T_>
+std::string type_string_of ();
+/// @endcond
+
+/// @brief A type sentinel for the various "fill with" constructors (on e.g. vectors, tensors, etc.).
+/// @headerfile core.hpp "tenh/core.hpp"
+template <typename T_>
+struct FillWith_t
+{
+	explicit FillWith_t (T_ const &t) : m(t) { }
+
+	T_ const &value () const { return m; }
+
+	static std::string type_as_string () { return "FillWith_t<" + type_string_of<T_>() + '>'; }
+
+private:
+
+	T_ m;
+};
+
+/// @brief A convenience function for specifying "fill with" parameters for constructors.
+/// @details If the type of the parameter should be enforced, then the template parameter
+///          T_ can be sepecified explicitly, e.g. fill_with<double>(0), which will return
+///          a FillWith_t<double> type, while fill_with(0) will return a FillWith_t<int>
+///          type.
+/// @headerfile core.hpp "tenh/core.hpp"
+template <typename T_>
+FillWith_t<T_> fill_with (T_ const &t)
+{
+	return FillWith_t<T_>(t);
+}
+
 /// @brief A type for use as a generic identifier, e.g. in a Basis_c.
 /// @headerfile core.hpp "tenh/core.hpp"
 struct Generic { static std::string type_as_string () { return "Generic"; } };

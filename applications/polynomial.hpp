@@ -38,7 +38,7 @@ struct MultivariatePolynomial
     typedef Tenh::PreallocatedArray_t<Scalar_,DIMENSION> CoefficientArray;
     typedef Tenh::PreallocatedArray_t<Scalar_ const,DIMENSION> ConstCoefficientArray;
 
-    MultivariatePolynomial (Scalar_ const &fill_with) : m_body(fill_with), m_term(fill_with) { }
+    MultivariatePolynomial (Tenh::FillWith_t<Scalar_> const &fill_with) : m_body(fill_with), m_term(fill_with) { }
     MultivariatePolynomial (Tenh::WithoutInitialization const &w) : m_body(w), m_term(w) { }
     MultivariatePolynomial (LeadingTermType const &leading_term, BodyPolynomial const &body)
         :
@@ -47,7 +47,7 @@ struct MultivariatePolynomial
     { }
     MultivariatePolynomial (LeadingTermType const &leading_term)
         :
-        m_body(Scalar(0)),
+        m_body(Tenh::fill_with<Scalar>(0)),
         m_term(leading_term)
     { }
     MultivariatePolynomial (SymDual const &leading_term, BodyPolynomial const &body)
@@ -57,7 +57,7 @@ struct MultivariatePolynomial
     { }
     MultivariatePolynomial (SymDual const &leading_term)
         :
-        m_body(Scalar(0)),
+        m_body(Tenh::fill_with<Scalar>(0)),
         m_term(leading_term)
     { }
     MultivariatePolynomial (MultivariatePolynomial const &other)
@@ -175,6 +175,7 @@ struct MultivariatePolynomial<0,BasedVectorSpace_,Scalar_>
     typedef Tenh::PreallocatedArray_t<Scalar_ const,DIMENSION> ConstCoefficientArray;
 
     MultivariatePolynomial (Scalar_ const &leading_term) : m_term(leading_term) { }
+    MultivariatePolynomial (Tenh::FillWith_t<Scalar_> const &fill_with) : m_term(fill_with.value()) { }
     MultivariatePolynomial (Tenh::WithoutInitialization const &w) { }
     MultivariatePolynomial (MultivariatePolynomial const &other) : m_term(other.m_term) { }
 

@@ -37,7 +37,7 @@ void constructor_fill_with (Context const &context)
     typedef Tenh::Operator<Domain_,Codomain_,Scalar_,UseArrayType_> Operator;
 
     Scalar_ fill = context.DataAs<Scalar_>();
-    Operator A(fill);
+    Operator A(Tenh::fill_with(fill));
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
         assert_eq(A[i], fill);
 }
@@ -48,7 +48,7 @@ void assignment (Context const &context)
     typedef Tenh::Operator<Domain_,Codomain_,Scalar_,UseArrayType_> Operator;
 
     Operator A(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
-    Operator const B(3.0f);
+    Operator const B(Tenh::fill_with<Scalar_>(3));
     Operator C(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
         C[i] = 3*i.value() + 4;

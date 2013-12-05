@@ -31,14 +31,14 @@ void constructor_without_initialization (Context const &context)
     Polynomial v(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
 }
 
-template <typename Scalar, typename BasedVectorSpace_, Uint32 DEGREE>
+template <typename Scalar_, typename BasedVectorSpace_, Uint32 DEGREE_>
 void constructor_fill_with (Context const &context)
 {
-    typedef MultivariatePolynomial<DEGREE,BasedVectorSpace_,Scalar> Polynomial;
-    typedef Tenh::PreallocatedArray_t<Scalar,Polynomial::DIMENSION> ArrayType;
+    typedef MultivariatePolynomial<DEGREE_,BasedVectorSpace_,Scalar_> Polynomial;
+    typedef Tenh::PreallocatedArray_t<Scalar_,Polynomial::DIMENSION> ArrayType;
 
-    Scalar fill = context.DataAs<Scalar>();
-    Polynomial v(fill);
+    Scalar_ fill = context.DataAs<Scalar_>();
+    Polynomial v(Tenh::fill_with<Scalar_>(fill));
     ArrayType array = v.as_array();
     for (typename ArrayType::ComponentIndex i; i.is_not_at_end(); ++i)
     {

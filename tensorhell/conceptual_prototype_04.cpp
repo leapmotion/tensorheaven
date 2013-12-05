@@ -74,7 +74,7 @@ void test_a_bunch_of_stuff ()
         typedef ImplementationOf_t<YTensorXDual,float,UseMemberArray> T;
         float components[3] = {8.0f, 10.0f, 11.0f};
         V v(&components[0], CHECK_POINTER); // v must live no longer than components[]
-        T t(2.0f);
+        T t(fill_with<float>(2));
         t[T::MultiIndex(0,1)] = -1.0f;
         t[T::MultiIndex(1,2)] = 3.0f;
         std::cout << FORMAT_VALUE(t) << '\n';
@@ -91,7 +91,7 @@ void test_a_bunch_of_stuff ()
         typedef ImplementationOf_t<BasedX,float> V;
         typedef ImplementationOf_t<YTensorXDual,float> T;
         V v(tuple(8.0f, 10.0f, 11.0f));
-        T t(2.0f);
+        T t(fill_with<float>(2));
         t[T::MultiIndex(0,1)] = -1.0f;
         t[T::MultiIndex(1,2)] = 3.0f;
         std::cout << FORMAT_VALUE(t) << '\n';
@@ -106,7 +106,7 @@ void test_a_bunch_of_stuff ()
     {
         typedef ImplementationOf_t<YTensorXDual,float,UseMemberArray> T;
         typedef ImplementationOf_t<YTensorXDual,float,UsePreallocatedArray> U;
-        T t(2.0f);
+        T t(fill_with<float>(2));
         t[T::MultiIndex(0,1)] = -1.0f;
         t[T::MultiIndex(1,2)] = 3.0f;
         U u(t.pointer_to_allocation()); // u must live no longer than t

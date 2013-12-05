@@ -396,6 +396,9 @@
   conceptual layer in general.  Should probably look into prior art on implementing C++ concepts
   (boost?).
 - Haskell turns out to be a great model for the metaprogramming.  Embrace it.
+- Using a sentinel type e.g. for "fill with" turns out to be a great way to get around constructor
+  choice ambiguity.  This ambiguity was a problem when we wanted to use conversion operators on 
+  expression templates that weren't conversion to the scalar type.
 
 
 ###Notes from Tensor Heaven future planning
