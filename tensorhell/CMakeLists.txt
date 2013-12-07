@@ -71,6 +71,7 @@ endif()
 # temp tests
 add_executable(algebraic_expression_prototype algebraic_expression_prototype.cpp)
 # add_executable(asm_exam asm_exam.cpp asm_exam_separate_functions.cpp)
+add_executable(compile_time_generated_lookup_table compile_time_generated_lookup_table.cpp)
 add_executable(conceptual_inheritance_prototype conceptual_inheritance_prototype.cpp)
 # add_executable(contraction_prototype contraction_prototype.cpp)
 # add_executable(eigen_interop_prototype eigen_interop_prototype.cpp)
