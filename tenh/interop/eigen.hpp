@@ -131,6 +131,48 @@ bool invert_2tensor (ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeL
 }
 
 // returns true iff the tensor was actually considered to be invertible (by Eigen::MatrixBase::computeInverseWithCheck)
+template <typename Factor_, typename Scalar_, typename UseArrayType_, typename InverseUseArrayType_>
+bool invert_2tensor (ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<2, Factor_>,
+                                        Scalar_,
+                                        UseArrayType_> const &s,
+                     ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<2, typename DualOf_f<Factor_>::T >,
+                                        Scalar_,
+                                        InverseUseArrayType_> &s_inverse)
+{
+    STATIC_ASSERT(!IsUseImmutableArray_f<UseArrayType_>::V, CANT_MAKE_EIGEN_MAP_OF_IMMUTABLE_ARRAY); // TODO: provide invert for UseImmutableArray
+    // create Eigen Maps for each of the parameters -- this way no copying is necessary;
+    // the t tensor's components are read directly by Eigen, and t_inverse's components
+    // are directly written to by Eigen.
+    typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor_, TypeList_t<Factor_> > >, Scalar_> TwoTensorType;
+    typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<typename DualOf_f<Factor_>::T, TypeList_t<typename DualOf_f<Factor_>::T> > >, Scalar_> TwoTensorDualType;
+    typedef SymmetricPowerOfBasedVectorSpace_c<2, typename DualOf_f<Factor_>::T > SymDualType;
+    typedef Eigen::Matrix<Scalar_, DimensionOf_f<Factor_>::V, DimensionOf_f<Factor_>::V, Eigen::RowMajor> EigenMatrixType;
+
+    AbstractIndex_c<'a'> a;
+    AbstractIndex_c<'i'> i;
+    AbstractIndex_c<'j'> j;
+
+    TwoTensorType t(Static<WithoutInitialization>::SINGLETON);
+    TwoTensorDualType t_inverse(Static<WithoutInitialization>::SINGLETON);
+    t(i|j) = s(a).split(a,i|j);
+    typename EigenMapOf2Tensor_const_f<Factor_,Factor_,Scalar_>::T eigen_map_of_t(EigenMap_of_2tensor(t));
+    typename EigenMapOf2Tensor_nonconst_f<typename DualOf_f<Factor_>::T,typename DualOf_f<Factor_>::T,Scalar_>::T eigen_map_of_t_inverse(EigenMap_of_2tensor(t_inverse));
+    Eigen::FullPivLU<EigenMatrixType> lu(eigen_map_of_t);
+
+    if (lu.isInvertible())
+    {
+       eigen_map_of_t_inverse = lu.inverse();
+       s_inverse(a) = t_inverse(i|j).bundle(i|j, SymDualType(), a);
+       return true;
+    }
+    else
+    {
+      return false;
+    }
+}
+
+
+// returns true iff the tensor was actually considered to be invertible (by Eigen::MatrixBase::computeInverseWithCheck)
 template <typename Factor1_, typename Factor2_, typename Scalar_, typename UseArrayType_>
 Scalar_ determinant_of_2tensor (ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,
                                                                            TypeList_t<Factor2_> > >,
