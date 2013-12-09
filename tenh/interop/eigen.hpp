@@ -155,7 +155,7 @@ bool invert_2tensor (ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<2, Fa
     TwoTensorType t(Static<WithoutInitialization>::SINGLETON);
     TwoTensorDualType t_inverse(Static<WithoutInitialization>::SINGLETON);
     t(i|j) = s(a).split(a,i|j);
-    typename EigenMapOf2Tensor_const_f<Factor_,Factor_,Scalar_>::T eigen_map_of_t(EigenMap_of_2tensor(t));
+    typename EigenMapOf2Tensor_nonconst_f<Factor_,Factor_,Scalar_>::T eigen_map_of_t(EigenMap_of_2tensor(t));
     typename EigenMapOf2Tensor_nonconst_f<typename DualOf_f<Factor_>::T,typename DualOf_f<Factor_>::T,Scalar_>::T eigen_map_of_t_inverse(EigenMap_of_2tensor(t_inverse));
     Eigen::FullPivLU<EigenMatrixType> lu(eigen_map_of_t);
 
