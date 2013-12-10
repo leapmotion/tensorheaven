@@ -3,13 +3,13 @@
 #include <iostream>
 #include <string>
 
-#include "applications/polynomial.hpp"
-
 #include "tenh/implementation/identity.hpp"
 #include "tenh/implementation/innerproduct.hpp"
 #include "tenh/implementation/vector.hpp"
 #include "tenh/implementation/vee.hpp"
+#include "tenh/interop/eigen.hpp"
 #include "tenh/expressiontemplate_eval.hpp"
+#include "tenh/utility/optimization.hpp"
 
 using namespace Tenh;
 
@@ -111,6 +111,7 @@ struct FunctionObjectType_m
 {
     typedef typename DualOf_f<ParameterSpace_>::T DualOfBasedVectorSpace;
     typedef SymmetricPowerOfBasedVectorSpace_c<2,DualOfBasedVectorSpace> Sym2Dual;
+    typedef CodomainSpace_ CodomainSpace;
     typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<CodomainSpace_,
                                                TypeList_t<DualOfBasedVectorSpace> > > Differential1;
     typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<CodomainSpace_,
@@ -130,6 +131,7 @@ struct FunctionObjectType_m<ParameterSpace_,Scalar_,Scalar_>
 {
     typedef typename DualOf_f<ParameterSpace_>::T DualOfBasedVectorSpace;
     typedef SymmetricPowerOfBasedVectorSpace_c<2,DualOfBasedVectorSpace> Sym2Dual;
+    typedef Scalar_ CodomainSpace;
     typedef DualOfBasedVectorSpace Differential1;
     typedef Sym2Dual Differential2;
 
@@ -149,6 +151,7 @@ struct TaylorPolynomialVerifier_t
 
     typedef typename FunctionObjectType::DualOfBasedVectorSpace DualOfBasedVectorSpace;
     typedef typename FunctionObjectType::Sym2Dual Sym2Dual;
+    typedef typename FunctionObjectType::CodomainSpace CodomainSpace;
     typedef typename FunctionObjectType::Differential1 Differential1;
     typedef typename FunctionObjectType::Differential2 Differential2;
     typedef typename FunctionObjectType::V V;
@@ -173,9 +176,10 @@ struct TaylorPolynomialVerifier_t
                             Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &evaluation_point) const
     {
         AbstractIndex_c<'i'> i;
-        V delta(Static<WithoutInitialization>::SINGLETON);
-        delta(i).no_alias() = evaluation_point(i) - based_at_point(i);
-        return evaluate_1st_order_via_delta(o, based_at_point, delta);
+        // V delta(Static<WithoutInitialization>::SINGLETON);
+        // delta(i).no_alias() = evaluation_point(i) - based_at_point(i);
+        // return evaluate_1st_order_via_delta(o, based_at_point, delta);
+        return evaluate_1st_order_via_delta(o, based_at_point, (evaluation_point(i) - based_at_point(i)).eval());
     }
 
     template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
@@ -185,10 +189,10 @@ struct TaylorPolynomialVerifier_t
                             Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &evaluation_point) const
     {
         AbstractIndex_c<'i'> i;
-        Out retval(Static<WithoutInitialization>::SINGLETON);
-        V delta(Static<WithoutInitialization>::SINGLETON);
-        delta(i).no_alias() = evaluation_point(i) - based_at_point(i);
-        return evaluate_2nd_order_via_delta(o, based_at_point, delta);
+        // V delta(Static<WithoutInitialization>::SINGLETON);
+        // delta(i).no_alias() = evaluation_point(i) - based_at_point(i);
+        // return evaluate_2nd_order_via_delta(o, based_at_point, delta);
+        return evaluate_2nd_order_via_delta(o, based_at_point, (evaluation_point(i) - based_at_point(i)).eval());
     }
 
     template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
@@ -212,6 +216,8 @@ struct TaylorPolynomialVerifier_t
         retval(i).no_alias() = o.function(based_at_point)(i)
                              + o.D_function(based_at_point)(i|j)*delta(j);
         return retval;
+        // return (  o.function(based_at_point)(i)
+        //         + o.D_function(based_at_point)(i|j)*delta(j)).eval();
     }
 
     template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
@@ -229,6 +235,9 @@ struct TaylorPolynomialVerifier_t
                              + o.D_function(based_at_point)(i|j)*delta(j)
                              + o.D2_function(based_at_point)(i|p).split(p,j|k)*delta(j)*delta(k)/2;
         return retval;
+        // return (  o.function(based_at_point)(i)
+        //         + o.D_function(based_at_point)(i|j)*delta(j)
+        //         + o.D2_function(based_at_point)(i|p).split(p,j|k)*delta(j)*delta(k)/2).eval();
     }
 
     template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE_>
@@ -303,6 +312,7 @@ struct TaylorPolynomialVerifier_t<ParameterSpace_,Scalar_,StandardInnerProduct,S
 
     typedef typename FunctionObjectType::DualOfBasedVectorSpace DualOfBasedVectorSpace;
     typedef typename FunctionObjectType::Sym2Dual Sym2Dual;
+    typedef typename FunctionObjectType::CodomainSpace CodomainSpace;
     typedef typename FunctionObjectType::Differential1 Differential1;
     typedef typename FunctionObjectType::Differential2 Differential2;
     typedef typename FunctionObjectType::V V;
@@ -327,9 +337,10 @@ struct TaylorPolynomialVerifier_t<ParameterSpace_,Scalar_,StandardInnerProduct,S
                                 Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &evaluation_point) const
     {
         AbstractIndex_c<'i'> i;
-        V delta(Static<WithoutInitialization>::SINGLETON);
-        delta(i).no_alias() = evaluation_point(i) - based_at_point(i);
-        return evaluate_1st_order_via_delta(o, based_at_point, delta);
+        // V delta(Static<WithoutInitialization>::SINGLETON);
+        // delta(i).no_alias() = evaluation_point(i) - based_at_point(i);
+        // return evaluate_1st_order_via_delta(o, based_at_point, delta);
+        return evaluate_1st_order_via_delta(o, based_at_point, (evaluation_point(i) - based_at_point(i)).eval());
     }
 
     template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
@@ -341,9 +352,10 @@ struct TaylorPolynomialVerifier_t<ParameterSpace_,Scalar_,StandardInnerProduct,S
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
         AbstractIndex_c<'p'> p;
-        V delta(Static<WithoutInitialization>::SINGLETON);
-        delta(i).no_alias() = evaluation_point(i) - based_at_point(i);
-        return evaluate_2nd_order_via_delta(o, based_at_point, delta);
+        // V delta(Static<WithoutInitialization>::SINGLETON);
+        // delta(i).no_alias() = evaluation_point(i) - based_at_point(i);
+        // return evaluate_2nd_order_via_delta(o, based_at_point, delta);
+        return evaluate_2nd_order_via_delta(o, based_at_point, (evaluation_point(i) - based_at_point(i)).eval());
     }
 
     template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
@@ -391,10 +403,11 @@ struct TaylorPolynomialVerifier_t<ParameterSpace_,Scalar_,StandardInnerProduct,S
             V delta(Static<WithoutInitialization>::SINGLETON);
             V evaluation_point(Static<WithoutInitialization>::SINGLETON);
             AbstractIndex_c<'j'> j;
-            randomize<StandardInnerProduct>(delta, Scalar_(1)/100, Scalar_(10)/100);
+            randomize<StandardInnerProduct>(delta, Scalar_(1)/100, Scalar_(100)/100);
             evaluation_point(j).no_alias() = at_point(j) + delta(j);
             // Scalar_ actual_function_value(function(at_point + delta)); // TODO: make this work?
             Scalar_ actual_function_value(o.function(evaluation_point));
+            // Scalar_ actual_function_value(o.function((at_point(j) + delta(j)).eval().value()));
 //             Scalar_ estimated_function_value(evaluate_1st_order(at_point, evaluation_point));
             Scalar_ estimated_function_value(evaluate_1st_order_via_delta(o, at_point, delta));
             Scalar_ error(actual_function_value - estimated_function_value);
@@ -421,7 +434,7 @@ struct TaylorPolynomialVerifier_t<ParameterSpace_,Scalar_,StandardInnerProduct,S
             V evaluation_point(Static<WithoutInitialization>::SINGLETON);
             AbstractIndex_c<'j'> j;
             // use a solid annulus of radius [1/100, 2/200] around at_point
-            randomize<StandardInnerProduct>(delta, Scalar_(1)/100, Scalar_(10)/100);
+            randomize<StandardInnerProduct>(delta, Scalar_(1)/100, Scalar_(100)/100);
             evaluation_point(j) = at_point(j) + delta(j);
             // Scalar_ actual_function_value(function(at_point + delta)); // TODO: make this work?
             Scalar_ actual_function_value(o.function(evaluation_point));
@@ -460,6 +473,10 @@ Scalar_ hat (ComponentIndex_t<DimensionOf_f<HatMorphism_>::V> const &i)
                                                TypeList_t<DualOfBasedVectorSpace> > > HatMorphism;
     STATIC_ASSERT_TYPES_ARE_EQUAL(HatMorphism, HatMorphism_);
 
+    // hat(x,y,z) has the form
+    // [ [  0 -z  y ]
+    //   [  z  0 -x ]
+    //   [ -y  x  0 ] ].
     // with EndomorphismOfBasedVectorSpaces indexed as
     // [ [ 0 1 2 ]
     //   [ 3 4 5 ]
@@ -561,6 +578,7 @@ public:
 
     typedef typename FunctionObjectType::DualOfBasedVectorSpace DualOfBasedVectorSpace;
     typedef typename FunctionObjectType::Sym2Dual Sym2Dual;
+    typedef typename FunctionObjectType::CodomainSpace CodomainSpace;
     typedef typename FunctionObjectType::Differential1 Differential1;
     typedef typename FunctionObjectType::Differential2 Differential2;
     typedef typename FunctionObjectType::V V;
@@ -630,6 +648,7 @@ public:
 
     typedef typename FunctionObjectType::DualOfBasedVectorSpace DualOfBasedVectorSpace;
     typedef typename FunctionObjectType::Sym2Dual Sym2Dual;
+    typedef typename FunctionObjectType::CodomainSpace CodomainSpace;
     typedef typename FunctionObjectType::Differential1 Differential1;
     typedef typename FunctionObjectType::Differential2 Differential2;
     typedef typename FunctionObjectType::V V;
@@ -707,6 +726,7 @@ public:
 
     typedef typename FunctionObjectType::DualOfBasedVectorSpace DualOfBasedVectorSpace;
     typedef typename FunctionObjectType::Sym2Dual Sym2Dual;
+//    typedef typename FunctionObjectType::CodomainSpace CodomainSpace;
     typedef typename FunctionObjectType::Differential1 Differential1;
     typedef typename FunctionObjectType::Differential2 Differential2;
     typedef typename FunctionObjectType::V V;
@@ -794,6 +814,7 @@ public:
 
     typedef typename FunctionObjectType::DualOfBasedVectorSpace DualOfBasedVectorSpace;
     typedef typename FunctionObjectType::Sym2Dual Sym2Dual;
+    // typedef typename FunctionObjectType::CodomainSpace CodomainSpace;
     typedef typename FunctionObjectType::Differential1 Differential1;
     typedef typename FunctionObjectType::Differential2 Differential2;
     typedef typename FunctionObjectType::V V;
@@ -847,6 +868,194 @@ private:
     typename HatTensor_f<BasedVectorSpace_,Scalar_>::T m_hat_tensor;
 };
 
+// quadratic function on BasedVectorSpace_
+template <typename BasedVectorSpace_, typename Scalar_, typename InnerProductId_>
+struct QuadraticFunction_t
+{
+    typedef FunctionObjectType_m<BasedVectorSpace_,Scalar_,Scalar_> FunctionObjectType;
+
+    typedef typename FunctionObjectType::DualOfBasedVectorSpace DualOfBasedVectorSpace;
+    typedef typename FunctionObjectType::Sym2Dual Sym2Dual;
+    typedef typename FunctionObjectType::CodomainSpace CodomainSpace;
+    typedef typename FunctionObjectType::Differential1 Differential1;
+    typedef typename FunctionObjectType::Differential2 Differential2;
+    typedef typename FunctionObjectType::V V;
+    typedef typename FunctionObjectType::DualOfV DualOfV;
+    typedef typename FunctionObjectType::Out Out;
+    typedef typename FunctionObjectType::D1 D1;
+    typedef typename FunctionObjectType::D2 D2;
+
+    // QuadraticFunction_t ()
+    //     :
+    //     m1(Static<WithoutInitialization>::SINGLETON),
+    //     m2(fill_with<Scalar_>(0)),
+    //     m_D2(Static<WithoutInitialization>::SINGLETON)
+    // {
+    //     AbstractIndex_c<'i'> i;
+    //     AbstractIndex_c<'j'> j;
+    //     AbstractIndex_c<'p'> p;
+    //     // this really should use the natural embedding of the diagonal (inner product) into Sym2Dual
+    //     //m_D2(p) = (Scalar_(-2)*m_inner_product(q)).split(q,i|j).bundle(i|j,typename D2::Concept(),p);
+
+    //     // random constant term
+    //     randomize(m0);
+    //     // random linear term
+    //     randomize<InnerProductId_>(m1, Scalar_(0), Scalar_(10));
+    //     // create a random, positive-definite symmetric bilinear form for the quadratic term.
+    //     for (Uint32 it = 0; it < DimensionOf_f<BasedVectorSpace_>::V; ++it)
+    //     {
+    //         DualOfV a(Static<WithoutInitialization>::SINGLETON);
+    //         randomize<InnerProductId_>(a, Scalar_(1), Scalar_(2));
+    //         m2(p) += (a(i)*a(j)).bundle(i|j,typename D2::Concept(),p);
+    //     }
+    //     m_D2(p) = Scalar_(2)*m2(p);
+    // }
+
+    QuadraticFunction_t ()
+        :
+        m1(Static<WithoutInitialization>::SINGLETON),
+        m2(fill_with<Scalar_>(0)),
+        m_D2(Static<WithoutInitialization>::SINGLETON)
+    {
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        AbstractIndex_c<'p'> p;
+        // this really should use the natural embedding of the diagonal (inner product) into Sym2Dual
+        //m_D2(p) = (Scalar_(-2)*m_inner_product(q)).split(q,i|j).bundle(i|j,typename D2::Concept(),p);
+
+        // random constant term
+        randomize(m0);
+        // random linear term
+        randomize<InnerProductId_>(m1, Scalar_(0), Scalar_(10));
+        // // create a random, positive-definite symmetric bilinear form for the quadratic term.
+        // for (Uint32 it = 0; it < DimensionOf_f<BasedVectorSpace_>::V; ++it)
+        // {
+        //     DualOfV a(Static<WithoutInitialization>::SINGLETON);
+        //     randomize<InnerProductId_>(a, Scalar_(1), Scalar_(2));
+        //     m2(p) += (a(i)*a(j)).bundle(i|j,typename D2::Concept(),p);
+        // }
+        // create a non-positive-definite symmetric bilinear form
+        m2(p) += ((DualOfV::template BasisVector_f<0>::V(i))*(DualOfV::template BasisVector_f<0>::V(j))).bundle(i|j,typename D2::Concept(),p);
+        m2(p) += ((DualOfV::template BasisVector_f<1>::V(i))*(DualOfV::template BasisVector_f<1>::V(j))).bundle(i|j,typename D2::Concept(),p);
+        m2(p) -= ((DualOfV::template BasisVector_f<2>::V(i))*(DualOfV::template BasisVector_f<2>::V(j))).bundle(i|j,typename D2::Concept(),p);
+        m_D2(p) = Scalar_(2)*m2(p);
+    }
+
+    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
+    Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    {
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        AbstractIndex_c<'p'> p;
+        // return Scalar_(1) - x(i)*m_inner_product(p).split(p,i|j)*x(j);
+        return m0 + m1(i)*x(i) + m2(p).split(p,i|j)*x(i)*x(j);
+    }
+    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
+    D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    {
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        AbstractIndex_c<'p'> p;
+        // D1 retval(Static<WithoutInitialization>::SINGLETON);
+        // retval(j).no_alias() = x(i)*m_D2(p).split(p,i|j); //Scalar_(-2)*x(i)*m_inner_product(p).split(p,i|j);
+        // return retval;
+        D1 retval(Static<WithoutInitialization>::SINGLETON);
+        retval(j) = m1(j) + Scalar_(2)*(x(i)*m2(p).split(p,i|j));
+        return retval;
+    }
+    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
+    D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    {
+// //         AbstractIndex_c<'i'> i;
+// //         AbstractIndex_c<'j'> j;
+//         AbstractIndex_c<'p'> p;
+// //         D2 retval(Static<WithoutInitialization>::SINGLETON);
+// //         retval(p).no_alias() = Scalar_(-2)*m_inner_product(p);
+// //         return retval;
+// //        return m_D2;
+//         D2 retval(Static<WithoutInitialization>::SINGLETON);
+//         retval(p) = Scalar_(2)*m2(p);
+//         return retval;
+        return m_D2;
+    }
+
+private:
+
+    //typename InnerProduct_f<BasedVectorSpace_,StandardInnerProduct,Scalar_>::T m_inner_product;
+    Scalar_ m0;
+    DualOfV m1;
+    D2 m2;
+    D2 m_D2;
+};
+
+// quadratic function on BasedVectorSpace_
+template <typename BasedVectorSpace_, typename Scalar_>
+struct BigFunction_t
+{
+    typedef FunctionObjectType_m<BasedVectorSpace_,Scalar_,Scalar_> FunctionObjectType;
+
+    typedef typename FunctionObjectType::DualOfBasedVectorSpace DualOfBasedVectorSpace;
+    typedef typename FunctionObjectType::Sym2Dual Sym2Dual;
+    typedef typename FunctionObjectType::CodomainSpace CodomainSpace;
+    typedef typename FunctionObjectType::Differential1 Differential1;
+    typedef typename FunctionObjectType::Differential2 Differential2;
+    typedef typename FunctionObjectType::V V;
+    typedef typename FunctionObjectType::DualOfV DualOfV;
+    typedef typename FunctionObjectType::Out Out;
+    typedef typename FunctionObjectType::D1 D1;
+    typedef typename FunctionObjectType::D2 D2;
+
+    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
+    Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    {
+        return m_q.function(m_cayley_transform.function(x));
+    }
+    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
+    D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    {
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        AbstractIndex_c<'p'> p;
+        // chain rule
+        D1 retval(Static<WithoutInitialization>::SINGLETON);
+        retval(j) = m_q.D_function(m_cayley_transform.function(x))(i)
+                  * m_cayley_transform.D_function(x)(p).split(p,i|j);
+        return retval;
+    }
+    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
+    D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    {
+        AbstractIndex_c<'a'> a;
+        AbstractIndex_c<'b'> b;
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        AbstractIndex_c<'k'> k;
+        AbstractIndex_c<'l'> l;
+        AbstractIndex_c<'p'> p;
+        AbstractIndex_c<'q'> q;
+        typename CayleyTransform::Out cayley_transform(m_cayley_transform.function(x));
+        typename CayleyTransform::D1 D_cayley_transform(m_cayley_transform.D_function(x));
+        // double chain rule
+        D2 retval(Static<WithoutInitialization>::SINGLETON);
+        retval(q) = (  m_q.D2_function(cayley_transform)(p).split(p,i|j)
+                     * D_cayley_transform(a).split(a,i|k)
+                     * D_cayley_transform(b).split(b,j|l)).bundle(k|l,typename D2::Concept(),q)
+                    +
+                      m_q.D_function(cayley_transform)(i)
+                    * m_cayley_transform.D2_function(x)(a).split(a,i|q);
+        return retval;
+    }
+
+private:
+
+    typedef CayleyTransform_t<BasedVectorSpace_,Scalar_> CayleyTransform;
+    typedef TensorProduct_c<TypeList_t<StandardInnerProduct,
+                            TypeList_t<StandardInnerProduct> > > InnerProductId;
+
+    QuadraticFunction_t<typename CayleyTransform::CodomainSpace,Scalar_,InnerProductId> m_q;
+    CayleyTransform m_cayley_transform;
+};
+
 int main (int argc, char **argv)
 {
     typedef double Scalar;
@@ -863,6 +1072,17 @@ int main (int argc, char **argv)
     std::cerr << FORMAT_VALUE(c.function(x)) << "\n\n";
     std::cerr << FORMAT_VALUE(c.D_function(x)) << "\n\n";
 //     std::cerr << FORMAT_VALUE(c.D2_function(x)) << "\n\n";
+
+    {
+        std::cerr << "optimizing a quadratic function\n";
+        QuadraticFunction_t<BasedVectorSpace,Scalar,StandardInnerProduct> qf;
+        V x(uniform_tuple<Scalar>(100, 100, 100));
+        V y(minimize<StandardInnerProduct>(qf, x, 1e-05));
+        std::cerr << "approximate optimizer = " << y << '\n';
+        std::cerr << "differential of function at approximate optimizer = " << qf.D_function(y) << '\n';
+    }
+
+    return 0;
 
     InnerProduct_f<BasedVectorSpace,StandardInnerProduct,Scalar>::T inner_product;
     InnerProduct_f<DualOf_f<BasedVectorSpace>::T,StandardInnerProduct,Scalar>::T inner_product_inverse;
@@ -882,7 +1102,7 @@ int main (int argc, char **argv)
 //         std::cerr << FORMAT_VALUE((cayley_transform(i|j)*inner_product(p).split(p,i|k)*cayley_transform(k|l) - inner_product_inverse(p).split(p,j|l)).eval().tensor_value()) << "\n\n";
         typedef TypeList_t<StandardInnerProduct,
                 TypeList_t<StandardInnerProduct> > InnerProductFactorList;
-        std::cerr << "this value should be about equal to 0: " << FORMAT_VALUE(squared_norm<TensorProduct_c<InnerProductFactorList> >((cayley_transform(i|j)*inner_product(p).split(p,i|k)*cayley_transform(k|l) - inner_product_inverse(p).split(p,j|l)).eval().tensor_value())) << "\n\n";
+        std::cerr << "this value should be about equal to 0: " << FORMAT_VALUE(squared_norm<TensorProduct_c<InnerProductFactorList> >((cayley_transform(i|j)*inner_product(p).split(p,i|k)*cayley_transform(k|l) - inner_product_inverse(p).split(p,j|l)).eval().value())) << "\n\n";
     }
 
     static Uint32 const SAMPLES = 50;
@@ -1027,6 +1247,33 @@ int main (int argc, char **argv)
             V at_point(Static<WithoutInitialization>::SINGLETON);
             randomize<StandardInnerProduct>(at_point, Scalar(1)/2, Scalar(100));
             big_o_bound = std::max(big_o_bound, verifier.verify_hessian(cayley_transform, at_point));
+        }
+        std::cerr << "max big-o-bound for hessian verification = " << big_o_bound << '\n';
+    }
+    std::cerr << '\n';
+    std::cerr << "BigFunction_t\n";
+    {
+        Scalar big_o_bound(0);
+        typedef BigFunction_t<BasedVectorSpace,Scalar> BigFunction;
+        BigFunction big_function;
+        typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace,
+                                                   TypeList_t<DualOf_f<BasedVectorSpace>::T> > > CodomainSpace;
+        typedef TensorProduct_c<TypeList_t<StandardInnerProduct,
+                                TypeList_t<StandardInnerProduct> > > CodomainInnerProductId;
+        TaylorPolynomialVerifier_t<BasedVectorSpace,Scalar,StandardInnerProduct,Scalar,BigFunction> verifier;
+        for (Uint32 i = 0; i < SAMPLES; ++i)
+        {
+            V at_point(Static<WithoutInitialization>::SINGLETON);
+            randomize<StandardInnerProduct>(at_point, Scalar(1)/2, Scalar(100));
+            big_o_bound = std::max(big_o_bound, verifier.verify_gradient(big_function, at_point));
+        }
+        std::cerr << "max big-o-bound for gradient verification = " << big_o_bound << '\n';
+        big_o_bound = Scalar(0);
+        for (Uint32 i = 0; i < SAMPLES; ++i)
+        {
+            V at_point(Static<WithoutInitialization>::SINGLETON);
+            randomize<StandardInnerProduct>(at_point, Scalar(1)/2, Scalar(100));
+            big_o_bound = std::max(big_o_bound, verifier.verify_hessian(big_function, at_point));
         }
         std::cerr << "max big-o-bound for hessian verification = " << big_o_bound << '\n';
     }
