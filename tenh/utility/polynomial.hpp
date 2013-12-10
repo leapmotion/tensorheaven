@@ -1,12 +1,11 @@
 // ///////////////////////////////////////////////////////////////////////////
-// applications/polynomial.hpp by Ted Nitz, created 2013/08/27
+// tenh/utility/polynomial.hpp by Ted Nitz, created 2013/08/27
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#ifndef APPLICATIONS_POLYNOMIAL_HPP_
-#define APPLICATIONS_POLYNOMIAL_HPP_
+#ifndef TENH_UTILITY_POLYNOMIAL_HPP_
+#define TENH_UTILITY_POLYNOMIAL_HPP_
 
-#include "applications/homogeneouspolynomial.hpp"
 
 #include "tenh/core.hpp"
 
@@ -19,27 +18,28 @@
 #include "tenh/meta/typelist_utility.hpp"
 #include "tenh/multiindex.hpp"
 #include "tenh/preallocatedarray.hpp"
+#include "tenh/utility/homogeneouspolynomial.hpp"
 
-using Tenh::Uint32;
+namespace Tenh {
 
 template <Uint32 DEGREE_, typename BasedVectorSpace_, typename Scalar_ = float>
 struct MultivariatePolynomial
 {
-    typedef Tenh::ImplementationOf_t<BasedVectorSpace_,Scalar_> Vector;
-    typedef Tenh::SymmetricPowerOfBasedVectorSpace_c<DEGREE_,BasedVectorSpace_> SymmetricPower;
-    typedef Tenh::ImplementationOf_t<SymmetricPower,Scalar_> Sym;
-    typedef typename Tenh::DualOf_f<Sym>::T SymDual;
+    typedef ImplementationOf_t<BasedVectorSpace_,Scalar_> Vector;
+    typedef SymmetricPowerOfBasedVectorSpace_c<DEGREE_,BasedVectorSpace_> SymmetricPower;
+    typedef ImplementationOf_t<SymmetricPower,Scalar_> Sym;
+    typedef typename DualOf_f<Sym>::T SymDual;
     typedef Scalar_ Scalar;
 
     typedef HomogeneousPolynomial<DEGREE_,BasedVectorSpace_,Scalar_> LeadingTermType;
     typedef MultivariatePolynomial<DEGREE_-1,BasedVectorSpace_,Scalar_> BodyPolynomial;
     static Uint32 const DIMENSION = LeadingTermType::DIMENSION + BodyPolynomial::DIMENSION;
 
-    typedef Tenh::PreallocatedArray_t<Scalar_,DIMENSION> CoefficientArray;
-    typedef Tenh::PreallocatedArray_t<Scalar_ const,DIMENSION> ConstCoefficientArray;
+    typedef PreallocatedArray_t<Scalar_,DIMENSION> CoefficientArray;
+    typedef PreallocatedArray_t<Scalar_ const,DIMENSION> ConstCoefficientArray;
 
-    MultivariatePolynomial (Tenh::FillWith_t<Scalar_> const &fill_with) : m_body(fill_with), m_term(fill_with) { }
-    MultivariatePolynomial (Tenh::WithoutInitialization const &w) : m_body(w), m_term(w) { }
+    MultivariatePolynomial (FillWith_t<Scalar_> const &fill_with) : m_body(fill_with), m_term(fill_with) { }
+    MultivariatePolynomial (WithoutInitialization const &w) : m_body(w), m_term(w) { }
     MultivariatePolynomial (LeadingTermType const &leading_term, BodyPolynomial const &body)
         :
         m_body(body),
@@ -47,7 +47,7 @@ struct MultivariatePolynomial
     { }
     MultivariatePolynomial (LeadingTermType const &leading_term)
         :
-        m_body(Tenh::fill_with<Scalar>(0)),
+        m_body(fill_with<Scalar>(0)),
         m_term(leading_term)
     { }
     MultivariatePolynomial (SymDual const &leading_term, BodyPolynomial const &body)
@@ -57,7 +57,7 @@ struct MultivariatePolynomial
     { }
     MultivariatePolynomial (SymDual const &leading_term)
         :
-        m_body(Tenh::fill_with<Scalar>(0)),
+        m_body(fill_with<Scalar>(0)),
         m_term(leading_term)
     { }
     MultivariatePolynomial (MultivariatePolynomial const &other)
@@ -119,17 +119,17 @@ struct MultivariatePolynomial
     // this object is alive -- this is effectively a shallow copy.
     ConstCoefficientArray as_array () const
     {
-        assert(reinterpret_cast<Tenh::Uint8 const *>(&m_body) + sizeof(m_body) == reinterpret_cast<Tenh::Uint8 const *>(&m_term) &&
+        assert(reinterpret_cast<Uint8 const *>(&m_body) + sizeof(m_body) == reinterpret_cast<Uint8 const *>(&m_term) &&
                "for this to work, the members must be layed out contiguously in memory");
-        return ConstCoefficientArray(reinterpret_cast<Scalar_ const *>(&m_body), Tenh::DONT_CHECK_POINTER);
+        return ConstCoefficientArray(reinterpret_cast<Scalar_ const *>(&m_body), DONT_CHECK_POINTER);
     }
     // NOTE: the PreallocatedArray_t returned from this is valid only as long as
     // this object is alive -- this is effectively a shallow copy.
     CoefficientArray as_array ()
     {
-        assert(reinterpret_cast<Tenh::Uint8 const *>(&m_body) + sizeof(m_body) == reinterpret_cast<Tenh::Uint8 const *>(&m_term) &&
+        assert(reinterpret_cast<Uint8 const *>(&m_body) + sizeof(m_body) == reinterpret_cast<Uint8 const *>(&m_term) &&
                "for this to work, the members must be layed out contiguously in memory");
-        return CoefficientArray(reinterpret_cast<Scalar_ *>(&m_body), Tenh::DONT_CHECK_POINTER);
+        return CoefficientArray(reinterpret_cast<Scalar_ *>(&m_body), DONT_CHECK_POINTER);
     }
 
     bool is_exactly_zero() const
@@ -166,17 +166,17 @@ private:
 template <typename BasedVectorSpace_, typename Scalar_>
 struct MultivariatePolynomial<0,BasedVectorSpace_,Scalar_>
 {
-    typedef Tenh::ImplementationOf_t<BasedVectorSpace_,Scalar_> Vector;
+    typedef ImplementationOf_t<BasedVectorSpace_,Scalar_> Vector;
 
     typedef Scalar_ LeadingTermType;
     static Uint32 const DIMENSION = 1;
 
-    typedef Tenh::PreallocatedArray_t<Scalar_,DIMENSION> CoefficientArray;
-    typedef Tenh::PreallocatedArray_t<Scalar_ const,DIMENSION> ConstCoefficientArray;
+    typedef PreallocatedArray_t<Scalar_,DIMENSION> CoefficientArray;
+    typedef PreallocatedArray_t<Scalar_ const,DIMENSION> ConstCoefficientArray;
 
     MultivariatePolynomial (Scalar_ const &leading_term) : m_term(leading_term) { }
-    MultivariatePolynomial (Tenh::FillWith_t<Scalar_> const &fill_with) : m_term(fill_with.value()) { }
-    MultivariatePolynomial (Tenh::WithoutInitialization const &w) { }
+    MultivariatePolynomial (FillWith_t<Scalar_> const &fill_with) : m_term(fill_with.value()) { }
+    MultivariatePolynomial (WithoutInitialization const &w) { }
     MultivariatePolynomial (MultivariatePolynomial const &other) : m_term(other.m_term) { }
 
     // TODO (?) add "operator Scalar_ () const { return m_term; }" because
@@ -221,13 +221,13 @@ struct MultivariatePolynomial<0,BasedVectorSpace_,Scalar_>
     // this object is alive -- this is effectively a shallow copy.
     ConstCoefficientArray as_array () const
     {
-        return ConstCoefficientArray(reinterpret_cast<Scalar_ const *>(&m_term), Tenh::DONT_CHECK_POINTER);
+        return ConstCoefficientArray(reinterpret_cast<Scalar_ const *>(&m_term), DONT_CHECK_POINTER);
     }
     // NOTE: the PreallocatedArray_t returned from this is valid only as long as
     // this object is alive -- this is effectively a shallow copy.
     CoefficientArray as_array ()
     {
-        return CoefficientArray(reinterpret_cast<Scalar_ *>(&m_term), Tenh::DONT_CHECK_POINTER);
+        return CoefficientArray(reinterpret_cast<Scalar_ *>(&m_term), DONT_CHECK_POINTER);
     }
 
     bool is_exactly_zero() const
@@ -299,4 +299,6 @@ MultivariatePolynomial<DEG1_+DEG2_,BasedVectorSpace_,Scalar_>
     return MultivariatePolynomial<DEG1_+DEG2_,BasedVectorSpace_,Scalar_>(rhs*lhs);
 }
 
-#endif // APPLICATIONS_POLYNOMIAL_HPP_
+} // end of namespace Tenh
+
+#endif // TENH_UTILITY_POLYNOMIAL_HPP_

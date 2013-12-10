@@ -125,40 +125,17 @@ set(test_SRCS
 add_executable(test standard/test.cpp ${test_SRCS})
 include_directories(${tensorheaven_test_SOURCE_DIR}/.. ${tensorheaven_test_SOURCE_DIR}/lvd ${tensorheaven_test_SOURCE_DIR}/standard)
 
-#     standard/test_euclideanembedding.cpp
-#     standard/test_euclideanembeddinginverse.cpp
-#     standard/test_expressiontemplates.cpp
-#     standard/test_interop_eigen_euclideanlyembedded.cpp
-#     standard/test_interop_eigen_euclideanlyembedded0.cpp
-#     standard/test_interop_eigen_euclideanlyembedded1.cpp
-#     standard/test_interop_eigen_euclideanlyembedded2.cpp
-#     standard/test_interop_eigen_euclideanlyembedded3.cpp
-#     standard/test_interop_eigen_euclideanlyembedded4.cpp
-#     standard/test_interop_eigen_euclideanlyembedded5.cpp
-#     standard/test_interop_eigen_euclideanlyembedded6.cpp
-#     standard/test_interop_eigen_euclideanlyembedded7.cpp
-#     standard/test_interop_eigen_inversion.cpp
-#     standard/test_interop_eigen_inversion0.cpp
-#     standard/test_interop_eigen_inversion1.cpp
-#     standard/test_interop_eigen_inversion2.cpp
-#     standard/test_interop_eigen_inversion3.cpp
-#     standard/test_interop_eigen_inversion4.cpp
-#     standard/test_interop_eigen_inversion5.cpp
-#     standard/test_interop_eigen_inversion6.cpp
-#     standard/test_interop_eigen_inversion7.cpp
-#     standard/test_interop_eigen_ldlt.cpp
-#     standard/test_tensor2.cpp
-#     standard/test_tensor2diagonal.cpp
-#     standard/test_vector.cpp)
-
-
-set(applications_SRCS
+# tenh-utility-using tests
+set(tenh_utility_test_SRCS
     lvd/lvd_callstack.cpp
     lvd/lvd_commandlineparser.cpp
     lvd/lvd_spawner.cpp
     lvd/lvd_testsystem.cpp
     standard/randomize.cpp
-    applications_test/test_homogeneouspolynomials.cpp
-    applications_test/test_multivariatepolynomials.cpp)
-add_executable(applications_test applications_test/test.cpp ${applications_SRCS})
-include_directories(${tensorheaven_test_SOURCE_DIR}/.. ${tensorheaven_test_SOURCE_DIR}/lvd ${tensorheaven_test_SOURCE_DIR}/standard ${tensorheaven_test_SOURCE_DIR}/applications_test)
+    tenh_utility_test/test_homogeneouspolynomials.cpp
+    tenh_utility_test/test_multivariatepolynomials.cpp)
+add_executable(tenh_utility_test tenh_utility_test/test.cpp ${tenh_utility_test_SRCS})
+include_directories(${tensorheaven_test_SOURCE_DIR}/..
+                    ${tensorheaven_test_SOURCE_DIR}/lvd
+                    ${tensorheaven_test_SOURCE_DIR}/standard
+                    ${tensorheaven_test_SOURCE_DIR}/tenh_utility_test)

@@ -1,15 +1,17 @@
 // ///////////////////////////////////////////////////////////////////////////
-// applications/polynomial_utility.hpp by Ted Nitz, created 2013/09/27
+// tenh/utility/polynomial_utility.hpp by Ted Nitz, created 2013/09/27
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#ifndef APPLICATIONS_POLYNOMIAL_UTILITY_HPP_
-#define APPLICATIONS_POLYNOMIAL_UTILITY_HPP_
+#ifndef TENH_UTILITY_POLYNOMIAL_UTILITY_HPP_
+#define TENH_UTILITY_POLYNOMIAL_UTILITY_HPP_
 
 #include <ostream>
 
-#include "applications/polynomial.hpp"
-#include "applications/homogeneouspolynomial.hpp"
+#include "tenh/utility/polynomial.hpp"
+#include "tenh/utility/homogeneouspolynomial.hpp"
+
+namespace Tenh {
 
 //    operator<< for ostream
 template <Uint32 DEG, typename BasedVectorSpace_, typename Scalar>
@@ -18,19 +20,19 @@ struct VariableStringComputer
     static std::string compute(typename HomogeneousPolynomial<DEG,BasedVectorSpace_,Scalar>::Sym::MultiIndex const &n)
     {
         typedef typename HomogeneousPolynomial<DEG,BasedVectorSpace_,Scalar>::Sym::MultiIndex MultiIndex;
-        MultiIndex m = Tenh::sorted<typename MultiIndex::IndexTypeList,std::less<Uint32> >(n);
-        Uint32 last = m.value_of_index(0, Tenh::DONT_CHECK_RANGE);
+        MultiIndex m = sorted<typename MultiIndex::IndexTypeList,std::less<Uint32> >(n);
+        Uint32 last = m.value_of_index(0, DONT_CHECK_RANGE);
         Uint32 count = 1;
         std::string result = "x" + AS_STRING(last);
         for (Uint32 i = 1; i < MultiIndex::LENGTH; ++i)
         {
-            if (m.value_of_index(i, Tenh::DONT_CHECK_RANGE) == last)
+            if (m.value_of_index(i, DONT_CHECK_RANGE) == last)
             {
                 ++count;
             }
             else
             {
-                last = m.value_of_index(i, Tenh::DONT_CHECK_RANGE);
+                last = m.value_of_index(i, DONT_CHECK_RANGE);
                 if (count != 1)
                 {
                     result += "^" + AS_STRING(count);
@@ -51,9 +53,9 @@ private:
 };
 
 template <Uint32 DEG, typename ScalarField_, typename VectorSpaceId_, typename Basis_, typename Scalar>
-struct VariableStringComputer<DEG,Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<ScalarField_,0,VectorSpaceId_>,Basis_>,Scalar>
+struct VariableStringComputer<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,0,VectorSpaceId_>,Basis_>,Scalar>
 {
-    static std::string compute(typename HomogeneousPolynomial<DEG,Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<ScalarField_,0,VectorSpaceId_>,Basis_>,Scalar>::Sym::MultiIndex const &n)
+    static std::string compute(typename HomogeneousPolynomial<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,0,VectorSpaceId_>,Basis_>,Scalar>::Sym::MultiIndex const &n)
     {
         return "";
     }
@@ -63,11 +65,11 @@ private:
 
 
 template <Uint32 DEG, typename ScalarField_, typename VectorSpaceId_, typename Basis_, typename Scalar>
-struct VariableStringComputer<DEG,Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<ScalarField_,1,VectorSpaceId_>,Basis_>,Scalar>
+struct VariableStringComputer<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,1,VectorSpaceId_>,Basis_>,Scalar>
 {
-    static std::string compute(typename HomogeneousPolynomial<DEG,Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<ScalarField_,1,VectorSpaceId_>,Basis_>,Scalar>::Sym::MultiIndex const &n)
+    static std::string compute(typename HomogeneousPolynomial<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,1,VectorSpaceId_>,Basis_>,Scalar>::Sym::MultiIndex const &n)
     {
-        typedef typename HomogeneousPolynomial<DEG,Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<ScalarField_,1,VectorSpaceId_>,Basis_>,Scalar>::Sym::MultiIndex MultiIndex;
+        typedef typename HomogeneousPolynomial<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,1,VectorSpaceId_>,Basis_>,Scalar>::Sym::MultiIndex MultiIndex;
         return "x" + ((MultiIndex::LENGTH > 1) ? "^" + AS_STRING(MultiIndex::LENGTH) : "");
     }
 private:
@@ -75,26 +77,26 @@ private:
 };
 
 template <Uint32 DEG, typename ScalarField_, typename VectorSpaceId_, typename Basis_, typename Scalar>
-struct VariableStringComputer<DEG,Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<ScalarField_,2,VectorSpaceId_>,Basis_>,Scalar>
+struct VariableStringComputer<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,2,VectorSpaceId_>,Basis_>,Scalar>
 {
-    static std::string compute(typename HomogeneousPolynomial<DEG,Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<ScalarField_,2,VectorSpaceId_>,Basis_>,Scalar>::Sym::MultiIndex const &n)
+    static std::string compute(typename HomogeneousPolynomial<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,2,VectorSpaceId_>,Basis_>,Scalar>::Sym::MultiIndex const &n)
     {
-        typedef typename HomogeneousPolynomial<DEG,Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<ScalarField_,2,VectorSpaceId_>,Basis_>,Scalar>::Sym::MultiIndex MultiIndex;
-        MultiIndex m = Tenh::sorted<typename MultiIndex::IndexTypeList,std::less<Uint32> >(n);
+        typedef typename HomogeneousPolynomial<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,2,VectorSpaceId_>,Basis_>,Scalar>::Sym::MultiIndex MultiIndex;
+        MultiIndex m = sorted<typename MultiIndex::IndexTypeList,std::less<Uint32> >(n);
         char vars[3] = "xy";
-        Uint32 last = m.value_of_index(0, Tenh::DONT_CHECK_RANGE);
+        Uint32 last = m.value_of_index(0, DONT_CHECK_RANGE);
         Uint32 count = 1;
         std::string result;
         result.push_back(vars[last]);
         for (Uint32 i = 1; i < MultiIndex::LENGTH; ++i)
         {
-            if (m.value_of_index(i, Tenh::DONT_CHECK_RANGE) == last)
+            if (m.value_of_index(i, DONT_CHECK_RANGE) == last)
             {
                 ++count;
             }
             else
             {
-                last = m.value_of_index(i, Tenh::DONT_CHECK_RANGE);
+                last = m.value_of_index(i, DONT_CHECK_RANGE);
                 if (count != 1)
                 {
                     result += "^" + AS_STRING(count);
@@ -116,26 +118,26 @@ private:
 };
 
 template <Uint32 DEG, typename ScalarField_, typename VectorSpaceId_, typename Basis_, typename Scalar>
-struct VariableStringComputer<DEG,Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<ScalarField_,3,VectorSpaceId_>,Basis_>,Scalar>
+struct VariableStringComputer<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,3,VectorSpaceId_>,Basis_>,Scalar>
 {
-    static std::string compute(typename HomogeneousPolynomial<DEG,Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<ScalarField_,3,VectorSpaceId_>,Basis_>,Scalar>::Sym::MultiIndex const &n)
+    static std::string compute(typename HomogeneousPolynomial<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,3,VectorSpaceId_>,Basis_>,Scalar>::Sym::MultiIndex const &n)
     {
-        typedef typename HomogeneousPolynomial<DEG,Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<ScalarField_,3,VectorSpaceId_>,Basis_>,Scalar>::Sym::MultiIndex MultiIndex;
-        MultiIndex m = Tenh::sorted<typename MultiIndex::IndexTypeList,std::less<Uint32> >(n);
+        typedef typename HomogeneousPolynomial<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,3,VectorSpaceId_>,Basis_>,Scalar>::Sym::MultiIndex MultiIndex;
+        MultiIndex m = sorted<typename MultiIndex::IndexTypeList,std::less<Uint32> >(n);
         char vars[4] = "xyz";
-        Uint32 last = m.value_of_index(0, Tenh::DONT_CHECK_RANGE);
+        Uint32 last = m.value_of_index(0, DONT_CHECK_RANGE);
         Uint32 count = 1;
         std::string result;
         result.push_back(vars[last]);
         for (Uint32 i = 1; i < MultiIndex::LENGTH; ++i)
         {
-            if (m.value_of_index(i, Tenh::DONT_CHECK_RANGE) == last)
+            if (m.value_of_index(i, DONT_CHECK_RANGE) == last)
             {
                 ++count;
             }
             else
             {
-                last = m.value_of_index(i, Tenh::DONT_CHECK_RANGE);
+                last = m.value_of_index(i, DONT_CHECK_RANGE);
                 if (count != 1)
                 {
                     result += "^" + AS_STRING(count);
@@ -170,7 +172,7 @@ std::ostream &operator << (std::ostream &out, HomogeneousPolynomial<DEG,BasedVec
     {
 
         MultiIndex m = PolyType::Sym::template bundle_index_map<typename MultiIndex::IndexTypeList, ComponentIndex>(it);
-        Scalar coeff = poly.coefficients()[it] * Scalar(Tenh::Factorial_t<DEG>::V / (Tenh::MultiIndexMultiplicity_t<MultiIndex>::eval(m)));
+        Scalar coeff = poly.coefficients()[it] * Scalar(Factorial_t<DEG>::V / (MultiIndexMultiplicity_t<MultiIndex>::eval(m)));
         if (coeff == Scalar(1))
         {
             if (first_loop)
@@ -239,4 +241,6 @@ std::ostream &operator << (std::ostream &out, MultivariatePolynomial<DEG,BasedVe
     }
 }
 
-#endif // APPLICATIONS_POLYNOMIAL_UTILITY_HPP_
+} // end of namespace Tenh
+
+#endif // TENH_UTILITY_POLYNOMIAL_UTILITY_HPP_

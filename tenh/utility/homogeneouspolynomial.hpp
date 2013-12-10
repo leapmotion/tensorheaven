@@ -1,10 +1,10 @@
 // ///////////////////////////////////////////////////////////////////////////
-// applications/homogeneouspolynomial.hpp by Ted Nitz, created 2013/08/27
+// tenh/utility/homogeneouspolynomial.hpp by Ted Nitz, created 2013/08/27
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#ifndef APPLICATIONS_HOMOGENEOUSPOLYNOMIAL_HPP_
-#define APPLICATIONS_HOMOGENEOUSPOLYNOMIAL_HPP_
+#ifndef TENH_UTILITY_HOMOGENEOUSPOLYNOMIAL_HPP_
+#define TENH_UTILITY_HOMOGENEOUSPOLYNOMIAL_HPP_
 
 #include "tenh/core.hpp"
 
@@ -20,39 +20,39 @@
 #include "tenh/multiindex.hpp"
 #include "tenh/preallocatedarray.hpp"
 
-using Tenh::Uint32;
+namespace Tenh {
 
 template <Uint32 DEGREE_, typename BasedVectorSpace_, typename Scalar_ = float>
 struct HomogeneousPolynomial
 {
-    typedef Tenh::ImplementationOf_t<BasedVectorSpace_,Scalar_> Vector;
-    typedef Tenh::SymmetricPowerOfBasedVectorSpace_c<DEGREE_,BasedVectorSpace_> SymmetricPower;
-    typedef Tenh::ImplementationOf_t<SymmetricPower,Scalar_> Sym;
-    typedef typename Tenh::DualOf_f<Sym>::T SymDual;
+    typedef ImplementationOf_t<BasedVectorSpace_,Scalar_> Vector;
+    typedef SymmetricPowerOfBasedVectorSpace_c<DEGREE_,BasedVectorSpace_> SymmetricPower;
+    typedef ImplementationOf_t<SymmetricPower,Scalar_> Sym;
+    typedef typename DualOf_f<Sym>::T SymDual;
 
     typedef Scalar_ Scalar;
 
     static Uint32 const DIMENSION = SymDual::DIM;
 
-    typedef Tenh::PreallocatedArray_t<Scalar_,DIMENSION> CoefficientArray;
-    typedef Tenh::PreallocatedArray_t<Scalar_ const,DIMENSION> ConstCoefficientArray;
+    typedef PreallocatedArray_t<Scalar_,DIMENSION> CoefficientArray;
+    typedef PreallocatedArray_t<Scalar_ const,DIMENSION> ConstCoefficientArray;
 
-    HomogeneousPolynomial (Tenh::FillWith_t<Scalar_> const &fill_with) : m_coefficients(fill_with) { }
-    HomogeneousPolynomial (Tenh::WithoutInitialization const &w) : m_coefficients(w) { }
+    HomogeneousPolynomial (FillWith_t<Scalar_> const &fill_with) : m_coefficients(fill_with) { }
+    HomogeneousPolynomial (WithoutInitialization const &w) : m_coefficients(w) { }
     HomogeneousPolynomial (SymDual const &term) : m_coefficients(term) { }
     HomogeneousPolynomial (HomogeneousPolynomial const &other) : m_coefficients(other.m_coefficients) { }
 
     Scalar_ evaluate (Vector const &at) const
     {
-        Tenh::AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'i'> i;
         return m_coefficients(i)*outer_power_of(at)(i);
     }
 
     // Member operators
     HomogeneousPolynomial operator * (Scalar_ const &rhs) const
     {
-        HomogeneousPolynomial result(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
-        Tenh::AbstractIndex_c<'i'> i;
+        HomogeneousPolynomial result(Static<WithoutInitialization>::SINGLETON);
+        AbstractIndex_c<'i'> i;
 
         result.m_coefficients(i) = rhs*m_coefficients(i);
         return result;
@@ -68,8 +68,8 @@ struct HomogeneousPolynomial
 
     HomogeneousPolynomial operator + (HomogeneousPolynomial const &rhs) const
     {
-        Tenh::AbstractIndex_c<'i'> i;
-        HomogeneousPolynomial result(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+        AbstractIndex_c<'i'> i;
+        HomogeneousPolynomial result(Static<WithoutInitialization>::SINGLETON);
         result.m_coefficients(i) = m_coefficients(i) + rhs.m_coefficients(i);
         return result;
     }
@@ -82,27 +82,27 @@ struct HomogeneousPolynomial
         typedef typename ResultPolynomial::SymDual ResultSymDual;
         typedef typename ResultSymDual::MultiIndex ResultMultiIndex;
         typedef typename ResultSymDual::ComponentIndex ResultComponentIndex;
-        typedef typename Tenh::TensorPowerOfBasedVectorSpace_f<OTHER_DEGREE_ + DEGREE_,typename Tenh::DualOf_f<BasedVectorSpace_>::T>::T ResultingTensorPowerType;
+        typedef typename TensorPowerOfBasedVectorSpace_f<OTHER_DEGREE_ + DEGREE_,typename DualOf_f<BasedVectorSpace_>::T>::T ResultingTensorPowerType;
 
-        typedef typename Tenh::Sym_f<OTHER_DEGREE_ + DEGREE_,typename Tenh::DualOf_f<BasedVectorSpace_>::T,Scalar_>::T SymmetrizeType;
+        typedef typename Sym_f<OTHER_DEGREE_ + DEGREE_,typename DualOf_f<BasedVectorSpace_>::T,Scalar_>::T SymmetrizeType;
 
-        ResultPolynomial result(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+        ResultPolynomial result(Static<WithoutInitialization>::SINGLETON);
         SymmetrizeType symmetrize;
 
-        Tenh::AbstractIndex_c<'i'> i;
-        Tenh::AbstractIndex_c<'j'> j;
-        Tenh::AbstractIndex_c<'k'> k;
-        Tenh::AbstractIndex_c<'I'> I;
-        Tenh::AbstractIndex_c<'J'> J;
-        Tenh::AbstractIndex_c<'K'> K;
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        AbstractIndex_c<'k'> k;
+        AbstractIndex_c<'I'> I;
+        AbstractIndex_c<'J'> J;
+        AbstractIndex_c<'K'> K;
 
         result.m_coefficients(i) = (m_coefficients(j).split(j,J)*rhs.m_coefficients(k).split(k,K)).bundle(J|K,ResultingTensorPowerType(),I)*symmetrize(i|I);
 
         for (ResultComponentIndex it; it.is_not_at_end(); ++it)
         {
             ResultMultiIndex m = ResultSymDual::template bundle_index_map<typename ResultMultiIndex::IndexTypeList, ResultComponentIndex>(it);
-            result.m_coefficients[it] *= static_cast<Scalar_>(Tenh::MultiIndexMultiplicity_t<ResultMultiIndex>::eval(m))
-                                         / static_cast<Scalar_>(Tenh::Factorial_t<OTHER_DEGREE_ + DEGREE_>::V);
+            result.m_coefficients[it] *= static_cast<Scalar_>(MultiIndexMultiplicity_t<ResultMultiIndex>::eval(m))
+                                         / static_cast<Scalar_>(Factorial_t<OTHER_DEGREE_ + DEGREE_>::V);
         }
 
         return result;
@@ -130,13 +130,13 @@ struct HomogeneousPolynomial
     // this object is alive -- this is effectively a shallow copy.
     ConstCoefficientArray as_array () const
     {
-        return ConstCoefficientArray(reinterpret_cast<Scalar_ const *>(&m_coefficients), Tenh::DONT_CHECK_POINTER);
+        return ConstCoefficientArray(reinterpret_cast<Scalar_ const *>(&m_coefficients), DONT_CHECK_POINTER);
     }
     // NOTE: the PreallocatedArray_t returned from this is valid only as long as
     // this object is alive -- this is effectively a shallow copy.
     CoefficientArray as_array ()
     {
-        return CoefficientArray(reinterpret_cast<Scalar_ *>(&m_coefficients), Tenh::DONT_CHECK_POINTER);
+        return CoefficientArray(reinterpret_cast<Scalar_ *>(&m_coefficients), DONT_CHECK_POINTER);
     }
 
 private:
@@ -145,16 +145,16 @@ private:
     // This should probably be a function in tensor heaven somewhere.
     Sym outer_power_of (Vector const &input) const
     {
-        Sym result(Tenh::fill_with<Scalar_>(1));
+        Sym result(fill_with<Scalar_>(1));
 
         for (typename Sym::ComponentIndex it; it.is_not_at_end(); ++it)
         {
             typename Sym::MultiIndex m = Sym::template bundle_index_map<typename Sym::MultiIndex::IndexTypeList, typename Sym::ComponentIndex>(it);
             for (Uint32 i = 0; i < Sym::MultiIndex::LENGTH; ++i)
             {
-                result[it] *= input[typename Vector::ComponentIndex(m.value_of_index(i, Tenh::DONT_CHECK_RANGE))];
+                result[it] *= input[typename Vector::ComponentIndex(m.value_of_index(i, DONT_CHECK_RANGE))];
             }
-            result[it] *= Tenh::Factorial_t<DEGREE_>::V / (Tenh::MultiIndexMultiplicity_t<typename Sym::MultiIndex>::eval(m));
+            result[it] *= Factorial_t<DEGREE_>::V / (MultiIndexMultiplicity_t<typename Sym::MultiIndex>::eval(m));
         }
         return result;
     }
@@ -182,4 +182,6 @@ HomogeneousPolynomial<DEG_,BasedVectorSpace_,Scalar_>
     return rhs*Scalar_(lhs);
 }
 
-#endif // APPLICATIONS_HOMOGENEOUSPOLYNOMIAL_HPP_
+} // end of namespace Tenh
+
+#endif // TENH_UTILITY_HOMOGENEOUSPOLYNOMIAL_HPP_
