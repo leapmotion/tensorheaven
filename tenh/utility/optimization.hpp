@@ -44,9 +44,11 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
 
     AbstractIndex_c<'a'> a;
     AbstractIndex_c<'b'> b;
+    AbstractIndex_c<'c'> c;
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
     AbstractIndex_c<'k'> k;
+    AbstractIndex_c<'l'> l;
 
     VectorType current_approximation = guess;
     int iteration_count = 0;
@@ -91,8 +93,9 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
         if (d < EPSILON) // h isn't postive definite along step so fall back to conjugate gradient
         {
             VectorType v(Static<WithoutInitialization>::SINGLETON);
-            v(i).no_alias() = h(a).split(a,i|j)*covector_innerproduct(b).split(b,j|k)*g(k);
-            d = g(i)*v(i);
+            v(j).no_alias() = g(i) * covector_innerproduct(a).split(a,i|j);
+            // d = g(i)*v(i);
+            d = v(i) * h(b).split(b,i|j) * v(j);
 
             if (d < EPSILON) // h isn't positive definite along g either, gradient descent
             {
@@ -110,10 +113,11 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
                     std::cout << "Using conjugate gradient." << std::endl;
                     ++conjugate_gradient;
                 }
-                Scalar_ v_squared_norm = v(i)*vector_innerproduct(a).split(a,i|j)*v(j);
+                //Scalar_ v_squared_norm = v(i)*vector_innerproduct(a).split(a,i|j)*v(j);
                 //Scalar_ v_norm = std::sqrt(v_squared_norm);
 
-                step(i).no_alias() = -g_squared_norm / v_squared_norm * v(i);
+                // step(i).no_alias() = -g_squared_norm / v_squared_norm * v(i);
+                step(i).no_alias() = (-g_squared_norm / (Scalar_(2) * d)) * v(i);
             }
         }
         else // h is positive definite along step, use it as is.
