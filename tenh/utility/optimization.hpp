@@ -10,22 +10,17 @@
 
 #include <iostream>
 
-// #include "tenh/conceptual/symmetricpower.hpp"
-// #include "tenh/conceptual/tensorproduct.hpp"
-// #include "tenh/conceptual/vectorspace.hpp"
-// #include "tenh/implementation/sym.hpp"
-// #include "tenh/implementation/vector.hpp"
-// #include "tenh/implementation/vee.hpp"
-// #include "tenh/meta/typelist_utility.hpp"
-// #include "tenh/multiindex.hpp"
-// #include "tenh/preallocatedarray.hpp"
+#include "tenh/implementation/vector.hpp"
+#include "tenh/implementation/vee.hpp"
 
 namespace Tenh {
 
 // adaptive minimization which uses, in order of availability/preference,
 // 1. Newton's method, 2. conjugate gradient, and 3. gradient descent.
 template <typename InnerProductId_, typename ObjectiveFunction_, typename BasedVectorSpace_, typename Scalar_>
-ImplementationOf_t<BasedVectorSpace_, Scalar_> minimize (ObjectiveFunction_ const &func, ImplementationOf_t<BasedVectorSpace_, Scalar_> const &guess, Scalar_ const tolerance)
+ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const &func, 
+                                                        ImplementationOf_t<BasedVectorSpace_,Scalar_> const &guess,
+                                                        Scalar_ const tolerance)
 {
     typedef ImplementationOf_t<BasedVectorSpace_, Scalar_> VectorType;
     typedef InnerProductId_ InnerProductType;
@@ -72,7 +67,8 @@ ImplementationOf_t<BasedVectorSpace_, Scalar_> minimize (ObjectiveFunction_ cons
             std::cout << current_approximation << " " << g_norm << std::endl;
         }
 
-        if (g_norm <= tolerance) {
+        if (g_norm <= tolerance)
+        {
             tolerance_was_attained = true;
             break;
         }
@@ -124,7 +120,7 @@ ImplementationOf_t<BasedVectorSpace_, Scalar_> minimize (ObjectiveFunction_ cons
         {
             if (PRINT_DEBUG_OUTPUT)
             {
-                std::cout << "Newton's method, fuck yes." << std::endl;
+                std::cout << "Newton's method." << std::endl;
                 ++newtons_method;
             }
         }
@@ -151,6 +147,7 @@ ImplementationOf_t<BasedVectorSpace_, Scalar_> minimize (ObjectiveFunction_ cons
             if (next_value > current_value)
             {
                 step = partial_step;
+                std::cout << "used " << it << " steps in line search\n";
                 break;
             }
             current_value = next_value;
