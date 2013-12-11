@@ -85,6 +85,16 @@ public:
     typedef typename TensorProductOfImmutable2Tensors_f<InnerProductTypeList>::T T;
 };
 
+template <typename FactorTypeList_, typename InnerProductIdTypeList_, typename Scalar_>
+struct InnerProduct_f<DirectSumOfBasedVectorSpaces_c<FactorTypeList_>,DirectSum_c<InnerProductIdTypeList_>,Scalar_>
+{
+private:
+    typedef typename InnerProductOfEachInTypeList_f<FactorTypeList_,InnerProductIdTypeList_,Scalar_>::T InnerProductTypeList;
+    InnerProduct_f();
+public:
+    typedef typename DirectSumOfImmutable2Tensors_f<InnerProductTypeList>::T T;
+};
+
 } // end of namespace Tenh
 
 #endif // TENH_IMPLEMENTATION_INNERPRODUCT_HPP_
