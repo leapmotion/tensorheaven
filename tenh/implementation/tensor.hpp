@@ -67,12 +67,13 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
     struct BasisVector_f
     {
     private:
-        enum { STATIC_ASSERT_IN_ENUM((INDEX_ < DIM), INDEX_OUT_OF_RANGE) };
+        enum { STATIC_ASSERT_IN_ENUM((INDEX_ < Parent_Tensor_i::DIM), INDEX_OUT_OF_RANGE) };
         BasisVector_f () { }
+        typedef typename ComponentGenerator_Characteristic_f<Scalar_,Parent_Tensor_i::DIM,INDEX_>::T ComponentGenerator;
     public:
         typedef ImplementationOf_t<Concept,
                                    Scalar_,
-                                   UseImmutableArray_t<typename ComponentGenerator_Characteristic_f<Scalar_,DIM,INDEX_>::T>,
+                                   UseImmutableArray_t<ComponentGenerator>,
                                    Derived_> T;
         static T const V;
     };

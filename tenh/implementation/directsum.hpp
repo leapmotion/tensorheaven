@@ -51,24 +51,37 @@ Uint32 component_for_offset (SummandTypeList_ const &, Uint32 offset)
 template <typename SummandTypeList_, typename Scalar_, typename UseArrayType_, typename Derived_>
 struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_,Derived_>
     :
-    public ImplementationOf_t<typename UniqueBasedVectorSpaceStructureOf_f<DirectSumOfBasedVectorSpaces_c<SummandTypeList_> >::T,Scalar_,UseArrayType_, typename DerivedType_f<Derived_, ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_,Derived_> >::T>
+    public Vector_i<typename DerivedType_f<Derived_,ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_,Derived_> >::T,
+                    Scalar_,
+                    DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,
+                    ComponentsAreImmutable_f<UseArrayType_>::V>,
+    // privately inherited because it is an implementation detail
+    private ArrayStorage_f<Scalar_,
+                           DimensionOf_f<DirectSumOfBasedVectorSpaces_c<SummandTypeList_> >::V,
+                           UseArrayType_,
+                           typename DerivedType_f<Derived_,ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_,Derived_> >::T >::T
 {
-    typedef ImplementationOf_t<typename UniqueBasedVectorSpaceStructureOf_f<DirectSumOfBasedVectorSpaces_c<SummandTypeList_> >::T,Scalar_,UseArrayType_, typename DerivedType_f<Derived_, ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_,Derived_> >::T> Parent_Implementation;
-    typedef typename Parent_Implementation::Parent_Vector_i Parent_Vector_i;
-    typedef typename Parent_Implementation::Parent_Array_i Parent_Array_i;
+    typedef Vector_i<typename DerivedType_f<Derived_,ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_,Derived_> >::T,
+                     Scalar_,
+                     DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,
+                     ComponentsAreImmutable_f<UseArrayType_>::V> Parent_Vector_i;
+    typedef typename ArrayStorage_f<Scalar_,
+                                    DimensionOf_f<DirectSumOfBasedVectorSpaces_c<SummandTypeList_> >::V,
+                                    UseArrayType_,
+                                    typename DerivedType_f<Derived_,ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_,Derived_> >::T >::T Parent_Array_i;
 
     typedef DirectSumOfBasedVectorSpaces_c<SummandTypeList_> Concept;
     typedef UseArrayType_ UseArrayType;
-    typedef typename Parent_Implementation::Derived Derived;
-    typedef typename Parent_Implementation::Scalar Scalar;
-    typedef typename Parent_Implementation::BasedVectorSpace BasedVectorSpace;
-    using Parent_Implementation::DIM;
-    typedef typename Parent_Implementation::ComponentIndex ComponentIndex;
-    typedef typename Parent_Implementation::MultiIndex MultiIndex;
+    typedef typename Parent_Vector_i::Derived Derived;
+    typedef typename Parent_Vector_i::Scalar Scalar;
+    typedef typename Parent_Vector_i::BasedVectorSpace BasedVectorSpace;
+    using Parent_Vector_i::DIM;
+    typedef typename Parent_Vector_i::ComponentIndex ComponentIndex;
+    typedef typename Parent_Vector_i::MultiIndex MultiIndex;
 
     using Parent_Array_i::COMPONENTS_ARE_IMMUTABLE;
-    typedef typename Parent_Implementation::ComponentAccessConstReturnType ComponentAccessConstReturnType;
-    typedef typename Parent_Implementation::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
+    typedef typename Parent_Array_i::ComponentAccessConstReturnType ComponentAccessConstReturnType;
+    typedef typename Parent_Array_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
 
     typedef typename DualOf_f<ImplementationOf_t>::T Dual; // relies on the template specialization below
 
@@ -82,24 +95,24 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
     struct BasisVector_f
     {
     private:
-        enum { STATIC_ASSERT_IN_ENUM((INDEX_ < DIM), INDEX_OUT_OF_RANGE) };
+        enum { STATIC_ASSERT_IN_ENUM((INDEX_ < Parent_Vector_i::DIM), INDEX_OUT_OF_RANGE) };
         BasisVector_f () { }
     public:
         typedef ImplementationOf_t<Concept,
                                    Scalar_,
-                                   UseImmutableArray_t<typename ComponentGenerator_Characteristic_f<Scalar_,DIM,INDEX_>::T>,
+                                   UseImmutableArray_t<typename ComponentGenerator_Characteristic_f<Scalar_,Parent_Vector_i::DIM,INDEX_>::T>,
                                    Derived_> T;
         static T const V;
     };
 
-    explicit ImplementationOf_t (WithoutInitialization const &w) : Parent_Implementation(w) { }
+    explicit ImplementationOf_t (WithoutInitialization const &w) : Parent_Array_i(w) { }
 
     // only use these if UseMemberArray is specified
 
     // probably only useful for zero element (because this is basis-dependent)
     ImplementationOf_t (FillWith_t<Scalar> const &fill_with)
         :
-        Parent_Implementation(fill_with)
+        Parent_Array_i(fill_with)
     {
         STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemberArray);
     }
@@ -107,7 +120,7 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
     template <typename HeadType_, typename BodyTypeList_>
     ImplementationOf_t (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x)
         :
-        Parent_Implementation(x.as_member_array())
+        Parent_Array_i(x.as_member_array())
     {
         STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemberArray);
     }
@@ -116,14 +129,14 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
 
     explicit ImplementationOf_t (Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
-        Parent_Implementation(pointer_to_allocation, check_pointer)
+        Parent_Array_i(pointer_to_allocation, check_pointer)
     {
         STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
     }
     ImplementationOf_t (FillWith_t<Scalar> const &fill_with,
                         Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
-        Parent_Implementation(fill_with, pointer_to_allocation, check_pointer)
+        Parent_Array_i(fill_with, pointer_to_allocation, check_pointer)
     {
         STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
     }
@@ -132,7 +145,7 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
     ImplementationOf_t (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x,
                         Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
-        Parent_Implementation(x, pointer_to_allocation, check_pointer)
+        Parent_Array_i(x, pointer_to_allocation, check_pointer)
     {
         STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
     }
@@ -140,15 +153,15 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
     // only use this if UseImmutableArray_t<...> is specified or if the vector space is 0-dimensional
     ImplementationOf_t ()
         :
-        Parent_Implementation(WithoutInitialization()) // sort of meaningless constructor
+        Parent_Array_i(WithoutInitialization()) // sort of meaningless constructor
     {
         STATIC_ASSERT(IsUseImmutableArray_f<UseArrayType_>::V || DIM == 0, MUST_BE_USE_IMMUTABLE_ARRAY_OR_BE_ZERO_DIMENSIONAL);
     }
 
-    using Parent_Implementation::as_derived;
-    using Parent_Implementation::operator[];
-    using Parent_Implementation::allocation_size_in_bytes;
-    using Parent_Implementation::pointer_to_allocation;
+    using Parent_Array_i::as_derived;
+    using Parent_Array_i::operator[];
+    using Parent_Array_i::allocation_size_in_bytes;
+    using Parent_Array_i::pointer_to_allocation;
 
     template <Uint32 N>
     struct ElementType_f
@@ -160,8 +173,7 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
                                    Scalar_,
                                    typename If_f<IsUseImmutableArray_f<UseArrayType_>::V,
                                                  UseArrayType_,
-                                                 UsePreallocatedArray>::T >
-                T;
+                                                 UsePreallocatedArray>::T > T;
     };
 
     template <Uint32 N>

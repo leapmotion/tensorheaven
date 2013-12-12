@@ -22,8 +22,7 @@ namespace Tenh {
 
 // NOTE: Scalar_ MUST be a POD data type.  An implementation of this interface
 // really only needs to provide implementations of the const and non-const
-// component_access_without_range_check methods.  BasedVectorSpace_ should be
-// a BasedVectorSpace_c type.
+// component_access_without_range_check methods.
 template <typename Derived_, typename Scalar_, typename BasedVectorSpace_, bool COMPONENTS_ARE_IMMUTABLE_>
 struct Vector_i
 {
@@ -72,29 +71,29 @@ struct Vector_i
     Derived const &as_derived () const { return *static_cast<Derived const *>(this); }
     Derived &as_derived () { return *static_cast<Derived *>(this); }
 
-    // NOTE: will not currently work for complex types
-    typename AssociatedFloatingPointType_t<Scalar>::T squared_norm () const
-    {
-        AbstractIndex_c<'i'> i;
-        // TODO: once strong typing is done, this will require an inner product
-        return operator()(i)*operator()(i);
-    }
-    // NOTE: will not currently work for complex types
-    typename AssociatedFloatingPointType_t<Scalar>::T norm () const
-    {
-        return std::sqrt(squared_norm());
-    }
+    // // NOTE: will not currently work for complex types
+    // typename AssociatedFloatingPointType_t<Scalar>::T squared_norm () const
+    // {
+    //     AbstractIndex_c<'i'> i;
+    //     // TODO: once strong typing is done, this will require an inner product
+    //     return operator()(i)*operator()(i);
+    // }
+    // // NOTE: will not currently work for complex types
+    // typename AssociatedFloatingPointType_t<Scalar>::T norm () const
+    // {
+    //     return std::sqrt(squared_norm());
+    // }
 
     // NOTE: operator [] will be used to return values, while operator () will be
     // used to create expression templates for the purposes of indexed contractions.
 
-    ComponentAccessConstReturnType operator [] (ComponentIndex const &i) const { return as_derived().Derived::operator[](i); }
-    ComponentAccessNonConstReturnType operator [] (ComponentIndex const &i) { return as_derived().Derived::operator[](i); }
+    ComponentAccessConstReturnType operator [] (ComponentIndex const &i) const { return as_derived().operator[](i); }
+    ComponentAccessNonConstReturnType operator [] (ComponentIndex const &i) { return as_derived().operator[](i); }
 
     template <typename Index_>
-    ComponentAccessConstReturnType operator [] (MultiIndex_t<TypeList_t<Index_> > const &m) const { return as_derived().Derived::operator[](m.head()); }
+    ComponentAccessConstReturnType operator [] (MultiIndex_t<TypeList_t<Index_> > const &m) const { return as_derived().operator[](m.head()); }
     template <typename Index_>
-    ComponentAccessNonConstReturnType operator [] (MultiIndex_t<TypeList_t<Index_> > const &m) { return as_derived().Derived::operator[](m.head()); }
+    ComponentAccessNonConstReturnType operator [] (MultiIndex_t<TypeList_t<Index_> > const &m) { return as_derived().operator[](m.head()); }
 
     // because the return type for "operator () (...) const" is an abomination, use this helper.
     template <AbstractIndexSymbol SYMBOL_>

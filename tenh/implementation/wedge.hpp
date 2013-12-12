@@ -73,12 +73,12 @@ struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scal
     struct BasisVector_f
     {
     private:
-        enum { STATIC_ASSERT_IN_ENUM((INDEX_ < DIM), INDEX_OUT_OF_RANGE) };
+        enum { STATIC_ASSERT_IN_ENUM((INDEX_ < Parent_EmbeddableAsTensor_i::DIM), INDEX_OUT_OF_RANGE) };
         BasisVector_f () { }
     public:
         typedef ImplementationOf_t<Concept,
                                    Scalar_,
-                                   UseImmutableArray_t<typename ComponentGenerator_Characteristic_f<Scalar_,DIM,INDEX_>::T>,
+                                   UseImmutableArray_t<typename ComponentGenerator_Characteristic_f<Scalar_,Parent_EmbeddableAsTensor_i::DIM,INDEX_>::T>,
                                    Derived_> T;
         static T const V;
     };

@@ -62,12 +62,13 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
     struct BasisVector_f
     {
     private:
-        enum { STATIC_ASSERT_IN_ENUM((INDEX_ < DIM), INDEX_OUT_OF_RANGE) };
+        enum { STATIC_ASSERT_IN_ENUM((INDEX_ < Parent_Vector_i::DIM), INDEX_OUT_OF_RANGE) };
         BasisVector_f () { }
+        typedef typename ComponentGenerator_Characteristic_f<Scalar_,Parent_Vector_i::DIM,INDEX_>::T ComponentGenerator;
     public:
         typedef ImplementationOf_t<Concept,
                                    Scalar_,
-                                   UseImmutableArray_t<typename ComponentGenerator_Characteristic_f<Scalar_,DIM,INDEX_>::T>,
+                                   UseImmutableArray_t<ComponentGenerator>,
                                    Derived_> T;
         static T const V;
     };

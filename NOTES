@@ -68,6 +68,9 @@
 - This works, if a and b are both of type U \otimes U^*
   b(i) = a(j|k).bundle(k|j, type(), i);
   That's not good.
+- could templatize the Scalar parameter for FillWith_t<Scalar> in the fill-with constructors for
+  various things, and then the constructor itself could do the conversion.  then fill_with(1),
+  which returns FillWith_t<int>, will do the right thing.
 
 
 ###implemented features/items:

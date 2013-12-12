@@ -83,11 +83,19 @@ struct ExpressionTemplate_Eval_t
     typedef TensorProductOfBasedVectorSpaces_c<FreeFactorTypeList> ExpressionTensorType;
     typedef ImplementationOf_t<ExpressionTensorType,Scalar,UseMemberArray> EvaluatedTensor;
 
-    EvaluatedTensor const &tensor_value () const
+    // returns the cached value, caching it if necessary.
+    EvaluatedTensor const &value () const
     {
         this->ensure_tensor_is_cached();
         return m_cached_tensor;
     }
+    // used e.g. for passing the value of an indexed expression into a function,
+    // such as in
+    //   function((x(i)*y(j)).eval())
+    // where the parameter to function is of type EvaluatedTensor const &,
+    // or BaseClass const &, where BaseClass is a base class of EvaluatedTensor.
+    // operator EvaluatedTensor const & () const { return value(); }
+    // operator EvaluatedTensor () const { return value(); }
 
     // this blocks aliasing, so it doesn't use the tensor in the sense of this method
     template <typename OtherTensor>
