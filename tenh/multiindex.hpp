@@ -87,7 +87,7 @@ public:
     MultiIndex_t (ComponentIndex_t<COMPONENT_COUNT> const &i)
         :
         Parent(HeadIndexType(i.value() / BODY_COMPONENT_COUNT_OR_ONE),
-               BodyMultiIndex(ComponentIndex_t<BodyMultiIndex::COMPONENT_COUNT>(i.value() % BODY_COMPONENT_COUNT_OR_ONE)))
+        BodyMultiIndex(ComponentIndex_t<BodyMultiIndex::COMPONENT_COUNT>(i.value() % BODY_COMPONENT_COUNT_OR_ONE)))
     { }
 
     bool operator == (MultiIndex_t const &m) const { return this->head() == m.head() && body() == m.body(); }
@@ -97,6 +97,7 @@ public:
     bool is_at_end () const { return this->head().is_at_end(); } // because the head is the last one incremented
     bool is_not_at_end () const { return this->head().is_not_at_end(); } // because the head is the last one incremented
     Uint32 value () const { return BodyMultiIndex::COMPONENT_COUNT*this->head().value() + this->body().value(); }
+    ComponentIndex_t<COMPONENT_COUNT> as_component_index () const { return ComponentIndex_t<COMPONENT_COUNT>(value(), DONT_CHECK_RANGE); }
     // TODO: think about adding a redundant single index that just increments and can be returned directly in value()
     void operator ++ ()
     {
@@ -273,6 +274,7 @@ public:
     bool is_at_end () const { return this->head().is_at_end(); }
     bool is_not_at_end () const { return this->head().is_not_at_end(); }
     Uint32 value () const { return this->head().value(); }
+    ComponentIndex_t<COMPONENT_COUNT> as_component_index () const { return ComponentIndex_t<COMPONENT_COUNT>(value(), DONT_CHECK_RANGE); }
     void operator ++ () { ++(this->head()); }
     void reset () { this->head().reset(); }
 
@@ -417,6 +419,7 @@ struct MultiIndex_t<EmptyTypeList> : public List_t<EmptyTypeList>
     bool is_at_end () const { return true; }
     bool is_not_at_end () const { return false; }
     Uint32 value () const { return 0; } // vacuous value
+    ComponentIndex_t<COMPONENT_COUNT> as_component_index () const { return ComponentIndex_t<COMPONENT_COUNT>(value(), DONT_CHECK_RANGE); }
     void operator ++ () { } // no-op
     void reset () { } // no-op
 

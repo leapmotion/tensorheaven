@@ -9,6 +9,7 @@
 #include "tenh/core.hpp"
 
 #include "tenh/implementation/diagonal2tensor.hpp"
+#include "tenh/implementation/directsum.hpp"
 #include "tenh/implementation/tensorproduct.hpp"
 #include "tenh/interface/vector.hpp"
 
@@ -85,6 +86,7 @@ public:
     typedef typename TensorProductOfImmutable2Tensors_f<InnerProductTypeList>::T T;
 };
 
+// induced inner product on DirectSumOfBasedVectorSpaces_c
 template <typename FactorTypeList_, typename InnerProductIdTypeList_, typename Scalar_>
 struct InnerProduct_f<DirectSumOfBasedVectorSpaces_c<FactorTypeList_>,DirectSum_c<InnerProductIdTypeList_>,Scalar_>
 {
