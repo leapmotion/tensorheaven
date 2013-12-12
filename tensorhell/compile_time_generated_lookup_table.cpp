@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "tenh/core.hpp"
+#include "tenh/meta/typelist.hpp"
 #include "tenh/meta/typestringof.hpp"
 
 using namespace std;
@@ -68,6 +69,9 @@ struct LookupTable_t<Function_f_,START_END_,START_END_,Codomain_>
 // test metafunction
 template <uint N_> struct Factorial_f { static uint const V = N_ * Factorial_f<N_-1>::V; };
 template <> struct Factorial_f<0> { static uint const V = 1; };
+
+// other test metafunction
+template <typename N_> struct Square_f { typedef Tenh::Value_t<uint,N_::V*N_::V> T; };
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -154,8 +158,44 @@ struct SymmetricIndexHashInverse_f
 template <uint N_>
 SymmetricIndex const SymmetricIndexHashInverse_f<N_>::V = SymmetricIndexHashInverse_f<N_>::T::V;
 
+///////////////////////////////////////////////////////////////////////////////
+
+// some function on SymmetricIndex_t
+// template <typename SymmetricIndex_> WhateverFunction_f;
+
+// template <uint I_, uint J_>
+// struct WhateverFunction_f<SymmetricIndex_t<I_,J_> >
+// {
+//     typedef SymmetricIndex_t<I_+1,J_+1> T;
+// };
+
+///////////////////////////////////////////////////////////////////////////////
+
+// composition of metafunctions
+
+// template <typename FunctionTypeList_, typename Input_> struct Composition_f;
+
+// template <template <typename T_> class HeadFunction_f_, typename BodyFunctionTypeList_, typename Input_>
+// struct Composition_f<Tenh::TypeList_t<template <typename T_> class HeadFunction_f_,BodyFunctionTypeList_>,Input_>
+// {
+// private:
+//     typedef typename Composition_f<BodyFunctionTypeList_,Input_>::T BodyCompositionValue;
+// public:
+//     typedef HeadFunction_f_<BodyCompositionValue>::T T;
+// };
+
+// template <template <typename T_> class HeadFunction_f_, typename Input_>
+// struct Composition_f<Tenh::TypeList_t<HeadFunction_f_>,Input_>
+// {
+//     typedef HeadFunction_f_<Input_>::T T;
+// };
+
+///////////////////////////////////////////////////////////////////////////////
+
+
 int main (int argc, char **argv)
 {
+    /*
     cout << "0! = " << Factorial_f<0>::V << '\n';
     cout << "1! = " << Factorial_f<1>::V << '\n';
     cout << "2! = " << Factorial_f<2>::V << '\n';
@@ -212,14 +252,14 @@ int main (int argc, char **argv)
     cout << FORMAT_VALUE((Tenh::type_string_of<SymmetricIndexHashInverse_f<SymmetricIndexHash_f<SymmetricIndex_t<2,2> >::V>::T>())) << '\n';
     cout << '\n';
 
-    // cout << FORMAT_VALUE((SymmetricIndex_t<0,0>::V)) << '\n';
-    // cout << FORMAT_VALUE((SymmetricIndex_t<1,0>::V)) << '\n';
-    // cout << FORMAT_VALUE((SymmetricIndex_t<1,1>::V)) << '\n';
-    // cout << FORMAT_VALUE((SymmetricIndex_t<2,0>::V)) << '\n';
-    // cout << FORMAT_VALUE((SymmetricIndex_t<2,1>::V)) << '\n';
-    // cout << FORMAT_VALUE((SymmetricIndex_t<2,2>::V)) << '\n';
-    // cout << FORMAT_VALUE((SymmetricIndex_t<3,0>::V)) << '\n';
-    // cout << '\n';
+    cout << FORMAT_VALUE((SymmetricIndex_t<0,0>::V)) << '\n';
+    cout << FORMAT_VALUE((SymmetricIndex_t<1,0>::V)) << '\n';
+    cout << FORMAT_VALUE((SymmetricIndex_t<1,1>::V)) << '\n';
+    cout << FORMAT_VALUE((SymmetricIndex_t<2,0>::V)) << '\n';
+    cout << FORMAT_VALUE((SymmetricIndex_t<2,1>::V)) << '\n';
+    cout << FORMAT_VALUE((SymmetricIndex_t<2,2>::V)) << '\n';
+    cout << FORMAT_VALUE((SymmetricIndex_t<3,0>::V)) << '\n';
+    cout << '\n';
 
     cout << FORMAT_VALUE(SymmetricIndexHashInverse_f<0>::V) << '\n';
     cout << FORMAT_VALUE(SymmetricIndexHashInverse_f<1>::V) << '\n';
@@ -242,7 +282,7 @@ int main (int argc, char **argv)
     cout << FORMAT_VALUE(SymmetricIndexHashInverse_f<7>::T::V) << '\n';
     cout << FORMAT_VALUE(SymmetricIndexHashInverse_f<8>::T::V) << '\n';
     cout << '\n';
-
+*/
     {
         static uint const LOOKUP_TABLE_SIZE = 40;
         typedef LookupTable_t<SymmetricIndexHashInverse_f,0,LOOKUP_TABLE_SIZE,SymmetricIndex> LookupTable;
@@ -251,6 +291,9 @@ int main (int argc, char **argv)
             cout << "lookup(" << i << ") = " << lookup[i] << '\n';
     }
 
+    // typedef TypeList_t<Square_f,
+    //         TypeList_t<Square_f> > FunctionTypeList;
+    // cout << FORMAT_VALUE(Tenh::type_string_of<Composition_f<FunctionTypeList,Tenh::Value_t<uint,0> >::T>()) << '\n';
 
     return 0;
 }

@@ -21,6 +21,11 @@ template <bool condition_> struct Assert;
 template <> struct Assert<true> { static bool const V = true; operator bool () const { return V; } };
 /// @endcond
 
+/// @brief Wrapper type to contain a type, useful basically only in If_f statements.
+/// @headerfile core.hpp "tenh/meta/core.hpp"
+/// @note The type string for this is defined in typestringof.hpp.
+template <typename T_> struct Type_t { typedef T_ T; };
+
 /// @brief Wrapper type to contain a compile time constant of any template value parameter type.
 /// @headerfile core.hpp "tenh/meta/core.hpp"
 /// @note The type string for this is defined in typestringof.hpp.
