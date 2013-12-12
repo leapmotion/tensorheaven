@@ -35,24 +35,26 @@ struct EigenMapOf2Tensor_nonconst_f
 };
 
 // const version
-template <typename Factor1_, typename Factor2_, typename Scalar_, typename UseArrayType_>
+template <typename Factor1_, typename Factor2_, typename Scalar_, typename UseArrayType_, typename Derived_>
 typename EigenMapOf2Tensor_const_f<Factor1_,Factor2_,Scalar_>::T
     EigenMap_of_2tensor (ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,
                                                                                TypeList_t<Factor2_> > >,
                                             Scalar_,
-                                            UseArrayType_> const &t)
+                                            UseArrayType_,
+                                            Derived_> const &t)
 {
     STATIC_ASSERT(!IsUseImmutableArray_f<UseArrayType_>::V, CANT_MAKE_EIGEN_MAP_OF_IMMUTABLE_ARRAY);
     return typename EigenMapOf2Tensor_const_f<Factor1_,Factor2_,Scalar_>::T(t.pointer_to_allocation());
 }
 
 // non-const version
-template <typename Factor1_, typename Factor2_, typename Scalar_, typename UseArrayType_>
+template <typename Factor1_, typename Factor2_, typename Scalar_, typename UseArrayType_, typename Derived_>
 typename EigenMapOf2Tensor_nonconst_f<Factor1_,Factor2_,Scalar_>::T
     EigenMap_of_2tensor (ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,
                                                                                TypeList_t<Factor2_> > >,
                                             Scalar_,
-                                            UseArrayType_> &t)
+                                            UseArrayType_,
+                                            Derived_> &t)
 {
     STATIC_ASSERT(!IsUseImmutableArray_f<UseArrayType_>::V, CANT_MAKE_EIGEN_MAP_OF_IMMUTABLE_ARRAY);
     return typename EigenMapOf2Tensor_nonconst_f<Factor1_,Factor2_,Scalar_>::T(t.pointer_to_allocation());
@@ -77,37 +79,41 @@ struct EigenMapOfVector_nonconst_f
 };
 
 // const version
-template <typename Type_, typename Scalar_, typename UseArrayType_>
+template <typename Type_, typename Scalar_, typename UseArrayType_, typename Derived_>
 typename EigenMapOfVector_const_f<Type_,Scalar_>::T
     EigenMap_of_vector (ImplementationOf_t<Type_,
                                            Scalar_,
-                                           UseArrayType_> const &t)
+                                           UseArrayType_,
+                                           Derived_> const &t)
 {
     STATIC_ASSERT(!IsUseImmutableArray_f<UseArrayType_>::V, CANT_MAKE_EIGEN_MAP_OF_IMMUTABLE_ARRAY);
     return typename EigenMapOfVector_const_f<Type_,Scalar_>::T(t.pointer_to_allocation());
 }
 
 // non-const version
-template <typename Type_, typename Scalar_, typename UseArrayType_>
+template <typename Type_, typename Scalar_, typename UseArrayType_, typename Derived_>
 typename EigenMapOfVector_nonconst_f<Type_,Scalar_>::T
     EigenMap_of_vector (ImplementationOf_t<Type_,
                                            Scalar_,
-                                           UseArrayType_> &t)
+                                           UseArrayType_,
+                                           Derived_> &t)
 {
     STATIC_ASSERT(!IsUseImmutableArray_f<UseArrayType_>::V, CANT_MAKE_EIGEN_MAP_OF_IMMUTABLE_ARRAY);
     return typename EigenMapOfVector_nonconst_f<Type_,Scalar_>::T(t.pointer_to_allocation());
 }
 
 // returns true iff the tensor was actually considered to be invertible (by Eigen::MatrixBase::computeInverseWithCheck)
-template <typename Factor1_, typename Factor2_, typename Scalar_, typename UseArrayType_, typename InverseUseArrayType_>
+template <typename Factor1_, typename Factor2_, typename Scalar_, typename UseArrayType_, typename Derived_, typename InverseUseArrayType_, typename InverseDerived_>
 bool invert_2tensor (ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,
                                                                            TypeList_t<Factor2_> > >,
                                         Scalar_,
-                                        UseArrayType_> const &t,
+                                        UseArrayType_,
+                                        Derived_> const &t,
                      ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<typename DualOf_f<Factor2_>::T,
                                                                            TypeList_t<typename DualOf_f<Factor1_>::T> > >,
                                         Scalar_,
-                                        InverseUseArrayType_> &t_inverse)
+                                        InverseUseArrayType_,
+                                        InverseDerived_> &t_inverse)
 {
     STATIC_ASSERT(DimensionOf_f<Factor1_>::V == DimensionOf_f<Factor2_>::V, FACTOR_DIMENSIONS_MUST_BE_EQUAL);
     STATIC_ASSERT(!IsUseImmutableArray_f<UseArrayType_>::V, CANT_MAKE_EIGEN_MAP_OF_IMMUTABLE_ARRAY); // TODO: provide invert for UseImmutableArray
@@ -131,13 +137,15 @@ bool invert_2tensor (ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeL
 }
 
 // returns true iff the tensor was actually considered to be invertible (by Eigen::MatrixBase::computeInverseWithCheck)
-template <typename Factor_, typename Scalar_, typename UseArrayType_, typename InverseUseArrayType_>
+template <typename Factor_, typename Scalar_, typename UseArrayType_, typename Derived_, typename InverseUseArrayType_, typename InverseDerived_>
 bool invert_2tensor (ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<2, Factor_>,
                                         Scalar_,
-                                        UseArrayType_> const &s,
+                                        UseArrayType_,
+                                        Derived_> const &s,
                      ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<2, typename DualOf_f<Factor_>::T >,
                                         Scalar_,
-                                        InverseUseArrayType_> &s_inverse)
+                                        InverseUseArrayType_,
+                                        InverseDerived_> &s_inverse)
 {
     STATIC_ASSERT(!IsUseImmutableArray_f<UseArrayType_>::V, CANT_MAKE_EIGEN_MAP_OF_IMMUTABLE_ARRAY); // TODO: provide invert for UseImmutableArray
     // create Eigen Maps for each of the parameters -- this way no copying is necessary;
@@ -173,11 +181,12 @@ bool invert_2tensor (ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<2, Fa
 
 
 // returns true iff the tensor was actually considered to be invertible (by Eigen::MatrixBase::computeInverseWithCheck)
-template <typename Factor1_, typename Factor2_, typename Scalar_, typename UseArrayType_>
+template <typename Factor1_, typename Factor2_, typename Scalar_, typename UseArrayType_, typename Derived_>
 Scalar_ determinant_of_2tensor (ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,
                                                                            TypeList_t<Factor2_> > >,
                                                   Scalar_,
-                                                  UseArrayType_> const &t)
+                                                  UseArrayType_,
+                                                  Derived_> const &t)
 {
     STATIC_ASSERT(DimensionOf_f<Factor1_>::V == DimensionOf_f<Factor2_>::V, FACTOR_DIMENSIONS_MUST_BE_EQUAL);
     STATIC_ASSERT(!IsUseImmutableArray_f<UseArrayType_>::V, CANT_MAKE_EIGEN_MAP_OF_IMMUTABLE_ARRAY); // TODO: provide determinant for UseImmutableArray

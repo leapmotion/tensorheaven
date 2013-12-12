@@ -18,8 +18,8 @@ namespace Tenh {
 
 template <typename T, typename ResultUseArrayType_ = UsePreallocatedArray> struct RowsOfTwoTensor_f;
 
-template <typename Factor1_, typename Factor2_, typename Scalar_, typename UseArrayType_, typename ResultUseArrayType_>
-struct RowsOfTwoTensor_f<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,TypeList_t<Factor2_> > >,Scalar_, UseArrayType_>, ResultUseArrayType_>
+template <typename Factor1_, typename Factor2_, typename Scalar_, typename UseArrayType_, typename Derived_, typename ResultUseArrayType_>
+struct RowsOfTwoTensor_f<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,TypeList_t<Factor2_> > >,Scalar_, UseArrayType_, Derived_>, ResultUseArrayType_>
 {
 private:
     enum { STATIC_ASSERT_IN_ENUM((!IsUseImmutableArray_f<UseArrayType_>::V), MUST_NOT_BE_USE_IMMUTABLE_ARRAY) };
@@ -31,8 +31,8 @@ public:
 template <typename T> struct SVDReturnTypesOf_m;
 
 // We must have t(i|l) == u(i|j) * s(j|k) * v(l|k), i.e. t = u * s * v^T. Also u, and v are square matrices.
-template <typename Factor1_, typename Factor2_, typename Scalar_, typename UseArrayTypeT_>
-struct SVDReturnTypesOf_m<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,TypeList_t<Factor2_> > >,Scalar_, UseArrayTypeT_> >
+template <typename Factor1_, typename Factor2_, typename Scalar_, typename UseArrayTypeT_, typename Derived_>
+struct SVDReturnTypesOf_m<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,TypeList_t<Factor2_> > >,Scalar_, UseArrayTypeT_, Derived_> >
 {
     template <typename UseArrayTypeU_ = UseArrayTypeT_>
     struct OfU_f
@@ -87,16 +87,16 @@ struct SVDReturnTypesOf_m<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<
 
 template <typename T> struct EigenMatrixFor_f;
 
-template <typename Factor1_, typename Factor2_, typename Scalar_, typename UseArrayType_>
-struct EigenMatrixFor_f<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,TypeList_t<Factor2_> > >,Scalar_, UseArrayType_> >
+template <typename Factor1_, typename Factor2_, typename Scalar_, typename UseArrayType_, typename Derived_>
+struct EigenMatrixFor_f<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,TypeList_t<Factor2_> > >,Scalar_, UseArrayType_, Derived_> >
 {
     typedef Eigen::Matrix<Scalar_,DimensionOf_f<Factor1_>::V,DimensionOf_f<Factor2_>::V,Eigen::RowMajor> T;
 };
 
 template <typename T> struct EigenVectorFor_f;
 
-template <typename Type_, typename Scalar_, typename UseArrayType_>
-struct EigenVectorFor_f<ImplementationOf_t<Type_, Scalar_, UseArrayType_> >
+template <typename Type_, typename Scalar_, typename UseArrayType_, typename Derived_>
+struct EigenVectorFor_f<ImplementationOf_t<Type_, Scalar_, UseArrayType_, Derived_> >
 {
     typedef Eigen::Matrix<Scalar_,DimensionOf_f<Type_>::V,1,Eigen::RowMajor> T;
 };

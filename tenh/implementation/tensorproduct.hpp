@@ -220,13 +220,14 @@ template <typename Factor1_,
           typename Factor2_,
           typename Scalar_,
           typename UseArrayType_,
+          typename Derived_,
           typename Immutable2TensorImplementationBodyTypeList_>
 struct ConceptualTypeOfTensorProductOfImmutable2Tensors_f<
-    TypeList_t<ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,Scalar_,UseArrayType_>,
+    TypeList_t<ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,Scalar_,UseArrayType_,Derived_>,
                Immutable2TensorImplementationBodyTypeList_> >
 {
 private:
-    typedef TypeList_t<ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,Scalar_,UseArrayType_>,
+    typedef TypeList_t<ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,Scalar_,UseArrayType_,Derived_>,
                        Immutable2TensorImplementationBodyTypeList_> Immutable2TensorImplementationTypeList;
     typedef typename ConceptOfEachTypeIn_f<Immutable2TensorImplementationTypeList>::T ConceptTypeList;
     enum { STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<ConceptTypeList,IsDiagonal2TensorProductOfBasedVectorSpaces_p>::V), MUST_BE_TYPELIST_OF_DIAGONAL_2_TENSORS) };
@@ -262,13 +263,14 @@ template <typename Factor1_,
           typename Factor2_,
           typename Scalar_,
           typename UseArrayType_,
+          typename Derived_,
           typename Immutable2TensorImplementationBodyTypeList_>
 struct ConceptualTypeOfTensorProductOfImmutable2Tensors_f<
-    TypeList_t<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,TypeList_t<Factor2_> > >,Scalar_,UseArrayType_>,
+    TypeList_t<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,TypeList_t<Factor2_> > >,Scalar_,UseArrayType_,Derived_>,
                Immutable2TensorImplementationBodyTypeList_> >
 {
 private:
-    typedef TypeList_t<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,TypeList_t<Factor2_> > >,Scalar_,UseArrayType_>,
+    typedef TypeList_t<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,TypeList_t<Factor2_> > >,Scalar_,UseArrayType_,Derived_>,
                        Immutable2TensorImplementationBodyTypeList_> Immutable2TensorImplementationTypeList;
     typedef typename ConceptOfEachTypeIn_f<Immutable2TensorImplementationTypeList>::T ConceptTypeList;
     enum

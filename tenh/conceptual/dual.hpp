@@ -69,6 +69,15 @@ private:
     DualOf_f();
 };
 
+// I guess NullType should be self dual...
+template <>
+struct DualOf_f<NullType>
+{
+    typedef NullType T;
+private:
+    DualOf_f();
+};
+
 } // end of namespace Tenh
 
 #endif // TENH_CONCEPTUAL_DUAL_HPP_

@@ -23,6 +23,7 @@ private:
 };
 
 #if _WIN32
+// Don't shoot the messenger.
 template<>
 struct ArraySize_f<0>
 {

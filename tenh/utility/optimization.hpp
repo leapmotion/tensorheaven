@@ -17,9 +17,9 @@ namespace Tenh {
 
 // adaptive minimization which uses, in order of availability/preference,
 // 1. Newton's method, 2. conjugate gradient, and 3. gradient descent.
-template <typename InnerProductId_, typename ObjectiveFunction_, typename BasedVectorSpace_, typename Scalar_>
-ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const &func, 
-                                                        ImplementationOf_t<BasedVectorSpace_,Scalar_> const &guess,
+template <typename InnerProductId_, typename ObjectiveFunction_, typename BasedVectorSpace_, typename Scalar_, typename GuessUseArrayType_, typename Derived_>
+ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const &func,
+                                                        ImplementationOf_t<BasedVectorSpace_,Scalar_,GuessUseArrayType_,Derived_> const &guess,
                                                         Scalar_ const tolerance)
 {
     typedef ImplementationOf_t<BasedVectorSpace_, Scalar_> VectorType;

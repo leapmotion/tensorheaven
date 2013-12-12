@@ -31,8 +31,8 @@
 #include "tenh/implementation/wedge.hpp"
 #include "tenh/interop/eigen.hpp"
 
-#include "applications/polynomial.hpp"
-#include "applications/polynomial_utility.hpp"
+#include "tenh/utility/polynomial.hpp"
+#include "tenh/utility/polynomial_utility.hpp"
 
 struct X
 {

@@ -28,13 +28,15 @@ struct Operator
     public ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Codomain_,
                                                                  TypeList_t<typename DualOf_f<Domain_>::T> > >,
                               Scalar_,
-                              UseArrayType_>
+                              UseArrayType_,
+                              Operator<Domain_,Codomain_,Scalar_,UseArrayType_> >
 {
 private:
     typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Codomain_,
                                                                   TypeList_t<typename DualOf_f<Domain_>::T> > >,
                                Scalar_,
-                               UseArrayType_> Parent_Implementation;
+                               UseArrayType_,
+                               Operator<Domain_,Codomain_,Scalar_,UseArrayType_> > Parent_Implementation;
     typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<Codomain_,
                                                TypeList_t<typename DualOf_f<Domain_>::T> > > TensorProduct;
 public:

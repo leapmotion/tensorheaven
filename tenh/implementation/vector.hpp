@@ -15,10 +15,10 @@
 
 namespace Tenh {
 
-template <typename VectorSpace_, typename Basis_, typename Scalar_, typename UseArrayType_>
-struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_>
+template <typename VectorSpace_, typename Basis_, typename Scalar_, typename UseArrayType_, typename Derived_>
+struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_,Derived_>
     :
-    public Vector_i<ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_>,
+    public Vector_i<typename DerivedType_f<Derived_,ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_,Derived_> >::T,
                     Scalar_,
                     BasedVectorSpace_c<VectorSpace_,Basis_>,
                     ComponentsAreImmutable_f<UseArrayType_>::V>,
@@ -26,16 +26,16 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
     private ArrayStorage_f<Scalar_,
                            DimensionOf_f<VectorSpace_>::V,
                            UseArrayType_,
-                           ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_> >::T
+                           typename DerivedType_f<Derived_,ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_,Derived_> >::T >::T
 {
-    typedef Vector_i<ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_>,
+    typedef Vector_i<typename DerivedType_f<Derived_,ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_,Derived_> >::T,
                      Scalar_,
                      BasedVectorSpace_c<VectorSpace_,Basis_>,
                      ComponentsAreImmutable_f<UseArrayType_>::V> Parent_Vector_i;
     typedef typename ArrayStorage_f<Scalar_,
                                     DimensionOf_f<VectorSpace_>::V,
                                     UseArrayType_,
-                                    ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_> >::T Parent_Array_i;
+                                    typename DerivedType_f<Derived_,ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_,Derived_> >::T >::T Parent_Array_i;
 
     typedef BasedVectorSpace_c<VectorSpace_,Basis_> Concept;
     typedef UseArrayType_ UseArrayType;
@@ -54,7 +54,8 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
 
     typedef ImplementationOf_t<Concept,
                                Scalar_,
-                               UseImmutableArray_t<typename ComponentGenerator_Constant_f<Scalar_,DIM,0>::T> > Zero;
+                               UseImmutableArray_t<typename ComponentGenerator_Constant_f<Scalar_,DIM,0>::T>,
+                               Derived_> Zero;
     static Zero const ZERO;
 
     template <Uint32 INDEX_>
@@ -66,7 +67,8 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
     public:
         typedef ImplementationOf_t<Concept,
                                    Scalar_,
-                                   UseImmutableArray_t<typename ComponentGenerator_Characteristic_f<Scalar_,DIM,INDEX_>::T> > T;
+                                   UseImmutableArray_t<typename ComponentGenerator_Characteristic_f<Scalar_,DIM,INDEX_>::T>,
+                                   Derived_> T;
         static T const V;
     };
 
@@ -80,7 +82,7 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
         Parent_Array_i(fill_with)
     {
         STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemberArray);
-    }    
+    }
     // this is the tuple-based constructor
     template <typename HeadType_, typename BodyTypeList_>
     ImplementationOf_t (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x)
@@ -136,17 +138,17 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
     }
 };
 
-template <typename VectorSpace_, typename Basis_, typename Scalar_, typename UseArrayType_>
-typename ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_>::Zero const ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_>::ZERO;
+template <typename VectorSpace_, typename Basis_, typename Scalar_, typename UseArrayType_, typename Derived_>
+typename ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_,Derived_>::Zero const ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_,Derived_>::ZERO;
 
-template <typename VectorSpace_, typename Basis_, typename Scalar_, typename UseArrayType_>
+template <typename VectorSpace_, typename Basis_, typename Scalar_, typename UseArrayType_, typename Derived_>
 template <Uint32 INDEX_>
-typename ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_>::template BasisVector_f<INDEX_>::T const ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_>::BasisVector_f<INDEX_>::V;
+typename ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_,Derived_>::template BasisVector_f<INDEX_>::T const ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_,Derived_>::BasisVector_f<INDEX_>::V;
 
-template <typename VectorSpace_, typename Basis_, typename Scalar_, typename UseArrayType_>
-struct DualOf_f<ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_> >
+template <typename VectorSpace_, typename Basis_, typename Scalar_, typename UseArrayType_, typename Derived_>
+struct DualOf_f<ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_,Derived_> >
 {
-    typedef ImplementationOf_t<typename DualOf_f<BasedVectorSpace_c<VectorSpace_,Basis_> >::T,Scalar_,typename DualOf_f<UseArrayType_>::T> T;
+    typedef ImplementationOf_t<typename DualOf_f<BasedVectorSpace_c<VectorSpace_,Basis_> >::T,Scalar_,typename DualOf_f<UseArrayType_>::T, typename DualOf_f<Derived_>::T> T;
 };
 
 } // end of namespace Tenh

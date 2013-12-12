@@ -30,12 +30,12 @@ struct OffsetForComponent_f<SummandTypeList_,0>
     static const Uint32 V = 0;
 };
 
-template <typename SummandTypeList_, typename Scalar_, typename UseArrayType_>
-struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_>
+template <typename SummandTypeList_, typename Scalar_, typename UseArrayType_, typename Derived_>
+struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_,Derived_>
     :
-    public ImplementationOf_t<typename UniqueBasedVectorSpaceStructureOf_f<DirectSumOfBasedVectorSpaces_c<SummandTypeList_> >::T,Scalar_,UseArrayType_>
+    public ImplementationOf_t<typename UniqueBasedVectorSpaceStructureOf_f<DirectSumOfBasedVectorSpaces_c<SummandTypeList_> >::T,Scalar_,UseArrayType_, typename DerivedType_f<Derived_, ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_,Derived_> >::T>
 {
-    typedef ImplementationOf_t<typename UniqueBasedVectorSpaceStructureOf_f<DirectSumOfBasedVectorSpaces_c<SummandTypeList_> >::T,Scalar_,UseArrayType_> Parent_Implementation;
+    typedef ImplementationOf_t<typename UniqueBasedVectorSpaceStructureOf_f<DirectSumOfBasedVectorSpaces_c<SummandTypeList_> >::T,Scalar_,UseArrayType_, typename DerivedType_f<Derived_, ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_,Derived_> >::T> Parent_Implementation;
     typedef typename Parent_Implementation::Parent_Vector_i Parent_Vector_i;
     typedef typename Parent_Implementation::Parent_Array_i Parent_Array_i;
 
@@ -56,7 +56,8 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
 
     typedef ImplementationOf_t<Concept,
                                Scalar_,
-                               UseImmutableArray_t<typename ComponentGenerator_Constant_f<Scalar_,DIM,0>::T> > Zero;
+                               UseImmutableArray_t<typename ComponentGenerator_Constant_f<Scalar_,DIM,0>::T>,
+                               Derived_> Zero;
     static Zero const ZERO;
 
     template <Uint32 INDEX_>
@@ -68,7 +69,8 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
     public:
         typedef ImplementationOf_t<Concept,
                                    Scalar_,
-                                   UseImmutableArray_t<typename ComponentGenerator_Characteristic_f<Scalar_,DIM,INDEX_>::T> > T;
+                                   UseImmutableArray_t<typename ComponentGenerator_Characteristic_f<Scalar_,DIM,INDEX_>::T>,
+                                   Derived_> T;
         static T const V;
     };
 
@@ -195,17 +197,17 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
     }
 };
 
-template <typename SummandTypeList_, typename Scalar_, typename UseArrayType_>
-typename ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_>::Zero const ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_>::ZERO;
+template <typename SummandTypeList_, typename Scalar_, typename UseArrayType_, typename Derived_>
+typename ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_,Derived_>::Zero const ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_,Derived_>::ZERO;
 
-template <typename SummandTypeList_, typename Scalar_, typename UseArrayType_>
+template <typename SummandTypeList_, typename Scalar_, typename UseArrayType_, typename Derived_>
 template <Uint32 INDEX_>
-typename ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_>::template BasisVector_f<INDEX_>::T const ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_>::BasisVector_f<INDEX_>::V;
+typename ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_,Derived_>::template BasisVector_f<INDEX_>::T const ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_,Derived_>::BasisVector_f<INDEX_>::V;
 
-template <typename SummandTypeList_, typename Scalar_, typename UseArrayType_>
-struct DualOf_f<ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_> >
+template <typename SummandTypeList_, typename Scalar_, typename UseArrayType_, typename Derived_>
+struct DualOf_f<ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_,Derived_> >
 {
-    typedef ImplementationOf_t<typename DualOf_f<DirectSumOfBasedVectorSpaces_c<SummandTypeList_> >::T,Scalar_,typename DualOf_f<UseArrayType_>::T> T;
+    typedef ImplementationOf_t<typename DualOf_f<DirectSumOfBasedVectorSpaces_c<SummandTypeList_> >::T,Scalar_,typename DualOf_f<UseArrayType_>::T, typename DualOf_f<Derived_>::T> T;
 };
 
 } // end of namespace Tenh

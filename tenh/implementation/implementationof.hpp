@@ -81,7 +81,8 @@ private:
 // have a "typedef Concept_ Concept" and a "typedef UseArrayType_ UseArrayType".
 template <typename Concept_,
           typename Scalar_,
-          typename UseArrayType_ = UseMemberArray>
+          typename UseArrayType_ = UseMemberArray,
+          typename Derived_ = NullType>
 struct ImplementationOf_t;
 
 // ///////////////////////////////////////////////////////////////////////////
