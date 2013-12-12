@@ -127,12 +127,12 @@ bool invert_2tensor (ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeL
 
     if (lu.isInvertible())
     {
-       eigen_map_of_t_inverse = lu.inverse();
-       return true;
+        eigen_map_of_t_inverse = lu.inverse();
+        return true;
     }
     else
     {
-      return false;
+        return false;
     }
 }
 
