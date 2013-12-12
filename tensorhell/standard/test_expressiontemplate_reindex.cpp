@@ -67,7 +67,7 @@ void vector_based_IndexedObject_t (Context const &context)
         K k;
         typedef Tenh::AbstractIndex_c<'p'> P;
         P p;
-        Vector v(Tenh::fill_with<Scalar>(0));
+        Vector v(Tenh::fill_with(0));
         // hacky, but effective, way of ensuring the reindexed expression template is what
         // it's supposed to be (via type_as_string).  what's being tested is essentially
         // the commutativity of the operations of creating an ExpressionTemplate_IndexedObject_t
@@ -127,7 +127,7 @@ void tensor_based_IndexedObject_t (Context const &context)
         K k;
         typedef Tenh::AbstractIndex_c<'p'> P;
         P p;
-        Tensor t(Tenh::fill_with<Scalar>(0));
+        Tensor t(Tenh::fill_with(0));
         // hacky, but effective, way of ensuring the reindexed expression template is what it's supposed to be.
         assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(j|k))).type_as_string(),
                   t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j|k)).type_as_string()); // expected value
@@ -162,8 +162,8 @@ void Addition_t (Context const &context)
     typedef Tenh::Reindex_e<DomainIndexTypeList,CodomainIndexTypeList> Reindex;
     assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<I>::T,J>::V));
 
-    Vector x(Tenh::fill_with<Scalar>(3));
-    Vector y(Tenh::fill_with<Scalar>(4));
+    Vector x(Tenh::fill_with(3));
+    Vector y(Tenh::fill_with(4));
 
     I i;
     J j;
@@ -199,8 +199,8 @@ void ScalarMultiplication_t (Context const &context)
     typedef Tenh::Reindex_e<DomainIndexTypeList,CodomainIndexTypeList> Reindex;
     assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<I>::T,J>::V));
 
-    Vector x(Tenh::fill_with<Scalar>(3));
-    Vector y(Tenh::fill_with<Scalar>(4));
+    Vector x(Tenh::fill_with(3));
+    Vector y(Tenh::fill_with(4));
 
     I i;
     J j;
@@ -233,8 +233,8 @@ void Multiplication_t (Context const &context)
     typedef Tenh::Reindex_e<DomainIndexTypeList,CodomainIndexTypeList> Reindex;
     assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<I>::T,J>::V));
 
-    Vector x(Tenh::fill_with<Scalar>(3));
-    Vector y(Tenh::fill_with<Scalar>(4));
+    Vector x(Tenh::fill_with(3));
+    Vector y(Tenh::fill_with(4));
 
     I i;
     J j;
@@ -283,7 +283,7 @@ void IndexBundle_t (Context const &context)
     typedef Tenh::Reindex_e<DomainIndexTypeList,CodomainIndexTypeList> Reindex;
     assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<I>::T,J>::V));
 
-    Tensor t(Tenh::fill_with<Scalar>(3));
+    Tensor t(Tenh::fill_with(3));
 
     I i;
     J j;
@@ -319,7 +319,7 @@ void IndexSplit_t (Context const &context)
     typedef Tenh::Reindex_e<DomainIndexTypeList,CodomainIndexTypeList> Reindex;
     assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<I>::T,J>::V));
 
-    Tensor t(Tenh::fill_with<Scalar>(3));
+    Tensor t(Tenh::fill_with(3));
 
     I i;
     J j;
@@ -354,7 +354,7 @@ void IndexSplitToIndex_t (Context const &context)
     typedef Tenh::Reindex_e<DomainIndexTypeList,CodomainIndexTypeList> Reindex;
     assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<I>::T,J>::V));
 
-    Tensor t(Tenh::fill_with<Scalar>(3));
+    Tensor t(Tenh::fill_with(3));
 
     I i;
     J j;
@@ -389,7 +389,7 @@ void Eval_t (Context const &context)
     typedef Tenh::Reindex_e<DomainIndexTypeList,CodomainIndexTypeList> Reindex;
     assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<I>::T,J>::V));
 
-    Tensor t(Tenh::fill_with<Scalar>(3));
+    Tensor t(Tenh::fill_with(3));
 
     I i;
     J j;
@@ -423,10 +423,10 @@ void fancy_expression (Context const &context)
     typedef Tenh::Reindex_e<DomainIndexTypeList,CodomainIndexTypeList> Reindex;
     assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<I>::T,J>::V));
 
-    Tensor t(Tenh::fill_with<Scalar>(3));
-    Tenh::DualOf_f<Tensor>::T a(Tenh::fill_with<Scalar>(5));
-    Vector x(Tenh::fill_with<Scalar>(1));
-    Tenh::DualOf_f<Vector>::T c(Tenh::fill_with<Scalar>(8));
+    Tensor t(Tenh::fill_with(3));
+    Tenh::DualOf_f<Tensor>::T a(Tenh::fill_with(5));
+    Vector x(Tenh::fill_with(1));
+    Tenh::DualOf_f<Vector>::T c(Tenh::fill_with(8));
 
     I i;
     J j;

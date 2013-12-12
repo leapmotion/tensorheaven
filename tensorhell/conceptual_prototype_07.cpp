@@ -11,7 +11,7 @@ void test_eigen_map_of_2_tensor ()
     typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace,
                                                 TypeList_t<BasedVectorSpace> > > TensorProduct;
     typedef ImplementationOf_t<TensorProduct,float> T;
-    T t(fill_with<float>(3));
+    T t(fill_with(3));
     std::cout << FORMAT_VALUE(t) << '\n';
     std::cout << FORMAT_VALUE(EigenMap_of_2tensor(t)) << '\n';
     std::cout << FORMAT_VALUE(EigenMap_of_2tensor(static_cast<T const>(t))) << '\n';

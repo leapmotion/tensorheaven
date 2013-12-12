@@ -44,7 +44,7 @@ void test_zero_dimensional_vector_space ()
     typedef Basis_c<X> BasisX;
     typedef BasedVectorSpace_c<VSX,BasisX> BasedX;
     typedef ImplementationOf_t<BasedX,float> Vector;
-    Vector v(fill_with<float>(0));
+    Vector v(fill_with(0));
     std::cout << FORMAT_VALUE(v) << '\n';
 
     std::cout << '\n' << '\n';

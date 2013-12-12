@@ -9,8 +9,8 @@ void test_poly_in_4_dim ()
     std::cout << "Polynomials in 4 dimensions." << '\n';
     typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,X>,Basis_c<X> > BasedVectorSpace;
     typedef MultivariatePolynomial<2,BasedVectorSpace> PolyType;
-    PolyType::SymDual w(fill_with<float>(0));
-    MultivariatePolynomial<1,BasedVectorSpace>::SymDual x(fill_with<float>(1));
+    PolyType::SymDual w(fill_with(0));
+    MultivariatePolynomial<1,BasedVectorSpace>::SymDual x(fill_with(1));
     w[PolyType::SymDual::ComponentIndex(0, CHECK_RANGE)] = 1; // x^2
     w[PolyType::SymDual::ComponentIndex(1, CHECK_RANGE)] = 0; // xy
     w[PolyType::SymDual::ComponentIndex(2, CHECK_RANGE)] = 5; // y^2
@@ -23,7 +23,7 @@ void test_poly_in_4_dim ()
     w[PolyType::SymDual::ComponentIndex(9, CHECK_RANGE)] = 3; // w^2
     std::cout << FORMAT_VALUE(w) << '\n';
     PolyType roly(w,MultivariatePolynomial<1,BasedVectorSpace>(x,3));
-    PolyType poly(fill_with<float>(0));
+    PolyType poly(fill_with(0));
     poly = poly + MultivariatePolynomial<1,BasedVectorSpace>(x,3);
     PolyType::Vector v(tuple(1.0f,2.0f,3.0f,4.0f));
     std::cout << FORMAT_VALUE(roly) << '\n';
@@ -45,8 +45,8 @@ void test_polynomial_serialization ()
     std::cout << "serializing Polynomials in 4 dimensions." << '\n';
     typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,X>,Basis_c<X> > BasedVectorSpace;
     typedef MultivariatePolynomial<2,BasedVectorSpace> PolyType;
-    PolyType::SymDual w(fill_with<float>(0));
-    MultivariatePolynomial<1,BasedVectorSpace>::SymDual x(fill_with<float>(1));
+    PolyType::SymDual w(fill_with(0));
+    MultivariatePolynomial<1,BasedVectorSpace>::SymDual x(fill_with(1));
     w[PolyType::SymDual::ComponentIndex(0, CHECK_RANGE)] = 1; // x^2
     w[PolyType::SymDual::ComponentIndex(1, CHECK_RANGE)] = 0; // xy
     w[PolyType::SymDual::ComponentIndex(2, CHECK_RANGE)] = 5; // y^2
@@ -72,7 +72,7 @@ void test_polynomial_multiplication ()
     std::cout << "Polynomial multiplication tests." << '\n';
     typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,X>,Basis_c<X> > BasedVectorSpace;
     typedef MultivariatePolynomial<1,BasedVectorSpace> PolyType;
-    PolyType::SymDual x(fill_with<float>(0)),y(fill_with<float>(0));
+    PolyType::SymDual x(fill_with(0)),y(fill_with(0));
     x[PolyType::SymDual::ComponentIndex(0, CHECK_RANGE)] = 1.0f;
     y[PolyType::SymDual::ComponentIndex(1, CHECK_RANGE)] = 1.0f;
 

@@ -38,7 +38,7 @@ void constructor_fill_with (Context const &context)
     typedef Tenh::PreallocatedArray_t<Scalar_,Polynomial::DIMENSION> ArrayType;
 
     Scalar_ fill = context.DataAs<Scalar_>();
-    Polynomial v(Tenh::fill_with<Scalar_>(fill));
+    Polynomial v(Tenh::fill_with(fill));
     ArrayType array = v.as_array();
     for (typename ArrayType::ComponentIndex i; i.is_not_at_end(); ++i)
     {

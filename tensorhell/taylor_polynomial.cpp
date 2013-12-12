@@ -889,7 +889,7 @@ struct QuadraticFunction_t
     // QuadraticFunction_t ()
     //     :
     //     m1(Static<WithoutInitialization>::SINGLETON),
-    //     m2(fill_with<Scalar_>(0)),
+    //     m2(fill_with(0)),
     //     m_D2(Static<WithoutInitialization>::SINGLETON)
     // {
     //     AbstractIndex_c<'i'> i;
@@ -915,7 +915,7 @@ struct QuadraticFunction_t
     QuadraticFunction_t ()
         :
         m1(Static<WithoutInitialization>::SINGLETON),
-        m2(fill_with<Scalar_>(0)),
+        m2(fill_with(0)),
         m_D2(Static<WithoutInitialization>::SINGLETON)
     {
         AbstractIndex_c<'i'> i;
@@ -1190,16 +1190,18 @@ int main (int argc, char **argv)
         V y(minimize<StandardInnerProduct>(qf, x, 1e-05));
         std::cerr << "approximate optimizer = " << y << '\n';
         std::cerr << "differential of function at approximate optimizer = " << qf.D_function(y) << '\n';
+        std::cerr << '\n';
     }
 
     {
         std::cerr << "optimizing a wavey function 2\n";
         typedef WaveyFunction2_t<BasedVectorSpace,Scalar,StandardInnerProduct> WaveyFunction2;
         WaveyFunction2 wf;
-        WaveyFunction2::V x(fill_with<Scalar>(0.5));
+        WaveyFunction2::V x(fill_with(0.25));
         WaveyFunction2::V y(minimize<StandardInnerProduct>(wf, x, 1e-05));
         std::cerr << "approximate optimizer = " << y << '\n';
         std::cerr << "differential of function at approximate optimizer = " << wf.D_function(y) << '\n';
+        std::cerr << '\n';
     }
 
     std::cerr << "WaveyFunction2_t\n";

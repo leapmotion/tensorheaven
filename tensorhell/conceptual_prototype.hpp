@@ -58,7 +58,7 @@ ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER,Vector>,Scalar> test
     typedef ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER,Vector>,Scalar> Sym;
     typedef ImplementationOf_t<Vector,Scalar> Vec;
 
-    Sym result(fill_with<Scalar>(1));
+    Sym result(fill_with(1));
 
     for (typename Sym::ComponentIndex it; it.is_not_at_end(); ++it)
     {

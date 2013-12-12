@@ -53,7 +53,7 @@ void assignment (Context const &context)
 {
     typedef typename Vector_::Scalar Scalar;
     Vector_ u(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
-    Vector_ const v(Tenh::fill_with<Scalar>(3));
+    Vector_ const v(Tenh::fill_with(3));
     Vector_ w(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
     for (typename Vector_::ComponentIndex i; i.is_not_at_end(); ++i)
         w[i] = 3*i.value() + 4;

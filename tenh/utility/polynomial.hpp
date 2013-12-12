@@ -38,7 +38,8 @@ struct MultivariatePolynomial
     typedef PreallocatedArray_t<Scalar_,DIMENSION> CoefficientArray;
     typedef PreallocatedArray_t<Scalar_ const,DIMENSION> ConstCoefficientArray;
 
-    MultivariatePolynomial (FillWith_t<Scalar_> const &fill_with) : m_body(fill_with), m_term(fill_with) { }
+    template <typename T_>
+    explicit MultivariatePolynomial (FillWith_t<T_> const &fill_with) : m_body(fill_with), m_term(fill_with) { }
     MultivariatePolynomial (WithoutInitialization const &w) : m_body(w), m_term(w) { }
     MultivariatePolynomial (LeadingTermType const &leading_term, BodyPolynomial const &body)
         :
@@ -47,7 +48,7 @@ struct MultivariatePolynomial
     { }
     MultivariatePolynomial (LeadingTermType const &leading_term)
         :
-        m_body(fill_with<Scalar>(0)),
+        m_body(fill_with(0)),
         m_term(leading_term)
     { }
     MultivariatePolynomial (SymDual const &leading_term, BodyPolynomial const &body)
@@ -57,7 +58,7 @@ struct MultivariatePolynomial
     { }
     MultivariatePolynomial (SymDual const &leading_term)
         :
-        m_body(fill_with<Scalar>(0)),
+        m_body(fill_with(0)),
         m_term(leading_term)
     { }
     MultivariatePolynomial (MultivariatePolynomial const &other)
@@ -175,7 +176,8 @@ struct MultivariatePolynomial<0,BasedVectorSpace_,Scalar_>
     typedef PreallocatedArray_t<Scalar_ const,DIMENSION> ConstCoefficientArray;
 
     MultivariatePolynomial (Scalar_ const &leading_term) : m_term(leading_term) { }
-    MultivariatePolynomial (FillWith_t<Scalar_> const &fill_with) : m_term(fill_with.value()) { }
+    template <typename T_>
+    explicit MultivariatePolynomial (FillWith_t<T_> const &fill_with) : m_term(fill_with.value()) { }
     MultivariatePolynomial (WithoutInitialization const &w) { }
     MultivariatePolynomial (MultivariatePolynomial const &other) : m_term(other.m_term) { }
 

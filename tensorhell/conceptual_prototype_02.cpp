@@ -18,7 +18,7 @@ void test_wedge ()
 
     typedef ImplementationOf_t<Wedge3_BasedX,float> Wedge;
 
-    Wedge w(fill_with<float>(0));
+    Wedge w(fill_with(0));
     w[Wedge::ComponentIndex(0, CHECK_RANGE)] = 6;
     w[Wedge::ComponentIndex(1, CHECK_RANGE)] = 12;
     w[Wedge::ComponentIndex(2, CHECK_RANGE)] = 18;
@@ -79,7 +79,7 @@ void test_vee ()
 
     typedef ImplementationOf_t<Sym3_BasedX,float> Sym;
 
-    Sym w(fill_with<float>(0));
+    Sym w(fill_with(0));
     w[Sym::ComponentIndex(0, CHECK_RANGE)] = 1;
     w[Sym::ComponentIndex(1, CHECK_RANGE)] = 6;
     w[Sym::ComponentIndex(2, CHECK_RANGE)] = 9;

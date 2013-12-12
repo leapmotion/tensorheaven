@@ -48,7 +48,7 @@ void assignment (Context const &context)
     typedef Tenh::Operator<Domain_,Codomain_,Scalar_,UseArrayType_> Operator;
 
     Operator A(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
-    Operator const B(Tenh::fill_with<Scalar_>(3));
+    Operator const B(Tenh::fill_with(3));
     Operator C(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
         C[i] = 3*i.value() + 4;

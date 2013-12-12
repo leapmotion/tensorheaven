@@ -31,7 +31,7 @@ void test_partial_inverse (Context const &context)
     typedef Tenh::TensorProductOfBasedVectorSpaces_c<FactorTypeList> TensorProduct;
     typedef Tenh::ImplementationOf_t<TensorProduct,Scalar> Tensor;
 
-    Tensor t(Tenh::fill_with<Scalar>(3));
+    Tensor t(Tenh::fill_with(3));
     for (Tensor::ComponentIndex i; i.is_not_at_end(); ++i){
       t[i] = i.value();
     }

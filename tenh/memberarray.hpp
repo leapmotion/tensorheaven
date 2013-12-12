@@ -57,10 +57,11 @@ struct MemberArray_t
 #endif // __clang_version__
 
     explicit MemberArray_t (WithoutInitialization const &) { }
-    MemberArray_t (FillWith_t<Component> const &fill_with)
+    template <typename T_>
+    explicit MemberArray_t (FillWith_t<T_> const &fill_with)
     {
         for (Uint32 i = 0; i < COMPONENT_COUNT; ++i)
-            m_component[i] = fill_with.value();
+            m_component[i] = Component_(fill_with.value());
     }
 
 #ifdef __clang_version__

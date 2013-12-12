@@ -49,7 +49,8 @@ struct PreallocatedArray_t
 #pragma GCC diagnostic ignored "-Wtautological-compare"
 #endif // __clang_version__
 
-    PreallocatedArray_t (FillWith_t<Component> const &fill_with,
+    template <typename T_>
+    PreallocatedArray_t (FillWith_t<T_> const &fill_with,
                          Component *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         m_pointer_to_allocation(pointer_to_allocation)
@@ -57,7 +58,7 @@ struct PreallocatedArray_t
         if (check_pointer && m_pointer_to_allocation == NULL)
             throw std::invalid_argument("invalid pointer_to_allocation argument (must be non-NULL)");
         for (Uint32 i = 0; i < COMPONENT_COUNT; ++i)
-            m_pointer_to_allocation[i] = fill_with.value();
+            m_pointer_to_allocation[i] = Component_(fill_with.value());
     }
 
 #ifdef __clang_version__

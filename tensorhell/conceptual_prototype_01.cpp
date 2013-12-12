@@ -64,7 +64,7 @@ void test_tensor_contraction ()
     typedef ImplementationOf_t<TPBVS,float> T;
     std::cout << type_string_of<T>() << '\n';
 
-    T t(fill_with<float>(3));
+    T t(fill_with(3));
     std::cout << FORMAT_VALUE(t) << '\n';
     t[T::MultiIndex(0,0)] = 0.0f;
     t[T::MultiIndex(1,0)] = 4.0f;
@@ -89,7 +89,7 @@ void test_tensor_contraction ()
 
     typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedX,TypeList_t<DualOf_f<BasedY>::T,TypeList_t<DualOf_f<BasedY>::T> > > > H;
     typedef ImplementationOf_t<H,float> E;
-    E e(fill_with<float>(0));
+    E e(fill_with(0));
     for (E::ComponentIndex it; it.is_not_at_end(); ++it)
         e[it] = static_cast<float>(it.value());
     std::cout << FORMAT_VALUE(e(i)) << '\n'; // this has problems: TODO: fix -- ExpressionTemplate_i may need a vector-indexable operator[]
@@ -106,7 +106,7 @@ void test_tensor_contraction ()
 
     typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedY,TypeList_t<DualOf_f<BasedY>::T> > > EndomorphismOfY;
     typedef ImplementationOf_t<EndomorphismOfY,float> Endo;
-    Endo A(fill_with<float>(0));
+    Endo A(fill_with(0));
     A[Endo::MultiIndex(0,0)] = 3.0f;
     A[Endo::MultiIndex(1,1)] = 4.0f;
     std::cout << FORMAT_VALUE(A) << '\n';
@@ -114,7 +114,7 @@ void test_tensor_contraction ()
     std::cout << FORMAT_VALUE(A(i|i)) << '\n';
 
 
-    DualOf_f<E>::T f(fill_with<float>(3));
+    DualOf_f<E>::T f(fill_with(3));
     f[DualOf_f<E>::T::MultiIndex(0,0,0,CHECK_RANGE)] = 1.0f;
     f[DualOf_f<E>::T::MultiIndex(1,0,1,CHECK_RANGE)] = 2.0f;
     f[DualOf_f<E>::T::MultiIndex(2,1,1,CHECK_RANGE)] = 4.0f;
