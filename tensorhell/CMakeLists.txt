@@ -82,23 +82,23 @@ add_executable(typelist typelist.cpp)
 add_executable(taylor_polynomial taylor_polynomial.cpp)
 add_executable(typetuple typetuple.cpp)
 
-set(conceptual_prototype_SRCS
-    conceptual_prototype.cpp
-    conceptual_prototype_00.cpp
-    conceptual_prototype_01.cpp
-    conceptual_prototype_02.cpp
-    conceptual_prototype_03.cpp
-    conceptual_prototype_04.cpp
-    conceptual_prototype_05.cpp
-    conceptual_prototype_06.cpp
-    conceptual_prototype_07.cpp
-    conceptual_prototype_08.cpp
-    conceptual_prototype_09.cpp
-    conceptual_prototype_10.cpp
-    conceptual_prototype_11.cpp
-    conceptual_prototype_12.cpp
-    conceptual_prototype_13.cpp)
-add_executable(conceptual_prototype ${conceptual_prototype_SRCS})
+set(adhoc_test_SRCS
+    adhoc_test.cpp
+    adhoc_test_00.cpp
+    adhoc_test_01.cpp
+    adhoc_test_02.cpp
+    adhoc_test_03.cpp
+    adhoc_test_04.cpp
+    adhoc_test_05.cpp
+    adhoc_test_06.cpp
+    adhoc_test_07.cpp
+    adhoc_test_08.cpp
+    adhoc_test_09.cpp
+    adhoc_test_10.cpp
+    adhoc_test_11.cpp
+    adhoc_test_12.cpp
+    adhoc_test_13.cpp)
+add_executable(adhoc_test ${adhoc_test_SRCS})
 
 # test-framework-using tests
 set(test_SRCS

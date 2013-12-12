@@ -1,5 +1,5 @@
-#ifndef TENSORHELL_CONCEPTUAL_PROTOTYPE_HPP_
-#define TENSORHELL_CONCEPTUAL_PROTOTYPE_HPP_
+#ifndef TENSORHELL_ADHOC_TEST_HPP_
+#define TENSORHELL_ADHOC_TEST_HPP_
 
 #include <cassert>
 #include <iostream>
@@ -30,7 +30,6 @@
 #include "tenh/implementation/vee.hpp"
 #include "tenh/implementation/wedge.hpp"
 #include "tenh/interop/eigen.hpp"
-
 #include "tenh/utility/polynomial.hpp"
 #include "tenh/utility/polynomial_utility.hpp"
 
@@ -487,8 +486,8 @@ void test_direct_sums ();
 
 void test_zero_vector ();
 void test_basis_vectors ();
-// void test_eval_value ();
+void test_eval_value ();
 void test_direct_sum_of_2tensors ();
 void test_direct_sum_of_diagonal2tensors ();
 
-#endif // TENSORHELL_CONCEPTUAL_PROTOTYPE_HPP_
+#endif // TENSORHELL_ADHOC_TEST_HPP_

@@ -1,4 +1,4 @@
-#include "conceptual_prototype.hpp"
+#include "adhoc_test.hpp"
 
 int main (int, char **)
 {
@@ -55,7 +55,7 @@ int main (int, char **)
 
     test_zero_vector();
     test_basis_vectors();
-    // test_eval_value();
+    test_eval_value();
     test_direct_sum_of_2tensors();
     test_direct_sum_of_diagonal2tensors();
 
