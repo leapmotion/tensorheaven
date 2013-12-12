@@ -133,39 +133,39 @@ void test_basis_vectors ()
     std::cout << '\n';
 }
 
-// void test_eval_value ()
-// {
-//     std::cout << "testing eval().value()\n";
-//     AbstractIndex_c<'i'> i;
-//     AbstractIndex_c<'j'> j;
-//     AbstractIndex_c<'k'> k;
-//     typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > BasedVectorSpace;
-//     typedef float Scalar;
-//     typedef ImplementationOf_t<BasedVectorSpace,Scalar,UseMemberArray> V;
-//     V x(uniform_tuple<Scalar>(1, 2, 3));
-//     V y(uniform_tuple<Scalar>(4, 8, 9));
-//     V z(uniform_tuple<Scalar>(0, 8, 0));
-//     std::cout << FORMAT_VALUE(x(i)*y(j)*z(k)) << '\n';
-//     std::cout << FORMAT_VALUE((x(i)*y(j)*z(k)).eval()) << '\n';
-//     std::cout << FORMAT_VALUE((x(i)*y(j)*z(k)).eval().value()) << '\n';
+void test_eval_value ()
+{
+    std::cout << "testing eval().value()\n";
+    AbstractIndex_c<'i'> i;
+    AbstractIndex_c<'j'> j;
+    AbstractIndex_c<'k'> k;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > BasedVectorSpace;
+    typedef float Scalar;
+    typedef ImplementationOf_t<BasedVectorSpace,Scalar,UseMemberArray> V;
+    V x(uniform_tuple<Scalar>(1, 2, 3));
+    V y(uniform_tuple<Scalar>(4, 8, 9));
+    V z(uniform_tuple<Scalar>(0, 8, 0));
+    std::cout << FORMAT_VALUE(x(i)*y(j)*z(k)) << '\n';
+    std::cout << FORMAT_VALUE((x(i)*y(j)*z(k)).eval()) << '\n';
+    std::cout << FORMAT_VALUE((x(i)*y(j)*z(k)).eval().value()) << '\n';
 
-//     // V v((x(i)+y(i)).eval().value());
-//     // V w((x(i)+y(i)).eval());
-//     std::cout << FORMAT_VALUE(x(i)+y(i)) << '\n';
-//     std::cout << FORMAT_VALUE((x(i)*y(j)).eval()) << '\n';
-//     std::cout << FORMAT_VALUE((x(i)*y(j)).eval().value()) << '\n';
+    // V v((x(i)+y(i)).eval().value());
+    // V w((x(i)+y(i)).eval());
+    std::cout << FORMAT_VALUE(x(i)+y(i)) << '\n';
+    std::cout << FORMAT_VALUE((x(i)*y(j)).eval()) << '\n';
+    std::cout << FORMAT_VALUE((x(i)*y(j)).eval().value()) << '\n';
 
-//     typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace,
-//                                                TypeList_t<BasedVectorSpace> > > TensorProduct;
-//     typedef ImplementationOf_t<TensorProduct,Scalar,UseMemberArray> T;
-//     T t((x(i)*y(j)).eval().value());
-//     std::cout << FORMAT_VALUE(t) << '\n';
-//     // this should use "operator EvaluatedTensor const &" in ExpressionTemplate_Eval_t
-//     T s((x(i)*y(j)).eval());
-//     std::cout << FORMAT_VALUE(s) << '\n';
-//     // std::cout << FORMAT_VALUE((x(i)+y(i)).eval()) << '\n';
-//     // std::cout << FORMAT_VALUE((x(i)+y(i)).eval().value()) << '\n';
-// }
+    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace,
+                                               TypeList_t<BasedVectorSpace> > > TensorProduct;
+    typedef ImplementationOf_t<TensorProduct,Scalar,UseMemberArray> T;
+    T t((x(i)*y(j)).eval().value());
+    std::cout << FORMAT_VALUE(t) << '\n';
+    // this should use "operator EvaluatedTensor const &" in ExpressionTemplate_Eval_t
+    T s((x(i)*y(j)).eval());
+    std::cout << FORMAT_VALUE(s) << '\n';
+    // std::cout << FORMAT_VALUE((x(i)+y(i)).eval()) << '\n';
+    // std::cout << FORMAT_VALUE((x(i)+y(i)).eval().value()) << '\n';
+}
 
 void test_direct_sum_of_2tensors ()
 {
@@ -240,6 +240,82 @@ void test_direct_sum_of_2tensors ()
     typedef DirectSumOfImmutable2Tensors_f<TL>::T D;
     D d;
     std::cout << "direct sum of immutable 2-tensors\n";
+    std::cout << FORMAT_VALUE(d) << '\n';
+}
+
+void test_direct_sum_of_diagonal2tensors ()
+{
+    typedef double Scalar;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,1,Generic>,Basis_c<Generic> > B1;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,Generic>,Basis_c<Generic> > B2;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > B3;
+    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B1,B1> T11;
+    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B1,B2> T12;
+    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B1,B3> T13;
+    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B2,B1> T21;
+    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B2,B2> T22;
+    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B2,B3> T23;
+    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B3,B1> T31;
+    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B3,B2> T32;
+    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B3,B3> T33;
+    typedef ComponentGenerator_t<Scalar,
+                                 DimensionOf_f<T11>::V,
+                                 constant_component_generator_evaluator<Scalar,DimensionOf_f<T11>::V,11>,
+                                 Generic> ComponentGenerator11;
+    typedef ComponentGenerator_t<Scalar,
+                                 DimensionOf_f<T12>::V,
+                                 constant_component_generator_evaluator<Scalar,DimensionOf_f<T12>::V,12>,
+                                 Generic> ComponentGenerator12;
+    typedef ComponentGenerator_t<Scalar,
+                                 DimensionOf_f<T13>::V,
+                                 constant_component_generator_evaluator<Scalar,DimensionOf_f<T13>::V,13>,
+                                 Generic> ComponentGenerator13;
+    typedef ComponentGenerator_t<Scalar,
+                                 DimensionOf_f<T21>::V,
+                                 constant_component_generator_evaluator<Scalar,DimensionOf_f<T21>::V,21>,
+                                 Generic> ComponentGenerator21;
+    typedef ComponentGenerator_t<Scalar,
+                                 DimensionOf_f<T22>::V,
+                                 constant_component_generator_evaluator<Scalar,DimensionOf_f<T22>::V,22>,
+                                 Generic> ComponentGenerator22;
+    typedef ComponentGenerator_t<Scalar,
+                                 DimensionOf_f<T23>::V,
+                                 constant_component_generator_evaluator<Scalar,DimensionOf_f<T23>::V,23>,
+                                 Generic> ComponentGenerator23;
+    typedef ComponentGenerator_t<Scalar,
+                                 DimensionOf_f<T31>::V,
+                                 constant_component_generator_evaluator<Scalar,DimensionOf_f<T31>::V,31>,
+                                 Generic> ComponentGenerator31;
+    typedef ComponentGenerator_t<Scalar,
+                                 DimensionOf_f<T32>::V,
+                                 constant_component_generator_evaluator<Scalar,DimensionOf_f<T32>::V,32>,
+                                 Generic> ComponentGenerator32;
+    typedef ComponentGenerator_t<Scalar,
+                                 DimensionOf_f<T33>::V,
+                                 constant_component_generator_evaluator<Scalar,DimensionOf_f<T33>::V,33>,
+                                 Generic> ComponentGenerator33;
+    typedef ImplementationOf_t<T11,Scalar,UseImmutableArray_t<ComponentGenerator11> > T_11;
+    typedef ImplementationOf_t<T12,Scalar,UseImmutableArray_t<ComponentGenerator12> > T_12;
+    typedef ImplementationOf_t<T13,Scalar,UseImmutableArray_t<ComponentGenerator13> > T_13;
+    typedef ImplementationOf_t<T21,Scalar,UseImmutableArray_t<ComponentGenerator21> > T_21;
+    typedef ImplementationOf_t<T22,Scalar,UseImmutableArray_t<ComponentGenerator22> > T_22;
+    typedef ImplementationOf_t<T23,Scalar,UseImmutableArray_t<ComponentGenerator23> > T_23;
+    typedef ImplementationOf_t<T31,Scalar,UseImmutableArray_t<ComponentGenerator31> > T_31;
+    typedef ImplementationOf_t<T32,Scalar,UseImmutableArray_t<ComponentGenerator32> > T_32;
+    typedef ImplementationOf_t<T33,Scalar,UseImmutableArray_t<ComponentGenerator33> > T_33;
+
+    typedef TypeList_t<T_11,
+            TypeList_t<T_12,
+            TypeList_t<T_13,
+            TypeList_t<T_21,
+            TypeList_t<T_22,
+            TypeList_t<T_23,
+            TypeList_t<T_31,
+            TypeList_t<T_32,
+            TypeList_t<T_33> > > > > > > > > TL;
+    typedef DirectSumOfImmutable2Tensors_f<TL>::T D;
+    D d;
+    std::cout << "direct sum of immutable diagonal-2-tensors\n";
     std::cout << FORMAT_VALUE(d) << '\n';
 }
 

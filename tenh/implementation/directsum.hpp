@@ -8,6 +8,7 @@
 
 #include "tenh/core.hpp"
 
+#include "tenh/conceptual/diagonalbased2tensorproduct.hpp"
 #include "tenh/conceptual/directsum.hpp"
 #include "tenh/implementation/implementationof.hpp"
 #include "tenh/interface/vector.hpp"
@@ -253,13 +254,14 @@ private:
     typedef typename ConceptOfEachTypeIn_f<Immutable2TensorImplementationTypeList_>::T ConceptTypeList;
     enum
     {
-        STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<ConceptTypeList,IsTensorProductOfBasedVectorSpaces_p>::V), MUST_BE_TYPELIST_OF_DIAGONAL_2_TENSORS),
-        STATIC_ASSERT_IN_ENUM(EachTypeIsA2TensorProductOfBasedVectorSpaces_f<ConceptTypeList>::V, MUST_BE_TYPELIST_OF_2_TENSORS)
+        STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<ConceptTypeList,IsTensorProductOfBasedVectorSpaces_p>::V
+                               ||
+                               EachTypeSatisfies_f<ConceptTypeList,IsDiagonal2TensorProductOfBasedVectorSpaces_p>::V), MUST_BE_TYPELIST_OF_DIAGONAL_OR_2_TENSORS)
     };
-    typedef typename FactorNOfEachTypeIn_f<0,ConceptTypeList>::T Factor0TypeList;
-    typedef typename FactorNOfEachTypeIn_f<1,ConceptTypeList>::T Factor1TypeList;
-    typedef DirectSumOfBasedVectorSpaces_c<Factor0TypeList> Factor0DirectSum;
-    typedef DirectSumOfBasedVectorSpaces_c<Factor1TypeList> Factor1DirectSum;
+    typedef typename FactorNOfEachTypeIn_f<0,ConceptTypeList>::T SummandTypeList0;
+    typedef typename FactorNOfEachTypeIn_f<1,ConceptTypeList>::T SummandTypeList1;
+    typedef DirectSumOfBasedVectorSpaces_c<SummandTypeList0> Factor0DirectSum;
+    typedef DirectSumOfBasedVectorSpaces_c<SummandTypeList1> Factor1DirectSum;
     ConceptualTypeOfDirectSumOfImmutable2Tensors_f();
 public:
     typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0DirectSum,TypeList_t<Factor1DirectSum> > > T;
@@ -298,10 +300,15 @@ struct DirectSumOf2TensorsHelper_t
         }
         else if (first_block_for_row && first_block_for_col) // on block-diagonal, upper-left block
         {
+            AbstractIndex_c<'j'> j;
+            AbstractIndex_c<'k'> k;
+            AbstractIndex_c<'p'> p;
             HeadImplementation h;
             typedef typename HeadImplementation::MultiIndex M;
             M head_m(m.template el<0>().value(), m.template el<1>().value(), DONT_CHECK_RANGE);
-            return h[head_m];
+            // this split is unnecessary if HeadImmutable2TensorImplementation_ is a tensor product,
+            // but this makes the same code work for diagonal 2 tensors as well, so for now that's fine.
+            return h(p).split(p,j|k)[head_m];
         }
         else // body block
         {
@@ -328,8 +335,15 @@ struct DirectSumOf2TensorsHelper_t<TypeList_t<HeadImmutable2TensorImplementation
 
     static Scalar_ evaluate (ComponentIndex_t<DimensionOf_f<ConceptualTypeOfDirectSum_>::V> const &i)
     {
+        // this breaks up the component index into the corresponding multiindex.
+        typename HeadImmutable2TensorImplementation_::MultiIndex m(i);
         HeadImmutable2TensorImplementation_ h;
-        return h[i];
+        AbstractIndex_c<'j'> j;
+        AbstractIndex_c<'k'> k;
+        AbstractIndex_c<'p'> p;
+        // this split is unnecessary if HeadImmutable2TensorImplementation_ is a tensor product,
+        // but this makes the same code work for diagonal 2 tensors as well, so for now that's fine.
+        return h(p).split(p,j|k)[m];
     }
 };
 

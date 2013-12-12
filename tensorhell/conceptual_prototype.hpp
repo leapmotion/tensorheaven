@@ -489,5 +489,6 @@ void test_zero_vector ();
 void test_basis_vectors ();
 // void test_eval_value ();
 void test_direct_sum_of_2tensors ();
+void test_direct_sum_of_diagonal2tensors ();
 
 #endif // TENSORHELL_CONCEPTUAL_PROTOTYPE_HPP_

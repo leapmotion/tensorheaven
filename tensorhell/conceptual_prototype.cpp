@@ -57,6 +57,7 @@ int main (int, char **)
     test_basis_vectors();
     // test_eval_value();
     test_direct_sum_of_2tensors();
+    test_direct_sum_of_diagonal2tensors();
 
     return 0;
 }
