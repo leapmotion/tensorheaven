@@ -23,22 +23,23 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
                                                         Scalar_ const tolerance)
 {
     typedef ImplementationOf_t<BasedVectorSpace_, Scalar_> VectorType;
-    typedef InnerProductId_ InnerProductType;
-    typedef typename InnerProduct_f<BasedVectorSpace_, InnerProductType, Scalar_>::T VectorInnerProductType;
+    typedef typename InnerProduct_f<BasedVectorSpace_, InnerProductId_, Scalar_>::T VectorInnerProductType;
     typedef ImplementationOf_t<typename DualOf_f<BasedVectorSpace_>::T, Scalar_> CoVectorType;
-    typedef typename InnerProduct_f<typename DualOf_f<BasedVectorSpace_>::T, InnerProductType, Scalar_>::T CoVectorInnerProductType;
+    typedef typename InnerProduct_f<typename DualOf_f<BasedVectorSpace_>::T, InnerProductId_, Scalar_>::T CoVectorInnerProductType;
     typedef SymmetricPowerOfBasedVectorSpace_c<2, BasedVectorSpace_> Sym2;
     typedef typename ObjectiveFunction_::D2 HessianType;
     typedef ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<2, BasedVectorSpace_>, Scalar_> HessianInverseType;
     STATIC_ASSERT_TYPES_ARE_EQUAL(VectorType, typename ObjectiveFunction_::V);
     STATIC_ASSERT_TYPES_ARE_EQUAL(Scalar_, typename ObjectiveFunction_::Out);
-    static int const LINE_SEARCH_SAMPLE_COUNT = 20;
+
+    static int const LINE_SEARCH_SAMPLE_COUNT = 800;
     static Scalar_ const STEP_SCALE = Scalar_(1.0);
     static Scalar_ const MAX_STEP_SIZE = Scalar_(-1.0);
-    static int const MAX_ITERATION_COUNT = 200;
+    static int const MAX_ITERATION_COUNT = 20;
     static Scalar_ const GRADIENT_DESCENT_STEP_SIZE = Scalar_(1.0);
     static bool const PRINT_DEBUG_OUTPUT = true;
     static Scalar_ const EPSILON = 1e-5;
+
     VectorInnerProductType vector_innerproduct;
     CoVectorInnerProductType covector_innerproduct;
 
@@ -66,7 +67,7 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
 
         if (PRINT_DEBUG_OUTPUT)
         {
-            std::cout << current_approximation << " " << g_norm << std::endl;
+            std::cout << current_approximation << "\n" << g << " " << g_norm <<  " " << current_value << std::endl;
         }
 
         if (g_norm <= tolerance)
@@ -117,14 +118,14 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
                 //Scalar_ v_norm = std::sqrt(v_squared_norm);
 
                 // step(i).no_alias() = -g_squared_norm / v_squared_norm * v(i);
-                step(i).no_alias() = (-g_squared_norm / (Scalar_(2) * d)) * v(i);
+                step(i).no_alias() = (-g_squared_norm / d) * v(i);
             }
         }
         else // h is positive definite along step, use it as is.
         {
             if (PRINT_DEBUG_OUTPUT)
             {
-                std::cout << "Newton's method." << std::endl;
+                std::cout << "Newton's method." << std::endl << h(a).split(a,i|j) << std::endl;
                 ++newtons_method;
             }
         }
@@ -135,27 +136,41 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
 
         if (MAX_STEP_SIZE > 0 && step_norm > MAX_STEP_SIZE)
         {
+          if (PRINT_DEBUG_OUTPUT)
+          {
+            std::cout << "Clamping step length to " << MAX_STEP_SIZE << std::endl;
+          }
             step(i).no_alias() = MAX_STEP_SIZE * step(i) / step_norm;
         }
 
         VectorType line_search_step(Static<WithoutInitialization>::SINGLETON);
         VectorType partial_step(fill_with<Scalar_>(0));
+        VectorType x(Static<WithoutInitialization>::SINGLETON);
         line_search_step(i).no_alias() = step(i) / LINE_SEARCH_SAMPLE_COUNT;
-        for (int it = 0; it < LINE_SEARCH_SAMPLE_COUNT; ++it)
+        int it;
+        for (it = 0; it < LINE_SEARCH_SAMPLE_COUNT; ++it)
         {
-            VectorType x(Static<WithoutInitialization>::SINGLETON);
             partial_step(i).no_alias() += line_search_step(i);
             x(i).no_alias() = current_approximation(i) + partial_step(i);
             Scalar_ next_value = func.function(x);
 
             if (next_value > current_value)
             {
+                current_value = next_value;
                 step = partial_step;
-                std::cout << "used " << it << " steps in line search\n";
                 break;
             }
             current_value = next_value;
         }
+        if (PRINT_DEBUG_OUTPUT)
+        {
+          std::cout << "used " << it << " steps in line search\n";
+        }
+        if (it != 0 && it != LINE_SEARCH_SAMPLE_COUNT)
+        {
+          std::cout << "Did a partial line search\n";
+        }
+
 
         current_approximation(i) += step(i);
 
