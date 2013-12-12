@@ -9,6 +9,7 @@
 #include "tenh/core.hpp"
 
 #include "tenh/conceptual/dual.hpp"
+#include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/immutablearray.hpp"
 #include "tenh/memberarray.hpp"
 #include "tenh/preallocatedarray.hpp"
