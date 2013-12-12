@@ -30,6 +30,24 @@ struct OffsetForComponent_f<SummandTypeList_,0>
     static const Uint32 V = 0;
 };
 
+inline Uint32 component_for_offset (EmptyTypeList const &, Uint32 offset)
+{
+    assert(false && "this should never actually be called");
+    return 0;
+}
+
+template <typename SummandTypeList_>
+Uint32 component_for_offset (SummandTypeList_ const &, Uint32 offset)
+{
+    STATIC_ASSERT((Length_f<SummandTypeList_>::V > 0), LENGTH_MUST_BE_POSITIVE);
+    typedef typename Head_f<SummandTypeList_>::T HeadSummand;
+    typedef typename Body_f<SummandTypeList_>::T BodySummand;
+    if (offset < DimensionOf_f<HeadSummand>::V)
+        return 0;
+    else
+        return component_for_offset(BodySummand(), offset - DimensionOf_f<HeadSummand>::V);
+}
+
 template <typename SummandTypeList_, typename Scalar_, typename UseArrayType_, typename Derived_>
 struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_,Derived_>
     :
@@ -208,6 +226,136 @@ template <typename SummandTypeList_, typename Scalar_, typename UseArrayType_, t
 struct DualOf_f<ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_,Derived_> >
 {
     typedef ImplementationOf_t<typename DualOf_f<DirectSumOfBasedVectorSpaces_c<SummandTypeList_> >::T,Scalar_,typename DualOf_f<UseArrayType_>::T, typename DualOf_f<Derived_>::T> T;
+};
+
+// ///////////////////////////////////////////////////////////////////////////
+// direct sum of immutable 2-tensors (essentially gives a block-diag matrix)
+// ///////////////////////////////////////////////////////////////////////////
+
+template <typename Immutable2TensorImplementationTypeList_>
+struct ConceptualTypeOfDirectSumOfImmutable2Tensors_f
+{
+private:
+    typedef typename ConceptOfEachTypeIn_f<Immutable2TensorImplementationTypeList_>::T ConceptTypeList;
+    enum
+    {
+        STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<ConceptTypeList,IsTensorProductOfBasedVectorSpaces_p>::V), MUST_BE_TYPELIST_OF_DIAGONAL_2_TENSORS),
+        STATIC_ASSERT_IN_ENUM(EachTypeIsA2TensorProductOfBasedVectorSpaces_f<ConceptTypeList>::V, MUST_BE_TYPELIST_OF_2_TENSORS)
+    };
+    typedef typename FactorNOfEachTypeIn_f<0,ConceptTypeList>::T Factor0TypeList;
+    typedef typename FactorNOfEachTypeIn_f<1,ConceptTypeList>::T Factor1TypeList;
+    typedef DirectSumOfBasedVectorSpaces_c<Factor0TypeList> Factor0DirectSum;
+    typedef DirectSumOfBasedVectorSpaces_c<Factor1TypeList> Factor1DirectSum;
+    ConceptualTypeOfDirectSumOfImmutable2Tensors_f();
+public:
+    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0DirectSum,TypeList_t<Factor1DirectSum> > > T;
+};
+
+namespace ComponentGeneratorEvaluator {
+
+template <typename Immutable2TensorImplementationTypeList_,
+          typename ConceptualTypeOfDirectSum_,
+          typename Scalar_>
+struct DirectSumOf2TensorsHelper_t
+{
+    typedef ComponentIndex_t<DimensionOf_f<ConceptualTypeOfDirectSum_>::V> ComponentIndex;
+    typedef typename ConceptualTypeOfDirectSumOfImmutable2Tensors_f<Immutable2TensorImplementationTypeList_>::T ConceptualTypeOfDirectSum;
+    enum { STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<ConceptualTypeOfDirectSum_,ConceptualTypeOfDirectSum>::V), TYPES_MUST_BE_EQUAL) };
+    typedef typename FactorTypeListOf_f<ConceptualTypeOfDirectSum_>::T FactorTypeList;
+    typedef typename FactorTypeList::HeadType Factor0;
+    typedef typename FactorTypeList::BodyTypeList::HeadType Factor1;
+    typedef typename ImplementationOf_t<ConceptualTypeOfDirectSum_,Scalar_,UseMemberArray>::MultiIndex MultiIndex;
+    enum { STATIC_ASSERT_IN_ENUM((MultiIndex::LENGTH == 2), LENGTH_MUST_BE_EXACTLY_2) };
+    typedef typename Head_f<Immutable2TensorImplementationTypeList_>::T HeadImplementation;
+    typedef typename FactorTypeListOf_f<typename HeadImplementation::Concept>::T HeadFactorTypeList;
+    typedef typename Element_f<HeadFactorTypeList,0>::T HeadFactor0;
+    typedef typename Element_f<HeadFactorTypeList,1>::T HeadFactor1;
+
+    static Scalar_ evaluate (ComponentIndex_t<DimensionOf_f<ConceptualTypeOfDirectSum_>::V> const &i)
+    {
+        // this breaks up the component index into the corresponding multiindex.
+        MultiIndex m(i);
+        bool first_block_for_row = m.template el<0>().value() < DimensionOf_f<HeadFactor0>::V;
+        bool first_block_for_col = m.template el<1>().value() < DimensionOf_f<HeadFactor1>::V;
+
+        if (first_block_for_row != first_block_for_col) // off block-diagonal
+        {
+            return Scalar_(0);
+        }
+        else if (first_block_for_row && first_block_for_col) // on block-diagonal, upper-left block
+        {
+            HeadImplementation h;
+            typedef typename HeadImplementation::MultiIndex M;
+            M head_m(m.template el<0>().value(), m.template el<1>().value(), DONT_CHECK_RANGE);
+            return h[head_m];
+        }
+        else // body block
+        {
+            typedef typename Body_f<Immutable2TensorImplementationTypeList_>::T Immutable2TensorImplementationBodyTypeList;
+            typedef typename ConceptualTypeOfDirectSumOfImmutable2Tensors_f<Immutable2TensorImplementationBodyTypeList>::T ConceptualTypeOfDirectSumBody;
+            typedef DirectSumOf2TensorsHelper_t<Immutable2TensorImplementationBodyTypeList,
+                                                ConceptualTypeOfDirectSumBody,
+                                                Scalar_> DirectSumOf2TensorsHelper;
+            typedef typename DirectSumOf2TensorsHelper::MultiIndex BodyMultiIndex;
+            BodyMultiIndex body_m(m.template el<0>().value() - DimensionOf_f<HeadFactor0>::V,
+                                  m.template el<1>().value() - DimensionOf_f<HeadFactor1>::V,
+                                  DONT_CHECK_RANGE);
+            return DirectSumOf2TensorsHelper::evaluate(body_m.as_component_index());
+        }
+    }
+};
+
+template <typename HeadImmutable2TensorImplementation_,
+          typename ConceptualTypeOfDirectSum_,
+          typename Scalar_>
+struct DirectSumOf2TensorsHelper_t<TypeList_t<HeadImmutable2TensorImplementation_>,ConceptualTypeOfDirectSum_,Scalar_>
+{
+    typedef typename HeadImmutable2TensorImplementation_::MultiIndex MultiIndex;
+
+    static Scalar_ evaluate (ComponentIndex_t<DimensionOf_f<ConceptualTypeOfDirectSum_>::V> const &i)
+    {
+        HeadImmutable2TensorImplementation_ h;
+        return h[i];
+    }
+};
+
+template <typename Immutable2TensorImplementationTypeList_,
+          typename ConceptualTypeOfDirectSum_,
+          typename Scalar_>
+Scalar_ direct_sum_of_2tensors (ComponentIndex_t<DimensionOf_f<ConceptualTypeOfDirectSum_>::V> const &i)
+{
+    return DirectSumOf2TensorsHelper_t<Immutable2TensorImplementationTypeList_,
+                                       ConceptualTypeOfDirectSum_,
+                                       Scalar_>::evaluate(i);
+}
+
+} // end of namespace ComponentGeneratorEvaluator
+
+template <typename Immutable2TensorImplementationTypeList_>
+struct DirectSumOfImmutable2Tensors_f
+{
+private:
+    typedef typename ConceptOfEachTypeIn_f<Immutable2TensorImplementationTypeList_>::T ConceptTypeList;
+    typedef typename ScalarOfEachTypeIn_f<Immutable2TensorImplementationTypeList_>::T ScalarTypeList;
+    typedef typename ConceptualTypeOfDirectSumOfImmutable2Tensors_f<Immutable2TensorImplementationTypeList_>::T ConceptualTypeOfDirectSum;
+
+    enum
+    {
+        STATIC_ASSERT_IN_ENUM(TypeListIsUniform_t<ScalarTypeList>::V, ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
+        STATIC_ASSERT_IN_ENUM((EachTypeUsesImmutableArray_f<Immutable2TensorImplementationTypeList_>::V), MUST_BE_TYPELIST_OF_IMMUTABLE_IMPLEMENTATIONS)
+    };
+
+    typedef typename ScalarTypeList::HeadType Scalar;
+    typedef ComponentGenerator_t<Scalar,
+                                 DimensionOf_f<ConceptualTypeOfDirectSum>::V,
+                                 ComponentGeneratorEvaluator::direct_sum_of_2tensors<Immutable2TensorImplementationTypeList_,
+                                                                                     ConceptualTypeOfDirectSum,
+                                                                                     Scalar>,
+                                 DirectSum_c<Immutable2TensorImplementationTypeList_> > ComponentGenerator;
+private:
+    DirectSumOfImmutable2Tensors_f();
+public:
+    typedef ImplementationOf_t<ConceptualTypeOfDirectSum,Scalar,UseImmutableArray_t<ComponentGenerator> > T;
 };
 
 } // end of namespace Tenh

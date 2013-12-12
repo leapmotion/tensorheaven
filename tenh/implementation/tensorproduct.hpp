@@ -18,61 +18,6 @@
 namespace Tenh {
 
 // ///////////////////////////////////////////////////////////////////////////
-// helper metafunctions
-// ///////////////////////////////////////////////////////////////////////////
-
-template <typename TypeList_>
-struct ConceptOfEachTypeIn_f
-{
-    typedef TypeList_t<typename TypeList_::HeadType::Concept,
-                       typename ConceptOfEachTypeIn_f<typename TypeList_::BodyTypeList>::T> T;
-private:
-    ConceptOfEachTypeIn_f();
-};
-
-template <>
-struct ConceptOfEachTypeIn_f<EmptyTypeList>
-{
-    typedef EmptyTypeList T;
-private:
-    ConceptOfEachTypeIn_f();
-};
-
-template <typename TypeList_>
-struct ScalarOfEachTypeIn_f
-{
-    typedef TypeList_t<typename TypeList_::HeadType::Scalar,
-                       typename ScalarOfEachTypeIn_f<typename TypeList_::BodyTypeList>::T> T;
-private:
-    ScalarOfEachTypeIn_f();
-};
-
-template <>
-struct ScalarOfEachTypeIn_f<EmptyTypeList>
-{
-    typedef EmptyTypeList T;
-private:
-    ScalarOfEachTypeIn_f();
-};
-
-template <typename TypeList_>
-struct EachTypeUsesImmutableArray_f
-{
-    static bool const V = IsUseImmutableArray_f<typename TypeList_::HeadType::UseArrayType>::V &&
-                          EachTypeUsesImmutableArray_f<typename TypeList_::BodyTypeList>::V;
-private:
-    EachTypeUsesImmutableArray_f();
-};
-
-template <>
-struct EachTypeUsesImmutableArray_f<EmptyTypeList>
-{
-    static bool const V = true; // vacuously true
-private:
-    EachTypeUsesImmutableArray_f();
-};
-
-// ///////////////////////////////////////////////////////////////////////////
 // TensorProductOfImmutableVectors_f
 // ///////////////////////////////////////////////////////////////////////////
 
@@ -196,25 +141,6 @@ template <typename Immutable2TensorImplementationTypeList_> struct TensorProduct
 
 template <typename Immutable2TensorImplementationTypeList_> struct ConceptualTypeOfTensorProductOfImmutable2Tensors_f;
 
-template <Uint32 N_, typename TypeList_>
-struct FactorNOfEachTypeIn_f
-{
-private:
-    typedef typename FactorTypeListOf_f<typename TypeList_::HeadType>::T FactorTypeListOfHead;
-    FactorNOfEachTypeIn_f();
-public:
-    typedef TypeList_t<typename Element_f<FactorTypeListOfHead,N_>::T,
-                       typename FactorNOfEachTypeIn_f<N_,typename TypeList_::BodyTypeList>::T> T;
-};
-
-template <Uint32 N_>
-struct FactorNOfEachTypeIn_f<N_,EmptyTypeList>
-{
-    typedef EmptyTypeList T;
-private:
-    FactorNOfEachTypeIn_f();
-};
-
 // template specialization for tensor products of diagonal 2-tensors
 template <typename Factor1_,
           typename Factor2_,
@@ -238,24 +164,6 @@ private:
     ConceptualTypeOfTensorProductOfImmutable2Tensors_f();
 public:
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0TensorProduct,Factor1TensorProduct> T;
-};
-
-template <typename TensorProductOfBasedVectorSpacesTypeList_>
-struct EachTypeIsA2TensorProductOfBasedVectorSpaces_f
-{
-    static bool const V = IsTensorProductOfBasedVectorSpaces_f<typename TensorProductOfBasedVectorSpacesTypeList_::HeadType>::V &&
-                          (FactorTypeListOf_f<typename TensorProductOfBasedVectorSpacesTypeList_::HeadType>::T::LENGTH == 2) &&
-                          EachTypeIsA2TensorProductOfBasedVectorSpaces_f<typename TensorProductOfBasedVectorSpacesTypeList_::BodyTypeList>::V;
-private:
-    EachTypeIsA2TensorProductOfBasedVectorSpaces_f();
-};
-
-template <>
-struct EachTypeIsA2TensorProductOfBasedVectorSpaces_f<EmptyTypeList>
-{
-    static bool const V = true; // vacuously true
-private:
-    EachTypeIsA2TensorProductOfBasedVectorSpaces_f();
 };
 
 // template specialization for tensor products of general 2-tensors
