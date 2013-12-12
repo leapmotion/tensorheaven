@@ -94,7 +94,7 @@ struct ExpressionTemplate_Eval_t
     //   function((x(i)*y(j)).eval())
     // where the parameter to function is of type EvaluatedTensor const &,
     // or BaseClass const &, where BaseClass is a base class of EvaluatedTensor.
-    // operator EvaluatedTensor const & () const { return value(); }
+    operator EvaluatedTensor const & () const { return value(); }
     // operator EvaluatedTensor () const { return value(); }
 
     // this blocks aliasing, so it doesn't use the tensor in the sense of this method
