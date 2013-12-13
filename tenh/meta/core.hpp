@@ -40,6 +40,8 @@ struct NullValue { };
 template <typename T0_, typename T1_> struct TypesAreEqual_f { static bool const V = false; operator bool () const { return V; } };
 /// @cond false
 template <typename T_> struct TypesAreEqual_f<T_,T_> { static bool const V = true; operator bool () const { return V; } };
+template <typename T_> struct TypesAreEqual_f<const T_,T_> { static bool const V = true; operator bool () const { return V; } };
+template <typename T_> struct TypesAreEqual_f<T_,const T_> { static bool const V = true; operator bool () const { return V; } };
 /// @endcond
 
 

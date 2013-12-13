@@ -37,7 +37,7 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
     static Scalar_ const MAX_STEP_SIZE = Scalar_(-1.0);
     static int const MAX_ITERATION_COUNT = 20;
     static Scalar_ const GRADIENT_DESCENT_STEP_SIZE = Scalar_(1.0);
-    static bool const PRINT_DEBUG_OUTPUT = true;
+    static bool const PRINT_DEBUG_OUTPUT = false;
     static Scalar_ const EPSILON = 1e-5;
 
     VectorInnerProductType vector_innerproduct;
@@ -45,11 +45,8 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
 
     AbstractIndex_c<'a'> a;
     AbstractIndex_c<'b'> b;
-    AbstractIndex_c<'c'> c;
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
-    AbstractIndex_c<'k'> k;
-    AbstractIndex_c<'l'> l;
 
     VectorType current_approximation = guess;
     int iteration_count = 0;
@@ -165,12 +162,12 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
         if (PRINT_DEBUG_OUTPUT)
         {
           std::cout << "used " << it << " steps in line search\n";
-        }
+
         if (it != 0 && it != LINE_SEARCH_SAMPLE_COUNT)
         {
           std::cout << "Did a partial line search\n";
         }
-
+      }
 
         current_approximation(i) += step(i);
 

@@ -41,7 +41,7 @@ public:
 /// @headerfile core.hpp "tenh/core.hpp"
 struct WithoutInitialization { };
 
-// forward declarations for so that 
+// forward declarations for so that
 /// @cond false
 template <typename T_>
 std::string type_string_of (T_ const &);
@@ -160,39 +160,61 @@ struct AssociatedFloatingPointType_t;
 /// @cond false
 template <>
 struct AssociatedFloatingPointType_t<float> { typedef float T; };
+template <>
+struct AssociatedFloatingPointType_t<const float> { typedef const float T; };
 
 template <>
 struct AssociatedFloatingPointType_t<double> { typedef double T; };
+template <>
+struct AssociatedFloatingPointType_t<const double> { typedef const double T; };
 
 template <>
 struct AssociatedFloatingPointType_t<long double> { typedef long double T; };
+template <>
+struct AssociatedFloatingPointType_t<const long double> { typedef const long double T; };
 
 template <typename RealScalar>
 struct AssociatedFloatingPointType_t<std::complex<RealScalar> > { typedef RealScalar T; };
 
 template <>
 struct AssociatedFloatingPointType_t<Sint8> { typedef float T; }; // smallest lossless floating point conversion
+template <>
+struct AssociatedFloatingPointType_t<const Sint8> { typedef const float T; }; // smallest lossless floating point conversion
 
 template <>
 struct AssociatedFloatingPointType_t<Uint8> { typedef float T; }; // smallest lossless floating point conversion
+template <>
+struct AssociatedFloatingPointType_t<const Uint8> { typedef const float T; }; // smallest lossless floating point conversion
 
 template <>
 struct AssociatedFloatingPointType_t<Sint16> { typedef float T; }; // smallest lossless floating point conversion
+template <>
+struct AssociatedFloatingPointType_t<const Sint16> { typedef const float T; }; // smallest lossless floating point conversion
 
 template <>
 struct AssociatedFloatingPointType_t<Uint16> { typedef float T; }; // smallest lossless floating point conversion
+template <>
+struct AssociatedFloatingPointType_t<const Uint16> { typedef const float T; }; // smallest lossless floating point conversion
 
 template <>
 struct AssociatedFloatingPointType_t<Sint32> { typedef double T; }; // smallest lossless floating point conversion
+template <>
+struct AssociatedFloatingPointType_t<const Sint32> { typedef const double T; }; // smallest lossless floating point conversion
 
 template <>
 struct AssociatedFloatingPointType_t<Uint32> { typedef double T; }; // smallest lossless floating point conversion
+template <>
+struct AssociatedFloatingPointType_t<const Uint32> { typedef const double T; }; // smallest lossless floating point conversion
 
 template <>
 struct AssociatedFloatingPointType_t<Sint64> { typedef long double T; }; // smallest lossless floating point conversion
+template <>
+struct AssociatedFloatingPointType_t<const Sint64> { typedef const long double T; }; // smallest lossless floating point conversion
 
 template <>
 struct AssociatedFloatingPointType_t<Uint64> { typedef long double T; }; // smallest lossless floating point conversion
+template <>
+struct AssociatedFloatingPointType_t<const Uint64> { typedef const long double T; }; // smallest lossless floating point conversion
 ///@endcond
 
 } // end of namespace Tenh
