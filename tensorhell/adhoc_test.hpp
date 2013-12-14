@@ -30,6 +30,7 @@
 #include "tenh/implementation/vee.hpp"
 #include "tenh/implementation/wedge.hpp"
 #include "tenh/interop/eigen.hpp"
+#include "tenh/interop/eigen_invert.hpp"
 #include "tenh/utility/polynomial.hpp"
 #include "tenh/utility/polynomial_utility.hpp"
 
