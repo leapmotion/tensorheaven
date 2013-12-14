@@ -23,12 +23,15 @@ namespace Tenh {
 
 typedef Uint32 AbstractIndexSymbol;
 
-inline std::string abstract_index_symbol_as_string (AbstractIndexSymbol symbol)
+static bool const USE_QUOTES_FOR_ALPHABETIC = true;
+static bool const DONT_USE_QUOTES_FOR_ALPHABETIC = false;
+
+inline std::string abstract_index_symbol_as_string (AbstractIndexSymbol symbol, bool use_quotes_for_alphabetic = USE_QUOTES_FOR_ALPHABETIC)
 {
     assert(symbol > 0 && "invalid AbstractIndexSymbol");
     // for alphabetical chars, use the ascii representation.
     if ((symbol >= 'a' && symbol <= 'z') || (symbol >= 'A' && symbol <= 'Z'))
-        return '\'' + std::string(1, char(symbol)) + '\'';
+        return use_quotes_for_alphabetic ? ('\'' + std::string(1, char(symbol)) + '\'') : std::string(1, char(symbol));
     // otherwise use i_###, where ### is the symbol value
     else
         return "i_" + AS_STRING(Uint32(symbol));
@@ -106,9 +109,11 @@ TypeList_t<AbstractIndex_c<SYMBOL1>,TypeList_t<AbstractIndex_c<SYMBOL2> > > oper
 template <AbstractIndexSymbol HEAD_SYMBOL, typename BodyAbstractIndexTypeList>
 std::string symbol_string_of_abstract_index_type_list (TypeList_t<AbstractIndex_c<HEAD_SYMBOL>,BodyAbstractIndexTypeList> const &)
 {
-    return abstract_index_symbol_as_string(HEAD_SYMBOL) + ((BodyAbstractIndexTypeList::LENGTH > 0) ?
-                                                           '|' + symbol_string_of_abstract_index_type_list(BodyAbstractIndexTypeList()) :
-                                                           std::string());
+    return abstract_index_symbol_as_string(HEAD_SYMBOL, DONT_USE_QUOTES_FOR_ALPHABETIC)
+           +
+           ((BodyAbstractIndexTypeList::LENGTH > 0) ?
+            '|' + symbol_string_of_abstract_index_type_list(BodyAbstractIndexTypeList()) :
+            std::string());
 }
 
 inline std::string symbol_string_of_abstract_index_type_list (EmptyTypeList)
