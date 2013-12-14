@@ -490,5 +490,6 @@ void test_basis_vectors ();
 void test_eval_value ();
 void test_direct_sum_of_2tensors ();
 void test_direct_sum_of_diagonal2tensors ();
+void test_direct_sum_of_inner_products ();
 
 #endif // TENSORHELL_ADHOC_TEST_HPP_

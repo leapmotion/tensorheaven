@@ -319,3 +319,17 @@ void test_direct_sum_of_diagonal2tensors ()
     std::cout << FORMAT_VALUE(d) << '\n';
 }
 
+void test_direct_sum_of_inner_products ()
+{
+    typedef double Scalar;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,OrthonormalBasis_c<Generic> > B3;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,OrthonormalBasis_c<Generic> > B4;
+    typedef DirectSumOfBasedVectorSpaces_c<TypeList_t<B3,
+                                           TypeList_t<B4> > > DirectSum;
+    typedef DirectSum_c<TypeList_t<StandardInnerProduct,
+                        TypeList_t<StandardInnerProduct> > > DirectSumInnerProductId;
+    InnerProduct_f<DirectSum,DirectSumInnerProductId,Scalar>::T inner_product;
+    std::cout << "direct sum of inner products\n";
+    std::cout << FORMAT_VALUE(inner_product) << '\n';
+    std::cout << '\n';
+}

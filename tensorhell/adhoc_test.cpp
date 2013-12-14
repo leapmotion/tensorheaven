@@ -58,6 +58,7 @@ int main (int, char **)
     test_eval_value();
     test_direct_sum_of_2tensors();
     test_direct_sum_of_diagonal2tensors();
+    test_direct_sum_of_inner_products();
 
     return 0;
 }
