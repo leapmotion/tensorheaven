@@ -71,6 +71,8 @@
 - could templatize the Scalar parameter for FillWith_t<Scalar> in the fill-with constructors for
   various things, and then the constructor itself could do the conversion.  then fill_with(1),
   which returns FillWith_t<int>, will do the right thing.
+- consider disallowing non-square diagonal-2-tensors -- this will ease the optimization of
+  direct sum of diagonal 2 tensors (because it would then be a diagonal 2 tensor itself)
 
 
 ###implemented features/items:
