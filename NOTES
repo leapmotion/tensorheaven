@@ -55,8 +55,8 @@
 - make a bunch of the typedefs in `ImplementationOf_t` classes private, and decide which ones
   to offer publicly, or get rid of.
 - fix tensor products of diagonal 2-tensors on factors having non-equal dimension
-- do slice addressing by providing an "operator () (ComponentIndex_t<DIM> const &)" for AbstractIndex_c, 
-  which returns some distinct type that signifies a slice operation.  correspondingly, "operator |" which 
+- do slice addressing by providing an "operator () (ComponentIndex_t<DIM> const &)" for AbstractIndex_c,
+  which returns some distinct type that signifies a slice operation.  correspondingly, "operator |" which
   creates abstract multi-indices will have to be extended to account for this.  SliceIndex_t ?
 - XXX_f types should have a private constructor to prevent actually instantiating them
   (there are frequent programmer errors involving forgetting to "dereference" a metafunction
@@ -126,7 +126,9 @@
                             left to right, breaking types until there is a match, implementation is probably
                             recursive and relatively easy.  "breaking tensor type boxes apart recursively"
 - "barred multi-index"    : `s(i|j|k|l|m|T)`
-
+- "direct sum indices"    : if t is `DirectSum<V,V>`, and s and u are `V` then `t(i+j) = s(i) + u(j)` could work,
+                            also if t is `Tensor2<DirectSum<V,V>,DirectSum<V,V> >` and s and u are `Tensor2<V,V>`
+                            then `t((a+b)|(c+d)) = s(a|c) + u(b|d)` could fill t as a block diagonal tensor.
 
 ###Notes for conceptual layer and refactor
 - In order to incorporate the order-of-operations and diagonal 2-tensor contraction optimizations,
@@ -202,7 +204,7 @@
   in defining an inner product space (which is a vector space and a particular tensor).
 - TODO: think about how to use runtime-specified inner products (lazy initialization?), since
   probably the inner product implementation type has to be constructed using the default
-  constructor.  
+  constructor.
 - TODO: allow tensor products of non-immutable tensor/vector implementations -- this would
   amount to providing constructors which would take the tensor product operands as parameters,
   but could use the same code.
@@ -315,7 +317,7 @@
     * for example, if D is a diagonal 2-tensor of type V^* \otimes V^*, and x and y are
       vectors of type V, then
         D(i).embed(i,V^* \otimes V^*,j).split(j,a|b)*x(a)*y(b)
-      is the expression for use of D as a bilinear form, but this doesn't use its 
+      is the expression for use of D as a bilinear form, but this doesn't use its
       symmetry.  This would be more optimally expressed as
         D(i)*(x(a)*y(b)).bundle(a|b,V \otimes V,j).project(j,Diag2TensorSpace,i),
       where the projection would essentially compute the vector
@@ -403,7 +405,7 @@
   (boost?).
 - Haskell turns out to be a great model for the metaprogramming.  Embrace it.
 - Using a sentinel type e.g. for "fill with" turns out to be a great way to get around constructor
-  choice ambiguity.  This ambiguity was a problem when we wanted to use conversion operators on 
+  choice ambiguity.  This ambiguity was a problem when we wanted to use conversion operators on
   expression templates that weren't conversion to the scalar type.
 
 
