@@ -132,6 +132,7 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
     using Parent_Array_i::operator[];
     using Parent_Array_i::allocation_size_in_bytes;
     using Parent_Array_i::pointer_to_allocation;
+    using Parent_Array_i::overlaps_memory_range;
 
     static std::string type_as_string ()
     {

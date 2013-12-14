@@ -164,6 +164,7 @@ struct ImmutableArray_t
     Uint32 allocation_size_in_bytes () const { return 0; }
     Component const *pointer_to_allocation () const { return NULL; }
     Component *pointer_to_allocation () { return NULL; }
+    bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const { return false; }
 
     static std::string type_as_string ()
     {

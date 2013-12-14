@@ -151,6 +151,11 @@ struct Vector_i
         return typename IndexedExpressionNonConstType_f<SYMBOL_>::T(as_derived());
     }
 
+    Uint32 allocation_size_in_bytes () const { return as_derived().allocation_size_in_bytes(); }
+    Scalar_ const *pointer_to_allocation () const { return as_derived().pointer_to_allocation(); }
+    Scalar_ *pointer_to_allocation () { return as_derived().pointer_to_allocation(); }
+    bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const { return as_derived().overlaps_memory_range(ptr, range); }
+
     // NOTE: these are sort of part of the Tensor_i interface, but need Vector_i's cooperation.
     // if the return value for a particular MultiIndex is false, then that component is understood to be zero.
     static bool component_is_immutable_zero (MultiIndex const &m) { return false; }

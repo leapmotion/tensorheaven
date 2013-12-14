@@ -165,6 +165,7 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
     using Parent_Array_i::operator[];
     using Parent_Array_i::allocation_size_in_bytes;
     using Parent_Array_i::pointer_to_allocation;
+    using Parent_Array_i::overlaps_memory_range;
 
     template <Uint32 N>
     struct ElementType_f

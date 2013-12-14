@@ -487,8 +487,10 @@ struct IndexBundle_t
                                            bundle_index_map(m.template el<MultiIndex::LENGTH-1>()))];
     }
 
-    template <typename OtherTensor>
-    bool uses_tensor (OtherTensor const &t) const { return m_operand.uses_tensor(t); }
+    bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const
+    {
+        return m_operand.overlaps_memory_range(ptr, range);
+    }
 
     Operand const &operand () const { return m_operand; }
 
@@ -572,8 +574,10 @@ struct IndexSplitter_t
         return ImplementationOfSourceFactor::scalar_factor_for_component(s) * m_operand[c_rebundled];
     }
 
-    template <typename OtherTensor>
-    bool uses_tensor (OtherTensor const &t) const { return m_operand.uses_tensor(t); }
+    bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const
+    {
+        return m_operand.overlaps_memory_range(ptr, range);
+    }
 
     Operand const &operand () const { return m_operand; }
 
@@ -650,8 +654,10 @@ struct IndexSplitToIndex_t
         return ImplementationOfSourceFactor::scalar_factor_for_component(s) * m_operand[c_rebundled];
     }
 
-    template <typename OtherTensor>
-    bool uses_tensor (OtherTensor const &t) const { return m_operand.uses_tensor(t); }
+    bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const
+    {
+        return m_operand.overlaps_memory_range(ptr, range);
+    }
 
     Operand const &operand () const { return m_operand; }
 

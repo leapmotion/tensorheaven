@@ -144,6 +144,7 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
     using Parent_Array_i::as_derived;
     using Parent_Array_i::allocation_size_in_bytes;
     using Parent_Array_i::pointer_to_allocation;
+    using Parent_Array_i::overlaps_memory_range;
 
     // can't do "using Parent_Array_i::operator[];" due to overloading ambiguity.
     ComponentAccessConstReturnType operator [] (ComponentIndex const &i) const { return Parent_Array_i::operator[](i); }

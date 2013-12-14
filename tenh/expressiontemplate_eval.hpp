@@ -97,9 +97,7 @@ struct ExpressionTemplate_Eval_t
     operator EvaluatedTensor const & () const { return value(); }
     // operator EvaluatedTensor () const { return value(); }
 
-    // this blocks aliasing, so it doesn't use the tensor in the sense of this method
-    template <typename OtherTensor>
-    bool uses_tensor (OtherTensor const &t) const { return false; }
+    bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const { return false; }
 
     Operand const &operand () const { return m_operand; }
 

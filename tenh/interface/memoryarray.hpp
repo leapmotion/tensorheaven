@@ -79,8 +79,8 @@ struct MemoryArray_i
 
     // access to the raw data (WARNING: if Component isn't a POD type, then this isn't "everything")
     Uint32 allocation_size_in_bytes () const { return COMPONENT_COUNT*sizeof(Component); }
-    Component const *pointer_to_allocation () const { return as_derived().Derived::pointer_to_allocation(); }
-    Component *pointer_to_allocation () { return as_derived().Derived::pointer_to_allocation(); }
+    Component const *pointer_to_allocation () const { return as_derived().pointer_to_allocation(); }
+    Component *pointer_to_allocation () { return as_derived().pointer_to_allocation(); }
 
     static std::string type_as_string ()
     {

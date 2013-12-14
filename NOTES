@@ -68,11 +68,15 @@
 - This works, if a and b are both of type U \otimes U^*
   b(i) = a(j|k).bundle(k|j, type(), i);
   That's not good.
-- could templatize the Scalar parameter for FillWith_t<Scalar> in the fill-with constructors for
-  various things, and then the constructor itself could do the conversion.  then fill_with(1),
-  which returns FillWith_t<int>, will do the right thing.
 - consider disallowing non-square diagonal-2-tensors -- this will ease the optimization of
   direct sum of diagonal 2 tensors (because it would then be a diagonal 2 tensor itself)
+- make "operator ()" overloads for vectors, tensors, etc, so that the "this" object acts
+  as a multilinear form.  on vectors, it would naturally pair with a covector; on k-tensors
+  and embeddable-as-k-tensors, it would pair with a k-tuple of the corresponding vector
+  types.  e.g. if a is a covector, v is a vector, then
+    a(v) and v(a) would both evaluate to a(i)*v(i).
+  e.g. if x is a k-tensor, and v_1, ..., v_k are vectors dual to the factor types of x, then
+    x(tuple(v_1, ..., v_k)) evaluates to x(i_1|...|i_k)*v_1(i_1)*...*v_k(i_k).
 
 
 ###implemented features/items:
@@ -220,8 +224,6 @@
 - TODO: verify that bundle is a left-inverse to split, and then make it so that bundle actually
   left-cancels split.  verifying that bundle actually left-inverts split will require some
   special "no optimize" syntax though, or a verification at the reindexing level.
-- TODO: alias check needs to account for PreallocatedArray_t; the check should be done using
-  a memory range, not a pointer to a particular tensor.
 
 
 ###Features necessary for "version 1.0"
@@ -350,6 +352,30 @@
     B(p)*(x(i)*y(j)).bundle(i|j,V \otimes V,q).project(q,SpaceWithSymmetry,p),
   thereby providing optimization without cluttering up the notation/usage from the
   perspective of the user.
+
+
+###Notes for refined indexed expressions
+- In addition to creating abstract multi-indices via the | operator, e.g.
+    x(i)*g(i|j)*y(j)
+  make "direct sums" of induces, e.g. if x and y are vectors of type U and V respectively, 
+  and a is in (U \oplus V)^*, then
+    a(i+j)*x(i)*y(j)
+  denotes a(i)*(x \oplus y)(i).
+- It then makes sense to change operator | to operator * with regard to creating
+  multi-indices, as they could fairly be called tensor products of indices.
+- Then the operator precedence of * and + could be correctly used to make sense of
+  expressions like
+    T(i*j + k),
+  where T is in the direct sum of a 2-tensor and a vector type.
+- Implement this by creating types TensorProductOfAbstractIndices_c<AbstractIndexTypeList>
+  and DirectSumOfAbstractIndices_c<AbstractIndexTypeList>, each inheriting from some
+  base class for abstract indices -- AbstractIndex_c would also need to inherit from this
+  base class.  The class hierarchy could look like
+  
+  AbstractIndexBase_c<Derived_>
+    AbstractIndex_c<SYMBOL>
+    TensorProductOfAbstractIndices_c<IndexTypeList>
+    DirectSumOfAbstractIndices_c<IndexTypeList>
 
 
 ###Notes for [probable] upgrade to C++11 (to happen after "version 1.0" is reached)

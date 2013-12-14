@@ -93,12 +93,9 @@ struct ExpressionTemplate_IndexedObject_t
         return UnarySummation_t<Object,DimIndexTypeList,SummedDimIndexTypeList>::eval(m_object, m);
     }
 
-    template <typename OtherTensor>
-    bool uses_tensor (OtherTensor const &t) const
+    bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const
     {
-        // the reinterpret_cast is safe because we're dealing with POD types and there
-        // is an explicit type-check at compiletime (TypesAreEqual_f)
-        return TypesAreEqual_f<OtherTensor,Object>::V && reinterpret_cast<Object const *>(&t) == &m_object;
+        return m_object.overlaps_memory_range(ptr, range);
     }
 
     Object const &object () const { return m_object; }
@@ -206,14 +203,14 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList
 
     void operator += (ExpressionTemplate_IndexedObject_t const &right_operand)
     {
-      for (typename Object::ComponentIndex i; i.is_not_at_end(); ++i)
-        m_object[i] += right_operand[typename ExpressionTemplate_IndexedObject_t::MultiIndex(i)];
+        for (typename Object::ComponentIndex i; i.is_not_at_end(); ++i)
+            m_object[i] += right_operand[typename ExpressionTemplate_IndexedObject_t::MultiIndex(i)];
     }
 
     void operator -= (ExpressionTemplate_IndexedObject_t const &right_operand)
     {
-      for (typename Object::ComponentIndex i; i.is_not_at_end(); ++i)
-        m_object[i] -= right_operand[typename ExpressionTemplate_IndexedObject_t::MultiIndex(i)];
+        for (typename Object::ComponentIndex i; i.is_not_at_end(); ++i)
+            m_object[i] -= right_operand[typename ExpressionTemplate_IndexedObject_t::MultiIndex(i)];
     }
 
     template <typename RightOperand>
@@ -229,8 +226,10 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList
         };
 
         // check for aliasing (where source and destination memory overlap)
-        if (CHECK_FOR_ALIASING_ && right_operand.uses_tensor(m_object))
-            throw std::invalid_argument("aliased tensor assignment (source and destination memory overlap) -- see eval() and noalias()");
+        Uint8 const *ptr = reinterpret_cast<Uint8 const *>(m_object.pointer_to_allocation());
+        Uint32 range = m_object.allocation_size_in_bytes();
+        if (CHECK_FOR_ALIASING_ && right_operand.overlaps_memory_range(ptr, range))
+            throw std::invalid_argument("aliased tensor assignment (source and destination memory overlap) -- see eval() and no_alias()");
 
         typedef MultiIndexMap_t<FreeDimIndexTypeList,typename RightOperand::FreeDimIndexTypeList> RightOperandIndexMap;
         typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
@@ -253,8 +252,10 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList
         };
 
         // check for aliasing (where source and destination memory overlap)
-        if (CHECK_FOR_ALIASING_ && right_operand.uses_tensor(m_object))
-            throw std::invalid_argument("aliased tensor assignment (source and destination memory overlap) -- see eval() and noalias()");
+        Uint8 const *ptr = reinterpret_cast<Uint8 const *>(m_object.pointer_to_allocation());
+        Uint32 range = m_object.allocation_size_in_bytes();
+        if (CHECK_FOR_ALIASING_ && right_operand.overlaps_memory_range(ptr, range))
+            throw std::invalid_argument("aliased tensor assignment (source and destination memory overlap) -- see eval() and no_alias()");
 
         typedef MultiIndexMap_t<FreeDimIndexTypeList,typename RightOperand::FreeDimIndexTypeList> RightOperandIndexMap;
         typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
@@ -277,8 +278,10 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList
         };
 
         // check for aliasing (where source and destination memory overlap)
-        if (CHECK_FOR_ALIASING_ && right_operand.uses_tensor(m_object))
-            throw std::invalid_argument("aliased tensor assignment (source and destination memory overlap) -- see eval() and noalias()");
+        Uint8 const *ptr = reinterpret_cast<Uint8 const *>(m_object.pointer_to_allocation());
+        Uint32 range = m_object.allocation_size_in_bytes();
+        if (CHECK_FOR_ALIASING_ && right_operand.overlaps_memory_range(ptr, range))
+            throw std::invalid_argument("aliased tensor assignment (source and destination memory overlap) -- see eval() and no_alias()");
 
         typedef MultiIndexMap_t<FreeDimIndexTypeList,typename RightOperand::FreeDimIndexTypeList> RightOperandIndexMap;
         typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
@@ -288,13 +291,9 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList
             m_object[m] -= right_operand[right_operand_index_map(m)];
     }
 
-
-    template <typename OtherTensor>
-    bool uses_tensor (OtherTensor const &t) const
+    bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const
     {
-        // the reinterpret_cast is safe because we're dealing with POD types and there
-        // is an explicit type-check at compiletime (TypesAreEqual_f)
-        return TypesAreEqual_f<OtherTensor,Object>::V && reinterpret_cast<Object const *>(&t) == &m_object;
+        return m_object.overlaps_memory_range(ptr, range);
     }
 
     Object &object () const { return m_object; }
@@ -387,10 +386,9 @@ struct ExpressionTemplate_Addition_t
             return m_left_operand[left_operand_index_map(m)] - m_right_operand[right_operand_index_map(m)];
     }
 
-    template <typename OtherTensor>
-    bool uses_tensor (OtherTensor const &t) const
+    bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const
     {
-        return m_left_operand.uses_tensor(t) || m_right_operand.uses_tensor(t);
+        return m_left_operand.overlaps_memory_range(ptr, range) || m_right_operand.overlaps_memory_range(ptr, range);
     }
 
     LeftOperand const &left_operand () const { return m_left_operand; }
@@ -476,10 +474,9 @@ struct ExpressionTemplate_ScalarMultiplication_t
             return m_operand[m] / m_scalar_operand;
     }
 
-    template <typename OtherTensor>
-    bool uses_tensor (OtherTensor const &t) const
+    bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const
     {
-        return m_operand.uses_tensor(t);
+        return m_operand.overlaps_memory_range(ptr, range);
     }
 
     Operand const &operand () const { return m_operand; }
@@ -573,10 +570,9 @@ struct ExpressionTemplate_Multiplication_t
         return BinarySummation_t<LeftOperand,RightOperand,FreeDimIndexTypeList,SummedDimIndexTypeList>::eval(m_left_operand, m_right_operand, m);
     }
 
-    template <typename OtherTensor>
-    bool uses_tensor (OtherTensor const &t) const
+    bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const
     {
-        return m_left_operand.uses_tensor(t) || m_right_operand.uses_tensor(t);
+        return m_left_operand.overlaps_memory_range(ptr, range) || m_right_operand.overlaps_memory_range(ptr, range);
     }
 
     LeftOperand const &left_operand () const { return m_left_operand; }
@@ -660,8 +656,10 @@ public:
         return UnarySummation_t<IndexBundle,typename IndexBundle::DimIndexTypeList,SummedDimIndexTypeList>::eval(m_bundler, m);
     }
 
-    template <typename OtherTensor>
-    bool uses_tensor (OtherTensor const &t) const { return m_bundler.uses_tensor(t); }
+    bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const
+    {
+        return m_bundler.overlaps_memory_range(ptr, range);
+    }
 
     Operand const &operand () const { return m_bundler.operand(); }
 
@@ -752,8 +750,10 @@ public:
         return UnarySummation_t<IndexSplitter,typename IndexSplitter::DimIndexTypeList,SummedDimIndexTypeList>::eval(m_splitter, m);
     }
 
-    template <typename OtherTensor>
-    bool uses_tensor (OtherTensor const &t) const { return m_splitter.uses_tensor(t); }
+    bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const
+    {
+        return m_splitter.overlaps_memory_range(ptr, range);
+    }
 
     Operand const &operand () const { return m_splitter.operand(); }
 
@@ -842,8 +842,10 @@ public:
         return UnarySummation_t<IndexSplitToIndex,typename IndexSplitToIndex::DimIndexTypeList,SummedDimIndexTypeList>::eval(m_splitter, m);
     }
 
-    template <typename OtherTensor>
-    bool uses_tensor (OtherTensor const &t) const { return m_splitter.uses_tensor(t); }
+    bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const
+    {
+        return m_splitter.overlaps_memory_range(ptr, range);
+    }
 
     Operand const &operand () const { return m_splitter.operand(); }
 

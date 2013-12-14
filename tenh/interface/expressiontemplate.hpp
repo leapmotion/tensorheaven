@@ -41,7 +41,7 @@ struct ExpressionTemplate_Eval_t;
 //   operator Scalar () const // conversion to scalar -- always declared, but should
 //                            // only compile if the conversion is well-defined (e.g. no free indices)
 //   Scalar operator [] (MultiIndex const &) const // accessor using MultiIndex_t<FreeDimIndexTypeList>
-//   template <typename OtherTensor> bool uses_tensor (OtherTensor const &) const // used in checking for aliasing
+//   bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const // used in checking for aliasing
 template <typename Derived_,
           typename Scalar_,
           typename FreeFactorTypeList_,
@@ -69,7 +69,7 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     // compile-time interface methods
     operator Scalar () const { return as_derived().operator Scalar(); }
     Scalar operator [] (MultiIndex const &m) const { return as_derived().operator[](m); }
-    template <typename OtherTensor> bool uses_tensor (OtherTensor const &t) const { return as_derived().template uses_tensor<OtherTensor>(t); }
+    bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const { return as_derived().overlaps_memory_range(ptr, range); }
 
     // for accessing this as the Derived type
     Derived const &as_derived () const { return *static_cast<Derived const *>(this); }

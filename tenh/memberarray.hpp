@@ -89,6 +89,16 @@ struct MemberArray_t
     using Parent_MemoryArray_i::allocation_size_in_bytes;
     Component const *pointer_to_allocation () const { return &m_component[0]; }
     Component *pointer_to_allocation () { return &m_component[0]; }
+    // this should really go in MemoryArray_i, but there were problems with casting
+    // to private base classes.
+    bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const
+    {
+        Uint8 const *ptr_to_alloc = reinterpret_cast<Uint8 const *>(pointer_to_allocation());
+        Uint8 const *intersection_start = std::max(ptr, ptr_to_alloc);
+        Uint8 const *intersection_end   = std::min(ptr+range, ptr_to_alloc+allocation_size_in_bytes());
+        // return true iff the intersection range is positive
+        return intersection_start < intersection_end;
+    }
 
     static std::string type_as_string ()
     {

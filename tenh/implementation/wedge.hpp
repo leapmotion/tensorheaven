@@ -150,6 +150,7 @@ struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scal
     using Parent_Array_i::operator[];
     using Parent_Array_i::allocation_size_in_bytes;
     using Parent_Array_i::pointer_to_allocation;
+    using Parent_Array_i::overlaps_memory_range;
 
     // TODO (maybe): Scalar &operator [] (MultiIndex const &) -- writeable access to components,
     // which would need to throw if the multi-index corresponds to an immutable zero.  there is
