@@ -41,11 +41,9 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
     typedef UseArrayType_ UseArrayType;
     typedef typename Parent_Tensor_i::Derived Derived;
     typedef typename Parent_Tensor_i::Scalar Scalar;
-    typedef typename Parent_Tensor_i::BasedVectorSpace BasedVectorSpace;
     using Parent_Tensor_i::DIM;
     typedef typename Parent_Tensor_i::ComponentIndex ComponentIndex;
 
-    typedef typename Parent_Tensor_i::TensorProductOfBasedVectorSpaces TensorProductOfBasedVectorSpaces;
     typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
     typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
     using Parent_Tensor_i::ORDER;
@@ -160,7 +158,7 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
 
     static std::string type_as_string ()
     {
-        return "ImplementationOf_t<" + type_string_of<TensorProductOfBasedVectorSpaces>() + ','
+        return "ImplementationOf_t<" + type_string_of<Concept>() + ','
                                      + type_string_of<Scalar>() + ','
                                      + type_string_of<UseArrayType_>() + '>';
     }

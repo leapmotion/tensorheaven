@@ -41,7 +41,6 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
     typedef UseArrayType_ UseArrayType;
     typedef typename Parent_Vector_i::Derived Derived;
     typedef typename Parent_Vector_i::Scalar Scalar;
-    typedef typename Parent_Vector_i::BasedVectorSpace BasedVectorSpace;
     using Parent_Vector_i::DIM;
     typedef typename Parent_Vector_i::ComponentIndex ComponentIndex;
     typedef typename Parent_Vector_i::MultiIndex MultiIndex;
@@ -136,7 +135,7 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
 
     static std::string type_as_string ()
     {
-        return "ImplementationOf_t<" + type_string_of<BasedVectorSpace>() + ','
+        return "ImplementationOf_t<" + type_string_of<Concept>() + ','
                                      + type_string_of<Scalar>() + ','
                                      + type_string_of<UseArrayType_>() + '>';
     }

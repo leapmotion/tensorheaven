@@ -50,7 +50,6 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,F
     typedef UseArrayType_ UseArrayType;
     typedef typename Parent_EmbeddableAsTensor_i::Derived Derived;
     typedef typename Parent_EmbeddableAsTensor_i::Scalar Scalar;
-    typedef typename Parent_EmbeddableAsTensor_i::BasedVectorSpace BasedVectorSpace;
     using Parent_EmbeddableAsTensor_i::DIM;
     typedef typename Parent_EmbeddableAsTensor_i::ComponentIndex ComponentIndex;
 
@@ -60,7 +59,6 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,F
     static Uint32 const ORDER = 2;
     typedef Factor1_ Factor1;
     typedef Factor2_ Factor2;
-    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1,Factor2> Diagonal2TensorProductOfBasedVectorSpaces;
 
     using Parent_Array_i::COMPONENTS_ARE_IMMUTABLE;
     typedef typename Parent_Array_i::ComponentAccessConstReturnType ComponentAccessConstReturnType;
@@ -181,7 +179,7 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,F
 
     static std::string type_as_string ()
     {
-        return "ImplementationOf_t<" + type_string_of<Diagonal2TensorProductOfBasedVectorSpaces>() + ','
+        return "ImplementationOf_t<" + type_string_of<Concept>() + ','
                                      + type_string_of<Scalar>() + ','
                                      + type_string_of<UseArrayType_>() + '>';
     }
