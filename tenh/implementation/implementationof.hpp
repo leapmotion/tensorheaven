@@ -86,6 +86,16 @@ template <typename Concept_,
           typename Derived_ = NullType>
 struct ImplementationOf_t;
 
+template <typename T_> struct IsImplementationOf_f { static bool const V = false; };
+template <typename Concept_,
+          typename Scalar_,
+          typename UseArrayType_,
+          typename Derived_>
+struct IsImplementationOf_f<ImplementationOf_t<Concept_,Scalar_,UseArrayType_,Derived_> >
+{
+    static bool const V = true;
+};
+
 // ///////////////////////////////////////////////////////////////////////////
 // metafunction for deciding which structure to use for component access
 // ///////////////////////////////////////////////////////////////////////////

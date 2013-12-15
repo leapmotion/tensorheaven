@@ -103,6 +103,23 @@ TypeList_t<AbstractIndex_c<SYMBOL1>,TypeList_t<AbstractIndex_c<SYMBOL2> > > oper
 }
 
 // ///////////////////////////////////////////////////////////////////////////
+// for creating abstract multiindices with a given range of symbols
+// ///////////////////////////////////////////////////////////////////////////
+
+template <Uint32 INDEX_COUNT_, AbstractIndexSymbol STARTING_SYMBOL_>
+struct AbstractIndexRangeTypeList_f
+{
+    typedef TypeList_t<AbstractIndex_c<STARTING_SYMBOL_>,
+                       typename AbstractIndexRangeTypeList_f<INDEX_COUNT_-1,STARTING_SYMBOL_+1>::T> T;
+};
+
+template <AbstractIndexSymbol STARTING_SYMBOL_>
+struct AbstractIndexRangeTypeList_f<0,STARTING_SYMBOL_>
+{
+    typedef EmptyTypeList T;
+};
+
+// ///////////////////////////////////////////////////////////////////////////
 // for stringifying an abstract multiindex
 // ///////////////////////////////////////////////////////////////////////////
 

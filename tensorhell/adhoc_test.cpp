@@ -60,5 +60,7 @@ int main (int, char **)
     test_direct_sum_of_diagonal2tensors();
     test_direct_sum_of_inner_products();
 
+    test_embeddable_as_tensor_as_multilinear_form();
+
     return 0;
 }

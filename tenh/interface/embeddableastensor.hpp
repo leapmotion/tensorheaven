@@ -38,6 +38,55 @@ struct FactorComponentIndexTypeList_t<EmptyTypeList>
     typedef EmptyTypeList T;
 };
 
+// ///////////////////////////////////////////////////////////////////////////
+// metafunctions and functions for using an EmbeddableAsTensor_i as
+// a multilinear form.
+// ///////////////////////////////////////////////////////////////////////////
+
+template <typename ParameterTypeList_, typename AbstractIndexTypeList_>
+struct IndexedParameterListReturnType_f
+{
+private:
+    typedef typename Head_f<ParameterTypeList_>::T HeadParameter;
+    typedef typename Body_f<ParameterTypeList_>::T BodyParameterTypeList;
+    typedef typename Head_f<AbstractIndexTypeList_>::T HeadAbstractIndex;
+    typedef typename Body_f<AbstractIndexTypeList_>::T BodyAbstractIndexTypeList;
+    static AbstractIndexSymbol const HEAD_SYMBOL = SymbolOf_f<HeadAbstractIndex>::V;
+    typedef typename HeadParameter::template IndexedExpressionConstType_f<HEAD_SYMBOL>::T LeftOperand;
+    typedef typename IndexedParameterListReturnType_f<BodyParameterTypeList,BodyAbstractIndexTypeList>::T RightOperand;
+public:
+    typedef ExpressionTemplate_Multiplication_t<LeftOperand,RightOperand> T;
+};
+
+template <typename HeadParameter, typename HeadAbstractIndex>
+struct IndexedParameterListReturnType_f<TypeList_t<HeadParameter>,TypeList_t<HeadAbstractIndex> >
+{
+private:
+    static AbstractIndexSymbol const HEAD_SYMBOL = SymbolOf_f<HeadAbstractIndex>::V;
+public:
+    typedef typename HeadParameter::template IndexedExpressionConstType_f<HEAD_SYMBOL>::T T;
+};
+
+template <typename ParameterTypeList_, typename AbstractIndexTypeList_>
+typename IndexedParameterListReturnType_f<ParameterTypeList_,AbstractIndexTypeList_>::T
+    indexed_parameter_list (List_t<ParameterTypeList_> const &p, AbstractIndexTypeList_ const &)
+{
+    typedef typename Head_f<AbstractIndexTypeList_>::T HeadAbstractIndex;
+    typedef typename Body_f<AbstractIndexTypeList_>::T BodyAbstractIndexTypeList;
+    return p.head()(HeadAbstractIndex())*indexed_parameter_list(p.body(), BodyAbstractIndexTypeList());
+}
+
+template <typename HeadParameter, typename HeadAbstractIndex>
+typename IndexedParameterListReturnType_f<TypeList_t<HeadParameter>,TypeList_t<HeadAbstractIndex> >::T
+    indexed_parameter_list (List_t<TypeList_t<HeadParameter> > const &p, TypeList_t<HeadAbstractIndex> const &)
+{
+    return p.head()(HeadAbstractIndex());
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+// EmbeddableAsTensor_i
+// ///////////////////////////////////////////////////////////////////////////
+
 // compile-time interface for a symmetric tensor type -- e.g. exterior/symmetric product.
 // EmbeddableAsTensor_ should be a EmbeddableAsTensor_c type.
 // TODO: technically, this should be LinearlyEmbeddableAsTensor_i
@@ -99,6 +148,23 @@ struct EmbeddableAsTensor_i
         STATIC_ASSERT((EachTypeSatisfies_f<TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList>, IsAbstractIndex_p>::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
         AbstractIndex_c<666> dummy_index;
         return Parent_Vector_i::operator()(dummy_index).split(dummy_index, abstract_multiindex);
+    }
+
+    // this is for using this object as a multilinear form.
+    // e.g. if X is this object, and v_1, ..., v_k are vectors dual to the factor
+    // types of TensorProductOfBasedVectorSpaces, then
+    //   X(tuple(v_1, ..., v_k))
+    // evaluates as
+    //   X.split(i_1|...|i_k)*v_1(i_1)*...*v_k(i_k).
+    template <typename ParameterTypeList_>
+    Scalar_ operator () (List_t<ParameterTypeList_> const &p) const
+    {
+        // TODO: static assert that each type is an ImplementationOf_t
+        typedef typename ConceptOfEachTypeIn_f<ParameterTypeList_>::T ConceptTypeList;
+        typedef typename AbstractIndexRangeTypeList_f<Length_f<ParameterTypeList_>::V,667>::T AbstractIndexTypeList;
+        // TODO: eventually replace with project (the arguments will be projected),
+        // as this is where a frequent and very important optimization will occur
+        return split(AbstractIndexTypeList())*indexed_parameter_list(p, AbstractIndexTypeList());
     }
 
     static bool component_is_immutable_zero (MultiIndex const &m) { return as_derived().component_is_immutable_zero(m); }
