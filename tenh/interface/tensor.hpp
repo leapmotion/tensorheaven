@@ -13,29 +13,10 @@
 #include "tenh/componentindex.hpp"
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/expression_templates.hpp"
-#include "tenh/interface/vector.hpp"
+#include "tenh/interface/embeddableastensor.hpp"
 #include "tenh/print_multiindexable.hpp"
 
 namespace Tenh {
-
-template <typename FactorTypeList>
-struct FactorComponentIndexTypeList_t
-{
-    typedef TypeList_t<ComponentIndex_t<DimensionOf_f<typename FactorTypeList::HeadType>::V>,
-                       typename FactorComponentIndexTypeList_t<typename FactorTypeList::BodyTypeList>::T> T;
-};
-
-template <typename HeadType>
-struct FactorComponentIndexTypeList_t<TypeList_t<HeadType> >
-{
-    typedef TypeList_t<ComponentIndex_t<DimensionOf_f<HeadType>::V> > T;
-};
-
-template <>
-struct FactorComponentIndexTypeList_t<EmptyTypeList>
-{
-    typedef EmptyTypeList T;
-};
 
 // compile-time interface for a non-symmetric tensor product class.  TensorProductOfBasedVectorSpaces_
 // should be a TensorProductOfBasedVectorSpaces_c type.
@@ -44,7 +25,10 @@ template <typename Derived_,
           typename Scalar_,
           typename TensorProductOfBasedVectorSpaces_,
           bool COMPONENTS_ARE_IMMUTABLE_>
-struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_>
+struct Tensor_i
+    :
+    public EmbeddableAsTensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_>
+    // public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_>
 {
     enum
     {
@@ -53,15 +37,16 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
         STATIC_ASSERT_IN_ENUM(IS_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES_UNIQUELY(TensorProductOfBasedVectorSpaces_), MUST_BE_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES)
     };
 
-    typedef Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_> Parent_Vector_i;
-    typedef typename Parent_Vector_i::Derived Derived;
-    typedef typename Parent_Vector_i::Scalar Scalar;
-    typedef typename Parent_Vector_i::BasedVectorSpace BasedVectorSpace;
-    using Parent_Vector_i::DIM;
-    typedef typename Parent_Vector_i::ComponentIndex ComponentIndex;
-    using Parent_Vector_i::COMPONENTS_ARE_IMMUTABLE;
-    typedef typename Parent_Vector_i::ComponentAccessConstReturnType ComponentAccessConstReturnType;
-    typedef typename Parent_Vector_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
+    // typedef Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_> Parent_Vector_i;
+    typedef EmbeddableAsTensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_> Parent_EmbeddableAsTensor_i;
+    typedef typename Parent_EmbeddableAsTensor_i::Derived Derived;
+    typedef typename Parent_EmbeddableAsTensor_i::Scalar Scalar;
+    // typedef typename Parent_Vector_i::BasedVectorSpace BasedVectorSpace;
+    using Parent_EmbeddableAsTensor_i::DIM;
+    typedef typename Parent_EmbeddableAsTensor_i::ComponentIndex ComponentIndex;
+    using Parent_EmbeddableAsTensor_i::COMPONENTS_ARE_IMMUTABLE;
+    typedef typename Parent_EmbeddableAsTensor_i::ComponentAccessConstReturnType ComponentAccessConstReturnType;
+    typedef typename Parent_EmbeddableAsTensor_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
 
     typedef TensorProductOfBasedVectorSpaces_ TensorProductOfBasedVectorSpaces;
     typedef typename FactorTypeListOf_f<TensorProductOfBasedVectorSpaces>::T FactorTypeList;
@@ -75,9 +60,9 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
 
     static Uint32 order () { return ORDER; }
 
-    using Parent_Vector_i::dim;
-    using Parent_Vector_i::as_derived;
-    using Parent_Vector_i::operator[];
+    using Parent_EmbeddableAsTensor_i::dim;
+    using Parent_EmbeddableAsTensor_i::as_derived;
+    using Parent_EmbeddableAsTensor_i::operator[];
     // multi-index component access which is a frontend for the vector-index component access
     template <typename OtherIndexTypeList>
     ComponentAccessConstReturnType operator [] (MultiIndex_t<OtherIndexTypeList> const &m) const
@@ -91,7 +76,7 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
         // the compiler should optimize it out anyway.
         MultiIndex x(m);
         // m.value() is what does the multi-index-to-vector-index computation
-        return Parent_Vector_i::operator[](ComponentIndex(m.value(), DONT_CHECK_RANGE));
+        return Parent_EmbeddableAsTensor_i::operator[](ComponentIndex(m.value(), DONT_CHECK_RANGE));
     }
     // multi-index component access which is a frontend for the vector-index component access
     template <typename OtherIndexTypeList>
@@ -106,10 +91,10 @@ struct Tensor_i : public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpa
         // the compiler should optimize it out anyway.
         MultiIndex x(m);
         // m.value() is what does the multi-index-to-vector-index computation
-        return Parent_Vector_i::operator[](ComponentIndex(m.value(), DONT_CHECK_RANGE));
+        return Parent_EmbeddableAsTensor_i::operator[](ComponentIndex(m.value(), DONT_CHECK_RANGE));
     }
 
-    using Parent_Vector_i::operator();
+    using Parent_EmbeddableAsTensor_i::operator();
 
     // Because the return type for "operator () (...) const" is an abomination, use this helper.
     // This metafunction also serves to allow a 1-multiindex (i.e. a typelist of abstract indices
@@ -205,7 +190,7 @@ template <typename Derived_, typename Scalar_, typename TensorProductOfBasedVect
 template <typename AbstractIndexHeadType_>
 struct Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_>::IndexedExpressionConstType_f<TypeList_t<AbstractIndexHeadType_> >
 {
-    typedef typename Parent_Vector_i::template IndexedExpressionConstType_f<SymbolOf_f<AbstractIndexHeadType_>::V>::T T;
+    typedef typename Parent_EmbeddableAsTensor_i::template IndexedExpressionConstType_f<SymbolOf_f<AbstractIndexHeadType_>::V>::T T;
 };
 
 // the general definition indexes this Tensor_i as a tensor (using a multiindex)
@@ -227,7 +212,7 @@ template <typename Derived_, typename Scalar_, typename TensorProductOfBasedVect
 template <typename AbstractIndexHeadType_>
 struct Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_>::IndexedExpressionNonConstType_f<TypeList_t<AbstractIndexHeadType_> >
 {
-    typedef typename Parent_Vector_i::template IndexedExpressionNonConstType_f<SymbolOf_f<AbstractIndexHeadType_>::V>::T T;
+    typedef typename Parent_EmbeddableAsTensor_i::template IndexedExpressionNonConstType_f<SymbolOf_f<AbstractIndexHeadType_>::V>::T T;
 };
 
 } // end of namespace Tenh

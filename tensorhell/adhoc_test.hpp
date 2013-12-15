@@ -329,17 +329,17 @@ void test_split_index_to_index_order_2 ()
     AbstractIndex_c<'k'> k;
     AbstractIndex_c<'l'> l;
     std::cout << FORMAT_VALUE(s(i).split(i,k|l)) << '\n';
-    // std::cout << FORMAT_VALUE(s.split(k|l)) << '\n';
+    std::cout << FORMAT_VALUE(s.split(k|l)) << '\n';
     std::cout << FORMAT_VALUE(s(i).split(i,j)) << '\n';
     std::cout << FORMAT_VALUE(s(i).split(i,j).split(j,k|l)) << '\n';
     std::cout << "the following should be exactly zero\n";
     std::cout << FORMAT_VALUE(s(i).split(i,k|l) - s(i).split(i,j).split(j,k|l)) << '\n';
-    // std::cout << "the following should be exactly zero\n";
-    // std::cout << FORMAT_VALUE(s.split(k|l) - s(i).split(i,j).split(j,k|l)) << '\n';
+    std::cout << "the following should be exactly zero\n";
+    std::cout << FORMAT_VALUE(s.split(k|l) - s(i).split(i,j).split(j,k|l)) << '\n';
     std::cout << "the following should be exactly zero\n";
     std::cout << FORMAT_VALUE(s(i).split(i,j) - s(i).split(i,k|l).bundle(k|l,TensorProduct(),j)) << '\n';
-    // std::cout << "the following should be exactly zero\n";
-    // std::cout << FORMAT_VALUE(s(i).split(i,j) - s.split(k|l).bundle(k|l,TensorProduct(),j)) << '\n';
+    std::cout << "the following should be exactly zero\n";
+    std::cout << FORMAT_VALUE(s(i).split(i,j) - s.split(k|l).bundle(k|l,TensorProduct(),j)) << '\n';
     std::cout << '\n';
 }
 

@@ -14,11 +14,29 @@
 #include "tenh/conceptual/embeddableintensorproduct.hpp"
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/expression_templates.hpp"
-#include "tenh/interface/tensor.hpp"
 #include "tenh/interface/vector.hpp"
 #include "tenh/meta/typelist_utility.hpp"
 
 namespace Tenh {
+
+template <typename FactorTypeList>
+struct FactorComponentIndexTypeList_t
+{
+    typedef TypeList_t<ComponentIndex_t<DimensionOf_f<typename FactorTypeList::HeadType>::V>,
+                       typename FactorComponentIndexTypeList_t<typename FactorTypeList::BodyTypeList>::T> T;
+};
+
+template <typename HeadType>
+struct FactorComponentIndexTypeList_t<TypeList_t<HeadType> >
+{
+    typedef TypeList_t<ComponentIndex_t<DimensionOf_f<HeadType>::V> > T;
+};
+
+template <>
+struct FactorComponentIndexTypeList_t<EmptyTypeList>
+{
+    typedef EmptyTypeList T;
+};
 
 // compile-time interface for a symmetric tensor type -- e.g. exterior/symmetric product.
 // EmbeddableAsTensor_ should be a EmbeddableAsTensor_c type.
