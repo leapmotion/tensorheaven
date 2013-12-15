@@ -211,8 +211,6 @@ Scalar_ tensor_product_of_2_tensors (ComponentIndex_t<DimensionOf_f<ConceptualTy
     typedef typename TensorProductOfImmutable2Tensors_f<typename Immutable2TensorImplementationTypeList_::BodyTypeList>::T BodyImplementation;
     HeadImplementation head_implementation;
     BodyImplementation body_implementation;
-    AbstractIndex_c<'A'> A;
-    AbstractIndex_c<'B'> B;
     AbstractIndex_c<'u'> u;
     AbstractIndex_c<'v'> v;
     AbstractIndex_c<'k'> k;
@@ -220,7 +218,7 @@ Scalar_ tensor_product_of_2_tensors (ComponentIndex_t<DimensionOf_f<ConceptualTy
     AbstractIndex_c<'P'> P;
     AbstractIndex_c<'Q'> Q;
     AbstractIndex_c<'r'> r;
-    return (head_implementation(A).split(A,u|v)*body_implementation(B).split(B,k|l))
+    return (head_implementation.split(u|v)*body_implementation.split(k|l))
            .bundle(u|k,Factor1(),P)
            .bundle(v|l,Factor2(),Q)
            .bundle(P|Q,ConceptualTypeOfTensorProduct_(),r)

@@ -315,13 +315,12 @@ struct DirectSumOf2TensorsHelper_t
         {
             AbstractIndex_c<'j'> j;
             AbstractIndex_c<'k'> k;
-            AbstractIndex_c<'p'> p;
             HeadImplementation h;
             typedef typename HeadImplementation::MultiIndex M;
             M head_m(m.template el<0>().value(), m.template el<1>().value(), DONT_CHECK_RANGE);
             // this split is unnecessary if HeadImmutable2TensorImplementation_ is a tensor product,
             // but this makes the same code work for diagonal 2 tensors as well, so for now that's fine.
-            return h(p).split(p,j|k)[head_m];
+            return h.split(j|k)[head_m];
         }
         else // body block
         {
@@ -353,10 +352,9 @@ struct DirectSumOf2TensorsHelper_t<TypeList_t<HeadImmutable2TensorImplementation
         HeadImmutable2TensorImplementation_ h;
         AbstractIndex_c<'j'> j;
         AbstractIndex_c<'k'> k;
-        AbstractIndex_c<'p'> p;
         // this split is unnecessary if HeadImmutable2TensorImplementation_ is a tensor product,
         // but this makes the same code work for diagonal 2 tensors as well, so for now that's fine.
-        return h(p).split(p,j|k)[m];
+        return h.split(j|k)[m];
     }
 };
 

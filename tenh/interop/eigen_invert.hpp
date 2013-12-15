@@ -85,7 +85,7 @@ bool invert_2tensor (EmbeddableAsTensor_i<Derived1_,
 
     TwoTensorType t(Static<WithoutInitialization>::SINGLETON);
     TwoTensorDualType t_inverse(Static<WithoutInitialization>::SINGLETON);
-    t(i|j) = s(a).split(a,i|j);
+    t(i|j) = s.split(i|j);
 
     bool is_invertible = invert_2tensor(t, t_inverse);
     if (is_invertible)

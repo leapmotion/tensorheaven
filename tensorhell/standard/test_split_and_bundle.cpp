@@ -19,6 +19,7 @@ using namespace TestSystem;
 namespace Test {
 namespace SplitAndBundle {
 
+// TODO: templatize this and test a bunch of different splittable types
 void test_partial_inverse (Context const &context)
 {
     static Uint32 const DIM = 3;
@@ -32,10 +33,10 @@ void test_partial_inverse (Context const &context)
     typedef Tenh::ImplementationOf_t<TensorProduct,Scalar> Tensor;
 
     Tensor t(Tenh::fill_with(3));
-    for (Tensor::ComponentIndex i; i.is_not_at_end(); ++i){
-      t[i] = i.value();
-    }
-    Tenh::AbstractIndex_c <'I'> I;
+    for (Tensor::ComponentIndex i; i.is_not_at_end(); ++i)
+        t[i] = i.value();
+
+    // Tenh::AbstractIndex_c <'I'> I;
     Tenh::AbstractIndex_c <'J'> J;
     Tenh::AbstractIndex_c <'K'> K;
     Tenh::AbstractIndex_c <'L'> L;
@@ -46,11 +47,11 @@ void test_partial_inverse (Context const &context)
     std::cerr << FORMAT_VALUE(t(I).split(I,J|K|L)) << '\n';
     std::cerr << FORMAT_VALUE(t(I).split(I,J|K|L).bundle(J|K|L,TensorProduct() ,Z ) ) << '\n';
     */
-    Tensor eta( Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
-    eta(Z) = t(Z) - t(I).split(I,J|K|L).bundle(J|K|L,TensorProduct() ,Z );
+    Tensor eta(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
+    eta(Z) = t(Z) - t.split(J|K|L).bundle(J|K|L, TensorProduct(), Z);
     //std::cerr << FORMAT_VALUE(eta(Z)) << '\n';
-    for (Tensor::ComponentIndex i; i.is_not_at_end(); ++i )
-        assert_eq(eta[i],float(0)); 
+    for (Tensor::ComponentIndex i; i.is_not_at_end(); ++i)
+        assert_eq(eta[i], float(0)); 
     
 }
 
@@ -61,7 +62,6 @@ void AddTests (Directory &parent)
     Directory &split_and_bundle_dir = parent.GetSubDirectory("split_and_bundle");
 
     LVD_ADD_TEST_CASE_FUNCTION(split_and_bundle_dir, test_partial_inverse, RESULT_NO_ERROR);
-
 }
 
 } // end of namespace SplitAndBundle

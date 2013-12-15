@@ -126,7 +126,6 @@ void verify_on_tensor_type (Context const &context)
     Tenh::TypedIndex_t<Factor2,'b'> b;
     Tenh::TypedIndex_t<typename S::WithStandardEuclideanBasis,'p'> p;
     Tenh::TypedIndex_t<S,'q'> q;
-    Tenh::TypedIndex_t<S,'r'> r;
     Tenh::EuclideanEmbedding_t<S> e;
     for (typename S::Index i; i.is_not_at_end(); ++i)
     {
@@ -148,7 +147,7 @@ void verify_on_tensor_type (Context const &context)
                 w_i_dot_w_j += w_i[k]*w_j[k]; // NOT an expression template
 
             // now to compute the same dot product, but in the "blown up" space of nonsymmetric tensors
-            Scalar v_i_dot_v_j = v_i(q).split(q,a|b) * v_j(r).split(r,a|b);
+            Scalar v_i_dot_v_j = v_i.split(a|b) * v_j.split(a|b);
 
 //             std::cerr << FORMAT_VALUE(i) << ", " << FORMAT_VALUE(j) << ", "
 //                       << FORMAT_VALUE(w_i_dot_w_j) << ", " << FORMAT_VALUE(v_i_dot_v_j) << ", "

@@ -10,8 +10,10 @@
 
 #include <iostream>
 
+#include "tenh/implementation/innerproduct.hpp"
 #include "tenh/implementation/vector.hpp"
 #include "tenh/implementation/vee.hpp"
+#include "tenh/interop/eigen_invert.hpp"
 
 namespace Tenh {
 
@@ -22,21 +24,21 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
                                                         ImplementationOf_t<BasedVectorSpace_,Scalar_,GuessUseArrayType_,Derived_> const &guess,
                                                         Scalar_ const tolerance)
 {
-    typedef ImplementationOf_t<BasedVectorSpace_, Scalar_> VectorType;
-    typedef typename InnerProduct_f<BasedVectorSpace_, InnerProductId_, Scalar_>::T VectorInnerProductType;
-    typedef ImplementationOf_t<typename DualOf_f<BasedVectorSpace_>::T, Scalar_> CoVectorType;
-    typedef typename InnerProduct_f<typename DualOf_f<BasedVectorSpace_>::T, InnerProductId_, Scalar_>::T CoVectorInnerProductType;
-    typedef SymmetricPowerOfBasedVectorSpace_c<2, BasedVectorSpace_> Sym2;
+    typedef ImplementationOf_t<BasedVectorSpace_,Scalar_> VectorType;
+    typedef typename InnerProduct_f<BasedVectorSpace_,InnerProductId_,Scalar_>::T VectorInnerProductType;
+    typedef ImplementationOf_t<typename DualOf_f<BasedVectorSpace_>::T,Scalar_> CoVectorType;
+    typedef typename InnerProduct_f<typename DualOf_f<BasedVectorSpace_>::T,InnerProductId_,Scalar_>::T CoVectorInnerProductType;
+    typedef SymmetricPowerOfBasedVectorSpace_c<2,BasedVectorSpace_> Sym2;
     typedef typename ObjectiveFunction_::D2 HessianType;
-    typedef ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<2, BasedVectorSpace_>, Scalar_> HessianInverseType;
+    typedef ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<2,BasedVectorSpace_>,Scalar_> HessianInverseType;
     STATIC_ASSERT_TYPES_ARE_EQUAL(VectorType, typename ObjectiveFunction_::V);
     STATIC_ASSERT_TYPES_ARE_EQUAL(Scalar_, typename ObjectiveFunction_::Out);
-
-    static int const LINE_SEARCH_SAMPLE_COUNT = 800;
-    static Scalar_ const STEP_SCALE = Scalar_(1.0);
-    static Scalar_ const MAX_STEP_SIZE = Scalar_(-1.0);
+    static int const LINE_SEARCH_SAMPLE_COUNT = 50;
+    static Scalar_ const STEP_SCALE = Scalar_(1);
+    static Scalar_ const MAX_STEP_SIZE = Scalar_(-1);
+    // static Scalar_ const MAX_STEP_SIZE = Scalar_(1);
     static int const MAX_ITERATION_COUNT = 20;
-    static Scalar_ const GRADIENT_DESCENT_STEP_SIZE = Scalar_(1.0);
+    static Scalar_ const GRADIENT_DESCENT_STEP_SIZE = Scalar_(1);
     static bool const PRINT_DEBUG_OUTPUT = false;
     static Scalar_ const EPSILON = 1e-5;
 
@@ -44,7 +46,6 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
     CoVectorInnerProductType covector_innerproduct;
 
     AbstractIndex_c<'a'> a;
-    AbstractIndex_c<'b'> b;
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
 
@@ -59,7 +60,7 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
     {
         Scalar_ current_value = func.function(current_approximation);
         CoVectorType g = func.D_function(current_approximation);
-        Scalar_ g_squared_norm = g(i)*covector_innerproduct(a).split(a,i|j)*g(j);
+        Scalar_ g_squared_norm = g(i)*covector_innerproduct.split(i|j)*g(j);
         Scalar_ g_norm = std::sqrt(g_squared_norm);
 
         if (PRINT_DEBUG_OUTPUT)
@@ -80,7 +81,7 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
 
         if (invert_2tensor(h, hinv))
         {
-            step(i).no_alias() = hinv(a).split(a,i|j) * -g(j);
+            step(i).no_alias() = hinv.split(i|j) * -g(j);
             d = h(a)*(step(i)*step(j)).bundle(i|j,Sym2(),a);
         }
         else
@@ -88,12 +89,13 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
             d = 5; // bigger than EPSILON.
         }
 
+        //std::cerr << "positive definiteness along step: " << d << '\n';
         if (d < EPSILON) // h isn't postive definite along step so fall back to conjugate gradient
         {
             VectorType v(Static<WithoutInitialization>::SINGLETON);
-            v(j).no_alias() = g(i) * covector_innerproduct(a).split(a,i|j);
+            v(j).no_alias() = g(i) * covector_innerproduct.split(i|j);
             // d = g(i)*v(i);
-            d = v(i) * h(b).split(b,i|j) * v(j);
+            d = v(i) * h.split(i|j) * v(j);
 
             if (d < EPSILON) // h isn't positive definite along g either, gradient descent
             {
@@ -122,26 +124,79 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
         {
             if (PRINT_DEBUG_OUTPUT)
             {
-                std::cout << "Newton's method." << std::endl << h(a).split(a,i|j) << std::endl;
+                std::cout << "Newton's method." << std::endl << h.split(i|j) << std::endl;
                 ++newtons_method;
             }
         }
 
         step(i).no_alias() = STEP_SCALE * step(i);
 
-        Scalar_ step_norm = std::sqrt(vector_innerproduct(a).split(a,i|j)*step(i)*step(j));
+        Scalar_ step_norm = std::sqrt(vector_innerproduct.split(i|j)*step(i)*step(j));
 
         if (MAX_STEP_SIZE > 0 && step_norm > MAX_STEP_SIZE)
         {
-          if (PRINT_DEBUG_OUTPUT)
-          {
-            std::cout << "Clamping step length to " << MAX_STEP_SIZE << std::endl;
-          }
+            if (PRINT_DEBUG_OUTPUT)
+            {
+                std::cout << "Clamping step length to " << MAX_STEP_SIZE << std::endl;
+            }
             step(i).no_alias() = MAX_STEP_SIZE * step(i) / step_norm;
+            step_norm = std::sqrt(vector_innerproduct.split(i|j)*step(i)*step(j));
         }
 
+        //std::cerr << "step = " << step << ", step size = " << step_norm << '\n';
+
+        // {
+        //     std::cerr << "line search errors: ";
+        //     Scalar_ quad_a = func.D2_function(current_approximation).split(i|j)*step(i)*step(j)/2;
+        //     Scalar_ quad_b = func.D_function(current_approximation)(i)*step(i);
+        //     Scalar_ quad_c = func.function(current_approximation);
+        //     // print out error between quadratic approx and actual function value
+        //     for (Uint32 it = 0; it <= LINE_SEARCH_SAMPLE_COUNT; ++it)
+        //     {
+        //         VectorType x(Static<WithoutInitialization>::SINGLETON);
+        //         Scalar_ t = Scalar_(it) / LINE_SEARCH_SAMPLE_COUNT;
+        //         x(i).no_alias() = current_approximation(i) + t * step(i);
+        //         Scalar_ actual_value = func.function(x);
+        //         Scalar_ approximate_value = quad_c + quad_b*t + quad_a*sqr(t);
+        //         std::cerr << approximate_value - actual_value << ' ';
+        //     }
+        //     std::cerr << '\n';
+        // }
+
+//         {
+//             std::cerr << "approximation offsets: ";
+//             Scalar_ quad_a = func.D2_function(current_approximation).split(i|j)*step(i)*step(j)/2;
+//             Scalar_ quad_b = func.D_function(current_approximation)(i)*step(i);
+//             // print out error between quadratic approx and actual function value
+//             for (Uint32 it = 0; it <= LINE_SEARCH_SAMPLE_COUNT; ++it)
+//             {
+//                 VectorType x(Static<WithoutInitialization>::SINGLETON);
+//                 Scalar_ t = Scalar_(it) / LINE_SEARCH_SAMPLE_COUNT;
+// //                x(i).no_alias() = current_approximation(i) + t * step(i);
+//                 Scalar_ approximation_offset = quad_b*t + quad_a*sqr(t);
+//                 std::cerr << approximation_offset << ' ';
+//             }
+//             std::cerr << '\n';
+//         }
+
+//         {
+//             std::cerr << "approximation offsets (geometric sequence): ";
+//             Scalar_ quad_a = func.D2_function(current_approximation).split(i|j)*step(i)*step(j)/2;
+//             Scalar_ quad_b = func.D_function(current_approximation)(i)*step(i);
+//             // print out error between quadratic approx and actual function value
+//             for (Uint32 it = 0; it <= LINE_SEARCH_SAMPLE_COUNT; ++it)
+//             {
+//                 VectorType x(Static<WithoutInitialization>::SINGLETON);
+//                 Scalar_ t = std::pow(Scalar_(2), -Scalar_(it));
+// //                x(i).no_alias() = current_approximation(i) + t * step(i);
+//                 Scalar_ approximation_offset = quad_b*t + quad_a*sqr(t);
+//                 std::cerr << "t = " << t << ": " << approximation_offset << '\n';
+//             }
+//             std::cerr << '\n';
+//         }
+
         VectorType line_search_step(Static<WithoutInitialization>::SINGLETON);
-        VectorType partial_step(fill_with<Scalar_>(0));
+        VectorType partial_step(fill_with(0));
         VectorType x(Static<WithoutInitialization>::SINGLETON);
         line_search_step(i).no_alias() = step(i) / LINE_SEARCH_SAMPLE_COUNT;
         int it;
@@ -161,13 +216,12 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
         }
         if (PRINT_DEBUG_OUTPUT)
         {
-          std::cout << "used " << it << " steps in line search\n";
-
-        if (it != 0 && it != LINE_SEARCH_SAMPLE_COUNT)
-        {
-          std::cout << "Did a partial line search\n";
+            std::cout << "used " << it << " steps in line search\n";
+            if (it != 0 && it != LINE_SEARCH_SAMPLE_COUNT)
+            {
+                std::cout << "Did a partial line search\n";
+            }
         }
-      }
 
         current_approximation(i) += step(i);
 
