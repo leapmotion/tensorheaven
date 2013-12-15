@@ -214,6 +214,7 @@ void test_standard_euclidean_inner_product ()
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
     std::cout << FORMAT_VALUE(g(P).split(P,i|j)) << '\n';
+    std::cout << FORMAT_VALUE(g.split(i|j)) << '\n';
     std::cout << '\n';
 }
 
@@ -230,6 +231,7 @@ void test_tensor_power_of_inner_product ()
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
     std::cout << FORMAT_VALUE(g(P).split(P,i|j)) << '\n';
+    std::cout << FORMAT_VALUE(g.split(i|j)) << '\n';
     std::cout << '\n';
 }
 
@@ -244,6 +246,7 @@ void test_euclidean_embedding_of_standard_euclidean_space ()
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
     std::cout << FORMAT_VALUE(e(P).split(P,i|j)) << '\n';
+    std::cout << FORMAT_VALUE(e.split(i|j)) << '\n';
     std::cout << '\n';
 }
 
@@ -260,6 +263,7 @@ void test_tensor_power_of_euclidean_embedding ()
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
     std::cout << FORMAT_VALUE(e(P).split(P,i|j)) << '\n';
+    std::cout << FORMAT_VALUE(e.split(i|j)) << '\n';
     std::cout << '\n';
 }
 
@@ -325,12 +329,17 @@ void test_split_index_to_index_order_2 ()
     AbstractIndex_c<'k'> k;
     AbstractIndex_c<'l'> l;
     std::cout << FORMAT_VALUE(s(i).split(i,k|l)) << '\n';
+    // std::cout << FORMAT_VALUE(s.split(k|l)) << '\n';
     std::cout << FORMAT_VALUE(s(i).split(i,j)) << '\n';
     std::cout << FORMAT_VALUE(s(i).split(i,j).split(j,k|l)) << '\n';
     std::cout << "the following should be exactly zero\n";
     std::cout << FORMAT_VALUE(s(i).split(i,k|l) - s(i).split(i,j).split(j,k|l)) << '\n';
+    // std::cout << "the following should be exactly zero\n";
+    // std::cout << FORMAT_VALUE(s.split(k|l) - s(i).split(i,j).split(j,k|l)) << '\n';
     std::cout << "the following should be exactly zero\n";
     std::cout << FORMAT_VALUE(s(i).split(i,j) - s(i).split(i,k|l).bundle(k|l,TensorProduct(),j)) << '\n';
+    // std::cout << "the following should be exactly zero\n";
+    // std::cout << FORMAT_VALUE(s(i).split(i,j) - s.split(k|l).bundle(k|l,TensorProduct(),j)) << '\n';
     std::cout << '\n';
 }
 

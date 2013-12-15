@@ -39,8 +39,11 @@ void test_wedge ()
         AbstractIndex_c<'l'> l;
         AbstractIndex_c<'p'> p;
         std::cout << FORMAT_VALUE(w(i).split(i,j|k|l)) << '\n';
+        std::cout << FORMAT_VALUE(w.split(j|k|l)) << '\n';
         std::cout << FORMAT_VALUE(w(i).split(i,j|k|l).bundle(j|l,Wedge2_BasedX(),p)) << '\n';
+        std::cout << FORMAT_VALUE(w.split(j|k|l).bundle(j|l,Wedge2_BasedX(),p)) << '\n';
         std::cout << FORMAT_VALUE(w(i).split(i,j|k|l).bundle(j|l,T2_BasedX(),p)) << '\n';
+        std::cout << FORMAT_VALUE(w.split(j|k|l).bundle(j|l,T2_BasedX(),p)) << '\n';
     }
 
     std::cout << '\n' << '\n';
@@ -100,9 +103,12 @@ void test_vee ()
         AbstractIndex_c<'l'> l;
         AbstractIndex_c<'p'> p;
         std::cout << FORMAT_VALUE(w(i).split(i,j|k|l)) << '\n';
+        std::cout << FORMAT_VALUE(w.split(j|k|l)) << '\n';
         //std::cout << FORMAT_VALUE(w.split(j|k|l)) << '\n'; // this doesn't currently work.
         std::cout << FORMAT_VALUE(w(i).split(i,j|k|l).bundle(j|l,Sym2_BasedX(),p)) << '\n';
+        std::cout << FORMAT_VALUE(w.split(j|k|l).bundle(j|l,Sym2_BasedX(),p)) << '\n';
         std::cout << FORMAT_VALUE(w(i).split(i,j|k|l).bundle(j|l,T2_BasedX(),p)) << '\n';
+        std::cout << FORMAT_VALUE(w.split(j|k|l).bundle(j|l,T2_BasedX(),p)) << '\n';
     }
 
     std::cout << '\n' << '\n';

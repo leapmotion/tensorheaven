@@ -85,14 +85,33 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     // NOTE: you must include tenh/expressiontemplate_eval.hpp for the definition of this method
     typename AssociatedFloatingPointType_t<Scalar>::T norm () const; // definition is in expressiontemplate_eval.hpp
 
+    template <typename AbstractIndexHeadType,
+              typename AbstractIndexBodyTypeList,
+              typename ResultingFactorType,
+              typename ResultingAbstractIndexType>
+    struct BundleReturnType_f
+    {
+        typedef ExpressionTemplate_IndexBundle_t<Derived,
+                                                 TypeList_t<AbstractIndexHeadType,
+                                                            AbstractIndexBodyTypeList>,
+                                                 ResultingFactorType,
+                                                 ResultingAbstractIndexType> T;
+    };
+
     // method for "bundling" separate abstract indices into a single abstract index
     // of a more specific type (e.g. a 2-tensor, a fully symmetric 3-tensor, etc)
     // (m(j|i)*a(j|k)*m(k|l)).bundle(i|l,Q) -- bundle i,l into Q
-    template <typename AbstractIndexHeadType, typename AbstractIndexBodyTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType>
-    ExpressionTemplate_IndexBundle_t<Derived,TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList>,ResultingFactorType,ResultingAbstractIndexType> bundle (
-        TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> const &,
-        ResultingFactorType const &,
-        ResultingAbstractIndexType const &) const
+    template <typename AbstractIndexHeadType,
+              typename AbstractIndexBodyTypeList,
+              typename ResultingFactorType,
+              typename ResultingAbstractIndexType>
+    typename BundleReturnType_f<AbstractIndexHeadType,
+                                AbstractIndexBodyTypeList,
+                                ResultingFactorType,
+                                ResultingAbstractIndexType>::T
+        bundle (TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> const &,
+                ResultingFactorType const &,
+                ResultingAbstractIndexType const &) const
     {
         // make sure that ResultingAbstractIndexType actually is one
         STATIC_ASSERT(IsAbstractIndex_f<ResultingAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX);
@@ -101,8 +120,23 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
         // make sure that ResultingFactorType is the correct conceptual type
         // TODO: there is probably a stronger type check (a type which is embeddable into a tensor space)
         STATIC_ASSERT(HasBasedVectorSpaceStructure_f<ResultingFactorType>::V, MUST_BE_BASED_VECTOR_SPACE);
-        return ExpressionTemplate_IndexBundle_t<Derived,TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList>,ResultingFactorType,ResultingAbstractIndexType>(as_derived());
+        return typename BundleReturnType_f<AbstractIndexHeadType,
+                                           AbstractIndexBodyTypeList,
+                                           ResultingFactorType,
+                                           ResultingAbstractIndexType>::T(as_derived());
     }
+
+    template <typename SourceAbstractIndexType,
+              typename AbstractIndexHeadType,
+              typename AbstractIndexBodyTypeList>
+    struct SplitReturnType_f
+    {
+        typedef ExpressionTemplate_IndexSplit_t<Derived,
+                                                SourceAbstractIndexType,
+                                                TypeList_t<AbstractIndexHeadType,
+                                                           AbstractIndexBodyTypeList> > T;
+    };
+
     // method for "splitting" the index of something that is "embeddable
     // as tensor" into a separate indices (a multiindex).  for example:
     //   a(P|Q).split(P,i|j).split(Q,k|l)
@@ -110,16 +144,22 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     // so that the expression now has the four free indices i,j,k,l.
     // essentially this embeds the indexed factor into a particular
     // tensor product, and forgets the symmetries of the indexed factor.
-    template <typename SourceAbstractIndexType, typename AbstractIndexHeadType, typename AbstractIndexBodyTypeList>
-    ExpressionTemplate_IndexSplit_t<Derived,SourceAbstractIndexType,TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> > split (
-        SourceAbstractIndexType const &,
-        TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> const &) const
+    template <typename SourceAbstractIndexType,
+              typename AbstractIndexHeadType,
+              typename AbstractIndexBodyTypeList>
+    typename SplitReturnType_f<SourceAbstractIndexType,
+                               AbstractIndexHeadType,
+                               AbstractIndexBodyTypeList>::T
+        split (SourceAbstractIndexType const &,
+               TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> const &) const
     {
         // make sure that SourceAbstractIndexType actually is one
         STATIC_ASSERT(IsAbstractIndex_f<SourceAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX);
         // make sure that the index type list actually contains AbstractIndex_c types
         STATIC_ASSERT((EachTypeSatisfies_f<TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList>, IsAbstractIndex_p>::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
-        return ExpressionTemplate_IndexSplit_t<Derived,SourceAbstractIndexType,TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> >(as_derived());
+        return typename SplitReturnType_f<SourceAbstractIndexType,
+                                          AbstractIndexHeadType,
+                                          AbstractIndexBodyTypeList>::T(as_derived());
     }
     // method for "splitting" the index of something that is "embeddable
     // as tensor" into the vector index of the tensor product.  for example,
@@ -129,10 +169,11 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     // indexed by the single index Q.  essentially this embeds the indexed
     // factor into a particular tensor product, and forgets the symmetries of
     // the indexed factor.
+    // NOTE: this method will be deprecated when the "embed" feature exists.
     template <typename SourceAbstractIndexType, AbstractIndexSymbol SPLIT_ABSTRACT_INDEX_SYMBOL_>
-    ExpressionTemplate_IndexSplitToIndex_t<Derived,SourceAbstractIndexType,AbstractIndex_c<SPLIT_ABSTRACT_INDEX_SYMBOL_> > split (
-        SourceAbstractIndexType const &,
-        AbstractIndex_c<SPLIT_ABSTRACT_INDEX_SYMBOL_> const &) const
+    ExpressionTemplate_IndexSplitToIndex_t<Derived,SourceAbstractIndexType,AbstractIndex_c<SPLIT_ABSTRACT_INDEX_SYMBOL_> >
+        split (SourceAbstractIndexType const &,
+               AbstractIndex_c<SPLIT_ABSTRACT_INDEX_SYMBOL_> const &) const
     {
         // make sure that SourceAbstractIndexType actually is one
         STATIC_ASSERT(IsAbstractIndex_f<SourceAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX);

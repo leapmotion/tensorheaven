@@ -64,11 +64,13 @@ void test_Diagonal2Tensor ()
     AbstractIndex_c<'j'> j;
     AbstractIndex_c<'k'> k;
     std::cout << FORMAT_VALUE(d(i).split(i,j|k)) << '\n';
+    std::cout << FORMAT_VALUE(d.split(j|k)) << '\n';
 
     typedef ImplementationOf_t<BasedX,float> V;
     V u(tuple(1.0f, 2.0f, 10.0f, -2.0f));
     std::cout << FORMAT_VALUE(u) << '\n';
     std::cout << FORMAT_VALUE(u(j) * d(i).split(i,j|k) * u(k)) << '\n';
+    std::cout << FORMAT_VALUE(u(j) * d.split(j|k) * u(k)) << '\n';
 
     // do computation by hand to check it
     float total = 0.0f;
@@ -79,6 +81,7 @@ void test_Diagonal2Tensor ()
     V v(tuple(-1.0f, -1.0f, 2.0f, 2.0f));
     std::cout << FORMAT_VALUE(v) << '\n';
     std::cout << FORMAT_VALUE(u(j) * d(i).split(i,j|k) * v(k)) << '\n';
+    std::cout << FORMAT_VALUE(u(j) * d.split(j|k) * v(k)) << '\n';
 
     // do computation by hand to check it
     total = 0.0f;

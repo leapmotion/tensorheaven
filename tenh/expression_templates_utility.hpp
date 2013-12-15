@@ -498,7 +498,7 @@ private:
 
     void operator = (IndexBundle_t const &);
 
-    Operand const &m_operand;
+    Operand m_operand;
 };
 
 // not an expression template, but just something that handles the split indices
@@ -585,7 +585,7 @@ private:
 
     void operator = (IndexSplitter_t const &);
 
-    Operand const &m_operand;
+    Operand m_operand;
 };
 
 // not an expression template, but just something that handles the split indices
@@ -665,7 +665,7 @@ private:
 
     void operator = (IndexSplitToIndex_t const &);
 
-    Operand const &m_operand;
+    Operand m_operand;
 };
 
 } // end of namespace Tenh

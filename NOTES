@@ -311,10 +311,12 @@
       involving no fractions (e.g. direct component access for vees, or plus-or-minus 1
       times a direct component access for wedges).  This no-fraction constraint is
       so that integral scalar representations can be used.
-    * "embed" and "project" should be mutually adjoint with respect to the relevent
+    * "embed" and "project" should be mutually adjoint with respect to the relevant
       natural pairings.  That is,
-        A(i).embed(i,UpstairsSpace,j)*B(j) - A(i)*B(j).project(j,DownstairsSpace,i)
+        A(i).embed(i,UpstairsSpace(),j)*B(j) - A(i)*B(j).project(j,DownstairsSpace(),i)
       should give the zero scalar.
+- There should be abbreviated calls so that the above expression is
+    A.embed(UpstairsSpace(),j)*B(j) - A(i)*B.project(DownStairsSpace(),i)
 - The point of this theory is that doing a natural pairing "upstairs" doesn't take
   advantage of the symmetries available "downstairs", so it's ostensibly more efficient
   to project and do the natural pairing "downstairs".
@@ -357,25 +359,47 @@
 ###Notes for refined indexed expressions
 - In addition to creating abstract multi-indices via the | operator, e.g.
     x(i)*g(i|j)*y(j)
-  make "direct sums" of induces, e.g. if x and y are vectors of type U and V respectively, 
+  make "direct sums" of induces, e.g. if x and y are vectors of type U and V respectively,
   and a is in (U \oplus V)^*, then
-    a(i+j)*x(i)*y(j)
+    a(i+j)*(x(i) + y(j))
   denotes a(i)*(x \oplus y)(i).
+- The expression
+    a(i+j)*x(i)*y(j)
+  should be thought about more -- it may be meaningless, and if it is, it should be an
+  error.  The reason is that as the "i+j" direct sum index is iterated over, only one of
+  i or j should be able to produce nonzero values in quantities that they each index, so
+  the expression "should" be equal to zero, if it means anything at all.
 - It then makes sense to change operator | to operator * with regard to creating
   multi-indices, as they could fairly be called tensor products of indices.
 - Then the operator precedence of * and + could be correctly used to make sense of
   expressions like
     T(i*j + k),
-  where T is in the direct sum of a 2-tensor and a vector type.
+  where T is in the direct sum of a 2-tensor (or embeddable-in-2-tensor) and a vector type.
 - Implement this by creating types TensorProductOfAbstractIndices_c<AbstractIndexTypeList>
   and DirectSumOfAbstractIndices_c<AbstractIndexTypeList>, each inheriting from some
   base class for abstract indices -- AbstractIndex_c would also need to inherit from this
   base class.  The class hierarchy could look like
   
-  AbstractIndexBase_c<Derived_>
-    AbstractIndex_c<SYMBOL>
-    TensorProductOfAbstractIndices_c<IndexTypeList>
-    DirectSumOfAbstractIndices_c<IndexTypeList>
+    AbstractIndexBase_c<Derived_>
+      AbstractIndex_c<SYMBOL>
+      TensorProductOfAbstractIndices_c<IndexTypeList>
+      DirectSumOfAbstractIndices_c<IndexTypeList>
+
+- Initializing a matrix (a tensor product of direct sums) by blocks would look something like
+
+    block_diagonal((i_0+i_1)*(j_0+j_1)) = upper_left_block(i_0*j_0)
+                                        + upper_right_block(i_0*j_1)
+                                        + lower_left_block(i_1*j_0)
+                                        + lower_right_block(i_1*j_1);
+
+  However, not all four terms are necessary.  The statement
+
+    block_diagonal((i_0+i_1)*(j_0+j_1)) = upper_left_block(i_0*j_0)
+                                        + lower_right_block(i_1*j_1);
+
+  should also work, where the upper-right and lower-left blocks are initialized to zero.
+  This particular example shows that the implementation of such an indexing scheme is
+  nontrivial and requires some thought.
 
 
 ###Notes for [probable] upgrade to C++11 (to happen after "version 1.0" is reached)
@@ -398,6 +422,19 @@
 - Use nullptr
 - Change private constructors to use the new " = delete" notation added in C++11.
 - Move semantics for move constructors for various memory-containing structures (e.g. vectors)
+- Once "decltype" becomes available, it would be possible to do things like
+
+    typedef BasedVectorSpace_c<...> B;
+    B b;
+    // this would be typename DualOf_f<B>::T
+    typedef decltype(dual(b)) DualOfB;
+    // this would be TensorProductOfBasedVectorSpaces_c<TypeList_t<B,
+    //                                                  TypeList_t<typename DualOf_f<B>::T> > >
+    typedef decltype(b * dual(b)) EndomorphismOfB; 
+    // this would be SymmetricPowerOfBasedVectorSpace_c<3,DualOfB>
+    typedef decltype(sym<3>(dual(b))) Sym3_DualOfB;
+
+  which would make the conceptual type hierarchy much easier to use.
 
 
 ###Notes/Reflections on the development of a really really template-heavy math library

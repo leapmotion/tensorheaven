@@ -39,6 +39,7 @@ struct FactorComponentIndexTypeList_t<EmptyTypeList>
 
 // compile-time interface for a non-symmetric tensor product class.  TensorProductOfBasedVectorSpaces_
 // should be a TensorProductOfBasedVectorSpaces_c type.
+// TODO: should this inherit from EmbeddableAsTensor_i ?
 template <typename Derived_,
           typename Scalar_,
           typename TensorProductOfBasedVectorSpaces_,
