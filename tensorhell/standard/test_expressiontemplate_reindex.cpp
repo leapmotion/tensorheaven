@@ -331,8 +331,6 @@ void IndexSplit_t (Context const &context)
               (t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i))
                .split(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i),
                       Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j|k|l))).type_as_string()); // expected value
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t.split(j|k|l)).type_as_string()),
-              (t.split(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j|k|l))).type_as_string()); // expected value
 }
 
 void IndexSplitToIndex_t (Context const &context)

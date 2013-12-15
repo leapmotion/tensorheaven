@@ -150,6 +150,29 @@ struct EmbeddableAsTensor_i
         return Parent_Vector_i::operator()(dummy_index).split(dummy_index, abstract_multiindex);
     }
 
+    // this is for using this object as a multilinear (bilinear) form.
+    // e.g. if X is this object, and u and v are vectors dual to the factor
+    // types of TensorProductOfBasedVectorSpaces, then
+    //   X(u, v)
+    // evaluates as
+    //   X.split(i|j)*u(i)*v(j).
+    // this is a special case for when ORDER == 2, i.e. it is a bilinear form.
+    template <typename Derived0_,
+              typename BasedVectorSpace0_,
+              bool COMPONENTS_ARE_IMMUTABLE0_,
+              typename Derived1_,
+              typename BasedVectorSpace1_,
+              bool COMPONENTS_ARE_IMMUTABLE1_>
+    Scalar_ operator () (Vector_i<Derived0_,Scalar_,BasedVectorSpace0_,COMPONENTS_ARE_IMMUTABLE0_> const &v0,
+                         Vector_i<Derived1_,Scalar_,BasedVectorSpace1_,COMPONENTS_ARE_IMMUTABLE1_> const &v1) const
+    {
+        STATIC_ASSERT(ORDER == 2, ORDER_MUST_BE_EXACTLY_2);
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        // TODO: eventually replace with project (the arguments will be projected),
+        // as this is where a frequent and very important optimization will occur
+        return split(i|j)*v0(i)*v1(j);
+    }
     // this is for using this object as a multilinear form.
     // e.g. if X is this object, and v_1, ..., v_k are vectors dual to the factor
     // types of TensorProductOfBasedVectorSpaces, then
@@ -159,8 +182,7 @@ struct EmbeddableAsTensor_i
     template <typename ParameterTypeList_>
     Scalar_ operator () (List_t<ParameterTypeList_> const &p) const
     {
-        // TODO: static assert that each type is an ImplementationOf_t
-        typedef typename ConceptOfEachTypeIn_f<ParameterTypeList_>::T ConceptTypeList;
+        STATIC_ASSERT(Length_f<ParameterTypeList_>::V == ORDER, ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
         typedef typename AbstractIndexRangeTypeList_f<Length_f<ParameterTypeList_>::V,667>::T AbstractIndexTypeList;
         // TODO: eventually replace with project (the arguments will be projected),
         // as this is where a frequent and very important optimization will occur

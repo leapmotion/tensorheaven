@@ -32,7 +32,7 @@ Scalar_ squared_norm (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
     typename InnerProduct_f<BasedVectorSpace_,InnerProductId_,Scalar_>::T inner_product;
-    return inner_product.split(i|j)*v(i)*v(j); // doesn't take advantage of symmetry
+    return inner_product(v, v);//inner_product.split(i|j)*v(i)*v(j); // doesn't take advantage of symmetry
 }
 
 // NOTE: this won't work for complex types
@@ -669,7 +669,8 @@ public:
     {
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
-        return Scalar_(1) / (Scalar_(1) + x(i)*m_inner_product.split(i|j)*x(j));
+        // return Scalar_(1) / (Scalar_(1) + x(i)*m_inner_product.split(i|j)*x(j));
+        return Scalar_(1) / (Scalar_(1) + m_inner_product(x, x));
     }
     template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
     D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
@@ -934,7 +935,8 @@ struct QuadraticFunction_t
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
         // return Scalar_(1) - x(i)*m_inner_product.split(i|j)*x(j);
-        return m0 + m1(i)*x(i) + m2.split(i|j)*x(i)*x(j);
+        // return m0 + m1(i)*x(i) + m2.split(i|j)*x(i)*x(j);
+        return m0 + m1(x) + m2(x, x);
     }
     template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
     D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
@@ -951,16 +953,6 @@ struct QuadraticFunction_t
     template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
     D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
     {
-// //         AbstractIndex_c<'i'> i;
-// //         AbstractIndex_c<'j'> j;
-//         AbstractIndex_c<'p'> p;
-// //         D2 retval(Static<WithoutInitialization>::SINGLETON);
-// //         retval(p).no_alias() = Scalar_(-2)*m_inner_product(p);
-// //         return retval;
-// //        return m_D2;
-//         D2 retval(Static<WithoutInitialization>::SINGLETON);
-//         retval(p) = Scalar_(2)*m2(p);
-//         return retval;
         return m_D2;
     }
 
@@ -1004,7 +996,7 @@ struct BigFunction_t
         // chain rule
         D1 retval(Static<WithoutInitialization>::SINGLETON);
         retval(j) = m_q.D_function(m_cayley_transform.function(x))(i)
-                  * m_cayley_transform.D_function(x)(p).split(p,i|j);
+                  * m_cayley_transform.D_function(x).split(i|j);
         return retval;
     }
     template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>

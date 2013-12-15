@@ -224,6 +224,12 @@
 - TODO: verify that bundle is a left-inverse to split, and then make it so that bundle actually
   left-cancels split.  verifying that bundle actually left-inverts split will require some
   special "no optimize" syntax though, or a verification at the reindexing level.
+- IDEA for better/simpler functorially induced types, e.g. inner product spaces and tensor products:
+  Have a "CategoryOf_f" metafunction which returns things like CategoryOfBasedVectorSpaces,
+  CategoryOfInnerProductSpaces, etc.  Add a metafunction "CommonConceptOf_f" which computes the
+  "highest common ancestor" of all the concepts in a typelist.  Then the category of a tensor
+  product can be computed -- is it a tensor product of based vector spaces?  is it a tensor
+  product of inner product spaces?  is it a formal tensor product?  etc.
 
 
 ###Features necessary for "version 1.0"

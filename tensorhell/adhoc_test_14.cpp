@@ -20,6 +20,8 @@ void test_embeddable_as_tensor_as_multilinear_form ()
     typedef float Scalar;
     typedef ImplementationOf_t<B3,Scalar> V3;
     typedef ImplementationOf_t<B4,Scalar> V4;
+    typedef ImplementationOf_t<DualOfB3,Scalar> DualOfV3;
+    typedef ImplementationOf_t<DualOfB4,Scalar> DualOfV4;
     typedef ImplementationOf_t<TensorProduct,Scalar> T;
     typedef ImplementationOf_t<Diagonal2TensorProduct,Scalar> D;
     typedef ImplementationOf_t<Sym,Scalar> S;
@@ -44,10 +46,17 @@ void test_embeddable_as_tensor_as_multilinear_form ()
     V3 v3(uniform_tuple<Scalar>(-4, 2, 2));
     V4 w(uniform_tuple<Scalar>(8, -2, 5, -1));
 
+    DualOfV3 x(uniform_tuple<Scalar>(-1, 3, 2));
+    DualOfV4 y(uniform_tuple<Scalar>(1, -2, 3, 4));
+
     std::cout << FORMAT_VALUE(v1) << '\n';
     std::cout << FORMAT_VALUE(v2) << '\n';
     std::cout << FORMAT_VALUE(v3) << '\n';
     std::cout << FORMAT_VALUE(w) << '\n';
+    std::cout << '\n';
+
+    std::cout << FORMAT_VALUE(x) << '\n';
+    std::cout << FORMAT_VALUE(y) << '\n';
     std::cout << '\n';
 
     AbstractIndex_c<'i'> i;
@@ -65,11 +74,23 @@ void test_embeddable_as_tensor_as_multilinear_form ()
     std::cout << FORMAT_VALUE(a(tuple(v1, v2))) << '\n';
     std::cout << '\n';
 
-    std::cout << "the following numbers should be exactly zero: ";
+    std::cout << FORMAT_VALUE(t(v1, w)) << '\n';
+    std::cout << FORMAT_VALUE(d(v1, w)) << '\n';
+    std::cout << FORMAT_VALUE(a(v1, v2)) << '\n';
+    std::cout << '\n';
+
+    std::cout << "the following numbers should be exactly zero:\n";
+    std::cout << FORMAT_VALUE(x(tuple(v1)) - x(i)*v1(i)) << '\n';
+    std::cout << FORMAT_VALUE(y(tuple(w)) - y(i)*w(i)) << '\n';
     std::cout << FORMAT_VALUE(t(tuple(v1, w)) - t(i|j)*v1(i)*w(j)) << '\n';
     std::cout << FORMAT_VALUE(d(tuple(v1, w)) - d.split(i|j)*v1(i)*w(j)) << '\n';
     std::cout << FORMAT_VALUE(s(tuple(v1, v2, v3)) - s.split(i|j|k)*v1(i)*v2(j)*v3(k)) << '\n';
     std::cout << FORMAT_VALUE(a(tuple(v1, v2)) - a.split(i|j)*v1(i)*v2(j)) << '\n';
+    std::cout << FORMAT_VALUE(x(v1) - x(i)*v1(i)) << '\n';
+    std::cout << FORMAT_VALUE(y(w) - y(i)*w(i)) << '\n';
+    std::cout << FORMAT_VALUE(t(v1, w) - t(i|j)*v1(i)*w(j)) << '\n';
+    std::cout << FORMAT_VALUE(d(v1, w) - d.split(i|j)*v1(i)*w(j)) << '\n';
+    std::cout << FORMAT_VALUE(a(v1, v2) - a.split(i|j)*v1(i)*v2(j)) << '\n';
     std::cout << '\n';
 
     std::cout << '\n';

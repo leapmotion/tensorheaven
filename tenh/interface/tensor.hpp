@@ -20,7 +20,6 @@ namespace Tenh {
 
 // compile-time interface for a non-symmetric tensor product class.  TensorProductOfBasedVectorSpaces_
 // should be a TensorProductOfBasedVectorSpaces_c type.
-// TODO: should this inherit from EmbeddableAsTensor_i ?
 template <typename Derived_,
           typename Scalar_,
           typename TensorProductOfBasedVectorSpaces_,
@@ -28,7 +27,6 @@ template <typename Derived_,
 struct Tensor_i
     :
     public EmbeddableAsTensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_>
-    // public Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_>
 {
     enum
     {
@@ -37,11 +35,9 @@ struct Tensor_i
         STATIC_ASSERT_IN_ENUM(IS_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES_UNIQUELY(TensorProductOfBasedVectorSpaces_), MUST_BE_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES)
     };
 
-    // typedef Vector_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_> Parent_Vector_i;
     typedef EmbeddableAsTensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_> Parent_EmbeddableAsTensor_i;
     typedef typename Parent_EmbeddableAsTensor_i::Derived Derived;
     typedef typename Parent_EmbeddableAsTensor_i::Scalar Scalar;
-    // typedef typename Parent_Vector_i::BasedVectorSpace BasedVectorSpace;
     using Parent_EmbeddableAsTensor_i::DIM;
     typedef typename Parent_EmbeddableAsTensor_i::ComponentIndex ComponentIndex;
     using Parent_EmbeddableAsTensor_i::COMPONENTS_ARE_IMMUTABLE;

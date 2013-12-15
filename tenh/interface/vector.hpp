@@ -151,6 +151,34 @@ struct Vector_i
         return typename IndexedExpressionNonConstType_f<SYMBOL_>::T(as_derived());
     }
 
+    // this is for using this object as a multilinear form (a 1-linear form)
+    // e.g. if X is this object, and v is a vector dual to BasedVectorSpace_, then
+    //   X(v)
+    // evaluates as
+    //   X(i)*v(i).
+    // this is a special case function because it is known that there will be
+    // exactly one argument.
+    template <typename OtherDerived_,
+              typename OtherBasedVectorSpace_,
+              bool OTHER_COMPONENTS_ARE_IMMUTABLE_>
+    Scalar_ operator () (Vector_i<OtherDerived_,Scalar_,OtherBasedVectorSpace_,OTHER_COMPONENTS_ARE_IMMUTABLE_> const &v) const
+    {
+        AbstractIndex_c<'i'> i;
+        return operator()(i)*v(i);
+    }
+    // this is for using this object as a multilinear form (a 1-linear form)
+    // e.g. if X is this object, and v is a vector dual to BasedVectorSpace_, then
+    //   X(tuple(v))
+    // evaluates as
+    //   X(i)*v(i).
+    template <typename ParameterTypeList_>
+    Scalar_ operator () (List_t<ParameterTypeList_> const &p) const
+    {
+        STATIC_ASSERT(Length_f<ParameterTypeList_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
+        AbstractIndex_c<'i'> i;
+        return operator()(i)*p.head()(i);
+    }
+
     Uint32 allocation_size_in_bytes () const { return as_derived().allocation_size_in_bytes(); }
     Scalar_ const *pointer_to_allocation () const { return as_derived().pointer_to_allocation(); }
     Scalar_ *pointer_to_allocation () { return as_derived().pointer_to_allocation(); }
