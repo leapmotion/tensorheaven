@@ -9,6 +9,7 @@
 #include "tenh/core.hpp"
 
 #include <iostream>
+#include <math.h>
 
 #include "tenh/implementation/innerproduct.hpp"
 #include "tenh/implementation/vector.hpp"
@@ -16,6 +17,30 @@
 #include "tenh/interop/eigen_invert.hpp"
 
 namespace Tenh {
+
+template <typename T>
+bool isNaN(T const &x)
+{
+    return false;
+}
+
+template<>
+bool isNaN(float const &x)
+{
+    return std::isnan(x);
+}
+
+template<>
+bool isNaN(double const &x)
+{
+    return std::isnan(x);
+}
+
+template<>
+bool isNaN(long double const &x)
+{
+    return std::isnan(x);
+}
 
 // adaptive minimization which uses, in order of availability/preference,
 // 1. Newton's method, 2. conjugate gradient, and 3. gradient descent.
@@ -41,7 +66,7 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
     static int const MAX_ITERATION_COUNT = 20;
     static Scalar_ const GRADIENT_DESCENT_STEP_SIZE = Scalar_(0.25);
     static bool const PRINT_DEBUG_OUTPUT = false;
-    static Scalar_ const EPSILON = 1e-5;
+    static Scalar_ const EPSILON = 1e-10;
 
     VectorInnerProductType vector_innerproduct;
     CoVectorInnerProductType covector_innerproduct;
@@ -88,45 +113,44 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
         }
         else
         {
-            d = 5; // bigger than EPSILON.
+            if (PRINT_DEBUG_OUTPUT)
+            {
+                std::cout << "Hessian wasn't invertible." << std::endl;
+            }
+            d = 0; // less than EPSILON.
         }
 
-        //std::cerr << "positive definiteness along step: " << d << '\n';
-        if (d < EPSILON) // h isn't postive definite along step so fall back to conjugate gradient
+        if (isNaN(d) || d < EPSILON) // h isn't postive definite along step so fall back to conjugate gradient
         {
             VectorType v(Static<WithoutInitialization>::SINGLETON);
             v(j).no_alias() = g(i) * covector_innerproduct.split(i|j);
             // d = g(i)*v(i);
             d = h(v, v);//v(i) * h.split(i|j) * v(j);
 
-            if (d < EPSILON) // h isn't positive definite along g either, gradient descent
+            if (isNaN(d) || d < EPSILON) // h isn't positive definite along g either, gradient descent
             {
+                step(i).no_alias() = -GRADIENT_DESCENT_STEP_SIZE * g(i) / g_norm;
                 if (PRINT_DEBUG_OUTPUT)
                 {
-                    std::cout << "Doing Gradient descent." << std::endl;
+                    std::cout << "Gradient descent. With step = " << step << std::endl;
                     ++gradient_descent;
                 }
-                step(i).no_alias() = -GRADIENT_DESCENT_STEP_SIZE * g(i) / g_norm;
             }
             else // h is positive definite along g, use conjugate gradient
             {
+                step(i).no_alias() = (-g_squared_norm / d) * v(i);
                 if (PRINT_DEBUG_OUTPUT)
                 {
-                    std::cout << "Using conjugate gradient." << std::endl;
+                    std::cout << "Conjugate gradient. With d = " << d << " and step = " << step << std::endl;
                     ++conjugate_gradient;
                 }
-                //Scalar_ v_squared_norm = v(i)*vector_innerproduct(a).split(a,i|j)*v(j);
-                //Scalar_ v_norm = std::sqrt(v_squared_norm);
-
-                // step(i).no_alias() = -g_squared_norm / v_squared_norm * v(i);
-                step(i).no_alias() = (-g_squared_norm / d) * v(i);
             }
         }
         else // h is positive definite along step, use it as is.
         {
             if (PRINT_DEBUG_OUTPUT)
             {
-                std::cout << "Newton's method." << std::endl << h.split(i|j) << std::endl;
+                std::cout << "Newton's method. With step = " << step << std::endl;
                 ++newtons_method;
             }
         }
