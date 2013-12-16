@@ -230,6 +230,7 @@
   "highest common ancestor" of all the concepts in a typelist.  Then the category of a tensor
   product can be computed -- is it a tensor product of based vector spaces?  is it a tensor
   product of inner product spaces?  is it a formal tensor product?  etc.
+- copy constructor for PreallocatedArray_t and subclasses?  maybe one for MemberArray_t and subclasses.
 
 
 ###Features necessary for "version 1.0"
