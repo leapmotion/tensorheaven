@@ -100,7 +100,7 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
 
     // method for "bundling" separate abstract indices into a single abstract index
     // of a more specific type (e.g. a 2-tensor, a fully symmetric 3-tensor, etc)
-    // (m(j|i)*a(j|k)*m(k|l)).bundle(i|l,Q) -- bundle i,l into Q
+    // (m(j*i)*a(j*k)*m(k*l)).bundle(i*l,Q) -- bundle i,l into Q
     template <typename AbstractIndexHeadType,
               typename AbstractIndexBodyTypeList,
               typename ResultingFactorType,
@@ -139,7 +139,7 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
 
     // method for "splitting" the index of something that is "embeddable
     // as tensor" into a separate indices (a multiindex).  for example:
-    //   a(P|Q).split(P,i|j).split(Q,k|l)
+    //   a(P*Q).split(P,i*j).split(Q,k*l)
     // splits the tensor indices P and Q into the pairs i,j and k,l
     // so that the expression now has the four free indices i,j,k,l.
     // essentially this embeds the indexed factor into a particular

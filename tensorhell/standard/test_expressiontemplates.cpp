@@ -46,7 +46,7 @@ void test_Tensor2_t (Context const &context)
     Tenh::TypedIndex_t<Factor1,'j'> j;
     Tenh::TypedIndex_t<Factor2,'k'> k;
 
-    assert_about_eq(Scalar(a(i)*b(i)), Scalar(a(j|k)*b(j|k)));
+    assert_about_eq(Scalar(a(i)*b(i)), Scalar(a(j*k)*b(j*k)));
 }
 
 template <typename Scalar, Uint32 DIM>

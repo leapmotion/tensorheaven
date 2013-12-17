@@ -420,13 +420,13 @@ struct IndexBundle_t
         // bundled into ResultingFactorType
     };
 
-    // if Operand's free indices are i|j|k|l|m|n, the bundle indices are i|k|l, and the resulting
+    // if Operand's free indices are i*j*k*l*m*n, the bundle indices are i*k*l, and the resulting
     // index is P, then the transformation is
-    //      i|j|k|l|m|n --> j|m|n|i|k|l --> j|m|n|P
+    //      i*j*k*l*m*n --> j*m*n*i*k*l --> j*m*n*P
     // the first transformation being putting the bundle indices at the back (preserving their order),
     // and the second one transforming them into the bundled index.  the component access goes backward
-    // in this diagram (components are accessed via the indices j|m|n|P, the bundle map is applied to
-    // P to get i|k|l, and then j|m|n|i|k|l is transformed to i|j|k|l|m|n to get the component from
+    // in this diagram (components are accessed via the indices j*m*n*P, the bundle map is applied to
+    // P to get i*k*l, and then j*m*n*i*k*l is transformed to i*j*k*l*m*n to get the component from
     // Operand).
 
     typedef typename DimIndexTypeListOf_t<typename Operand::FreeFactorTypeList,

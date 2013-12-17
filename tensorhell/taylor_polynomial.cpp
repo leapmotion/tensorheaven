@@ -13,7 +13,7 @@
 #include "tenh/utility/optimization.hpp"
 
 using namespace Tenh;
-
+#if 0
 // ///////////////////////////////////////////////////////////////////////////
 // norm and squared norm functions, which require an inner product to use
 // ///////////////////////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@ Scalar_ squared_norm (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
     typename InnerProduct_f<BasedVectorSpace_,InnerProductId_,Scalar_>::T inner_product;
-    return inner_product(v, v);//inner_product.split(i|j)*v(i)*v(j); // doesn't take advantage of symmetry
+    return inner_product(v, v);//inner_product.split(i*j)*v(i)*v(j); // doesn't take advantage of symmetry
 }
 
 // NOTE: this won't work for complex types
@@ -104,7 +104,7 @@ void randomize (Vector_i<Derived_,Scalar_,BasedVectorSpace_,false> &x,
     } // if the randomly generated point is outside of the annulus, try again
     while (sqn <= squared_inner_radius || squared_outer_radius <= sqn);
 }
-
+#endif
 // for arbitrary codomain
 template <typename ParameterSpace_, typename CodomainSpace_, typename Scalar_>
 struct FunctionObjectType_m
@@ -214,10 +214,10 @@ struct TaylorPolynomialVerifier_t
         AbstractIndex_c<'j'> j;
         Out retval(Static<WithoutInitialization>::SINGLETON);
         retval(i).no_alias() = o.function(based_at_point)(i)
-                             + o.D_function(based_at_point)(i|j)*delta(j);
+                             + o.D_function(based_at_point)(i*j)*delta(j);
         return retval;
         // return (  o.function(based_at_point)(i)
-        //         + o.D_function(based_at_point)(i|j)*delta(j)).eval();
+        //         + o.D_function(based_at_point)(i*j)*delta(j)).eval();
     }
 
     template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
@@ -232,12 +232,12 @@ struct TaylorPolynomialVerifier_t
         AbstractIndex_c<'p'> p;
         Out retval(Static<WithoutInitialization>::SINGLETON);
         retval(i).no_alias() = o.function(based_at_point)(i)
-                             + o.D_function(based_at_point)(i|j)*delta(j)
-                             + o.D2_function(based_at_point)(i|p).split(p,j|k)*delta(j)*delta(k)/2;
+                             + o.D_function(based_at_point)(i*j)*delta(j)
+                             + o.D2_function(based_at_point)(i*p).split(p,j*k)*delta(j)*delta(k)/2;
         return retval;
         // return (  o.function(based_at_point)(i)
-        //         + o.D_function(based_at_point)(i|j)*delta(j)
-        //         + o.D2_function(based_at_point)(i|p).split(p,j|k)*delta(j)*delta(k)/2).eval();
+        //         + o.D_function(based_at_point)(i*j)*delta(j)
+        //         + o.D2_function(based_at_point)(i*p).split(p,j*k)*delta(j)*delta(k)/2).eval();
     }
 
     template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE_>
@@ -388,7 +388,7 @@ struct TaylorPolynomialVerifier_t<ParameterSpace_,Scalar_,StandardInnerProduct,S
         AbstractIndex_c<'j'> j;
         return o.function(based_at_point)
              + o.D_function(based_at_point)(i)*delta(i)
-             + o.D2_function(based_at_point).split(i|j)*delta(i)*delta(j)/2;
+             + o.D2_function(based_at_point).split(i*j)*delta(i)*delta(j)/2;
     }
 
     template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE_>
@@ -594,7 +594,7 @@ public:
         AbstractIndex_c<'j'> j;
         AbstractIndex_c<'p'> p;
         // this really should use the natural embedding of the diagonal (inner product) into Sym2Dual
-        m_D2(p) = Scalar_(-2)*m_inner_product.split(i|j).bundle(i|j,typename D2::Concept(),p);
+        m_D2(p) = Scalar_(-2)*m_inner_product.split(i*j).bundle(i*j,typename D2::Concept(),p);
     }
 
     template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
@@ -602,7 +602,7 @@ public:
     {
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
-        return Scalar_(1) - x(i)*m_inner_product.split(i|j)*x(j);
+        return Scalar_(1) - x(i)*m_inner_product.split(i*j)*x(j);
     }
     template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
     D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
@@ -610,7 +610,7 @@ public:
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
         D1 retval(Static<WithoutInitialization>::SINGLETON);
-        retval(j).no_alias() = x(i)*m_D2.split(i|j); //Scalar_(-2)*x(i)*m_inner_product.split(i|j);
+        retval(j).no_alias() = x(i)*m_D2.split(i*j); //Scalar_(-2)*x(i)*m_inner_product.split(i*j);
         return retval;
     }
     template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
@@ -661,7 +661,7 @@ public:
         AbstractIndex_c<'j'> j;
         AbstractIndex_c<'p'> p;
         // this really should use the natural embedding of the diagonal (inner product) into Sym2Dual
-        m_form(p) = Scalar_(2)*m_inner_product.split(i|j).bundle(i|j,typename D2::Concept(),p);
+        m_form(p) = Scalar_(2)*m_inner_product.split(i*j).bundle(i*j,typename D2::Concept(),p);
     }
 
     template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
@@ -669,7 +669,7 @@ public:
     {
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
-        // return Scalar_(1) / (Scalar_(1) + x(i)*m_inner_product.split(i|j)*x(j));
+        // return Scalar_(1) / (Scalar_(1) + x(i)*m_inner_product.split(i*j)*x(j));
         return Scalar_(1) / (Scalar_(1) + m_inner_product(x, x));
     }
     template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
@@ -678,7 +678,7 @@ public:
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
         D1 retval(Static<WithoutInitialization>::SINGLETON);
-        retval(j).no_alias() = -sqr(function(x))*x(i)*m_form.split(i|j);
+        retval(j).no_alias() = -sqr(function(x))*x(i)*m_form.split(i*j);
         return retval;
     }
     template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
@@ -692,7 +692,7 @@ public:
         AbstractIndex_c<'p'> p;
         D2 retval(Static<WithoutInitialization>::SINGLETON);
         retval(p).no_alias() = sqr(f_of_x)
-                             * (  Scalar_(2)*f_of_x*(m_form.split(j|a)*x(a)*x(b)*m_form.split(b|k)).bundle(j|k,typename D2::Concept(),p)
+                             * (  Scalar_(2)*f_of_x*(m_form.split(j*a)*x(a)*x(b)*m_form.split(b*k)).bundle(j*k,typename D2::Concept(),p)
                                 - m_form(p));
         return retval;
     }
@@ -735,8 +735,8 @@ public:
         AbstractIndex_c<'j'> j;
         AbstractIndex_c<'p'> p;
         Out retval(Static<WithoutInitialization>::SINGLETON);
-        retval(i|j).no_alias() = m_J.function(x)*m_identity.split(i|j)
-                               + Scalar_(2) * (x(i)*m_inner_product.split(j|p)*x(p) + hat(x)(i|j));
+        retval(i*j).no_alias() = m_J.function(x)*m_identity.split(i*j)
+                               + Scalar_(2) * (x(i)*m_inner_product.split(j*p)*x(p) + hat(x)(i*j));
         return retval;
     }
     template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
@@ -749,11 +749,11 @@ public:
         AbstractIndex_c<'A'> A;
         AbstractIndex_c<'B'> B;
         D1 retval(Static<WithoutInitialization>::SINGLETON);
-        retval(B|k).no_alias() = (  m_J.D_function(x)(k)*m_identity.split(i|j)
-                                  + Scalar_(2) * (  m_identity.split(i|k)*m_inner_product.split(j|p)*x(p)
-                                                  + x(i)*m_inner_product.split(j|k)
-                                                  + m_hat_tensor(A|k).split(A,i|j)))
-                                 .bundle(i|j,typename Out::Concept(),B);
+        retval(B*k).no_alias() = (  m_J.D_function(x)(k)*m_identity.split(i*j)
+                                  + Scalar_(2) * (  m_identity.split(i*k)*m_inner_product.split(j*p)*x(p)
+                                                  + x(i)*m_inner_product.split(j*k)
+                                                  + m_hat_tensor(A*k).split(A,i*j)))
+                                 .bundle(i*j,typename Out::Concept(),B);
         return retval;
     }
     template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
@@ -767,14 +767,14 @@ public:
         AbstractIndex_c<'B'> B;
         AbstractIndex_c<'C'> C;
         D2 retval(Static<WithoutInitialization>::SINGLETON);
-        retval(C|p).no_alias() = m_identity(B).split(B,C)*m_J.D2_function(x)(p)
+        retval(C*p).no_alias() = m_identity(B).split(B,C)*m_J.D2_function(x)(p)
                                + Scalar_(2)
-                               * (  (m_identity.split(i|k)*m_inner_product.split(j|l))
-                                    .bundle(i|j,typename Out::Concept(),C)
-                                    .bundle(k|l,typename Sym2_DualOfV::Concept(),p)
-                                  + (m_identity.split(i|l)*m_inner_product.split(j|k))
-                                    .bundle(i|j,typename Out::Concept(),C)
-                                    .bundle(k|l,typename Sym2_DualOfV::Concept(),p));
+                               * (  (m_identity.split(i*k)*m_inner_product.split(j*l))
+                                    .bundle(i*j,typename Out::Concept(),C)
+                                    .bundle(k*l,typename Sym2_DualOfV::Concept(),p)
+                                  + (m_identity.split(i*l)*m_inner_product.split(j*k))
+                                    .bundle(i*j,typename Out::Concept(),C)
+                                    .bundle(k*l,typename Sym2_DualOfV::Concept(),p));
         return retval;
     }
 
@@ -826,8 +826,8 @@ public:
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
         D1 retval(Static<WithoutInitialization>::SINGLETON);
-//         retval(i|j).no_alias() = D_K(x)(j)*N(x)(i) + K(x)*D_N(x)(i|j); // this should work but Tenh complains about the ordering
-        retval(i|j).no_alias() = m_N.function(x)(i)*m_K.D_function(x)(j) + m_K.function(x)*m_N.D_function(x)(i|j);
+//         retval(i*j).no_alias() = D_K(x)(j)*N(x)(i) + K(x)*D_N(x)(i*j); // this should work but Tenh complains about the ordering
+        retval(i*j).no_alias() = m_N.function(x)(i)*m_K.D_function(x)(j) + m_K.function(x)*m_N.D_function(x)(i*j);
         return retval;
     }
     template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
@@ -839,10 +839,10 @@ public:
         AbstractIndex_c<'p'> p;
         AbstractIndex_c<'C'> C;
         D2 retval(Static<WithoutInitialization>::SINGLETON);
-        retval(C|p).no_alias() = m_N.function(x)(C)*m_K.D2_function(x)(p)
-                               + (m_N.D_function(x)(C|k)*m_K.D_function(x)(j)).bundle(j|k,typename Sym2_DualOfV::Concept(),p)
-                               + (m_K.D_function(x)(k)*m_N.D_function(x)(C|j)).bundle(j|k,typename Sym2_DualOfV::Concept(),p)
-                               + m_K.function(x)*m_N.D2_function(x)(C|p);
+        retval(C*p).no_alias() = m_N.function(x)(C)*m_K.D2_function(x)(p)
+                               + (m_N.D_function(x)(C*k)*m_K.D_function(x)(j)).bundle(j*k,typename Sym2_DualOfV::Concept(),p)
+                               + (m_K.D_function(x)(k)*m_N.D_function(x)(C*j)).bundle(j*k,typename Sym2_DualOfV::Concept(),p)
+                               + m_K.function(x)*m_N.D2_function(x)(C*p);
         return retval;
     }
 
@@ -883,7 +883,7 @@ struct QuadraticFunction_t
     //     AbstractIndex_c<'j'> j;
     //     AbstractIndex_c<'p'> p;
     //     // this really should use the natural embedding of the diagonal (inner product) into Sym2Dual
-    //     //m_D2(p) = Scalar_(-2)*m_inner_product.split(i|j).bundle(i|j,typename D2::Concept(),p);
+    //     //m_D2(p) = Scalar_(-2)*m_inner_product.split(i*j).bundle(i*j,typename D2::Concept(),p);
 
     //     // random constant term
     //     randomize(m0);
@@ -894,7 +894,7 @@ struct QuadraticFunction_t
     //     {
     //         DualOfV a(Static<WithoutInitialization>::SINGLETON);
     //         randomize<InnerProductId_>(a, Scalar_(1), Scalar_(2));
-    //         m2(p) += (a(i)*a(j)).bundle(i|j,typename D2::Concept(),p);
+    //         m2(p) += (a(i)*a(j)).bundle(i*j,typename D2::Concept(),p);
     //     }
     //     m_D2(p) = Scalar_(2)*m2(p);
     // }
@@ -909,7 +909,7 @@ struct QuadraticFunction_t
         AbstractIndex_c<'j'> j;
         AbstractIndex_c<'p'> p;
         // this really should use the natural embedding of the diagonal (inner product) into Sym2Dual
-        //m_D2(p) = Scalar_(-2)*m_inner_product.split(i|j).bundle(i|j,typename D2::Concept(),p);
+        //m_D2(p) = Scalar_(-2)*m_inner_product.split(i*j).bundle(i*j,typename D2::Concept(),p);
 
         // random constant term
         randomize(m0);
@@ -920,12 +920,12 @@ struct QuadraticFunction_t
         // {
         //     DualOfV a(Static<WithoutInitialization>::SINGLETON);
         //     randomize<InnerProductId_>(a, Scalar_(1), Scalar_(2));
-        //     m2(p) += (a(i)*a(j)).bundle(i|j,typename D2::Concept(),p);
+        //     m2(p) += (a(i)*a(j)).bundle(i*j,typename D2::Concept(),p);
         // }
         // create a non-positive-definite symmetric bilinear form
-        m2(p) += ((DualOfV::template BasisVector_f<0>::V(i))*(DualOfV::template BasisVector_f<0>::V(j))).bundle(i|j,typename D2::Concept(),p);
-        m2(p) += ((DualOfV::template BasisVector_f<1>::V(i))*(DualOfV::template BasisVector_f<1>::V(j))).bundle(i|j,typename D2::Concept(),p);
-        m2(p) -= ((DualOfV::template BasisVector_f<2>::V(i))*(DualOfV::template BasisVector_f<2>::V(j))).bundle(i|j,typename D2::Concept(),p);
+        m2(p) += ((DualOfV::template BasisVector_f<0>::V(i))*(DualOfV::template BasisVector_f<0>::V(j))).bundle(i*j,typename D2::Concept(),p);
+        m2(p) += ((DualOfV::template BasisVector_f<1>::V(i))*(DualOfV::template BasisVector_f<1>::V(j))).bundle(i*j,typename D2::Concept(),p);
+        m2(p) -= ((DualOfV::template BasisVector_f<2>::V(i))*(DualOfV::template BasisVector_f<2>::V(j))).bundle(i*j,typename D2::Concept(),p);
         m_D2(p) = Scalar_(2)*m2(p);
     }
 
@@ -934,8 +934,8 @@ struct QuadraticFunction_t
     {
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
-        // return Scalar_(1) - x(i)*m_inner_product.split(i|j)*x(j);
-        // return m0 + m1(i)*x(i) + m2.split(i|j)*x(i)*x(j);
+        // return Scalar_(1) - x(i)*m_inner_product.split(i*j)*x(j);
+        // return m0 + m1(i)*x(i) + m2.split(i*j)*x(i)*x(j);
         return m0 + m1(x) + m2(x, x);
     }
     template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
@@ -944,10 +944,10 @@ struct QuadraticFunction_t
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
         // D1 retval(Static<WithoutInitialization>::SINGLETON);
-        // retval(j).no_alias() = x(i)*m_D2.split(i|j); //Scalar_(-2)*x(i)*m_inner_product.split(i|j);
+        // retval(j).no_alias() = x(i)*m_D2.split(i*j); //Scalar_(-2)*x(i)*m_inner_product.split(i*j);
         // return retval;
         D1 retval(Static<WithoutInitialization>::SINGLETON);
-        retval(j) = m1(j) + Scalar_(2)*(x(i)*m2.split(i|j));
+        retval(j) = m1(j) + Scalar_(2)*(x(i)*m2.split(i*j));
         return retval;
     }
     template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
@@ -996,7 +996,7 @@ struct BigFunction_t
         // chain rule
         D1 retval(Static<WithoutInitialization>::SINGLETON);
         retval(j) = m_q.D_function(m_cayley_transform.function(x))(i)
-                  * m_cayley_transform.D_function(x).split(i|j);
+                  * m_cayley_transform.D_function(x).split(i*j);
         return retval;
     }
     template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
@@ -1011,12 +1011,12 @@ struct BigFunction_t
         typename CayleyTransform::D1 D_cayley_transform(m_cayley_transform.D_function(x));
         // double chain rule
         D2 retval(Static<WithoutInitialization>::SINGLETON);
-        retval(q) = (  m_q.D2_function(cayley_transform).split(i|j)
-                     * D_cayley_transform.split(i|k)
-                     * D_cayley_transform.split(j|l)).bundle(k|l,typename D2::Concept(),q)
+        retval(q) = (  m_q.D2_function(cayley_transform).split(i*j)
+                     * D_cayley_transform.split(i*k)
+                     * D_cayley_transform.split(j*l)).bundle(k*l,typename D2::Concept(),q)
                     +
                       m_q.D_function(cayley_transform)(i)
-                    * m_cayley_transform.D2_function(x).split(i|q);
+                    * m_cayley_transform.D2_function(x).split(i*q);
         return retval;
     }
 
@@ -1108,7 +1108,7 @@ struct WaveyFunction2_t
         AbstractIndex_c<'j'> j;
         typename InnerProduct_f<BasedVectorSpace_,InnerProductId_,Scalar_>::T inner_product;
         D1 retval(Static<WithoutInitialization>::SINGLETON);
-        retval(j) = Scalar_(2) * cos(squared_norm<InnerProductId_>(x)) * x(i)*inner_product.split(i|j);
+        retval(j) = Scalar_(2) * cos(squared_norm<InnerProductId_>(x)) * x(i)*inner_product.split(i*j);
         return retval;
     }
     template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
@@ -1124,12 +1124,12 @@ struct WaveyFunction2_t
         Scalar_ squared_norm_x = squared_norm<InnerProductId_>(x);
         retval(p) = (  Scalar_(2)
                      * cos(squared_norm_x)
-                     * inner_product.split(j|l)
+                     * inner_product.split(j*l)
                      -
                        Scalar_(4)
                      * sin(squared_norm_x)
-                     * x(i)*inner_product.split(i|j)
-                     * x(k)*inner_product.split(k|l)).bundle(j|l,typename D2::Concept(),p);
+                     * x(i)*inner_product.split(i*j)
+                     * x(k)*inner_product.split(k*l)).bundle(j*l,typename D2::Concept(),p);
         return retval;
     }
 };
@@ -1211,14 +1211,14 @@ int main (int argc, char **argv)
         AbstractIndex_c<'j'> j;
         AbstractIndex_c<'k'> k;
         AbstractIndex_c<'l'> l;
-//         std::cerr << FORMAT_VALUE(cayley_transform(i|j)*inner_product.split(i|k)*cayley_transform(k|l)) << "\n\n";
-//         std::cerr << FORMAT_VALUE((cayley_transform(i|j)*inner_product.split(i|k)*cayley_transform(k|l)).eval().tensor_value()) << "\n\n";
-//         std::cerr << FORMAT_VALUE(cayley_transform(i|j)*inner_product.split(i|k)*cayley_transform(k|l) - inner_product_inverse.split(j|l)) << "\n\n";
-//         std::cerr << FORMAT_VALUE((cayley_transform(i|j)*inner_product.split(i|k)*cayley_transform(k|l) - inner_product_inverse.split(j|l)).eval().tensor_value()) << "\n\n";
+//         std::cerr << FORMAT_VALUE(cayley_transform(i*j)*inner_product.split(i*k)*cayley_transform(k*l)) << "\n\n";
+//         std::cerr << FORMAT_VALUE((cayley_transform(i*j)*inner_product.split(i*k)*cayley_transform(k*l)).eval().tensor_value()) << "\n\n";
+//         std::cerr << FORMAT_VALUE(cayley_transform(i*j)*inner_product.split(i*k)*cayley_transform(k*l) - inner_product_inverse.split(j*l)) << "\n\n";
+//         std::cerr << FORMAT_VALUE((cayley_transform(i*j)*inner_product.split(i*k)*cayley_transform(k*l) - inner_product_inverse.split(j*l)).eval().tensor_value()) << "\n\n";
         typedef TypeList_t<StandardInnerProduct,
                 TypeList_t<StandardInnerProduct> > InnerProductFactorList;
         std::cerr << "this value should be about equal to 0: " 
-                  << FORMAT_VALUE(squared_norm<TensorProduct_c<InnerProductFactorList> >((cayley_transform(i|j)*inner_product.split(i|k)*cayley_transform(k|l) - inner_product_inverse.split(j|l)).eval().value())) << "\n\n";
+                  << FORMAT_VALUE(squared_norm<TensorProduct_c<InnerProductFactorList> >((cayley_transform(i*j)*inner_product.split(i*k)*cayley_transform(k*l) - inner_product_inverse.split(j*l)).eval().value())) << "\n\n";
     }
 
 //     std::cerr << "QuadraticFunction_t\n";

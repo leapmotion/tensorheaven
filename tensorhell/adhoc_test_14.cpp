@@ -62,10 +62,10 @@ void test_embeddable_as_tensor_as_multilinear_form ()
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
     AbstractIndex_c<'k'> k;
-    std::cout << FORMAT_VALUE(t(i|j)) << '\n';
-    std::cout << FORMAT_VALUE(d.split(i|j)) << '\n';
-    std::cout << FORMAT_VALUE(s.split(i|j|k)) << '\n';
-    std::cout << FORMAT_VALUE(a.split(i|j)) << '\n';
+    std::cout << FORMAT_VALUE(t(i*j)) << '\n';
+    std::cout << FORMAT_VALUE(d.split(i*j)) << '\n';
+    std::cout << FORMAT_VALUE(s.split(i*j*k)) << '\n';
+    std::cout << FORMAT_VALUE(a.split(i*j)) << '\n';
     std::cout << '\n';
 
     std::cout << FORMAT_VALUE(t(tuple(v1, w))) << '\n';
@@ -82,17 +82,37 @@ void test_embeddable_as_tensor_as_multilinear_form ()
     std::cout << "the following numbers should be exactly zero:\n";
     std::cout << FORMAT_VALUE(x(tuple(v1)) - x(i)*v1(i)) << '\n';
     std::cout << FORMAT_VALUE(y(tuple(w)) - y(i)*w(i)) << '\n';
-    std::cout << FORMAT_VALUE(t(tuple(v1, w)) - t(i|j)*v1(i)*w(j)) << '\n';
-    std::cout << FORMAT_VALUE(d(tuple(v1, w)) - d.split(i|j)*v1(i)*w(j)) << '\n';
-    std::cout << FORMAT_VALUE(s(tuple(v1, v2, v3)) - s.split(i|j|k)*v1(i)*v2(j)*v3(k)) << '\n';
-    std::cout << FORMAT_VALUE(a(tuple(v1, v2)) - a.split(i|j)*v1(i)*v2(j)) << '\n';
+    std::cout << FORMAT_VALUE(t(tuple(v1, w)) - t(i*j)*v1(i)*w(j)) << '\n';
+    std::cout << FORMAT_VALUE(d(tuple(v1, w)) - d.split(i*j)*v1(i)*w(j)) << '\n';
+    std::cout << FORMAT_VALUE(s(tuple(v1, v2, v3)) - s.split(i*j*k)*v1(i)*v2(j)*v3(k)) << '\n';
+    std::cout << FORMAT_VALUE(a(tuple(v1, v2)) - a.split(i*j)*v1(i)*v2(j)) << '\n';
     std::cout << FORMAT_VALUE(x(v1) - x(i)*v1(i)) << '\n';
     std::cout << FORMAT_VALUE(y(w) - y(i)*w(i)) << '\n';
-    std::cout << FORMAT_VALUE(t(v1, w) - t(i|j)*v1(i)*w(j)) << '\n';
-    std::cout << FORMAT_VALUE(d(v1, w) - d.split(i|j)*v1(i)*w(j)) << '\n';
-    std::cout << FORMAT_VALUE(a(v1, v2) - a.split(i|j)*v1(i)*v2(j)) << '\n';
+    std::cout << FORMAT_VALUE(t(v1, w) - t(i*j)*v1(i)*w(j)) << '\n';
+    std::cout << FORMAT_VALUE(d(v1, w) - d.split(i*j)*v1(i)*w(j)) << '\n';
+    std::cout << FORMAT_VALUE(a(v1, v2) - a.split(i*j)*v1(i)*v2(j)) << '\n';
     std::cout << '\n';
 
     std::cout << '\n';
 }
+
+void test_product_of_abstract_indices ()
+{
+    AbstractIndex_c<'i'> i;
+    AbstractIndex_c<'j'> j;
+    AbstractIndex_c<'k'> k;
+    AbstractIndex_c<'l'> l;
+
+    std::cout << "testing product of abstract indices\n";
+    std::cout << FORMAT_VALUE(symbol_string_of_abstract_index_type_list(i*j)) << '\n';
+    std::cout << FORMAT_VALUE(symbol_string_of_abstract_index_type_list((i*j)*k)) << '\n';
+    std::cout << FORMAT_VALUE(symbol_string_of_abstract_index_type_list(i*(j*k))) << '\n';
+    std::cout << FORMAT_VALUE(symbol_string_of_abstract_index_type_list(i*j*k)) << '\n';
+    std::cout << FORMAT_VALUE(symbol_string_of_abstract_index_type_list((i*j)*(k*l))) << '\n';
+    std::cout << FORMAT_VALUE(symbol_string_of_abstract_index_type_list(i*(j*k*l))) << '\n';
+    std::cout << FORMAT_VALUE(symbol_string_of_abstract_index_type_list((i*j*k)*l)) << '\n';
+    std::cout << FORMAT_VALUE(symbol_string_of_abstract_index_type_list(i*j*k*l)) << '\n';
+    std::cout << '\n';
+}
+
 

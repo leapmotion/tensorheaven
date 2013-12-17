@@ -129,10 +129,10 @@ void tensor_based_IndexedObject_t (Context const &context)
         P p;
         Tensor t(Tenh::fill_with(0));
         // hacky, but effective, way of ensuring the reindexed expression template is what it's supposed to be.
-        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(j|k))).type_as_string(),
-                  t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j|k)).type_as_string()); // expected value
-        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(k|p))).type_as_string(),
-                  t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(k|p)).type_as_string()); // expected value
+        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(j*k))).type_as_string(),
+                  t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j*k)).type_as_string()); // expected value
+        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(k*p))).type_as_string(),
+                  t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(k*p)).type_as_string()); // expected value
 
         // single-indexed expressions
         assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(j))).type_as_string(),
@@ -291,9 +291,9 @@ void IndexBundle_t (Context const &context)
     L l;
     // hacky, but effective, way of ensuring the reindexed expression template is what it's supposed to be.
     // verify that the operations of index-expression-bundle and reindexing commute.
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(i|j|k).bundle(i|j|k,TensorProduct(),l)).type_as_string()),
-              (t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i|j|k))
-               .bundle(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i|j|k),
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(i*j*k).bundle(i*j*k,TensorProduct(),l)).type_as_string()),
+              (t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i*j*k))
+               .bundle(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i*j*k),
                        TensorProduct(),
                        Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(l))).type_as_string()); // expected value
 }
@@ -327,10 +327,10 @@ void IndexSplit_t (Context const &context)
     L l;
     // hacky, but effective, way of ensuring the reindexed expression template is what it's supposed to be.
     // verify that the operations of index-expression-split and reindexing commute.
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(i).split(i,j|k|l)).type_as_string()),
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(i).split(i,j*k*l)).type_as_string()),
               (t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i))
                .split(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i),
-                      Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j|k|l))).type_as_string()); // expected value
+                      Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j*k*l))).type_as_string()); // expected value
 }
 
 void IndexSplitToIndex_t (Context const &context)
@@ -434,9 +434,9 @@ void fancy_expression (Context const &context)
     L l;
     // hacky, but effective, way of ensuring the reindexed expression template is what it's supposed to be.
     // verify that the operations of composing this fancy expression and reindexing commute.
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(Scalar(3) * t(i|j|k)*a(j|k|l) + x(i)*c(l))).type_as_string(),
-              (Scalar(3) * t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i|j|k))
-                         * a(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j|k|l))
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(Scalar(3) * t(i*j*k)*a(j*k*l) + x(i)*c(l))).type_as_string(),
+              (Scalar(3) * t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i*j*k))
+                         * a(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j*k*l))
                          + x(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i))
                          * c(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(l))).type_as_string()); // expected value
 }

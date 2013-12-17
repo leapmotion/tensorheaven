@@ -76,9 +76,9 @@ void LDLT_Solve (Tensor2Symmetric_t<Factor> const & a,
     typename Factor::WithStandardEuclideanBasis tensor_return_value(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON),
                                                 tensor_column(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
 
-    blow_up(i|l) = e(i|j)*a(j|k)*e(l|k);
+    blow_up(i*l) = e(i*j)*a(j*k)*e(l*k);
 
-    tensor_column(i) = e(i|j)*b(j);
+    tensor_column(i) = e(i*j)*b(j);
 
     EigenVector return_value, eigen_column;
 
@@ -90,7 +90,7 @@ void LDLT_Solve (Tensor2Symmetric_t<Factor> const & a,
 
     memcpy(tensor_return_value.pointer_to_allocation(), &return_value(0,0), tensor_return_value.allocation_size_in_bytes());
 
-    x(j) = e_inv(j|i)*tensor_return_value(i);
+    x(j) = e_inv(j*i)*tensor_return_value(i);
 }
 
 } // end of namespace Tenh

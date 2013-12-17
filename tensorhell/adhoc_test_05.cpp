@@ -126,7 +126,7 @@ void test_products_of_immutable_stuff ()
             AbstractIndex_c<'j'> j;
             AbstractIndex_c<'k'> k;
             AbstractIndex_c<'l'> l;
-            std::cout << FORMAT_VALUE(TProdOfImpl()(P|Q).split(P,i|j).split(Q,k|l)) << '\n';
+            std::cout << FORMAT_VALUE(TProdOfImpl()(P*Q).split(P,i*j).split(Q,k*l)) << '\n';
         }
         std::cout << '\n';
     }
@@ -167,8 +167,8 @@ void test_products_of_immutable_stuff ()
             AbstractIndex_c<'j'> j;
             AbstractIndex_c<'k'> k;
             AbstractIndex_c<'l'> l;
-            std::cout << FORMAT_VALUE(TProdOfImpl()(A).split(A,P|Q)) << '\n';
-            std::cout << FORMAT_VALUE(TProdOfImpl()(A).split(A,P|Q).split(P,i|j).split(Q,k|l)) << '\n';
+            std::cout << FORMAT_VALUE(TProdOfImpl()(A).split(A,P*Q)) << '\n';
+            std::cout << FORMAT_VALUE(TProdOfImpl()(A).split(A,P*Q).split(P,i*j).split(Q,k*l)) << '\n';
         }
         std::cout << '\n';
     }

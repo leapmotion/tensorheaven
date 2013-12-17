@@ -30,7 +30,7 @@ public:
 
 template <typename T> struct SVDReturnTypesOf_m;
 
-// We must have t(i|l) == u(i|j) * s(j|k) * v(l|k), i.e. t = u * s * v^T. Also u, and v are square matrices.
+// We must have t(i*l) == u(i*j) * s(j*k) * v(l*k), i.e. t = u * s * v^T. Also u, and v are square matrices.
 template <typename Factor1_, typename Factor2_, typename Scalar_, typename UseArrayTypeT_, typename Derived_>
 struct SVDReturnTypesOf_m<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,TypeList_t<Factor2_> > >,Scalar_, UseArrayTypeT_, Derived_> >
 {

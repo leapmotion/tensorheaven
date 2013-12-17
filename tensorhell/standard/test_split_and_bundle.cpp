@@ -44,11 +44,11 @@ void test_partial_inverse (Context const &context)
     /*
     std::cerr << FORMAT_VALUE(t) << '\n';
     std::cerr << FORMAT_VALUE(t(Z)) << '\n';
-    std::cerr << FORMAT_VALUE(t(I).split(I,J|K|L)) << '\n';
-    std::cerr << FORMAT_VALUE(t(I).split(I,J|K|L).bundle(J|K|L,TensorProduct() ,Z ) ) << '\n';
+    std::cerr << FORMAT_VALUE(t(I).split(I,J*K*L)) << '\n';
+    std::cerr << FORMAT_VALUE(t(I).split(I,J*K*L).bundle(J*K*L,TensorProduct() ,Z ) ) << '\n';
     */
     Tensor eta(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
-    eta(Z) = t(Z) - t.split(J|K|L).bundle(J|K|L, TensorProduct(), Z);
+    eta(Z) = t(Z) - t.split(J*K*L).bundle(J*K*L, TensorProduct(), Z);
     //std::cerr << FORMAT_VALUE(eta(Z)) << '\n';
     for (Tensor::ComponentIndex i; i.is_not_at_end(); ++i)
         assert_eq(eta[i], float(0)); 

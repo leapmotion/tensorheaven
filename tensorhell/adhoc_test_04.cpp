@@ -20,7 +20,7 @@ void test_vector_power_thingy ()
     Vec v(tuple(1.0f,2.0f,3.0f,4.0f));
 
     std::cout << test_vector_power<4,BasedX,float>(v) << '\n';
-    std::cout << test_vector_power<4,BasedX,float>(v)(i).split(i,j|k|l|p) << '\n';
+    std::cout << test_vector_power<4,BasedX,float>(v)(i).split(i,j*k*l*p) << '\n';
     std::cout << '\n';
 }
 
@@ -81,7 +81,7 @@ void test_a_bunch_of_stuff ()
         std::cout << FORMAT_VALUE(v) << '\n';
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
-        std::cout << FORMAT_VALUE(t(i|j)*v(j)) << '\n';
+        std::cout << FORMAT_VALUE(t(i*j)*v(j)) << '\n';
 
         std::cout << '\n';
     }
@@ -98,7 +98,7 @@ void test_a_bunch_of_stuff ()
         std::cout << FORMAT_VALUE(v) << '\n';
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
-        std::cout << FORMAT_VALUE(t(i|j)*v(j)) << '\n';
+        std::cout << FORMAT_VALUE(t(i*j)*v(j)) << '\n';
 
         std::cout << '\n';
     }
@@ -129,8 +129,8 @@ void test_a_bunch_of_stuff ()
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
         AbstractIndex_c<'P'> P;
-        std::cout << FORMAT_VALUE(t(P).split(P,i|j)*v(j)) << '\n';
-        std::cout << FORMAT_VALUE(t.split(i|j)*v(j)) << '\n';
+        std::cout << FORMAT_VALUE(t(P).split(P,i*j)*v(j)) << '\n';
+        std::cout << FORMAT_VALUE(t.split(i*j)*v(j)) << '\n';
 
         std::cout << '\n';
     }
@@ -148,11 +148,11 @@ void test_a_bunch_of_stuff ()
         AbstractIndex_c<'j'> j;
         AbstractIndex_c<'k'> k;
         AbstractIndex_c<'P'> P;
-        s(P) = (v(i)*v(j)*v(k)).bundle(i|j|k,Sym(),P);
+        s(P) = (v(i)*v(j)*v(k)).bundle(i*j*k,Sym(),P);
         std::cout << FORMAT_VALUE(v) << '\n';
         std::cout << FORMAT_VALUE(s) << '\n';
-        std::cout << FORMAT_VALUE(s(P).split(P,i|j|k)) << '\n';
-        std::cout << FORMAT_VALUE(s.split(i|j|k)) << '\n';
+        std::cout << FORMAT_VALUE(s(P).split(P,i*j*k)) << '\n';
+        std::cout << FORMAT_VALUE(s.split(i*j*k)) << '\n';
         S_ s_(s.pointer_to_allocation());
         std::cout << FORMAT_VALUE(s_) << '\n';
 
@@ -174,11 +174,11 @@ void test_a_bunch_of_stuff ()
         AbstractIndex_c<'j'> j;
         AbstractIndex_c<'k'> k;
         AbstractIndex_c<'P'> P;
-        a(P) = (u(i)*v(j)*w(k) - u(i)*w(j)*v(k) - v(i)*u(j)*w(k) + v(i)*w(j)*u(k) + w(i)*u(j)*v(k) - w(i)*v(j)*u(k)).bundle(i|j|k,Alt(),P);
+        a(P) = (u(i)*v(j)*w(k) - u(i)*w(j)*v(k) - v(i)*u(j)*w(k) + v(i)*w(j)*u(k) + w(i)*u(j)*v(k) - w(i)*v(j)*u(k)).bundle(i*j*k,Alt(),P);
         std::cout << FORMAT_VALUE(v) << '\n';
         std::cout << FORMAT_VALUE(a) << '\n';
-        std::cout << FORMAT_VALUE(a(P).split(P,i|j|k)) << '\n';
-        std::cout << FORMAT_VALUE(a.split(i|j|k)) << '\n';
+        std::cout << FORMAT_VALUE(a(P).split(P,i*j*k)) << '\n';
+        std::cout << FORMAT_VALUE(a.split(i*j*k)) << '\n';
         A_ a_(a.pointer_to_allocation());
         std::cout << FORMAT_VALUE(a_) << '\n';
 

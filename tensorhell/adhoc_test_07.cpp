@@ -38,8 +38,8 @@ void test_eigen_map_of_2_tensor ()
         AbstractIndex_c<'j'> j;
         AbstractIndex_c<'k'> k;
         // verify the identity tensor of the appropriate type pops out of each composition
-        std::cout << FORMAT_VALUE(t(i|j)*t_inverse(j|k)) << '\n';
-        std::cout << FORMAT_VALUE(t_inverse(i|j)*t(j|k)) << '\n';
+        std::cout << FORMAT_VALUE(t(i*j)*t_inverse(j*k)) << '\n';
+        std::cout << FORMAT_VALUE(t_inverse(i*j)*t(j*k)) << '\n';
         std::cout << '\n';
 
         std::cout << FORMAT_VALUE(determinant_of_2tensor(t)) << '\n';
@@ -63,10 +63,10 @@ void test_eigen_map_of_2_tensor ()
         AbstractIndex_c<'k'> k;
         AbstractIndex_c<'p'> p;
         AbstractIndex_c<'q'> q;
-        std::cout << FORMAT_VALUE(s_inverse(p).split(p,i|j)) << '\n';
+        std::cout << FORMAT_VALUE(s_inverse(p).split(p,i*j)) << '\n';
         // verify the identity tensor of the appropriate type pops out of each composition
-        std::cout << FORMAT_VALUE(s(p).split(p,i|j)*s_inverse(q).split(q,j|k)) << '\n';
-        std::cout << FORMAT_VALUE(s_inverse(p).split(p,i|j)*s(q).split(q,j|k)) << '\n';
+        std::cout << FORMAT_VALUE(s(p).split(p,i*j)*s_inverse(q).split(q,j*k)) << '\n';
+        std::cout << FORMAT_VALUE(s_inverse(p).split(p,i*j)*s(q).split(q,j*k)) << '\n';
         std::cout << '\n';
     }
 }

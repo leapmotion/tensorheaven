@@ -155,7 +155,7 @@ struct EmbeddableAsTensor_i
     // types of TensorProductOfBasedVectorSpaces, then
     //   X(u, v)
     // evaluates as
-    //   X.split(i|j)*u(i)*v(j).
+    //   X.split(i*j)*u(i)*v(j).
     // this is a special case for when ORDER == 2, i.e. it is a bilinear form.
     template <typename Derived0_,
               typename BasedVectorSpace0_,
@@ -171,14 +171,14 @@ struct EmbeddableAsTensor_i
         AbstractIndex_c<'j'> j;
         // TODO: eventually replace with project (the arguments will be projected),
         // as this is where a frequent and very important optimization will occur
-        return split(i|j)*v0(i)*v1(j);
+        return split(i*j)*v0(i)*v1(j);
     }
     // this is for using this object as a multilinear form.
     // e.g. if X is this object, and v_1, ..., v_k are vectors dual to the factor
     // types of TensorProductOfBasedVectorSpaces, then
     //   X(tuple(v_1, ..., v_k))
     // evaluates as
-    //   X.split(i_1|...|i_k)*v_1(i_1)*...*v_k(i_k).
+    //   X.split(i_1*...*i_k)*v_1(i_1)*...*v_k(i_k).
     template <typename ParameterTypeList_>
     Scalar_ operator () (List_t<ParameterTypeList_> const &p) const
     {

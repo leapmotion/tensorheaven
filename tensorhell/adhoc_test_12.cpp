@@ -41,21 +41,21 @@ void test_induced_inner_product ()
     AbstractIndex_c<'z'> z;
 
     std::cout << FORMAT_VALUE(g) << '\n';
-    std::cout << FORMAT_VALUE(g(i).split(i,j|k)) << '\n';
+    std::cout << FORMAT_VALUE(g(i).split(i,j*k)) << '\n';
     std::cout << FORMAT_VALUE(u) << '\n';
     std::cout << FORMAT_VALUE(v) << '\n';
-    std::cout << FORMAT_VALUE(g(i).split(i,j|k) * u(j) * v(k)) << '\n';
+    std::cout << FORMAT_VALUE(g(i).split(i,j*k) * u(j) * v(k)) << '\n';
     // this would become a .project(p,SymmetricPower2(),i)
-    std::cout << FORMAT_VALUE(g(i) * sym(i|p) * (u(j) * v(k)).bundle(j|k,T2(),p)) << '\n';
+    std::cout << FORMAT_VALUE(g(i) * sym(i*p) * (u(j) * v(k)).bundle(j*k,T2(),p)) << '\n';
 
     {
         ImplementationOf_t<S2_T2_star,Scalar> g_T2(Static<WithoutInitialization>::SINGLETON);
-        g_T2(r) = (g(i).split(i,j|k) *
-                   g(a).split(a,b|c)).bundle(j|b,T2_star(),p)
-                                     .bundle(k|c,T2_star(),q)
-                                     .bundle(p|q,S2_T2_star(),r);
+        g_T2(r) = (g(i).split(i,j*k) *
+                   g(a).split(a,b*c)).bundle(j*b,T2_star(),p)
+                                     .bundle(k*c,T2_star(),q)
+                                     .bundle(p*q,S2_T2_star(),r);
         std::cout << FORMAT_VALUE(g_T2) << '\n';
-        std::cout << FORMAT_VALUE(g_T2(i).split(i,j|k)) << '\n';
+        std::cout << FORMAT_VALUE(g_T2(i).split(i,j*k)) << '\n';
 
         typedef ImplementationOf_t<T2,Scalar> T2_impl;
         T2_impl t2_0(Static<WithoutInitialization>::SINGLETON);
@@ -65,22 +65,22 @@ void test_induced_inner_product ()
             t2_0[idx] = idx.value();
             t2_1[idx] = idx.value() + 7;
         }
-        std::cout << FORMAT_VALUE(g_T2(p).split(p,i|j) * t2_0(i) * t2_1(j)) << '\n';
-        std::cout << FORMAT_VALUE(t2_0(b|j) * g(a).split(a,b|c)*g(i).split(i,j|k) * t2_1(c|k)) << '\n';
+        std::cout << FORMAT_VALUE(g_T2(p).split(p,i*j) * t2_0(i) * t2_1(j)) << '\n';
+        std::cout << FORMAT_VALUE(t2_0(b*j) * g(a).split(a,b*c)*g(i).split(i,j*k) * t2_1(c*k)) << '\n';
         Sym_f<2,T2,Scalar>::T sym;
-        std::cout << FORMAT_VALUE(g_T2(p) * sym(p|q) * (t2_0(i)*t2_1(j)).bundle(i|j,TensorPowerOfBasedVectorSpace_f<2,T2>::T(),q)) << '\n';
-        std::cout << FORMAT_VALUE(g_T2(p) * sym(p|q).split(q,i|j) * (t2_0(i)*t2_1(j))) << '\n';
+        std::cout << FORMAT_VALUE(g_T2(p) * sym(p*q) * (t2_0(i)*t2_1(j)).bundle(i*j,TensorPowerOfBasedVectorSpace_f<2,T2>::T(),q)) << '\n';
+        std::cout << FORMAT_VALUE(g_T2(p) * sym(p*q).split(q,i*j) * (t2_0(i)*t2_1(j))) << '\n';
     }
 
     {
         ImplementationOf_t<S2_T3_star,Scalar> g_T3(Static<WithoutInitialization>::SINGLETON);
-        g_T3(r) = (g(i).split(i,j|k) *
-                   g(a).split(a,b|c) *
-                   g(x).split(x,y|z)).bundle(j|b|y,T3_star(),p)
-                                     .bundle(k|c|z,T3_star(),q)
-                                     .bundle(p|q,S2_T3_star(),r);
+        g_T3(r) = (g(i).split(i,j*k) *
+                   g(a).split(a,b*c) *
+                   g(x).split(x,y*z)).bundle(j*b*y,T3_star(),p)
+                                     .bundle(k*c*z,T3_star(),q)
+                                     .bundle(p*q,S2_T3_star(),r);
         std::cout << FORMAT_VALUE(g_T3) << '\n';
-        std::cout << FORMAT_VALUE(g_T3(i).split(i,j|k)) << '\n';
+        std::cout << FORMAT_VALUE(g_T3(i).split(i,j*k)) << '\n';
 
         typedef ImplementationOf_t<T3,Scalar> T3_impl;
         T3_impl t3_0(Static<WithoutInitialization>::SINGLETON);
@@ -90,11 +90,11 @@ void test_induced_inner_product ()
             t3_0[idx] = idx.value();
             t3_1[idx] = idx.value() + 7;
         }
-        std::cout << FORMAT_VALUE(t3_0(i) * g_T3(p).split(p,i|j) * t3_1(j)) << '\n';
-        std::cout << FORMAT_VALUE(t3_0(b|j|y) * g(a).split(a,b|c)*g(i).split(i,j|k)*g(x).split(x,y|z) * t3_1(c|k|z)) << '\n';
+        std::cout << FORMAT_VALUE(t3_0(i) * g_T3(p).split(p,i*j) * t3_1(j)) << '\n';
+        std::cout << FORMAT_VALUE(t3_0(b*j*y) * g(a).split(a,b*c)*g(i).split(i,j*k)*g(x).split(x,y*z) * t3_1(c*k*z)) << '\n';
         Sym_f<2,T3,Scalar>::T sym;
-        std::cout << FORMAT_VALUE(g_T3(p) * sym(p|q) * (t3_0(i)*t3_1(j)).bundle(i|j,TensorPowerOfBasedVectorSpace_f<2,T3>::T(),q)) << '\n';
-        std::cout << FORMAT_VALUE(g_T3(p) * sym(p|q).split(q,i|j) * (t3_0(i)*t3_1(j))) << '\n';
+        std::cout << FORMAT_VALUE(g_T3(p) * sym(p*q) * (t3_0(i)*t3_1(j)).bundle(i*j,TensorPowerOfBasedVectorSpace_f<2,T3>::T(),q)) << '\n';
+        std::cout << FORMAT_VALUE(g_T3(p) * sym(p*q).split(q,i*j) * (t3_0(i)*t3_1(j))) << '\n';
     }
 }
 
@@ -146,18 +146,18 @@ void test_direct_sums ()
     std::cout << FORMAT_VALUE(t.el<0>()) << '\n';
     std::cout << FORMAT_VALUE(t.el<1>()) << '\n';
     std::cout << FORMAT_VALUE(t.el<2>()) << '\n';
-    std::cout << FORMAT_VALUE(t.el<0>()(i).split(i,j|k)) << '\n';
-    // std::cout << FORMAT_VALUE(t.el<0>(i).split(i,j|k)) << '\n';
+    std::cout << FORMAT_VALUE(t.el<0>()(i).split(i,j*k)) << '\n';
+    // std::cout << FORMAT_VALUE(t.el<0>(i).split(i,j*k)) << '\n';
     std::cout << FORMAT_VALUE(t.el<1>()(i)) << '\n';
     // std::cout << FORMAT_VALUE(t.el<1>(i)) << '\n';
     std::cout << FORMAT_VALUE(t.el<2>()(i)) << '\n';
     // std::cout << FORMAT_VALUE(t.el<2>(i)) << '\n';
 
-    t.el<0>()(k) = 0.5f*(s(i)*r(j) + r(i)*s(j)).bundle(i|j,SymmetricSquare(),k);
+    t.el<0>()(k) = 0.5f*(s(i)*r(j) + r(i)*s(j)).bundle(i*j,SymmetricSquare(),k);
     std::cout << FORMAT_VALUE(t) << '\n';
     std::cout << FORMAT_VALUE(t.el<0>()) << '\n';
-    std::cout << FORMAT_VALUE(t.el<0>()(i).split(i,j|k)) << '\n';
-    // std::cout << FORMAT_VALUE(t.el<0>(i).split(i,j|k)) << '\n';
+    std::cout << FORMAT_VALUE(t.el<0>()(i).split(i,j*k)) << '\n';
+    // std::cout << FORMAT_VALUE(t.el<0>(i).split(i,j*k)) << '\n';
 
     t.el<1>()(i) = s(i);
     std::cout << FORMAT_VALUE(t) << '\n';

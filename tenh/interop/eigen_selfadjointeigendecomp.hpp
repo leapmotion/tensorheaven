@@ -48,7 +48,7 @@ struct SelfAdjointEigenDecomposition_t
         TypedIndex_t<typename Factor::WithStandardEuclideanBasis,'k'> k;
         TypedIndex_t<Factor,'l'> l;
         EuclideanEmbeddingInverse_t<Factor> e_inv;
-        eigenvectors(i|l).no_alias() = e_inv(i|j)*euclideanly_embedded_eigenvectors(j|k)*e_inv(l|k);
+        eigenvectors(i*l).no_alias() = e_inv(i*j)*euclideanly_embedded_eigenvectors(j*k)*e_inv(l*k);
     }
 
     // compute only eigenvalues

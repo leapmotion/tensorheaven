@@ -113,7 +113,7 @@ public:
         STATIC_ASSERT(Length_f<FreeDimIndexTypeList_>::V == 2, LENGTH_MUST_BE_EXACTLY_2);
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
-        (*this)(i|j) = rhs(i|j);
+        (*this)(i*j) = rhs(i*j);
     }
     // TODO: a "no alias" version of operator= -- this probably requires adding a no_alias() method to this class.
 

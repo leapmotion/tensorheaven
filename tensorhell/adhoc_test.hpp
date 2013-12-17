@@ -197,8 +197,8 @@ void test_immutable_identity_tensor ()
     AbstractIndex_c<'q'> q;
     AbstractIndex_c<'r'> r;
     std::cout << FORMAT_VALUE(v) << '\n';
-    std::cout << FORMAT_VALUE(identity_tensor(p|q)*v(q)) << '\n';
-    std::cout << FORMAT_VALUE(identity_tensor(p|q)*identity_tensor(q|r)) << '\n';
+    std::cout << FORMAT_VALUE(identity_tensor(p*q)*v(q)) << '\n';
+    std::cout << FORMAT_VALUE(identity_tensor(p*q)*identity_tensor(q*r)) << '\n';
 
     std::cout << '\n';
 }
@@ -213,8 +213,8 @@ void test_standard_euclidean_inner_product ()
     AbstractIndex_c<'P'> P;
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
-    std::cout << FORMAT_VALUE(g(P).split(P,i|j)) << '\n';
-    std::cout << FORMAT_VALUE(g.split(i|j)) << '\n';
+    std::cout << FORMAT_VALUE(g(P).split(P,i*j)) << '\n';
+    std::cout << FORMAT_VALUE(g.split(i*j)) << '\n';
     std::cout << '\n';
 }
 
@@ -230,8 +230,8 @@ void test_tensor_power_of_inner_product ()
     AbstractIndex_c<'P'> P;
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
-    std::cout << FORMAT_VALUE(g(P).split(P,i|j)) << '\n';
-    std::cout << FORMAT_VALUE(g.split(i|j)) << '\n';
+    std::cout << FORMAT_VALUE(g(P).split(P,i*j)) << '\n';
+    std::cout << FORMAT_VALUE(g.split(i*j)) << '\n';
     std::cout << '\n';
 }
 
@@ -245,8 +245,8 @@ void test_euclidean_embedding_of_standard_euclidean_space ()
     AbstractIndex_c<'P'> P;
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
-    std::cout << FORMAT_VALUE(e(P).split(P,i|j)) << '\n';
-    std::cout << FORMAT_VALUE(e.split(i|j)) << '\n';
+    std::cout << FORMAT_VALUE(e(P).split(P,i*j)) << '\n';
+    std::cout << FORMAT_VALUE(e.split(i*j)) << '\n';
     std::cout << '\n';
 }
 
@@ -262,8 +262,8 @@ void test_tensor_power_of_euclidean_embedding ()
     AbstractIndex_c<'P'> P;
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
-    std::cout << FORMAT_VALUE(e(P).split(P,i|j)) << '\n';
-    std::cout << FORMAT_VALUE(e.split(i|j)) << '\n';
+    std::cout << FORMAT_VALUE(e(P).split(P,i*j)) << '\n';
+    std::cout << FORMAT_VALUE(e.split(i*j)) << '\n';
     std::cout << '\n';
 }
 
@@ -303,13 +303,13 @@ void test_split_index_to_index_order_1 ()
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
     AbstractIndex_c<'k'> k;
-    std::cout << FORMAT_VALUE(s(i).split(i,EmptyTypeList()|k)) << '\n';
+    std::cout << FORMAT_VALUE(s(i).split(i,EmptyTypeList()*k)) << '\n';
     std::cout << FORMAT_VALUE(s(i).split(i,j)) << '\n';
-    std::cout << FORMAT_VALUE(s(i).split(i,j).split(j,EmptyTypeList()|k)) << '\n';
+    std::cout << FORMAT_VALUE(s(i).split(i,j).split(j,EmptyTypeList()*k)) << '\n';
     std::cout << "the following should be exactly zero\n";
-    std::cout << FORMAT_VALUE(s(i).split(i,EmptyTypeList()|k) - s(i).split(i,j).split(j,EmptyTypeList()|k)) << '\n';
+    std::cout << FORMAT_VALUE(s(i).split(i,EmptyTypeList()*k) - s(i).split(i,j).split(j,EmptyTypeList()*k)) << '\n';
     std::cout << "the following should be exactly zero\n";
-    std::cout << FORMAT_VALUE(s(i).split(i,j) - s(i).split(i,EmptyTypeList()|k).bundle(EmptyTypeList()|k,TensorProduct(),j)) << '\n';
+    std::cout << FORMAT_VALUE(s(i).split(i,j) - s(i).split(i,EmptyTypeList()*k).bundle(EmptyTypeList()*k,TensorProduct(),j)) << '\n';
     std::cout << '\n';
 }
 
@@ -328,18 +328,18 @@ void test_split_index_to_index_order_2 ()
     AbstractIndex_c<'j'> j;
     AbstractIndex_c<'k'> k;
     AbstractIndex_c<'l'> l;
-    std::cout << FORMAT_VALUE(s(i).split(i,k|l)) << '\n';
-    std::cout << FORMAT_VALUE(s.split(k|l)) << '\n';
+    std::cout << FORMAT_VALUE(s(i).split(i,k*l)) << '\n';
+    std::cout << FORMAT_VALUE(s.split(k*l)) << '\n';
     std::cout << FORMAT_VALUE(s(i).split(i,j)) << '\n';
-    std::cout << FORMAT_VALUE(s(i).split(i,j).split(j,k|l)) << '\n';
+    std::cout << FORMAT_VALUE(s(i).split(i,j).split(j,k*l)) << '\n';
     std::cout << "the following should be exactly zero\n";
-    std::cout << FORMAT_VALUE(s(i).split(i,k|l) - s(i).split(i,j).split(j,k|l)) << '\n';
+    std::cout << FORMAT_VALUE(s(i).split(i,k*l) - s(i).split(i,j).split(j,k*l)) << '\n';
     std::cout << "the following should be exactly zero\n";
-    std::cout << FORMAT_VALUE(s.split(k|l) - s(i).split(i,j).split(j,k|l)) << '\n';
+    std::cout << FORMAT_VALUE(s.split(k*l) - s(i).split(i,j).split(j,k*l)) << '\n';
     std::cout << "the following should be exactly zero\n";
-    std::cout << FORMAT_VALUE(s(i).split(i,j) - s(i).split(i,k|l).bundle(k|l,TensorProduct(),j)) << '\n';
+    std::cout << FORMAT_VALUE(s(i).split(i,j) - s(i).split(i,k*l).bundle(k*l,TensorProduct(),j)) << '\n';
     std::cout << "the following should be exactly zero\n";
-    std::cout << FORMAT_VALUE(s(i).split(i,j) - s.split(k|l).bundle(k|l,TensorProduct(),j)) << '\n';
+    std::cout << FORMAT_VALUE(s(i).split(i,j) - s.split(k*l).bundle(k*l,TensorProduct(),j)) << '\n';
     std::cout << '\n';
 }
 
@@ -359,13 +359,13 @@ void test_split_index_to_index_order_3 ()
     AbstractIndex_c<'k'> k;
     AbstractIndex_c<'l'> l;
     AbstractIndex_c<'m'> m;
-    std::cout << FORMAT_VALUE(s(i).split(i,k|l|m)) << '\n';
+    std::cout << FORMAT_VALUE(s(i).split(i,k*l*m)) << '\n';
     std::cout << FORMAT_VALUE(s(i).split(i,j)) << '\n';
-    std::cout << FORMAT_VALUE(s(i).split(i,j).split(j,k|l|m)) << '\n';
+    std::cout << FORMAT_VALUE(s(i).split(i,j).split(j,k*l*m)) << '\n';
     std::cout << "the following should be exactly zero\n";
-    std::cout << FORMAT_VALUE(s(i).split(i,k|l|m) - s(i).split(i,j).split(j,k|l|m)) << '\n';
+    std::cout << FORMAT_VALUE(s(i).split(i,k*l*m) - s(i).split(i,j).split(j,k*l*m)) << '\n';
     std::cout << "the following should be exactly zero\n";
-    std::cout << FORMAT_VALUE(s(i).split(i,j) - s(i).split(i,k|l|m).bundle(k|l|m,TensorProduct(),j)) << '\n';
+    std::cout << FORMAT_VALUE(s(i).split(i,j) - s(i).split(i,k*l*m).bundle(k*l*m,TensorProduct(),j)) << '\n';
     std::cout << '\n';
 }
 
@@ -506,5 +506,6 @@ void test_direct_sum_of_inner_products ();
 // ///////////////////////////////////////////////////////////////////////////////////////////
 
 void test_embeddable_as_tensor_as_multilinear_form ();
+void test_product_of_abstract_indices ();
 
 #endif // TENSORHELL_ADHOC_TEST_HPP_

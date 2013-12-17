@@ -61,6 +61,7 @@ int main (int, char **)
     test_direct_sum_of_inner_products();
 
     test_embeddable_as_tensor_as_multilinear_form();
+    test_product_of_abstract_indices();
 
     return 0;
 }

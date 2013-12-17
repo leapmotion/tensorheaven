@@ -66,12 +66,12 @@ void assignment (Context const &context)
     // expression template assignment
     Tenh::AbstractIndex_c<'j'> j;
     Tenh::AbstractIndex_c<'k'> k;
-    A = Tenh::reindexable(B(j|k));
+    A = Tenh::reindexable(B(j*k));
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
         assert_eq(A[i], B[i]);
 
     // expression template assignment
-    A = Tenh::reindexable(C(j|k));
+    A = Tenh::reindexable(C(j*k));
     for (typename Operator::ComponentIndex i; i.is_not_at_end(); ++i)
         assert_eq(A[i], C[i]);
 }

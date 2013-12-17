@@ -91,15 +91,63 @@ MAKE_1_ARY_VALUE_EVALUATOR(SymbolOf, AbstractIndexSymbol);
 // operator overloads for creating abstract multiindices
 // ///////////////////////////////////////////////////////////////////////////
 
-// operator overloads for stringing together type lists of abstract indices.
-// the rest of the operator overloads (involving TypeList_t and EmptyTypeList)
-// are in typelist.hpp.  this function just bootstraps the process.
-template <AbstractIndexSymbol SYMBOL1, AbstractIndexSymbol SYMBOL2>
-TypeList_t<AbstractIndex_c<SYMBOL1>,TypeList_t<AbstractIndex_c<SYMBOL2> > > operator | (
-    AbstractIndex_c<SYMBOL1> const &,
-    AbstractIndex_c<SYMBOL2> const &)
+// for creating multiindices
+template <AbstractIndexSymbol SYMBOL1_, AbstractIndexSymbol SYMBOL2_>
+TypeList_t<AbstractIndex_c<SYMBOL1_>,TypeList_t<AbstractIndex_c<SYMBOL2_> > > operator * (
+    AbstractIndex_c<SYMBOL1_> const &,
+    AbstractIndex_c<SYMBOL2_> const &)
 {
-    return TypeList_t<AbstractIndex_c<SYMBOL1>,TypeList_t<AbstractIndex_c<SYMBOL2> > >();
+    return TypeList_t<AbstractIndex_c<SYMBOL1_>,TypeList_t<AbstractIndex_c<SYMBOL2_> > >();
+}
+
+// for creating multiindices
+template <AbstractIndexSymbol SYMBOL_>
+TypeList_t<AbstractIndex_c<SYMBOL_> > operator * (
+    EmptyTypeList const &,
+    AbstractIndex_c<SYMBOL_> const &)
+{
+    return TypeList_t<AbstractIndex_c<SYMBOL_> >();
+}
+
+// for creating multiindices
+template <AbstractIndexSymbol SYMBOL_>
+TypeList_t<AbstractIndex_c<SYMBOL_> > operator * (
+    AbstractIndex_c<SYMBOL_> const &,
+    EmptyTypeList const &)
+{
+    return TypeList_t<AbstractIndex_c<SYMBOL_> >();
+}
+
+// for creating multiindices
+template <AbstractIndexSymbol SYMBOL1_, typename BodyTypeList_, AbstractIndexSymbol SYMBOL2_>
+typename ConcatenationOfTypeLists_t<TypeList_t<AbstractIndex_c<SYMBOL1_>,BodyTypeList_>,
+                                    TypeList_t<AbstractIndex_c<SYMBOL2_> > >::T operator * (
+    TypeList_t<AbstractIndex_c<SYMBOL1_>,BodyTypeList_> const &,
+    AbstractIndex_c<SYMBOL2_> const &)
+{
+    return typename ConcatenationOfTypeLists_t<TypeList_t<AbstractIndex_c<SYMBOL1_>,BodyTypeList_>,
+                                               TypeList_t<AbstractIndex_c<SYMBOL2_> > >::T();
+}
+
+// for creating multiindices
+template <AbstractIndexSymbol SYMBOL1_, AbstractIndexSymbol SYMBOL2_, typename BodyTypeList_>
+TypeList_t<AbstractIndex_c<SYMBOL1_>,TypeList_t<AbstractIndex_c<SYMBOL2_>,BodyTypeList_> > operator * (
+    AbstractIndex_c<SYMBOL1_> const &,
+    TypeList_t<AbstractIndex_c<SYMBOL2_>,BodyTypeList_> const &)
+{
+    return TypeList_t<AbstractIndex_c<SYMBOL1_>,TypeList_t<AbstractIndex_c<SYMBOL2_>,BodyTypeList_> >();
+}
+
+// for creating multiindices
+template <AbstractIndexSymbol SYMBOL1_, typename BodyTypeList1_,
+          AbstractIndexSymbol SYMBOL2_, typename BodyTypeList2_>
+typename ConcatenationOfTypeLists_t<TypeList_t<AbstractIndex_c<SYMBOL1_>,BodyTypeList1_>,
+                                    TypeList_t<AbstractIndex_c<SYMBOL2_>,BodyTypeList2_> >::T operator * (
+    TypeList_t<AbstractIndex_c<SYMBOL1_>,BodyTypeList1_> const &,
+    TypeList_t<AbstractIndex_c<SYMBOL2_>,BodyTypeList2_> const &)
+{
+    return typename ConcatenationOfTypeLists_t<TypeList_t<AbstractIndex_c<SYMBOL1_>,BodyTypeList1_>,
+                                               TypeList_t<AbstractIndex_c<SYMBOL2_>,BodyTypeList2_> >::T();
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -129,7 +177,7 @@ std::string symbol_string_of_abstract_index_type_list (TypeList_t<AbstractIndex_
     return abstract_index_symbol_as_string(HEAD_SYMBOL, DONT_USE_QUOTES_FOR_ALPHABETIC)
            +
            ((BodyAbstractIndexTypeList::LENGTH > 0) ?
-            '|' + symbol_string_of_abstract_index_type_list(BodyAbstractIndexTypeList()) :
+            '*' + symbol_string_of_abstract_index_type_list(BodyAbstractIndexTypeList()) :
             std::string());
 }
 

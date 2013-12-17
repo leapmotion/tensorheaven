@@ -91,9 +91,9 @@ void test_basis_vectors ()
     std::cout << FORMAT(D::BasisVector_f<2>::V) << '\n';
     std::cout << '\n';
     std::cout << "diagonal -- split\n";
-    std::cout << FORMAT(D::BasisVector_f<0>::V(P).split(P,i|j)) << '\n';
-    std::cout << FORMAT(D::BasisVector_f<1>::V(P).split(P,i|j)) << '\n';
-    std::cout << FORMAT(D::BasisVector_f<2>::V(P).split(P,i|j)) << '\n';
+    std::cout << FORMAT(D::BasisVector_f<0>::V(P).split(P,i*j)) << '\n';
+    std::cout << FORMAT(D::BasisVector_f<1>::V(P).split(P,i*j)) << '\n';
+    std::cout << FORMAT(D::BasisVector_f<2>::V(P).split(P,i*j)) << '\n';
     std::cout << '\n';
 
     std::cout << "direct sum\n";
@@ -114,12 +114,12 @@ void test_basis_vectors ()
     std::cout << FORMAT(S::BasisVector_f<4>::V) << '\n';
     std::cout << FORMAT(S::BasisVector_f<5>::V) << '\n';
     std::cout << "symmetric -- split\n";
-    std::cout << FORMAT(S::BasisVector_f<0>::V(P).split(P,i|j)) << '\n';
-    std::cout << FORMAT(S::BasisVector_f<1>::V(P).split(P,i|j)) << '\n';
-    std::cout << FORMAT(S::BasisVector_f<2>::V(P).split(P,i|j)) << '\n';
-    std::cout << FORMAT(S::BasisVector_f<3>::V(P).split(P,i|j)) << '\n';
-    std::cout << FORMAT(S::BasisVector_f<4>::V(P).split(P,i|j)) << '\n';
-    std::cout << FORMAT(S::BasisVector_f<5>::V(P).split(P,i|j)) << '\n';
+    std::cout << FORMAT(S::BasisVector_f<0>::V(P).split(P,i*j)) << '\n';
+    std::cout << FORMAT(S::BasisVector_f<1>::V(P).split(P,i*j)) << '\n';
+    std::cout << FORMAT(S::BasisVector_f<2>::V(P).split(P,i*j)) << '\n';
+    std::cout << FORMAT(S::BasisVector_f<3>::V(P).split(P,i*j)) << '\n';
+    std::cout << FORMAT(S::BasisVector_f<4>::V(P).split(P,i*j)) << '\n';
+    std::cout << FORMAT(S::BasisVector_f<5>::V(P).split(P,i*j)) << '\n';
     std::cout << '\n';
 
     std::cout << "alternating\n";
@@ -127,9 +127,9 @@ void test_basis_vectors ()
     std::cout << FORMAT(A::BasisVector_f<1>::V) << '\n';
     std::cout << FORMAT(A::BasisVector_f<2>::V) << '\n';
     std::cout << "alternating -- split\n";
-    std::cout << FORMAT(A::BasisVector_f<0>::V(P).split(P,i|j)) << '\n';
-    std::cout << FORMAT(A::BasisVector_f<1>::V(P).split(P,i|j)) << '\n';
-    std::cout << FORMAT(A::BasisVector_f<2>::V(P).split(P,i|j)) << '\n';
+    std::cout << FORMAT(A::BasisVector_f<0>::V(P).split(P,i*j)) << '\n';
+    std::cout << FORMAT(A::BasisVector_f<1>::V(P).split(P,i*j)) << '\n';
+    std::cout << FORMAT(A::BasisVector_f<2>::V(P).split(P,i*j)) << '\n';
     std::cout << '\n';
 }
 

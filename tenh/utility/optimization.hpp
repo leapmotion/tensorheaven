@@ -8,8 +8,8 @@
 
 #include "tenh/core.hpp"
 
+#include <cmath>
 #include <iostream>
-#include <math.h>
 
 #include "tenh/implementation/innerproduct.hpp"
 #include "tenh/implementation/vector.hpp"
@@ -85,7 +85,7 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
     {
         Scalar_ current_value = func.function(current_approximation);
         CoVectorType g = func.D_function(current_approximation);
-        Scalar_ g_squared_norm = covector_innerproduct(g, g);//g(i)*covector_innerproduct.split(i|j)*g(j);
+        Scalar_ g_squared_norm = covector_innerproduct(g, g);//g(i)*covector_innerproduct.split(i*j)*g(j);
         Scalar_ g_norm = std::sqrt(g_squared_norm);
 
         if (PRINT_DEBUG_OUTPUT)
@@ -108,8 +108,8 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
 
         if (invert_2tensor(h, hinv))
         {
-            step(i).no_alias() = hinv.split(i|j) * -g(j);
-            d = h(step, step);//h(a)*(step(i)*step(j)).bundle(i|j,Sym2(),a);
+            step(i).no_alias() = hinv.split(i*j) * -g(j);
+            d = h(step, step);//h(a)*(step(i)*step(j)).bundle(i*j,Sym2(),a);
         }
         else
         {
@@ -123,9 +123,9 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
         if (isNaN(d) || d < EPSILON) // h isn't postive definite along step so fall back to conjugate gradient
         {
             VectorType v(Static<WithoutInitialization>::SINGLETON);
-            v(j).no_alias() = g(i) * covector_innerproduct.split(i|j);
+            v(j).no_alias() = g(i) * covector_innerproduct.split(i*j);
             // d = g(i)*v(i);
-            d = h(v, v);//v(i) * h.split(i|j) * v(j);
+            d = h(v, v);//v(i) * h.split(i*j) * v(j);
 
             if (isNaN(d) || d < EPSILON) // h isn't positive definite along g either, gradient descent
             {
@@ -157,7 +157,7 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
 
         step(i).no_alias() = STEP_SCALE * step(i);
 
-        Scalar_ step_norm = std::sqrt(vector_innerproduct(step, step)); //std::sqrt(vector_innerproduct.split(i|j)*step(i)*step(j));
+        Scalar_ step_norm = std::sqrt(vector_innerproduct(step, step)); //std::sqrt(vector_innerproduct.split(i*j)*step(i)*step(j));
 
         if (MAX_STEP_SIZE > 0 && step_norm > MAX_STEP_SIZE)
         {
@@ -166,14 +166,14 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
                 std::cout << "Clamping step length to " << MAX_STEP_SIZE << std::endl;
             }
             step(i).no_alias() = MAX_STEP_SIZE * step(i) / step_norm;
-            step_norm = std::sqrt(vector_innerproduct(step, step));//std::sqrt(vector_innerproduct.split(i|j)*step(i)*step(j));
+            step_norm = std::sqrt(vector_innerproduct(step, step));//std::sqrt(vector_innerproduct.split(i*j)*step(i)*step(j));
         }
 
         //std::cerr << "step = " << step << ", step size = " << step_norm << '\n';
 
         // {
         //     std::cerr << "line search errors: ";
-        //     Scalar_ quad_a = func.D2_function(current_approximation).split(i|j)*step(i)*step(j)/2;
+        //     Scalar_ quad_a = func.D2_function(current_approximation).split(i*j)*step(i)*step(j)/2;
         //     Scalar_ quad_b = func.D_function(current_approximation)(i)*step(i);
         //     Scalar_ quad_c = func.function(current_approximation);
         //     // print out error between quadratic approx and actual function value
@@ -191,7 +191,7 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
 
 //         {
 //             std::cerr << "approximation offsets: ";
-//             Scalar_ quad_a = func.D2_function(current_approximation).split(i|j)*step(i)*step(j)/2;
+//             Scalar_ quad_a = func.D2_function(current_approximation).split(i*j)*step(i)*step(j)/2;
 //             Scalar_ quad_b = func.D_function(current_approximation)(i)*step(i);
 //             // print out error between quadratic approx and actual function value
 //             for (Uint32 it = 0; it <= LINE_SEARCH_SAMPLE_COUNT; ++it)
@@ -207,7 +207,7 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
 
 //         {
 //             std::cerr << "approximation offsets (geometric sequence): ";
-//             Scalar_ quad_a = func.D2_function(current_approximation).split(i|j)*step(i)*step(j)/2;
+//             Scalar_ quad_a = func.D2_function(current_approximation).split(i*j)*step(i)*step(j)/2;
 //             Scalar_ quad_b = func.D_function(current_approximation)(i)*step(i);
 //             // print out error between quadratic approx and actual function value
 //             for (Uint32 it = 0; it <= LINE_SEARCH_SAMPLE_COUNT; ++it)
@@ -296,7 +296,7 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> gradient_descent (ObjectiveFunctio
 
     while (iteration_count < MAX_ITERATION_COUNT)
     {
-        grad(j) = func.D_function(current_approximation)(i)*covector_innerproduct.split(i|j);
+        grad(j) = func.D_function(current_approximation)(i)*covector_innerproduct.split(i*j);
         Scalar_ norm_grad = std::sqrt(vector_innerproduct(grad, grad));
         if (norm_grad <= tolerance)
         {
@@ -330,7 +330,7 @@ template <typename InnerProductId_,
 Scalar_ squared_norm (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &v)
 {
     typename InnerProduct_f<BasedVectorSpace_,InnerProductId_,Scalar_>::T inner_product;
-    return inner_product(v, v);//inner_product.split(i|j)*v(i)*v(j); // doesn't take advantage of symmetry
+    return inner_product(v, v);//inner_product.split(i*j)*v(i)*v(j); // doesn't take advantage of symmetry
 }
 
 // NOTE: this won't work for complex types

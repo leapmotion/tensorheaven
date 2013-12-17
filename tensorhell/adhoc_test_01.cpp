@@ -40,8 +40,8 @@ void test_vector_contraction ()
     // std::cout << FORMAT_VALUE(a(i) + v(i)) << '\n';
 
     // testing 1-multiindex indexing of vectors
-    std::cout << FORMAT_VALUE(a(EmptyTypeList()|i)) << '\n';
-    std::cout << FORMAT_VALUE(v(EmptyTypeList()|i)) << '\n';
+    std::cout << FORMAT_VALUE(a(EmptyTypeList()*i)) << '\n';
+    std::cout << FORMAT_VALUE(v(EmptyTypeList()*i)) << '\n';
 
     std::cout << '\n' << '\n';
 }
@@ -79,12 +79,12 @@ void test_tensor_contraction ()
 
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
-    std::cout << FORMAT_VALUE(t(i|j)*v(j)) << '\n';
+    std::cout << FORMAT_VALUE(t(i*j)*v(j)) << '\n';
 
     U u(tuple(1.0f, 0.0f, -1.0f));
     std::cout << FORMAT_VALUE(u) << '\n';
     // this should cause a compile error due to the non-naturality of the pairing
-    // std::cout << FORMAT_VALUE(u(i)*t(i|j)) << '\n';
+    // std::cout << FORMAT_VALUE(u(i)*t(i*j)) << '\n';
 
 
     typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedX,TypeList_t<DualOf_f<BasedY>::T,TypeList_t<DualOf_f<BasedY>::T> > > > H;
@@ -99,10 +99,10 @@ void test_tensor_contraction ()
     AbstractIndex_c<'k'> k;
     std::cout << FORMAT_VALUE(w) << '\n';
     std::cout << FORMAT_VALUE(e) << '\n';
-    std::cout << FORMAT_VALUE(e(i|j|k)*v(j)*w(k)) << '\n';
+    std::cout << FORMAT_VALUE(e(i*j*k)*v(j)*w(k)) << '\n';
 
     // this should cause a compile error due to the non-naturality of the pairing
-    // std::cout << FORMAT_VALUE(e(i|j|j)) << '\n';
+    // std::cout << FORMAT_VALUE(e(i*j*j)) << '\n';
 
     typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedY,TypeList_t<DualOf_f<BasedY>::T> > > EndomorphismOfY;
     typedef ImplementationOf_t<EndomorphismOfY,float> Endo;
@@ -110,8 +110,8 @@ void test_tensor_contraction ()
     A[Endo::MultiIndex(0,0)] = 3.0f;
     A[Endo::MultiIndex(1,1)] = 4.0f;
     std::cout << FORMAT_VALUE(A) << '\n';
-    std::cout << FORMAT_VALUE(A(i|j)*v(j)) << '\n';
-    std::cout << FORMAT_VALUE(A(i|i)) << '\n';
+    std::cout << FORMAT_VALUE(A(i*j)*v(j)) << '\n';
+    std::cout << FORMAT_VALUE(A(i*i)) << '\n';
 
 
     DualOf_f<E>::T f(fill_with(3));
@@ -119,25 +119,25 @@ void test_tensor_contraction ()
     f[DualOf_f<E>::T::MultiIndex(1,0,1,CHECK_RANGE)] = 2.0f;
     f[DualOf_f<E>::T::MultiIndex(2,1,1,CHECK_RANGE)] = 4.0f;
     std::cout << FORMAT_VALUE(f) << '\n';
-    std::cout << FORMAT_VALUE(f(i|j|k)*e(i|j|k)) << '\n';
-    std::cout << FORMAT_VALUE(f(i|j|k)*e(i|k|j)) << '\n';
+    std::cout << FORMAT_VALUE(f(i*j*k)*e(i*j*k)) << '\n';
+    std::cout << FORMAT_VALUE(f(i*j*k)*e(i*k*j)) << '\n';
     std::cout << FORMAT_VALUE(f(i)*e(i)) << '\n';
 
     // std::cout << FORMAT_VALUE(e(i).eval()) << '\n';
-    std::cout << FORMAT_VALUE(e(i|j|k).eval()) << '\n';
+    std::cout << FORMAT_VALUE(e(i*j*k).eval()) << '\n';
 
     AbstractIndex_c<'l'> l;
-    std::cout << FORMAT_VALUE(e(i).split(i,j|k|l)) << '\n';
+    std::cout << FORMAT_VALUE(e(i).split(i,j*k*l)) << '\n';
 
 
     AbstractIndex_c<'P'> P;
     typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<DualOf_f<BasedY>::T,TypeList_t<DualOf_f<BasedY>::T> > > PartOfH;
     typedef ImplementationOf_t<PartOfH,float> G;
-    std::cout << FORMAT_VALUE(e(i|j|k).bundle(j|k,PartOfH(),P)) << '\n';
-    std::cout << FORMAT_VALUE(f(i|j|k).bundle(j|k,DualOf_f<PartOfH>::T(),P)) << '\n';
-    std::cout << FORMAT_VALUE(e(i|j|k).bundle(j|k,PartOfH(),P) * f(i|j|k).bundle(j|k,DualOf_f<PartOfH>::T(),P)) << '\n';
+    std::cout << FORMAT_VALUE(e(i*j*k).bundle(j*k,PartOfH(),P)) << '\n';
+    std::cout << FORMAT_VALUE(f(i*j*k).bundle(j*k,DualOf_f<PartOfH>::T(),P)) << '\n';
+    std::cout << FORMAT_VALUE(e(i*j*k).bundle(j*k,PartOfH(),P) * f(i*j*k).bundle(j*k,DualOf_f<PartOfH>::T(),P)) << '\n';
 
-    std::cout << FORMAT_VALUE(e(EmptyTypeList()|i)) << '\n';
+    std::cout << FORMAT_VALUE(e(EmptyTypeList()*i)) << '\n';
 
     std::cout << '\n' << '\n';
 }
