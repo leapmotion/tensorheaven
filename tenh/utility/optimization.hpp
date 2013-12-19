@@ -393,24 +393,24 @@ void randomize (Vector_i<Derived_,Scalar_,BasedVectorSpace_,false> &x,
 template <typename InnerProductId_,
           typename ObjectiveFunction_,
           typename BasedVectorSpace_,
-          typename Scalar_,
           typename GuessUseArrayType_,
           typename Derived_>
-ImplementationOf_t<BasedVectorSpace_,Scalar_>
+ImplementationOf_t<BasedVectorSpace_,typename ObjectiveFunction_::Scalar>
     totally_random_minimization (ObjectiveFunction_ const &func,
-                                 ImplementationOf_t<BasedVectorSpace_,Scalar_,GuessUseArrayType_,Derived_> const &initial_guess,
-                                 Scalar_ search_radius,
+                                 ImplementationOf_t<BasedVectorSpace_,typename ObjectiveFunction_::Scalar,GuessUseArrayType_,Derived_> const &initial_guess,
+                                 typename ObjectiveFunction_::Scalar search_radius,
                                  Uint32 sample_count = 10000,
                                  Uint32 max_iteration_count = 8,
-                                 Scalar_ *minimum = NULL)
+                                 typename ObjectiveFunction_::Scalar *minimum = NULL)
 {
-    assert(search_radius > Scalar_(0) && "search_radius must be positive");
+    typedef typename ObjectiveFunction_::Scalar Scalar;
+    assert(search_radius > Scalar(0) && "search_radius must be positive");
 
-    typedef ImplementationOf_t<BasedVectorSpace_,Scalar_,UseMemberArray> V;
+    typedef ImplementationOf_t<BasedVectorSpace_,Scalar,UseMemberArray> V;
 
     V random_center(initial_guess);
     V minimizer(initial_guess);
-    Scalar_ min(func.function(minimizer));
+    Scalar min(func.function(minimizer));
 
     // TODO: maybe make some threshold e such that if the change in minimum
     // is less than e, the iteration stops.
@@ -420,10 +420,10 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_>
         for (Uint32 sample = 0; sample < sample_count; ++sample)
         {
             V x(Static<WithoutInitialization>::SINGLETON);
-            randomize<InnerProductId_>(x, Scalar_(0), search_radius);
+            randomize<InnerProductId_>(x, Scalar(0), search_radius);
             AbstractIndex_c<'i'> i;
             x(i) += random_center(i);
-            Scalar_ value(func.function(x));
+            Scalar value(func.function(x));
             if (value < min)
             {
                 min = value;
@@ -433,7 +433,7 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_>
 
         // recenter and narrow search radius
         random_center = minimizer;
-        search_radius /= Scalar_(2);
+        search_radius /= Scalar(2);
     }
 
     if (minimum != NULL)
