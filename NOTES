@@ -77,6 +77,9 @@
     a(v) and v(a) would both evaluate to a(i)*v(i).
   e.g. if x is a k-tensor, and v_1, ..., v_k are vectors dual to the factor types of x, then
     x(tuple(v_1, ..., v_k)) evaluates to x(i_1|...|i_k)*v_1(i_1)*...*v_k(i_k).
+- use "enable_if" technique ( http://en.cppreference.com/w/cpp/types/enable_if ) to not generate
+  certain functions (e.g. a template type affecting which methods should be available on a 
+  class, such as all the different types of constructors for ImplementationOf_t).
 
 
 ###implemented features/items:

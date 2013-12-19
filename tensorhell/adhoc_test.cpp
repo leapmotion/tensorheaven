@@ -62,6 +62,7 @@ int main (int, char **)
 
     test_embeddable_as_tensor_as_multilinear_form();
     test_product_of_abstract_indices();
+    test_linear_solve_using_least_squares();
 
     return 0;
 }

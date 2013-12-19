@@ -507,5 +507,6 @@ void test_direct_sum_of_inner_products ();
 
 void test_embeddable_as_tensor_as_multilinear_form ();
 void test_product_of_abstract_indices ();
+void test_linear_solve_using_least_squares ();
 
 #endif // TENSORHELL_ADHOC_TEST_HPP_

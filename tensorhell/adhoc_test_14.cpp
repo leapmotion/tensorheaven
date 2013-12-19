@@ -1,5 +1,7 @@
 #include "adhoc_test.hpp"
 
+#include "tenh/interop/eigen_linearsolve.hpp"
+
 // ///////////////////////////////////////////////////////////////////////////////////////////
 // 14
 // ///////////////////////////////////////////////////////////////////////////////////////////
@@ -113,6 +115,65 @@ void test_product_of_abstract_indices ()
     std::cout << FORMAT_VALUE(symbol_string_of_abstract_index_type_list((i*j*k)*l)) << '\n';
     std::cout << FORMAT_VALUE(symbol_string_of_abstract_index_type_list(i*j*k*l)) << '\n';
     std::cout << '\n';
+}
+
+void test_linear_solve_using_least_squares ()
+{
+    typedef double Scalar;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,Generic>,OrthonormalBasis_c<Generic> > B2;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,OrthonormalBasis_c<Generic> > B3;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,OrthonormalBasis_c<Generic> > B4;
+    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B2,TypeList_t<DualOf_f<B2>::T> > > T22;
+    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B2,TypeList_t<DualOf_f<B3>::T> > > T23;
+    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B2,TypeList_t<DualOf_f<B4>::T> > > T24;
+    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B3,TypeList_t<DualOf_f<B2>::T> > > T32;
+    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B3,TypeList_t<DualOf_f<B3>::T> > > T33;
+    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B3,TypeList_t<DualOf_f<B4>::T> > > T34;
+    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B4,TypeList_t<DualOf_f<B2>::T> > > T42;
+    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B4,TypeList_t<DualOf_f<B3>::T> > > T43;
+    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B4,TypeList_t<DualOf_f<B4>::T> > > T44;
+
+    typedef ImplementationOf_t<B2,Scalar> V2;
+    typedef ImplementationOf_t<B3,Scalar> V3;
+    typedef ImplementationOf_t<B4,Scalar> V4;
+    typedef ImplementationOf_t<T22,Scalar> L22;
+    typedef ImplementationOf_t<T23,Scalar> L23;
+    typedef ImplementationOf_t<T24,Scalar> L24;
+    typedef ImplementationOf_t<T32,Scalar> L32;
+    typedef ImplementationOf_t<T33,Scalar> L33;
+    typedef ImplementationOf_t<T34,Scalar> L34;
+    typedef ImplementationOf_t<T42,Scalar> L42;
+    typedef ImplementationOf_t<T43,Scalar> L43;
+    typedef ImplementationOf_t<T44,Scalar> L44;
+
+    {
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        L22 l22(uniform_tuple<Scalar>(1, 2) |
+                uniform_tuple<Scalar>(3, 4));
+        V2 v2(uniform_tuple<Scalar>(0, 1));
+        V2 x(Static<WithoutInitialization>::SINGLETON);
+        std::cout << FORMAT_VALUE(l22) << '\n';
+        std::cout << FORMAT_VALUE(v2) << '\n';
+        linear_solve_using_least_squares<StandardInnerProduct>(l22, x, v2);
+        std::cout << "solution: " << FORMAT_VALUE(x) << '\n';
+        std::cout << "image of solution: " << FORMAT_VALUE(l22(i*j)*x(j)) << '\n';
+        std::cout << "discrepancy: " << FORMAT_VALUE(l22(i*j)*x(j) - v2(i)) << '\n';
+    }
+    {
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        L22 l22(uniform_tuple<Scalar>(1, 1) |
+                uniform_tuple<Scalar>(1, 1));
+        V2 v2(uniform_tuple<Scalar>(0, 1));
+        V2 x(Static<WithoutInitialization>::SINGLETON);
+        std::cout << FORMAT_VALUE(l22) << '\n';
+        std::cout << FORMAT_VALUE(v2) << '\n';
+        linear_solve_using_least_squares<StandardInnerProduct>(l22, x, v2);
+        std::cout << "solution: " << FORMAT_VALUE(x) << '\n';
+        std::cout << "image of solution: " << FORMAT_VALUE(l22(i*j)*x(j)) << '\n';
+        std::cout << "discrepancy: " << FORMAT_VALUE(l22(i*j)*x(j) - v2(i)) << '\n';
+    }
 }
 
 
