@@ -126,14 +126,14 @@ void SVD_of_2tensor (Tensor_i<DerivedT_, Scalar_, Concept_, COMPONENTS_ARE_IMMUT
     memcpy(s.pointer_to_allocation(), &svd.singularValues()(0,0), s.allocation_size_in_bytes());
 }
 
-template <typename DerivedT_, typename DerivedB_, typename DerivedX_, typename Scalar_, typename Concept_, bool COMPONENTS_ARE_IMMUTABLE_, bool COMPONENTS_ARE_IMMUTABLE_b_>
-void SVD_of_2tensor (Tensor_i<DerivedT_, Scalar_, Concept_, COMPONENTS_ARE_IMMUTABLE_> const &t,
-                     Vector_i<DerivedB_, Scalar_, typename SVDReturnTypesOf_m<DerivedT_>::ConstantTerm_f::T, COMPONENTS_ARE_IMMUTABLE_b_> const &b,
-                     Vector_i<DerivedX_, Scalar_, typename SVDReturnTypesOf_m<DerivedT_>::SolutionVector_f::T, MUTABLE_COMPONENTS> &x)
+template <typename DerivedT_, typename DerivedX_, typename DerivedB_, typename Scalar_, typename Concept_, bool COMPONENTS_ARE_IMMUTABLE_, bool COMPONENTS_ARE_IMMUTABLE_b_>
+void SVD_solve (Tensor_i<DerivedT_, Scalar_, Concept_, COMPONENTS_ARE_IMMUTABLE_> const &t,
+                Vector_i<DerivedX_, Scalar_, typename SVDReturnTypesOf_m<Concept_>::SolutionVector_f::T, MUTABLE_COMPONENTS> &x,
+                Vector_i<DerivedB_, Scalar_, typename SVDReturnTypesOf_m<Concept_>::ConstantTerm_f::T, COMPONENTS_ARE_IMMUTABLE_b_> const &b)
 {
   typedef typename EigenMatrixFor_f<Tensor_i<DerivedT_, Scalar_, Concept_, COMPONENTS_ARE_IMMUTABLE_> >::T EigenMatrix;
-  typedef typename EigenVectorFor_f<Vector_i<DerivedB_, Scalar_, typename SVDReturnTypesOf_m<DerivedT_>::ConstantTerm_f::T, COMPONENTS_ARE_IMMUTABLE_b_> >::T ConstantTermVector;
-  typedef typename EigenVectorFor_f<Vector_i<DerivedX_, Scalar_, typename SVDReturnTypesOf_m<DerivedT_>::SolutionVector_f::T, MUTABLE_COMPONENTS> >::T SolutionVector;
+  typedef typename EigenVectorFor_f<Vector_i<DerivedX_, Scalar_, typename SVDReturnTypesOf_m<Concept_>::SolutionVector_f::T, MUTABLE_COMPONENTS> >::T SolutionVector;
+  typedef typename EigenVectorFor_f<Vector_i<DerivedB_, Scalar_, typename SVDReturnTypesOf_m<Concept_>::ConstantTerm_f::T, COMPONENTS_ARE_IMMUTABLE_b_> >::T ConstantTermVector;
 
   Eigen::JacobiSVD<EigenMatrix> svd(EigenMap_of_2tensor(t).jacobiSvd(Eigen::ComputeThinU|Eigen::ComputeThinV));
   EigenMap_of_vector(x) = svd.solve(EigenMap_of_vector(b));
