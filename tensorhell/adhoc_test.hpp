@@ -502,11 +502,13 @@ void test_direct_sum_of_diagonal2tensors ();
 void test_direct_sum_of_inner_products ();
 
 // ///////////////////////////////////////////////////////////////////////////////////////////
-// 13
+// 14
 // ///////////////////////////////////////////////////////////////////////////////////////////
 
 void test_embeddable_as_tensor_as_multilinear_form ();
 void test_product_of_abstract_indices ();
 void test_linear_solve_using_least_squares ();
+void test_implementation_of_vector_construction_via_vector_i ();
+
 
 #endif // TENSORHELL_ADHOC_TEST_HPP_

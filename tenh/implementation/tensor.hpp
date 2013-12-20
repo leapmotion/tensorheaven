@@ -80,6 +80,18 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
 
     // only use these if UseMemberArray is specified
 
+    // similar to a copy constructor, except initializes from a Vector_i.
+    // this was chosen to be explicit to avoid unnecessary copies.
+    template <typename OtherDerived_, bool COMPONENTS_ARE_IMMUTABLE_>
+    explicit ImplementationOf_t (Vector_i<OtherDerived_,Scalar_,Concept,COMPONENTS_ARE_IMMUTABLE_> const &x)
+        :
+        Parent_Array_i(Static<WithoutInitialization>::SINGLETON)
+    {
+        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemberArray);
+        // TODO: could make this use MemoryArray_i::copy_from (?)
+        for (ComponentIndex i; i.is_not_at_end(); ++i)
+            (*this)[i] = x[i];
+    }
     // probably only useful for zero element (because this is basis-dependent)
     template <typename T_>
     explicit ImplementationOf_t (FillWith_t<T_> const &fill_with)
@@ -104,6 +116,19 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
         Parent_Array_i(pointer_to_allocation, check_pointer)
     {
         STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
+    }
+    // similar to a copy constructor, except initializes from a Vector_i.
+    // this was chosen to be explicit to avoid unnecessary copies.
+    template <typename OtherDerived_, bool COMPONENTS_ARE_IMMUTABLE_>
+    ImplementationOf_t (Vector_i<OtherDerived_,Scalar_,Concept,COMPONENTS_ARE_IMMUTABLE_> const &x,
+                        Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+        :
+        Parent_Array_i(pointer_to_allocation, check_pointer)
+    {
+        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
+        // TODO: could make this use MemoryArray_i::copy_from (?)
+        for (ComponentIndex i; i.is_not_at_end(); ++i)
+            (*this)[i] = x[i];
     }
     template <typename T_>
     ImplementationOf_t (FillWith_t<T_> const &fill_with,

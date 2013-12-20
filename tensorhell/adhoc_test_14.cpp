@@ -176,4 +176,68 @@ void test_linear_solve_using_least_squares ()
     }
 }
 
+template <typename Concept_, typename Scalar_>
+void test_particular_implementation_of_vector_construction_via_vector_i ()
+{
+    typedef ImplementationOf_t<Concept_,Scalar_,UseMemberArray> U;
+    typedef ImplementationOf_t<Concept_,Scalar_,UsePreallocatedArray> V;
+    static Uint32 const DIM = U::DIM;
+
+    U u(Static<WithoutInitialization>::SINGLETON);
+    Scalar_ array[DIM];
+    V v(&array[0]);
+
+    for (typename U::ComponentIndex i; i.is_not_at_end(); ++i)
+        u[i] = i.value() + 1;
+    for (typename V::ComponentIndex i; i.is_not_at_end(); ++i)
+        v[i] = i.value() + 1 + DIM;
+
+    std::cout << "test_implementation_of_vector_construction_via_vector_i<" + type_string_of<Concept_>() + ',' + type_string_of<Scalar_>() + ">\n";
+    std::cout << FORMAT_VALUE(u) << '\n';
+    std::cout << FORMAT_VALUE(v) << '\n';
+
+    typename U::Parent_Vector_i const &u_as_vector_i = u;
+    std::cout << FORMAT_VALUE(u_as_vector_i) << '\n';
+    typename V::Parent_Vector_i const &v_as_vector_i = v;
+    std::cout << FORMAT_VALUE(v_as_vector_i) << '\n';
+    {
+        std::cout << "testing UseMemberArray construction from Vector_i types\n";
+        U constructed_from_vector_i_0(u_as_vector_i);
+        std::cout << FORMAT_VALUE(constructed_from_vector_i_0) << '\n';
+        U constructed_from_vector_i_1(v_as_vector_i);
+        std::cout << FORMAT_VALUE(constructed_from_vector_i_1) << '\n';
+        U constructed_from_vector_i_2(U::template BasisVector_f<0>::V);
+        std::cout << FORMAT_VALUE(constructed_from_vector_i_2) << '\n';
+    }
+    {
+        std::cout << "testing UsePreallocatedArray construction from Vector_i types\n";
+        Scalar_ other_array[3];
+        V constructed_from_vector_i_0(u_as_vector_i, &other_array[0]);
+        std::cout << FORMAT_VALUE(constructed_from_vector_i_0) << '\n';
+        V constructed_from_vector_i_1(v_as_vector_i, &other_array[0]);
+        std::cout << FORMAT_VALUE(constructed_from_vector_i_1) << '\n';
+        V constructed_from_vector_i_2(V::template BasisVector_f<0>::V, &other_array[0]);
+        std::cout << FORMAT_VALUE(constructed_from_vector_i_2) << '\n';
+    }
+    std::cout << '\n';
+}
+
+void test_implementation_of_vector_construction_via_vector_i ()
+{
+    typedef double Scalar;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > B3;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,Basis_c<Generic> > B4;
+    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B3,B4> Diagonal2Tensor;
+    typedef DirectSumOfBasedVectorSpaces_c<TypeList_t<B3,TypeList_t<B4> > > DirectSum;
+    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B3,TypeList_t<B4> > > TensorProduct;
+    typedef ExteriorPowerOfBasedVectorSpace_c<3,B4> ExteriorPower;
+    typedef SymmetricPowerOfBasedVectorSpace_c<3,B3> SymmetricPower;
+    test_particular_implementation_of_vector_construction_via_vector_i<B3,Scalar>();
+    test_particular_implementation_of_vector_construction_via_vector_i<Diagonal2Tensor,Scalar>();
+    test_particular_implementation_of_vector_construction_via_vector_i<DirectSum,Scalar>();
+    test_particular_implementation_of_vector_construction_via_vector_i<TensorProduct,Scalar>();
+    test_particular_implementation_of_vector_construction_via_vector_i<ExteriorPower,Scalar>();
+    test_particular_implementation_of_vector_construction_via_vector_i<SymmetricPower,Scalar>();
+}
+
 

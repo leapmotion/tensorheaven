@@ -80,6 +80,9 @@
 - use "enable_if" technique ( http://en.cppreference.com/w/cpp/types/enable_if ) to not generate
   certain functions (e.g. a template type affecting which methods should be available on a 
   class, such as all the different types of constructors for ImplementationOf_t).
+- design and implement mathematical type string methods and printing for debugging purposes
+- design and implement some form of type debugging method (to debug indexed expression
+  compile errors)
 
 
 ###implemented features/items:
