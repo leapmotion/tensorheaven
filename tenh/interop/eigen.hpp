@@ -67,7 +67,7 @@ struct EigenMapOfVector_const_f
     typedef Eigen::Map<Eigen::Matrix<Scalar_,
                                      DimensionOf_f<Type_>::V,
                                      1,
-                                     Eigen::RowMajor> const> T;
+                                     Eigen::ColMajor> const> T;
 };
 
 template <typename Type_, typename Scalar_>
@@ -76,7 +76,7 @@ struct EigenMapOfVector_nonconst_f
     typedef Eigen::Map<Eigen::Matrix<Scalar_,
                                      DimensionOf_f<Type_>::V,
                                      1,
-                                     Eigen::RowMajor> > T;
+                                     Eigen::ColMajor> > T;
 };
 
 // const version
