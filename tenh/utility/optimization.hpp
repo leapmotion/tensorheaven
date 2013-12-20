@@ -15,6 +15,7 @@
 #include "tenh/implementation/vector.hpp"
 #include "tenh/implementation/vee.hpp"
 #include "tenh/interop/eigen_invert.hpp"
+#include "tenh/interop/eigen_svd.hpp"
 
 namespace Tenh {
 
@@ -56,7 +57,7 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
     typedef typename InnerProduct_f<typename DualOf_f<BasedVectorSpace_>::T,InnerProductId_,Scalar_>::T CoVectorInnerProductType;
     typedef SymmetricPowerOfBasedVectorSpace_c<2,BasedVectorSpace_> Sym2;
     typedef typename ObjectiveFunction_::D2 HessianType;
-    typedef ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<2,BasedVectorSpace_>,Scalar_> HessianInverseType;
+    typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<typename DualOf_f<BasedVectorSpace_>::T, TypeList_t<typename DualOf_f<BasedVectorSpace_>::T> > >,Scalar_> Hessian2TensorType;
     STATIC_ASSERT_TYPES_ARE_EQUAL(VectorType, typename ObjectiveFunction_::V);
     STATIC_ASSERT_TYPES_ARE_EQUAL(Scalar_, typename ObjectiveFunction_::Out);
     static int const LINE_SEARCH_SAMPLE_COUNT = 50;
@@ -85,8 +86,10 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
     {
         Scalar_ current_value = func.function(current_approximation);
         CoVectorType g = func.D_function(current_approximation);
+        CoVectorType minus_g(Static<WithoutInitialization>::SINGLETON);
         Scalar_ g_squared_norm = covector_innerproduct(g, g);//g(i)*covector_innerproduct.split(i*j)*g(j);
         Scalar_ g_norm = std::sqrt(g_squared_norm);
+        minus_g(i) = -g(i);
 
         if (PRINT_DEBUG_OUTPUT)
         {
@@ -102,23 +105,13 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
         }
 
         HessianType h(func.D2_function(current_approximation));
-        HessianInverseType hinv(Static<WithoutInitialization>::SINGLETON);
+        Hessian2TensorType h2(Static<WithoutInitialization>::SINGLETON);
         VectorType step(Static<WithoutInitialization>::SINGLETON);
         Scalar_ d;
+        h2(i*j) = h.split(i*j);
 
-        if (invert_2tensor(h, hinv))
-        {
-            step(i).no_alias() = hinv.split(i*j) * -g(j);
-            d = h(step, step);//h(a)*(step(i)*step(j)).bundle(i*j,Sym2(),a);
-        }
-        else
-        {
-            if (PRINT_DEBUG_OUTPUT)
-            {
-                std::cout << "Hessian wasn't invertible." << std::endl;
-            }
-            d = 0; // less than EPSILON.
-        }
+        SVD_solve(h2,step,minus_g);
+        d = h(step, step);//h(a)*(step(i)*step(j)).bundle(i*j,Sym2(),a);
 
         if (isNaN(d) || d < EPSILON) // h isn't postive definite along step so fall back to conjugate gradient
         {
