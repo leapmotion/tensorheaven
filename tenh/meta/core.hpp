@@ -215,6 +215,12 @@ enum
         Assert<If_f<false,Value_t<int,0>,Value_t<int,1> >::T::V == 1>::V
 };
 
+template<bool B_, class T_ = void>
+struct EnableIf_f {};
+
+template<class T_>
+struct EnableIf_f<true, T_> { typedef T_ T; };
+
 } // end of namespace Tenh
 
 #endif // !defined(TENH_META_CORE_HPP_)
