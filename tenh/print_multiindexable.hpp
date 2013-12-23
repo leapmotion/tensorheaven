@@ -29,14 +29,13 @@ void print_multiindexable (std::ostream &out, MultiIndexable const &t, EmptyType
 template <typename MultiIndexable, typename HeadIndexType, typename BodyIndexTypeList>
 void print_multiindexable (std::ostream &out, MultiIndexable const &t, TypeList_t<HeadIndexType,BodyIndexTypeList> const &)
 {
-    typedef typename MultiIndexable::Scalar Scalar;
     typedef typename MultiIndexable::MultiIndex MultiIndex;
     typedef TypeList_t<HeadIndexType,BodyIndexTypeList> AllegedIndexTypeList;
     STATIC_ASSERT_TYPES_ARE_EQUAL(typename MultiIndex::IndexTypeList, AllegedIndexTypeList);
     static Uint32 const ORDER = MultiIndex::LENGTH;
     static Uint32 const COMPONENT_COUNT_OF_LAST_INDEX = Element_f<typename MultiIndex::IndexTypeList,ORDER-1>::T::COMPONENT_COUNT;
 
-    // find the maximum component length, as printed in an ostream, so that 
+    // find the maximum component length, as printed in an ostream, so that
     // the actual output can be nicely justified and look awesome.
     Uint32 max_component_width = 0;
     for (MultiIndex m; m.is_not_at_end(); ++m)

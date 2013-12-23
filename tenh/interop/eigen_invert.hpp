@@ -74,10 +74,6 @@ bool invert_2tensor (EmbeddableAsTensor_i<Derived1_,
                                                                   TypeList_t<typename DualOf_f<Factor_>::T> > >,
                                Scalar_> TwoTensorDualType;
     typedef SymmetricPowerOfBasedVectorSpace_c<2,typename DualOf_f<Factor_>::T > SymDualType;
-    typedef Eigen::Matrix<Scalar_,
-                          DimensionOf_f<Factor_>::V,
-                          DimensionOf_f<Factor_>::V,
-                          Eigen::RowMajor> EigenMatrixType;
 
     AbstractIndex_c<'a'> a;
     AbstractIndex_c<'i'> i;

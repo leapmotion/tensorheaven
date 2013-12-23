@@ -506,7 +506,6 @@ MultiIndex_t<typename ConcatenationOfTypeLists_t<Lhs_TypeList_,Rhs_TypeList_>::T
 template <typename IndexTypeList, typename Compare>
 void sort (MultiIndex_t<IndexTypeList> &m)
 {
-    typedef MultiIndex_t<IndexTypeList> MultiIndex;
     STATIC_ASSERT(TypeListIsUniform_t<IndexTypeList>::V, ALL_TYPES_IN_TYPELIST_MUST_BE_THE_SAME);
     // run-time check that the memory is actually layed out contiguously, which is necessary for the reinterpret_cast to work.
     assert(m.is_layed_out_contiguously_in_memory());

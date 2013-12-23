@@ -124,7 +124,7 @@ bool uniform_step (ObjectiveFunction_ const &f,
     {
         next_position(i).no_alias() += partial_step(i);
         // first, check if the next value is bigger than the current value.
-        // if it is, then bisect 
+        // if it is, then bisect
         Scalar_ current_value(f.function(current_position));
         Scalar_ next_value(f.function(next_position));
         if (next_value >= current_value)
@@ -171,7 +171,6 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
     typedef typename InnerProduct_f<BasedVectorSpace_,InnerProductId_,Scalar_>::T VectorInnerProductType;
     typedef ImplementationOf_t<typename DualOf_f<BasedVectorSpace_>::T,Scalar_> CoVectorType;
     typedef typename InnerProduct_f<typename DualOf_f<BasedVectorSpace_>::T,InnerProductId_,Scalar_>::T CoVectorInnerProductType;
-    typedef SymmetricPowerOfBasedVectorSpace_c<2,BasedVectorSpace_> Sym2;
     typedef typename ObjectiveFunction_::D2 HessianType;
     typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<typename DualOf_f<BasedVectorSpace_>::T, TypeList_t<typename DualOf_f<BasedVectorSpace_>::T> > >,Scalar_> Hessian2TensorType;
     STATIC_ASSERT_TYPES_ARE_EQUAL(VectorType, typename ObjectiveFunction_::V);
@@ -211,7 +210,7 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
         DEBUG_OUTPUT(   "minimize: iteration " << iteration_count
                      << ", current_approximation = " << current_approximation
                      << "\n    gradient = " << g
-                     << ", norm of gradient = " << g_norm 
+                     << ", norm of gradient = " << g_norm
                      << ", current function value = " << current_value << '\n');
 
         if (g_norm <= tolerance)
@@ -288,7 +287,7 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
         ++iteration_count;
     }
 
-    DEBUG_OUTPUT(   "    minimize took " << iteration_count << " steps; " 
+    DEBUG_OUTPUT(   "    minimize took " << iteration_count << " steps; "
                  << newtons_method << " were Newton's method, "
                  << conjugate_gradient << " were conjugate gradient, and "
                  << gradient_descent << " were gradient descent." << '\n');

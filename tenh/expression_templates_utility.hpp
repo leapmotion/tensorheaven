@@ -632,10 +632,7 @@ struct IndexSplitToIndex_t
 
     Scalar operator [] (MultiIndex const &m) const
     {
-        typedef typename DimIndexTypeListOf_t<TypeList_t<EmbeddingTensorProduct>,
-                                              TypeList_t<SplitAbstractIndexType> >::T SourceFactorDimIndexTypeList;
         typedef ComponentIndex_t<DimensionOf_f<SourceFactor>::V> SourceFactorComponentIndex;
-        //typedef MultiIndex_t<SourceFactorDimIndexTypeList> SourceFactorMultiIndex;
         // TODO: the use of UseMemberArray here is arbitrary because it's just used to access a
         // static method.  figure out if this is a problem
         typedef ImplementationOf_t<SourceFactor,Scalar,UseMemberArray> ImplementationOfSourceFactor;

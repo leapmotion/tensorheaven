@@ -53,6 +53,15 @@ template <typename Then_, typename Else_> struct If_f<true, Then_, Else_> { type
 template <typename Then_, typename Else_> struct If_f<false, Then_, Else_> { typedef Else_ T; };
 /// @endcond
 
+
+/// @brief Metafunction for using "substitution failure is not an error" (SFINAE) for enabling/disabling
+/// particular functions based on a compile-time conditional.
+/// @headerfile core.hpp "tenh/meta/core.hpp"
+template<bool CONDITION_, class T_ = void> struct EnableIf_f { };
+/// @cond false
+template<class T_> struct EnableIf_f<true,T_> { typedef T_ T; };
+/// @endcond
+
 // ///////////////////////////////////////////////////////////////////////////
 // setup for int type templates
 // ///////////////////////////////////////////////////////////////////////////
@@ -214,12 +223,6 @@ enum
         Assert<If_f<true,Value_t<int,0>,Value_t<int,1> >::T::V == 0>::V &&
         Assert<If_f<false,Value_t<int,0>,Value_t<int,1> >::T::V == 1>::V
 };
-
-template<bool B_, class T_ = void>
-struct EnableIf_f {};
-
-template<class T_>
-struct EnableIf_f<true, T_> { typedef T_ T; };
 
 } // end of namespace Tenh
 

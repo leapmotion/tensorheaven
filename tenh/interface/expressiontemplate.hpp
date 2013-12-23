@@ -219,7 +219,6 @@ template <typename Derived_,
           typename UsedDimIndexTypeList_>
 std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &e)
 {
-    typedef ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> ExpressionTemplate;
     print_multiindexable(out, e, FreeDimIndexTypeList_());
     typedef typename AbstractIndicesOfDimIndexTypeList_t<FreeDimIndexTypeList_>::T AbstractIndexTypeList;
     // print the abstract index symbols
