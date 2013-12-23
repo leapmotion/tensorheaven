@@ -218,15 +218,15 @@ void test_direct_sum_of_2tensors ()
                                  DimensionOf_f<T33>::V,
                                  constant_component_generator_evaluator<Scalar,DimensionOf_f<T33>::V,33>,
                                  Generic> ComponentGenerator33;
-    typedef ImplementationOf_t<T11,Scalar,UseImmutableArray_t<ComponentGenerator11> > T_11;
-    typedef ImplementationOf_t<T12,Scalar,UseImmutableArray_t<ComponentGenerator12> > T_12;
-    typedef ImplementationOf_t<T13,Scalar,UseImmutableArray_t<ComponentGenerator13> > T_13;
-    typedef ImplementationOf_t<T21,Scalar,UseImmutableArray_t<ComponentGenerator21> > T_21;
-    typedef ImplementationOf_t<T22,Scalar,UseImmutableArray_t<ComponentGenerator22> > T_22;
-    typedef ImplementationOf_t<T23,Scalar,UseImmutableArray_t<ComponentGenerator23> > T_23;
-    typedef ImplementationOf_t<T31,Scalar,UseImmutableArray_t<ComponentGenerator31> > T_31;
-    typedef ImplementationOf_t<T32,Scalar,UseImmutableArray_t<ComponentGenerator32> > T_32;
-    typedef ImplementationOf_t<T33,Scalar,UseImmutableArray_t<ComponentGenerator33> > T_33;
+    typedef ImplementationOf_t<T11,Scalar,UseProceduralArray_t<ComponentGenerator11> > T_11;
+    typedef ImplementationOf_t<T12,Scalar,UseProceduralArray_t<ComponentGenerator12> > T_12;
+    typedef ImplementationOf_t<T13,Scalar,UseProceduralArray_t<ComponentGenerator13> > T_13;
+    typedef ImplementationOf_t<T21,Scalar,UseProceduralArray_t<ComponentGenerator21> > T_21;
+    typedef ImplementationOf_t<T22,Scalar,UseProceduralArray_t<ComponentGenerator22> > T_22;
+    typedef ImplementationOf_t<T23,Scalar,UseProceduralArray_t<ComponentGenerator23> > T_23;
+    typedef ImplementationOf_t<T31,Scalar,UseProceduralArray_t<ComponentGenerator31> > T_31;
+    typedef ImplementationOf_t<T32,Scalar,UseProceduralArray_t<ComponentGenerator32> > T_32;
+    typedef ImplementationOf_t<T33,Scalar,UseProceduralArray_t<ComponentGenerator33> > T_33;
 
     typedef TypeList_t<T_11,
             TypeList_t<T_12,
@@ -237,9 +237,9 @@ void test_direct_sum_of_2tensors ()
             TypeList_t<T_31,
             TypeList_t<T_32,
             TypeList_t<T_33> > > > > > > > > TL;
-    typedef DirectSumOfImmutable2Tensors_f<TL>::T D;
+    typedef DirectSumOfProcedural2Tensors_f<TL>::T D;
     D d;
-    std::cout << "direct sum of immutable 2-tensors\n";
+    std::cout << "direct sum of procedural 2-tensors\n";
     std::cout << FORMAT_VALUE(d) << '\n';
 }
 
@@ -294,15 +294,15 @@ void test_direct_sum_of_diagonal2tensors ()
                                  DimensionOf_f<T33>::V,
                                  constant_component_generator_evaluator<Scalar,DimensionOf_f<T33>::V,33>,
                                  Generic> ComponentGenerator33;
-    typedef ImplementationOf_t<T11,Scalar,UseImmutableArray_t<ComponentGenerator11> > T_11;
-    typedef ImplementationOf_t<T12,Scalar,UseImmutableArray_t<ComponentGenerator12> > T_12;
-    typedef ImplementationOf_t<T13,Scalar,UseImmutableArray_t<ComponentGenerator13> > T_13;
-    typedef ImplementationOf_t<T21,Scalar,UseImmutableArray_t<ComponentGenerator21> > T_21;
-    typedef ImplementationOf_t<T22,Scalar,UseImmutableArray_t<ComponentGenerator22> > T_22;
-    typedef ImplementationOf_t<T23,Scalar,UseImmutableArray_t<ComponentGenerator23> > T_23;
-    typedef ImplementationOf_t<T31,Scalar,UseImmutableArray_t<ComponentGenerator31> > T_31;
-    typedef ImplementationOf_t<T32,Scalar,UseImmutableArray_t<ComponentGenerator32> > T_32;
-    typedef ImplementationOf_t<T33,Scalar,UseImmutableArray_t<ComponentGenerator33> > T_33;
+    typedef ImplementationOf_t<T11,Scalar,UseProceduralArray_t<ComponentGenerator11> > T_11;
+    typedef ImplementationOf_t<T12,Scalar,UseProceduralArray_t<ComponentGenerator12> > T_12;
+    typedef ImplementationOf_t<T13,Scalar,UseProceduralArray_t<ComponentGenerator13> > T_13;
+    typedef ImplementationOf_t<T21,Scalar,UseProceduralArray_t<ComponentGenerator21> > T_21;
+    typedef ImplementationOf_t<T22,Scalar,UseProceduralArray_t<ComponentGenerator22> > T_22;
+    typedef ImplementationOf_t<T23,Scalar,UseProceduralArray_t<ComponentGenerator23> > T_23;
+    typedef ImplementationOf_t<T31,Scalar,UseProceduralArray_t<ComponentGenerator31> > T_31;
+    typedef ImplementationOf_t<T32,Scalar,UseProceduralArray_t<ComponentGenerator32> > T_32;
+    typedef ImplementationOf_t<T33,Scalar,UseProceduralArray_t<ComponentGenerator33> > T_33;
 
     typedef TypeList_t<T_11,
             TypeList_t<T_12,
@@ -313,9 +313,9 @@ void test_direct_sum_of_diagonal2tensors ()
             TypeList_t<T_31,
             TypeList_t<T_32,
             TypeList_t<T_33> > > > > > > > > TL;
-    typedef DirectSumOfImmutable2Tensors_f<TL>::T D;
+    typedef DirectSumOfProcedural2Tensors_f<TL>::T D;
     D d;
-    std::cout << "direct sum of immutable diagonal-2-tensors\n";
+    std::cout << "direct sum of procedural diagonal-2-tensors\n";
     std::cout << FORMAT_VALUE(d) << '\n';
 }
 

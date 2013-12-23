@@ -563,7 +563,7 @@ struct IndexSplitter_t
         typedef ImplementationOf_t<SourceFactor,Scalar,UseMemberArray> ImplementationOfSourceFactor;
 
         SourceFactorMultiIndex s(m.template range<SOURCE_INDEX_TYPE_INDEX,SOURCE_INDEX_TYPE_INDEX+SplitAbstractIndexTypeList::LENGTH>());
-        if (ImplementationOfSourceFactor::component_is_immutable_zero(s))
+        if (ImplementationOfSourceFactor::component_is_procedural_zero(s))
             return Scalar(0);
 
         SourceFactorComponentIndex i(ImplementationOfSourceFactor::vector_index_of(s));
@@ -640,7 +640,7 @@ struct IndexSplitToIndex_t
 
         // this does the vector-index to multi-index conversion
         SourceFactorMultiIndex s(m.template el<SOURCE_INDEX_TYPE_INDEX>());
-        if (ImplementationOfSourceFactor::component_is_immutable_zero(s))
+        if (ImplementationOfSourceFactor::component_is_procedural_zero(s))
             return Scalar(0);
 
         SourceFactorComponentIndex i(ImplementationOfSourceFactor::vector_index_of(s));

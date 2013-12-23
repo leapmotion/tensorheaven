@@ -66,13 +66,13 @@ void test_read_access (Context const &context)
             {
                 assert_eq(t[ci], s);
                 assert_eq(t.scalar_factor_for_component(ci), Scalar(1));
-                assert(!t.component_is_immutable_zero(ci));
+                assert(!t.component_is_procedural_zero(ci));
             }
             else
             {
                 assert_eq(t[ci], Scalar(0));
                     assert_eq(t.scalar_factor_for_component(ci), Scalar(0));
-                assert(t.component_is_immutable_zero(ci));
+                assert(t.component_is_procedural_zero(ci));
             }
         }
     }

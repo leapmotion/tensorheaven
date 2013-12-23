@@ -24,7 +24,7 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,F
     public EmbeddableAsTensor_i<typename DerivedType_f<Derived_, ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,Scalar_,UseArrayType_,Derived_> >::T,
                                 Scalar_,
                                 Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,
-                                ComponentsAreImmutable_f<UseArrayType_>::V>,
+                                ComponentsAreProcedural_f<UseArrayType_>::V>,
     // privately inherited because it is an implementation detail
     private ArrayStorage_f<Scalar_,
                            DimensionOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >::V,
@@ -40,7 +40,7 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,F
     typedef EmbeddableAsTensor_i<typename DerivedType_f<Derived_, ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,Scalar_,UseArrayType_,Derived_> >::T,
                                  Scalar_,
                                  Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,
-                                 ComponentsAreImmutable_f<UseArrayType_>::V> Parent_EmbeddableAsTensor_i;
+                                 ComponentsAreProcedural_f<UseArrayType_>::V> Parent_EmbeddableAsTensor_i;
     typedef typename ArrayStorage_f<Scalar_,
                                     DimensionOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >::V,
                                     UseArrayType_,
@@ -60,7 +60,7 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,F
     typedef Factor1_ Factor1;
     typedef Factor2_ Factor2;
 
-    using Parent_Array_i::COMPONENTS_ARE_IMMUTABLE;
+    using Parent_Array_i::COMPONENTS_ARE_PROCEDURAL;
     typedef typename Parent_Array_i::ComponentAccessConstReturnType ComponentAccessConstReturnType;
     typedef typename Parent_Array_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
 
@@ -68,7 +68,7 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,F
 
     typedef ImplementationOf_t<Concept,
                                Scalar_,
-                               UseImmutableArray_t<typename ComponentGenerator_Constant_f<Scalar_,DIM,0>::T>,
+                               UseProceduralArray_t<typename ComponentGenerator_Constant_f<Scalar_,DIM,0>::T>,
                                Derived_> Zero;
     static Zero const ZERO;
 
@@ -81,7 +81,7 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,F
     public:
         typedef ImplementationOf_t<Concept,
                                    Scalar_,
-                                   UseImmutableArray_t<typename ComponentGenerator_Characteristic_f<Scalar_,Parent_EmbeddableAsTensor_i::DIM,INDEX_>::T>,
+                                   UseProceduralArray_t<typename ComponentGenerator_Characteristic_f<Scalar_,Parent_EmbeddableAsTensor_i::DIM,INDEX_>::T>,
                                    Derived_> T;
         static T const V;
     };
@@ -92,8 +92,8 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,F
 
     // similar to a copy constructor, except initializes from a Vector_i.
     // this was chosen to be explicit to avoid unnecessary copies.
-    template <typename OtherDerived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    explicit ImplementationOf_t (Vector_i<OtherDerived_,Scalar_,Concept,COMPONENTS_ARE_IMMUTABLE_> const &x)
+    template <typename OtherDerived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    explicit ImplementationOf_t (Vector_i<OtherDerived_,Scalar_,Concept,COMPONENTS_ARE_PROCEDURAL_> const &x)
         :
         Parent_Array_i(Static<WithoutInitialization>::SINGLETON)
     {
@@ -131,8 +131,8 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,F
     }
     // similar to a copy constructor, except initializes from a Vector_i.
     // this was chosen to be explicit to avoid unnecessary copies.
-    template <typename OtherDerived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    ImplementationOf_t (Vector_i<OtherDerived_,Scalar_,Concept,COMPONENTS_ARE_IMMUTABLE_> const &x,
+    template <typename OtherDerived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    ImplementationOf_t (Vector_i<OtherDerived_,Scalar_,Concept,COMPONENTS_ARE_PROCEDURAL_> const &x,
                         Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Array_i(pointer_to_allocation, check_pointer)
@@ -160,12 +160,12 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,F
         STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
     }
 
-    // only use this if UseImmutableArray_t<...> is specified
+    // only use this if UseProceduralArray_t<...> is specified
     ImplementationOf_t ()
         :
         Parent_Array_i(WithoutInitialization()) // sort of meaningless constructor
     {
-        STATIC_ASSERT(IsUseImmutableArray_f<UseArrayType_>::V, MUST_BE_USE_IMMUTABLE_ARRAY);
+        STATIC_ASSERT(IsUseProceduralArray_f<UseArrayType_>::V, MUST_BE_USE_PROCEDURAL_ARRAY);
     }
 
     template <typename BundleIndexTypeList, typename BundledIndex>
@@ -191,14 +191,14 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,F
     using Parent_Array_i::overlaps_memory_range;
 
     // TODO (maybe): Scalar &operator [] (MultiIndex const &) -- writeable access to components,
-    // which would need to throw if the multi-index corresponds to an immutable zero.  there is
+    // which would need to throw if the multi-index corresponds to an procedural zero.  there is
     // the complication that components with non-unit scale factors would need to be set with
     // a division by that scale factor.
 
     // these are what provide indexed expressions -- via expression templates
     using Parent_EmbeddableAsTensor_i::operator();
 
-    static bool component_is_immutable_zero (MultiIndex const &m) { return m.template el<0>().value() != m.template el<1>().value(); }
+    static bool component_is_procedural_zero (MultiIndex const &m) { return m.template el<0>().value() != m.template el<1>().value(); }
     static Scalar scalar_factor_for_component (MultiIndex const &) { return Scalar(1); }
     static ComponentIndex vector_index_of (MultiIndex const &m) { return ComponentIndex(m.template el<0>().value(), DONT_CHECK_RANGE); }
 

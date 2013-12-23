@@ -196,7 +196,7 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList
         if (&right_operand.m_object == &m_object)
             return;
 
-        // can't do a memcpy because the right operand might be an immutable vector and have no memory
+        // can't do a memcpy because the right operand might be an procedural vector and have no memory
         for (typename Object::ComponentIndex i; i.is_not_at_end(); ++i)
             m_object[i] = right_operand[typename ExpressionTemplate_IndexedObject_t::MultiIndex(i)];
     }

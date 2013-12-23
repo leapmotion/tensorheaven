@@ -17,7 +17,7 @@ namespace Tenh {
 
 // ///////////////////////////////////////////////////////////////////////////
 // forward declaration for the InnerProduct_f metafunction (should return
-// an ImplementationOf_t type that uses ImmutableArray_t)
+// an ImplementationOf_t type that uses ProceduralArray_t)
 // ///////////////////////////////////////////////////////////////////////////
 
 template <typename BasedVectorSpace_, typename InnerProductId_, typename Scalar_> struct InnerProduct_f;
@@ -43,7 +43,7 @@ private:
                                  StandardInnerProduct> ComponentGenerator;
     InnerProduct_f();
 public:
-    typedef ImplementationOf_t<Diagonal2Tensor,Scalar_,UseImmutableArray_t<ComponentGenerator> > T;
+    typedef ImplementationOf_t<Diagonal2Tensor,Scalar_,UseProceduralArray_t<ComponentGenerator> > T;
 };
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -83,7 +83,7 @@ private:
     typedef typename InnerProductOfEachInTypeList_f<FactorTypeList_,InnerProductIdTypeList_,Scalar_>::T InnerProductTypeList;
     InnerProduct_f();
 public:
-    typedef typename TensorProductOfImmutable2Tensors_f<InnerProductTypeList>::T T;
+    typedef typename TensorProductOfProcedural2Tensors_f<InnerProductTypeList>::T T;
 };
 
 // induced inner product on DirectSumOfBasedVectorSpaces_c
@@ -94,7 +94,7 @@ private:
     typedef typename InnerProductOfEachInTypeList_f<FactorTypeList_,InnerProductIdTypeList_,Scalar_>::T InnerProductTypeList;
     InnerProduct_f();
 public:
-    typedef typename DirectSumOfImmutable2Tensors_f<InnerProductTypeList>::T T;
+    typedef typename DirectSumOfProcedural2Tensors_f<InnerProductTypeList>::T T;
 };
 
 } // end of namespace Tenh

@@ -1,10 +1,10 @@
 // ///////////////////////////////////////////////////////////////////////////
-// tenh/immutablearray.hpp by Victor Dods, created 2013/09/11
+// tenh/proceduralarray.hpp by Victor Dods, created 2013/09/11
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#ifndef TENH_IMMUTABLEARRAY_HPP_
-#define TENH_IMMUTABLEARRAY_HPP_
+#ifndef TENH_PROCEDURALARRAY_HPP_
+#define TENH_PROCEDURALARRAY_HPP_
 
 #include <stdexcept>
 
@@ -19,7 +19,7 @@ namespace Tenh {
 // ComponentGenerator_t
 // ///////////////////////////////////////////////////////////////////////////
 
-// gives a way to provide a "named" component generator for use in ImmutableArray_t
+// gives a way to provide a "named" component generator for use in ProceduralArray_t
 template <typename Component_,
           Uint32 COMPONENT_COUNT_,
           Component_ (*evaluator_)(ComponentIndex_t<COMPONENT_COUNT_> const &),
@@ -114,7 +114,7 @@ private:
 };
 
 // ///////////////////////////////////////////////////////////////////////////
-// ImmutableArray_t
+// ProceduralArray_t
 // ///////////////////////////////////////////////////////////////////////////
 
 // fixed-length array of a given component type, which must be a POD type
@@ -123,19 +123,19 @@ template <typename Component_,
           Uint32 COMPONENT_COUNT_,
           typename ComponentGenerator_,
           typename Derived_ = NullType>
-struct ImmutableArray_t
+struct ProceduralArray_t
     :
-    public Array_i<typename DerivedType_f<Derived_,ImmutableArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_> >::T,
+    public Array_i<typename DerivedType_f<Derived_,ProceduralArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_> >::T,
                    Component_,
                    COMPONENT_COUNT_,
-                   IMMUTABLE_COMPONENTS>
+                   PROCEDURAL_COMPONENTS>
 {
     enum { STATIC_ASSERT_IN_ENUM(IsComponentGenerator_t<ComponentGenerator_>::V, MUST_BE_COMPONENT_GENERATOR) };
 
-    typedef Array_i<typename DerivedType_f<Derived_,ImmutableArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_> >::T,
+    typedef Array_i<typename DerivedType_f<Derived_,ProceduralArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_> >::T,
                     Component_,
                     COMPONENT_COUNT_,
-                    IMMUTABLE_COMPONENTS> Parent_Array_i;
+                    PROCEDURAL_COMPONENTS> Parent_Array_i;
 
     typedef typename Parent_Array_i::Component Component;
     using Parent_Array_i::COMPONENT_COUNT;
@@ -144,8 +144,8 @@ struct ImmutableArray_t
 
     // no initialization is necessary (or possible), since all components are
     // generated procedurally.
-    ImmutableArray_t () { }
-    explicit ImmutableArray_t (WithoutInitialization const &) { }
+    ProceduralArray_t () { }
+    explicit ProceduralArray_t (WithoutInitialization const &) { }
 
     Component operator [] (ComponentIndex const &i) const
     {
@@ -169,34 +169,34 @@ struct ImmutableArray_t
     static std::string type_as_string ()
     {
         // TODO: figure out how to provide stringified type info for the component_generator_ template param.
-        return "ImmutableArray_t<" + type_string_of<Component_>() + ','
+        return "ProceduralArray_t<" + type_string_of<Component_>() + ','
                                    + AS_STRING(COMPONENT_COUNT_) + ','
                                    + type_string_of<ComponentGenerator_>() + '>';
     }
 };
 
-template <typename T> struct IsImmutableArray_t
+template <typename T> struct IsProceduralArray_t
 {
     static bool const V = false;
 private:
-    IsImmutableArray_t();
+    IsProceduralArray_t();
 };
 template <typename Component_,
           Uint32 COMPONENT_COUNT_,
           typename ComponentGenerator_,
           typename Derived_>
-struct IsImmutableArray_t<ImmutableArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_> >
+struct IsProceduralArray_t<ProceduralArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_> >
 {
     static bool const V = true;
 private:
-    IsImmutableArray_t();
+    IsProceduralArray_t();
 };
 
 template <typename Component_,
           Uint32 COMPONENT_COUNT_,
           typename ComponentGenerator_,
           typename Derived_>
-struct IsArray_i<ImmutableArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_> >
+struct IsArray_i<ProceduralArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_> >
 {
     static bool const V = true;
 private:
@@ -205,4 +205,4 @@ private:
 
 } // end of namespace Tenh
 
-#endif // TENH_IMMUTABLEARRAY_HPP_
+#endif // TENH_PROCEDURALARRAY_HPP_

@@ -93,10 +93,10 @@ typename IndexedParameterListReturnType_f<TypeList_t<HeadParameter>,TypeList_t<H
 template <typename Derived_,
           typename Scalar_,
           typename EmbeddableInTensorProductOfBasedVectorSpaces_,
-          bool COMPONENTS_ARE_IMMUTABLE_>
+          bool COMPONENTS_ARE_PROCEDURAL_>
 struct EmbeddableAsTensor_i
     :
-    public Vector_i<Derived_,Scalar_,EmbeddableInTensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_>
+    public Vector_i<Derived_,Scalar_,EmbeddableInTensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_PROCEDURAL_>
 {
     enum
     {
@@ -105,13 +105,13 @@ struct EmbeddableAsTensor_i
                               MUST_BE_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES),
     };
 
-    typedef Vector_i<Derived_,Scalar_,EmbeddableInTensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_> Parent_Vector_i;
+    typedef Vector_i<Derived_,Scalar_,EmbeddableInTensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_PROCEDURAL_> Parent_Vector_i;
     typedef typename Parent_Vector_i::Derived Derived;
     typedef typename Parent_Vector_i::Scalar Scalar;
     typedef typename Parent_Vector_i::BasedVectorSpace BasedVectorSpace;
     using Parent_Vector_i::DIM; // does this make any sense?  e.g. simple tensors aren't a linear space
     typedef typename Parent_Vector_i::ComponentIndex ComponentIndex;
-    using Parent_Vector_i::COMPONENTS_ARE_IMMUTABLE;
+    using Parent_Vector_i::COMPONENTS_ARE_PROCEDURAL;
     typedef typename Parent_Vector_i::ComponentAccessConstReturnType ComponentAccessConstReturnType;
     typedef typename Parent_Vector_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
 
@@ -159,12 +159,12 @@ struct EmbeddableAsTensor_i
     // this is a special case for when ORDER == 2, i.e. it is a bilinear form.
     template <typename Derived0_,
               typename BasedVectorSpace0_,
-              bool COMPONENTS_ARE_IMMUTABLE0_,
+              bool COMPONENTS_ARE_PROCEDURAL0_,
               typename Derived1_,
               typename BasedVectorSpace1_,
-              bool COMPONENTS_ARE_IMMUTABLE1_>
-    Scalar_ operator () (Vector_i<Derived0_,Scalar_,BasedVectorSpace0_,COMPONENTS_ARE_IMMUTABLE0_> const &v0,
-                         Vector_i<Derived1_,Scalar_,BasedVectorSpace1_,COMPONENTS_ARE_IMMUTABLE1_> const &v1) const
+              bool COMPONENTS_ARE_PROCEDURAL1_>
+    Scalar_ operator () (Vector_i<Derived0_,Scalar_,BasedVectorSpace0_,COMPONENTS_ARE_PROCEDURAL0_> const &v0,
+                         Vector_i<Derived1_,Scalar_,BasedVectorSpace1_,COMPONENTS_ARE_PROCEDURAL1_> const &v1) const
     {
         STATIC_ASSERT(ORDER == 2, ORDER_MUST_BE_EXACTLY_2);
         AbstractIndex_c<'i'> i;
@@ -189,7 +189,7 @@ struct EmbeddableAsTensor_i
         return split(AbstractIndexTypeList())*indexed_parameter_list(p, AbstractIndexTypeList());
     }
 
-    static bool component_is_immutable_zero (MultiIndex const &m) { return as_derived().component_is_immutable_zero(m); }
+    static bool component_is_procedural_zero (MultiIndex const &m) { return as_derived().component_is_procedural_zero(m); }
     static Scalar scalar_factor_for_component (MultiIndex const &m) { return as_derived().scalar_factor_for_component(m); }
     static ComponentIndex vector_index_of (MultiIndex const &m) { return as_derived().vector_index_of(m); }
 
@@ -198,14 +198,14 @@ struct EmbeddableAsTensor_i
         return "EmbeddableAsTensor_i<" + type_string_of<Derived>() + ','
                                        + type_string_of<Scalar>() + ','
                                        + type_string_of<EmbeddableInTensorProductOfBasedVectorSpaces>() + ','
-                                       + AS_STRING((COMPONENTS_ARE_IMMUTABLE_ ? "IMMUTABLE_COMPONENTS" : "MUTABLE_COMPONENTS")) + '>';
+                                       + AS_STRING((COMPONENTS_ARE_PROCEDURAL_ ? "PROCEDURAL_COMPONENTS" : "MUTABLE_COMPONENTS")) + '>';
     }
 };
 
-template <typename Derived_, typename Scalar_, typename EmbeddableInTensorProductOfBasedVectorSpaces_, bool COMPONENTS_ARE_IMMUTABLE_>
-std::ostream &operator << (std::ostream &out, EmbeddableAsTensor_i<Derived_,Scalar_,EmbeddableInTensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_> const &e)
+template <typename Derived_, typename Scalar_, typename EmbeddableInTensorProductOfBasedVectorSpaces_, bool COMPONENTS_ARE_PROCEDURAL_>
+std::ostream &operator << (std::ostream &out, EmbeddableAsTensor_i<Derived_,Scalar_,EmbeddableInTensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_PROCEDURAL_> const &e)
 {
-    return out << *static_cast<Vector_i<Derived_,Scalar_,EmbeddableInTensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_> const *>(&e);
+    return out << *static_cast<Vector_i<Derived_,Scalar_,EmbeddableInTensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_PROCEDURAL_> const *>(&e);
 }
 
 } // end of namespace Tenh

@@ -48,7 +48,7 @@ Scalar_ alt (ComponentIndex_t<COMPONENT_COUNT_> const &i)
     TensorPowerMultiIndex m1(Factor1BootstrappingImplementation::template bundle_index_map<Factor1IndexTypeList,TensorPowerComponentIndex>(m.template el<1>()));
 
     // if there is no memory location for the multiindex value, the component is zero
-    if (Factor0BootstrappingImplementation::component_is_immutable_zero(m1))
+    if (Factor0BootstrappingImplementation::component_is_procedural_zero(m1))
     {
         return Scalar_(0);
     }
@@ -89,7 +89,7 @@ private:
                                  AltId_t<ORDER_,Factor_> > ComponentGenerator;
     Alt_f();
 public:
-    typedef ImplementationOf_t<Projection,Scalar_,UseImmutableArray_t<ComponentGenerator> > T;
+    typedef ImplementationOf_t<Projection,Scalar_,UseProceduralArray_t<ComponentGenerator> > T;
 };
 
 } // end of namespace Tenh

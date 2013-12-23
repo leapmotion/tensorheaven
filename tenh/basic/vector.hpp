@@ -84,13 +84,13 @@ public:
         STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
     }
 
-    // only use this if UseImmutableArray_t<...> is specified or if the vector space is 0-dimensional
+    // only use this if UseProceduralArray_t<...> is specified or if the vector space is 0-dimensional
     Vector ()
         :
         Parent_Implementation(WithoutInitialization()) // sort of meaningless constructor
     {
-        STATIC_ASSERT(IsUseImmutableArray_f<UseArrayType_>::V || DimensionOf_f<BasedVectorSpace_>::V == 0,
-                      MUST_BE_USE_IMMUTABLE_ARRAY_OR_BE_ZERO_DIMENSIONAL);
+        STATIC_ASSERT(IsUseProceduralArray_f<UseArrayType_>::V || DimensionOf_f<BasedVectorSpace_>::V == 0,
+                      MUST_BE_USE_PROCEDURAL_ARRAY_OR_BE_ZERO_DIMENSIONAL);
     }
 
     template <typename ExpressionTemplate_, typename FreeDimIndexTypeList_>

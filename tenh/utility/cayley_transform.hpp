@@ -82,17 +82,17 @@ private:
                                HatId> ComponentGenerator;
   HatTensor_f();
 public:
-  typedef ImplementationOf_t<HatMorphism,Scalar_,UseImmutableArray_t<ComponentGenerator> > T;
+  typedef ImplementationOf_t<HatMorphism,Scalar_,UseProceduralArray_t<ComponentGenerator> > T;
 };
 
 // Lie algebra morphism from (R^3, \times) to (so(3), [.,.]) - as a 2-tensor
 // TODO: figure out if this make sense to have for arbitrary 3-dimensional based vector spaces
-template <typename Derived_, typename Scalar_, typename BasedVectorSpace_, bool COMPONENTS_ARE_IMMUTABLE_>
+template <typename Derived_, typename Scalar_, typename BasedVectorSpace_, bool COMPONENTS_ARE_PROCEDURAL_>
 ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_,
                                                                  TypeList_t<typename DualOf_f<BasedVectorSpace_>::T> > >,
                                                       Scalar_,
                                                       UseMemberArray>
-hat (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x)
+hat (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x)
 {
   STATIC_ASSERT(DimensionOf_f<BasedVectorSpace_>::V == 3, DIMENSION_MUST_BE_EXACTLY_3);
   // for brevity
@@ -100,7 +100,7 @@ hat (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> cons
                                                                 TypeList_t<typename DualOf_f<BasedVectorSpace_>::T> > >,
                              Scalar_,
                              UseMemberArray> T;
-  typedef typename Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_>::ComponentIndex c;
+  typedef typename Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_>::ComponentIndex c;
   typedef typename T::ComponentIndex C;
   T retval(Static<WithoutInitialization>::SINGLETON);
   retval[C(0)] = Scalar_(0);
@@ -156,14 +156,14 @@ public:
     m_D2(p) = (Scalar_(-2)*m_inner_product.split(i*j)).bundle(i*j,typename D2::Concept(),p);
   }
 
-  template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-  Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+  template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+  Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
   {
     return Scalar_(1) - m_inner_product(x, x);
   }
 
-  template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-  D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+  template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+  D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
   {
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
@@ -172,8 +172,8 @@ public:
     return retval;
   }
 
-  template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-  D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+  template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+  D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
   {
     return m_D2;
   }
@@ -221,14 +221,14 @@ public:
     m_form(p) = (Scalar_(2)*m_inner_product.split(i*j)).bundle(i*j,typename D2::Concept(),p);
   }
 
-  template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-  Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+  template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+  Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
   {
     return Scalar_(1) / (Scalar_(1) + m_inner_product(x, x));
   }
 
-  template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-  D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+  template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+  D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
   {
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
@@ -237,8 +237,8 @@ public:
     return retval;
   }
 
-  template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-  D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+  template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+  D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
   {
     Scalar_ f_of_x(function(x));
     AbstractIndex_c<'a'> a;
@@ -288,8 +288,8 @@ public:
   typedef typename FunctionObjectType::D1 D1;
   typedef typename FunctionObjectType::D2 D2;
 
-  template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-  Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+  template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+  Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
   {
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
@@ -300,8 +300,8 @@ public:
     return retval;
   }
 
-  template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-  D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+  template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+  D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
   {
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
@@ -318,8 +318,8 @@ public:
     return retval;
   }
 
-  template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-  D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+  template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+  D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
   {
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
@@ -377,8 +377,8 @@ public:
   typedef typename FunctionObjectType::D1 D1;
   typedef typename FunctionObjectType::D2 D2;
 
-  template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-  Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+  template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+  Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
   {
     AbstractIndex_c<'i'> i;
     Out retval(Static<WithoutInitialization>::SINGLETON);
@@ -388,8 +388,8 @@ public:
     return retval;
   }
 
-  template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-  D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+  template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+  D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
   {
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
@@ -400,8 +400,8 @@ public:
 
     return retval;
   }
-  template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-  D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+  template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+  D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
   {
     AbstractIndex_c<'j'> j;
     AbstractIndex_c<'k'> k;

@@ -21,7 +21,7 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
     public Vector_i<typename DerivedType_f<Derived_,ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_,Derived_> >::T,
                     Scalar_,
                     BasedVectorSpace_c<VectorSpace_,Basis_>,
-                    ComponentsAreImmutable_f<UseArrayType_>::V>,
+                    ComponentsAreProcedural_f<UseArrayType_>::V>,
     // privately inherited because it is an implementation detail
     private ArrayStorage_f<Scalar_,
                            DimensionOf_f<VectorSpace_>::V,
@@ -31,7 +31,7 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
     typedef Vector_i<typename DerivedType_f<Derived_,ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArrayType_,Derived_> >::T,
                      Scalar_,
                      BasedVectorSpace_c<VectorSpace_,Basis_>,
-                     ComponentsAreImmutable_f<UseArrayType_>::V> Parent_Vector_i;
+                     ComponentsAreProcedural_f<UseArrayType_>::V> Parent_Vector_i;
     typedef typename ArrayStorage_f<Scalar_,
                                     DimensionOf_f<VectorSpace_>::V,
                                     UseArrayType_,
@@ -45,7 +45,7 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
     typedef typename Parent_Vector_i::ComponentIndex ComponentIndex;
     typedef typename Parent_Vector_i::MultiIndex MultiIndex;
 
-    using Parent_Array_i::COMPONENTS_ARE_IMMUTABLE;
+    using Parent_Array_i::COMPONENTS_ARE_PROCEDURAL;
     typedef typename Parent_Array_i::ComponentAccessConstReturnType ComponentAccessConstReturnType;
     typedef typename Parent_Array_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
 
@@ -53,7 +53,7 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
 
     typedef ImplementationOf_t<Concept,
                                Scalar_,
-                               UseImmutableArray_t<typename ComponentGenerator_Constant_f<Scalar_,DIM,0>::T>,
+                               UseProceduralArray_t<typename ComponentGenerator_Constant_f<Scalar_,DIM,0>::T>,
                                Derived_> Zero;
     static Zero const ZERO;
 
@@ -67,7 +67,7 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
     public:
         typedef ImplementationOf_t<Concept,
                                    Scalar_,
-                                   UseImmutableArray_t<ComponentGenerator>,
+                                   UseProceduralArray_t<ComponentGenerator>,
                                    Derived_> T;
         static T const V;
     };
@@ -78,8 +78,8 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
 
     // similar to a copy constructor, except initializes from a Vector_i.
     // this was chosen to be explicit to avoid unnecessary copies.
-    template <typename OtherDerived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    explicit ImplementationOf_t (Vector_i<OtherDerived_,Scalar_,Concept,COMPONENTS_ARE_IMMUTABLE_> const &x)
+    template <typename OtherDerived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    explicit ImplementationOf_t (Vector_i<OtherDerived_,Scalar_,Concept,COMPONENTS_ARE_PROCEDURAL_> const &x)
         :
         Parent_Array_i(Static<WithoutInitialization>::SINGLETON)
     {
@@ -115,8 +115,8 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
     }
     // similar to a copy constructor, except initializes from a Vector_i.
     // this was chosen to be explicit to avoid unnecessary copies.
-    template <typename OtherDerived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    ImplementationOf_t (Vector_i<OtherDerived_,Scalar_,Concept,COMPONENTS_ARE_IMMUTABLE_> const &x,
+    template <typename OtherDerived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    ImplementationOf_t (Vector_i<OtherDerived_,Scalar_,Concept,COMPONENTS_ARE_PROCEDURAL_> const &x,
                                  Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Array_i(pointer_to_allocation, check_pointer)
@@ -144,12 +144,12 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
         STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
     }
 
-    // only use this if UseImmutableArray_t<...> is specified or if the vector space is 0-dimensional
+    // only use this if UseProceduralArray_t<...> is specified or if the vector space is 0-dimensional
     ImplementationOf_t ()
         :
         Parent_Array_i(WithoutInitialization()) // sort of meaningless constructor
     {
-        STATIC_ASSERT(IsUseImmutableArray_f<UseArrayType_>::V || DIM == 0, MUST_BE_USE_IMMUTABLE_ARRAY_OR_BE_ZERO_DIMENSIONAL);
+        STATIC_ASSERT(IsUseProceduralArray_f<UseArrayType_>::V || DIM == 0, MUST_BE_USE_PROCEDURAL_ARRAY_OR_BE_ZERO_DIMENSIONAL);
     }
 
     using Parent_Array_i::as_derived;

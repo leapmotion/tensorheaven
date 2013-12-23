@@ -10,9 +10,9 @@
 
 #include "tenh/conceptual/dual.hpp"
 #include "tenh/conceptual/tensorproduct.hpp"
-#include "tenh/immutablearray.hpp"
 #include "tenh/memberarray.hpp"
 #include "tenh/preallocatedarray.hpp"
+#include "tenh/proceduralarray.hpp"
 
 namespace Tenh {
 
@@ -39,7 +39,7 @@ private:
 };
 
 template <typename ComponentGenerator_>
-struct UseImmutableArray_t
+struct UseProceduralArray_t
 {
     enum { STATIC_ASSERT_IN_ENUM(IsComponentGenerator_t<ComponentGenerator_>::V, MUST_BE_COMPONENT_GENERATOR) };
 
@@ -47,35 +47,35 @@ struct UseImmutableArray_t
 
     static std::string type_as_string ()
     {
-        return "UseImmutableArray_t<" + type_string_of<ComponentGenerator_>() + '>';
+        return "UseProceduralArray_t<" + type_string_of<ComponentGenerator_>() + '>';
     }
 };
 
-template <typename T> struct IsUseImmutableArray_f
+template <typename T> struct IsUseProceduralArray_f
 {
     static bool const V = false;
 private:
-    IsUseImmutableArray_f();
+    IsUseProceduralArray_f();
 };
-template <typename ComponentGenerator_> struct IsUseImmutableArray_f<UseImmutableArray_t<ComponentGenerator_> >
+template <typename ComponentGenerator_> struct IsUseProceduralArray_f<UseProceduralArray_t<ComponentGenerator_> >
 {
     static bool const V = true;
 private:
-    IsUseImmutableArray_f();
+    IsUseProceduralArray_f();
 };
 
-// used by ImplementationOf_t to provide the COMPONENTS_ARE_IMMUTABLE parameter value
-template <typename T> struct ComponentsAreImmutable_f
+// used by ImplementationOf_t to provide the COMPONENTS_ARE_PROCEDURAL parameter value
+template <typename T> struct ComponentsAreProcedural_f
 {
     static bool const V = false;
 private:
-    ComponentsAreImmutable_f();
+    ComponentsAreProcedural_f();
 };
-template <typename ComponentGenerator_> struct ComponentsAreImmutable_f<UseImmutableArray_t<ComponentGenerator_> >
+template <typename ComponentGenerator_> struct ComponentsAreProcedural_f<UseProceduralArray_t<ComponentGenerator_> >
 {
     static bool const V = true;
 private:
-    ComponentsAreImmutable_f();
+    ComponentsAreProcedural_f();
 };
 
 // the default is UseMemberArray (internal storage).  each ImplementationOf_t must
@@ -101,7 +101,7 @@ struct IsImplementationOf_f<ImplementationOf_t<Concept_,Scalar_,UseArrayType_,De
 // ///////////////////////////////////////////////////////////////////////////
 
 // a template metafunction for figuring out which type of Array_i to use
-// (one of MemberArray_t, PreallocatedArray_t, ImmutableArray_t)
+// (one of MemberArray_t, PreallocatedArray_t, ProceduralArray_t)
 template <typename Component_,
           Uint32 COMPONENT_COUNT_,
           typename UseArrayType_,
@@ -126,9 +126,9 @@ private:
 };
 
 template <typename Component_, Uint32 COMPONENT_COUNT_, typename ComponentGenerator_, typename Derived_>
-struct ArrayStorage_f<Component_,COMPONENT_COUNT_,UseImmutableArray_t<ComponentGenerator_>,Derived_>
+struct ArrayStorage_f<Component_,COMPONENT_COUNT_,UseProceduralArray_t<ComponentGenerator_>,Derived_>
 {
-    typedef ImmutableArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_> T;
+    typedef ProceduralArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_> T;
 private:
     ArrayStorage_f();
 };
@@ -172,20 +172,20 @@ private:
 };
 
 template <typename TypeList_>
-struct EachTypeUsesImmutableArray_f
+struct EachTypeUsesProceduralArray_f
 {
-    static bool const V = IsUseImmutableArray_f<typename TypeList_::HeadType::UseArrayType>::V &&
-                          EachTypeUsesImmutableArray_f<typename TypeList_::BodyTypeList>::V;
+    static bool const V = IsUseProceduralArray_f<typename TypeList_::HeadType::UseArrayType>::V &&
+                          EachTypeUsesProceduralArray_f<typename TypeList_::BodyTypeList>::V;
 private:
-    EachTypeUsesImmutableArray_f();
+    EachTypeUsesProceduralArray_f();
 };
 
 template <>
-struct EachTypeUsesImmutableArray_f<EmptyTypeList>
+struct EachTypeUsesProceduralArray_f<EmptyTypeList>
 {
     static bool const V = true; // vacuously true
 private:
-    EachTypeUsesImmutableArray_f();
+    EachTypeUsesProceduralArray_f();
 };
 
 template <typename TensorProductOfBasedVectorSpacesTypeList_>

@@ -32,7 +32,7 @@ struct MemoryArray_i
     typedef typename Parent_Array_i::Component Component;
     using Parent_Array_i::COMPONENT_COUNT;
     typedef typename Parent_Array_i::ComponentIndex ComponentIndex;
-    using Parent_Array_i::COMPONENTS_ARE_IMMUTABLE;
+    using Parent_Array_i::COMPONENTS_ARE_PROCEDURAL;
     typedef typename Parent_Array_i::ComponentAccessConstReturnType ComponentAccessConstReturnType;
     typedef typename Parent_Array_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
 
@@ -55,10 +55,10 @@ struct MemoryArray_i
                 reinterpret_cast<void const *>(&a[typename OtherArray::ComponentIndex(0, DONT_CHECK_RANGE)]),
                 sizeof(Component_)*components_to_copy);
     }
-    // overload for immutable-component arrays (which don't correspond to actual memory,
+    // overload for procedural-component arrays (which don't correspond to actual memory,
     // so no memcpy/memmove is possible; each component has to be produced individually)
     template <typename OtherDerived_, Uint32 OTHER_COMPONENT_COUNT_>
-    void copy_from (Array_i<OtherDerived_,Component_,OTHER_COMPONENT_COUNT_,IMMUTABLE_COMPONENTS> const &a,
+    void copy_from (Array_i<OtherDerived_,Component_,OTHER_COMPONENT_COUNT_,PROCEDURAL_COMPONENTS> const &a,
                     Uint32 start_offset = 0,
                     Uint32 components_to_copy = OTHER_COMPONENT_COUNT_,
                     bool check_range = CHECK_RANGE)

@@ -29,9 +29,9 @@ int main (int, char **)
 
     test_vector_power_thingy();
     test_a_bunch_of_stuff();
-    test_immutable_stuff();
+    test_procedural_stuff();
     test_inner_product_and_euclidean_stuff();
-    test_products_of_immutable_stuff();
+    test_products_of_procedural_stuff();
     test_pretty_typestringof();
     test_conceptual_inheritance_graph();
     test_conceptual_property_accessors();

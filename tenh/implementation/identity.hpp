@@ -13,8 +13,8 @@
 namespace Tenh {
 
 // ///////////////////////////////////////////////////////////////////////////
-// Identity_f metafunction (should return an ImplementationOf_t type that 
-// uses ImmutableArray_t)
+// Identity_f metafunction (should return an ImplementationOf_t type that
+// uses ProceduralArray_t)
 // ///////////////////////////////////////////////////////////////////////////
 
 template <typename OnBasedVectorSpace_, typename Scalar_>
@@ -26,7 +26,7 @@ private:
     typedef typename ComponentGenerator_Constant_f<Scalar_,DimensionOf_f<Diagonal2Tensor>::V,1>::T ComponentGenerator;
     Identity_f ();
 public:
-    typedef ImplementationOf_t<Diagonal2Tensor,Scalar_,UseImmutableArray_t<ComponentGenerator> > T;
+    typedef ImplementationOf_t<Diagonal2Tensor,Scalar_,UseProceduralArray_t<ComponentGenerator> > T;
 };
 
 } // end of namespace Tenh

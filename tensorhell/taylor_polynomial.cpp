@@ -26,8 +26,8 @@ template <typename InnerProductId_,
           typename Derived_,
           typename Scalar_,
           typename BasedVectorSpace_,
-          bool COMPONENTS_ARE_IMMUTABLE_>
-Scalar_ squared_norm (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &v)
+          bool COMPONENTS_ARE_PROCEDURAL_>
+Scalar_ squared_norm (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &v)
 {
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
@@ -40,9 +40,9 @@ template <typename InnerProductId_,
           typename Derived_,
           typename Scalar_,
           typename BasedVectorSpace_,
-          bool COMPONENTS_ARE_IMMUTABLE_>
+          bool COMPONENTS_ARE_PROCEDURAL_>
 typename AssociatedFloatingPointType_t<Scalar_>::T
-    norm (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &v)
+    norm (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &v)
 {
     return std::sqrt(squared_norm<InnerProductId_>(v));
 }
@@ -82,7 +82,7 @@ void randomize (long double &x)
 }
 
 // open annulus of given inner and outer radii in the vector space -- false
-// is the parameter value for COMPONENTS_ARE_IMMUTABLE
+// is the parameter value for COMPONENTS_ARE_PROCEDURAL
 template <typename InnerProductId_, typename Derived_, typename Scalar_, typename BasedVectorSpace_>
 void randomize (Vector_i<Derived_,Scalar_,BasedVectorSpace_,false> &x,
                 Scalar_ const &inner_radius,
@@ -160,20 +160,20 @@ struct TaylorPolynomialVerifier_t
     typedef typename FunctionObjectType::D1 D1;
     typedef typename FunctionObjectType::D2 D2;
 
-    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
-              typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
+    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL0_,
+              typename Derived1_, bool COMPONENTS_ARE_PROCEDURAL1_>
     Out evaluate_0th_order (FunctionObject_ const &o,
-                            Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
-                            Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &evaluation_point) const
+                            Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL0_> const &based_at_point,
+                            Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL1_> const &evaluation_point) const
     {
         return o.function(based_at_point);
     }
 
-    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
-              typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
+    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL0_,
+              typename Derived1_, bool COMPONENTS_ARE_PROCEDURAL1_>
     Out evaluate_1st_order (FunctionObject_ const &o,
-                            Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
-                            Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &evaluation_point) const
+                            Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL0_> const &based_at_point,
+                            Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL1_> const &evaluation_point) const
     {
         AbstractIndex_c<'i'> i;
         // V delta(Static<WithoutInitialization>::SINGLETON);
@@ -182,11 +182,11 @@ struct TaylorPolynomialVerifier_t
         return evaluate_1st_order_via_delta(o, based_at_point, (evaluation_point(i) - based_at_point(i)).eval());
     }
 
-    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
-              typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
+    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL0_,
+              typename Derived1_, bool COMPONENTS_ARE_PROCEDURAL1_>
     Out evaluate_2nd_order (FunctionObject_ const &o,
-                            Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
-                            Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &evaluation_point) const
+                            Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL0_> const &based_at_point,
+                            Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL1_> const &evaluation_point) const
     {
         AbstractIndex_c<'i'> i;
         // V delta(Static<WithoutInitialization>::SINGLETON);
@@ -195,20 +195,20 @@ struct TaylorPolynomialVerifier_t
         return evaluate_2nd_order_via_delta(o, based_at_point, (evaluation_point(i) - based_at_point(i)).eval());
     }
 
-    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
-              typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
+    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL0_,
+              typename Derived1_, bool COMPONENTS_ARE_PROCEDURAL1_>
     Out evaluate_0th_order_via_delta (FunctionObject_ const &o,
-                                      Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
-                                      Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &delta) const
+                                      Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL0_> const &based_at_point,
+                                      Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL1_> const &delta) const
     {
         return o.function(based_at_point);
     }
 
-    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
-              typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
+    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL0_,
+              typename Derived1_, bool COMPONENTS_ARE_PROCEDURAL1_>
     Out evaluate_1st_order_via_delta (FunctionObject_ const &o,
-                                      Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
-                                      Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &delta) const
+                                      Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL0_> const &based_at_point,
+                                      Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL1_> const &delta) const
     {
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
@@ -220,11 +220,11 @@ struct TaylorPolynomialVerifier_t
         //         + o.D_function(based_at_point)(i*j)*delta(j)).eval();
     }
 
-    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
-              typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
+    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL0_,
+              typename Derived1_, bool COMPONENTS_ARE_PROCEDURAL1_>
     Out evaluate_2nd_order_via_delta (FunctionObject_ const &o,
-                                      Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
-                                      Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &delta) const
+                                      Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL0_> const &based_at_point,
+                                      Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL1_> const &delta) const
     {
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
@@ -240,9 +240,9 @@ struct TaylorPolynomialVerifier_t
         //         + o.D2_function(based_at_point)(i*p).split(p,j*k)*delta(j)*delta(k)/2).eval();
     }
 
-    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE_>
+    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL_>
     Scalar_ verify_gradient (FunctionObject_ const &o,
-                             Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE_> const &at_point) const
+                             Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL_> const &at_point) const
     {
         Scalar_ big_o_bound(0);
         static Uint32 const SAMPLES = 100;
@@ -270,9 +270,9 @@ struct TaylorPolynomialVerifier_t
         return big_o_bound;
     }
 
-    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE_>
+    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL_>
     Scalar_ verify_hessian (FunctionObject_ const &o,
-                            Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE_> const &at_point) const
+                            Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL_> const &at_point) const
     {
         Scalar_ big_o_bound(0);
         static Uint32 const SAMPLES = 100;
@@ -321,20 +321,20 @@ struct TaylorPolynomialVerifier_t<ParameterSpace_,Scalar_,StandardInnerProduct,S
     typedef typename FunctionObjectType::D1 D1;
     typedef typename FunctionObjectType::D2 D2;
 
-    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
-              typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
+    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL0_,
+              typename Derived1_, bool COMPONENTS_ARE_PROCEDURAL1_>
     Scalar_ evaluate_0th_order (FunctionObject_ const &o,
-                                Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
-                                Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &evaluation_point) const
+                                Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL0_> const &based_at_point,
+                                Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL1_> const &evaluation_point) const
     {
         return o.function(based_at_point);
     }
 
-    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
-              typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
+    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL0_,
+              typename Derived1_, bool COMPONENTS_ARE_PROCEDURAL1_>
     Scalar_ evaluate_1st_order (FunctionObject_ const &o,
-                                Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
-                                Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &evaluation_point) const
+                                Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL0_> const &based_at_point,
+                                Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL1_> const &evaluation_point) const
     {
         AbstractIndex_c<'i'> i;
         // V delta(Static<WithoutInitialization>::SINGLETON);
@@ -343,11 +343,11 @@ struct TaylorPolynomialVerifier_t<ParameterSpace_,Scalar_,StandardInnerProduct,S
         return evaluate_1st_order_via_delta(o, based_at_point, (evaluation_point(i) - based_at_point(i)).eval());
     }
 
-    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
-              typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
+    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL0_,
+              typename Derived1_, bool COMPONENTS_ARE_PROCEDURAL1_>
     Scalar_ evaluate_2nd_order (FunctionObject_ const &o,
-                                Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
-                                Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &evaluation_point) const
+                                Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL0_> const &based_at_point,
+                                Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL1_> const &evaluation_point) const
     {
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
@@ -358,31 +358,31 @@ struct TaylorPolynomialVerifier_t<ParameterSpace_,Scalar_,StandardInnerProduct,S
         return evaluate_2nd_order_via_delta(o, based_at_point, (evaluation_point(i) - based_at_point(i)).eval());
     }
 
-    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
-              typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
+    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL0_,
+              typename Derived1_, bool COMPONENTS_ARE_PROCEDURAL1_>
     Scalar_ evaluate_0th_order_via_delta (FunctionObject_ const &o,
-                                          Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
-                                          Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &delta) const
+                                          Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL0_> const &based_at_point,
+                                          Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL1_> const &delta) const
     {
         return o.function(based_at_point);
     }
 
-    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
-              typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
+    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL0_,
+              typename Derived1_, bool COMPONENTS_ARE_PROCEDURAL1_>
     Scalar_ evaluate_1st_order_via_delta (FunctionObject_ const &o,
-                                          Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
-                                          Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &delta) const
+                                          Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL0_> const &based_at_point,
+                                          Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL1_> const &delta) const
     {
         AbstractIndex_c<'i'> i;
         return o.function(based_at_point)
              + o.D_function(based_at_point)(i)*delta(i);
     }
 
-    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE0_,
-              typename Derived1_, bool COMPONENTS_ARE_IMMUTABLE1_>
+    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL0_,
+              typename Derived1_, bool COMPONENTS_ARE_PROCEDURAL1_>
     Scalar_ evaluate_2nd_order_via_delta (FunctionObject_ const &o,
-                                          Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE0_> const &based_at_point,
-                                          Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE1_> const &delta) const
+                                          Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL0_> const &based_at_point,
+                                          Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL1_> const &delta) const
     {
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
@@ -391,9 +391,9 @@ struct TaylorPolynomialVerifier_t<ParameterSpace_,Scalar_,StandardInnerProduct,S
              + o.D2_function(based_at_point).split(i*j)*delta(i)*delta(j)/2;
     }
 
-    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE_>
+    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL_>
     Scalar_ verify_gradient (FunctionObject_ const &o,
-                             Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE_> const &at_point) const
+                             Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL_> const &at_point) const
     {
         Scalar_ big_o_bound(0);
         static Uint32 const SAMPLES = 10;
@@ -421,9 +421,9 @@ struct TaylorPolynomialVerifier_t<ParameterSpace_,Scalar_,StandardInnerProduct,S
         return big_o_bound;
     }
 
-    template <typename Derived0_, bool COMPONENTS_ARE_IMMUTABLE_>
+    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL_>
     Scalar_ verify_hessian (FunctionObject_ const &o,
-                            Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_IMMUTABLE_> const &at_point) const
+                            Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL_> const &at_point) const
     {
         Scalar_ big_o_bound(0);
         static Uint32 const SAMPLES = 100;
@@ -527,17 +527,17 @@ private:
                                  HatId> ComponentGenerator;
     HatTensor_f();
 public:
-    typedef ImplementationOf_t<HatMorphism,Scalar_,UseImmutableArray_t<ComponentGenerator> > T;
+    typedef ImplementationOf_t<HatMorphism,Scalar_,UseProceduralArray_t<ComponentGenerator> > T;
 };
 
 // Lie algebra morphism from (R^3, \times) to (so(3), [.,.]) - as a 2-tensor
 // TODO: figure out if this make sense to have for arbitrary 3-dimensional based vector spaces
-template <typename Derived_, typename Scalar_, typename BasedVectorSpace_, bool COMPONENTS_ARE_IMMUTABLE_>
+template <typename Derived_, typename Scalar_, typename BasedVectorSpace_, bool COMPONENTS_ARE_PROCEDURAL_>
 ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_,
                                                       TypeList_t<typename DualOf_f<BasedVectorSpace_>::T> > >,
                    Scalar_,
                    UseMemberArray>
-    hat (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x)
+    hat (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x)
 {
     STATIC_ASSERT(DimensionOf_f<BasedVectorSpace_>::V == 3, DIMENSION_MUST_BE_EXACTLY_3);
     // for brevity
@@ -545,7 +545,7 @@ ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpac
                                                       TypeList_t<typename DualOf_f<BasedVectorSpace_>::T> > >,
                                Scalar_,
                                UseMemberArray> T;
-    typedef typename Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_>::ComponentIndex c;
+    typedef typename Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_>::ComponentIndex c;
     typedef typename T::ComponentIndex C;
     T retval(Static<WithoutInitialization>::SINGLETON);
     retval[C(0)] = Scalar_(0);
@@ -597,15 +597,15 @@ public:
         m_D2(p) = Scalar_(-2)*m_inner_product.split(i*j).bundle(i*j,typename D2::Concept(),p);
     }
 
-    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
     {
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
         return Scalar_(1) - x(i)*m_inner_product.split(i*j)*x(j);
     }
-    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
     {
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
@@ -613,8 +613,8 @@ public:
         retval(j).no_alias() = x(i)*m_D2.split(i*j); //Scalar_(-2)*x(i)*m_inner_product.split(i*j);
         return retval;
     }
-    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
     {
 //         AbstractIndex_c<'i'> i;
 //         AbstractIndex_c<'j'> j;
@@ -664,16 +664,16 @@ public:
         m_form(p) = Scalar_(2)*m_inner_product.split(i*j).bundle(i*j,typename D2::Concept(),p);
     }
 
-    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
     {
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
         // return Scalar_(1) / (Scalar_(1) + x(i)*m_inner_product.split(i*j)*x(j));
         return Scalar_(1) / (Scalar_(1) + m_inner_product(x, x));
     }
-    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
     {
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
@@ -681,8 +681,8 @@ public:
         retval(j).no_alias() = -sqr(function(x))*x(i)*m_form.split(i*j);
         return retval;
     }
-    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
     {
         Scalar_ f_of_x(function(x));
         AbstractIndex_c<'a'> a;
@@ -728,8 +728,8 @@ public:
     typedef typename FunctionObjectType::D1 D1;
     typedef typename FunctionObjectType::D2 D2;
 
-    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
     {
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
@@ -739,8 +739,8 @@ public:
                                + Scalar_(2) * (x(i)*m_inner_product.split(j*p)*x(p) + hat(x)(i*j));
         return retval;
     }
-    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
     {
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
@@ -756,8 +756,8 @@ public:
                                  .bundle(i*j,typename Out::Concept(),B);
         return retval;
     }
-    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
     {
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
@@ -812,16 +812,16 @@ public:
     typedef typename FunctionObjectType::D1 D1;
     typedef typename FunctionObjectType::D2 D2;
 
-    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
     {
         AbstractIndex_c<'i'> i;
         Out retval(Static<WithoutInitialization>::SINGLETON);
         retval(i).no_alias() = m_K.function(x) * m_N.function(x)(i);
         return retval;
     }
-    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
     {
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
@@ -830,8 +830,8 @@ public:
         retval(i*j).no_alias() = m_N.function(x)(i)*m_K.D_function(x)(j) + m_K.function(x)*m_N.D_function(x)(i*j);
         return retval;
     }
-    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
     {
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
@@ -929,8 +929,8 @@ struct QuadraticFunction_t
         m_D2(p) = Scalar_(2)*m2(p);
     }
 
-    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
     {
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
@@ -938,8 +938,8 @@ struct QuadraticFunction_t
         // return m0 + m1(i)*x(i) + m2.split(i*j)*x(i)*x(j);
         return m0 + m1(x) + m2(x, x);
     }
-    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
     {
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
@@ -950,8 +950,8 @@ struct QuadraticFunction_t
         retval(j) = m1(j) + Scalar_(2)*(x(i)*m2.split(i*j));
         return retval;
     }
-    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
     {
         return m_D2;
     }
@@ -982,13 +982,13 @@ struct BigFunction_t
     typedef typename FunctionObjectType::D1 D1;
     typedef typename FunctionObjectType::D2 D2;
 
-    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
     {
         return m_q.function(m_cayley_transform.function(x));
     }
-    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
     {
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
@@ -999,8 +999,8 @@ struct BigFunction_t
                   * m_cayley_transform.D_function(x).split(i*j);
         return retval;
     }
-    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
     {
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
@@ -1047,18 +1047,18 @@ struct WaveyFunction_t
     typedef typename FunctionObjectType::D1 D1;
     typedef typename FunctionObjectType::D2 D2;
 
-    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace,COMPONENTS_ARE_PROCEDURAL_> const &x) const
     {
-        typedef Vector_i<Derived_,Scalar_,BasedVectorSpace,COMPONENTS_ARE_IMMUTABLE_> P;
+        typedef Vector_i<Derived_,Scalar_,BasedVectorSpace,COMPONENTS_ARE_PROCEDURAL_> P;
         Scalar_ const &u = x[typename P::ComponentIndex(0, DONT_CHECK_RANGE)];
         Scalar_ const &v = x[typename P::ComponentIndex(1, DONT_CHECK_RANGE)];
         return sin(u)*sin(v);
     }
-    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace,COMPONENTS_ARE_PROCEDURAL_> const &x) const
     {
-        typedef Vector_i<Derived_,Scalar_,BasedVectorSpace,COMPONENTS_ARE_IMMUTABLE_> P;
+        typedef Vector_i<Derived_,Scalar_,BasedVectorSpace,COMPONENTS_ARE_PROCEDURAL_> P;
         Scalar_ const &u = x[typename P::ComponentIndex(0, DONT_CHECK_RANGE)];
         Scalar_ const &v = x[typename P::ComponentIndex(1, DONT_CHECK_RANGE)];
         D1 retval(Static<WithoutInitialization>::SINGLETON);
@@ -1066,10 +1066,10 @@ struct WaveyFunction_t
         retval[typename D1::ComponentIndex(1, DONT_CHECK_RANGE)] = sin(u)*cos(v);
         return retval;
     }
-    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace,COMPONENTS_ARE_PROCEDURAL_> const &x) const
     {
-        typedef Vector_i<Derived_,Scalar_,BasedVectorSpace,COMPONENTS_ARE_IMMUTABLE_> P;
+        typedef Vector_i<Derived_,Scalar_,BasedVectorSpace,COMPONENTS_ARE_PROCEDURAL_> P;
         Scalar_ const &u = x[typename P::ComponentIndex(0, DONT_CHECK_RANGE)];
         Scalar_ const &v = x[typename P::ComponentIndex(1, DONT_CHECK_RANGE)];
         D2 retval(Static<WithoutInitialization>::SINGLETON);
@@ -1096,13 +1096,13 @@ struct WaveyFunction2_t
     typedef typename FunctionObjectType::D1 D1;
     typedef typename FunctionObjectType::D2 D2;
 
-    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
     {
         return sin(squared_norm<InnerProductId_>(x));
     }
-    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
     {
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
@@ -1111,8 +1111,8 @@ struct WaveyFunction2_t
         retval(j) = Scalar_(2) * cos(squared_norm<InnerProductId_>(x)) * x(i)*inner_product.split(i*j);
         return retval;
     }
-    template <typename Derived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &x) const
+    template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &x) const
     {
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
@@ -1217,7 +1217,7 @@ int main (int argc, char **argv)
 //         std::cerr << FORMAT_VALUE((cayley_transform(i*j)*inner_product.split(i*k)*cayley_transform(k*l) - inner_product_inverse.split(j*l)).eval().tensor_value()) << "\n\n";
         typedef TypeList_t<StandardInnerProduct,
                 TypeList_t<StandardInnerProduct> > InnerProductFactorList;
-        std::cerr << "this value should be about equal to 0: " 
+        std::cerr << "this value should be about equal to 0: "
                   << FORMAT_VALUE(squared_norm<TensorProduct_c<InnerProductFactorList> >((cayley_transform(i*j)*inner_product.split(i*k)*cayley_transform(k*l) - inner_product_inverse.split(j*l)).eval().value())) << "\n\n";
     }
 

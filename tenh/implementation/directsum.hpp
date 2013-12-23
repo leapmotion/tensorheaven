@@ -55,7 +55,7 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
     public Vector_i<typename DerivedType_f<Derived_,ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_,Derived_> >::T,
                     Scalar_,
                     DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,
-                    ComponentsAreImmutable_f<UseArrayType_>::V>,
+                    ComponentsAreProcedural_f<UseArrayType_>::V>,
     // privately inherited because it is an implementation detail
     private ArrayStorage_f<Scalar_,
                            DimensionOf_f<DirectSumOfBasedVectorSpaces_c<SummandTypeList_> >::V,
@@ -65,7 +65,7 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
     typedef Vector_i<typename DerivedType_f<Derived_,ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scalar_,UseArrayType_,Derived_> >::T,
                      Scalar_,
                      DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,
-                     ComponentsAreImmutable_f<UseArrayType_>::V> Parent_Vector_i;
+                     ComponentsAreProcedural_f<UseArrayType_>::V> Parent_Vector_i;
     typedef typename ArrayStorage_f<Scalar_,
                                     DimensionOf_f<DirectSumOfBasedVectorSpaces_c<SummandTypeList_> >::V,
                                     UseArrayType_,
@@ -79,7 +79,7 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
     typedef typename Parent_Vector_i::ComponentIndex ComponentIndex;
     typedef typename Parent_Vector_i::MultiIndex MultiIndex;
 
-    using Parent_Array_i::COMPONENTS_ARE_IMMUTABLE;
+    using Parent_Array_i::COMPONENTS_ARE_PROCEDURAL;
     typedef typename Parent_Array_i::ComponentAccessConstReturnType ComponentAccessConstReturnType;
     typedef typename Parent_Array_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
 
@@ -87,7 +87,7 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
 
     typedef ImplementationOf_t<Concept,
                                Scalar_,
-                               UseImmutableArray_t<typename ComponentGenerator_Constant_f<Scalar_,DIM,0>::T>,
+                               UseProceduralArray_t<typename ComponentGenerator_Constant_f<Scalar_,DIM,0>::T>,
                                Derived_> Zero;
     static Zero const ZERO;
 
@@ -100,7 +100,7 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
     public:
         typedef ImplementationOf_t<Concept,
                                    Scalar_,
-                                   UseImmutableArray_t<typename ComponentGenerator_Characteristic_f<Scalar_,Parent_Vector_i::DIM,INDEX_>::T>,
+                                   UseProceduralArray_t<typename ComponentGenerator_Characteristic_f<Scalar_,Parent_Vector_i::DIM,INDEX_>::T>,
                                    Derived_> T;
         static T const V;
     };
@@ -111,8 +111,8 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
 
     // similar to a copy constructor, except initializes from a Vector_i.
     // this was chosen to be explicit to avoid unnecessary copies.
-    template <typename OtherDerived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    explicit ImplementationOf_t (Vector_i<OtherDerived_,Scalar_,Concept,COMPONENTS_ARE_IMMUTABLE_> const &x)
+    template <typename OtherDerived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    explicit ImplementationOf_t (Vector_i<OtherDerived_,Scalar_,Concept,COMPONENTS_ARE_PROCEDURAL_> const &x)
         :
         Parent_Array_i(Static<WithoutInitialization>::SINGLETON)
     {
@@ -148,8 +148,8 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
     }
     // similar to a copy constructor, except initializes from a Vector_i.
     // this was chosen to be explicit to avoid unnecessary copies.
-    template <typename OtherDerived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    ImplementationOf_t (Vector_i<OtherDerived_,Scalar_,Concept,COMPONENTS_ARE_IMMUTABLE_> const &x,
+    template <typename OtherDerived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    ImplementationOf_t (Vector_i<OtherDerived_,Scalar_,Concept,COMPONENTS_ARE_PROCEDURAL_> const &x,
                         Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Array_i(pointer_to_allocation, check_pointer)
@@ -177,12 +177,12 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
         STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
     }
 
-    // only use this if UseImmutableArray_t<...> is specified or if the vector space is 0-dimensional
+    // only use this if UseProceduralArray_t<...> is specified or if the vector space is 0-dimensional
     ImplementationOf_t ()
         :
         Parent_Array_i(WithoutInitialization()) // sort of meaningless constructor
     {
-        STATIC_ASSERT(IsUseImmutableArray_f<UseArrayType_>::V || DIM == 0, MUST_BE_USE_IMMUTABLE_ARRAY_OR_BE_ZERO_DIMENSIONAL);
+        STATIC_ASSERT(IsUseProceduralArray_f<UseArrayType_>::V || DIM == 0, MUST_BE_USE_PROCEDURAL_ARRAY_OR_BE_ZERO_DIMENSIONAL);
     }
 
     using Parent_Array_i::as_derived;
@@ -199,7 +199,7 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
     public:
         typedef ImplementationOf_t<typename Element_f<SummandTypeList_, N>::T,
                                    Scalar_,
-                                   typename If_f<IsUseImmutableArray_f<UseArrayType_>::V,
+                                   typename If_f<IsUseProceduralArray_f<UseArrayType_>::V,
                                                  UseArrayType_,
                                                  UsePreallocatedArray>::T > T;
     };
@@ -212,7 +212,7 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
     public:
         typedef ImplementationOf_t<typename Element_f<SummandTypeList_, N>::T,
                                    Scalar_ const,
-                                   typename If_f<IsUseImmutableArray_f<UseArrayType_>::V,
+                                   typename If_f<IsUseProceduralArray_f<UseArrayType_>::V,
                                                  UseArrayType_,
                                                  UsePreallocatedArray>::T > T;
     };
@@ -282,14 +282,14 @@ struct DualOf_f<ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeLis
 };
 
 // ///////////////////////////////////////////////////////////////////////////
-// direct sum of immutable 2-tensors (essentially gives a block-diag matrix)
+// direct sum of procedural 2-tensors (essentially gives a block-diag matrix)
 // ///////////////////////////////////////////////////////////////////////////
 
-template <typename Immutable2TensorImplementationTypeList_>
-struct ConceptualTypeOfDirectSumOfImmutable2Tensors_f
+template <typename Procedural2TensorImplementationTypeList_>
+struct ConceptualTypeOfDirectSumOfProcedural2Tensors_f
 {
 private:
-    typedef typename ConceptOfEachTypeIn_f<Immutable2TensorImplementationTypeList_>::T ConceptTypeList;
+    typedef typename ConceptOfEachTypeIn_f<Procedural2TensorImplementationTypeList_>::T ConceptTypeList;
     enum
     {
         STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<ConceptTypeList,IsTensorProductOfBasedVectorSpaces_p>::V
@@ -300,27 +300,27 @@ private:
     typedef typename FactorNOfEachTypeIn_f<1,ConceptTypeList>::T SummandTypeList1;
     typedef DirectSumOfBasedVectorSpaces_c<SummandTypeList0> Factor0DirectSum;
     typedef DirectSumOfBasedVectorSpaces_c<SummandTypeList1> Factor1DirectSum;
-    ConceptualTypeOfDirectSumOfImmutable2Tensors_f();
+    ConceptualTypeOfDirectSumOfProcedural2Tensors_f();
 public:
     typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0DirectSum,TypeList_t<Factor1DirectSum> > > T;
 };
 
 namespace ComponentGeneratorEvaluator {
 
-template <typename Immutable2TensorImplementationTypeList_,
+template <typename Procedural2TensorImplementationTypeList_,
           typename ConceptualTypeOfDirectSum_,
           typename Scalar_>
 struct DirectSumOf2TensorsHelper_t
 {
     typedef ComponentIndex_t<DimensionOf_f<ConceptualTypeOfDirectSum_>::V> ComponentIndex;
-    typedef typename ConceptualTypeOfDirectSumOfImmutable2Tensors_f<Immutable2TensorImplementationTypeList_>::T ConceptualTypeOfDirectSum;
+    typedef typename ConceptualTypeOfDirectSumOfProcedural2Tensors_f<Procedural2TensorImplementationTypeList_>::T ConceptualTypeOfDirectSum;
     enum { STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<ConceptualTypeOfDirectSum_,ConceptualTypeOfDirectSum>::V), TYPES_MUST_BE_EQUAL) };
     typedef typename FactorTypeListOf_f<ConceptualTypeOfDirectSum_>::T FactorTypeList;
     typedef typename FactorTypeList::HeadType Factor0;
     typedef typename FactorTypeList::BodyTypeList::HeadType Factor1;
     typedef typename ImplementationOf_t<ConceptualTypeOfDirectSum_,Scalar_,UseMemberArray>::MultiIndex MultiIndex;
     enum { STATIC_ASSERT_IN_ENUM((MultiIndex::LENGTH == 2), LENGTH_MUST_BE_EXACTLY_2) };
-    typedef typename Head_f<Immutable2TensorImplementationTypeList_>::T HeadImplementation;
+    typedef typename Head_f<Procedural2TensorImplementationTypeList_>::T HeadImplementation;
     typedef typename FactorTypeListOf_f<typename HeadImplementation::Concept>::T HeadFactorTypeList;
     typedef typename Element_f<HeadFactorTypeList,0>::T HeadFactor0;
     typedef typename Element_f<HeadFactorTypeList,1>::T HeadFactor1;
@@ -343,15 +343,15 @@ struct DirectSumOf2TensorsHelper_t
             HeadImplementation h;
             typedef typename HeadImplementation::MultiIndex M;
             M head_m(m.template el<0>().value(), m.template el<1>().value(), DONT_CHECK_RANGE);
-            // this split is unnecessary if HeadImmutable2TensorImplementation_ is a tensor product,
+            // this split is unnecessary if HeadProcedural2TensorImplementation_ is a tensor product,
             // but this makes the same code work for diagonal 2 tensors as well, so for now that's fine.
             return h.split(j*k)[head_m];
         }
         else // body block
         {
-            typedef typename Body_f<Immutable2TensorImplementationTypeList_>::T Immutable2TensorImplementationBodyTypeList;
-            typedef typename ConceptualTypeOfDirectSumOfImmutable2Tensors_f<Immutable2TensorImplementationBodyTypeList>::T ConceptualTypeOfDirectSumBody;
-            typedef DirectSumOf2TensorsHelper_t<Immutable2TensorImplementationBodyTypeList,
+            typedef typename Body_f<Procedural2TensorImplementationTypeList_>::T Procedural2TensorImplementationBodyTypeList;
+            typedef typename ConceptualTypeOfDirectSumOfProcedural2Tensors_f<Procedural2TensorImplementationBodyTypeList>::T ConceptualTypeOfDirectSumBody;
+            typedef DirectSumOf2TensorsHelper_t<Procedural2TensorImplementationBodyTypeList,
                                                 ConceptualTypeOfDirectSumBody,
                                                 Scalar_> DirectSumOf2TensorsHelper;
             typedef typename DirectSumOf2TensorsHelper::MultiIndex BodyMultiIndex;
@@ -363,63 +363,63 @@ struct DirectSumOf2TensorsHelper_t
     }
 };
 
-template <typename HeadImmutable2TensorImplementation_,
+template <typename HeadProcedural2TensorImplementation_,
           typename ConceptualTypeOfDirectSum_,
           typename Scalar_>
-struct DirectSumOf2TensorsHelper_t<TypeList_t<HeadImmutable2TensorImplementation_>,ConceptualTypeOfDirectSum_,Scalar_>
+struct DirectSumOf2TensorsHelper_t<TypeList_t<HeadProcedural2TensorImplementation_>,ConceptualTypeOfDirectSum_,Scalar_>
 {
-    typedef typename HeadImmutable2TensorImplementation_::MultiIndex MultiIndex;
+    typedef typename HeadProcedural2TensorImplementation_::MultiIndex MultiIndex;
 
     static Scalar_ evaluate (ComponentIndex_t<DimensionOf_f<ConceptualTypeOfDirectSum_>::V> const &i)
     {
         // this breaks up the component index into the corresponding multiindex.
-        typename HeadImmutable2TensorImplementation_::MultiIndex m(i);
-        HeadImmutable2TensorImplementation_ h;
+        typename HeadProcedural2TensorImplementation_::MultiIndex m(i);
+        HeadProcedural2TensorImplementation_ h;
         AbstractIndex_c<'j'> j;
         AbstractIndex_c<'k'> k;
-        // this split is unnecessary if HeadImmutable2TensorImplementation_ is a tensor product,
+        // this split is unnecessary if HeadProcedural2TensorImplementation_ is a tensor product,
         // but this makes the same code work for diagonal 2 tensors as well, so for now that's fine.
         return h.split(j*k)[m];
     }
 };
 
-template <typename Immutable2TensorImplementationTypeList_,
+template <typename Procedural2TensorImplementationTypeList_,
           typename ConceptualTypeOfDirectSum_,
           typename Scalar_>
 Scalar_ direct_sum_of_2tensors (ComponentIndex_t<DimensionOf_f<ConceptualTypeOfDirectSum_>::V> const &i)
 {
-    return DirectSumOf2TensorsHelper_t<Immutable2TensorImplementationTypeList_,
+    return DirectSumOf2TensorsHelper_t<Procedural2TensorImplementationTypeList_,
                                        ConceptualTypeOfDirectSum_,
                                        Scalar_>::evaluate(i);
 }
 
 } // end of namespace ComponentGeneratorEvaluator
 
-template <typename Immutable2TensorImplementationTypeList_>
-struct DirectSumOfImmutable2Tensors_f
+template <typename Procedural2TensorImplementationTypeList_>
+struct DirectSumOfProcedural2Tensors_f
 {
 private:
-    typedef typename ConceptOfEachTypeIn_f<Immutable2TensorImplementationTypeList_>::T ConceptTypeList;
-    typedef typename ScalarOfEachTypeIn_f<Immutable2TensorImplementationTypeList_>::T ScalarTypeList;
-    typedef typename ConceptualTypeOfDirectSumOfImmutable2Tensors_f<Immutable2TensorImplementationTypeList_>::T ConceptualTypeOfDirectSum;
+    typedef typename ConceptOfEachTypeIn_f<Procedural2TensorImplementationTypeList_>::T ConceptTypeList;
+    typedef typename ScalarOfEachTypeIn_f<Procedural2TensorImplementationTypeList_>::T ScalarTypeList;
+    typedef typename ConceptualTypeOfDirectSumOfProcedural2Tensors_f<Procedural2TensorImplementationTypeList_>::T ConceptualTypeOfDirectSum;
 
     enum
     {
         STATIC_ASSERT_IN_ENUM(TypeListIsUniform_t<ScalarTypeList>::V, ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM((EachTypeUsesImmutableArray_f<Immutable2TensorImplementationTypeList_>::V), MUST_BE_TYPELIST_OF_IMMUTABLE_IMPLEMENTATIONS)
+        STATIC_ASSERT_IN_ENUM((EachTypeUsesProceduralArray_f<Procedural2TensorImplementationTypeList_>::V), MUST_BE_TYPELIST_OF_PROCEDURAL_IMPLEMENTATIONS)
     };
 
     typedef typename ScalarTypeList::HeadType Scalar;
     typedef ComponentGenerator_t<Scalar,
                                  DimensionOf_f<ConceptualTypeOfDirectSum>::V,
-                                 ComponentGeneratorEvaluator::direct_sum_of_2tensors<Immutable2TensorImplementationTypeList_,
+                                 ComponentGeneratorEvaluator::direct_sum_of_2tensors<Procedural2TensorImplementationTypeList_,
                                                                                      ConceptualTypeOfDirectSum,
                                                                                      Scalar>,
-                                 DirectSum_c<Immutable2TensorImplementationTypeList_> > ComponentGenerator;
+                                 DirectSum_c<Procedural2TensorImplementationTypeList_> > ComponentGenerator;
 private:
-    DirectSumOfImmutable2Tensors_f();
+    DirectSumOfProcedural2Tensors_f();
 public:
-    typedef ImplementationOf_t<ConceptualTypeOfDirectSum,Scalar,UseImmutableArray_t<ComponentGenerator> > T;
+    typedef ImplementationOf_t<ConceptualTypeOfDirectSum,Scalar,UseProceduralArray_t<ComponentGenerator> > T;
 };
 
 } // end of namespace Tenh

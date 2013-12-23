@@ -23,10 +23,10 @@ namespace Tenh {
 template <typename Derived_,
           typename Scalar_,
           typename TensorProductOfBasedVectorSpaces_,
-          bool COMPONENTS_ARE_IMMUTABLE_>
+          bool COMPONENTS_ARE_PROCEDURAL_>
 struct Tensor_i
     :
-    public EmbeddableAsTensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_>
+    public EmbeddableAsTensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_PROCEDURAL_>
 {
     enum
     {
@@ -35,12 +35,12 @@ struct Tensor_i
         STATIC_ASSERT_IN_ENUM(IS_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES_UNIQUELY(TensorProductOfBasedVectorSpaces_), MUST_BE_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES)
     };
 
-    typedef EmbeddableAsTensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_> Parent_EmbeddableAsTensor_i;
+    typedef EmbeddableAsTensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_PROCEDURAL_> Parent_EmbeddableAsTensor_i;
     typedef typename Parent_EmbeddableAsTensor_i::Derived Derived;
     typedef typename Parent_EmbeddableAsTensor_i::Scalar Scalar;
     using Parent_EmbeddableAsTensor_i::DIM;
     typedef typename Parent_EmbeddableAsTensor_i::ComponentIndex ComponentIndex;
-    using Parent_EmbeddableAsTensor_i::COMPONENTS_ARE_IMMUTABLE;
+    using Parent_EmbeddableAsTensor_i::COMPONENTS_ARE_PROCEDURAL;
     typedef typename Parent_EmbeddableAsTensor_i::ComponentAccessConstReturnType ComponentAccessConstReturnType;
     typedef typename Parent_EmbeddableAsTensor_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
 
@@ -143,7 +143,7 @@ struct Tensor_i
         return typename IndexedExpressionNonConstType_f<TypeList_t<AbstractIndexHeadType_,AbstractIndexBodyTypeList_> >::T(as_derived());
     }
 
-    static bool component_is_immutable_zero (MultiIndex const &) { return false; }
+    static bool component_is_procedural_zero (MultiIndex const &) { return false; }
     static Scalar scalar_factor_for_component (MultiIndex const &) { return Scalar(1); }
     static ComponentIndex vector_index_of (MultiIndex const &m) { return ComponentIndex(m.value(), DONT_CHECK_RANGE); }
 
@@ -152,25 +152,25 @@ struct Tensor_i
         return "Tensor_i<" + type_string_of<Derived>() + ','
                            + type_string_of<Scalar>() + ','
                            + type_string_of<TensorProductOfBasedVectorSpaces>() + ','
-                           + AS_STRING((COMPONENTS_ARE_IMMUTABLE_ ? "IMMUTABLE_COMPONENTS" : "MUTABLE_COMPONENTS")) + '>';
+                           + AS_STRING((COMPONENTS_ARE_PROCEDURAL_ ? "PROCEDURAL_COMPONENTS" : "MUTABLE_COMPONENTS")) + '>';
     }
 };
 
 // will print any order tensor in a nice-looking justified way.  if the order is greater
 // than 1, this will print newlines, notably including the first character.
-template <typename Derived_, typename Scalar_, typename TensorProductOfBasedVectorSpaces_, bool COMPONENTS_ARE_IMMUTABLE_>
-std::ostream &operator << (std::ostream &out, Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_> const &t)
+template <typename Derived_, typename Scalar_, typename TensorProductOfBasedVectorSpaces_, bool COMPONENTS_ARE_PROCEDURAL_>
+std::ostream &operator << (std::ostream &out, Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_PROCEDURAL_> const &t)
 {
-    typedef Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_> Tensor;
+    typedef Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_PROCEDURAL_> Tensor;
     typedef typename Tensor::MultiIndex::IndexTypeList IndexTypeList;
     print_multiindexable(out, t, IndexTypeList());
     return out;
 }
 
 // the general definition indexes this Tensor_i as a tensor (using a multiindex)
-template <typename Derived_, typename Scalar_, typename TensorProductOfBasedVectorSpaces_, bool COMPONENTS_ARE_IMMUTABLE_>
+template <typename Derived_, typename Scalar_, typename TensorProductOfBasedVectorSpaces_, bool COMPONENTS_ARE_PROCEDURAL_>
 template <typename AbstractIndexTypeList_>
-struct Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_>::IndexedExpressionConstType_f
+struct Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_PROCEDURAL_>::IndexedExpressionConstType_f
 {
     typedef ExpressionTemplate_IndexedObject_t<
                 Derived, // have to use Derived instead of Tensor_i, so that the return-a-reference operator[] is used
@@ -182,17 +182,17 @@ struct Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_AR
 };
 
 // the special definition (for 1-multiindices) indexes this Tensor_i as a Vector_i
-template <typename Derived_, typename Scalar_, typename TensorProductOfBasedVectorSpaces_, bool COMPONENTS_ARE_IMMUTABLE_>
+template <typename Derived_, typename Scalar_, typename TensorProductOfBasedVectorSpaces_, bool COMPONENTS_ARE_PROCEDURAL_>
 template <typename AbstractIndexHeadType_>
-struct Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_>::IndexedExpressionConstType_f<TypeList_t<AbstractIndexHeadType_> >
+struct Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_PROCEDURAL_>::IndexedExpressionConstType_f<TypeList_t<AbstractIndexHeadType_> >
 {
     typedef typename Parent_EmbeddableAsTensor_i::template IndexedExpressionConstType_f<SymbolOf_f<AbstractIndexHeadType_>::V>::T T;
 };
 
 // the general definition indexes this Tensor_i as a tensor (using a multiindex)
-template <typename Derived_, typename Scalar_, typename TensorProductOfBasedVectorSpaces_, bool COMPONENTS_ARE_IMMUTABLE_>
+template <typename Derived_, typename Scalar_, typename TensorProductOfBasedVectorSpaces_, bool COMPONENTS_ARE_PROCEDURAL_>
 template <typename AbstractIndexTypeList_>
-struct Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_>::IndexedExpressionNonConstType_f
+struct Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_PROCEDURAL_>::IndexedExpressionNonConstType_f
 {
     typedef ExpressionTemplate_IndexedObject_t<
                 Derived, // have to use Derived instead of Tensor_i, so that the return-a-reference operator[] is used
@@ -204,9 +204,9 @@ struct Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_AR
 };
 
 // the special definition (for 1-multiindices) indexes this Tensor_i as a Vector_i
-template <typename Derived_, typename Scalar_, typename TensorProductOfBasedVectorSpaces_, bool COMPONENTS_ARE_IMMUTABLE_>
+template <typename Derived_, typename Scalar_, typename TensorProductOfBasedVectorSpaces_, bool COMPONENTS_ARE_PROCEDURAL_>
 template <typename AbstractIndexHeadType_>
-struct Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_IMMUTABLE_>::IndexedExpressionNonConstType_f<TypeList_t<AbstractIndexHeadType_> >
+struct Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_PROCEDURAL_>::IndexedExpressionNonConstType_f<TypeList_t<AbstractIndexHeadType_> >
 {
     typedef typename Parent_EmbeddableAsTensor_i::template IndexedExpressionNonConstType_f<SymbolOf_f<AbstractIndexHeadType_>::V>::T T;
 };

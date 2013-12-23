@@ -18,7 +18,7 @@ namespace Tenh {
 
 // ///////////////////////////////////////////////////////////////////////////
 // forward declaration for the EuclideanEmbedding_f metafunction (should
-// return an ImplementationOf_t type that uses ImmutableArray_t)
+// return an ImplementationOf_t type that uses ProceduralArray_t)
 // ///////////////////////////////////////////////////////////////////////////
 
 template <typename BasedVectorSpace_, typename InnerProductId_, typename Scalar_> struct EuclideanEmbedding_f;
@@ -73,7 +73,7 @@ private:
                                  StandardInnerProduct> ComponentGenerator;
     EuclideanEmbedding_f();
 public:
-    typedef ImplementationOf_t<Diagonal2Tensor,Scalar_,UseImmutableArray_t<ComponentGenerator> > T;
+    typedef ImplementationOf_t<Diagonal2Tensor,Scalar_,UseProceduralArray_t<ComponentGenerator> > T;
 };
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -114,7 +114,7 @@ private:
     typedef typename EuclideanEmbeddingOfEachInTypeList_f<FactorTypeList_,InnerProductIdTypeList_,Scalar_>::T EuclideanEmbeddingTypeList;
     EuclideanEmbedding_f();
 public:
-    typedef typename TensorProductOfImmutable2Tensors_f<EuclideanEmbeddingTypeList>::T T;
+    typedef typename TensorProductOfProcedural2Tensors_f<EuclideanEmbeddingTypeList>::T T;
 };
 
 } // end of namespace Tenh

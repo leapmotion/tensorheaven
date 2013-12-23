@@ -21,7 +21,7 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
     public Tensor_i<typename DerivedType_f<Derived_, ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Scalar_,UseArrayType_,Derived_> >::T,
                     Scalar_,
                     TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,
-                    ComponentsAreImmutable_f<UseArrayType_>::V>,
+                    ComponentsAreProcedural_f<UseArrayType_>::V>,
     // privately inherited because it is an implementation detail
     private ArrayStorage_f<Scalar_,
                            DimensionOf_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >::V,
@@ -31,7 +31,7 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
     typedef Tensor_i<typename DerivedType_f<Derived_, ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Scalar_,UseArrayType_,Derived_> >::T,
                      Scalar_,
                      TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,
-                     ComponentsAreImmutable_f<UseArrayType_>::V> Parent_Tensor_i;
+                     ComponentsAreProcedural_f<UseArrayType_>::V> Parent_Tensor_i;
     typedef typename ArrayStorage_f<Scalar_,
                                     DimensionOf_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >::V,
                                     UseArrayType_,
@@ -49,7 +49,7 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
     using Parent_Tensor_i::ORDER;
     using Parent_Tensor_i::IS_TENSOR_I;
 
-    using Parent_Array_i::COMPONENTS_ARE_IMMUTABLE;
+    using Parent_Array_i::COMPONENTS_ARE_PROCEDURAL;
     typedef typename Parent_Array_i::ComponentAccessConstReturnType ComponentAccessConstReturnType;
     typedef typename Parent_Array_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
 
@@ -57,7 +57,7 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
 
     typedef ImplementationOf_t<Concept,
                                Scalar_,
-                               UseImmutableArray_t<typename ComponentGenerator_Constant_f<Scalar_,DIM,0>::T>,
+                               UseProceduralArray_t<typename ComponentGenerator_Constant_f<Scalar_,DIM,0>::T>,
                                Derived_> Zero;
     static Zero const ZERO;
 
@@ -71,7 +71,7 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
     public:
         typedef ImplementationOf_t<Concept,
                                    Scalar_,
-                                   UseImmutableArray_t<ComponentGenerator>,
+                                   UseProceduralArray_t<ComponentGenerator>,
                                    Derived_> T;
         static T const V;
     };
@@ -82,8 +82,8 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
 
     // similar to a copy constructor, except initializes from a Vector_i.
     // this was chosen to be explicit to avoid unnecessary copies.
-    template <typename OtherDerived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    explicit ImplementationOf_t (Vector_i<OtherDerived_,Scalar_,Concept,COMPONENTS_ARE_IMMUTABLE_> const &x)
+    template <typename OtherDerived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    explicit ImplementationOf_t (Vector_i<OtherDerived_,Scalar_,Concept,COMPONENTS_ARE_PROCEDURAL_> const &x)
         :
         Parent_Array_i(Static<WithoutInitialization>::SINGLETON)
     {
@@ -119,8 +119,8 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
     }
     // similar to a copy constructor, except initializes from a Vector_i.
     // this was chosen to be explicit to avoid unnecessary copies.
-    template <typename OtherDerived_, bool COMPONENTS_ARE_IMMUTABLE_>
-    ImplementationOf_t (Vector_i<OtherDerived_,Scalar_,Concept,COMPONENTS_ARE_IMMUTABLE_> const &x,
+    template <typename OtherDerived_, bool COMPONENTS_ARE_PROCEDURAL_>
+    ImplementationOf_t (Vector_i<OtherDerived_,Scalar_,Concept,COMPONENTS_ARE_PROCEDURAL_> const &x,
                         Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Array_i(pointer_to_allocation, check_pointer)
@@ -148,12 +148,12 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
         STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
     }
 
-    // only use this if UseImmutableArray_t<...> is specified
+    // only use this if UseProceduralArray_t<...> is specified
     ImplementationOf_t ()
         :
         Parent_Array_i(WithoutInitialization()) // sort of meaningless constructor
     {
-        STATIC_ASSERT(IsUseImmutableArray_f<UseArrayType_>::V, MUST_BE_USE_IMMUTABLE_ARRAY);
+        STATIC_ASSERT(IsUseProceduralArray_f<UseArrayType_>::V, MUST_BE_USE_PROCEDURAL_ARRAY);
     }
 
     template <typename BundleIndexTypeList, typename BundledIndex>
@@ -177,7 +177,7 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
     // these are what provide indexed expressions -- via expression templates
     using Parent_Tensor_i::operator();
 
-    using Parent_Tensor_i::component_is_immutable_zero;
+    using Parent_Tensor_i::component_is_procedural_zero;
     using Parent_Tensor_i::scalar_factor_for_component;
     using Parent_Tensor_i::vector_index_of;
 

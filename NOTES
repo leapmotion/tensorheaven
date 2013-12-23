@@ -78,7 +78,7 @@
   e.g. if x is a k-tensor, and v_1, ..., v_k are vectors dual to the factor types of x, then
     x(tuple(v_1, ..., v_k)) evaluates to x(i_1|...|i_k)*v_1(i_1)*...*v_k(i_k).
 - use "enable_if" technique ( http://en.cppreference.com/w/cpp/types/enable_if ) to not generate
-  certain functions (e.g. a template type affecting which methods should be available on a 
+  certain functions (e.g. a template type affecting which methods should be available on a
   class, such as all the different types of constructors for ImplementationOf_t).
 - design and implement mathematical type string methods and printing for debugging purposes
 - design and implement some form of type debugging method (to debug indexed expression
@@ -120,13 +120,13 @@
 - x exterior powers -- i.e. wedges.
 - x symmetric powers -- e.g. "vee"s.
 - x diagonal 2-tensor products of based vector spaces
-- x "mapped" tensors/vectors (using preallocated memory) and "immutable" tensors/vectors (using static
+- x "mapped" tensors/vectors (using preallocated memory) and "procedural" tensors/vectors (using static
     component-generating functions).
 - x "basic mode", allowing standard linear algebra notation, for easier adoption by non-experts
 - x choice of bases for tensors-with-symmetry rendering significant type-system simplification
     and computational speedups.
-- x a canonical "zero" immutable-array-based ImplementationOf_t for all vector types (including tensor, vee, etc)
-- x basis vector immutable-array-based ImplementationOf_t for all vector types (including tensor, vee, etc)
+- x a canonical "zero" procedural-array-based ImplementationOf_t for all vector types (including tensor, vee, etc)
+- x basis vector procedural-array-based ImplementationOf_t for all vector types (including tensor, vee, etc)
 
 
 ###different multi-indexing schemes
@@ -217,10 +217,10 @@
 - TODO: think about how to use runtime-specified inner products (lazy initialization?), since
   probably the inner product implementation type has to be constructed using the default
   constructor.
-- TODO: allow tensor products of non-immutable tensor/vector implementations -- this would
+- TODO: allow tensor products of non-procedural tensor/vector implementations -- this would
   amount to providing constructors which would take the tensor product operands as parameters,
   but could use the same code.
-- TODO: lazy-initialized immutable array -- initialized at runtime once -- something that can't
+- TODO: lazy-initialized procedural array -- initialized at runtime once -- something that can't
   easily be done at compile time, e.g. computing the inverse of a given non-diagonal 2-tensor.
   could make LazilyInitializedArray_t or some such, which inherits MemoryArray_i.
 - MSVC doesn't like the following code, when e is a 3-tensor implementation and i is an
@@ -392,7 +392,7 @@
   and DirectSumOfAbstractIndices_c<AbstractIndexTypeList>, each inheriting from some
   base class for abstract indices -- AbstractIndex_c would also need to inherit from this
   base class.  The class hierarchy could look like
-  
+
     AbstractIndexBase_c<Derived_>
       AbstractIndex_c<SYMBOL>
       TensorProductOfAbstractIndices_c<IndexTypeList>
@@ -443,7 +443,7 @@
     typedef decltype(dual(b)) DualOfB;
     // this would be TensorProductOfBasedVectorSpaces_c<TypeList_t<B,
     //                                                  TypeList_t<typename DualOf_f<B>::T> > >
-    typedef decltype(b * dual(b)) EndomorphismOfB; 
+    typedef decltype(b * dual(b)) EndomorphismOfB;
     // this would be SymmetricPowerOfBasedVectorSpace_c<3,DualOfB>
     typedef decltype(sym<3>(dual(b))) Sym3_DualOfB;
 

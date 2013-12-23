@@ -75,7 +75,7 @@ private:
                                  SymId_t<ORDER_,Factor_> > ComponentGenerator;
     Sym_f();
 public:
-    typedef ImplementationOf_t<Projection,Scalar_,UseImmutableArray_t<ComponentGenerator> > T;
+    typedef ImplementationOf_t<Projection,Scalar_,UseProceduralArray_t<ComponentGenerator> > T;
 };
 
 } // end of namespace Tenh

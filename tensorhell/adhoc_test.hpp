@@ -17,7 +17,6 @@
 #include "tenh/conceptual/dual.hpp"
 #include "tenh/expressiontemplate_eval.hpp"
 #include "tenh/memberarray.hpp"
-#include "tenh/immutablearray.hpp"
 #include "tenh/implementation/alt.hpp"
 #include "tenh/implementation/diagonal2tensor.hpp"
 #include "tenh/implementation/directsum.hpp"
@@ -31,6 +30,7 @@
 #include "tenh/implementation/wedge.hpp"
 #include "tenh/interop/eigen.hpp"
 #include "tenh/interop/eigen_invert.hpp"
+#include "tenh/proceduralarray.hpp"
 #include "tenh/utility/polynomial.hpp"
 #include "tenh/utility/polynomial_utility.hpp"
 
@@ -113,7 +113,7 @@ struct StandardBasisVector_f
 private:
     typedef typename StandardBasisComponentGenerator_f<Scalar_,DimensionOf_f<BasedVectorSpace_>::V,K_>::T ComponentGenerator;
 public:
-    typedef ImplementationOf_t<BasedVectorSpace_,Scalar_,UseImmutableArray_t<ComponentGenerator> > T;
+    typedef ImplementationOf_t<BasedVectorSpace_,Scalar_,UseProceduralArray_t<ComponentGenerator> > T;
 };
 
 template <typename Scalar_, Uint32 DIM_>
@@ -126,14 +126,14 @@ template <Uint32 DIM_>
 struct CountingVectorGeneratorId { static std::string type_as_string () { return "CountingVectorGenerator<" + AS_STRING(DIM_) + '>'; } };
 
 template <typename Scalar_, Uint32 DIM_, Uint32 K_>
-void test_immutable_array_0 ()
+void test_procedural_array_0 ()
 {
-    std::cout << "test_immutable_array_0<" << type_string_of<Scalar_>() << ',' + AS_STRING(DIM_) << ',' << AS_STRING(K_) << ">\n";
+    std::cout << "test_procedural_array_0<" << type_string_of<Scalar_>() << ',' + AS_STRING(DIM_) << ',' << AS_STRING(K_) << ">\n";
     typedef ComponentGenerator_t<Scalar_,
                                  DIM_,
                                  standard_basis_vector_generator<Scalar_,DIM_,K_>,
                                  StandardBasisVectorGeneratorId<DIM_,K_> > ComponentGenerator;
-    typedef ImmutableArray_t<Scalar_,DIM_,ComponentGenerator> A;
+    typedef ProceduralArray_t<Scalar_,DIM_,ComponentGenerator> A;
     A a;
     std::cout << FORMAT_VALUE(a.type_as_string()) << '\n';
     for (typename A::ComponentIndex i; i.is_not_at_end(); ++i)
@@ -142,14 +142,14 @@ void test_immutable_array_0 ()
 }
 
 template <typename Scalar_, Uint32 DIM_>
-void test_immutable_array_1 ()
+void test_procedural_array_1 ()
 {
-    std::cout << "test_immutable_array_1<" << type_string_of<Scalar_>() << ',' << AS_STRING(DIM_) << ">\n";
+    std::cout << "test_procedural_array_1<" << type_string_of<Scalar_>() << ',' << AS_STRING(DIM_) << ">\n";
     typedef ComponentGenerator_t<Scalar_,
                                  DIM_,
                                  counting_vector_generator<Scalar_,DIM_>,
                                  CountingVectorGeneratorId<DIM_> > ComponentGenerator;
-    typedef ImmutableArray_t<Scalar_,DIM_,ComponentGenerator> A;
+    typedef ProceduralArray_t<Scalar_,DIM_,ComponentGenerator> A;
     A a;
     std::cout << FORMAT_VALUE(a.type_as_string()) << '\n';
     for (typename A::ComponentIndex i; i.is_not_at_end(); ++i)
@@ -158,9 +158,9 @@ void test_immutable_array_1 ()
 }
 
 template <typename Scalar_, Uint32 DIM_>
-void test_immutable_implementation_of_vector ()
+void test_procedural_implementation_of_vector ()
 {
-    std::cout << "test_immutable_implementation_of_vector<" << type_string_of<Scalar_>() << ',' << AS_STRING(DIM_) << ">\n";
+    std::cout << "test_procedural_implementation_of_vector<" << type_string_of<Scalar_>() << ',' << AS_STRING(DIM_) << ">\n";
 }
 
 template <typename Scalar_, Uint32 DIM_>
@@ -174,7 +174,7 @@ Scalar_ identity_matrix_generator (ComponentIndex_t<DIM_*DIM_> const &i)
 struct IdentityMatrixGeneratorId { static std::string type_as_string () { return "IdentityMatrixGenerator"; } };
 
 template <typename Scalar_, typename BasedVectorSpace_>
-void test_immutable_identity_tensor ()
+void test_procedural_identity_tensor ()
 {
     typedef TypeList_t<BasedVectorSpace_,TypeList_t<typename DualOf_f<BasedVectorSpace_>::T> > FactorTypeList;
     typedef TensorProductOfBasedVectorSpaces_c<FactorTypeList> TensorProduct;
@@ -182,9 +182,9 @@ void test_immutable_identity_tensor ()
                                  DimensionOf_f<TensorProduct>::V,
                                  identity_matrix_generator<Scalar_,DimensionOf_f<BasedVectorSpace_>::V>,
                                  IdentityMatrixGeneratorId> ComponentGenerator;
-    typedef ImplementationOf_t<TensorProduct,Scalar_,UseImmutableArray_t<ComponentGenerator> > IdentityTensor;
+    typedef ImplementationOf_t<TensorProduct,Scalar_,UseProceduralArray_t<ComponentGenerator> > IdentityTensor;
     IdentityTensor identity_tensor;
-    std::cout << "test_immutable_identity_tensor<" << type_string_of<Scalar_>() << ',' << type_string_of<BasedVectorSpace_>() << ">\n";
+    std::cout << "test_procedural_identity_tensor<" << type_string_of<Scalar_>() << ',' << type_string_of<BasedVectorSpace_>() << ">\n";
     std::cout << FORMAT_VALUE(type_string_of<IdentityTensor>()) << '\n';
     std::cout << FORMAT_VALUE(identity_tensor) << '\n';
 
@@ -432,9 +432,9 @@ void test_a_bunch_of_stuff ();
 // 5
 // ///////////////////////////////////////////////////////////////////////////////////////////
 
-void test_immutable_stuff ();
+void test_procedural_stuff ();
 void test_inner_product_and_euclidean_stuff ();
-void test_products_of_immutable_stuff ();
+void test_products_of_procedural_stuff ();
 
 // ///////////////////////////////////////////////////////////////////////////////////////////
 // 6

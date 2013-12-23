@@ -66,10 +66,10 @@ template <typename ObjectiveFunction_,
           typename Derived2_,
           typename Scalar_,
           typename BasedVectorSpace_,
-          bool COMPONENTS_ARE_IMMUTABLE_>
+          bool COMPONENTS_ARE_PROCEDURAL_>
 bool geometric_step (ObjectiveFunction_ const &f,
                      Vector_i<Derived1_,Scalar_,BasedVectorSpace_,MUTABLE_COMPONENTS> &position,
-                     Vector_i<Derived2_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &step,
+                     Vector_i<Derived2_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &step,
                      Scalar_ scale_factor,
                      Uint32 max_iteration_count)
 {
@@ -106,10 +106,10 @@ template <typename ObjectiveFunction_,
           typename Derived2_,
           typename Scalar_,
           typename BasedVectorSpace_,
-          bool COMPONENTS_ARE_IMMUTABLE_>
+          bool COMPONENTS_ARE_PROCEDURAL_>
 bool uniform_step (ObjectiveFunction_ const &f,
                    Vector_i<Derived1_,Scalar_,BasedVectorSpace_,MUTABLE_COMPONENTS> &position,
-                   Vector_i<Derived2_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &step,
+                   Vector_i<Derived2_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &step,
                    Uint32 substep_count = 1)
 {
     assert(substep_count > 0 && "must have positive substep_count");
@@ -357,8 +357,8 @@ template <typename InnerProductId_,
           typename Derived_,
           typename Scalar_,
           typename BasedVectorSpace_,
-          bool COMPONENTS_ARE_IMMUTABLE_>
-Scalar_ squared_norm (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &v)
+          bool COMPONENTS_ARE_PROCEDURAL_>
+Scalar_ squared_norm (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &v)
 {
     typename InnerProduct_f<BasedVectorSpace_,InnerProductId_,Scalar_>::T inner_product;
     return inner_product(v, v);//inner_product.split(i*j)*v(i)*v(j); // doesn't take advantage of symmetry
@@ -369,9 +369,9 @@ template <typename InnerProductId_,
           typename Derived_,
           typename Scalar_,
           typename BasedVectorSpace_,
-          bool COMPONENTS_ARE_IMMUTABLE_>
+          bool COMPONENTS_ARE_PROCEDURAL_>
 typename AssociatedFloatingPointType_t<Scalar_>::T
-    norm (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &v)
+    norm (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &v)
 {
     return std::sqrt(squared_norm<InnerProductId_>(v));
 }
@@ -397,7 +397,7 @@ inline void randomize (long double &x)
 }
 
 // open annulus of given inner and outer radii in the vector space -- false
-// is the parameter value for COMPONENTS_ARE_IMMUTABLE
+// is the parameter value for COMPONENTS_ARE_PROCEDURAL
 template <typename InnerProductId_, typename Derived_, typename Scalar_, typename BasedVectorSpace_>
 void randomize (Vector_i<Derived_,Scalar_,BasedVectorSpace_,false> &x,
                 Scalar_ const &inner_radius,
