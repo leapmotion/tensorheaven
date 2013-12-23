@@ -131,12 +131,13 @@ void SVD_solve (Tensor_i<DerivedT_, Scalar_, Concept_, COMPONENTS_ARE_IMMUTABLE_
                 Vector_i<DerivedX_, Scalar_, typename SVDReturnTypesOf_m<Concept_>::SolutionVector_f::T, MUTABLE_COMPONENTS> &x,
                 Vector_i<DerivedB_, Scalar_, typename SVDReturnTypesOf_m<Concept_>::ConstantTerm_f::T, COMPONENTS_ARE_IMMUTABLE_b_> const &b)
 {
-  typedef typename EigenMatrixFor_f<Tensor_i<DerivedT_, Scalar_, Concept_, COMPONENTS_ARE_IMMUTABLE_> >::T EigenMatrix;
-  typedef typename EigenVectorFor_f<Vector_i<DerivedX_, Scalar_, typename SVDReturnTypesOf_m<Concept_>::SolutionVector_f::T, MUTABLE_COMPONENTS> >::T SolutionVector;
-  typedef typename EigenVectorFor_f<Vector_i<DerivedB_, Scalar_, typename SVDReturnTypesOf_m<Concept_>::ConstantTerm_f::T, COMPONENTS_ARE_IMMUTABLE_b_> >::T ConstantTermVector;
+    typedef typename EigenMatrixFor_f<Tensor_i<DerivedT_, Scalar_, Concept_, COMPONENTS_ARE_IMMUTABLE_> >::T EigenMatrix;
+    typedef typename EigenVectorFor_f<Vector_i<DerivedX_, Scalar_, typename SVDReturnTypesOf_m<Concept_>::SolutionVector_f::T, MUTABLE_COMPONENTS> >::T SolutionVector;
+    typedef typename EigenVectorFor_f<Vector_i<DerivedB_, Scalar_, typename SVDReturnTypesOf_m<Concept_>::ConstantTerm_f::T, COMPONENTS_ARE_IMMUTABLE_b_> >::T ConstantTermVector;
 
-  Eigen::JacobiSVD<EigenMatrix> svd(EigenMap_of_2tensor(t).jacobiSvd(Eigen::ComputeThinU|Eigen::ComputeThinV));
-  EigenMap_of_vector(x) = svd.solve(EigenMap_of_vector(b));
+    // Eigen::JacobiSVD<EigenMatrix> svd(EigenMap_of_2tensor(t).jacobiSvd(Eigen::ComputeThinU|Eigen::ComputeThinV));
+    Eigen::JacobiSVD<EigenMatrix> svd(EigenMap_of_2tensor(t).jacobiSvd(Eigen::ComputeFullU|Eigen::ComputeFullV));
+    EigenMap_of_vector(x) = svd.solve(EigenMap_of_vector(b));
 }
 
 } // end of namespace Tenh

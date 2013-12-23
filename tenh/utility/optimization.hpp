@@ -17,6 +17,14 @@
 #include "tenh/interop/eigen_invert.hpp"
 #include "tenh/interop/eigen_svd.hpp"
 
+static bool const PRINT_DEBUG_OUTPUT = true;
+
+#define DEBUG_OUTPUT(x) \
+if (PRINT_DEBUG_OUTPUT) \
+{ \
+    std::cerr << x; \
+}
+
 namespace Tenh {
 
 template <typename T>
@@ -43,6 +51,117 @@ bool isNaN(long double const &x)
     return std::isnan(x);
 }
 
+// ///////////////////////////////////////////////////////////////////////////
+// line searches
+// ///////////////////////////////////////////////////////////////////////////
+
+namespace LineSearch {
+
+// Tests the function after one step -- if the function at that position is
+// greater than the current position, divides the step size through by the
+// specified amount and tries again.  The goal is to leave position with a
+// value such that the function is less than that of position's initial value.
+// If max_iteration_count is exceeded, then position is left unchanged.
+// The return value is the success of the algorithm, i.e. if the position was
+// updated in the step direction such that the function takes a lower value.
+template <typename ObjectiveFunction_,
+          typename Derived1_,
+          typename Derived2_,
+          typename Scalar_,
+          typename BasedVectorSpace_,
+          bool COMPONENTS_ARE_IMMUTABLE_>
+bool geometric_step (ObjectiveFunction_ const &f,
+                     Vector_i<Derived1_,Scalar_,BasedVectorSpace_,MUTABLE_COMPONENTS> &position,
+                     Vector_i<Derived2_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &step,
+                     Scalar_ scale_factor,
+                     Uint32 max_iteration_count)
+{
+    assert(scale_factor > Scalar_(0) && scale_factor < Scalar_(1) && "scale_factor must be a positive number less than 1");
+    assert(max_iteration_count > 0 && "max_iteration_count must be positive");
+    typedef ImplementationOf_t<BasedVectorSpace_,Scalar_> V;
+    AbstractIndex_c<'i'> i;
+    Scalar_ accumulated_scale_factor(1);
+    Scalar_ current_value(f.function(position));
+    DEBUG_OUTPUT("    LineSearch::geometric_step; current function value = " << current_value << '\n');
+    V next_position(Static<WithoutInitialization>::SINGLETON);
+    for (Uint32 iteration_count = 0; iteration_count < max_iteration_count; ++iteration_count, accumulated_scale_factor *= scale_factor)
+    {
+        next_position(i).no_alias() = position(i) + accumulated_scale_factor * step(i);
+        Scalar_ next_value(f.function(next_position));
+        DEBUG_OUTPUT(   "    LineSearch::geometric_step; for accumulated_scale_factor = " << accumulated_scale_factor
+                     << ", function value is " << next_value << '\n');
+        // if the next value is less than the current value, set the position and return success
+        if (next_value < current_value)
+        {
+            position = next_position;
+            DEBUG_OUTPUT("    LineSearch::geometric_step succeeded on iteration " << iteration_count << '\n');
+            return true;
+        }
+    }
+
+    // max iteration count was exceeded, so return failure
+    DEBUG_OUTPUT("    LineSearch::geometric_step failed after " << max_iteration_count << " iterations (scale_factor = " << scale_factor << ")\n");
+    return false;
+}
+
+template <typename ObjectiveFunction_,
+          typename Derived1_,
+          typename Derived2_,
+          typename Scalar_,
+          typename BasedVectorSpace_,
+          bool COMPONENTS_ARE_IMMUTABLE_>
+bool uniform_step (ObjectiveFunction_ const &f,
+                   Vector_i<Derived1_,Scalar_,BasedVectorSpace_,MUTABLE_COMPONENTS> &position,
+                   Vector_i<Derived2_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_IMMUTABLE_> const &step,
+                   Uint32 substep_count = 1)
+{
+    assert(substep_count > 0 && "must have positive substep_count");
+    typedef ImplementationOf_t<BasedVectorSpace_,Scalar_> V;
+    V partial_step(Static<WithoutInitialization>::SINGLETON);
+    AbstractIndex_c<'i'> i;
+    partial_step(i).no_alias() = step(i) / substep_count;
+
+    V current_position(position);
+    V next_position(position);
+    for (Uint32 step_count = 0; step_count < substep_count; ++step_count)
+    {
+        next_position(i).no_alias() += partial_step(i);
+        // first, check if the next value is bigger than the current value.
+        // if it is, then bisect 
+        Scalar_ current_value(f.function(current_position));
+        Scalar_ next_value(f.function(next_position));
+        if (next_value >= current_value)
+        {
+            // if the first step failed to decrease, return with failure.
+            if (step_count == 0)
+            {
+                DEBUG_OUTPUT("    LineSearch::uniform_step failed on first step (out of " << substep_count << " possible)\n");
+                return false;
+            }
+            // otherwise a non-first step failed to decrease, so use the
+            // current position and return with success.
+            else
+            {
+                DEBUG_OUTPUT("    LineSearch::uniform_step succeeded on step " << step_count+1 << " (out of " << substep_count << " possible)\n");
+                position(i).no_alias() = current_position(i);
+                return true;
+            }
+        }
+        current_position(i).no_alias() = next_position(i);
+    }
+
+    // all steps decreased, so set the final step position and return with success
+    DEBUG_OUTPUT("    LineSearch::uniform_step succeeded for all steps (out of " << substep_count << " possible)\n");
+    position(i).no_alias() = next_position(i);
+    return true;
+}
+
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+// optimization methods
+// ///////////////////////////////////////////////////////////////////////////
+
 // adaptive minimization which uses, in order of availability/preference,
 // 1. Newton's method, 2. conjugate gradient, and 3. gradient descent.
 template <typename InnerProductId_, typename ObjectiveFunction_, typename BasedVectorSpace_, typename Scalar_, typename GuessUseArrayType_, typename Derived_>
@@ -60,13 +179,14 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
     typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<typename DualOf_f<BasedVectorSpace_>::T, TypeList_t<typename DualOf_f<BasedVectorSpace_>::T> > >,Scalar_> Hessian2TensorType;
     STATIC_ASSERT_TYPES_ARE_EQUAL(VectorType, typename ObjectiveFunction_::V);
     STATIC_ASSERT_TYPES_ARE_EQUAL(Scalar_, typename ObjectiveFunction_::Out);
-    static int const LINE_SEARCH_SAMPLE_COUNT = 50;
+    static Scalar_ const LINE_SEARCH_GEOMETRIC_STEP_FACTOR = Scalar_(0.5);
+    static Uint32 const LINE_SEARCH_GEOMETRIC_STEP_MAX_ITERATION_COUNT = 10;
+    static int const LINE_SEARCH_UNIFORM_STEP_SUBSTEP_COUNT = 50;
     static Scalar_ const STEP_SCALE = Scalar_(1);
     static Scalar_ const MAX_STEP_SIZE = Scalar_(-1);
     // static Scalar_ const MAX_STEP_SIZE = Scalar_(1);
     static int const MAX_ITERATION_COUNT = 20;
     static Scalar_ const GRADIENT_DESCENT_STEP_SIZE = Scalar_(0.25);
-    static bool const PRINT_DEBUG_OUTPUT = false;
     static Scalar_ const EPSILON = 1e-10;
 
     VectorInnerProductType vector_innerproduct;
@@ -87,14 +207,15 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
         Scalar_ current_value = func.function(current_approximation);
         CoVectorType g = func.D_function(current_approximation);
         CoVectorType minus_g(Static<WithoutInitialization>::SINGLETON);
-        Scalar_ g_squared_norm = covector_innerproduct(g, g);//g(i)*covector_innerproduct.split(i*j)*g(j);
+        Scalar_ g_squared_norm = covector_innerproduct(g, g);
         Scalar_ g_norm = std::sqrt(g_squared_norm);
         minus_g(i) = -g(i);
 
-        if (PRINT_DEBUG_OUTPUT)
-        {
-            std::cout << current_approximation << "\n" << g << " " << g_norm <<  " " << current_value << std::endl;
-        }
+        DEBUG_OUTPUT(   "minimize: iteration " << iteration_count
+                     << ", current_approximation = " << current_approximation
+                     << "\n    gradient = " << g
+                     << ", norm of gradient = " << g_norm 
+                     << ", current function value = " << current_value << '\n');
 
         if (g_norm <= tolerance)
         {
@@ -110,42 +231,33 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
         Scalar_ d;
         h2(i*j) = h.split(i*j);
 
+        // TODO; this could be replaced with something that uses symmetry of h
         SVD_solve(h2,step,minus_g);
-        d = h(step, step);//h(a)*(step(i)*step(j)).bundle(i*j,Sym2(),a);
+        d = h(step, step);
 
         if (isNaN(d) || d < EPSILON) // h isn't postive definite along step so fall back to conjugate gradient
         {
             VectorType v(Static<WithoutInitialization>::SINGLETON);
             v(j).no_alias() = g(i) * covector_innerproduct.split(i*j);
-            // d = g(i)*v(i);
-            d = h(v, v);//v(i) * h.split(i*j) * v(j);
+            d = h(v, v);
 
             if (isNaN(d) || d < EPSILON) // h isn't positive definite along g either, gradient descent
             {
                 step(i).no_alias() = -GRADIENT_DESCENT_STEP_SIZE * g(i) / g_norm;
-                if (PRINT_DEBUG_OUTPUT)
-                {
-                    std::cout << "Gradient descent. With step = " << step << std::endl;
-                    ++gradient_descent;
-                }
+                DEBUG_OUTPUT("    Gradient descent; step = " << step << '\n');
+                ++gradient_descent;
             }
             else // h is positive definite along g, use conjugate gradient
             {
                 step(i).no_alias() = (-g_squared_norm / d) * v(i);
-                if (PRINT_DEBUG_OUTPUT)
-                {
-                    std::cout << "Conjugate gradient. With d = " << d << " and step = " << step << std::endl;
-                    ++conjugate_gradient;
-                }
+                DEBUG_OUTPUT("    Conjugate gradient; d = " << d << ", step = " << step << '\n');
+                ++conjugate_gradient;
             }
         }
         else // h is positive definite along step, use it as is.
         {
-            if (PRINT_DEBUG_OUTPUT)
-            {
-                std::cout << "Newton's method. With step = " << step << std::endl;
-                ++newtons_method;
-            }
+            DEBUG_OUTPUT("    Newton's method; step = " << step << '\n');
+            ++newtons_method;
         }
 
         step(i).no_alias() = STEP_SCALE * step(i);
@@ -154,111 +266,47 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
 
         if (MAX_STEP_SIZE > 0 && step_norm > MAX_STEP_SIZE)
         {
-            if (PRINT_DEBUG_OUTPUT)
-            {
-                std::cout << "Clamping step length to " << MAX_STEP_SIZE << std::endl;
-            }
+            DEBUG_OUTPUT("    Clamping step length to " << MAX_STEP_SIZE << '\n');
             step(i).no_alias() = MAX_STEP_SIZE * step(i) / step_norm;
-            step_norm = std::sqrt(vector_innerproduct(step, step));//std::sqrt(vector_innerproduct.split(i*j)*step(i)*step(j));
+            step_norm = MAX_STEP_SIZE;
         }
 
-        //std::cerr << "step = " << step << ", step size = " << step_norm << '\n';
-
-        // {
-        //     std::cerr << "line search errors: ";
-        //     Scalar_ quad_a = func.D2_function(current_approximation).split(i*j)*step(i)*step(j)/2;
-        //     Scalar_ quad_b = func.D_function(current_approximation)(i)*step(i);
-        //     Scalar_ quad_c = func.function(current_approximation);
-        //     // print out error between quadratic approx and actual function value
-        //     for (Uint32 it = 0; it <= LINE_SEARCH_SAMPLE_COUNT; ++it)
-        //     {
-        //         VectorType x(Static<WithoutInitialization>::SINGLETON);
-        //         Scalar_ t = Scalar_(it) / LINE_SEARCH_SAMPLE_COUNT;
-        //         x(i).no_alias() = current_approximation(i) + t * step(i);
-        //         Scalar_ actual_value = func.function(x);
-        //         Scalar_ approximate_value = quad_c + quad_b*t + quad_a*sqr(t);
-        //         std::cerr << approximate_value - actual_value << ' ';
-        //     }
-        //     std::cerr << '\n';
-        // }
-
-//         {
-//             std::cerr << "approximation offsets: ";
-//             Scalar_ quad_a = func.D2_function(current_approximation).split(i*j)*step(i)*step(j)/2;
-//             Scalar_ quad_b = func.D_function(current_approximation)(i)*step(i);
-//             // print out error between quadratic approx and actual function value
-//             for (Uint32 it = 0; it <= LINE_SEARCH_SAMPLE_COUNT; ++it)
-//             {
-//                 VectorType x(Static<WithoutInitialization>::SINGLETON);
-//                 Scalar_ t = Scalar_(it) / LINE_SEARCH_SAMPLE_COUNT;
-// //                x(i).no_alias() = current_approximation(i) + t * step(i);
-//                 Scalar_ approximation_offset = quad_b*t + quad_a*sqr(t);
-//                 std::cerr << approximation_offset << ' ';
-//             }
-//             std::cerr << '\n';
-//         }
-
-//         {
-//             std::cerr << "approximation offsets (geometric sequence): ";
-//             Scalar_ quad_a = func.D2_function(current_approximation).split(i*j)*step(i)*step(j)/2;
-//             Scalar_ quad_b = func.D_function(current_approximation)(i)*step(i);
-//             // print out error between quadratic approx and actual function value
-//             for (Uint32 it = 0; it <= LINE_SEARCH_SAMPLE_COUNT; ++it)
-//             {
-//                 VectorType x(Static<WithoutInitialization>::SINGLETON);
-//                 Scalar_ t = std::pow(Scalar_(2), -Scalar_(it));
-// //                x(i).no_alias() = current_approximation(i) + t * step(i);
-//                 Scalar_ approximation_offset = quad_b*t + quad_a*sqr(t);
-//                 std::cerr << "t = " << t << ": " << approximation_offset << '\n';
-//             }
-//             std::cerr << '\n';
-//         }
-
-        VectorType line_search_step(Static<WithoutInitialization>::SINGLETON);
-        VectorType partial_step(fill_with(0));
-        VectorType x(Static<WithoutInitialization>::SINGLETON);
-        line_search_step(i).no_alias() = step(i) / LINE_SEARCH_SAMPLE_COUNT;
-        int it;
-        for (it = 0; it < LINE_SEARCH_SAMPLE_COUNT; ++it)
+        bool line_search_success =
+            LineSearch::uniform_step(func,
+                                     current_approximation,
+                                     step,
+                                     LINE_SEARCH_UNIFORM_STEP_SUBSTEP_COUNT);
+        if (!line_search_success)
         {
-            partial_step(i).no_alias() += line_search_step(i);
-            x(i).no_alias() = current_approximation(i) + partial_step(i);
-            Scalar_ next_value = func.function(x);
-
-            if (next_value > current_value) // this seems wrong.
-            {
-                current_value = next_value;
-                step = partial_step;
-                break;
-            }
-            current_value = next_value;
+            step(i).no_alias() = step(i) / LINE_SEARCH_UNIFORM_STEP_SUBSTEP_COUNT;
+            line_search_success =
+                LineSearch::geometric_step(func,
+                                           current_approximation,
+                                           step,
+                                           LINE_SEARCH_GEOMETRIC_STEP_FACTOR,
+                                           LINE_SEARCH_GEOMETRIC_STEP_MAX_ITERATION_COUNT);
+            // TODO: do something if there's still a failure
         }
-        if (PRINT_DEBUG_OUTPUT)
-        {
-            std::cout << "used " << it << " steps in line search\n";
-            if (it != 0 && it != LINE_SEARCH_SAMPLE_COUNT)
-            {
-                std::cout << "Did a partial line search\n";
-            }
-        }
-
-        current_approximation(i) += step(i);
 
         ++iteration_count;
     }
 
-    if (PRINT_DEBUG_OUTPUT)
-    {
-        std::cout << "optimize took " << iteration_count << " steps " << newtons_method << " were Newton's method, " << conjugate_gradient << " were conjugate gradient, and " << gradient_descent << " were gradient descent." <<  std::endl;
-    }
+    DEBUG_OUTPUT(   "    minimize took " << iteration_count << " steps; " 
+                 << newtons_method << " were Newton's method, "
+                 << conjugate_gradient << " were conjugate gradient, and "
+                 << gradient_descent << " were gradient descent." << '\n');
 
     return current_approximation;
 }
+
 /*
 template <typename InnerProductId_, typename ObjectiveFunction_, typename BasedVectorSpace_, typename Scalar_, typename GuessUseArrayType_, typename Derived_>
-ImplementationOf_t<BasedVectorSpace_,Scalar_> gradient_descent (ObjectiveFunction_ const &func,
-                                                                ImplementationOf_t<BasedVectorSpace_,Scalar_,GuessUseArrayType_,Derived_> const &guess,
-                                                                Scalar_ tolerance)
+ImplementationOf_t<BasedVectorSpace_,Scalar_>
+    gradient_descent (ObjectiveFunction_ const &func,
+                      ImplementationOf_t<BasedVectorSpace_,Scalar_,GuessUseArrayType_,Derived_> const &guess,
+                      Scalar_ norm_grad_tolerance,
+                      Scalar_ max_step_size = Scalar_(1),
+                      Uint32 max_step_count = 200)
 {
     typedef ImplementationOf_t<BasedVectorSpace_,Scalar_> VectorType;
     typedef typename InnerProduct_f<BasedVectorSpace_,InnerProductId_,Scalar_>::T VectorInnerProductType;
@@ -268,10 +316,6 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> gradient_descent (ObjectiveFunctio
     STATIC_ASSERT_TYPES_ARE_EQUAL(Scalar_, typename ObjectiveFunction_::Out);
     static int const LINE_SEARCH_SAMPLE_COUNT = 50;
     static Scalar_ const STEP_SCALE = Scalar_(1);
-    static Scalar_ const MAX_STEP_SIZE = Scalar_(-1);
-    // static Scalar_ const MAX_STEP_SIZE = Scalar_(1);
-    static int const MAX_ITERATION_COUNT = 2000;
-    static Scalar_ const GRADIENT_DESCENT_STEP_SIZE = Scalar_(1);
     static bool const PRINT_DEBUG_OUTPUT = false;
     static Scalar_ const EPSILON = 1e-5;
 
@@ -284,14 +328,14 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> gradient_descent (ObjectiveFunctio
 
     VectorType current_approximation = guess;
     VectorType gradient(Static<WithoutInitialization>::SINGLETON);
-    int iteration_count = 0;
+    int step_count = 0;
     bool tolerance_was_attained = false;
 
-    while (iteration_count < MAX_ITERATION_COUNT)
+    while (step_count < max_step_count)
     {
         grad(j) = func.D_function(current_approximation)(i)*covector_innerproduct.split(i*j);
         Scalar_ norm_grad = std::sqrt(vector_innerproduct(grad, grad));
-        if (norm_grad <= tolerance)
+        if (norm_grad <= norm_grad_tolerance)
         {
             tolerance_was_attained = true;
             break;
@@ -299,12 +343,10 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> gradient_descent (ObjectiveFunctio
 
 
 
-        ++iteration_count;
+        ++step_count;
     }
 }
 */
-
-
 // TEMP
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -399,7 +441,7 @@ ImplementationOf_t<BasedVectorSpace_,typename ObjectiveFunction_::Scalar>
     typedef typename ObjectiveFunction_::Scalar Scalar;
     assert(search_radius > Scalar(0) && "search_radius must be positive");
 
-    typedef ImplementationOf_t<BasedVectorSpace_,Scalar,UseMemberArray> V;
+    typedef ImplementationOf_t<BasedVectorSpace_,Scalar> V;
 
     V random_center(initial_guess);
     V minimizer(initial_guess);
