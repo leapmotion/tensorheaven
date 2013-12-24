@@ -33,20 +33,17 @@ bool isNaN(T const &x)
     return false;
 }
 
-template<>
-bool isNaN(float const &x)
+inline bool isNaN(float const &x)
 {
     return std::isnan(x);
 }
 
-template<>
-bool isNaN(double const &x)
+inline bool isNaN(double const &x)
 {
     return std::isnan(x);
 }
 
-template<>
-bool isNaN(long double const &x)
+inline bool isNaN(long double const &x)
 {
     return std::isnan(x);
 }
@@ -383,19 +380,19 @@ typename AssociatedFloatingPointType_t<Scalar_>::T
 // ///////////////////////////////////////////////////////////////////////////
 
 // uniform distribution in [0,1]
-void randomize (float &x)
+inline void randomize (float &x)
 {
     x = float(rand()) / RAND_MAX;
 }
 
 // uniform distribution in [0,1]
-void randomize (double &x)
+inline void randomize (double &x)
 {
     x = double(rand()) / RAND_MAX;
 }
 
 // uniform distribution in [0,1]
-void randomize (long double &x)
+inline void randomize (long double &x)
 {
     x = static_cast<long double>(rand()) / RAND_MAX;
 }
