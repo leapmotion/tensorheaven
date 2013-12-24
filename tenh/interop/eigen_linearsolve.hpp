@@ -21,20 +21,22 @@ template <typename RhsInnerProductId_,
           typename Scalar_,
           typename Derived1_,
           typename Derived2_,
-          typename Derived3_>
+          typename Derived3_,
+          ComponentQualifier COMPONENT_QUALIFIER0_,
+          ComponentQualifier COMPONENT_QUALIFIER1_>
 void linear_solve_using_least_squares (Tensor_i<Derived1_,
                                                 Scalar_,
                                                 TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,
                                                                                    TypeList_t<typename DualOf_f<Factor2_>::T> > >,
-                                                MUTABLE_COMPONENTS> const &A,
+                                                COMPONENT_QUALIFIER0_> const &A,
                                        Vector_i<Derived3_,
                                                 Scalar_,
                                                 Factor2_,
-                                                MUTABLE_COMPONENTS> &x,
+                                                COMPONENTS_ARE_NONCONST_MEMORY> &x,
                                        Vector_i<Derived2_,
                                                 Scalar_,
                                                 Factor1_,
-                                                MUTABLE_COMPONENTS> const &b)
+                                                COMPONENT_QUALIFIER1_> const &b)
 {
     // for now require this special case -- non-standard inner products require
     // the use of a non-identity Euclidean embedding.

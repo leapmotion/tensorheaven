@@ -83,6 +83,8 @@
 - design and implement mathematical type string methods and printing for debugging purposes
 - design and implement some form of type debugging method (to debug indexed expression
   compile errors)
+- make a copy_from(Array_i const &) that does memcpy, memmove, or iterative operator[] access
+  depending on what Array_i type it is.
 
 
 ###implemented features/items:

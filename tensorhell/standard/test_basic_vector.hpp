@@ -340,13 +340,13 @@ void add_particular_tests_for_scalar_and_use_array_type_Vec (Directory &parent)
 template <typename Scalar_>
 void add_particular_tests_for_scalar_Vector (Directory &parent)
 {
-    add_particular_tests_for_scalar_and_use_array_type_Vector<Scalar_,Tenh::UseMemberArray>(parent);
+    add_particular_tests_for_scalar_and_use_array_type_Vector<Scalar_,Tenh::UseMemberArray_t<Tenh::COMPONENTS_ARE_NONCONST> >(parent);
 }
 
 template <typename Scalar_>
 void add_particular_tests_for_scalar_Vec (Directory &parent)
 {
-    add_particular_tests_for_scalar_and_use_array_type_Vec<Scalar_,Tenh::UseMemberArray>(parent);
+    add_particular_tests_for_scalar_and_use_array_type_Vec<Scalar_,Tenh::UseMemberArray_t<Tenh::COMPONENTS_ARE_NONCONST> >(parent);
 }
 
 void AddTests0 (Lvd::TestSystem::Directory &parent);

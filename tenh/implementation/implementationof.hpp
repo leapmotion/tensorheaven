@@ -8,6 +8,7 @@
 
 #include "tenh/core.hpp"
 
+#include "tenh/componentqualifier.hpp"
 #include "tenh/conceptual/dual.hpp"
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/memberarray.hpp"
@@ -22,20 +23,48 @@ namespace Tenh {
 
 // these are for the UseArrayType parameter in ImplementationOf_t
 
-struct UseMemberArray { static std::string type_as_string () { return "UseMemberArray"; } };
-template <> struct DualOf_f<UseMemberArray>
+template <bool COMPONENTS_ARE_CONST_>
+struct UseMemberArray_t { static std::string type_as_string () { return "UseMemberArray_t<" + AS_STRING(COMPONENTS_ARE_CONST_) + '>'; } };
+template <bool COMPONENTS_ARE_CONST_> struct DualOf_f<UseMemberArray_t<COMPONENTS_ARE_CONST_> >
 {
-    typedef UseMemberArray T;
+    typedef UseMemberArray_t<COMPONENTS_ARE_CONST_> T;
 private:
     DualOf_f();
 };
 
-struct UsePreallocatedArray { static std::string type_as_string () { return "UsePreallocatedArray"; } };
-template <> struct DualOf_f<UsePreallocatedArray>
+template <typename T> struct IsUseMemberArray_f
 {
-    typedef UsePreallocatedArray T;
+    static bool const V = false;
+private:
+    IsUseMemberArray_f();
+};
+template <bool COMPONENTS_ARE_CONST_> struct IsUseMemberArray_f<UseMemberArray_t<COMPONENTS_ARE_CONST_> >
+{
+    static bool const V = true;
+private:
+    IsUseMemberArray_f();
+};
+
+template <bool COMPONENTS_ARE_CONST_>
+struct UsePreallocatedArray_t { static std::string type_as_string () { return "UsePreallocatedArray_t<" + AS_STRING(COMPONENTS_ARE_CONST_) + '>'; } };
+template <bool COMPONENTS_ARE_CONST_> struct DualOf_f<UsePreallocatedArray_t<COMPONENTS_ARE_CONST_> >
+{
+    typedef UsePreallocatedArray_t<COMPONENTS_ARE_CONST_> T;
 private:
     DualOf_f();
+};
+
+template <typename T> struct IsUsePreallocatedArray_f
+{
+    static bool const V = false;
+private:
+    IsUsePreallocatedArray_f();
+};
+template <bool COMPONENTS_ARE_CONST_> struct IsUsePreallocatedArray_f<UsePreallocatedArray_t<COMPONENTS_ARE_CONST_> >
+{
+    static bool const V = true;
+private:
+    IsUsePreallocatedArray_f();
 };
 
 template <typename ComponentGenerator_>
@@ -64,25 +93,11 @@ private:
     IsUseProceduralArray_f();
 };
 
-// used by ImplementationOf_t to provide the COMPONENTS_ARE_PROCEDURAL parameter value
-template <typename T> struct ComponentsAreProcedural_f
-{
-    static bool const V = false;
-private:
-    ComponentsAreProcedural_f();
-};
-template <typename ComponentGenerator_> struct ComponentsAreProcedural_f<UseProceduralArray_t<ComponentGenerator_> >
-{
-    static bool const V = true;
-private:
-    ComponentsAreProcedural_f();
-};
-
-// the default is UseMemberArray (internal storage).  each ImplementationOf_t must
+// the default is UseMemberArray_t (internal storage).  each ImplementationOf_t must
 // have a "typedef Concept_ Concept" and a "typedef UseArrayType_ UseArrayType".
 template <typename Concept_,
           typename Scalar_,
-          typename UseArrayType_ = UseMemberArray,
+          typename UseArrayType_ = UseMemberArray_t<COMPONENTS_ARE_NONCONST>,
           typename Derived_ = NullType>
 struct ImplementationOf_t;
 
@@ -96,6 +111,26 @@ struct IsImplementationOf_f<ImplementationOf_t<Concept_,Scalar_,UseArrayType_,De
     static bool const V = true;
 };
 
+template <typename T_> struct ComponentQualifierOfArrayType_f;
+
+template <bool COMPONENTS_ARE_CONST_>
+struct ComponentQualifierOfArrayType_f<UseMemberArray_t<COMPONENTS_ARE_CONST_> >
+{
+    static ComponentQualifier const V = COMPONENTS_ARE_CONST_ ? COMPONENTS_ARE_CONST_MEMORY : COMPONENTS_ARE_NONCONST_MEMORY;
+};
+
+template <bool COMPONENTS_ARE_CONST_>
+struct ComponentQualifierOfArrayType_f<UsePreallocatedArray_t<COMPONENTS_ARE_CONST_> >
+{
+    static ComponentQualifier const V = COMPONENTS_ARE_CONST_ ? COMPONENTS_ARE_CONST_MEMORY : COMPONENTS_ARE_NONCONST_MEMORY;
+};
+
+template <typename ComponentGenerator_>
+struct ComponentQualifierOfArrayType_f<UseProceduralArray_t<ComponentGenerator_> >
+{
+    static ComponentQualifier const V = COMPONENTS_ARE_PROCEDURAL;
+};
+
 // ///////////////////////////////////////////////////////////////////////////
 // metafunction for deciding which structure to use for component access
 // ///////////////////////////////////////////////////////////////////////////
@@ -104,23 +139,23 @@ struct IsImplementationOf_f<ImplementationOf_t<Concept_,Scalar_,UseArrayType_,De
 // (one of MemberArray_t, PreallocatedArray_t, ProceduralArray_t)
 template <typename Component_,
           Uint32 COMPONENT_COUNT_,
-          typename UseArrayType_,
+          typename UseArrayType_,// = UseMemberArray_t<COMPONENTS_ARE_NONCONST>,
           typename Derived_ = NullType>
 struct ArrayStorage_f;
 
 // template specialization for use of MemberArray_t
-template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_>
-struct ArrayStorage_f<Component_,COMPONENT_COUNT_,UseMemberArray,Derived_>
+template <typename Component_, Uint32 COMPONENT_COUNT_, bool COMPONENTS_ARE_CONST_, typename Derived_>
+struct ArrayStorage_f<Component_,COMPONENT_COUNT_,UseMemberArray_t<COMPONENTS_ARE_CONST_>,Derived_>
 {
-    typedef MemberArray_t<Component_,COMPONENT_COUNT_,Derived_> T;
+    typedef MemberArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> T;
 private:
     ArrayStorage_f();
 };
 
-template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_>
-struct ArrayStorage_f<Component_,COMPONENT_COUNT_,UsePreallocatedArray,Derived_>
+template <typename Component_, Uint32 COMPONENT_COUNT_, bool COMPONENTS_ARE_CONST_, typename Derived_>
+struct ArrayStorage_f<Component_,COMPONENT_COUNT_,UsePreallocatedArray_t<COMPONENTS_ARE_CONST_>,Derived_>
 {
-    typedef PreallocatedArray_t<Component_,COMPONENT_COUNT_,Derived_> T;
+    typedef PreallocatedArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> T;
 private:
     ArrayStorage_f();
 };

@@ -19,23 +19,30 @@ namespace Tenh {
 // (the allocation_size_in_bytes and pointer_to_allocation methods require this).  this
 // implementation of MemoryArray_i is a "map" to preexisting memory -- it just
 // puts an MemoryArray_i interface on existing memory.
-template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_ = NullType>
+template <typename Component_, Uint32 COMPONENT_COUNT_, bool COMPONENTS_ARE_CONST_ = COMPONENTS_ARE_NONCONST, typename Derived_ = NullType>
 struct PreallocatedArray_t
     :
-    public MemoryArray_i<typename DerivedType_f<Derived_,PreallocatedArray_t<Component_,COMPONENT_COUNT_,Derived_> >::T,
+    public MemoryArray_i<typename DerivedType_f<Derived_,PreallocatedArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> >::T,
                          Component_,
-                         COMPONENT_COUNT_>
+                         COMPONENT_COUNT_,
+                         COMPONENTS_ARE_CONST_>
 {
-    typedef MemoryArray_i<typename DerivedType_f<Derived_,PreallocatedArray_t<Component_,COMPONENT_COUNT_,Derived_> >::T,
+    typedef MemoryArray_i<typename DerivedType_f<Derived_,PreallocatedArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> >::T,
                           Component_,
-                          COMPONENT_COUNT_> Parent_MemoryArray_i;
+                          COMPONENT_COUNT_,
+                          COMPONENTS_ARE_CONST_> Parent_MemoryArray_i;
 
     typedef typename Parent_MemoryArray_i::Component Component;
     using Parent_MemoryArray_i::COMPONENT_COUNT;
+    using Parent_MemoryArray_i::COMPONENT_QUALIFIER;
+    using Parent_MemoryArray_i::COMPONENTS_ARE_CONST;
     typedef typename Parent_MemoryArray_i::ComponentIndex ComponentIndex;
+    typedef typename Parent_MemoryArray_i::ComponentAccessConstReturnType ComponentAccessConstReturnType;
+    typedef typename Parent_MemoryArray_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
+    typedef typename Parent_MemoryArray_i::QualifiedComponent QualifiedComponent;
 
     explicit PreallocatedArray_t (WithoutInitialization const &) : m_pointer_to_allocation(NULL) { }
-    explicit PreallocatedArray_t (Component *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+    explicit PreallocatedArray_t (QualifiedComponent *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         m_pointer_to_allocation(pointer_to_allocation)
     {
@@ -51,7 +58,7 @@ struct PreallocatedArray_t
 
     template <typename T_>
     PreallocatedArray_t (FillWith_t<T_> const &fill_with,
-                         Component *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+                         QualifiedComponent *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         m_pointer_to_allocation(pointer_to_allocation)
     {
@@ -67,7 +74,7 @@ struct PreallocatedArray_t
 
     template <typename HeadType_, typename BodyTypeList_>
     PreallocatedArray_t (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x,
-                         Component *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+                         QualifiedComponent *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         m_pointer_to_allocation(pointer_to_allocation)
     {
@@ -81,15 +88,15 @@ struct PreallocatedArray_t
     }
 
     // the existence of this method is a necessary corollary of the WithoutInitialization constructor.
-    void set_pointer_to_allocation (Component *pointer_to_allocation) { m_pointer_to_allocation = pointer_to_allocation; }
+    void set_pointer_to_allocation (QualifiedComponent *pointer_to_allocation) { m_pointer_to_allocation = pointer_to_allocation; }
 
-    Component const &operator [] (ComponentIndex const &i) const
+    ComponentAccessConstReturnType operator [] (ComponentIndex const &i) const
     {
         assert(m_pointer_to_allocation != NULL && "you didn't initialize the pointer_to_allocation value");
         assert(i.is_not_at_end() && "you used ComponentIndex_t(x, DONT_RANGE_CHECK) inappropriately");
         return m_pointer_to_allocation[i.value()];
     }
-    Component &operator [] (ComponentIndex const &i)
+    ComponentAccessNonConstReturnType operator [] (ComponentIndex const &i)
     {
         assert(m_pointer_to_allocation != NULL && "you didn't initialize the pointer_to_allocation value");
         assert(i.is_not_at_end() && "you used ComponentIndex_t(x, DONT_RANGE_CHECK) inappropriately");
@@ -98,8 +105,8 @@ struct PreallocatedArray_t
 
     // access to the raw data
     using Parent_MemoryArray_i::allocation_size_in_bytes;
-    Component const *pointer_to_allocation () const { return m_pointer_to_allocation; }
-    Component *pointer_to_allocation () { return m_pointer_to_allocation; }
+    Component_ const *pointer_to_allocation () const { return m_pointer_to_allocation; }
+    QualifiedComponent *pointer_to_allocation () { return m_pointer_to_allocation; }
     // this should really go in MemoryArray_i, but there were problems with casting
     // to private base classes.
     bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const
@@ -119,7 +126,7 @@ struct PreallocatedArray_t
 protected:
 
     // a pointer to the preallocated memory on which this structure operates
-    Component *m_pointer_to_allocation;
+    QualifiedComponent *m_pointer_to_allocation;
 
 private:
 
@@ -133,20 +140,20 @@ template <typename T> struct IsPreallocatedArray_t
 private:
     IsPreallocatedArray_t();
 };
-template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_> struct IsPreallocatedArray_t<PreallocatedArray_t<Component_,COMPONENT_COUNT_,Derived_> >
+template <typename Component_, Uint32 COMPONENT_COUNT_, bool COMPONENTS_ARE_CONST_, typename Derived_> struct IsPreallocatedArray_t<PreallocatedArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> >
 {
     static bool const V = true;
 private:
     IsPreallocatedArray_t();
 };
 
-template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_> struct IsArray_i<PreallocatedArray_t<Component_,COMPONENT_COUNT_,Derived_> >
+template <typename Component_, Uint32 COMPONENT_COUNT_, bool COMPONENTS_ARE_CONST_, typename Derived_> struct IsArray_i<PreallocatedArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> >
 {
     static bool const V = true;
 private:
     IsArray_i();
 };
-template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_> struct IsMemoryArray_i<PreallocatedArray_t<Component_,COMPONENT_COUNT_,Derived_> >
+template <typename Component_, Uint32 COMPONENT_COUNT_, bool COMPONENTS_ARE_CONST_, typename Derived_> struct IsMemoryArray_i<PreallocatedArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> >
 {
     static bool const V = true;
 private:

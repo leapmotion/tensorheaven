@@ -9,17 +9,15 @@
 #include "tenh/core.hpp"
 
 #include "tenh/componentindex.hpp"
+#include "tenh/componentqualifier.hpp"
 #include "tenh/meta/typestringof.hpp"
 
 namespace Tenh {
 
-static bool const PROCEDURAL_COMPONENTS = true;
-static bool const MUTABLE_COMPONENTS = false;
-
 // compile-time interface for fixed-length array of a given component type,
 // with no presupposition about how the components are provided (see
 // MemoryArray_i and ProceduralArray_t).
-template <typename Derived_, typename Component_, Uint32 COMPONENT_COUNT_, bool COMPONENTS_ARE_PROCEDURAL_>
+template <typename Derived_, typename Component_, Uint32 COMPONENT_COUNT_, ComponentQualifier COMPONENT_QUALIFIER_>
 struct Array_i
 {
     enum
@@ -30,10 +28,11 @@ struct Array_i
     typedef Derived_ Derived;
     typedef Component_ Component;
     static Uint32 const COMPONENT_COUNT = COMPONENT_COUNT_;
-    static bool const COMPONENTS_ARE_PROCEDURAL = COMPONENTS_ARE_PROCEDURAL_;
+    static ComponentQualifier const COMPONENT_QUALIFIER = COMPONENT_QUALIFIER_;
     typedef ComponentIndex_t<COMPONENT_COUNT> ComponentIndex;
-    typedef typename If_f<COMPONENTS_ARE_PROCEDURAL_,Component_,Component_ const &>::T ComponentAccessConstReturnType;
-    typedef typename If_f<COMPONENTS_ARE_PROCEDURAL_,Component_,Component_ &>::T ComponentAccessNonConstReturnType;
+    typedef typename ComponentQualifier_m<Component_,COMPONENT_QUALIFIER_>::ComponentAccessConstReturnType ComponentAccessConstReturnType;
+    typedef typename ComponentQualifier_m<Component_,COMPONENT_QUALIFIER_>::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
+    typedef typename ComponentQualifier_m<Component_,COMPONENT_QUALIFIER_>::QualifiedComponent QualifiedComponent;
 
     ComponentAccessConstReturnType operator [] (ComponentIndex const &i) const { return as_derived().Derived::operator[](i); }
     ComponentAccessNonConstReturnType operator [] (ComponentIndex const &i) { return as_derived().Derived::operator[](i); }
@@ -60,15 +59,15 @@ struct Array_i
 
     static std::string type_as_string ()
     {
-        return "Array_i<" + type_string_of<Derived>() + ','
-                          + type_string_of<Component>() + ','
-                          + AS_STRING(COMPONENT_COUNT) + ','
-                          + AS_STRING((COMPONENTS_ARE_PROCEDURAL_ ? "PROCEDURAL_COMPONENTS" : "MUTABLE_COMPONENTS")) + '>';
+        return "Array_i<" + type_string_of<Derived_>() + ','
+                          + type_string_of<Component_>() + ','
+                          + AS_STRING(COMPONENT_COUNT_) + ','
+                          + component_qualifier_as_string(COMPONENT_QUALIFIER_) + '>';
     }
 };
 
 template <typename T> struct IsArray_i { static bool const V = false; };
-template <typename Derived_, typename Component_, Uint32 COMPONENT_COUNT_, bool COMPONENTS_ARE_PROCEDURAL_> struct IsArray_i<Array_i<Derived_,Component_,COMPONENT_COUNT_,COMPONENTS_ARE_PROCEDURAL_> > { static bool const V = true; };
+template <typename Derived_, typename Component_, Uint32 COMPONENT_COUNT_, ComponentQualifier COMPONENT_QUALIFIER_> struct IsArray_i<Array_i<Derived_,Component_,COMPONENT_COUNT_,COMPONENT_QUALIFIER_> > { static bool const V = true; };
 
 } // end of namespace Tenh
 

@@ -27,13 +27,13 @@ struct FunctionObjectType_m
     typedef CodomainSpace_ CoDomain;
     typedef Scalar_ Scalar;
 
-    typedef ImplementationOf_t<Domain,Scalar_,UseMemberArray> V;
-    typedef ImplementationOf_t<DualOfBasedVectorSpace,Scalar_,UseMemberArray> DualOfV;
-    typedef ImplementationOf_t<Sym2Dual,Scalar_,UseMemberArray> Sym2_DualOfV;
-    typedef ImplementationOf_t<Domain,Scalar_,UseMemberArray> In;
-    typedef ImplementationOf_t<CoDomain,Scalar_,UseMemberArray> Out;
-    typedef ImplementationOf_t<Differential1,Scalar_,UseMemberArray> D1;
-    typedef ImplementationOf_t<Differential2,Scalar_,UseMemberArray> D2;
+    typedef ImplementationOf_t<Domain,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > V;
+    typedef ImplementationOf_t<DualOfBasedVectorSpace,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > DualOfV;
+    typedef ImplementationOf_t<Sym2Dual,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > Sym2_DualOfV;
+    typedef ImplementationOf_t<Domain,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > In;
+    typedef ImplementationOf_t<CoDomain,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > Out;
+    typedef ImplementationOf_t<Differential1,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > D1;
+    typedef ImplementationOf_t<Differential2,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > D2;
 };
 
 // template specialization for when CodomainSpace_ is Scalar_
@@ -49,10 +49,10 @@ struct FunctionObjectType_m<ParameterSpace_,Scalar_,Scalar_>
     typedef Scalar_ CoDomain;
     typedef Scalar_ Scalar;
 
-    typedef ImplementationOf_t<ParameterSpace_,Scalar_,UseMemberArray> V;
-    typedef ImplementationOf_t<DualOfBasedVectorSpace,Scalar_,UseMemberArray> DualOfV;
-    typedef ImplementationOf_t<Sym2Dual,Scalar_,UseMemberArray> Sym2_DualOfV;
-    typedef ImplementationOf_t<ParameterSpace_,Scalar_,UseMemberArray> In;
+    typedef ImplementationOf_t<ParameterSpace_,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > V;
+    typedef ImplementationOf_t<DualOfBasedVectorSpace,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > DualOfV;
+    typedef ImplementationOf_t<Sym2Dual,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > Sym2_DualOfV;
+    typedef ImplementationOf_t<ParameterSpace_,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > In;
     typedef Scalar_ Out;
     typedef DualOfV D1;
     typedef Sym2_DualOfV D2;
@@ -79,20 +79,20 @@ struct TaylorPolynomialVerifier_t
     typedef typename FunctionObjectType::D1 D1;
     typedef typename FunctionObjectType::D2 D2;
 
-    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL0_,
-    typename Derived1_, bool COMPONENTS_ARE_PROCEDURAL1_>
+    template <typename Derived0_, ComponentQualifier COMPONENT_QUALIFIER0_,
+    typename Derived1_, ComponentQualifier COMPONENT_QUALIFIER1_>
     Out evaluate_0th_order (FunctionObject_ const &o,
-                            Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL0_> const &based_at_point,
-                            Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL1_> const &evaluation_point) const
+                            Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENT_QUALIFIER0_> const &based_at_point,
+                            Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENT_QUALIFIER1_> const &evaluation_point) const
     {
         return o.function(based_at_point);
     }
 
-    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL0_,
-    typename Derived1_, bool COMPONENTS_ARE_PROCEDURAL1_>
+    template <typename Derived0_, ComponentQualifier COMPONENT_QUALIFIER0_,
+    typename Derived1_, ComponentQualifier COMPONENT_QUALIFIER1_>
     Out evaluate_1st_order (FunctionObject_ const &o,
-                            Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL0_> const &based_at_point,
-                            Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL1_> const &evaluation_point) const
+                            Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENT_QUALIFIER0_> const &based_at_point,
+                            Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENT_QUALIFIER1_> const &evaluation_point) const
     {
         AbstractIndex_c<'i'> i;
         V delta(Static<WithoutInitialization>::SINGLETON);
@@ -102,11 +102,11 @@ struct TaylorPolynomialVerifier_t
         return evaluate_1st_order_via_delta(o, based_at_point, delta);
     }
 
-    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL0_,
-    typename Derived1_, bool COMPONENTS_ARE_PROCEDURAL1_>
+    template <typename Derived0_, ComponentQualifier COMPONENT_QUALIFIER0_,
+    typename Derived1_, ComponentQualifier COMPONENT_QUALIFIER1_>
     Out evaluate_2nd_order (FunctionObject_ const &o,
-                            Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL0_> const &based_at_point,
-                            Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL1_> const &evaluation_point) const
+                            Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENT_QUALIFIER0_> const &based_at_point,
+                            Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENT_QUALIFIER1_> const &evaluation_point) const
     {
         AbstractIndex_c<'i'> i;
         Out retval(Static<WithoutInitialization>::SINGLETON);
@@ -117,20 +117,20 @@ struct TaylorPolynomialVerifier_t
         return evaluate_2nd_order_via_delta(o, based_at_point, delta);
     }
 
-    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL0_,
-    typename Derived1_, bool COMPONENTS_ARE_PROCEDURAL1_>
+    template <typename Derived0_, ComponentQualifier COMPONENT_QUALIFIER0_,
+    typename Derived1_, ComponentQualifier COMPONENT_QUALIFIER1_>
     Out evaluate_0th_order_via_delta (FunctionObject_ const &o,
-                                    Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL0_> const &based_at_point,
-                                    Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL1_> const &delta) const
+                                    Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENT_QUALIFIER0_> const &based_at_point,
+                                    Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENT_QUALIFIER1_> const &delta) const
     {
         return o.function(based_at_point);
     }
 
-    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL0_,
-    typename Derived1_, bool COMPONENTS_ARE_PROCEDURAL1_>
+    template <typename Derived0_, ComponentQualifier COMPONENT_QUALIFIER0_,
+    typename Derived1_, ComponentQualifier COMPONENT_QUALIFIER1_>
     Out evaluate_1st_order_via_delta (FunctionObject_ const &o,
-                                    Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL0_> const &based_at_point,
-                                    Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL1_> const &delta) const
+                                    Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENT_QUALIFIER0_> const &based_at_point,
+                                    Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENT_QUALIFIER1_> const &delta) const
     {
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
@@ -142,11 +142,11 @@ struct TaylorPolynomialVerifier_t
         return retval;
     }
 
-    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL0_,
-    typename Derived1_, bool COMPONENTS_ARE_PROCEDURAL1_>
+    template <typename Derived0_, ComponentQualifier COMPONENT_QUALIFIER0_,
+    typename Derived1_, ComponentQualifier COMPONENT_QUALIFIER1_>
     Out evaluate_2nd_order_via_delta (FunctionObject_ const &o,
-                                    Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL0_> const &based_at_point,
-                                    Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL1_> const &delta) const
+                                    Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENT_QUALIFIER0_> const &based_at_point,
+                                    Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENT_QUALIFIER1_> const &delta) const
     {
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
@@ -161,9 +161,9 @@ struct TaylorPolynomialVerifier_t
         return retval;
     }
 
-    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL_>
+    template <typename Derived0_, ComponentQualifier COMPONENT_QUALIFIER_>
     Scalar_ verify_gradient (FunctionObject_ const &o,
-                            Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL_> const &at_point) const
+                            Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENT_QUALIFIER_> const &at_point) const
     {
         Scalar_ big_o_bound(0);
         static Uint32 const SAMPLES = 100;
@@ -193,9 +193,9 @@ struct TaylorPolynomialVerifier_t
         return big_o_bound;
     }
 
-    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL_>
+    template <typename Derived0_, ComponentQualifier COMPONENT_QUALIFIER_>
     Scalar_ verify_hessian (FunctionObject_ const &o,
-                            Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL_> const &at_point) const
+                            Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENT_QUALIFIER_> const &at_point) const
     {
         Scalar_ big_o_bound(0);
         static Uint32 const SAMPLES = 100;
@@ -251,20 +251,20 @@ struct TaylorPolynomialVerifier_t<ParameterSpace_,Scalar_,StandardInnerProduct,S
     typedef typename FunctionObjectType::D1 D1;
     typedef typename FunctionObjectType::D2 D2;
 
-    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL0_,
-    typename Derived1_, bool COMPONENTS_ARE_PROCEDURAL1_>
+    template <typename Derived0_, ComponentQualifier COMPONENT_QUALIFIER0_,
+    typename Derived1_, ComponentQualifier COMPONENT_QUALIFIER1_>
     Scalar_ evaluate_0th_order (FunctionObject_ const &o,
-                                Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL0_> const &based_at_point,
-                                Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL1_> const &evaluation_point) const
+                                Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENT_QUALIFIER0_> const &based_at_point,
+                                Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENT_QUALIFIER1_> const &evaluation_point) const
     {
         return o.function(based_at_point);
     }
 
-    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL0_,
-    typename Derived1_, bool COMPONENTS_ARE_PROCEDURAL1_>
+    template <typename Derived0_, ComponentQualifier COMPONENT_QUALIFIER0_,
+    typename Derived1_, ComponentQualifier COMPONENT_QUALIFIER1_>
     Scalar_ evaluate_1st_order (FunctionObject_ const &o,
-                                Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL0_> const &based_at_point,
-                                Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL1_> const &evaluation_point) const
+                                Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENT_QUALIFIER0_> const &based_at_point,
+                                Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENT_QUALIFIER1_> const &evaluation_point) const
     {
         AbstractIndex_c<'i'> i;
         V delta(Static<WithoutInitialization>::SINGLETON);
@@ -272,11 +272,11 @@ struct TaylorPolynomialVerifier_t<ParameterSpace_,Scalar_,StandardInnerProduct,S
         return evaluate_1st_order_via_delta(o, based_at_point, delta);
     }
 
-    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL0_,
-    typename Derived1_, bool COMPONENTS_ARE_PROCEDURAL1_>
+    template <typename Derived0_, ComponentQualifier COMPONENT_QUALIFIER0_,
+    typename Derived1_, ComponentQualifier COMPONENT_QUALIFIER1_>
     Scalar_ evaluate_2nd_order (FunctionObject_ const &o,
-                                Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL0_> const &based_at_point,
-                                Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL1_> const &evaluation_point) const
+                                Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENT_QUALIFIER0_> const &based_at_point,
+                                Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENT_QUALIFIER1_> const &evaluation_point) const
     {
         AbstractIndex_c<'i'> i;
         V delta(Static<WithoutInitialization>::SINGLETON);
@@ -286,20 +286,20 @@ struct TaylorPolynomialVerifier_t<ParameterSpace_,Scalar_,StandardInnerProduct,S
         return evaluate_2nd_order_via_delta(o, based_at_point, delta);
     }
 
-    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL0_,
-    typename Derived1_, bool COMPONENTS_ARE_PROCEDURAL1_>
+    template <typename Derived0_, ComponentQualifier COMPONENT_QUALIFIER0_,
+    typename Derived1_, ComponentQualifier COMPONENT_QUALIFIER1_>
     Scalar_ evaluate_0th_order_via_delta (FunctionObject_ const &o,
-                                        Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL0_> const &based_at_point,
-                                        Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL1_> const &delta) const
+                                        Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENT_QUALIFIER0_> const &based_at_point,
+                                        Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENT_QUALIFIER1_> const &delta) const
     {
         return o.function(based_at_point);
     }
 
-    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL0_,
-    typename Derived1_, bool COMPONENTS_ARE_PROCEDURAL1_>
+    template <typename Derived0_, ComponentQualifier COMPONENT_QUALIFIER0_,
+    typename Derived1_, ComponentQualifier COMPONENT_QUALIFIER1_>
     Scalar_ evaluate_1st_order_via_delta (FunctionObject_ const &o,
-                                        Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL0_> const &based_at_point,
-                                        Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL1_> const &delta) const
+                                        Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENT_QUALIFIER0_> const &based_at_point,
+                                        Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENT_QUALIFIER1_> const &delta) const
     {
         AbstractIndex_c<'i'> i;
 
@@ -307,11 +307,11 @@ struct TaylorPolynomialVerifier_t<ParameterSpace_,Scalar_,StandardInnerProduct,S
              + o.D_function(based_at_point)(i)*delta(i);
     }
 
-    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL0_,
-    typename Derived1_, bool COMPONENTS_ARE_PROCEDURAL1_>
+    template <typename Derived0_, ComponentQualifier COMPONENT_QUALIFIER0_,
+    typename Derived1_, ComponentQualifier COMPONENT_QUALIFIER1_>
     Scalar_ evaluate_2nd_order_via_delta (FunctionObject_ const &o,
-                                        Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL0_> const &based_at_point,
-                                        Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL1_> const &delta) const
+                                        Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENT_QUALIFIER0_> const &based_at_point,
+                                        Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENT_QUALIFIER1_> const &delta) const
     {
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
@@ -322,9 +322,9 @@ struct TaylorPolynomialVerifier_t<ParameterSpace_,Scalar_,StandardInnerProduct,S
                 + o.D2_function(based_at_point)(p).split(p,i*j)*delta(i)*delta(j)/2;
     }
 
-    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL_>
+    template <typename Derived0_, ComponentQualifier COMPONENT_QUALIFIER_>
     Scalar_ verify_gradient (FunctionObject_ const &o,
-                            Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL_> const &at_point) const
+                            Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENT_QUALIFIER_> const &at_point) const
     {
         Scalar_ big_o_bound(0);
         static Uint32 const SAMPLES = 10;
@@ -351,9 +351,9 @@ struct TaylorPolynomialVerifier_t<ParameterSpace_,Scalar_,StandardInnerProduct,S
         return big_o_bound;
     }
 
-    template <typename Derived0_, bool COMPONENTS_ARE_PROCEDURAL_>
+    template <typename Derived0_, ComponentQualifier COMPONENT_QUALIFIER_>
     Scalar_ verify_hessian (FunctionObject_ const &o,
-                            Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENTS_ARE_PROCEDURAL_> const &at_point) const
+                            Vector_i<Derived0_,Scalar_,ParameterSpace_,COMPONENT_QUALIFIER_> const &at_point) const
     {
         Scalar_ big_o_bound(0);
         static Uint32 const SAMPLES = 100;
@@ -425,14 +425,14 @@ public:
         m_inner(inner)
     { }
 
-    template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
-    Out function (Vector_i<Derived_,Scalar,Domain,COMPONENTS_ARE_PROCEDURAL_> const &x) const
+    template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
+    Out function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
     {
         return m_outer.function(m_inner.function(x));
     }
 
-    template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
-    D1 D_function (Vector_i<Derived_,Scalar,Domain,COMPONENTS_ARE_PROCEDURAL_> const &x) const
+    template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
+    D1 D_function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
     {
         typedef AbstractIndex_c<'i'> I;
         typedef AbstractIndex_c<'j'> J;
@@ -455,8 +455,8 @@ public:
         return retval;
     }
 
-    template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
-    D2 D2_function (Vector_i<Derived_,Scalar,Domain,COMPONENTS_ARE_PROCEDURAL_> const &x) const
+    template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
+    D2 D2_function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
     {
         typedef AbstractIndex_c<'c'> C;
         typedef AbstractIndex_c<'i'> I;
@@ -539,8 +539,8 @@ struct FunctionDirectSum_t
   m_right(right)
   { }
 
-  template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
-  Out function (Vector_i<Derived_,Scalar,Domain,COMPONENTS_ARE_PROCEDURAL_> const &x) const
+  template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
+  Out function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
   {
     AbstractIndex_c<'i'> i;
     Out retval(Static<WithoutInitialization>::SINGLETON);
@@ -556,8 +556,8 @@ struct FunctionDirectSum_t
     return retval;
   }
 
-  template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
-  D1 D_function (Vector_i<Derived_,Scalar,Domain,COMPONENTS_ARE_PROCEDURAL_> const &x) const
+  template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
+  D1 D_function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
   {
     AbstractIndex_c<'a'> a;
     D1 retval(Static<WithoutInitialization>::SINGLETON);
@@ -598,8 +598,8 @@ struct FunctionDirectSum_t
     return retval;
   }
 
-  template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
-  D2 D2_function (Vector_i<Derived_,Scalar,Domain,COMPONENTS_ARE_PROCEDURAL_> const &x) const
+  template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
+  D2 D2_function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
   {
     typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<CoDomain,
                                                TypeList_t<DualOfBasedVectorSpace,
@@ -693,8 +693,8 @@ struct DiagonalFunction_t
   typedef typename FunctionObjectType::D1 D1;
   typedef typename FunctionObjectType::D2 D2;
 
-  template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
-  Out function (Vector_i<Derived_,Scalar,Domain,COMPONENTS_ARE_PROCEDURAL_> const &x) const
+  template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
+  Out function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
   {
     AbstractIndex_c<'i'> i;
     Out retval(Static<WithoutInitialization>::SINGLETON);
@@ -705,8 +705,8 @@ struct DiagonalFunction_t
     return retval;
   }
 
-  template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
-  D1 D_function (Vector_i<Derived_,Scalar,Domain,COMPONENTS_ARE_PROCEDURAL_> const &x) const
+  template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
+  D1 D_function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
   {
     D1 retval(Static<WithoutInitialization>::SINGLETON);
 
@@ -727,8 +727,8 @@ struct DiagonalFunction_t
     return retval;
   }
 
-  template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
-  D2 D2_function (Vector_i<Derived_,Scalar,Domain,COMPONENTS_ARE_PROCEDURAL_> const &x) const
+  template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
+  D2 D2_function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
   {
     return D2(fill_with(0));
   }
@@ -769,20 +769,20 @@ struct IdentityFunction_t
   }
 
 
-  template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
-  Out function (Vector_i<Derived_,Scalar,Domain,COMPONENTS_ARE_PROCEDURAL_> const &x) const
+  template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
+  Out function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
   {
     return x.as_derived();
   }
 
-  template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
-  D1 D_function (Vector_i<Derived_,Scalar,Domain,COMPONENTS_ARE_PROCEDURAL_> const &x) const
+  template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
+  D1 D_function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
   {
     return m_D1;
   }
 
-  template <typename Derived_, bool COMPONENTS_ARE_PROCEDURAL_>
-  D2 D2_function (Vector_i<Derived_,Scalar,Domain,COMPONENTS_ARE_PROCEDURAL_> const &x) const
+  template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
+  D2 D2_function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
   {
     return D2(FillWith_t<Scalar_>(0));
   }

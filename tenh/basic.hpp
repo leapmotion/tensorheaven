@@ -23,7 +23,7 @@ template <Uint32 DIMENSION_,
           typename Scalar_ = float,
           typename Basis_ = OrthonormalBasis_c<Generic>,
           typename VectorSpaceId_ = Generic,
-          typename UseArrayType_ = UseMemberArray,
+          typename UseArrayType_ = UseMemberArray_t<COMPONENTS_ARE_NONCONST>,
           typename ScalarField_ = RealField>
 struct Vec : public Vector<BasedVectorSpace_c<VectorSpace_c<ScalarField_,DIMENSION_,VectorSpaceId_>,Basis_>,Scalar_,UseArrayType_>
 {
@@ -39,7 +39,7 @@ public:
 
     // TODO: copy constructor and operator= (for appropriate UseArrayType_)
 
-    // only use these if UseMemberArray is specified
+    // only use these if UseMemberArray_t<...> is specified
 
     // probably only useful for zero element (because this is basis-dependent)
     template <typename T_>
@@ -47,7 +47,7 @@ public:
         :
         Parent_Vector(fill_with)
     {
-        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemberArray);
+        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
     }
     // this is the tuple-based constructor
     template <typename HeadType_, typename BodyTypeList_>
@@ -55,16 +55,16 @@ public:
         :
         Parent_Vector(x.as_member_array())
     {
-        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemberArray);
+        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
     }
 
-    // only use these if UsePreallocatedArray is specified
+    // only use these if UsePreallocatedArray_t<...> is specified
 
     explicit Vec (Scalar_ *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Vector(pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
+        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
     }
     template <typename T_>
     Vec (FillWith_t<T_> const &fill_with,
@@ -72,7 +72,7 @@ public:
         :
         Parent_Vector(fill_with, pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
+        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
     }
     // this is the tuple-based constructor
     template <typename HeadType_, typename BodyTypeList_>
@@ -81,7 +81,7 @@ public:
         :
         Parent_Vector(x, pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
+        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
     }
 
     // only use this if UseProceduralArray_t<...> is specified or if the vector space is 0-dimensional
@@ -134,7 +134,7 @@ template <Uint32 CODOMAIN_DIMENSION_,
           typename DomainBasis_ = OrthonormalBasis_c<Generic>,
           typename CodomainId_ = Generic,
           typename DomainId_ = Generic,
-          typename UseArrayType_ = UseMemberArray,
+          typename UseArrayType_ = UseMemberArray_t<COMPONENTS_ARE_NONCONST>,
           typename ScalarField_ = RealField>
 struct Op
     :
@@ -160,14 +160,14 @@ public:
 
     // TODO: copy constructor and operator= (for appropriate UseArrayType_)
 
-    // only use these if UseMemberArray is specified
+    // only use these if UseMemberArray_t<...> is specified
 
     // probably only useful for zero element (because this is basis-dependent)
     explicit Op (Scalar_ const &fill_with)
         :
         Parent_Operator(fill_with)
     {
-        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemberArray);
+        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
     }
     // this is the tuple-based constructor
     template <typename HeadType_, typename BodyTypeList_>
@@ -175,23 +175,23 @@ public:
         :
         Parent_Operator(x.as_member_array())
     {
-        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemberArray);
+        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
     }
 
-    // only use these if UsePreallocatedArray is specified
+    // only use these if UsePreallocatedArray_t<...> is specified
 
     explicit Op (Scalar_ *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Operator(pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
+        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
     }
     Op (Scalar_ const &fill_with,
         Scalar_ *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Operator(fill_with, pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
+        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
     }
     // this is the tuple-based constructor
     template <typename HeadType_, typename BodyTypeList_>
@@ -200,7 +200,7 @@ public:
         :
         Parent_Operator(x, pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
+        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
     }
 
     // only use this if UseProceduralArray_t<...> is specified or if the vector space is 0-dimensional

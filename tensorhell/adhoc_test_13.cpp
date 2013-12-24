@@ -141,7 +141,7 @@ void test_eval_value ()
     AbstractIndex_c<'k'> k;
     typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > BasedVectorSpace;
     typedef float Scalar;
-    typedef ImplementationOf_t<BasedVectorSpace,Scalar,UseMemberArray> V;
+    typedef ImplementationOf_t<BasedVectorSpace,Scalar,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > V;
     V x(uniform_tuple<Scalar>(1, 2, 3));
     V y(uniform_tuple<Scalar>(4, 8, 9));
     V z(uniform_tuple<Scalar>(0, 8, 0));
@@ -157,7 +157,7 @@ void test_eval_value ()
 
     typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace,
                                                TypeList_t<BasedVectorSpace> > > TensorProduct;
-    typedef ImplementationOf_t<TensorProduct,Scalar,UseMemberArray> T;
+    typedef ImplementationOf_t<TensorProduct,Scalar,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > T;
     T t((x(i)*y(j)).eval().value());
     std::cout << FORMAT_VALUE(t) << '\n';
     // this should use "operator EvaluatedTensor const &" in ExpressionTemplate_Eval_t

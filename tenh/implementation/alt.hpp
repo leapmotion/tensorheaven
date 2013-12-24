@@ -30,11 +30,11 @@ Scalar_ alt (ComponentIndex_t<COMPONENT_COUNT_> const &i)
     typedef TensorProductOfBasedVectorSpaces_c<FactorTypeList> Projection;
     STATIC_ASSERT(DimensionOf_f<Projection>::V == COMPONENT_COUNT_, DIMENSIONS_MUST_MATCH);
 
-    // for using bundle_index_map -- the use of UsePreallocatedArray is somewhat arbitrary,
+    // for using bundle_index_map -- the use of UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST> is somewhat arbitrary,
     // since only the static method bundle_index_map will be used.
-    typedef ImplementationOf_t<Projection,Scalar_,UsePreallocatedArray> BootstrappingImplementation;
-    typedef ImplementationOf_t<ExteriorPower,Scalar_,UsePreallocatedArray> Factor0BootstrappingImplementation;
-    typedef ImplementationOf_t<TensorPower,Scalar_,UsePreallocatedArray> Factor1BootstrappingImplementation;
+    typedef ImplementationOf_t<Projection,Scalar_,UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST> > BootstrappingImplementation;
+    typedef ImplementationOf_t<ExteriorPower,Scalar_,UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST> > Factor0BootstrappingImplementation;
+    typedef ImplementationOf_t<TensorPower,Scalar_,UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST> > Factor1BootstrappingImplementation;
 
     typedef typename BootstrappingImplementation::MultiIndex MultiIndex;
     typedef typename MultiIndex::IndexTypeList IndexTypeList;

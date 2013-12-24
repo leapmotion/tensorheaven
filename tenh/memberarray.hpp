@@ -35,20 +35,27 @@ private:
 
 // fixed-length array of a given component type, which must be a POD type
 // (the allocation_size_in_bytes and pointer_to_allocation methods require this).
-template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_ = NullType>
+template <typename Component_, Uint32 COMPONENT_COUNT_, bool COMPONENTS_ARE_CONST_ = COMPONENTS_ARE_NONCONST, typename Derived_ = NullType>
 struct MemberArray_t
     :
-    public MemoryArray_i<typename DerivedType_f<Derived_,MemberArray_t<Component_,COMPONENT_COUNT_,Derived_> >::T,
+    public MemoryArray_i<typename DerivedType_f<Derived_,MemberArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> >::T,
                          Component_,
-                         COMPONENT_COUNT_>
+                         COMPONENT_COUNT_,
+                         COMPONENTS_ARE_CONST_>
 {
-    typedef MemoryArray_i<typename DerivedType_f<Derived_,MemberArray_t<Component_,COMPONENT_COUNT_,Derived_> >::T,
+    typedef MemoryArray_i<typename DerivedType_f<Derived_,MemberArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> >::T,
                           Component_,
-                          COMPONENT_COUNT_> Parent_MemoryArray_i;
+                          COMPONENT_COUNT_,
+                          COMPONENTS_ARE_CONST_> Parent_MemoryArray_i;
 
     typedef typename Parent_MemoryArray_i::Component Component;
     using Parent_MemoryArray_i::COMPONENT_COUNT;
+    using Parent_MemoryArray_i::COMPONENT_QUALIFIER;
     typedef typename Parent_MemoryArray_i::ComponentIndex ComponentIndex;
+    typedef typename Parent_MemoryArray_i::ComponentAccessConstReturnType ComponentAccessConstReturnType;
+    typedef typename Parent_MemoryArray_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
+    using Parent_MemoryArray_i::COMPONENTS_ARE_CONST;
+    typedef typename Parent_MemoryArray_i::QualifiedComponent QualifiedComponent;
 
 // this is to allow 0-component arrays to work (necessary for 0-dimensional vectors)
 #ifdef __clang_version__
@@ -68,18 +75,18 @@ struct MemberArray_t
 #pragma GCC diagnostic pop
 #endif // __clang_version__
 
-    template <typename OtherDerived_>
-    MemberArray_t (MemberArray_t<Component_,COMPONENT_COUNT_,OtherDerived_> const &m)
+    template <bool OTHER_COMPONENTS_ARE_CONST_, typename OtherDerived_>
+    MemberArray_t (MemberArray_t<Component_,COMPONENT_COUNT_,OTHER_COMPONENTS_ARE_CONST_,OtherDerived_> const &m)
     {
         memcpy(&m_component[0], m.pointer_to_allocation(), allocation_size_in_bytes());
     }
 
-    Component const &operator [] (ComponentIndex const &i) const
+    ComponentAccessConstReturnType operator [] (ComponentIndex const &i) const
     {
         assert(i.is_not_at_end() && "you used ComponentIndex_t(x, DONT_RANGE_CHECK) inappropriately");
         return m_component[i.value()];
     }
-    Component &operator [] (ComponentIndex const &i)
+    ComponentAccessNonConstReturnType operator [] (ComponentIndex const &i)
     {
         assert(i.is_not_at_end() && "you used ComponentIndex_t(x, DONT_RANGE_CHECK) inappropriately");
         return m_component[i.value()];
@@ -87,8 +94,8 @@ struct MemberArray_t
 
     // access to the raw data
     using Parent_MemoryArray_i::allocation_size_in_bytes;
-    Component const *pointer_to_allocation () const { return &m_component[0]; }
-    Component *pointer_to_allocation () { return &m_component[0]; }
+    Component_ const *pointer_to_allocation () const { return &m_component[0]; }
+    QualifiedComponent *pointer_to_allocation () { return &m_component[0]; }
     // this should really go in MemoryArray_i, but there were problems with casting
     // to private base classes.
     bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const
@@ -102,12 +109,14 @@ struct MemberArray_t
 
     static std::string type_as_string ()
     {
-        return "MemberArray_t<" + type_string_of<Component>() + ',' + AS_STRING(COMPONENT_COUNT) + '>';
+        return "MemberArray_t<" + type_string_of<Component_>() + ','
+                                + AS_STRING(COMPONENT_COUNT_) + ','
+                                + AS_STRING(COMPONENTS_ARE_CONST_) + '>';
     }
 
 protected:
 
-    Component m_component[ArraySize_f<COMPONENT_COUNT>::V];
+    Component m_component[ArraySize_f<COMPONENT_COUNT_>::V];
 
 private:
 
@@ -121,20 +130,20 @@ template <typename T> struct IsMemberArray_t
 private:
     IsMemberArray_t();
 };
-template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_> struct IsMemberArray_t<MemberArray_t<Component_,COMPONENT_COUNT_,Derived_> >
+template <typename Component_, Uint32 COMPONENT_COUNT_, bool COMPONENTS_ARE_CONST_, typename Derived_> struct IsMemberArray_t<MemberArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> >
 {
     static bool const V = true;
 private:
     IsMemberArray_t();
 };
 
-template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_> struct IsArray_i<MemberArray_t<Component_,COMPONENT_COUNT_,Derived_> >
+template <typename Component_, Uint32 COMPONENT_COUNT_, bool COMPONENTS_ARE_CONST_, typename Derived_> struct IsArray_i<MemberArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> >
 {
     static bool const V = true;
 private:
     IsArray_i();
 };
-template <typename Component_, Uint32 COMPONENT_COUNT_, typename Derived_> struct IsMemoryArray_i<MemberArray_t<Component_,COMPONENT_COUNT_,Derived_> >
+template <typename Component_, Uint32 COMPONENT_COUNT_, bool COMPONENTS_ARE_CONST_, typename Derived_> struct IsMemoryArray_i<MemberArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> >
 {
     static bool const V = true;
 private:

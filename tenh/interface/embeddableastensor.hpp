@@ -93,10 +93,10 @@ typename IndexedParameterListReturnType_f<TypeList_t<HeadParameter>,TypeList_t<H
 template <typename Derived_,
           typename Scalar_,
           typename EmbeddableInTensorProductOfBasedVectorSpaces_,
-          bool COMPONENTS_ARE_PROCEDURAL_>
+          ComponentQualifier COMPONENT_QUALIFIER_>
 struct EmbeddableAsTensor_i
     :
-    public Vector_i<Derived_,Scalar_,EmbeddableInTensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_PROCEDURAL_>
+    public Vector_i<Derived_,Scalar_,EmbeddableInTensorProductOfBasedVectorSpaces_,COMPONENT_QUALIFIER_>
 {
     enum
     {
@@ -105,15 +105,16 @@ struct EmbeddableAsTensor_i
                               MUST_BE_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES),
     };
 
-    typedef Vector_i<Derived_,Scalar_,EmbeddableInTensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_PROCEDURAL_> Parent_Vector_i;
+    typedef Vector_i<Derived_,Scalar_,EmbeddableInTensorProductOfBasedVectorSpaces_,COMPONENT_QUALIFIER_> Parent_Vector_i;
     typedef typename Parent_Vector_i::Derived Derived;
     typedef typename Parent_Vector_i::Scalar Scalar;
     typedef typename Parent_Vector_i::BasedVectorSpace BasedVectorSpace;
     using Parent_Vector_i::DIM; // does this make any sense?  e.g. simple tensors aren't a linear space
     typedef typename Parent_Vector_i::ComponentIndex ComponentIndex;
-    using Parent_Vector_i::COMPONENTS_ARE_PROCEDURAL;
+    using Parent_Vector_i::COMPONENT_QUALIFIER;
     typedef typename Parent_Vector_i::ComponentAccessConstReturnType ComponentAccessConstReturnType;
     typedef typename Parent_Vector_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
+    typedef typename Parent_Vector_i::QualifiedComponent QualifiedComponent;
 
     typedef EmbeddableInTensorProductOfBasedVectorSpaces_ EmbeddableInTensorProductOfBasedVectorSpaces;
     typedef typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(EmbeddableInTensorProductOfBasedVectorSpaces)::TensorProductOfBasedVectorSpaces TensorProductOfBasedVectorSpaces;
@@ -159,12 +160,12 @@ struct EmbeddableAsTensor_i
     // this is a special case for when ORDER == 2, i.e. it is a bilinear form.
     template <typename Derived0_,
               typename BasedVectorSpace0_,
-              bool COMPONENTS_ARE_PROCEDURAL0_,
+              ComponentQualifier COMPONENT_QUALIFIER0_,
               typename Derived1_,
               typename BasedVectorSpace1_,
-              bool COMPONENTS_ARE_PROCEDURAL1_>
-    Scalar_ operator () (Vector_i<Derived0_,Scalar_,BasedVectorSpace0_,COMPONENTS_ARE_PROCEDURAL0_> const &v0,
-                         Vector_i<Derived1_,Scalar_,BasedVectorSpace1_,COMPONENTS_ARE_PROCEDURAL1_> const &v1) const
+              ComponentQualifier COMPONENT_QUALIFIER1_>
+    Scalar_ operator () (Vector_i<Derived0_,Scalar_,BasedVectorSpace0_,COMPONENT_QUALIFIER0_> const &v0,
+                         Vector_i<Derived1_,Scalar_,BasedVectorSpace1_,COMPONENT_QUALIFIER1_> const &v1) const
     {
         STATIC_ASSERT(ORDER == 2, ORDER_MUST_BE_EXACTLY_2);
         AbstractIndex_c<'i'> i;
@@ -198,14 +199,14 @@ struct EmbeddableAsTensor_i
         return "EmbeddableAsTensor_i<" + type_string_of<Derived>() + ','
                                        + type_string_of<Scalar>() + ','
                                        + type_string_of<EmbeddableInTensorProductOfBasedVectorSpaces>() + ','
-                                       + AS_STRING((COMPONENTS_ARE_PROCEDURAL_ ? "PROCEDURAL_COMPONENTS" : "MUTABLE_COMPONENTS")) + '>';
+                                       + component_qualifier_as_string(COMPONENT_QUALIFIER_) + '>';
     }
 };
 
-template <typename Derived_, typename Scalar_, typename EmbeddableInTensorProductOfBasedVectorSpaces_, bool COMPONENTS_ARE_PROCEDURAL_>
-std::ostream &operator << (std::ostream &out, EmbeddableAsTensor_i<Derived_,Scalar_,EmbeddableInTensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_PROCEDURAL_> const &e)
+template <typename Derived_, typename Scalar_, typename EmbeddableInTensorProductOfBasedVectorSpaces_, ComponentQualifier COMPONENT_QUALIFIER_>
+std::ostream &operator << (std::ostream &out, EmbeddableAsTensor_i<Derived_,Scalar_,EmbeddableInTensorProductOfBasedVectorSpaces_,COMPONENT_QUALIFIER_> const &e)
 {
-    return out << *static_cast<Vector_i<Derived_,Scalar_,EmbeddableInTensorProductOfBasedVectorSpaces_,COMPONENTS_ARE_PROCEDURAL_> const *>(&e);
+    return out << *static_cast<Vector_i<Derived_,Scalar_,EmbeddableInTensorProductOfBasedVectorSpaces_,COMPONENT_QUALIFIER_> const *>(&e);
 }
 
 } // end of namespace Tenh

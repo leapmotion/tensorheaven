@@ -81,7 +81,7 @@ struct ExpressionTemplate_Eval_t
     }
 
     typedef TensorProductOfBasedVectorSpaces_c<FreeFactorTypeList> ExpressionTensorType;
-    typedef ImplementationOf_t<ExpressionTensorType,Scalar,UseMemberArray> EvaluatedTensor;
+    typedef ImplementationOf_t<ExpressionTensorType,Scalar,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > EvaluatedTensor;
 
     // returns the cached value, caching it if necessary.
     EvaluatedTensor const &value () const

@@ -23,7 +23,7 @@ namespace Tenh {
 // NOTE: Scalar_ MUST be a POD data type.  An implementation of this interface
 // really only needs to provide implementations of the const and non-const
 // component_access_without_range_check methods.
-template <typename Derived_, typename Scalar_, typename BasedVectorSpace_, bool COMPONENTS_ARE_PROCEDURAL_>
+template <typename Derived_, typename Scalar_, typename BasedVectorSpace_, ComponentQualifier COMPONENT_QUALIFIER_>
 struct Vector_i
 {
     enum
@@ -44,10 +44,10 @@ struct Vector_i
     // a 1-tensor having a particular type.
     typedef TypeList_t<BasedVectorSpace> FactorTypeList;
 
-    // these definitions must coincide with the Array_i ones (if used in conjunction with Array_i)
-    static bool const COMPONENTS_ARE_PROCEDURAL = COMPONENTS_ARE_PROCEDURAL_;
-    typedef typename If_f<COMPONENTS_ARE_PROCEDURAL_,Scalar_,Scalar_ const &>::T ComponentAccessConstReturnType;
-    typedef typename If_f<COMPONENTS_ARE_PROCEDURAL_,Scalar_,Scalar_ &>::T ComponentAccessNonConstReturnType;
+    static bool const COMPONENT_QUALIFIER = COMPONENT_QUALIFIER_;
+    typedef typename ComponentQualifier_m<Scalar_,COMPONENT_QUALIFIER_>::ComponentAccessConstReturnType ComponentAccessConstReturnType;
+    typedef typename ComponentQualifier_m<Scalar_,COMPONENT_QUALIFIER_>::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
+    typedef typename ComponentQualifier_m<Scalar_,COMPONENT_QUALIFIER_>::QualifiedComponent QualifiedComponent;
 
     static Uint32 dim () { return DIM; }
 
@@ -160,8 +160,8 @@ struct Vector_i
     // exactly one argument.
     template <typename OtherDerived_,
               typename OtherBasedVectorSpace_,
-              bool OTHER_COMPONENTS_ARE_PROCEDURAL_>
-    Scalar_ operator () (Vector_i<OtherDerived_,Scalar_,OtherBasedVectorSpace_,OTHER_COMPONENTS_ARE_PROCEDURAL_> const &v) const
+              ComponentQualifier OTHER_COMPONENT_QUALIFIER_>
+    Scalar_ operator () (Vector_i<OtherDerived_,Scalar_,OtherBasedVectorSpace_,OTHER_COMPONENT_QUALIFIER_> const &v) const
     {
         AbstractIndex_c<'i'> i;
         return operator()(i)*v(i);
@@ -180,8 +180,8 @@ struct Vector_i
     }
 
     Uint32 allocation_size_in_bytes () const { return as_derived().allocation_size_in_bytes(); }
-    Scalar_ const *pointer_to_allocation () const { return as_derived().pointer_to_allocation(); }
-    Scalar_ *pointer_to_allocation () { return as_derived().pointer_to_allocation(); }
+    Scalar const *pointer_to_allocation () const { return as_derived().pointer_to_allocation(); }
+    QualifiedComponent *pointer_to_allocation () { return as_derived().pointer_to_allocation(); }
     bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const { return as_derived().overlaps_memory_range(ptr, range); }
 
     // NOTE: these are sort of part of the Tensor_i interface, but need Vector_i's cooperation.
@@ -195,17 +195,17 @@ struct Vector_i
         return "Vector_i<" + type_string_of<Derived>() + ','
                            + type_string_of<Scalar>() + ','
                            + type_string_of<BasedVectorSpace>() + ','
-                           + AS_STRING((COMPONENTS_ARE_PROCEDURAL_ ? "PROCEDURAL_COMPONENTS" : "MUTABLE_COMPONENTS")) + '>';
+                           + component_qualifier_as_string(COMPONENT_QUALIFIER_) + '>';
     }
 };
 
 template <typename T_> struct IsAVector_i { static bool const V = false; };
-template <typename Derived_, typename Scalar_, typename BasedVectorSpace_, bool COMPONENTS_ARE_PROCEDURAL_> struct IsAVector_i<Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> > { static bool const V = true; };
+template <typename Derived_, typename Scalar_, typename BasedVectorSpace_, ComponentQualifier COMPONENT_QUALIFIER_> struct IsAVector_i<Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENT_QUALIFIER_> > { static bool const V = true; };
 
-template <typename Derived_, typename Scalar_, typename BasedVectorSpace_, bool COMPONENTS_ARE_PROCEDURAL_>
-std::ostream &operator << (std::ostream &out, Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> const &v)
+template <typename Derived_, typename Scalar_, typename BasedVectorSpace_, ComponentQualifier COMPONENT_QUALIFIER_>
+std::ostream &operator << (std::ostream &out, Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENT_QUALIFIER_> const &v)
 {
-    typedef Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_PROCEDURAL_> Vector;
+    typedef Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENT_QUALIFIER_> Vector;
 
     if (Vector::DIM == 0)
         return out << "()";

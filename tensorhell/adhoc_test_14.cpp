@@ -179,8 +179,8 @@ void test_linear_solve_using_least_squares ()
 template <typename Concept_, typename Scalar_>
 void test_particular_implementation_of_vector_construction_via_vector_i ()
 {
-    typedef ImplementationOf_t<Concept_,Scalar_,UseMemberArray> U;
-    typedef ImplementationOf_t<Concept_,Scalar_,UsePreallocatedArray> V;
+    typedef ImplementationOf_t<Concept_,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > U;
+    typedef ImplementationOf_t<Concept_,Scalar_,UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST> > V;
     static Uint32 const DIM = U::DIM;
 
     U u(Static<WithoutInitialization>::SINGLETON);
@@ -201,7 +201,7 @@ void test_particular_implementation_of_vector_construction_via_vector_i ()
     typename V::Parent_Vector_i const &v_as_vector_i = v;
     std::cout << FORMAT_VALUE(v_as_vector_i) << '\n';
     {
-        std::cout << "testing UseMemberArray construction from Vector_i types\n";
+        std::cout << "testing UseMemberArray_t<COMPONENTS_ARE_NONCONST> construction from Vector_i types\n";
         U constructed_from_vector_i_0(u_as_vector_i);
         std::cout << FORMAT_VALUE(constructed_from_vector_i_0) << '\n';
         U constructed_from_vector_i_1(v_as_vector_i);
@@ -210,7 +210,7 @@ void test_particular_implementation_of_vector_construction_via_vector_i ()
         std::cout << FORMAT_VALUE(constructed_from_vector_i_2) << '\n';
     }
     {
-        std::cout << "testing UsePreallocatedArray construction from Vector_i types\n";
+        std::cout << "testing UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST> construction from Vector_i types\n";
         Scalar_ other_array[3];
         V constructed_from_vector_i_0(u_as_vector_i, &other_array[0]);
         std::cout << FORMAT_VALUE(constructed_from_vector_i_0) << '\n';

@@ -18,20 +18,20 @@ namespace Tenh {
 template <typename FactorTypeList_, typename Scalar_, typename UseArrayType_, typename Derived_>
 struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Scalar_,UseArrayType_,Derived_>
     :
-    public Tensor_i<typename DerivedType_f<Derived_, ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Scalar_,UseArrayType_,Derived_> >::T,
+    public Tensor_i<typename DerivedType_f<Derived_,ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Scalar_,UseArrayType_,Derived_> >::T,
                     Scalar_,
                     TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,
-                    ComponentsAreProcedural_f<UseArrayType_>::V>,
+                    ComponentQualifierOfArrayType_f<UseArrayType_>::V>,
     // privately inherited because it is an implementation detail
     private ArrayStorage_f<Scalar_,
                            DimensionOf_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >::V,
                            UseArrayType_,
                            typename DerivedType_f<Derived_, ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Scalar_,UseArrayType_,Derived_> >::T >::T
 {
-    typedef Tensor_i<typename DerivedType_f<Derived_, ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Scalar_,UseArrayType_,Derived_> >::T,
+    typedef Tensor_i<typename DerivedType_f<Derived_,ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Scalar_,UseArrayType_,Derived_> >::T,
                      Scalar_,
                      TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,
-                     ComponentsAreProcedural_f<UseArrayType_>::V> Parent_Tensor_i;
+                     ComponentQualifierOfArrayType_f<UseArrayType_>::V> Parent_Tensor_i;
     typedef typename ArrayStorage_f<Scalar_,
                                     DimensionOf_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >::V,
                                     UseArrayType_,
@@ -49,9 +49,10 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
     using Parent_Tensor_i::ORDER;
     using Parent_Tensor_i::IS_TENSOR_I;
 
-    using Parent_Array_i::COMPONENTS_ARE_PROCEDURAL;
+    using Parent_Array_i::COMPONENT_QUALIFIER;
     typedef typename Parent_Array_i::ComponentAccessConstReturnType ComponentAccessConstReturnType;
     typedef typename Parent_Array_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
+    typedef typename Parent_Array_i::QualifiedComponent QualifiedComponent;
 
     typedef typename DualOf_f<ImplementationOf_t>::T Dual; // relies on the template specialization below
 
@@ -78,16 +79,16 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
 
     explicit ImplementationOf_t (WithoutInitialization const &w) : Parent_Array_i(w) { }
 
-    // only use these if UseMemberArray is specified
+    // only use these if UseMemberArray_t<...> is specified
 
     // similar to a copy constructor, except initializes from a Vector_i.
     // this was chosen to be explicit to avoid unnecessary copies.
-    template <typename OtherDerived_, bool COMPONENTS_ARE_PROCEDURAL_>
-    explicit ImplementationOf_t (Vector_i<OtherDerived_,Scalar_,Concept,COMPONENTS_ARE_PROCEDURAL_> const &x)
+    template <typename OtherDerived_, ComponentQualifier OTHER_COMPONENT_QUALIFIER_>
+    explicit ImplementationOf_t (Vector_i<OtherDerived_,Scalar_,Concept,OTHER_COMPONENT_QUALIFIER_> const &x)
         :
         Parent_Array_i(Static<WithoutInitialization>::SINGLETON)
     {
-        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemberArray);
+        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
         // TODO: could make this use MemoryArray_i::copy_from (?)
         for (ComponentIndex i; i.is_not_at_end(); ++i)
             (*this)[i] = x[i];
@@ -98,7 +99,7 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
         :
         Parent_Array_i(fill_with)
     {
-        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemberArray);
+        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
     }
     // this is the tuple-based constructor
     template <typename HeadType_, typename BodyTypeList_>
@@ -106,46 +107,46 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
         :
         Parent_Array_i(x.as_member_array())
     {
-        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UseMemberArray);
+        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
     }
 
-    // only use these if UsePreallocatedArray is specified
+    // only use these if UsePreallocatedArray_t<...> is specified
 
-    explicit ImplementationOf_t (Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+    explicit ImplementationOf_t (QualifiedComponent *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Array_i(pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
+        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
     }
     // similar to a copy constructor, except initializes from a Vector_i.
     // this was chosen to be explicit to avoid unnecessary copies.
-    template <typename OtherDerived_, bool COMPONENTS_ARE_PROCEDURAL_>
-    ImplementationOf_t (Vector_i<OtherDerived_,Scalar_,Concept,COMPONENTS_ARE_PROCEDURAL_> const &x,
-                        Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+    template <typename OtherDerived_, ComponentQualifier OTHER_COMPONENT_QUALIFIER_>
+    ImplementationOf_t (Vector_i<OtherDerived_,Scalar_,Concept,OTHER_COMPONENT_QUALIFIER_> const &x,
+                        QualifiedComponent *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Array_i(pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
+        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
         // TODO: could make this use MemoryArray_i::copy_from (?)
         for (ComponentIndex i; i.is_not_at_end(); ++i)
             (*this)[i] = x[i];
     }
     template <typename T_>
     ImplementationOf_t (FillWith_t<T_> const &fill_with,
-                        Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+                        QualifiedComponent *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Array_i(fill_with, pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
+        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
     }
     // this is the tuple-based constructor
     template <typename HeadType_, typename BodyTypeList_>
     ImplementationOf_t (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x,
-                        Scalar *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+                        QualifiedComponent *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Array_i(x, pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT_TYPES_ARE_EQUAL(UseArrayType_,UsePreallocatedArray);
+        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
     }
 
     // only use this if UseProceduralArray_t<...> is specified
