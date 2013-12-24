@@ -192,56 +192,45 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
     using Parent_Array_i::pointer_to_allocation;
     using Parent_Array_i::overlaps_memory_range;
 
-    template <Uint32 N>
+    template <Uint32 N_, bool FORCE_CONST_>
     struct ElementType_f
     {
     private:
-        enum { STATIC_ASSERT_IN_ENUM((SummandTypeList_::LENGTH > N), ATTEMPTED_ACCESS_PAST_LIST_END) };
+        enum { STATIC_ASSERT_IN_ENUM((SummandTypeList_::LENGTH > N_), ATTEMPTED_ACCESS_PAST_LIST_END) };
+        static bool const ELEMENT_COMPONENTS_ARE_CONST = FORCE_CONST_ ||
+                                                         ComponentQualifierOfArrayType_f<UseArrayType_>::V == COMPONENTS_ARE_CONST_MEMORY;
     public:
-        typedef ImplementationOf_t<typename Element_f<SummandTypeList_, N>::T,
+        typedef ImplementationOf_t<typename Element_f<SummandTypeList_,N_>::T,
                                    Scalar_,
                                    typename If_f<IsUseProceduralArray_f<UseArrayType_>::V,
                                                  UseArrayType_,
-                                                 UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST> >::T > T;
+                                                 UsePreallocatedArray_t<ELEMENT_COMPONENTS_ARE_CONST> >::T > T;
     };
 
-    template <Uint32 N>
-    struct ConstElementType_f
+    template <Uint32 N_>
+    typename ElementType_f<N_,false>::T el ()
     {
-    private:
-        enum { STATIC_ASSERT_IN_ENUM((SummandTypeList_::LENGTH > N), ATTEMPTED_ACCESS_PAST_LIST_END) };
-    public:
-        typedef ImplementationOf_t<typename Element_f<SummandTypeList_, N>::T,
-                                   Scalar_ const,
-                                   typename If_f<IsUseProceduralArray_f<UseArrayType_>::V,
-                                                 UseArrayType_,
-                                                 UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST> >::T > T;
-    };
-
-    template <Uint32 N>
-    typename ElementType_f<N>::T el ()
-    {
-        STATIC_ASSERT((SummandTypeList_::LENGTH > N), ATTEMPTED_ACCESS_PAST_LIST_END);
-        return typename ElementType_f<N>::T(pointer_to_allocation() + OffsetForComponent_f<SummandTypeList_,N>::V);
+        STATIC_ASSERT((SummandTypeList_::LENGTH > N_), ATTEMPTED_ACCESS_PAST_LIST_END);
+        return typename ElementType_f<N_,false>::T(pointer_to_allocation() + OffsetForComponent_f<SummandTypeList_,N_>::V);
     }
 
-    template <Uint32 N>
-    typename ConstElementType_f<N>::T el () const
+    template <Uint32 N_>
+    typename ElementType_f<N_,true>::T el () const
     {
-        STATIC_ASSERT((SummandTypeList_::LENGTH > N), ATTEMPTED_ACCESS_PAST_LIST_END);
-        return typename ConstElementType_f<N>::T(pointer_to_allocation() + OffsetForComponent_f<SummandTypeList_,N>::V);
+        STATIC_ASSERT((SummandTypeList_::LENGTH > N_), ATTEMPTED_ACCESS_PAST_LIST_END);
+        return typename ElementType_f<N_,true>::T(pointer_to_allocation() + OffsetForComponent_f<SummandTypeList_,N_>::V);
     }
 
-    typename ElementType_f<0>::T el (Uint32 n)
+    typename ElementType_f<0,false>::T el (Uint32 n)
     {
         STATIC_ASSERT(TypeListIsUniform_t<SummandTypeList_>::V, TYPELIST_MUST_BE_UNIFORM);
-        return typename ElementType_f<0>::T(pointer_to_allocation() + DimensionOf_f<typename SummandTypeList_::HeadType>::V * n);
+        return typename ElementType_f<0,false>::T(pointer_to_allocation() + DimensionOf_f<typename SummandTypeList_::HeadType>::V * n);
     }
 
-    typename ConstElementType_f<0>::T el (Uint32 n) const
+    typename ElementType_f<0,true>::T el (Uint32 n) const
     {
         STATIC_ASSERT(TypeListIsUniform_t<SummandTypeList_>::V, TYPELIST_MUST_BE_UNIFORM);
-        return typename ConstElementType_f<0>::T(pointer_to_allocation() + DimensionOf_f<typename SummandTypeList_::HeadType>::V * n);
+        return typename ElementType_f<0,true>::T(pointer_to_allocation() + DimensionOf_f<typename SummandTypeList_::HeadType>::V * n);
     }
 
     // These versions of el<...> are intended to allow use like el<n>(i) rather than the more clunky el<n>()(i) to get an indexed expression.
