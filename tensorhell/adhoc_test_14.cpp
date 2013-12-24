@@ -240,4 +240,47 @@ void test_implementation_of_vector_construction_via_vector_i ()
     test_particular_implementation_of_vector_construction_via_vector_i<SymmetricPower,Scalar>();
 }
 
+void test_const_component_arrays ()
+{
+    {
+        std::cout << "testing const-component MemberArray_t\n";
+        typedef MemberArray_t<Uint32,8,COMPONENTS_ARE_NONCONST> MemberArrayNonConst;
+        typedef MemberArray_t<Uint32,8,COMPONENTS_ARE_CONST> MemberArrayConst;
+
+        MemberArrayNonConst nonconst_array(Static<WithoutInitialization>::SINGLETON);
+        for (MemberArrayNonConst::ComponentIndex i; i.is_not_at_end(); ++i)
+            nonconst_array[i] = i.value() + 1;
+        std::cout << "nonconst_array = ";
+        nonconst_array.print(std::cout);
+        std::cout << '\n';
+
+        MemberArrayConst const_array(nonconst_array);
+        std::cout << "const_array = ";
+        const_array.print(std::cout);
+        std::cout << "\n\n";
+
+        // this should produce a compile error
+        //const_array[MemberArrayConst::ComponentIndex(0)] = 82;
+    }
+
+    {
+        std::cout << "testing const-component PreallocatedArray_t\n";
+        typedef PreallocatedArray_t<Uint32,8,COMPONENTS_ARE_CONST> PreallocatedArrayConst;
+
+        Uint32 const data[8] = {2, 4, 8, 16, 32, 64, 128, 256};
+
+        std::cout << "data = {";
+        for (Uint32 i = 0; i < 8; ++i)
+            std::cout << data[i] << ", ";
+        std::cout << "}\n";
+
+        PreallocatedArrayConst const_array(&data[0]);
+        std::cout << "const_array = ";
+        const_array.print(std::cout);
+        std::cout << "\n\n";
+
+        // this should produce a compile error
+        //const_array[PreallocatedArrayConst::ComponentIndex(0)] = 82;
+    }
+}
 

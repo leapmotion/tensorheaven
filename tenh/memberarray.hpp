@@ -80,6 +80,7 @@ struct MemberArray_t
     {
         memcpy(&m_component[0], m.pointer_to_allocation(), allocation_size_in_bytes());
     }
+    // TODO: tuple constructor?
 
     ComponentAccessConstReturnType operator [] (ComponentIndex const &i) const
     {
