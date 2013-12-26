@@ -9,7 +9,9 @@
 #define TENH_META_TYPELIST_UTILITY_HPP_
 
 #include "tenh/core.hpp"
+
 #include "tenh/meta/typelist.hpp"
+#include "tenh/meta/function.hpp"
 
 namespace Tenh {
 
@@ -44,24 +46,6 @@ inline void compile_time_check_that_there_is_a_type_conversion (EmptyTypeList co
     // nothing needs to be done, there are no types to check
 }
 /// @endcond
-
-
-// ///////////////////////////////////////////////////////////////////////////
-// apply a metafunction to each element in a TypeList_t
-// ///////////////////////////////////////////////////////////////////////////
-
-template <typename TypeList_, typename FunctionEvaluator_>
-struct OnEach_f
-{
-    typedef TypeList_t<typename FunctionEvaluator_::template Eval_f<typename TypeList_::HeadType>::T,
-                       typename OnEach_f<typename TypeList_::BodyTypeList,FunctionEvaluator_>::T> T;
-};
-
-template <typename FunctionEvaluator_>
-struct OnEach_f<EmptyTypeList,FunctionEvaluator_>
-{
-    typedef EmptyTypeList T;
-};
 
 // ///////////////////////////////////////////////////////////////////////////
 // logic

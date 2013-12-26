@@ -2,6 +2,7 @@
 // tenh/meta/core.hpp by Victor Dods, created 2006/11/29
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
+
 /// @file meta/core.hpp
 /// @headerfile core.hpp "tenh/meta/core.hpp"
 /// @brief Contains essential template metafunction building blocks.
@@ -125,77 +126,7 @@ typedef Integer<64>::Signed Sint64;
 typedef Integer<64>::Unsigned Uint64;
 
 // ///////////////////////////////////////////////////////////////////////////
-// macros to make evaluator wrappers so that metafunctions can be passed
-// in as template parameters like in any real functional language
-// ///////////////////////////////////////////////////////////////////////////
-
-#define MAKE_1_ARY_TYPE_EVALUATOR(MetaFunctionName) \
-struct MetaFunctionName##_e \
-{ \
-    template <typename TypeList_> \
-    struct Eval_f \
-    { \
-        typedef typename MetaFunctionName##_f<TypeList_>::T T; \
-    }; \
-}
-
-#define MAKE_2_ARY_TYPE_EVALUATOR(MetaFunctionName, Type2, Name2) \
-template <Type2 Name2> \
-struct MetaFunctionName##_e \
-{ \
-    template <typename TypeList_> \
-    struct Eval_f \
-    { \
-        typedef typename MetaFunctionName##_f<TypeList_,Name2>::T T; \
-    }; \
-}
-
-#define MAKE_3_ARY_TYPE_EVALUATOR(MetaFunctionName, Type2, Name2, Type3, Name3) \
-template <Type2 Name2, Type3 Name3> \
-struct MetaFunctionName##_e \
-{ \
-    template <typename TypeList_> \
-    struct Eval_f \
-    { \
-        typedef typename MetaFunctionName##_f<TypeList_,Name2,Name3>::T T; \
-    }; \
-}
-
-#define MAKE_1_ARY_VALUE_EVALUATOR(MetaFunctionName, MetaFunctionValueType) \
-struct MetaFunctionName##_e \
-{ \
-    template <typename TypeList_> \
-    struct Eval_f \
-    { \
-        typedef Value_t<MetaFunctionValueType,MetaFunctionName##_f<TypeList_>::V> T; \
-    }; \
-}
-
-#define MAKE_2_ARY_VALUE_EVALUATOR(MetaFunctionName, MetaFunctionValueType, Type2, Name2) \
-template <Type2 Name2> \
-struct MetaFunctionName##_e \
-{ \
-    template <typename TypeList_> \
-    struct Eval_f \
-    { \
-        typedef Value_t<MetaFunctionValueType,MetaFunctionName##_f<TypeList_,Name2>::V> T; \
-    }; \
-}
-
-#define MAKE_3_ARY_VALUE_EVALUATOR(MetaFunctionName, MetaFunctionValueType, Type2, Name2, Type3, Name3) \
-template <Type2 Name2, Type3 Name3> \
-struct MetaFunctionName##_e \
-{ \
-    template <typename TypeList_> \
-    struct Eval_f \
-    { \
-        typedef Value_t<MetaFunctionValueType,MetaFunctionName##_f<TypeList_,Name2,Name3>::V> T; \
-    }; \
-}
-
-
-// ///////////////////////////////////////////////////////////////////////////
-// compile-time asserts for the above code (only basic asserts for BinXX)
+// compile-time asserts for the above code
 // ///////////////////////////////////////////////////////////////////////////
 
 /// Assertions to test the functionality of the code in this file.

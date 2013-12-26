@@ -2,10 +2,12 @@
 #include <iostream>
 
 #include "tenh/core.hpp"
+#include "tenh/meta/function.hpp"
 #include "tenh/meta/typelist.hpp"
 #include "tenh/meta/typestringof.hpp"
 
 using namespace std;
+using namespace Tenh;
 
 typedef unsigned long long int uint;
 
@@ -30,8 +32,13 @@ private:
 //   hash map -- one a compile-time TMP valued thing, and the other a runtime valued
 //   thing.
 
-// generates a lookup table for Function_f_ in range [START_, END_)
-template <template <uint N_> class Function_f_, uint START_, uint END_, typename Codomain_>
+// generates a lookup table for Function_f_ in range [START_, END_).
+// Domain_ should be an integral type.
+template <typename Domain_,
+          template <Domain_ N_> class Function_f_,
+          Domain_ START_,
+          Domain_ END_,
+          typename Codomain_>
 struct LookupTable_t
 {
     LookupTable_t ()
@@ -39,6 +46,7 @@ struct LookupTable_t
         m_start_value(Function_f_<START_>::V),
         m_body_lookup_table()
     {
+        cout << Function_f_<START_>::V << '\n';
         // make sure the range is valid
         assert(START_ <= END_);
         // make sure that each m_start_value is actually layed out contiguously in memory
@@ -48,20 +56,23 @@ struct LookupTable_t
     {
         return &m_start_value;
     }
-    Codomain_ operator [] (uint i) const
+    Codomain_ operator [] (Domain_ i) const
     {
         assert(START_ <= i && i < END_);
         return as_array()[i - START_];
     }
 private:
-    typedef LookupTable_t<Function_f_,START_+1,END_,Codomain_> BodyLookupTable;
+    typedef LookupTable_t<Domain_,Function_f_,START_+1,END_,Codomain_> BodyLookupTable;
 
     Codomain_ const m_start_value;
     BodyLookupTable m_body_lookup_table;
 };
 
-template <template <uint N_> class Function_f_, uint START_END_, typename Codomain_>
-struct LookupTable_t<Function_f_,START_END_,START_END_,Codomain_>
+template <typename Domain_,
+          template <Domain_ N_> class Function_f_,
+          Domain_ START_END_,
+          typename Codomain_>
+struct LookupTable_t<Domain_,Function_f_,START_END_,START_END_,Codomain_>
 {
     Codomain_ const *as_array () const { return reinterpret_cast<Codomain_ const *>(this); }
 };
@@ -75,11 +86,31 @@ template <typename N_> struct Square_f { typedef Tenh::Value_t<uint,N_::V*N_::V>
 
 ///////////////////////////////////////////////////////////////////////////////
 
+template <typename T_> struct Cube_f;
+template <uint VALUE_> struct Cube_f<Value_t<uint,VALUE_> >
+{
+    static uint const V = VALUE_*VALUE_*VALUE_;
+    // typedef Value_t<uint,V> T;
+};
+
+template <typename T_> struct PlusOne_f;
+template <uint VALUE_> struct PlusOne_f<Value_t<uint,VALUE_> >
+{
+    static uint const V = VALUE_+1;
+    // typedef Value_t<uint,V> T;
+};
+
+MAKE_1_ARY_VALUE_EVALUATOR(Cube, uint);
+MAKE_1_ARY_VALUE_EVALUATOR(PlusOne, uint);
+
+///////////////////////////////////////////////////////////////////////////////
+
 uint triangular_number (uint n) { return (n * (n + 1)) / 2; }
 
 struct SymmetricIndex
 {
     uint i, j;
+    //SymmetricIndex (SymmetricIndex const &s) : i(s.i), j(s.j) { }
     SymmetricIndex (uint i_, uint j_) : i(i_), j(j_) { assert (i >= j); }
 };
 
@@ -109,6 +140,7 @@ struct SymmetricIndex_t
     enum { _ = Tenh::Assert<(I_ >= J_)>::V };
 
     static SymmetricIndex const V;
+    // operator SymmetricIndex () const { return V; }
 
     static std::string type_as_string () { return "SymmetricIndex_t<" + AS_STRING(I_) + ',' + AS_STRING(J_) + '>'; }
 };
@@ -171,31 +203,9 @@ SymmetricIndex const SymmetricIndexHashInverse_f<N_>::V = SymmetricIndexHashInve
 
 ///////////////////////////////////////////////////////////////////////////////
 
-// composition of metafunctions
-
-// template <typename FunctionTypeList_, typename Input_> struct Composition_f;
-
-// template <template <typename T_> class HeadFunction_f_, typename BodyFunctionTypeList_, typename Input_>
-// struct Composition_f<Tenh::TypeList_t<template <typename T_> class HeadFunction_f_,BodyFunctionTypeList_>,Input_>
-// {
-// private:
-//     typedef typename Composition_f<BodyFunctionTypeList_,Input_>::T BodyCompositionValue;
-// public:
-//     typedef HeadFunction_f_<BodyCompositionValue>::T T;
-// };
-
-// template <template <typename T_> class HeadFunction_f_, typename Input_>
-// struct Composition_f<Tenh::TypeList_t<HeadFunction_f_>,Input_>
-// {
-//     typedef HeadFunction_f_<Input_>::T T;
-// };
-
-///////////////////////////////////////////////////////////////////////////////
-
-
 int main (int argc, char **argv)
 {
-    /*
+
     cout << "0! = " << Factorial_f<0>::V << '\n';
     cout << "1! = " << Factorial_f<1>::V << '\n';
     cout << "2! = " << Factorial_f<2>::V << '\n';
@@ -205,7 +215,7 @@ int main (int argc, char **argv)
     cout << '\n';
 
     {
-        typedef LookupTable_t<Factorial_f,0,20,uint> LookupTable;
+        typedef LookupTable_t<uint,Factorial_f,0,20,uint> LookupTable;
         LookupTable lookup;
         for (uint i = 0; i < 20; ++i)
             cout << "lookup(" << i << ") = " << lookup[i] << '\n';
@@ -282,10 +292,15 @@ int main (int argc, char **argv)
     cout << FORMAT_VALUE(SymmetricIndexHashInverse_f<7>::T::V) << '\n';
     cout << FORMAT_VALUE(SymmetricIndexHashInverse_f<8>::T::V) << '\n';
     cout << '\n';
-*/
+
+    cout << FORMAT_VALUE((SymmetricIndex_t<3,2>::V)) << '\n';
+    cout << FORMAT_VALUE((SymmetricIndex_t<4,2>::V)) << '\n';
+    cout << FORMAT_VALUE((SymmetricIndex_t<5,3>::V)) << '\n';
+    cout << '\n';
+
     {
         static uint const LOOKUP_TABLE_SIZE = 40;
-        typedef LookupTable_t<SymmetricIndexHashInverse_f,0,LOOKUP_TABLE_SIZE,SymmetricIndex> LookupTable;
+        typedef LookupTable_t<uint,SymmetricIndexHashInverse_f,0,LOOKUP_TABLE_SIZE,SymmetricIndex> LookupTable;
         LookupTable lookup;
         for (uint i = 0; i < LOOKUP_TABLE_SIZE; ++i)
             cout << "lookup(" << i << ") = " << lookup[i] << '\n';
@@ -294,6 +309,27 @@ int main (int argc, char **argv)
     // typedef TypeList_t<Square_f,
     //         TypeList_t<Square_f> > FunctionTypeList;
     // cout << FORMAT_VALUE(Tenh::type_string_of<Composition_f<FunctionTypeList,Tenh::Value_t<uint,0> >::T>()) << '\n';
+
+    typedef CompositionOf_e<TypeList_t<Cube_e,
+                            TypeList_t<PlusOne_e> > > AddOneThenCube_e;
+    typedef CompositionOf_e<TypeList_t<PlusOne_e,
+                            TypeList_t<Cube_e,
+                            TypeList_t<PlusOne_e> > > > AddOneThenCubeThenAddOne_e;
+
+    cout << FORMAT_VALUE((AddOneThenCube_e::Eval_f<Value_t<uint,0> >::T::V)) << '\n';
+    cout << FORMAT_VALUE((AddOneThenCube_e::Eval_f<Value_t<uint,1> >::T::V)) << '\n';
+    cout << FORMAT_VALUE((AddOneThenCube_e::Eval_f<Value_t<uint,2> >::T::V)) << '\n';
+    cout << FORMAT_VALUE((AddOneThenCube_e::Eval_f<Value_t<uint,3> >::T::V)) << '\n';
+    cout << FORMAT_VALUE((AddOneThenCube_e::Eval_f<Value_t<uint,4> >::T::V)) << '\n';
+    cout << FORMAT_VALUE((AddOneThenCube_e::Eval_f<Value_t<uint,5> >::T::V)) << '\n';
+    cout << '\n';
+
+    cout << FORMAT_VALUE((AddOneThenCubeThenAddOne_e::Eval_f<Value_t<uint,0> >::T::V)) << '\n';
+    cout << FORMAT_VALUE((AddOneThenCubeThenAddOne_e::Eval_f<Value_t<uint,1> >::T::V)) << '\n';
+    cout << FORMAT_VALUE((AddOneThenCubeThenAddOne_e::Eval_f<Value_t<uint,2> >::T::V)) << '\n';
+    cout << FORMAT_VALUE((AddOneThenCubeThenAddOne_e::Eval_f<Value_t<uint,3> >::T::V)) << '\n';
+    cout << FORMAT_VALUE((AddOneThenCubeThenAddOne_e::Eval_f<Value_t<uint,4> >::T::V)) << '\n';
+    cout << FORMAT_VALUE((AddOneThenCubeThenAddOne_e::Eval_f<Value_t<uint,5> >::T::V)) << '\n';
 
     return 0;
 }
