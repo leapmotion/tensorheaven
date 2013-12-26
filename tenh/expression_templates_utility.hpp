@@ -404,20 +404,24 @@ template <typename Scalar, typename BundleDimIndexTypeList, typename ResultingFa
 typename BundleIndexMap_t<Scalar,BundleDimIndexTypeList,ResultingFactorType,ResultingDimIndexType>::T const BundleIndexMap_t<Scalar,BundleDimIndexTypeList,ResultingFactorType,ResultingDimIndexType>::V =
     ImplementationOf_t<ResultingFactorType,Scalar,UseMemberArray_t<COMPONENTS_ARE_NONCONST> >::template bundle_index_map<BundleDimIndexTypeList,ResultingDimIndexType>;
 
+// TEMP: until the indexed expressions are flexible enough to safely do
+// head/body recursion (e.g. in tensor product of procedural 2-tensors)
+static bool const DONT_CHECK_FACTOR_TYPES = true;
+static bool const CHECK_FACTOR_TYPES = false;
+
 // not an expression template, but just something that handles the bundled indices
-template <typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType>
+template <typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType, bool DONT_CHECK_FACTOR_TYPES_>
 struct IndexBundle_t
 {
     typedef typename AbstractIndicesOfDimIndexTypeList_t<typename Operand::FreeDimIndexTypeList>::T OperandFreeAbstractIndexTypeList;
 
     enum
     {
+        STATIC_ASSERT_IN_ENUM(IS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_VECTOR_SPACES_UNIQUELY(ResultingFactorType), MUST_BE_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES),
         STATIC_ASSERT_IN_ENUM(IsAbstractIndex_f<ResultingAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX),
         STATIC_ASSERT_IN_ENUM((IsASubsetOf_t<BundleAbstractIndexTypeList,OperandFreeAbstractIndexTypeList>::V), BUNDLE_INDICES_MUST_BE_FREE),
         STATIC_ASSERT_IN_ENUM((!Contains_f<BundleAbstractIndexTypeList,ResultingAbstractIndexType>::V), BUNDLE_AND_RESULTING_MUST_BE_DISTINCT),
         STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<Operand>::V, OPERAND_IS_EXPRESSION_TEMPLATE)
-        // TODO: check that the factor types specified by BundleAbstractIndexTypeList can actually be
-        // bundled into ResultingFactorType
     };
 
     // if Operand's free indices are i*j*k*l*m*n, the bundle indices are i*k*l, and the resulting
@@ -438,6 +442,18 @@ struct IndexBundle_t
                                           BundleAbstractIndexTypeList>::T BundleDimIndexTypeList;
     typedef DimIndex_t<ResultingAbstractIndexType::SYMBOL,
                        DimensionOf_f<ResultingFactorType>::V> ResultingDimIndexType;
+
+private:
+
+    typedef typename FactorTypeListOf_f<typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(ResultingFactorType)::TensorProductOfBasedVectorSpaces>::T ResultingFactorTypeFactorTypeList;
+    enum
+    {
+        STATIC_ASSERT_IN_ENUM(DONT_CHECK_FACTOR_TYPES_ || 
+                              (TypesAreEqual_f<BundleFactorTypeList,ResultingFactorTypeFactorTypeList>::V),
+                              BUNDLE_FACTORS_MUST_MATCH)
+    };
+
+public:
 
     // zip the stuff so that the transformations can act on both the DimIndex_t and factor lists
     typedef typename Zip_t<TypeList_t<OperandFreeDimIndexTypeList,

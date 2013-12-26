@@ -97,7 +97,8 @@ struct HomogeneousPolynomial
         AbstractIndex_c<'J'> J;
         AbstractIndex_c<'K'> K;
 
-        result.m_coefficients(i) = (m_coefficients(j).split(j,J)*rhs.m_coefficients(k).split(k,K)).bundle(J*K,ResultingTensorPowerType(),I)*symmetrize(i*I);
+        result.m_coefficients(i) = (m_coefficients(j).split(j,J)*rhs.m_coefficients(k).split(k,K))
+                                   .bundle_with_no_type_check(J*K,ResultingTensorPowerType(),I)*symmetrize(i*I);
 
         for (ResultComponentIndex it; it.is_not_at_end(); ++it)
         {

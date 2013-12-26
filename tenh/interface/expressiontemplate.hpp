@@ -20,7 +20,7 @@ namespace Tenh {
 // compile-time interface for expression templates
 // ////////////////////////////////////////////////////////////////////////////
 
-template <typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType>
+template <typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType, bool DONT_CHECK_FACTOR_TYPES_>
 struct ExpressionTemplate_IndexBundle_t;
 
 template <typename Operand, typename SourceIndexType, typename SplitIndexTypeList>
@@ -85,7 +85,8 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     // NOTE: you must include tenh/expressiontemplate_eval.hpp for the definition of this method
     typename AssociatedFloatingPointType_t<Scalar>::T norm () const; // definition is in expressiontemplate_eval.hpp
 
-    template <typename AbstractIndexHeadType,
+    template <bool DONT_CHECK_FACTOR_TYPES_,
+              typename AbstractIndexHeadType,
               typename AbstractIndexBodyTypeList,
               typename ResultingFactorType,
               typename ResultingAbstractIndexType>
@@ -95,7 +96,8 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
                                                  TypeList_t<AbstractIndexHeadType,
                                                             AbstractIndexBodyTypeList>,
                                                  ResultingFactorType,
-                                                 ResultingAbstractIndexType> T;
+                                                 ResultingAbstractIndexType,
+                                                 DONT_CHECK_FACTOR_TYPES_> T;
     };
 
     // method for "bundling" separate abstract indices into a single abstract index
@@ -105,7 +107,8 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
               typename AbstractIndexBodyTypeList,
               typename ResultingFactorType,
               typename ResultingAbstractIndexType>
-    typename BundleReturnType_f<AbstractIndexHeadType,
+    typename BundleReturnType_f<false, // CHECK_FACTOR_TYPES
+                                AbstractIndexHeadType,
                                 AbstractIndexBodyTypeList,
                                 ResultingFactorType,
                                 ResultingAbstractIndexType>::T
@@ -120,7 +123,41 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
         // make sure that ResultingFactorType is the correct conceptual type
         // TODO: there is probably a stronger type check (a type which is embeddable into a tensor space)
         STATIC_ASSERT(HasBasedVectorSpaceStructure_f<ResultingFactorType>::V, MUST_BE_BASED_VECTOR_SPACE);
-        return typename BundleReturnType_f<AbstractIndexHeadType,
+        return typename BundleReturnType_f<false, // CHECK_FACTOR_TYPES
+                                           AbstractIndexHeadType,
+                                           AbstractIndexBodyTypeList,
+                                           ResultingFactorType,
+                                           ResultingAbstractIndexType>::T(as_derived());
+    }
+
+    // method for "bundling" separate abstract indices into a single abstract index
+    // of a more specific type (e.g. a 2-tensor, a fully symmetric 3-tensor, etc)
+    // (m(j*i)*a(j*k)*m(k*l)).bundle(i*l,Q) -- bundle i,l into Q
+    // NOTE: this is a temporary hack to allow bundles that are technically type
+    // unsafe, but that function.  this is necessary until the indexing paradigm
+    // is expressable enough to do head/body recursion with type correctness.
+    template <typename AbstractIndexHeadType,
+              typename AbstractIndexBodyTypeList,
+              typename ResultingFactorType,
+              typename ResultingAbstractIndexType>
+    typename BundleReturnType_f<true, // DONT_CHECK_FACTOR_TYPES
+                                AbstractIndexHeadType,
+                                AbstractIndexBodyTypeList,
+                                ResultingFactorType,
+                                ResultingAbstractIndexType>::T
+        bundle_with_no_type_check (TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> const &,
+                                   ResultingFactorType const &,
+                                   ResultingAbstractIndexType const &) const
+    {
+        // make sure that ResultingAbstractIndexType actually is one
+        STATIC_ASSERT(IsAbstractIndex_f<ResultingAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX);
+        // make sure that the index type list actually contains AbstractIndex_c types
+        STATIC_ASSERT((EachTypeSatisfies_f<TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList>, IsAbstractIndex_p>::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
+        // make sure that ResultingFactorType is the correct conceptual type
+        // TODO: there is probably a stronger type check (a type which is embeddable into a tensor space)
+        STATIC_ASSERT(HasBasedVectorSpaceStructure_f<ResultingFactorType>::V, MUST_BE_BASED_VECTOR_SPACE);
+        return typename BundleReturnType_f<true, // DONT_CHECK_FACTOR_TYPES
+                                           AbstractIndexHeadType,
                                            AbstractIndexBodyTypeList,
                                            ResultingFactorType,
                                            ResultingAbstractIndexType>::T(as_derived());

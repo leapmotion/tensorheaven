@@ -106,16 +106,16 @@ typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
     reindexed (ExpressionTemplate_Multiplication_t<LeftOperand,RightOperand> &e);
 
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
-          typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType>
+          typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType, bool DONT_CHECK_FACTOR_TYPES_>
 typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
-         ::template Eval_f<ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType> >::T
-    reindexed (ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType> const &e);
+         ::template Eval_f<ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_> >::T
+    reindexed (ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_> const &e);
 
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
-          typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType>
+          typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType, bool DONT_CHECK_FACTOR_TYPES_>
 typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
-         ::template Eval_f<ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType> >::T
-    reindexed (ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType> &e);
+         ::template Eval_f<ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_> >::T
+    reindexed (ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_> &e);
 
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
           typename Operand, typename SourceAbstractIndexType, typename SplitAbstractIndexTypeList>
@@ -400,9 +400,9 @@ typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
 // ///////////////////////////////////////////////////////////////////////////
 
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
-template <typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType>
+template <typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType, bool DONT_CHECK_FACTOR_TYPES_>
 struct Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
-    ::Eval_f<ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType> >
+    ::Eval_f<ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_> >
 {
 private:
     typedef Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> Reindex;
@@ -411,30 +411,31 @@ public:
     typedef ExpressionTemplate_IndexBundle_t<typename Reindex::template Eval_f<Operand>::T,
                                              typename Reindex::template Eval_f<BundleAbstractIndexTypeList>::T,
                                              ResultingFactorType,
-                                             typename Reindex::template Eval_f<ResultingAbstractIndexType>::T> T;
+                                             typename Reindex::template Eval_f<ResultingAbstractIndexType>::T,
+                                             DONT_CHECK_FACTOR_TYPES_> T;
 };
 
 // unfortunately you have to make a const and a non-const version of each
 
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
-          typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType>
+          typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType, bool DONT_CHECK_FACTOR_TYPES_>
 typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
-         ::template Eval_f<ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType> >::T
-    reindexed (ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType> const &e)
+         ::template Eval_f<ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_> >::T
+    reindexed (ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_> const &e)
 {
     typedef typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
-                     ::template Eval_f<ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType> >::T Reindexed;
+                     ::template Eval_f<ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_> >::T Reindexed;
     return Reindexed(reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.operand()));
 }
 
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
-          typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType>
+          typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType, bool DONT_CHECK_FACTOR_TYPES_>
 typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
-         ::template Eval_f<ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType> >::T
-    reindexed (ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType> &e)
+         ::template Eval_f<ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_> >::T
+    reindexed (ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_> &e)
 {
     typedef typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
-                     ::template Eval_f<ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType> >::T Reindexed;
+                     ::template Eval_f<ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_> >::T Reindexed;
     return Reindexed(reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.operand()));
 }
 
@@ -573,9 +574,9 @@ public:
 // ///////////////////////////////////////////////////////////////////////////
 
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
-template <typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType>
+template <typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType, bool DONT_CHECK_FACTOR_TYPES_>
 struct Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
-    ::Eval_f<IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType> >
+    ::Eval_f<IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_> >
 {
 private:
     typedef Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> Reindex;
@@ -584,7 +585,8 @@ public:
     typedef IndexBundle_t<typename Reindex::template Eval_f<Operand>::T,
                           typename Reindex::template Eval_f<BundleAbstractIndexTypeList>::T,
                           typename Reindex::template Eval_f<ResultingFactorType>::T,
-                          typename Reindex::template Eval_f<ResultingAbstractIndexType>::T> T;
+                          typename Reindex::template Eval_f<ResultingAbstractIndexType>::T,
+                          DONT_CHECK_FACTOR_TYPES_> T;
 };
 
 // no reindex<...> function is necessary because this is made by the expression template

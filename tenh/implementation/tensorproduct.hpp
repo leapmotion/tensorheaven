@@ -89,7 +89,9 @@ Scalar_ tensor_product_of_procedural_vectors (ComponentIndex_t<DimensionOf_f<Ten
     AbstractIndex_c<'a'> a;
     AbstractIndex_c<'b'> b;
     AbstractIndex_c<'P'> P;
-    return (head_implementation(a)*body_implementation(b)).bundle(a*b,TensorProductOfBasedVectorSpaces_(),P)[MultiIndex_t<TypeList_t<ComponentIndex> >(i)];
+    return (head_implementation(a)*body_implementation(b))
+           .bundle_with_no_type_check(a*b,TensorProductOfBasedVectorSpaces_(),P)
+           [MultiIndex_t<TypeList_t<ComponentIndex> >(i)];
 }
 
 } // end of namespace ComponentGeneratorEvaluator
@@ -217,8 +219,8 @@ Scalar_ tensor_product_of_2_tensors (ComponentIndex_t<DimensionOf_f<ConceptualTy
     AbstractIndex_c<'Q'> Q;
     AbstractIndex_c<'r'> r;
     return (head_implementation.split(u*v)*body_implementation.split(k*l))
-           .bundle(u*k,Factor1(),P)
-           .bundle(v*l,Factor2(),Q)
+           .bundle_with_no_type_check(u*k,Factor1(),P)
+           .bundle_with_no_type_check(v*l,Factor2(),Q)
            .bundle(P*Q,ConceptualTypeOfTensorProduct_(),r)
            [MultiIndex_t<TypeList_t<ComponentIndex> >(i)];
 }

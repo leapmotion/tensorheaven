@@ -23,7 +23,6 @@
 
 ###random TODOs:
 - implement all (?) reindexing as a lookup table for speed.
-- allow use of same indices across different terms (distinguishing multiplication and addition)
 - see if it's possible to do strong range check guarantees for indices (`Index_t`) -- this would probably
   require a "for each" construct which would best be accomplished with lambda expressions
 - move "private" utility functions/metafunctions into the "Tenh::NonPublic" namespace so that they're not in the
@@ -65,18 +64,8 @@
   a given 2-tensor (linear map) into each tensor factor in each summand of a polynomial, so that
   the polynomial has been pulled back onto the domain of the given linear map (Gabe uses operator %
   for this purpose).
-- This works, if a and b are both of type U \otimes U^*
-  b(i) = a(j|k).bundle(k|j, type(), i);
-  That's not good.
 - consider disallowing non-square diagonal-2-tensors -- this will ease the optimization of
   direct sum of diagonal 2 tensors (because it would then be a diagonal 2 tensor itself)
-- make "operator ()" overloads for vectors, tensors, etc, so that the "this" object acts
-  as a multilinear form.  on vectors, it would naturally pair with a covector; on k-tensors
-  and embeddable-as-k-tensors, it would pair with a k-tuple of the corresponding vector
-  types.  e.g. if a is a covector, v is a vector, then
-    a(v) and v(a) would both evaluate to a(i)*v(i).
-  e.g. if x is a k-tensor, and v_1, ..., v_k are vectors dual to the factor types of x, then
-    x(tuple(v_1, ..., v_k)) evaluates to x(i_1|...|i_k)*v_1(i_1)*...*v_k(i_k).
 - use "enable_if" technique ( http://en.cppreference.com/w/cpp/types/enable_if ) to not generate
   certain functions (e.g. a template type affecting which methods should be available on a
   class, such as all the different types of constructors for ImplementationOf_t).
@@ -85,6 +74,9 @@
   compile errors)
 - make a copy_from(Array_i const &) that does memcpy, memmove, or iterative operator[] access
   depending on what Array_i type it is.
+- change metafunction predicates to use _e suffix, to regularize them with the ones produced
+  by MAKE_X_ARY_VALUE_EVALUATOR.  maybe just make all predicates be generated using those
+  macros from "primitive" metafunctions.
 
 
 ###implemented features/items:
@@ -129,6 +121,7 @@
     and computational speedups.
 - x a canonical "zero" procedural-array-based ImplementationOf_t for all vector types (including tensor, vee, etc)
 - x basis vector procedural-array-based ImplementationOf_t for all vector types (including tensor, vee, etc)
+- x multilinear form evaluation via "operator ()" (e.g. g(x,y) as evaluation of a bilinear form).
 
 
 ###different multi-indexing schemes
@@ -209,10 +202,6 @@
 - `ComponentIndex_t` and `DimIndex_t` should possibly be made conceptual types, they interact with
   `AbstractIndex_c`, and right now `DimIndex_t` still overrides `IsAbstractIndex_f` (this is from Ted's
   commit ecebc8c4bd3a54b4f83f2ba74871990828f1114d on the cleanup-conceptual-members branch).
-- It might ease things like inducing inner products on tensor products/symmetric powers/etc if
-  there was some decoupled "component supplier" mechanism, so it was much easier to define
-  inner products and so forth without having to define new, heavyweight ImplementationOf_t-like
-  classes.
 - Add `ElementOf_c<Concept,Id>` (or `ElementOf_c<ConcreteCategoryObject,Id>` ?) which is essentially
   a formal symbol for a particular element of an object in a category.  This will be used e.g.
   in defining an inner product space (which is a vector space and a particular tensor).
@@ -233,11 +222,15 @@
   left-cancels split.  verifying that bundle actually left-inverts split will require some
   special "no optimize" syntax though, or a verification at the reindexing level.
 - IDEA for better/simpler functorially induced types, e.g. inner product spaces and tensor products:
-  Have a "CategoryOf_f" metafunction which returns things like CategoryOfBasedVectorSpaces,
-  CategoryOfInnerProductSpaces, etc.  Add a metafunction "CommonConceptOf_f" which computes the
-  "highest common ancestor" of all the concepts in a typelist.  Then the category of a tensor
+  Have a "ConceptClassOf_f" metafunction which returns things like Concept_BasedVectorSpaces,
+  Concept_InnerProductSpace, etc.  Add a metafunction "CommonConceptClassOf_f" which computes the
+  "greatest common ancestor" of all the concepts in a typelist.  Then the category of a tensor
   product can be computed -- is it a tensor product of based vector spaces?  is it a tensor
   product of inner product spaces?  is it a formal tensor product?  etc.
+  QUESTION: is there just a single concept class for each thing, or is it a set of concept
+  classes that each thing is in?  e.g. a tensor product of inner product spaces is all of
+  the following: a formal tensor product, a vector space, an inner product space, and a
+  tensor product of vector spaces.
 - copy constructor for PreallocatedArray_t and subclasses?  maybe one for MemberArray_t and subclasses.
 
 
@@ -258,7 +251,7 @@
     into Array_i, making Array_t inherit Array_i, then making PreallocatedArray_t also inherit
     Array_i.  Then the "mapped" versions of each tensor implementation would just flip a
     switch to use Array_t or PreallocatedArray_t (hopefully it can be this simple).
-- refactoring the Eigen interop code to be strongly typed, ideally using the "map" functionality
+- x refactoring the Eigen interop code to be strongly typed, ideally using the "map" functionality
 - do more assembler code inspection for each of the compilers we use (GCC, Clang, MSVC) to
   make sure that it's generating code that's as efficient as we expect it to be (this is
   really important).  record some analysis of each, noting the compiler versions for each
@@ -365,7 +358,7 @@
 - Ideally, if B was a bilinear form on V with symmetry and x and y were V vectors,
   then the expression
     x(i)*B(i|j)*y(j)
-  would be replaced with
+  would be replaced (via some metaprogramming optimization) with
     B(p)*(x(i)*y(j)).bundle(i|j,V \otimes V,q).project(q,SpaceWithSymmetry,p),
   thereby providing optimization without cluttering up the notation/usage from the
   perspective of the user.
@@ -449,7 +442,18 @@
     // this would be SymmetricPowerOfBasedVectorSpace_c<3,DualOfB>
     typedef decltype(sym<3>(dual(b))) Sym3_DualOfB;
 
-  which would make the conceptual type hierarchy much easier to use.
+  which would make the conceptual type hierarchy much easier to use.  To make "parenthesized"
+  types, e.g. (U * V) * (W * X), which would be a 2-tensor of 2-tensors, a formal
+  parenthesized AST note should be used, since the parenthesization of a C++ expression is
+  not possible to determine via operator overloading.  The code would look like
+
+    typedef decltype(paren(u * v) * paren(w * x)) TProd;
+
+  Contrast this with the current way:
+
+    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<U,TypeList_t<V> > > U_otimes_V;
+    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<W,TypeList_t<X> > > W_otimes_X;
+    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<U_otimes_V,TypeList_t<W_otimes_X> > > TProd;
 
 
 ###Notes/Reflections on the development of a really really template-heavy math library
@@ -468,8 +472,8 @@
       write the C++ template code to allow any pairs of indices to be contracted, and then use a
       static assert to enforce the up/down pairing, thereby controlling the situation when there
       is an index mismatch.  The error message produced is then readable and meaningful.
-- Trying to encode the full, deep mathematical relationships in the C++ type system proved to be
-  too difficult, because C++ ties its types to code.
+- Trying to encode the full, deep mathematical relationships in a C++ class hierarchy proved to be
+  too difficult, because inheritance in the mathematical sense doesn't work exactly the same way.
     * The solution appears to be (though the full solution is yet to be implemented as of 2013.07.21)
       implementing the mathematical relationships in "pure" types (compile-time only, no code) in a
       "conceptual" layer, and put the implementations in its own layer.  This forces the designer
