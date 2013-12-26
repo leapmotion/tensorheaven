@@ -197,6 +197,25 @@ std::ostream &operator << (std::ostream &out, Pretty<TypeStringOf_t<T_>,SHORTIFY
     return out;
 }
 
+/// @brief Returns the prettified type string of the given type instance.
+template <Uint32 SHORTIFY_DEPTH_, typename T_>
+std::string pretty_type_string_of (T_ const &)
+{
+    std::ostringstream out;
+    print_pretty_typestring(out, TypeStringOf_t<T_>::eval(), SHORTIFY_DEPTH_);
+    return out.str();
+}
+
+/// @brief Returns the type string of the given explicitly specified type T_.
+/// @tparam T_ The type for which to generate the type string.
+template <Uint32 SHORTIFY_DEPTH_, typename T_>
+std::string pretty_type_string_of ()
+{
+    std::ostringstream out;
+    print_pretty_typestring(out, TypeStringOf_t<T_>::eval(), SHORTIFY_DEPTH_);
+    return out.str();
+}
+
 } // end of namespace Tenh
 
 #endif // TENH_META_TYPESTRINGOF_HPP_
