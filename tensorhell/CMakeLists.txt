@@ -9,7 +9,7 @@ OPTION(ASM_EXAM "Keep ASM intermediaries for inspection of compiler optimization
 OPTION(NO_OPTIMIZE "Compile without optimization (useful for debugging; not implemented for MSVC currently)." OFF)
 
 # the root directory of the project (the one containing the tenh/ dir) is the only necessary include dir
-include_directories(${tensorheaven_test_SOURCE_DIR} ${EIGEN_INCLUDE_DIR} ${BOOST_INCLUDE_DIR})
+include_directories(${tensorheaven_test_SOURCE_DIR}/include ${EIGEN_INCLUDE_DIR} ${BOOST_INCLUDE_DIR})
 
 set(BASE_MSVC_FLAGS /arch:SSE2)
 # misnomer: The above MSVC flags are not used in Debug mode
@@ -121,7 +121,7 @@ set(test_SRCS
     standard/test_tuple.cpp
     standard/test_typelist.cpp)
 add_executable(test standard/test.cpp ${test_SRCS})
-include_directories(${tensorheaven_test_SOURCE_DIR}/.. ${tensorheaven_test_SOURCE_DIR}/lvd ${tensorheaven_test_SOURCE_DIR}/standard)
+include_directories(${tensorheaven_test_SOURCE_DIR}/../include ${tensorheaven_test_SOURCE_DIR}/lvd ${tensorheaven_test_SOURCE_DIR}/standard)
 
 # tenh-utility-using tests
 set(tenh_utility_test_SRCS
@@ -133,7 +133,7 @@ set(tenh_utility_test_SRCS
     tenh_utility_test/test_homogeneouspolynomials.cpp
     tenh_utility_test/test_multivariatepolynomials.cpp)
 add_executable(tenh_utility_test tenh_utility_test/test.cpp ${tenh_utility_test_SRCS})
-include_directories(${tensorheaven_test_SOURCE_DIR}/..
+include_directories(${tensorheaven_test_SOURCE_DIR}/../include
                     ${tensorheaven_test_SOURCE_DIR}/lvd
                     ${tensorheaven_test_SOURCE_DIR}/standard
                     ${tensorheaven_test_SOURCE_DIR}/tenh_utility_test)
