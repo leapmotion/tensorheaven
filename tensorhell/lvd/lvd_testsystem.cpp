@@ -10,6 +10,7 @@
 #include <sstream>
 #if !defined(_WIN32)
 #include <sys/wait.h>
+#include <unistd.h>
 
 #include "lvd_callstack.hpp"
 #endif
