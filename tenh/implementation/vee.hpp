@@ -49,16 +49,15 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
     typedef typename Parent_EmbeddableAsTensor_i::Scalar Scalar;
     using Parent_EmbeddableAsTensor_i::DIM;
     typedef typename Parent_EmbeddableAsTensor_i::ComponentIndex ComponentIndex;
+    using Parent_EmbeddableAsTensor_i::COMPONENT_QUALIFIER;
+    typedef typename Parent_EmbeddableAsTensor_i::ComponentAccessConstReturnType ComponentAccessConstReturnType;
+    typedef typename Parent_EmbeddableAsTensor_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
+    typedef typename Parent_EmbeddableAsTensor_i::QualifiedComponent QualifiedComponent;
 
     typedef typename Parent_EmbeddableAsTensor_i::FactorTypeList FactorTypeList;
     typedef typename Parent_EmbeddableAsTensor_i::MultiIndex MultiIndex;
     static Uint32 const ORDER = ORDER_;
     typedef Factor_ Factor;
-
-    using Parent_Array_i::COMPONENT_QUALIFIER;
-    typedef typename Parent_Array_i::ComponentAccessConstReturnType ComponentAccessConstReturnType;
-    typedef typename Parent_Array_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
-    typedef typename Parent_Array_i::QualifiedComponent QualifiedComponent;
 
     typedef typename DualOf_f<ImplementationOf_t>::T Dual; // relies on the template specialization below
 
@@ -154,20 +153,20 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
         STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
     }
 
-    template <typename BundleIndexTypeList, typename BundledIndex>
-    static MultiIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)
-    {
-        //STATIC_ASSERT(IsDimIndex_f<BundledIndex>::V, MUST_BE_COMPONENT_INDEX);
-        // this constructor breaks the vector index apart into a row-major multi-index
-        return BundleIndexComputer_t<BundleIndexTypeList, BundledIndex, ORDER_>::compute(b);
-    }
-
     // only use this if UseProceduralArray_t<...> is specified
     ImplementationOf_t ()
         :
         Parent_Array_i(WithoutInitialization()) // sort of meaningless constructor
     {
         STATIC_ASSERT(IsUseProceduralArray_f<UseArrayType_>::V, MUST_BE_USE_PROCEDURAL_ARRAY);
+    }
+
+    template <typename BundleIndexTypeList, typename BundledIndex>
+    static MultiIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)
+    {
+        //STATIC_ASSERT(IsDimIndex_f<BundledIndex>::V, MUST_BE_COMPONENT_INDEX);
+        // this constructor breaks the vector index apart into a row-major multi-index
+        return BundleIndexComputer_t<BundleIndexTypeList, BundledIndex, ORDER_>::compute(b);
     }
 
     using Parent_Array_i::as_derived;

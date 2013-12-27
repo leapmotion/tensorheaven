@@ -48,16 +48,15 @@ struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scal
     typedef typename Parent_EmbeddableAsTensor_i::Scalar Scalar;
     using Parent_EmbeddableAsTensor_i::DIM;
     typedef typename Parent_EmbeddableAsTensor_i::ComponentIndex ComponentIndex;
+    using Parent_EmbeddableAsTensor_i::COMPONENT_QUALIFIER;
+    typedef typename Parent_EmbeddableAsTensor_i::ComponentAccessConstReturnType ComponentAccessConstReturnType;
+    typedef typename Parent_EmbeddableAsTensor_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
+    typedef typename Parent_EmbeddableAsTensor_i::QualifiedComponent QualifiedComponent;
 
     typedef typename Parent_EmbeddableAsTensor_i::FactorTypeList FactorTypeList;
     typedef typename Parent_EmbeddableAsTensor_i::MultiIndex MultiIndex;
     static Uint32 const ORDER = ORDER_;
     typedef Factor_ Factor;
-
-    using Parent_Array_i::COMPONENT_QUALIFIER;
-    typedef typename Parent_Array_i::ComponentAccessConstReturnType ComponentAccessConstReturnType;
-    typedef typename Parent_Array_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
-    typedef typename Parent_Array_i::QualifiedComponent QualifiedComponent;
 
     typedef typename DualOf_f<ImplementationOf_t>::T Dual; // relies on the template specialization below
 

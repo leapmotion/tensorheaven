@@ -410,6 +410,72 @@
   nontrivial and requires some thought.
 
 
+###Notes for conceptual layer refinement to implement clearer/simpler categorical structure
+- Add a hierarchy of "concept classes", in which whole classes of concepts have a fixed
+  inheritance hierarchy, with a root class of "concept".  This defines a poset structure
+  on the set of conceptual classes, and allows the "meet" of a finite set of concepts to
+  be defined.  This meet operation will be used in determining the structure of functorially
+  induced constructions such as tensor products.
+- The current concept class hierarchy is
+                    BasedInnerProductSpace
+                   /                      \
+            InnerProductSpace       BasedVectorSpace
+               /        \           /       \
+      InnerProduct       VectorSpace         Basis
+                 \            |             /
+                   \          |           /
+                     \        |         /
+                       \      |       /
+                            Concept
+  The nodes in the upper diamond are categories.  Other useful categories that could be
+  useful to consider are HermitianSpace, SymplecticSpace, PseudoInnerProductSpace, etc.
+  Though maybe all of these could be subsumed into a single "VectorSpace equipped with a
+  bilinear form", from which particular properties (e.g. positive-definite, symmetric,
+  etc) could be extracted.  Though this is getting away from the conceptual and concept
+  class hierarchy as a general principal, so it may not be a good idea.  Or perhaps this
+  "Vector space equipped with a bilinear form" is the meet of InnerProductSpace,
+  HermitianSpace, SymplecticSpace, etc.
+- Maybe only a hierarchy of categories should be implemented, in which case, the hierarchy
+  would be only
+                    BasedInnerProductSpace
+                   /                      \
+            InnerProductSpace       BasedVectorSpace
+                        \           /
+                         VectorSpace
+- There will be a "concept class of" metafunction which returns the concept class of any
+  particular concept.
+- The conceptual hierarchy as implemented by a concept via ParentTypeList should mirror
+  the structure as defined by the concept class hierarchy.
+- Tensor products (and tensor/symmetric/exterior powers, diagonal 2-tensors, direct sums,
+  etc) will now be functors that produce the concept TensorProduct_c (and analogous), and
+  the concept class of a tensor product will be determined via the meet of its factors.
+- In particular for vector/tensor spaces, there needs to be a well-defined "factor count"
+  metafunction, which returns 1 for a vector space and the number of factors for a tensor
+  product.  For an exterior/symmetric product, it will be 1.
+- There should be a well-defined "direct summand count" metafunction which returns 1 for
+  anything but a direct sum, and the number of summands for a direct sum.
+- All the "embeddable in tensor product" stuff will go away in preference for the
+  vector-space-into-vector-space embeddings which can be requested.  These embeddings
+  will be sparse operations that are defined by reindexing (and scale factor) maps in
+  the conceptual layer.
+- There could be a single ImplementationOf_t class, providing all the facilities (e.g.
+  vector indexing, tensor indexing, embedding, direct summand access), possibly through
+  interfaces classes (Vector_i, Tensor_i, EmbeddableAsTensor_i, DirectSum_i), and the
+  success of various forms of access (e.g. accessing the Nth direct summand, using a
+  multi-indexed expression template) would depend on the type of the concept being
+  implemented.
+- Implement scalar fields as 0-tensors
+- Do all the 0-tensor and 0th tensor/symmetric/exterior power stuff in the conceptual
+  layer (need to know what scalar field the tensor product is taken over), where a
+  0 tensor is the scalar field.  This can happen before the whole conceptual layer
+  refinement.
+- The DimensionOf_f metafunction should take an "OverScalarField_" parameter, defaulting
+  to NullType (which indicates the base field of the argument should be used), but can
+  be specified e.g. to find the real dimension of a complex vector space.
+- Probably the embed/project stuff will need to happen at the same time as all this,
+  or perhaps the embed/project stuff could happen before it.
+
+
 ###Notes for [probable] upgrade to C++11 (to happen after "version 1.0" is reached)
 - TODO: look into C++11 support for embedded (and other) compilers that we might have to
   deal with in the future.
