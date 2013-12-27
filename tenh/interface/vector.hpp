@@ -44,7 +44,7 @@ struct Vector_i
     // a 1-tensor having a particular type.
     typedef TypeList_t<BasedVectorSpace> FactorTypeList;
 
-    static bool const COMPONENT_QUALIFIER = COMPONENT_QUALIFIER_;
+    static ComponentQualifier const COMPONENT_QUALIFIER = COMPONENT_QUALIFIER_;
     typedef typename ComponentQualifier_m<Scalar_,COMPONENT_QUALIFIER_>::ComponentAccessConstReturnType ComponentAccessConstReturnType;
     typedef typename ComponentQualifier_m<Scalar_,COMPONENT_QUALIFIER_>::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
     typedef typename ComponentQualifier_m<Scalar_,COMPONENT_QUALIFIER_>::QualifiedComponent QualifiedComponent;

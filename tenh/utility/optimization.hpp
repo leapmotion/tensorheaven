@@ -8,7 +8,13 @@
 
 #include "tenh/core.hpp"
 
-#include <cmath>
+#if _WIN32
+#include <float.h>
+#define isnan(x) _isnan(x) != 0
+#else
+#include <math.h>
+using std::isnan;
+#endif
 #include <iostream>
 
 #include "tenh/implementation/innerproduct.hpp"
@@ -35,17 +41,17 @@ bool isNaN(T const &x)
 
 inline bool isNaN(float const &x)
 {
-    return std::isnan(x);
+    return isnan(x);
 }
 
 inline bool isNaN(double const &x)
 {
-    return std::isnan(x);
+    return isnan(x);
 }
 
 inline bool isNaN(long double const &x)
 {
-    return std::isnan(x);
+    return isnan(x);
 }
 
 // ///////////////////////////////////////////////////////////////////////////
