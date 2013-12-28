@@ -13,6 +13,7 @@
 
 #include "tenh/componentindex.hpp"
 #include "tenh/conceptual/abstractindex.hpp"
+#include "tenh/conceptual/linearembedding.hpp"
 #include "tenh/conceptual/vectorspace.hpp"
 #include "tenh/expression_templates.hpp"
 #include "tenh/meta/typestringof.hpp"
@@ -179,7 +180,7 @@ struct Vector_i
         return operator()(i)*p.head()(i);
     }
 
-    // this provides the "embed" operation without needing an intermediate temporary index,
+    // this provides the "embed_using" operation without needing an intermediate temporary index,
     // since this object will be frequently embedded.
     // TODO: could the C++11 infer the return type?  this return type is annoying
     template <typename EmbeddingId_, typename EmbeddingCodomain_, AbstractIndexSymbol EMBEDDED_ABSTRACT_INDEX_SYMBOL_>
@@ -188,12 +189,26 @@ struct Vector_i
                                           EmbeddingCodomain_,
                                           EMBEDDED_ABSTRACT_INDEX_SYMBOL_,
                                           EmbeddingId_>::T
+        embed_using (EmbeddingCodomain_ const &, AbstractIndex_c<EMBEDDED_ABSTRACT_INDEX_SYMBOL_> const &i) const
+    {
+        AbstractIndex_c<666> dummy_index;
+        return operator()(dummy_index).template embed_using<EmbeddingId_>(dummy_index, EmbeddingCodomain_(), i);
+    }
+    // this provides the "embed" operation without needing an intermediate temporary index,
+    // since this object will be frequently embedded.
+    // TODO: could the C++11 infer the return type?  this return type is annoying
+    template <typename EmbeddingCodomain_, AbstractIndexSymbol EMBEDDED_ABSTRACT_INDEX_SYMBOL_>
+    typename IndexedExpressionConstType_f<666>::T
+             ::template EmbedReturnType_f<AbstractIndex_c<666>,
+                                          EmbeddingCodomain_,
+                                          EMBEDDED_ABSTRACT_INDEX_SYMBOL_,
+                                          NaturalEmbedding>::T
         embed (EmbeddingCodomain_ const &, AbstractIndex_c<EMBEDDED_ABSTRACT_INDEX_SYMBOL_> const &i) const
     {
         AbstractIndex_c<666> dummy_index;
-        return operator()(dummy_index).template embed<EmbeddingId_>(dummy_index, EmbeddingCodomain_(), i);
+        return operator()(dummy_index).template embed(dummy_index, EmbeddingCodomain_(), i);
     }
-    // this provides the "coembed" operation without needing an intermediate temporary index,
+    // this provides the "coembed_using" operation without needing an intermediate temporary index,
     // since this object will be frequently embedded.
     // TODO: could the C++11 infer the return type?  this return type is annoying
     template <typename EmbeddingId_, typename CoembeddingCodomain_, AbstractIndexSymbol COEMBEDDED_ABSTRACT_INDEX_SYMBOL_>
@@ -202,10 +217,24 @@ struct Vector_i
                                             CoembeddingCodomain_,
                                             COEMBEDDED_ABSTRACT_INDEX_SYMBOL_,
                                             EmbeddingId_>::T
+        coembed_using (CoembeddingCodomain_ const &, AbstractIndex_c<COEMBEDDED_ABSTRACT_INDEX_SYMBOL_> const &i) const
+    {
+        AbstractIndex_c<666> dummy_index;
+        return operator()(dummy_index).template coembed_using<EmbeddingId_>(dummy_index, CoembeddingCodomain_(), i);
+    }
+    // this provides the "coembed" operation without needing an intermediate temporary index,
+    // since this object will be frequently embedded.
+    // TODO: could the C++11 infer the return type?  this return type is annoying
+    template <typename CoembeddingCodomain_, AbstractIndexSymbol COEMBEDDED_ABSTRACT_INDEX_SYMBOL_>
+    typename IndexedExpressionConstType_f<666>::T
+             ::template CoembedReturnType_f<AbstractIndex_c<666>,
+                                            CoembeddingCodomain_,
+                                            COEMBEDDED_ABSTRACT_INDEX_SYMBOL_,
+                                            NaturalEmbedding>::T
         coembed (CoembeddingCodomain_ const &, AbstractIndex_c<COEMBEDDED_ABSTRACT_INDEX_SYMBOL_> const &i) const
     {
         AbstractIndex_c<666> dummy_index;
-        return operator()(dummy_index).template coembed<EmbeddingId_>(dummy_index, CoembeddingCodomain_(), i);
+        return operator()(dummy_index).template coembed(dummy_index, CoembeddingCodomain_(), i);
     }
 
     Uint32 allocation_size_in_bytes () const { return as_derived().allocation_size_in_bytes(); }

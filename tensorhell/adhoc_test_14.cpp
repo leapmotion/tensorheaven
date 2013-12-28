@@ -303,18 +303,18 @@ void test_identity_embedding ()
     V::Dual a(uniform_tuple<Scalar>(3, -1, 2));
 
     std::cout << FORMAT_VALUE(v(i)) << '\n';
-    std::cout << FORMAT_VALUE(v(i).embed<IdentityEmbedding>(i,b,j)) << '\n';
-    std::cout << FORMAT_VALUE(v.embed<IdentityEmbedding>(b,j)) << '\n';
+    std::cout << FORMAT_VALUE(v(i).embed_using<IdentityEmbedding>(i,b,j)) << '\n';
+    std::cout << FORMAT_VALUE(v.embed_using<IdentityEmbedding>(b,j)) << '\n';
 
-    std::cout << FORMAT_VALUE(v(i).coembed<IdentityEmbedding>(i,b,j)) << '\n';
-    std::cout << FORMAT_VALUE(v.coembed<IdentityEmbedding>(b,j)) << '\n';
+    std::cout << FORMAT_VALUE(v(i).coembed_using<IdentityEmbedding>(i,b,j)) << '\n';
+    std::cout << FORMAT_VALUE(v.coembed_using<IdentityEmbedding>(b,j)) << '\n';
     std::cout << '\n';
     std::cout << FORMAT_VALUE(a(i)) << '\n';
-    std::cout << FORMAT_VALUE(a(i).embed<IdentityEmbedding>(i,dual_of_b,j)) << '\n';
-    std::cout << FORMAT_VALUE(a.embed<IdentityEmbedding>(dual_of_b,j)) << '\n';
+    std::cout << FORMAT_VALUE(a(i).embed_using<IdentityEmbedding>(i,dual_of_b,j)) << '\n';
+    std::cout << FORMAT_VALUE(a.embed_using<IdentityEmbedding>(dual_of_b,j)) << '\n';
 
-    std::cout << FORMAT_VALUE(a(i).coembed<IdentityEmbedding>(i,dual_of_b,j)) << '\n';
-    std::cout << FORMAT_VALUE(a.coembed<IdentityEmbedding>(dual_of_b,j)) << '\n';
+    std::cout << FORMAT_VALUE(a(i).coembed_using<IdentityEmbedding>(i,dual_of_b,j)) << '\n';
+    std::cout << FORMAT_VALUE(a.coembed_using<IdentityEmbedding>(dual_of_b,j)) << '\n';
     std::cout << '\n';
 
     typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B,
@@ -327,17 +327,17 @@ void test_identity_embedding ()
         uniform_tuple<Scalar>(0, 3, 1));
     std::cout << FORMAT_VALUE(m) << '\n';
     std::cout << FORMAT_VALUE(m(i)) << '\n';
-    std::cout << FORMAT_VALUE(m(i).embed<IdentityEmbedding>(i,t,j)) << '\n';
-    std::cout << FORMAT_VALUE(m.embed<IdentityEmbedding>(t,j)) << '\n';
-    std::cout << FORMAT_VALUE(m(i*j).embed<IdentityEmbedding>(i,b,k)) << '\n';
-    std::cout << FORMAT_VALUE(m(i*j).embed<IdentityEmbedding>(j,dual_of_b,l)) << '\n';
-    std::cout << FORMAT_VALUE(m(i*j).embed<IdentityEmbedding>(i,b,k).embed<IdentityEmbedding>(j,dual_of_b,l)) << '\n';
+    std::cout << FORMAT_VALUE(m(i).embed_using<IdentityEmbedding>(i,t,j)) << '\n';
+    std::cout << FORMAT_VALUE(m.embed_using<IdentityEmbedding>(t,j)) << '\n';
+    std::cout << FORMAT_VALUE(m(i*j).embed_using<IdentityEmbedding>(i,b,k)) << '\n';
+    std::cout << FORMAT_VALUE(m(i*j).embed_using<IdentityEmbedding>(j,dual_of_b,l)) << '\n';
+    std::cout << FORMAT_VALUE(m(i*j).embed_using<IdentityEmbedding>(i,b,k).embed_using<IdentityEmbedding>(j,dual_of_b,l)) << '\n';
 
-    std::cout << FORMAT_VALUE(m(i).coembed<IdentityEmbedding>(i,t,j)) << '\n';
-    std::cout << FORMAT_VALUE(m.coembed<IdentityEmbedding>(t,j)) << '\n';
-    std::cout << FORMAT_VALUE(m(i*j).coembed<IdentityEmbedding>(i,b,k)) << '\n';
-    std::cout << FORMAT_VALUE(m(i*j).coembed<IdentityEmbedding>(j,dual_of_b,l)) << '\n';
-    std::cout << FORMAT_VALUE(m(i*j).coembed<IdentityEmbedding>(i,b,k).coembed<IdentityEmbedding>(j,dual_of_b,l)) << '\n';
+    std::cout << FORMAT_VALUE(m(i).coembed_using<IdentityEmbedding>(i,t,j)) << '\n';
+    std::cout << FORMAT_VALUE(m.coembed_using<IdentityEmbedding>(t,j)) << '\n';
+    std::cout << FORMAT_VALUE(m(i*j).coembed_using<IdentityEmbedding>(i,b,k)) << '\n';
+    std::cout << FORMAT_VALUE(m(i*j).coembed_using<IdentityEmbedding>(j,dual_of_b,l)) << '\n';
+    std::cout << FORMAT_VALUE(m(i*j).coembed_using<IdentityEmbedding>(i,b,k).coembed_using<IdentityEmbedding>(j,dual_of_b,l)) << '\n';
     std::cout << '\n';
 }
 
@@ -351,6 +351,8 @@ void test_diag2tensor_embedding ()
     typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B3,TypeList_t<B4> > > Tensor2;
 
     typedef double Scalar;
+    typedef ImplementationOf_t<B3,Scalar> V3;
+    typedef ImplementationOf_t<B4,Scalar> V4;
     typedef ImplementationOf_t<Diag2,Scalar> D;
     typedef ImplementationOf_t<Tensor2,Scalar> T;
 
@@ -366,20 +368,27 @@ void test_diag2tensor_embedding ()
     D d(uniform_tuple<Scalar>(2, 1, 3));
     std::cout << FORMAT_VALUE(d) << '\n';
     std::cout << FORMAT_VALUE(d.split(i*j)) << '\n';
-    std::cout << FORMAT_VALUE(d(i).embed<NaturalEmbedding>(i,tensor2,j)) << '\n';
-    std::cout << FORMAT_VALUE(d(i).embed<NaturalEmbedding>(i,tensor2,j).split(j,k*l)) << '\n';
-    std::cout << FORMAT_VALUE(d.embed<NaturalEmbedding>(tensor2,j)) << '\n';
-    std::cout << FORMAT_VALUE(d.embed<NaturalEmbedding>(tensor2,j).split(j,k*l)) << '\n';
+    std::cout << FORMAT_VALUE(d(i).embed(i,tensor2,j)) << '\n';
+    std::cout << FORMAT_VALUE(d(i).embed(i,tensor2,j).split(j,k*l)) << '\n';
+    std::cout << FORMAT_VALUE(d.embed(tensor2,j)) << '\n';
+    std::cout << FORMAT_VALUE(d.embed(tensor2,j).split(j,k*l)) << '\n';
 
     T t(uniform_tuple<Scalar>( 1,  2,  3,  4) |
         uniform_tuple<Scalar>( 5,  6,  7,  8) |
         uniform_tuple<Scalar>( 9, 10, 11, 12));
     std::cout << FORMAT_VALUE(t) << '\n';
     std::cout << FORMAT_VALUE(t(i*j)) << '\n';
-    std::cout << FORMAT_VALUE(t(i).coembed<NaturalEmbedding>(i,diag2,j)) << '\n';
-    std::cout << FORMAT_VALUE(t(i).coembed<NaturalEmbedding>(i,diag2,j).split(j,k*l)) << '\n';
-    std::cout << FORMAT_VALUE(t.coembed<NaturalEmbedding>(diag2,j)) << '\n';
-    std::cout << FORMAT_VALUE(t.coembed<NaturalEmbedding>(diag2,j).split(j,k*l)) << '\n';
+    std::cout << FORMAT_VALUE(t(i).coembed(i,diag2,j)) << '\n';
+    std::cout << FORMAT_VALUE(t(i).coembed(i,diag2,j).split(j,k*l)) << '\n';
+    std::cout << FORMAT_VALUE(t.coembed(diag2,j)) << '\n';
+    std::cout << FORMAT_VALUE(t.coembed(diag2,j).split(j,k*l)) << '\n';
     std::cout << '\n';
+
+    V3 u(uniform_tuple<Scalar>(1, 2, 3));
+    V4 v(uniform_tuple<Scalar>(4, 5, 6, 7));
+    std::cout << FORMAT_VALUE(u) << '\n';
+    std::cout << FORMAT_VALUE(v) << '\n';
+    std::cout << FORMAT_VALUE(u(i)*v(j)) << '\n';
+    std::cout << FORMAT_VALUE((u(i)*v(j)).bundle(i*j,tensor2,k).coembed(k,diag2,l)) << '\n';
 }
 

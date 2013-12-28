@@ -9,6 +9,7 @@
 #include "tenh/core.hpp"
 
 #include "tenh/conceptual/abstractindex.hpp"
+#include "tenh/conceptual/linearembedding.hpp"
 #include "tenh/dimindex.hpp"
 #include "tenh/meta/typelist.hpp"
 #include "tenh/multiindex.hpp"
@@ -253,6 +254,23 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
                                EmbeddingCodomain_,
                                EMBEDDED_ABSTRACT_INDEX_SYMBOL_,
                                EmbeddingId_>::T
+        embed_using (SourceAbstractIndexType_ const &,
+                     EmbeddingCodomain_ const &,
+                     AbstractIndex_c<EMBEDDED_ABSTRACT_INDEX_SYMBOL_> const &) const
+    {
+        // make sure that SourceAbstractIndexType_ actually is one
+        STATIC_ASSERT(IsAbstractIndex_f<SourceAbstractIndexType_>::V, MUST_BE_ABSTRACT_INDEX);
+        return typename EmbedReturnType_f<SourceAbstractIndexType_,
+                                          EmbeddingCodomain_,
+                                          EMBEDDED_ABSTRACT_INDEX_SYMBOL_,
+                                          EmbeddingId_>::T(as_derived());
+    }
+    // convenience method equivalent to embed_using<NaturalEmbedding>, e.g. for symmetric powers, etc.
+    template <typename SourceAbstractIndexType_, typename EmbeddingCodomain_, AbstractIndexSymbol EMBEDDED_ABSTRACT_INDEX_SYMBOL_>
+    typename EmbedReturnType_f<SourceAbstractIndexType_,
+                               EmbeddingCodomain_,
+                               EMBEDDED_ABSTRACT_INDEX_SYMBOL_,
+                               NaturalEmbedding>::T
         embed (SourceAbstractIndexType_ const &,
                EmbeddingCodomain_ const &,
                AbstractIndex_c<EMBEDDED_ABSTRACT_INDEX_SYMBOL_> const &) const
@@ -262,7 +280,7 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
         return typename EmbedReturnType_f<SourceAbstractIndexType_,
                                           EmbeddingCodomain_,
                                           EMBEDDED_ABSTRACT_INDEX_SYMBOL_,
-                                          EmbeddingId_>::T(as_derived());
+                                          NaturalEmbedding>::T(as_derived());
     }
 
     // metafunction for determining the return type of the coembed method.
@@ -285,6 +303,23 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
                                  CoembeddingCodomain_,
                                  COEMBEDDED_ABSTRACT_INDEX_SYMBOL_,
                                  EmbeddingId_>::T
+        coembed_using (SourceAbstractIndexType_ const &,
+                       CoembeddingCodomain_ const &,
+                       AbstractIndex_c<COEMBEDDED_ABSTRACT_INDEX_SYMBOL_> const &) const
+    {
+        // make sure that SourceAbstractIndexType_ actually is one
+        STATIC_ASSERT(IsAbstractIndex_f<SourceAbstractIndexType_>::V, MUST_BE_ABSTRACT_INDEX);
+        return typename CoembedReturnType_f<SourceAbstractIndexType_,
+                                            CoembeddingCodomain_,
+                                            COEMBEDDED_ABSTRACT_INDEX_SYMBOL_,
+                                            EmbeddingId_>::T(as_derived());
+    }
+    // convenience method equivalent to coembed_using<NaturalEmbedding>, e.g. for symmetric powers, etc.
+    template <typename SourceAbstractIndexType_, typename CoembeddingCodomain_, AbstractIndexSymbol COEMBEDDED_ABSTRACT_INDEX_SYMBOL_>
+    typename CoembedReturnType_f<SourceAbstractIndexType_,
+                                 CoembeddingCodomain_,
+                                 COEMBEDDED_ABSTRACT_INDEX_SYMBOL_,
+                                 NaturalEmbedding>::T
         coembed (SourceAbstractIndexType_ const &,
                  CoembeddingCodomain_ const &,
                  AbstractIndex_c<COEMBEDDED_ABSTRACT_INDEX_SYMBOL_> const &) const
@@ -294,7 +329,7 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
         return typename CoembedReturnType_f<SourceAbstractIndexType_,
                                             CoembeddingCodomain_,
                                             COEMBEDDED_ABSTRACT_INDEX_SYMBOL_,
-                                            EmbeddingId_>::T(as_derived());
+                                            NaturalEmbedding>::T(as_derived());
     }
 
     // method for doing an intermediate evaluation of an expression template to avoid aliasing
