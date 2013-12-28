@@ -142,6 +142,26 @@ typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
     reindexed (ExpressionTemplate_IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType> &e);
 
 template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename Operand_,
+          typename SourceAbstractIndexType_,
+          typename EmbeddingCodomain_,
+          typename EmbeddedAbstractIndexType_,
+          typename EmbeddingId_>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_IndexEmbed_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_> >::T
+    reindexed (ExpressionTemplate_IndexEmbed_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_> const &e);
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename Operand_,
+          typename SourceAbstractIndexType_,
+          typename EmbeddingCodomain_,
+          typename EmbeddedAbstractIndexType_,
+          typename EmbeddingId_>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_IndexEmbed_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_> >::T
+    reindexed (ExpressionTemplate_IndexEmbed_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_> &e);
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
           typename Operand>
 typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
          ::template Eval_f<ExpressionTemplate_Eval_t<Operand> >::T
@@ -520,6 +540,62 @@ typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
 {
     typedef typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
                      ::template Eval_f<ExpressionTemplate_IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType> >::T Reindexed;
+    return Reindexed(reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.operand()));
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+// ExpressionTemplate_IndexSplitToIndex_t
+// ///////////////////////////////////////////////////////////////////////////
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
+template <typename Operand_,
+          typename SourceAbstractIndexType_,
+          typename EmbeddingCodomain_,
+          typename EmbeddedAbstractIndexType_,
+          typename EmbeddingId_>
+struct Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+    ::Eval_f<ExpressionTemplate_IndexEmbed_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_> >
+{
+private:
+    typedef Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> Reindex;
+    Eval_f();
+public:
+    typedef ExpressionTemplate_IndexEmbed_t<typename Reindex::template Eval_f<Operand_>::T,
+                                            typename Reindex::template Eval_f<SourceAbstractIndexType_>::T,
+                                            typename Reindex::template Eval_f<EmbeddingCodomain_>::T,
+                                            typename Reindex::template Eval_f<EmbeddedAbstractIndexType_>::T,
+                                            typename Reindex::template Eval_f<EmbeddingId_>::T> T;
+};
+
+// unfortunately you have to make a const and a non-const version of each
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename Operand_,
+          typename SourceAbstractIndexType_,
+          typename EmbeddingCodomain_,
+          typename EmbeddedAbstractIndexType_,
+          typename EmbeddingId_>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_IndexEmbed_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_> >::T
+    reindexed (ExpressionTemplate_IndexEmbed_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_> const &e)
+{
+    typedef typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+                     ::template Eval_f<ExpressionTemplate_IndexEmbed_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_> >::T Reindexed;
+    return Reindexed(reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.operand()));
+}
+
+template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_,
+          typename Operand_,
+          typename SourceAbstractIndexType_,
+          typename EmbeddingCodomain_,
+          typename EmbeddedAbstractIndexType_,
+          typename EmbeddingId_>
+typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+         ::template Eval_f<ExpressionTemplate_IndexEmbed_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_> >::T
+    reindexed (ExpressionTemplate_IndexEmbed_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_> &e)
+{
+    typedef typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
+                     ::template Eval_f<ExpressionTemplate_IndexEmbed_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_> >::T Reindexed;
     return Reindexed(reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.operand()));
 }
 
