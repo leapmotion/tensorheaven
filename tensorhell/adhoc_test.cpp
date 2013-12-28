@@ -67,6 +67,7 @@ int main (int, char **)
     test_const_component_arrays();
     test_identity_embedding();
     test_diag2tensor_embedding();
+    test_embed_coembed_adjointness();
 
     return 0;
 }

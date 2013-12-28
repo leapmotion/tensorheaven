@@ -78,6 +78,8 @@
   by MAKE_X_ARY_VALUE_EVALUATOR.  maybe just make all predicates be generated using those
   macros from "primitive" metafunctions.
 - make a "2-tensor out of LinearEmbedding_c" procedural 2-tensor (is this actually useful?)
+- make an abstracted summation function/facility so that different methods for summation can
+  be implemented -- e.g. fast-naive, or sorted-for-accuracy, etc.
 
 
 ###implemented features/items:

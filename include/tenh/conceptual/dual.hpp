@@ -60,11 +60,16 @@ private:
     DualOf_f();
 };
 
-// template specialization to make the Generic type self-dual
+/// @brief A type for use as a generic identifier, e.g. in a Basis_c.
+/// @headerfile core.hpp "tenh/core.hpp"
+struct SelfDualGeneric { static std::string type_as_string () { return "SelfDualGeneric"; } };
+
+// template specialization to make the SelfDualGeneric type self-dual.  Note that
+// Generic is NOT self-dual.
 template <>
-struct DualOf_f<Generic>
+struct DualOf_f<SelfDualGeneric>
 {
-    typedef Generic T;
+    typedef SelfDualGeneric T;
 private:
     DualOf_f();
 };

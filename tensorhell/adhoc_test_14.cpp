@@ -359,7 +359,9 @@ void test_diag2tensor_embedding ()
     B3 b3;
     B4 b4;
     Diag2 diag2;
+    DualOf_f<Diag2>::T dual_of_diag2;
     Tensor2 tensor2;
+    DualOf_f<Tensor2>::T dual_of_tensor2;
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
     AbstractIndex_c<'k'> k;
@@ -384,11 +386,56 @@ void test_diag2tensor_embedding ()
     std::cout << FORMAT_VALUE(t.coembed(diag2,j).split(j,k*l)) << '\n';
     std::cout << '\n';
 
+    // this should produce a type error (nonexistence of LinearEmbedding_c from diag2 to dual_of_tensor2)
+    // std::cout << FORMAT_VALUE(d.embed(dual_of_tensor2,j)) << '\n';
+    // this should produce a type error (nonexistence of LinearEmbedding_c from dual_of_diag2 to tensor2)
+    // std::cout << FORMAT_VALUE(t.coembed(dual_of_diag2,j)) << '\n';
+
     V3 u(uniform_tuple<Scalar>(1, 2, 3));
     V4 v(uniform_tuple<Scalar>(4, 5, 6, 7));
     std::cout << FORMAT_VALUE(u) << '\n';
     std::cout << FORMAT_VALUE(v) << '\n';
     std::cout << FORMAT_VALUE(u(i)*v(j)) << '\n';
     std::cout << FORMAT_VALUE((u(i)*v(j)).bundle(i*j,tensor2,k).coembed(k,diag2,l)) << '\n';
+    std::cout << '\n';
+}
+
+void test_embed_coembed_adjointness ()
+{
+    std::cout << "testing embed/coembed adjointness\n";
+
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > B3;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,Basis_c<Generic> > B4;
+    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B3,B4> Diag2;
+    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B3,TypeList_t<B4> > > Tensor2;
+
+    typedef double Scalar;
+    typedef ImplementationOf_t<B3,Scalar> V3;
+    typedef ImplementationOf_t<B4,Scalar> V4;
+    typedef ImplementationOf_t<Diag2,Scalar> D;
+    typedef ImplementationOf_t<Tensor2,Scalar> T;
+
+    B3 b3;
+    B4 b4;
+    Diag2 diag2;
+    DualOf_f<Diag2>::T dual_of_diag2;
+    Tensor2 tensor2;
+    DualOf_f<Tensor2>::T dual_of_tensor2;
+    AbstractIndex_c<'i'> i;
+    AbstractIndex_c<'j'> j;
+    AbstractIndex_c<'k'> k;
+    AbstractIndex_c<'l'> l;
+
+    D d(uniform_tuple<Scalar>(2, 1, 3));
+    T::Dual t(uniform_tuple<Scalar>( 1,  2,  3,  4) |
+              uniform_tuple<Scalar>( 5,  6,  7,  8) |
+              uniform_tuple<Scalar>( 9, 10, 11, 12));
+    std::cout << FORMAT_VALUE(d.split(i*j)) << '\n';
+    std::cout << FORMAT_VALUE(t.split(i*j)) << '\n';
+    std::cout << FORMAT_VALUE(d.embed(tensor2,j)*t(j)) << '\n';
+    std::cout << FORMAT_VALUE(d(i)*t.coembed(dual_of_diag2,i)) << '\n';
+    std::cout << "this should be exactly zero: ";
+    std::cout << FORMAT_VALUE(d.embed(tensor2,j)*t(j) - d(i)*t.coembed(dual_of_diag2,i)) << '\n';
+    std::cout << '\n';
 }
 

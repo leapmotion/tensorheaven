@@ -47,6 +47,16 @@ namespace Tenh {
 //     this would allow coembeddings to be requested, and if such a coembedding doesn't exist,
 //     it results in a compile error, as desired.
 //
+// * the embed/coembed expression template operations are defined by the following properties:
+//     ~ if A has type downstairs_space and B has type dual(upstairs_space), then
+//         A(i).embed(i,upstairs_space,j)*B(j) - A(i)*B(j).coembed(j,dual(downstairs_space),i) == 0.
+//     ~ the embed operation is sparse in the sense that it accesses 0 or 1 components of
+//       the embedded expression template, possibly multiplied by -1 (this restriction could
+//       potentially be relaxed).
+//     ~ the coembed operation, by definition, is adjoint to the embed operation, so it
+//       is uniquely defined by the embed operation.  If the matrix of the embed operation
+//       is written out, then it is the transpose of the matrix of the coembed operation.
+//
 // * the mutual adjointness property should provide a testable property to ensure that the
 //     functions required by embed/coembed actually do what they claim.
 //     TODO: figure out the criteria

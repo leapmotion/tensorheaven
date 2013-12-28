@@ -109,18 +109,19 @@ private:
     SummedAbstractIndexPairElementIndices_t();
 public:
     static Uint32 const FIRST = IndexOfFirstOccurrence_f<AbstractIndexTypeList,AbstractIndex>::V;
+private:
     static Uint32 const FIRST_MATCHING_IN_REST = IndexOfFirstOccurrence_f<typename TrailingTypeList_f<AbstractIndexTypeList,FIRST+1>::T,AbstractIndex>::V;
+public:
     static Uint32 const SECOND = FIRST + 1 + FIRST_MATCHING_IN_REST;
 };
 
 template <typename FirstFactor, typename SecondFactor>
-struct AssertThatSummationIsNaturalPairing_t
+struct SummationIsNaturalPairing_t
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<FirstFactor,typename DualOf_f<SecondFactor>::T>::V), SUMMATION_MUST_BE_NATURAL_PAIRING) };
-    AssertThatSummationIsNaturalPairing_t();
+    SummationIsNaturalPairing_t();
 public:
-    static bool const V = true;
+    static bool const V = TypesAreEqual_f<FirstFactor,typename DualOf_f<SecondFactor>::T>::V; //true;
 };
 
 template <typename FactorTypeList, typename AbstractIndexTypeList, typename SummedAbstractIndexTypeList, typename AbstractIndex>
@@ -140,29 +141,29 @@ private:
 };
 
 template <typename FactorTypeList, typename AbstractIndexTypeList, typename SummedAbstractIndexTypeList>
-struct AssertThatAllSummationsAreNaturalPairings_t
+struct AllSummationsAreNaturalPairings_t
 {
 private:
     typedef FactorsOfSummation_t<FactorTypeList,
                                  AbstractIndexTypeList,
                                  SummedAbstractIndexTypeList,
                                  typename SummedAbstractIndexTypeList::HeadType> FactorsOfSummation;
-    typedef AssertThatSummationIsNaturalPairing_t<typename FactorsOfSummation::FirstFactor,
-                                                  typename FactorsOfSummation::SecondFactor> A1;
-    typedef AssertThatAllSummationsAreNaturalPairings_t<FactorTypeList,
-                                                        AbstractIndexTypeList,
-                                                        typename SummedAbstractIndexTypeList::BodyTypeList> A2;
-    AssertThatAllSummationsAreNaturalPairings_t();
+    static bool const V_HEAD = SummationIsNaturalPairing_t<typename FactorsOfSummation::FirstFactor,
+                                                           typename FactorsOfSummation::SecondFactor>::V;
+    static bool const V_BODY = AllSummationsAreNaturalPairings_t<FactorTypeList,
+                                                                 AbstractIndexTypeList,
+                                                                 typename SummedAbstractIndexTypeList::BodyTypeList>::V;
+    AllSummationsAreNaturalPairings_t();
 public:
-    static bool const V = A1::V && A2::V;
+    static bool const V = V_HEAD && V_BODY;
 };
 
 template <typename FactorTypeList, typename AbstractIndexTypeList>
-struct AssertThatAllSummationsAreNaturalPairings_t<FactorTypeList,AbstractIndexTypeList,EmptyTypeList>
+struct AllSummationsAreNaturalPairings_t<FactorTypeList,AbstractIndexTypeList,EmptyTypeList>
 {
     static bool const V = true; // so this can be used in STATIC_ASSERT_IN_ENUM
 private:
-    AssertThatAllSummationsAreNaturalPairings_t();
+    AllSummationsAreNaturalPairings_t();
 };
 
 // this is designed to handle trace-type expression templates, such as u(i,i) or v(i,j,i)
@@ -176,9 +177,9 @@ private:
     typedef typename AbstractIndicesOfDimIndexTypeList_t<SummedDimIndexTypeList>::T SummedAbstractIndexTypeList;
     enum
     {
-        STATIC_ASSERT_IN_ENUM((AssertThatAllSummationsAreNaturalPairings_t<typename Tensor::FactorTypeList,
-                                                                           AbstractIndexTypeList,
-                                                                           SummedAbstractIndexTypeList>::V), ALL_SUMMATIONS_MUST_BE_NATURAL_PAIRINGS)
+        STATIC_ASSERT_IN_ENUM((AllSummationsAreNaturalPairings_t<typename Tensor::FactorTypeList,
+                                                                 AbstractIndexTypeList,
+                                                                 SummedAbstractIndexTypeList>::V), ALL_SUMMATIONS_MUST_BE_NATURAL_PAIRINGS)
     };
 public:
 
@@ -241,9 +242,9 @@ private:
         STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<RightOperand>::V, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename LeftOperand::Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
         STATIC_ASSERT_IN_ENUM((SummedDimIndexTypeList::LENGTH > 0), LENGTH_MUST_BE_POSITIVE),
-        STATIC_ASSERT_IN_ENUM((AssertThatAllSummationsAreNaturalPairings_t<FactorTypeList,
-                                                                           AbstractIndexTypeList,
-                                                                           SummedAbstractIndexTypeList>::V), ALL_SUMMATIONS_MUST_BE_NATURAL_PAIRINGS)
+        STATIC_ASSERT_IN_ENUM((AllSummationsAreNaturalPairings_t<FactorTypeList,
+                                                                 AbstractIndexTypeList,
+                                                                 SummedAbstractIndexTypeList>::V), ALL_SUMMATIONS_MUST_BE_NATURAL_PAIRINGS)
     };
 public:
     typedef typename LeftOperand::Scalar Scalar;
