@@ -257,10 +257,11 @@ public:
         return m.template el<(FACTOR1DIM_LEQ_FACTOR2DIM ? 0 : 1)>();
     }
 
-    static Uint32 term_count_for_projected_component (Diag2ComponentIndex const &) { return 1; }
-    static Scalar_ scalar_factor_for_projected_component (Diag2ComponentIndex const &i)
+    static Uint32 term_count_for_coembedded_component (Diag2ComponentIndex const &) { return 1; }
+    static Scalar_ scalar_factor_for_coembedded_component (Diag2ComponentIndex const &, Uint32) { return 1; }
+    static Tensor2ComponentIndex source_component_index_for_coembedded_component (Diag2ComponentIndex const &i, Uint32)
     {
-        return Tensor2MultiIndex(i.value(), i.value(), DONT_CHECK_RANGE);
+        return Tensor2MultiIndex(i.value(), i.value(), DONT_CHECK_RANGE).as_component_index();
     }
 };
 

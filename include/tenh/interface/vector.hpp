@@ -193,6 +193,20 @@ struct Vector_i
         AbstractIndex_c<666> dummy_index;
         return operator()(dummy_index).template embed<EmbeddingId_>(dummy_index, EmbeddingCodomain_(), i);
     }
+    // this provides the "coembed" operation without needing an intermediate temporary index,
+    // since this object will be frequently embedded.
+    // TODO: could the C++11 infer the return type?  this return type is annoying
+    template <typename EmbeddingId_, typename CoembeddingCodomain_, AbstractIndexSymbol COEMBEDDED_ABSTRACT_INDEX_SYMBOL_>
+    typename IndexedExpressionConstType_f<666>::T
+             ::template CoembedReturnType_f<AbstractIndex_c<666>,
+                                            CoembeddingCodomain_,
+                                            COEMBEDDED_ABSTRACT_INDEX_SYMBOL_,
+                                            EmbeddingId_>::T
+        coembed (CoembeddingCodomain_ const &, AbstractIndex_c<COEMBEDDED_ABSTRACT_INDEX_SYMBOL_> const &i) const
+    {
+        AbstractIndex_c<666> dummy_index;
+        return operator()(dummy_index).template coembed<EmbeddingId_>(dummy_index, CoembeddingCodomain_(), i);
+    }
 
     Uint32 allocation_size_in_bytes () const { return as_derived().allocation_size_in_bytes(); }
     Scalar const *pointer_to_allocation () const { return as_derived().pointer_to_allocation(); }

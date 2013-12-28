@@ -36,6 +36,13 @@ template <typename Operand_,
           typename EmbeddingId_>
 struct ExpressionTemplate_IndexEmbed_t;
 
+template <typename Operand_,
+          typename SourceAbstractIndexType_,
+          typename CoembeddingCodomain_,
+          typename CoembeddedAbstractIndexType_,
+          typename EmbeddingId_>
+struct ExpressionTemplate_IndexCoembed_t;
+
 template <typename Operand>
 struct ExpressionTemplate_Eval_t;
 
@@ -256,6 +263,38 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
                                           EmbeddingCodomain_,
                                           EMBEDDED_ABSTRACT_INDEX_SYMBOL_,
                                           EmbeddingId_>::T(as_derived());
+    }
+
+    // metafunction for determining the return type of the coembed method.
+    template <typename SourceAbstractIndexType_, typename CoembeddingCodomain_, AbstractIndexSymbol COEMBEDDED_ABSTRACT_INDEX_SYMBOL_, typename EmbeddingId_>
+    struct CoembedReturnType_f
+    {
+        typedef ExpressionTemplate_IndexCoembed_t<Derived,
+                                                  SourceAbstractIndexType_,
+                                                  CoembeddingCodomain_,
+                                                  AbstractIndex_c<COEMBEDDED_ABSTRACT_INDEX_SYMBOL_>,
+                                                  EmbeddingId_> T;
+    };
+    // method for "coembedding" the factor for a given index into another
+    // space (essentially pulling from the larger space into the smaller)
+    // which is an operation that is adjoint to embedding.  coembed is defined
+    // by the property
+    //   A(i).embed(i,UpstairsSpace(),j)*B(j) - A(i)*B(j).coembed(j,DownStairsSpace(),i) == 0
+    template <typename EmbeddingId_, typename SourceAbstractIndexType_, typename CoembeddingCodomain_, AbstractIndexSymbol COEMBEDDED_ABSTRACT_INDEX_SYMBOL_>
+    typename CoembedReturnType_f<SourceAbstractIndexType_,
+                                 CoembeddingCodomain_,
+                                 COEMBEDDED_ABSTRACT_INDEX_SYMBOL_,
+                                 EmbeddingId_>::T
+        coembed (SourceAbstractIndexType_ const &,
+                 CoembeddingCodomain_ const &,
+                 AbstractIndex_c<COEMBEDDED_ABSTRACT_INDEX_SYMBOL_> const &) const
+    {
+        // make sure that SourceAbstractIndexType_ actually is one
+        STATIC_ASSERT(IsAbstractIndex_f<SourceAbstractIndexType_>::V, MUST_BE_ABSTRACT_INDEX);
+        return typename CoembedReturnType_f<SourceAbstractIndexType_,
+                                            CoembeddingCodomain_,
+                                            COEMBEDDED_ABSTRACT_INDEX_SYMBOL_,
+                                            EmbeddingId_>::T(as_derived());
     }
 
     // method for doing an intermediate evaluation of an expression template to avoid aliasing

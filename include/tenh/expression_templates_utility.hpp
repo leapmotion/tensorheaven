@@ -764,6 +764,92 @@ private:
     Operand_ m_operand;
 };
 
+// not an expression template, but just something that handles the embedded indices
+template <typename Operand_,
+          typename SourceAbstractIndexType_,
+          typename CoembeddingCodomain_,
+          typename CoembeddedAbstractIndexType_,
+          typename EmbeddingId_>
+struct IndexCoembedder_t
+{
+    typedef typename AbstractIndicesOfDimIndexTypeList_t<typename Operand_::FreeDimIndexTypeList>::T OperandFreeAbstractIndexTypeList;
+
+    enum
+    {
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IsAbstractIndex_f<SourceAbstractIndexType_>::V, MUST_BE_ABSTRACT_INDEX, SOURCE),
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IsAbstractIndex_f<CoembeddedAbstractIndexType_>::V, MUST_BE_ABSTRACT_INDEX, EMBEDDED),
+        STATIC_ASSERT_IN_ENUM((Contains_f<OperandFreeAbstractIndexTypeList,SourceAbstractIndexType_>::V), SOURCE_INDEX_MUST_BE_FREE),
+        STATIC_ASSERT_IN_ENUM((!TypesAreEqual_f<SourceAbstractIndexType_,CoembeddedAbstractIndexType_>::V), SOURCE_AND_EMBEDDED_MUST_BE_DISTINCT),
+        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<Operand_>::V, OPERAND_IS_EXPRESSION_TEMPLATE)
+    };
+
+    typedef typename Operand_::Scalar Scalar;
+    // we must replace SourceAbstractIndexType_ with CoembeddedAbstractIndexType_ in the index type list
+    static Uint32 const SOURCE_INDEX_TYPE_INDEX = IndexOfFirstOccurrence_f<OperandFreeAbstractIndexTypeList,SourceAbstractIndexType_>::V;
+    typedef typename Element_f<typename Operand_::FreeFactorTypeList,SOURCE_INDEX_TYPE_INDEX>::T CoembeddingDomain;
+
+    typedef typename ConcatenationOfTypeLists_t<
+        typename LeadingTypeList_f<typename Operand_::FreeFactorTypeList,SOURCE_INDEX_TYPE_INDEX>::T,
+        TypeList_t<CoembeddingCodomain_,
+                   typename TrailingTypeList_f<typename Operand_::FreeFactorTypeList,SOURCE_INDEX_TYPE_INDEX+1>::T>
+        >::T FactorTypeList;
+    typedef typename ConcatenationOfTypeLists_t<
+        typename LeadingTypeList_f<typename Operand_::FreeDimIndexTypeList,SOURCE_INDEX_TYPE_INDEX>::T,
+        TypeList_t<CoembeddedAbstractIndexType_,
+                   typename TrailingTypeList_f<typename Operand_::FreeDimIndexTypeList,SOURCE_INDEX_TYPE_INDEX+1>::T>
+        >::T AbstractIndexTypeList;
+    typedef typename DimIndexTypeListOf_t<FactorTypeList,AbstractIndexTypeList>::T DimIndexTypeList;
+    typedef typename ConcatenationOfTypeLists_t<typename Operand_::UsedDimIndexTypeList,TypeList_t<CoembeddedAbstractIndexType_> >::T UsedDimIndexTypeList;
+    typedef MultiIndex_t<DimIndexTypeList> MultiIndex;
+
+    enum
+    {
+        STATIC_ASSERT_IN_ENUM__UNIQUE((FactorTypeList::LENGTH == DimIndexTypeList::LENGTH), MUST_HAVE_EQUAL_LENGTHS, FACTORTYPELIST)
+    };
+
+    IndexCoembedder_t (Operand_ const &operand) : m_operand(operand) { }
+
+    Scalar operator [] (MultiIndex const &m) const
+    {
+        typedef ComponentIndex_t<DimensionOf_f<CoembeddingCodomain_>::V> CoembeddingCodomainComponentIndex;
+        typedef ComponentIndex_t<DimensionOf_f<CoembeddingDomain>::V> CoembeddingDomainComponentIndex;
+        // TODO: the use of UseMemberArray_t<COMPONENTS_ARE_NONCONST> here is arbitrary because it's just used to access a
+        // static method.  figure out if this is a problem
+        typedef ImplementationOf_t<CoembeddingDomain,Scalar,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > ImplementationOfSourceFactor;
+        typedef typename ImplementationOfSourceFactor::MultiIndex CoembeddingDomainMultiIndex;
+
+        CoembeddingCodomainComponentIndex j(m.template el<SOURCE_INDEX_TYPE_INDEX>());
+
+        // the domain and codomain are reversed because of a contravariance property
+        typedef LinearEmbedding_c<CoembeddingCodomain_,CoembeddingDomain,Scalar,EmbeddingId_> LinearEmbedding;
+        Scalar retval(0);
+        Uint32 term_count = LinearEmbedding::term_count_for_coembedded_component(j);
+        for (Uint32 term = 0; term < term_count; ++term)
+        {
+            CoembeddingDomainComponentIndex i(LinearEmbedding::source_component_index_for_coembedded_component(j, term));
+            // this replaces the CoembeddedAbstractIndexType_ portion with SourceAbstractIndexType_
+            typename Operand_::MultiIndex c_rebundled(m.template leading_list<SOURCE_INDEX_TYPE_INDEX>()
+                                                     |
+                                                     (i >>= m.template trailing_list<SOURCE_INDEX_TYPE_INDEX+1>()));
+            retval += LinearEmbedding::scalar_factor_for_coembedded_component(j, term) * m_operand[c_rebundled];
+        }
+        return retval;
+    }
+
+    bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const
+    {
+        return m_operand.overlaps_memory_range(ptr, range);
+    }
+
+    Operand_ const &operand () const { return m_operand; }
+
+private:
+
+    void operator = (IndexCoembedder_t const &);
+
+    Operand_ m_operand;
+};
+
 } // end of namespace Tenh
 
 #endif // TENH_EXPRESSION_TEMPLATES_UTILITY_HPP_
