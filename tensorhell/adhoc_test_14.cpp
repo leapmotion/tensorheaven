@@ -284,3 +284,45 @@ void test_const_component_arrays ()
     }
 }
 
+void test_identity_embedding ()
+{
+    std::cout << "testing identity embedding\n";
+
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > B;
+    typedef DualOf_f<B>::T DualOfB;
+    B b;
+    DualOfB dual_of_b;
+    typedef double Scalar;
+    typedef ImplementationOf_t<B,Scalar> V;
+    AbstractIndex_c<'i'> i;
+    AbstractIndex_c<'j'> j;
+    AbstractIndex_c<'k'> k;
+    AbstractIndex_c<'l'> l;
+
+    V v(uniform_tuple<Scalar>(1, 2, 4));
+    V::Dual a(uniform_tuple<Scalar>(3, -1, 2));
+
+    std::cout << FORMAT_VALUE(v(i)) << '\n';
+    std::cout << FORMAT_VALUE(v(i).embed<IdentityEmbedding>(i,b,j)) << '\n';
+    std::cout << '\n';
+    std::cout << FORMAT_VALUE(a(i)) << '\n';
+    std::cout << FORMAT_VALUE(a(i).embed<IdentityEmbedding>(i,dual_of_b,j)) << '\n';
+    std::cout << '\n';
+
+    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B,
+                                               TypeList_t<DualOfB> > > TProd;
+    TProd t;
+    typedef ImplementationOf_t<TProd,Scalar> T;
+
+    T m(uniform_tuple<Scalar>(2, 0, 0) |
+        uniform_tuple<Scalar>(1, 1, 1) |
+        uniform_tuple<Scalar>(0, 3, 1));
+    std::cout << FORMAT_VALUE(m) << '\n';
+    std::cout << FORMAT_VALUE(m(i)) << '\n';
+    std::cout << FORMAT_VALUE(m(i).embed<IdentityEmbedding>(i,t,j)) << '\n';
+    std::cout << FORMAT_VALUE(m(i*j).embed<IdentityEmbedding>(i,b,k)) << '\n';
+    std::cout << FORMAT_VALUE(m(i*j).embed<IdentityEmbedding>(j,dual_of_b,l)) << '\n';
+    std::cout << FORMAT_VALUE(m(i*j).embed<IdentityEmbedding>(i,b,k).embed<IdentityEmbedding>(j,dual_of_b,l)) << '\n';
+    std::cout << '\n';
+}
+

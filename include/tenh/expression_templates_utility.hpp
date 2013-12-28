@@ -11,6 +11,7 @@
 #include "tenh/componentindex.hpp"
 #include "tenh/conceptual/abstractindex.hpp"
 #include "tenh/conceptual/embeddableintensorproduct.hpp"
+#include "tenh/conceptual/linearembedding.hpp"
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/dimindex.hpp"
 #include "tenh/implementation/implementationof.hpp"
@@ -448,7 +449,7 @@ private:
     typedef typename FactorTypeListOf_f<typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(ResultingFactorType)::TensorProductOfBasedVectorSpaces>::T ResultingFactorTypeFactorTypeList;
     enum
     {
-        STATIC_ASSERT_IN_ENUM(DONT_CHECK_FACTOR_TYPES_ || 
+        STATIC_ASSERT_IN_ENUM(DONT_CHECK_FACTOR_TYPES_ ||
                               (TypesAreEqual_f<BundleFactorTypeList,ResultingFactorTypeFactorTypeList>::V),
                               BUNDLE_FACTORS_MUST_MATCH)
     };
@@ -660,7 +661,7 @@ struct IndexSplitToIndex_t
             return Scalar(0);
 
         SourceFactorComponentIndex i(ImplementationOfSourceFactor::vector_index_of(s));
-        // this replaces the SplitAbstractIndexTypeList portion with SourceAbstractIndexType
+        // this replaces the SplitAbstractIndexType_ portion with SourceAbstractIndexType
         typename Operand::MultiIndex c_rebundled(m.template leading_list<SOURCE_INDEX_TYPE_INDEX>()
                                                  |
                                                  (i >>= m.template trailing_list<SOURCE_INDEX_TYPE_INDEX+1>()));
@@ -679,6 +680,88 @@ private:
     void operator = (IndexSplitToIndex_t const &);
 
     Operand m_operand;
+};
+
+// not an expression template, but just something that handles the embedded indices
+template <typename Operand_,
+          typename SourceAbstractIndexType_,
+          typename EmbeddingCodomain_,
+          typename EmbeddedAbstractIndexType_,
+          typename EmbeddingId_>
+struct IndexEmbedder_t
+{
+    typedef typename AbstractIndicesOfDimIndexTypeList_t<typename Operand_::FreeDimIndexTypeList>::T OperandFreeAbstractIndexTypeList;
+
+    enum
+    {
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IsAbstractIndex_f<SourceAbstractIndexType_>::V, MUST_BE_ABSTRACT_INDEX, SOURCE),
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IsAbstractIndex_f<EmbeddedAbstractIndexType_>::V, MUST_BE_ABSTRACT_INDEX, EMBEDDED),
+        STATIC_ASSERT_IN_ENUM((Contains_f<OperandFreeAbstractIndexTypeList,SourceAbstractIndexType_>::V), SOURCE_INDEX_MUST_BE_FREE),
+        STATIC_ASSERT_IN_ENUM((!TypesAreEqual_f<SourceAbstractIndexType_,EmbeddedAbstractIndexType_>::V), SOURCE_AND_EMBEDDED_MUST_BE_DISTINCT),
+        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<Operand_>::V, OPERAND_IS_EXPRESSION_TEMPLATE)
+    };
+
+    typedef typename Operand_::Scalar Scalar;
+    // we must replace SourceAbstractIndexType_ with EmbeddedAbstractIndexType_ in the index type list
+    static Uint32 const SOURCE_INDEX_TYPE_INDEX = IndexOfFirstOccurrence_f<OperandFreeAbstractIndexTypeList,SourceAbstractIndexType_>::V;
+    typedef typename Element_f<typename Operand_::FreeFactorTypeList,SOURCE_INDEX_TYPE_INDEX>::T EmbeddingDomain;
+
+    typedef typename ConcatenationOfTypeLists_t<
+        typename LeadingTypeList_f<typename Operand_::FreeFactorTypeList,SOURCE_INDEX_TYPE_INDEX>::T,
+        TypeList_t<EmbeddingCodomain_,
+                   typename TrailingTypeList_f<typename Operand_::FreeFactorTypeList,SOURCE_INDEX_TYPE_INDEX+1>::T>
+        >::T FactorTypeList;
+    typedef typename ConcatenationOfTypeLists_t<
+        typename LeadingTypeList_f<typename Operand_::FreeDimIndexTypeList,SOURCE_INDEX_TYPE_INDEX>::T,
+        TypeList_t<EmbeddedAbstractIndexType_,
+                   typename TrailingTypeList_f<typename Operand_::FreeDimIndexTypeList,SOURCE_INDEX_TYPE_INDEX+1>::T>
+        >::T AbstractIndexTypeList;
+    typedef typename DimIndexTypeListOf_t<FactorTypeList,AbstractIndexTypeList>::T DimIndexTypeList;
+    typedef typename ConcatenationOfTypeLists_t<typename Operand_::UsedDimIndexTypeList,TypeList_t<EmbeddedAbstractIndexType_> >::T UsedDimIndexTypeList;
+    typedef MultiIndex_t<DimIndexTypeList> MultiIndex;
+
+    enum
+    {
+        STATIC_ASSERT_IN_ENUM__UNIQUE((FactorTypeList::LENGTH == DimIndexTypeList::LENGTH), MUST_HAVE_EQUAL_LENGTHS, FACTORTYPELIST)
+    };
+
+    IndexEmbedder_t (Operand_ const &operand) : m_operand(operand) { }
+
+    Scalar operator [] (MultiIndex const &m) const
+    {
+        typedef ComponentIndex_t<DimensionOf_f<EmbeddingCodomain_>::V> EmbeddingCodomainComponentIndex;
+        typedef ComponentIndex_t<DimensionOf_f<EmbeddingDomain>::V> EmbeddingDomainComponentIndex;
+        // TODO: the use of UseMemberArray_t<COMPONENTS_ARE_NONCONST> here is arbitrary because it's just used to access a
+        // static method.  figure out if this is a problem
+        typedef ImplementationOf_t<EmbeddingDomain,Scalar,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > ImplementationOfSourceFactor;
+        typedef typename ImplementationOfSourceFactor::MultiIndex EmbeddingDomainMultiIndex;
+
+        EmbeddingCodomainComponentIndex j(m.template el<SOURCE_INDEX_TYPE_INDEX>());
+
+        typedef LinearEmbedding_c<EmbeddingDomain,EmbeddingCodomain_,Scalar,EmbeddingId_> LinearEmbedding;
+        if (LinearEmbedding::embedded_component_is_procedural_zero(j))
+            return Scalar(0);
+
+        EmbeddingDomainComponentIndex i(LinearEmbedding::source_component_index_for_embedded_component(j));
+        // this replaces the EmbeddedAbstractIndexType_ portion with SourceAbstractIndexType_
+        typename Operand_::MultiIndex c_rebundled(m.template leading_list<SOURCE_INDEX_TYPE_INDEX>()
+                                                 |
+                                                 (i >>= m.template trailing_list<SOURCE_INDEX_TYPE_INDEX+1>()));
+        return LinearEmbedding::scalar_factor_for_embedded_component(j) * m_operand[c_rebundled];
+    }
+
+    bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const
+    {
+        return m_operand.overlaps_memory_range(ptr, range);
+    }
+
+    Operand_ const &operand () const { return m_operand; }
+
+private:
+
+    void operator = (IndexEmbedder_t const &);
+
+    Operand_ m_operand;
 };
 
 } // end of namespace Tenh

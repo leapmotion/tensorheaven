@@ -510,6 +510,7 @@ void test_product_of_abstract_indices ();
 void test_linear_solve_using_least_squares ();
 void test_implementation_of_vector_construction_via_vector_i ();
 void test_const_component_arrays ();
+void test_identity_embedding ();
 
 
 #endif // TENSORHELL_ADHOC_TEST_HPP_

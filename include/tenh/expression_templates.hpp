@@ -604,6 +604,7 @@ private:
 // bundling multiple separate indices into a single vector index (downcasting)
 // ////////////////////////////////////////////////////////////////////////////
 
+// TODO: use a metafunction to define the parent class and clean this up
 template <typename Operand,
           typename BundleAbstractIndexTypeList,
           typename ResultingFactorType,
@@ -699,6 +700,7 @@ private:
 // splitting a single vector index into a multiple separate indices (upcasting)
 // ////////////////////////////////////////////////////////////////////////////
 
+// TODO: use a metafunction to define the parent class and clean this up
 template <typename Operand, typename SourceAbstractIndexType, typename SplitAbstractIndexTypeList>
 struct ExpressionTemplate_IndexSplit_t
     :
@@ -791,6 +793,7 @@ private:
 // ////////////////////////////////////////////////////////////////////////////
 
 // TODO: this could probably combine with ExpressionTemplate_IndexSplit_t
+// TODO: use a metafunction to define the parent class and clean this up
 template <typename Operand, typename SourceAbstractIndexType, typename SplitAbstractIndexType>
 struct ExpressionTemplate_IndexSplitToIndex_t
     :
@@ -872,6 +875,108 @@ template <typename Operand_,
 struct IsExpressionTemplate_f<ExpressionTemplate_IndexSplitToIndex_t<Operand_,
                                                                      SourceAbstractIndexType_,
                                                                      SplitAbstractIndexTypeList_> >
+{
+    static bool const V = true;
+private:
+    IsExpressionTemplate_f();
+};
+
+// ////////////////////////////////////////////////////////////////////////////
+// embedding single vector index into a single vector index for larger space
+// ////////////////////////////////////////////////////////////////////////////
+
+// TODO: use a metafunction to define the parent class and clean this up
+template <typename Operand_,
+          typename SourceAbstractIndexType_,
+          typename EmbeddingCodomain_,
+          typename EmbeddedAbstractIndexType_,
+          typename EmbeddingId_>
+struct ExpressionTemplate_IndexEmbed_t
+    :
+    public ExpressionTemplate_IndexedObject_t<IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>,
+                                              typename IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>::FactorTypeList,
+                                              typename IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>::DimIndexTypeList,
+                                              typename SummedIndexTypeList_t<typename IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>::DimIndexTypeList>::T,
+                                              FORCE_CONST,
+                                              CHECK_FOR_ALIASING, // irrelevant value
+                                              ExpressionTemplate_IndexEmbed_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_> >
+{
+    enum
+    {
+        STATIC_ASSERT_IN_ENUM(IsAbstractIndex_f<SourceAbstractIndexType_>::V, MUST_BE_ABSTRACT_INDEX),
+    };
+
+    typedef ExpressionTemplate_IndexedObject_t<IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>,
+                                               typename IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>::FactorTypeList,
+                                               typename IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>::DimIndexTypeList,
+                                               typename SummedIndexTypeList_t<typename IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>::DimIndexTypeList>::T,
+                                               FORCE_CONST,
+                                               CHECK_FOR_ALIASING, // irrelevant value
+                                               ExpressionTemplate_IndexEmbed_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_> > Parent;
+    typedef typename Parent::Derived Derived;
+    typedef typename Parent::Scalar Scalar;
+    typedef typename Parent::FreeFactorTypeList FreeFactorTypeList;
+    typedef typename Parent::FreeDimIndexTypeList FreeDimIndexTypeList;
+    typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
+    typedef typename Parent::MultiIndex MultiIndex;
+    typedef typename Parent::SummedDimIndexTypeList SummedDimIndexTypeList;
+
+private:
+
+    typedef IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_> IndexEmbedder;
+
+public:
+
+    // it's not great that m_embedder is being passed to Parent before
+    // m_embedder is constructed, but Parent only stores a reference
+    // to m_embedder, so it doesn't really matter.
+    ExpressionTemplate_IndexEmbed_t (Operand_ const &operand) : Parent(m_embedder), m_embedder(operand) { }
+
+    operator Scalar () const
+    {
+        STATIC_ASSERT_TYPELIST_IS_EMPTY(FreeDimIndexTypeList);
+        return operator[](MultiIndex());
+    }
+
+    // read-only, because it doesn't make sense to assign to an index-bundled expression (which is possibly also a summation).
+    Scalar operator [] (MultiIndex const &m) const
+    {
+        return UnarySummation_t<IndexEmbedder,typename IndexEmbedder::DimIndexTypeList,SummedDimIndexTypeList>::eval(m_embedder, m);
+    }
+
+    bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const
+    {
+        return m_embedder.overlaps_memory_range(ptr, range);
+    }
+
+    Operand_ const &operand () const { return m_embedder.operand(); }
+
+    static std::string type_as_string ()
+    {
+        return "ExpressionTemplate_IndexEmbed_t<" + type_string_of<Operand_>() + ','
+                                             + type_string_of<SourceAbstractIndexType_>() + ','
+                                             + type_string_of<EmbeddingCodomain_>() + ','
+                                             + type_string_of<EmbeddedAbstractIndexType_>() + ','
+                                             + type_string_of<EmbeddingId_>() + '>';
+    }
+
+private:
+
+    void operator = (ExpressionTemplate_IndexEmbed_t const &);
+
+    IndexEmbedder m_embedder;
+};
+
+template <typename Operand_,
+          typename SourceAbstractIndexType_,
+          typename EmbeddingCodomain_,
+          typename EmbeddedAbstractIndexType_,
+          typename EmbeddingId_>
+struct IsExpressionTemplate_f<ExpressionTemplate_IndexEmbed_t<Operand_,
+                                                         SourceAbstractIndexType_,
+                                                         EmbeddingCodomain_,
+                                                         EmbeddedAbstractIndexType_,
+                                                         EmbeddingId_> >
 {
     static bool const V = true;
 private:

@@ -65,6 +65,7 @@ int main (int, char **)
     test_linear_solve_using_least_squares();
     test_implementation_of_vector_construction_via_vector_i();
     test_const_component_arrays();
+    test_identity_embedding();
 
     return 0;
 }
