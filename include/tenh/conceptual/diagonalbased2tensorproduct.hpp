@@ -8,9 +8,12 @@
 
 #include "tenh/core.hpp"
 
+#include "tenh/componentindex.hpp" // technically not conceptual code, but close enough.
 #include "tenh/conceptual/concept.hpp"
 #include "tenh/conceptual/embeddableintensorproduct.hpp"
+#include "tenh/conceptual/linearembedding.hpp"
 #include "tenh/conceptual/tensorproduct.hpp"
+#include "tenh/multiindex.hpp" // technically not conceptual code, but close enough.
 
 namespace Tenh {
 
@@ -215,6 +218,50 @@ struct BaseProperty_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Facto
     typedef TypeList_t<Factor1_,TypeList_t<Factor2_> > T;
 private:
     BaseProperty_f();
+};
+
+// ///////////////////////////////////////////////////////////////////////////
+// linear embedding of diagonal 2-tensor into corresponding tensor product
+// ///////////////////////////////////////////////////////////////////////////
+
+template <typename Factor1_, typename Factor2_, typename Scalar_>
+struct LinearEmbedding_c<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,
+                         TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,TypeList_t<Factor2_> > >,
+                         Scalar_,
+                         NaturalEmbedding>
+{
+private:
+    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> Diag2;
+    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,TypeList_t<Factor2_> > > Tensor2;
+    static bool const FACTOR1DIM_LEQ_FACTOR2DIM = DimensionOf_f<Factor1_>::V <= DimensionOf_f<Factor2_>::V;
+public:
+
+    typedef ComponentIndex_t<DimensionOf_f<Diag2>::V> Diag2ComponentIndex;
+    typedef ComponentIndex_t<DimensionOf_f<Tensor2>::V> Tensor2ComponentIndex;
+    typedef ComponentIndex_t<DimensionOf_f<Factor1_>::V> Factor1ComponentIndex;
+    typedef ComponentIndex_t<DimensionOf_f<Factor2_>::V> Factor2ComponentIndex;
+    typedef MultiIndex_t<TypeList_t<Factor1ComponentIndex,
+                         TypeList_t<Factor2ComponentIndex> > > Tensor2MultiIndex;
+
+    static bool embedded_component_is_procedural_zero (Tensor2ComponentIndex const &i)
+    {
+        Tensor2MultiIndex m(i); // does the row-major indexing conversion
+        // it's a procedural zero if the component is off the diagonal.
+        return m.template el<0>().value() != m.template el<1>().value();
+    }
+    static Scalar_ scalar_factor_for_embedded_component (Tensor2ComponentIndex const &) { return Scalar_(1); }
+    static Diag2ComponentIndex source_component_index_for_embedded_component (Tensor2ComponentIndex const &i)
+    {
+        assert(!embedded_component_is_procedural_zero(i)); // this may potentially slow stuff down too much
+        Tensor2MultiIndex m(i); // does the row-major indexing conversion
+        return m.template el<(FACTOR1DIM_LEQ_FACTOR2DIM ? 0 : 1)>();
+    }
+
+    static Uint32 term_count_for_projected_component (Diag2ComponentIndex const &) { return 1; }
+    static Scalar_ scalar_factor_for_projected_component (Diag2ComponentIndex const &i)
+    {
+        return Tensor2MultiIndex(i.value(), i.value(), DONT_CHECK_RANGE);
+    }
 };
 
 } // end of namespace Tenh

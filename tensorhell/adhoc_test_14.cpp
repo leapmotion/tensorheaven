@@ -329,3 +329,33 @@ void test_identity_embedding ()
     std::cout << '\n';
 }
 
+void test_diag2tensor_embedding ()
+{
+    std::cout << "testing natural diag2tensor embedding\n";
+
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > B3;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,Basis_c<Generic> > B4;
+    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B3,B4> Diag2;
+    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B3,TypeList_t<B4> > > Tensor2;
+
+    typedef double Scalar;
+    typedef ImplementationOf_t<Diag2,Scalar> D;
+
+    B3 b3;
+    B4 b4;
+    Diag2 diag2;
+    Tensor2 tensor2;
+    AbstractIndex_c<'i'> i;
+    AbstractIndex_c<'j'> j;
+    AbstractIndex_c<'k'> k;
+    AbstractIndex_c<'l'> l;
+
+    D d(uniform_tuple<Scalar>(2, 1, 3));
+    std::cout << FORMAT_VALUE(d) << '\n';
+    std::cout << FORMAT_VALUE(d.split(i*j)) << '\n';
+    std::cout << FORMAT_VALUE(d(i).embed<NaturalEmbedding>(i,tensor2,j)) << '\n';
+    std::cout << FORMAT_VALUE(d(i).embed<NaturalEmbedding>(i,tensor2,j).split(j,k*l)) << '\n';
+    std::cout << FORMAT_VALUE(d.embed<NaturalEmbedding>(tensor2,j)) << '\n';
+    std::cout << FORMAT_VALUE(d.embed<NaturalEmbedding>(tensor2,j).split(j,k*l)) << '\n';
+}
+

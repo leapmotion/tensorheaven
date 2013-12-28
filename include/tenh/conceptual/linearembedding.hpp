@@ -8,8 +8,9 @@
 
 #include "tenh/core.hpp"
 
-#include "tenh/conceptual/concept.hpp"
 #include "tenh/componentindex.hpp" // technically not conceptual code, but close enough.
+#include "tenh/conceptual/concept.hpp"
+#include "tenh/conceptual/vectorspace.hpp"
 
 namespace Tenh {
 
@@ -62,14 +63,14 @@ template <typename Domain_, typename Codomain_, typename Scalar_, typename Embed
 // id for identity embedding
 struct IdentityEmbedding { static std::string type_as_string () { return "IdentityEmbedding"; } };
 
-// identity embedding
-template <typename Domain_, typename Scalar_>
-struct LinearEmbedding_c<Domain_,Domain_,Scalar_,IdentityEmbedding>
+// canonical identity embedding
+template <typename OnBasedVectorSpace_, typename Scalar_>
+struct LinearEmbedding_c<OnBasedVectorSpace_,OnBasedVectorSpace_,Scalar_,IdentityEmbedding>
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(Domain_), MUST_BE_BASED_VECTOR_SPACE) };
+    enum { STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(OnBasedVectorSpace_), MUST_BE_BASED_VECTOR_SPACE) };
 public:
-    typedef ComponentIndex_t<DimensionOf_f<Domain_>::V> ComponentIndex;
+    typedef ComponentIndex_t<DimensionOf_f<OnBasedVectorSpace_>::V> ComponentIndex;
 
     static bool embedded_component_is_procedural_zero (ComponentIndex const &) { return false; }
     static Scalar_ scalar_factor_for_embedded_component (ComponentIndex const &) { return Scalar_(1); }
