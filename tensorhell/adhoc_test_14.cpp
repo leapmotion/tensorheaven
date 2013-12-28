@@ -304,9 +304,11 @@ void test_identity_embedding ()
 
     std::cout << FORMAT_VALUE(v(i)) << '\n';
     std::cout << FORMAT_VALUE(v(i).embed<IdentityEmbedding>(i,b,j)) << '\n';
+    std::cout << FORMAT_VALUE(v.embed<IdentityEmbedding>(b,j)) << '\n';
     std::cout << '\n';
     std::cout << FORMAT_VALUE(a(i)) << '\n';
     std::cout << FORMAT_VALUE(a(i).embed<IdentityEmbedding>(i,dual_of_b,j)) << '\n';
+    std::cout << FORMAT_VALUE(a.embed<IdentityEmbedding>(dual_of_b,j)) << '\n';
     std::cout << '\n';
 
     typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B,
@@ -320,6 +322,7 @@ void test_identity_embedding ()
     std::cout << FORMAT_VALUE(m) << '\n';
     std::cout << FORMAT_VALUE(m(i)) << '\n';
     std::cout << FORMAT_VALUE(m(i).embed<IdentityEmbedding>(i,t,j)) << '\n';
+    std::cout << FORMAT_VALUE(m.embed<IdentityEmbedding>(t,j)) << '\n';
     std::cout << FORMAT_VALUE(m(i*j).embed<IdentityEmbedding>(i,b,k)) << '\n';
     std::cout << FORMAT_VALUE(m(i*j).embed<IdentityEmbedding>(j,dual_of_b,l)) << '\n';
     std::cout << FORMAT_VALUE(m(i*j).embed<IdentityEmbedding>(i,b,k).embed<IdentityEmbedding>(j,dual_of_b,l)) << '\n';

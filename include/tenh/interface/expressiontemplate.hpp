@@ -224,6 +224,16 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
         return ExpressionTemplate_IndexSplitToIndex_t<Derived,SourceAbstractIndexType,AbstractIndex_c<SPLIT_ABSTRACT_INDEX_SYMBOL_> >(as_derived());
     }
 
+    // metafunction for determining the return type of the embed method.
+    template <typename SourceAbstractIndexType_, typename EmbeddingCodomain_, AbstractIndexSymbol EMBEDDED_ABSTRACT_INDEX_SYMBOL_, typename EmbeddingId_>
+    struct EmbedReturnType_f
+    {
+        typedef ExpressionTemplate_IndexEmbed_t<Derived,
+                                                SourceAbstractIndexType_,
+                                                EmbeddingCodomain_,
+                                                AbstractIndex_c<EMBEDDED_ABSTRACT_INDEX_SYMBOL_>,
+                                                EmbeddingId_> T;
+    };
     // method for "embedding" the factor for a given index into another
     // space, such as embedding a diagonal 2-tensor into the corresponding
     // space of tensors -- though this is done entirely with vector indices.
@@ -231,23 +241,21 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     //   diag(i).embed(i,TensorProduct(),j)
     // embeds the diagonal 2-tensor into the corresponding 2-tensor product
     // defined by the type TensorProduct, having index j.
-    template <typename EmbeddingId_, typename SourceAbstractIndexType, typename EmbeddingCodomain_, AbstractIndexSymbol EMBEDDED_ABSTRACT_INDEX_SYMBOL_>
-    ExpressionTemplate_IndexEmbed_t<Derived,
-                                    SourceAbstractIndexType,
-                                    EmbeddingCodomain_,
-                                    AbstractIndex_c<EMBEDDED_ABSTRACT_INDEX_SYMBOL_>,
-                                    EmbeddingId_>
-        embed (SourceAbstractIndexType const &,
+    template <typename EmbeddingId_, typename SourceAbstractIndexType_, typename EmbeddingCodomain_, AbstractIndexSymbol EMBEDDED_ABSTRACT_INDEX_SYMBOL_>
+    typename EmbedReturnType_f<SourceAbstractIndexType_,
+                               EmbeddingCodomain_,
+                               EMBEDDED_ABSTRACT_INDEX_SYMBOL_,
+                               EmbeddingId_>::T
+        embed (SourceAbstractIndexType_ const &,
                EmbeddingCodomain_ const &,
                AbstractIndex_c<EMBEDDED_ABSTRACT_INDEX_SYMBOL_> const &) const
     {
-        // make sure that SourceAbstractIndexType actually is one
-        STATIC_ASSERT(IsAbstractIndex_f<SourceAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX);
-        return ExpressionTemplate_IndexEmbed_t<Derived,
-                                               SourceAbstractIndexType,
-                                               EmbeddingCodomain_,
-                                               AbstractIndex_c<EMBEDDED_ABSTRACT_INDEX_SYMBOL_>,
-                                               EmbeddingId_>(as_derived());
+        // make sure that SourceAbstractIndexType_ actually is one
+        STATIC_ASSERT(IsAbstractIndex_f<SourceAbstractIndexType_>::V, MUST_BE_ABSTRACT_INDEX);
+        return typename EmbedReturnType_f<SourceAbstractIndexType_,
+                                          EmbeddingCodomain_,
+                                          EMBEDDED_ABSTRACT_INDEX_SYMBOL_,
+                                          EmbeddingId_>::T(as_derived());
     }
 
     // method for doing an intermediate evaluation of an expression template to avoid aliasing
