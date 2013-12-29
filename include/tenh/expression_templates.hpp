@@ -340,23 +340,26 @@ struct ExpressionTemplate_Addition_t
     typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
     typedef typename Parent::MultiIndex MultiIndex;
 
-    // TODO: check that the summed indices from each operand have no indices in common
-    // though technically this is unnecessary, because the summed indices are "private"
-    // to each contraction, so this is really for the human's benefit, not getting
-    // confused by multiple repeated indices that have nothing to do with each other.
-    // NOTE: technically this check is already done inside MultiIndex_t, but it would
-    // be good to do the check here so that an error will be more obvious.
+private:
+
+    typedef typename Zip_t<TypeList_t<typename LeftOperand::FreeFactorTypeList,
+                           TypeList_t<typename LeftOperand::FreeDimIndexTypeList> > >::T LeftFactorAndIndexTypeList;
+    typedef typename Zip_t<TypeList_t<typename RightOperand::FreeFactorTypeList,
+                           TypeList_t<typename RightOperand::FreeDimIndexTypeList> > >::T RightFactorAndIndexTypeList;
+
     enum
     {
         STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<LeftOperand>::V, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<RightOperand>::V, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename LeftOperand::Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename LeftOperand::FreeFactorTypeList,typename RightOperand::FreeFactorTypeList>::V), OPERANDS_HAVE_SAME_FACTORS),
+        STATIC_ASSERT_IN_ENUM((AreEqualAsSets_t<LeftFactorAndIndexTypeList,RightFactorAndIndexTypeList>::V), OPERANDS_HAVE_SAME_FACTORS),
         STATIC_ASSERT_IN_ENUM((AreEqualAsSets_t<typename LeftOperand::FreeDimIndexTypeList,typename RightOperand::FreeDimIndexTypeList>::V), OPERANDS_HAVE_SAME_FREE_INDICES),
         STATIC_ASSERT_IN_ENUM(!ContainsDuplicates_t<typename LeftOperand::FreeDimIndexTypeList>::V, LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
         STATIC_ASSERT_IN_ENUM(!ContainsDuplicates_t<typename RightOperand::FreeDimIndexTypeList>::V, RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
         STATIC_ASSERT_IN_ENUM((OPERATOR == '+' || OPERATOR == '-'), OPERATOR_IS_PLUS_OR_MINUS)
     };
+
+public:
 
     ExpressionTemplate_Addition_t (LeftOperand const &left_operand, RightOperand const &right_operand)
         :
