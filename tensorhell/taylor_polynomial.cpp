@@ -1218,7 +1218,7 @@ int main (int argc, char **argv)
         typedef TypeList_t<StandardInnerProduct,
                 TypeList_t<StandardInnerProduct> > InnerProductFactorList;
         std::cerr << "this value should be about equal to 0: "
-                  << FORMAT_VALUE(squared_norm<TensorProduct_c<InnerProductFactorList> >((cayley_transform(i*j)*inner_product.split(i*k)*cayley_transform(k*l) - inner_product_inverse.split(j*l)).eval().value())) << "\n\n";
+                  << FORMAT_VALUE(squared_norm<TensorProduct_c<InnerProductFactorList> >((cayley_transform(i*j)*inner_product.split(i*k)*cayley_transform(k*l) - inner_product.split(j*l)).eval().value())) << "\n\n";
     }
 
 //     std::cerr << "QuadraticFunction_t\n";

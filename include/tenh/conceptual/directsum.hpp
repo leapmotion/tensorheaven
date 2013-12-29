@@ -389,6 +389,49 @@ private:
 };
 
 // ///////////////////////////////////////////////////////////////////////////
+// helper functions for easing use of the type system
+// ///////////////////////////////////////////////////////////////////////////
+
+// for now, just do direct sum of based vector spaces
+
+template <typename LhsBasedVectorSpace_, typename RhsBasedVectorSpace_>
+typename EnableIf_f<(IS_BASED_VECTOR_SPACE_UNIQUELY(LhsBasedVectorSpace_) &&
+                     IS_BASED_VECTOR_SPACE_UNIQUELY(RhsBasedVectorSpace_)),
+                    DirectSumOfBasedVectorSpaces_c<TypeList_t<LhsBasedVectorSpace_,
+                                                   TypeList_t<RhsBasedVectorSpace_> > > >::T
+    operator + (LhsBasedVectorSpace_ const &, RhsBasedVectorSpace_ const &)
+{
+    return DirectSumOfBasedVectorSpaces_c<TypeList_t<LhsBasedVectorSpace_,
+                                          TypeList_t<RhsBasedVectorSpace_> > >();
+}
+
+template <typename SummandTypeList_, typename BasedVectorSpace_>
+DirectSumOfBasedVectorSpaces_c<typename ConcatenationOfTypeLists_t<SummandTypeList_,
+                                                                   TypeList_t<BasedVectorSpace_> >::T>
+    operator + (DirectSumOfBasedVectorSpaces_c<SummandTypeList_> const &, BasedVectorSpace_ const &)
+{
+    return DirectSumOfBasedVectorSpaces_c<typename ConcatenationOfTypeLists_t<SummandTypeList_,
+                                                                              TypeList_t<BasedVectorSpace_> >::T>();
+}
+
+template <typename SummandTypeList_, typename BasedVectorSpace_>
+DirectSumOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_,SummandTypeList_> >
+    operator + (BasedVectorSpace_ const &, DirectSumOfBasedVectorSpaces_c<SummandTypeList_> const &)
+{
+    return DirectSumOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_,SummandTypeList_> >();
+}
+
+template <typename LhsSummandTypeList_, typename RhsSummandTypeList_>
+DirectSumOfBasedVectorSpaces_c<TypeList_t<DirectSumOfBasedVectorSpaces_c<LhsSummandTypeList_>,
+                               TypeList_t<DirectSumOfBasedVectorSpaces_c<RhsSummandTypeList_> > > >
+    operator + (DirectSumOfBasedVectorSpaces_c<LhsSummandTypeList_> const &,
+                DirectSumOfBasedVectorSpaces_c<RhsSummandTypeList_> const &)
+{
+    return DirectSumOfBasedVectorSpaces_c<TypeList_t<DirectSumOfBasedVectorSpaces_c<LhsSummandTypeList_>,
+                                          TypeList_t<DirectSumOfBasedVectorSpaces_c<RhsSummandTypeList_> > > >();
+}
+
+// ///////////////////////////////////////////////////////////////////////////
 // meta-functions for taking direct sum powers of stuff
 // disabled due to lack of a good name
 // ///////////////////////////////////////////////////////////////////////////

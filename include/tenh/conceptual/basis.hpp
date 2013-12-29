@@ -149,6 +149,33 @@ private:
     IdsOfTypeList_t();
 };
 
+// ///////////////////////////////////////////////////////////////////////////
+// helper functions for easing use of the type system
+// ///////////////////////////////////////////////////////////////////////////
+
+template <typename Id_>
+Basis_c<Id_> basis (Id_ const &)
+{
+    return Basis_c<Id_>();
+}
+
+// convenience function equivalent to basis(Generic())
+inline Basis_c<Generic> generic_basis ()
+{
+    return Basis_c<Generic>();
+}
+
+template <typename Id_>
+OrthonormalBasis_c<Id_> o_n_basis (Id_ const &)
+{
+    return OrthonormalBasis_c<Id_>();
+}
+
+// convenience function equivalent to orthonormal_basis(Generic())
+inline OrthonormalBasis_c<Generic> generic_o_n_basis ()
+{
+    return OrthonormalBasis_c<Generic>();
+}
 
 } // end of namespace Tenh
 

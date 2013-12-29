@@ -221,6 +221,17 @@ private:
 };
 
 // ///////////////////////////////////////////////////////////////////////////
+// helper functions for easing use of the type system
+// ///////////////////////////////////////////////////////////////////////////
+
+// for now, just do diagonal 2-tensor product of based vector spaces
+template <typename Factor1_, typename Factor2_>
+Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> diag (TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,TypeList_t<Factor2_> > > const &)
+{
+    return Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>();
+}
+
+// ///////////////////////////////////////////////////////////////////////////
 // linear embedding of diagonal 2-tensor into corresponding tensor product
 // ///////////////////////////////////////////////////////////////////////////
 

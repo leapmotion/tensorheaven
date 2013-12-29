@@ -439,3 +439,48 @@ void test_embed_coembed_adjointness ()
     std::cout << '\n';
 }
 
+void test_type_system_helper_functions ()
+{
+    std::cout << "testing type system helper functions\n";
+    RealField real_field;
+    Generic generic;
+    std::cout << FORMAT_VALUE(type_string_of(real_field)) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(generic)) << '\n';
+    std::cout << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(vs<3>(real_field, generic))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(generic_vs<3>(real_field))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(real_vs<3>(generic))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(generic_real_vs<3>())) << '\n';
+    std::cout << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(basis(Generic()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(generic_basis())) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(o_n_basis(Generic()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(generic_o_n_basis())) << '\n';
+    std::cout << '\n';
+    Basis_c<Generic> b;
+    VectorSpace_c<RealField,3,Generic> v3;
+    VectorSpace_c<RealField,4,Generic> v4;
+    std::cout << FORMAT_VALUE(type_string_of(bvs(v3, b))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(bvs<3>(real_field, generic))) << '\n';
+    std::cout << '\n';
+    BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > bvs3;
+    BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,Basis_c<Generic> > bvs4;
+    std::cout << FORMAT_VALUE(type_string_of(bvs3 + bvs4)) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(bvs3 + bvs4 + bvs3)) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of((bvs3 + bvs4) + bvs3)) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(bvs3 + (bvs4 + bvs3))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of((bvs3 + bvs4) + (bvs4 + bvs3))) << '\n';
+    std::cout << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(bvs3 * bvs4)) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(bvs3 * bvs4 * bvs3)) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of((bvs3 * bvs4) * bvs3)) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(bvs3 * (bvs4 * bvs3))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of((bvs3 * bvs4) * (bvs4 * bvs3))) << '\n';
+    std::cout << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(diag(bvs3*bvs4))) << '\n';
+    std::cout << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(ext<3>(bvs3))) << '\n';
+    std::cout << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(sym<3>(bvs3))) << '\n';
+    std::cout << '\n';
+}

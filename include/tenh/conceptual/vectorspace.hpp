@@ -312,6 +312,60 @@ private:
     ProductOfDimensions_t();
 };
 
+// ///////////////////////////////////////////////////////////////////////////
+// helper functions for easing use of the type system
+// ///////////////////////////////////////////////////////////////////////////
+
+template <Uint32 DIMENSION_, typename ScalarField_, typename Id_>
+VectorSpace_c<ScalarField_,DIMENSION_,Id_> vs (ScalarField_ const &, Id_ const &)
+{
+    return VectorSpace_c<ScalarField_,DIMENSION_,Id_>();
+}
+
+// equivalent to vs<DIMENSION_>(ScalarField_(), Generic())
+template <Uint32 DIMENSION_, typename ScalarField_>
+VectorSpace_c<ScalarField_,DIMENSION_,Generic> generic_vs (ScalarField_ const &)
+{
+    return VectorSpace_c<ScalarField_,DIMENSION_,Generic>();
+}
+
+// equivalent to vs<DIMENSION_>(RealField(), Id_())
+template <Uint32 DIMENSION_, typename Id_>
+VectorSpace_c<RealField,DIMENSION_,Id_> real_vs (Id_ const &)
+{
+    return VectorSpace_c<RealField,DIMENSION_,Id_>();
+}
+
+// equivalent to vs<DIMENSION_>(RealField(), Generic())
+template <Uint32 DIMENSION_>
+VectorSpace_c<RealField,DIMENSION_,Generic> generic_real_vs ()
+{
+    return VectorSpace_c<RealField,DIMENSION_,Generic>();
+}
+
+template <typename VectorSpace_, typename Basis_>
+BasedVectorSpace_c<VectorSpace_,Basis_> bvs (VectorSpace_ const &, Basis_ const &)
+{
+    return BasedVectorSpace_c<VectorSpace_,Basis_>();
+}
+
+// convenience overload to make the declaration nicer-looking -- Id_ is used for both
+// the vector space id and the basis id.
+template <Uint32 DIMENSION_, typename ScalarField_, typename Id_>
+BasedVectorSpace_c<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,Basis_c<Id_> >
+    bvs (ScalarField_ const &, Id_ const &)
+{
+    return BasedVectorSpace_c<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,Basis_c<Id_> >();
+}
+
+// convenience overload to make the declaration nicer-looking -- Id_ is used for both
+// the vector space id and the basis id.
+template <Uint32 DIMENSION_, typename ScalarField_, typename Id_>
+BasedVectorSpace_c<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,OrthonormalBasis_c<Id_> >
+    o_n_bvs (ScalarField_ const &, Id_ const &)
+{
+    return BasedVectorSpace_c<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,OrthonormalBasis_c<Id_> >();
+}
 
 } // end of namespace Tenh
 

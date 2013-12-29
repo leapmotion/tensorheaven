@@ -275,6 +275,16 @@ private:
     DualOf_f();
 };
 
+// ///////////////////////////////////////////////////////////////////////////
+// helper functions for easing use of the type system
+// ///////////////////////////////////////////////////////////////////////////
+
+// for now, just do symmetric power of based vector spaces
+template <Uint32 ORDER_, typename Factor_>
+SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> sym (Factor_ const &)
+{
+    return SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>();
+}
 
 } // end of namespace Tenh
 

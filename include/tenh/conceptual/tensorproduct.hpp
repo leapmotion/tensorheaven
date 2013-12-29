@@ -426,6 +426,50 @@ public:
     typedef TensorProductOfBasedVectorSpaces_c<typename UniformTypeListOfLength_t<Factor_,ORDER_>::T> T;
 };
 
+// ///////////////////////////////////////////////////////////////////////////
+// helper functions for easing use of the type system
+// ///////////////////////////////////////////////////////////////////////////
+
+// for now, just do tensor product of based vector spaces
+
+template <typename LhsBasedVectorSpace_,
+          typename RhsBasedVectorSpace_>
+typename EnableIf_f<(IS_BASED_VECTOR_SPACE_UNIQUELY(LhsBasedVectorSpace_) &&
+                     IS_BASED_VECTOR_SPACE_UNIQUELY(RhsBasedVectorSpace_)),
+                    TensorProductOfBasedVectorSpaces_c<TypeList_t<LhsBasedVectorSpace_,
+                                                       TypeList_t<RhsBasedVectorSpace_> > > >::T
+    operator * (LhsBasedVectorSpace_ const &, RhsBasedVectorSpace_ const &)
+{
+    return TensorProductOfBasedVectorSpaces_c<TypeList_t<LhsBasedVectorSpace_,
+                                              TypeList_t<RhsBasedVectorSpace_> > >();
+}
+
+template <typename FactorTypeList_, typename BasedVectorSpace_>
+TensorProductOfBasedVectorSpaces_c<typename ConcatenationOfTypeLists_t<FactorTypeList_,
+                                                                       TypeList_t<BasedVectorSpace_> >::T>
+    operator * (TensorProductOfBasedVectorSpaces_c<FactorTypeList_> const &, BasedVectorSpace_ const &)
+{
+    return TensorProductOfBasedVectorSpaces_c<typename ConcatenationOfTypeLists_t<FactorTypeList_,
+                                                                                  TypeList_t<BasedVectorSpace_> >::T>();
+}
+
+template <typename FactorTypeList_, typename BasedVectorSpace_>
+TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_,FactorTypeList_> >
+    operator * (BasedVectorSpace_ const &, TensorProductOfBasedVectorSpaces_c<FactorTypeList_> const &)
+{
+    return TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_,FactorTypeList_> >();
+}
+
+template <typename LhsFactorTypeList_, typename RhsFactorTypeList_>
+TensorProductOfBasedVectorSpaces_c<TypeList_t<TensorProductOfBasedVectorSpaces_c<LhsFactorTypeList_>,
+                                   TypeList_t<TensorProductOfBasedVectorSpaces_c<RhsFactorTypeList_> > > >
+    operator * (TensorProductOfBasedVectorSpaces_c<LhsFactorTypeList_> const &,
+                TensorProductOfBasedVectorSpaces_c<RhsFactorTypeList_> const &)
+{
+    return TensorProductOfBasedVectorSpaces_c<TypeList_t<TensorProductOfBasedVectorSpaces_c<LhsFactorTypeList_>,
+                                              TypeList_t<TensorProductOfBasedVectorSpaces_c<RhsFactorTypeList_> > > >();
+}
+
 } // end of namespace Tenh
 
 #endif // TENH_CONCEPTUAL_TENSORPRODUCT_HPP_

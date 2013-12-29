@@ -265,6 +265,17 @@ private:
     DualOf_f();
 };
 
+// ///////////////////////////////////////////////////////////////////////////
+// helper functions for easing use of the type system
+// ///////////////////////////////////////////////////////////////////////////
+
+// for now, just do exterior power of based vector spaces
+template <Uint32 ORDER_, typename Factor_>
+ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_> ext (Factor_ const &)
+{
+    return ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>();
+}
+
 } // end of namespace Tenh
 
 #endif // TENH_CONCEPTUAL_EXTERIORPOWER_HPP_

@@ -55,20 +55,39 @@ private:
     IsConcept_f();
 };
 
+// default definition for non-concepts -- no parents
+template <typename Concept_, bool ACTUALLY_IS_CONCEPT_ = IsConcept_f<Concept_>::V>
+struct ParentTypeListOfConcept_f;
+
+// template specialization for non-concepts -- EmptyTypeList
+template <typename Concept_>
+struct ParentTypeListOfConcept_f<Concept_,false>
+{
+    typedef EmptyTypeList T;
+};
+
+// template specialization for concepts -- uses Concept_::ParentTypeList
+template <typename Concept_>
+struct ParentTypeListOfConcept_f<Concept_,true>
+{
+    typedef typename Concept_::ParentTypeList T;
+};
+
 // parent-traversing metafunctions
 
 template <typename ParentTypeList>
 struct AncestorsOf_Recursive_f;
 
-// "ancestors" of Concept include Concept as a trivial ancestor
+// "ancestors" of Concept include Concept as a trivial ancestor -- if Concept
+// isn't actually a concept, T will be EmptyTypeList
 template <typename Concept>
 struct AncestorsOf_f
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM(IsConcept_f<Concept>::V, MUST_BE_CONCEPT) };
     AncestorsOf_f();
 public:
-    typedef TypeList_t<Concept,typename AncestorsOf_Recursive_f<typename Concept::ParentTypeList>::T> T;
+    typedef TypeList_t<Concept,
+                       typename AncestorsOf_Recursive_f<typename ParentTypeListOfConcept_f<Concept>::T>::T> T;
 };
 
 template <typename ParentTypeList>
@@ -109,11 +128,11 @@ private:
 
 // for recursively retrieving various conceptual structures
 
+// note that if Concept isn't actually a concept, then T will be EmptyTypeList.
 template <typename Concept, typename ConceptualStructurePredicate>
 struct ConceptualStructuresOf_f
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM(IsConcept_f<Concept>::V, MUST_BE_CONCEPT) }; // TODO: check that ConceptualStructurePredicate actually is one
     ConceptualStructuresOf_f();
 public:
     typedef typename UniqueTypesIn_t<typename AncestorsSatisfyingPredicate_f<Concept,ConceptualStructurePredicate>::T>::T T;

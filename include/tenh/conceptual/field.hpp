@@ -75,6 +75,17 @@ typedef Field_c<RealNumbers> RealField;
 // TODO: maybe quaternion (skew-field)?
 // TODO: Should ComplexField have a real VectorSpace structure?
 
+// ///////////////////////////////////////////////////////////////////////////
+// helper functions for easing use of the type system
+// ///////////////////////////////////////////////////////////////////////////
+
+// for now, just do tensor product of based vector spaces
+template <typename Id_>
+Field_c<Id_> field (Id_ const &)
+{
+    return Field_c<Id_>();
+}
+
 } // end of namespace Tenh
 
 #endif // TENH_CONCEPTUAL_FIELD_HPP_

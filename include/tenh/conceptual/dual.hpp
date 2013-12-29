@@ -13,6 +13,7 @@
 
 namespace Tenh {
 
+// formal dual of something
 template <typename Primal_>
 struct Dual_c
 {
@@ -43,7 +44,8 @@ private:
     DualOf_f();
 };
 
-// template specialization to take dual of each element in a TypeList_t
+// template specialization to take dual of each element in a TypeList_t 
+// -- essentially making the DualOf_f and TypeList_t functors commute.
 template <typename HeadType, typename BodyTypeList>
 struct DualOf_f<TypeList_t<HeadType,BodyTypeList> >
 {
@@ -82,6 +84,16 @@ struct DualOf_f<NullType>
 private:
     DualOf_f();
 };
+
+// ///////////////////////////////////////////////////////////////////////////
+// helper functions for easing use of the type system
+// ///////////////////////////////////////////////////////////////////////////
+
+template <typename Primal_>
+typename DualOf_f<Primal_>::T dual (Primal_ const &)
+{
+    return typename DualOf_f<Primal_>::T();
+}
 
 } // end of namespace Tenh
 
