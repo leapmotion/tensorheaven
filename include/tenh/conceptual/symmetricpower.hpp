@@ -286,6 +286,97 @@ SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> sym (Factor_ const &)
     return SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>();
 }
 
+// ///////////////////////////////////////////////////////////////////////////
+// linear embedding of symmetric power into corresponding tensor product
+// ///////////////////////////////////////////////////////////////////////////
+
+// TODO: think about how 0th powers should work (since they don't have an index)
+
+// specialization for 1st symmetric power -- both the 1st symmetric and 1st
+// tensor power of a vector space are naturally isomorphic to the vector space
+// itself, so the embedding is effectively the identity.
+template <typename Factor_, typename Scalar_>
+struct LinearEmbedding_c<SymmetricPowerOfBasedVectorSpace_c<1,Factor_>,
+                         typename TensorPowerOfBasedVectorSpace_f<1,Factor_>::T,
+                         Scalar_,
+                         NaturalEmbedding>
+{
+private:
+    typedef SymmetricPowerOfBasedVectorSpace_c<1,Factor_> Sym;
+    typedef typename TensorPowerOfBasedVectorSpace_f<1,Factor_>::T TPow;
+    typedef ComponentIndex_t<DimensionOf_f<Factor_>::V> FactorComponentIndex;
+    typedef MultiIndex_t<typename UniformTypeListOfLength_t<1,FactorComponentIndex>::T> TPowMultiIndex;
+public:
+    typedef ComponentIndex_t<DimensionOf_f<Sym>::V> SymComponentIndex;
+    typedef ComponentIndex_t<DimensionOf_f<TPow>::V> TPowComponentIndex;
+
+    static bool embedded_component_is_procedural_zero (TPowComponentIndex const &) { return false; }
+    static Scalar_ scalar_factor_for_embedded_component (TPowComponentIndex const &) { return Scalar_(1); }
+    static SymComponentIndex source_component_index_for_embedded_component (TPowComponentIndex const &i) { return i; }
+
+    static Uint32 term_count_for_coembedded_component (SymComponentIndex const &) { return 1; }
+    static Scalar_ scalar_factor_for_coembedded_component (SymComponentIndex const &, Uint32) { return Scalar_(1); }
+    static TPowComponentIndex source_component_index_for_coembedded_component (SymComponentIndex const &i, Uint32) { return i; }
+};
+
+template <Uint32 ORDER_, typename Factor_, typename Scalar_>
+struct LinearEmbedding_c<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,
+                         typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T,
+                         Scalar_,
+                         NaturalEmbedding>
+{
+private:
+    typedef SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> Sym;
+    typedef typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T TPow;
+    typedef ComponentIndex_t<DimensionOf_f<Factor_>::V> FactorComponentIndex;
+    typedef MultiIndex_t<typename UniformTypeListOfLength_t<ORDER_,FactorComponentIndex>::T> TPowMultiIndex;
+public:
+    typedef ComponentIndex_t<DimensionOf_f<Sym>::V> SymComponentIndex;
+    typedef ComponentIndex_t<DimensionOf_f<TPow>::V> TPowComponentIndex;
+
+    static bool embedded_component_is_procedural_zero (TPowComponentIndex const &i) { return false; }
+    static Scalar_ scalar_factor_for_embedded_component (TPowComponentIndex const &i) { return Scalar_(1); }
+    static SymComponentIndex source_component_index_for_embedded_component (TPowComponentIndex const &i)
+    {
+        TPowMultiIndex m(i); // this does the row-major conversion
+        // sort into non-increasing order -- choosing this instead of non-decreasing
+        // makes certain formulas not depend on the dimension of Factor_
+        sort<std::greater<Uint32> >(m);
+
+        static Uint32 const NEXT_ORDER_DOWN = (ORDER_ <= 1) ? ORDER_ : (ORDER_ - 1);
+        typedef LinearEmbedding_c<SymmetricPowerOfBasedVectorSpace_c<NEXT_ORDER_DOWN,Factor_>,
+                                  typename TensorPowerOfBasedVectorSpace_f<NEXT_ORDER_DOWN,Factor_>::T,
+                                  Scalar_,
+                                  NaturalEmbedding> BodyLinearEmbedding;
+        // NOTE: this is really inefficient because it converts to and then from a ComponentIndex.
+        // it could be better implemented using a private scalar_factor_for_embedded_component(MultiIndex)
+        return SymComponentIndex(  binomial_coefficient(m.head().value() + ORDER_ - 1, ORDER_)
+                                 + BodyLinearEmbedding::source_component_index_for_embedded_component(m.body().as_component_index()).value());
+    }
+
+    // static Uint32 term_count_for_coembedded_component (SymComponentIndex const &)
+    // {
+    //     return Factorial_t<ORDER_>::V;
+    // }
+    // // i corresponds to a unique multiindex M that is sorted in
+    // // nondecreasing order.  this index has an isotropy subgroup H of the
+    // // symmetric group G on ORDER_ letters.  the quotient of G by H is not
+    // // necessarily a group (because H is not necessarily normal).  picking
+    // // a section of this quotient map gives a set of representative permutations
+    // // whose action on M give all TPowMultiIndex values for M.  the signs of the
+    // // representative permutations give the scalar factor for the coembedded
+    // // components.
+    // static Scalar_ scalar_factor_for_coembedded_component (SymComponentIndex const &i, Uint32 term)
+    // {
+    //     // if a Gray coding scheme is used to map [0, term) to the non-invariant
+    //     // permutations of the multiindex M corresponding to i, such that the
+    //     // parity of the index in [0, term) gives the sign of the permutation.
+    // }
+    // static TPowComponentIndex source_component_index_for_coembedded_component (SymComponentIndex const &i, Uint32 term)
+    // {
+    // }
+};
+
 } // end of namespace Tenh
 
 #endif // TENH_CONCEPTUAL_SYMMETRICPOWER_HPP_

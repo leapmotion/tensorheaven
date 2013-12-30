@@ -68,6 +68,7 @@ int main (int, char **)
     test_identity_embedding();
     test_diag2tensor_embedding();
     test_exterior_power_embedding();
+    test_symmetric_power_embedding();
     test_embed_coembed_adjointness();
     test_type_system_helper_functions();
 

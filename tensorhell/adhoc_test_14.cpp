@@ -442,6 +442,48 @@ void test_exterior_power_embedding ()
     test_exterior_power_embedding_templatized<3,B>();
 }
 
+template <Uint32 ORDER_, typename Factor_>
+void test_symmetric_power_embedding_templatized ()
+{
+    std::cout << "testing natural " << ORDER_ << "-symmetric power embedding/coembedding\n";
+
+    typedef SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> Sym;
+    typedef typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T TPow;
+
+    typedef double Scalar;
+    typedef ImplementationOf_t<Sym,Scalar> S;
+    typedef ImplementationOf_t<TPow,Scalar> T;
+
+    Factor_ v;
+    Sym sym;
+    TPow tpow;
+
+    AbstractIndex_c<'i'> i;
+    AbstractIndex_c<'j'> j;
+    AbstractIndex_c<'k'> k;
+    AbstractIndex_c<'l'> l;
+
+    S s(Static<WithoutInitialization>::SINGLETON);
+    for (typename S::ComponentIndex it; it.is_not_at_end(); ++it)
+        s[it] = it.value() + 1;
+
+    std::cout << FORMAT_VALUE(s) << '\n';
+    std::cout << FORMAT_VALUE(s.embed(tpow,j)) << '\n';
+    typename AbstractIndexRangeTypeList_f<ORDER_,'k'>::T abstract_index_range;
+    std::cout << FORMAT_VALUE(s.embed(tpow,j).split(j,abstract_index_range)) << '\n';
+    // this causes a compile error because single indices and 1-multiindices are distinct types.
+    // std::cout << FORMAT_VALUE(s.embed(tpow,j).eval().value()) << '\n';
+    std::cout << '\n';
+}
+
+void test_symmetric_power_embedding ()
+{
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > B;
+    test_symmetric_power_embedding_templatized<1,B>();
+    test_symmetric_power_embedding_templatized<2,B>();
+    test_symmetric_power_embedding_templatized<3,B>();
+}
+
 void test_embed_coembed_adjointness ()
 {
     std::cout << "testing embed/coembed adjointness\n";
