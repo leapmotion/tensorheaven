@@ -439,7 +439,7 @@ DirectSumOfBasedVectorSpaces_c<TypeList_t<DirectSumOfBasedVectorSpaces_c<LhsSumm
 // template <Uint32 ORDER_, typename Factor_>
 // struct TensorPower_f
 // {
-//     typedef DirectSum_c<typename UniformTypeListOfLength_t<Factor_,ORDER_>::T> T;
+//     typedef DirectSum_c<typename UniformTypeListOfLength_t<ORDER_,Factor_>::T> T;
 // private:
 //     TensorPower_f();
 // };
@@ -451,7 +451,7 @@ DirectSumOfBasedVectorSpaces_c<TypeList_t<DirectSumOfBasedVectorSpaces_c<LhsSumm
 //     enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_VECTOR_SPACE) };
 //     TensorPowerOfVectorSpace_f();
 // public:
-//     typedef DirectSumOfVectorSpaces_c<typename UniformTypeListOfLength_t<Factor_,ORDER_>::T> T;
+//     typedef DirectSumOfVectorSpaces_c<typename UniformTypeListOfLength_t<ORDER_,Factor_>::T> T;
 // };
 //
 // template <Uint32 ORDER_, typename Factor_>
@@ -461,7 +461,7 @@ DirectSumOfBasedVectorSpaces_c<TypeList_t<DirectSumOfBasedVectorSpaces_c<LhsSumm
 //     enum { STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_BASED_VECTOR_SPACE) };
 //     TensorPowerOfBasedVectorSpace_f();
 // public:
-//     typedef DirectSumOfBasedVectorSpaces_c<typename UniformTypeListOfLength_t<Factor_,ORDER_>::T> T;
+//     typedef DirectSumOfBasedVectorSpaces_c<typename UniformTypeListOfLength_t<ORDER_,Factor_>::T> T;
 // };
 
 } // end of namespace Tenh

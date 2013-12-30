@@ -503,7 +503,7 @@ MultiIndex_t<typename ConcatenationOfTypeLists_t<Lhs_TypeList_,Rhs_TypeList_>::T
 
 
 // in-place sort of a uniform MultiIndex_t -- the default type for Compare should be std::less<Uint32>
-template <typename IndexTypeList, typename Compare>
+template <typename Compare, typename IndexTypeList>
 void sort (MultiIndex_t<IndexTypeList> &m)
 {
     STATIC_ASSERT(TypeListIsUniform_t<IndexTypeList>::V, ALL_TYPES_IN_TYPELIST_MUST_BE_THE_SAME);
@@ -514,11 +514,11 @@ void sort (MultiIndex_t<IndexTypeList> &m)
 }
 
 // functional sort of a uniform MultiIndex_t -- the default type for Compare should be std::less<Uint32>
-template <typename IndexTypeList, typename Compare>
+template <typename Compare, typename IndexTypeList>
 MultiIndex_t<IndexTypeList> sorted (MultiIndex_t<IndexTypeList> const &m)
 {
     MultiIndex_t<IndexTypeList> retval(m);
-    sort<IndexTypeList,Compare>(retval);
+    sort<Compare>(retval);
     return retval;
 }
 

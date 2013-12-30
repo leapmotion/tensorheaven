@@ -870,17 +870,17 @@ struct Unzip_t
 
 /// @struct UniformTypeListOfLength_t typelist_utility.hpp "tenh/meta/typelist_utility.hpp"
 /// @brief Generates a TypeList_t with a specified length, containing only one type.
-/// @tparam Type_ the type to contain.
 /// @tparam LENGTH_ the length to have.
-template <typename Type_, Uint32 LENGTH_>
+/// @tparam Type_ the type to contain.
+template <Uint32 LENGTH_, typename Type_>
 struct UniformTypeListOfLength_t
 {
-    typedef TypeList_t<Type_,typename UniformTypeListOfLength_t<Type_,LENGTH_-1>::T> T;
+    typedef TypeList_t<Type_,typename UniformTypeListOfLength_t<LENGTH_-1,Type_>::T> T;
 };
 
 /// @cond false
 template <typename Type_>
-struct UniformTypeListOfLength_t<Type_,0>
+struct UniformTypeListOfLength_t<0,Type_>
 {
     typedef EmptyTypeList T;
 };

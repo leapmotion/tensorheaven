@@ -512,6 +512,7 @@ void test_implementation_of_vector_construction_via_vector_i ();
 void test_const_component_arrays ();
 void test_identity_embedding ();
 void test_diag2tensor_embedding ();
+void test_exterior_power_embedding ();
 void test_embed_coembed_adjointness ();
 void test_type_system_helper_functions ();
 

@@ -20,7 +20,7 @@ struct VariableStringComputer
     static std::string compute(typename HomogeneousPolynomial<DEG,BasedVectorSpace_,Scalar>::Sym::MultiIndex const &n)
     {
         typedef typename HomogeneousPolynomial<DEG,BasedVectorSpace_,Scalar>::Sym::MultiIndex MultiIndex;
-        MultiIndex m = sorted<typename MultiIndex::IndexTypeList,std::less<Uint32> >(n);
+        MultiIndex m = sorted<std::less<Uint32> >(n);
         Uint32 last = m.value_of_index(0, DONT_CHECK_RANGE);
         Uint32 count = 1;
         std::string result = "x" + AS_STRING(last);
@@ -82,7 +82,7 @@ struct VariableStringComputer<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,
     static std::string compute(typename HomogeneousPolynomial<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,2,VectorSpaceId_>,Basis_>,Scalar>::Sym::MultiIndex const &n)
     {
         typedef typename HomogeneousPolynomial<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,2,VectorSpaceId_>,Basis_>,Scalar>::Sym::MultiIndex MultiIndex;
-        MultiIndex m = sorted<typename MultiIndex::IndexTypeList,std::less<Uint32> >(n);
+        MultiIndex m = sorted<std::less<Uint32> >(n);
         char vars[3] = "xy";
         Uint32 last = m.value_of_index(0, DONT_CHECK_RANGE);
         Uint32 count = 1;
@@ -123,7 +123,7 @@ struct VariableStringComputer<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,
     static std::string compute(typename HomogeneousPolynomial<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,3,VectorSpaceId_>,Basis_>,Scalar>::Sym::MultiIndex const &n)
     {
         typedef typename HomogeneousPolynomial<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,3,VectorSpaceId_>,Basis_>,Scalar>::Sym::MultiIndex MultiIndex;
-        MultiIndex m = sorted<typename MultiIndex::IndexTypeList,std::less<Uint32> >(n);
+        MultiIndex m = sorted<std::less<Uint32> >(n);
         char vars[4] = "xyz";
         Uint32 last = m.value_of_index(0, DONT_CHECK_RANGE);
         Uint32 count = 1;

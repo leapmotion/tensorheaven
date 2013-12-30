@@ -105,7 +105,7 @@ void test_direct_sums ()
     typedef BasedVectorSpace_c<VectorSpace_c<RealField,1,X>,Basis_c<X> > RealLine;
     typedef SymmetricPowerOfBasedVectorSpace_c<2, BasedVectorSpace> SymmetricSquare;
 
-    typedef DirectSumOfBasedVectorSpaces_c<UniformTypeListOfLength_t<BasedVectorSpace,4>::T> PowerOfVectorSpace;
+    typedef DirectSumOfBasedVectorSpaces_c<UniformTypeListOfLength_t<4,BasedVectorSpace>::T> PowerOfVectorSpace;
 
     typedef DirectSumOfBasedVectorSpaces_c<TypeList_t<SymmetricSquare, TypeList_t<BasedVectorSpace, TypeList_t<RealLine> > > > DirectSumType;
     typedef ImplementationOf_t<DirectSumType, float> T;

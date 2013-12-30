@@ -25,7 +25,7 @@ struct ExteriorPower_c
 
     static Uint32 const ORDER = ORDER_;
     typedef Factor_ Factor;
-    typedef typename UniformTypeListOfLength_t<Factor_,ORDER_>::T FactorTypeList;
+    typedef typename UniformTypeListOfLength_t<ORDER_,Factor_>::T FactorTypeList;
 
     static std::string type_as_string ()
     {
@@ -210,7 +210,7 @@ struct ExteriorPowerOfBasedVectorSpace_c
 {
 private:
     enum { STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_BASED_VECTOR_SPACE), };
-    typedef typename UniformTypeListOfLength_t<Factor_,ORDER_>::T FactorTypeList;
+    typedef typename UniformTypeListOfLength_t<ORDER_,Factor_>::T FactorTypeList;
 
     typedef BasedExteriorPowerOfVectorSpace_c<ExteriorPowerOfVectorSpace_c<ORDER_,Factor_>,
                                               ExteriorPowerOfBasis_c<ORDER_,typename BasisOf_f<Factor_>::T> > As_BasedExteriorPowerOfVectorSpace;
@@ -275,6 +275,249 @@ ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_> ext (Factor_ const &)
 {
     return ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>();
 }
+
+// ///////////////////////////////////////////////////////////////////////////
+// linear embedding of exterior power into corresponding tensor product
+// ///////////////////////////////////////////////////////////////////////////
+
+// TODO: think about how 0th powers should work (since they don't have an index)
+
+// specialization for 1st exterior power -- both the 1st exterior and 1st
+// tensor power of a vector space are naturally isomorphic to the vector space
+// itself, so the embedding is effectively the identity.
+template <typename Factor_, typename Scalar_>
+struct LinearEmbedding_c<ExteriorPowerOfBasedVectorSpace_c<1,Factor_>,
+                         typename TensorPowerOfBasedVectorSpace_f<1,Factor_>::T,
+                         Scalar_,
+                         NaturalEmbedding>
+{
+private:
+    typedef ExteriorPowerOfBasedVectorSpace_c<1,Factor_> Ext;
+    typedef typename TensorPowerOfBasedVectorSpace_f<1,Factor_>::T TPow;
+    typedef ComponentIndex_t<DimensionOf_f<Factor_>::V> FactorComponentIndex;
+    typedef MultiIndex_t<typename UniformTypeListOfLength_t<1,FactorComponentIndex>::T> TPowMultiIndex;
+public:
+    typedef ComponentIndex_t<DimensionOf_f<Ext>::V> ExtComponentIndex;
+    typedef ComponentIndex_t<DimensionOf_f<TPow>::V> TPowComponentIndex;
+
+    static bool embedded_component_is_procedural_zero (TPowComponentIndex const &) { return false; }
+    static Scalar_ scalar_factor_for_embedded_component (TPowComponentIndex const &) { return Scalar_(1); }
+    static ExtComponentIndex source_component_index_for_embedded_component (TPowComponentIndex const &i) { return i; }
+
+    static Uint32 term_count_for_coembedded_component (ExtComponentIndex const &) { return 1; }
+    static Scalar_ scalar_factor_for_coembedded_component (ExtComponentIndex const &, Uint32) { return Scalar_(1); }
+    static TPowComponentIndex source_component_index_for_coembedded_component (ExtComponentIndex const &i, Uint32) { return i; }
+};
+
+template <Uint32 ORDER_, typename Factor_, typename Scalar_>
+struct LinearEmbedding_c<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,
+                         typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T,
+                         Scalar_,
+                         NaturalEmbedding>
+{
+private:
+    typedef ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_> Ext;
+    typedef typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T TPow;
+    typedef ComponentIndex_t<DimensionOf_f<Factor_>::V> FactorComponentIndex;
+    typedef MultiIndex_t<typename UniformTypeListOfLength_t<ORDER_,FactorComponentIndex>::T> TPowMultiIndex;
+public:
+    typedef ComponentIndex_t<DimensionOf_f<Ext>::V> ExtComponentIndex;
+    typedef ComponentIndex_t<DimensionOf_f<TPow>::V> TPowComponentIndex;
+
+    static bool embedded_component_is_procedural_zero (TPowComponentIndex const &i)
+    {
+        TPowMultiIndex m(i); // this does the row-major conversion
+        // sort into non-increasing order -- choosing this instead of non-decreasing
+        // makes certain formulas not depend on the dimension of Factor_
+        sort<std::greater<Uint32> >(m);
+        // if there is any index that occurs at least twice, then this is procedural zero.
+        for (Uint32 j = 0; j < ORDER_-1; ++j)
+            if (m.index(j, DONT_CHECK_RANGE) == m.index(j+1, DONT_CHECK_RANGE))
+                return true;
+        return false;
+    }
+    static Scalar_ scalar_factor_for_embedded_component (TPowComponentIndex const &i)
+    {
+        TPowMultiIndex m(i); // this does the row-major conversion
+
+        int sign = 1;
+        for (Uint32 j = 0; j < ORDER_; ++j)
+            if (m.head().value() > m.index(j).value())
+                sign *= -1;
+
+        static Uint32 const NEXT_ORDER_DOWN = (ORDER_ <= 1) ? ORDER_ : (ORDER_ - 1);
+        typedef LinearEmbedding_c<ExteriorPowerOfBasedVectorSpace_c<NEXT_ORDER_DOWN,Factor_>,
+                                  typename TensorPowerOfBasedVectorSpace_f<NEXT_ORDER_DOWN,Factor_>::T,
+                                  Scalar_,
+                                  NaturalEmbedding> BodyLinearEmbedding;
+        // NOTE: this is really inefficient because it converts to and then from a ComponentIndex.
+        // it could be better implemented using a private scalar_factor_for_embedded_component(MultiIndex)
+        return sign * BodyLinearEmbedding::scalar_factor_for_embedded_component(m.body().as_component_index());
+    }
+    static ExtComponentIndex source_component_index_for_embedded_component (TPowComponentIndex const &i)
+    {
+        TPowMultiIndex m(i); // this does the row-major conversion
+        // sort into non-increasing order -- choosing this instead of non-decreasing
+        // makes certain formulas not depend on the dimension of Factor_
+        sort<std::greater<Uint32> >(m);
+
+        static Uint32 const NEXT_ORDER_DOWN = (ORDER_ <= 1) ? ORDER_ : (ORDER_ - 1);
+        typedef LinearEmbedding_c<ExteriorPowerOfBasedVectorSpace_c<NEXT_ORDER_DOWN,Factor_>,
+                                  typename TensorPowerOfBasedVectorSpace_f<NEXT_ORDER_DOWN,Factor_>::T,
+                                  Scalar_,
+                                  NaturalEmbedding> BodyLinearEmbedding;
+        // NOTE: this is really inefficient because it converts to and then from a ComponentIndex.
+        // it could be better implemented using a private scalar_factor_for_embedded_component(MultiIndex)
+        return ExtComponentIndex(  binomial_coefficient(m.head().value(), ORDER_)
+                                 + BodyLinearEmbedding::source_component_index_for_embedded_component(m.body().as_component_index()).value());
+    }
+
+    // static Uint32 term_count_for_coembedded_component (ExtComponentIndex const &)
+    // {
+    //     return Factorial_t<ORDER_>::V;
+    // }
+    // // i corresponds to a unique multiindex M that is sorted in
+    // // nondecreasing order.  this index has an isotropy subgroup H of the
+    // // symmetric group G on ORDER_ letters.  the quotient of G by H is not
+    // // necessarily a group (because H is not necessarily normal).  picking
+    // // a section of this quotient map gives a set of representative permutations
+    // // whose action on M give all TPowMultiIndex values for M.  the signs of the
+    // // representative permutations give the scalar factor for the coembedded
+    // // components.
+    // static Scalar_ scalar_factor_for_coembedded_component (ExtComponentIndex const &i, Uint32 term)
+    // {
+    //     // if a Gray coding scheme is used to map [0, term) to the non-invariant
+    //     // permutations of the multiindex M corresponding to i, such that the
+    //     // parity of the index in [0, term) gives the sign of the permutation.
+    // }
+    // static TPowComponentIndex source_component_index_for_coembedded_component (ExtComponentIndex const &i, Uint32 term)
+    // {
+    // }
+
+/*
+    MultiIndex n = sorted<std::greater<Uint32> >(m);
+    return ComponentIndex(VectorIndexComputer_t<MultiIndex>::compute(n), CHECK_RANGE);
+
+
+
+template <Uint32 ORDER_, typename Factor_, typename Scalar_, typename UseArrayType_, typename Derived_>
+template <typename T, typename I>
+struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_,Derived_>
+       ::VectorIndexComputer_t
+{
+    static Uint32 compute (T const &m)
+    {
+        return   VectorIndexComputer_t<typename T::BodyMultiIndex>::compute(m.body())
+               + binomial_coefficient(m.head().value(),T::LENGTH);
+    }
+};
+
+template <Uint32 ORDER_, typename Factor_, typename Scalar_, typename UseArrayType_, typename Derived_>
+template <typename I>
+struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_,Derived_>
+       ::VectorIndexComputer_t<MultiIndex_t<EmptyTypeList>, I>
+{
+    static Uint32 compute (MultiIndex_t<EmptyTypeList> const &)
+    {
+        return 0;
+    }
+};
+*/
+};
+/*
+// a component is a procedural zero iff it has multiplicity greater than 1.
+static bool component_is_procedural_zero (MultiIndex const &m)
+{
+    return MultiIndexMultiplicity_t<MultiIndex>::eval(
+        sorted<std::greater<Uint32> >(m)) != 1;
+}
+// the scalar factor is the sign of the permutation that sorts the multiindex
+static Scalar scalar_factor_for_component (MultiIndex const &m)
+{
+    return SignComputer_t<MultiIndex>::compute(m);
+}
+// 
+static ComponentIndex vector_index_of (MultiIndex const &m)
+{
+    MultiIndex n = sorted<std::greater<Uint32> >(m);
+    return ComponentIndex(VectorIndexComputer_t<MultiIndex>::compute(n), CHECK_RANGE);
+}
+
+template <Uint32 ORDER_, typename Factor_, typename Scalar_, typename UseArrayType_, typename Derived_>
+template <typename BundleIndexTypeList, typename BundledIndex, Uint32 ORD>
+struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_,Derived_>
+       ::BundleIndexComputer_t
+{
+    static MultiIndex_t<BundleIndexTypeList> compute (BundledIndex const &b)
+    {
+        return MultiIndex_t<BundleIndexTypeList>(typename BundleIndexTypeList::HeadType(index_of_greatest_triangular_number_less_than(b.value(),ORD), CHECK_RANGE), BundleIndexComputer_t<typename BundleIndexTypeList::BodyTypeList, BundledIndex, ORD-1>::compute(BundledIndex(b.value() - binomial_coefficient(index_of_greatest_triangular_number_less_than(b.value(),ORD), ORD), CHECK_RANGE)));
+    }
+};
+
+template <Uint32 ORDER_, typename Factor_, typename Scalar_, typename UseArrayType_, typename Derived_>
+template <typename FactorType, typename BundledIndex, Uint32 ORD>
+struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_,Derived_>
+       ::BundleIndexComputer_t<TypeList_t<FactorType>, BundledIndex, ORD>
+{
+    static MultiIndex_t<TypeList_t<FactorType> > compute (BundledIndex const &b)
+    {
+        return MultiIndex_t<TypeList_t<FactorType> >(FactorType(index_of_greatest_triangular_number_less_than(b.value(),ORD), CHECK_RANGE));
+    }
+};
+
+template <Uint32 ORDER_, typename Factor_, typename Scalar_, typename UseArrayType_, typename Derived_>
+template <typename T, typename I>
+struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_,Derived_>
+       ::VectorIndexComputer_t
+{
+    static Uint32 compute (T const &m)
+    {
+        return VectorIndexComputer_t<typename T::BodyMultiIndex>::compute(m.body()) + binomial_coefficient(m.head().value(),T::LENGTH);
+    }
+};
+
+template <Uint32 ORDER_, typename Factor_, typename Scalar_, typename UseArrayType_, typename Derived_>
+template <typename I>
+struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_,Derived_>
+       ::VectorIndexComputer_t<MultiIndex_t<EmptyTypeList>, I>
+{
+    static Uint32 compute (MultiIndex_t<EmptyTypeList> const &)
+    {
+        return 0;
+    }
+};
+
+template <Uint32 ORDER_, typename Factor_, typename Scalar_, typename UseArrayType_, typename Derived_>
+template <typename T, typename I>
+struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_,Derived_>
+       ::SignComputer_t
+{
+    static Scalar_ compute (T const &m)
+    {
+        Scalar_ sign(1);
+        for (Uint32 i = 0; i < T::LENGTH; ++i)
+        {
+            if (m.head().value() > m.index(i).value())
+            {
+                sign *= Scalar_(-1);
+            }
+        }
+
+        return SignComputer_t<typename T::BodyMultiIndex>::compute(m.body()) * sign;
+    }
+};
+
+template <Uint32 ORDER_, typename Factor_, typename Scalar_, typename UseArrayType_, typename Derived_>
+template <typename I>
+struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_,Derived_>
+       ::SignComputer_t<MultiIndex_t<EmptyTypeList>, I>
+{
+    static Scalar_ compute (MultiIndex_t<EmptyTypeList> const &m)
+    {
+        return Scalar_(1);
+    }
+};
+*/
 
 } // end of namespace Tenh
 

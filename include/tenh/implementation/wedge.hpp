@@ -182,11 +182,11 @@ struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scal
     // these are what provide indexed expressions -- via expression templates
     using Parent_EmbeddableAsTensor_i::operator();
 
-    static bool component_is_procedural_zero (MultiIndex const &m) { return MultiIndexMultiplicity_t<MultiIndex>::eval(sorted<typename MultiIndex::IndexTypeList,std::greater<Uint32> >(m)) != 1; }
+    static bool component_is_procedural_zero (MultiIndex const &m) { return MultiIndexMultiplicity_t<MultiIndex>::eval(sorted<std::greater<Uint32> >(m)) != 1; }
     static Scalar scalar_factor_for_component (MultiIndex const &m) { return SignComputer_t<MultiIndex>::compute(m); }
     static ComponentIndex vector_index_of (MultiIndex const &m)
     {
-        MultiIndex n = sorted<typename MultiIndex::IndexTypeList,std::greater<Uint32> >(m);
+        MultiIndex n = sorted<std::greater<Uint32> >(m);
         return ComponentIndex(VectorIndexComputer_t<MultiIndex>::compute(n), CHECK_RANGE);
     }
 

@@ -401,7 +401,7 @@ private:
 template <Uint32 ORDER_, typename Factor_>
 struct TensorPower_f
 {
-    typedef TensorProduct_c<typename UniformTypeListOfLength_t<Factor_,ORDER_>::T> T;
+    typedef TensorProduct_c<typename UniformTypeListOfLength_t<ORDER_,Factor_>::T> T;
 private:
     TensorPower_f();
 };
@@ -413,7 +413,7 @@ private:
     enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_VECTOR_SPACE) };
     TensorPowerOfVectorSpace_f();
 public:
-    typedef TensorProductOfVectorSpaces_c<typename UniformTypeListOfLength_t<Factor_,ORDER_>::T> T;
+    typedef TensorProductOfVectorSpaces_c<typename UniformTypeListOfLength_t<ORDER_,Factor_>::T> T;
 };
 
 template <Uint32 ORDER_, typename Factor_>
@@ -423,7 +423,7 @@ private:
     enum { STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_BASED_VECTOR_SPACE) };
     TensorPowerOfBasedVectorSpace_f();
 public:
-    typedef TensorProductOfBasedVectorSpaces_c<typename UniformTypeListOfLength_t<Factor_,ORDER_>::T> T;
+    typedef TensorProductOfBasedVectorSpaces_c<typename UniformTypeListOfLength_t<ORDER_,Factor_>::T> T;
 };
 
 // ///////////////////////////////////////////////////////////////////////////

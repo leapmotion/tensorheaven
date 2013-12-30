@@ -269,7 +269,7 @@ public:
     }
 
     static Uint32 term_count_for_coembedded_component (Diag2ComponentIndex const &) { return 1; }
-    static Scalar_ scalar_factor_for_coembedded_component (Diag2ComponentIndex const &, Uint32) { return 1; }
+    static Scalar_ scalar_factor_for_coembedded_component (Diag2ComponentIndex const &, Uint32) { return Scalar_(1); }
     static Tensor2ComponentIndex source_component_index_for_coembedded_component (Diag2ComponentIndex const &i, Uint32)
     {
         return Tensor2MultiIndex(i.value(), i.value(), DONT_CHECK_RANGE).as_component_index();

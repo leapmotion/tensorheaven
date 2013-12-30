@@ -523,7 +523,7 @@ struct ListHelper_t<TypeList,0>
 template <typename Type_, Uint32 LENGTH_>
 struct UniformListOfLength_f
 {
-    typedef List_t<typename UniformTypeListOfLength_t<Type_,LENGTH_>::T> T;
+    typedef List_t<typename UniformTypeListOfLength_t<LENGTH_,Type_>::T> T;
 private:
     UniformListOfLength_f();
 };

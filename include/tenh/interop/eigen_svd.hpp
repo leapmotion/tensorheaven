@@ -24,7 +24,7 @@ struct RowsOfTwoTensor_f<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<T
 private:
     enum { STATIC_ASSERT_IN_ENUM((!IsUseProceduralArray_f<UseArrayType_>::V), MUST_NOT_BE_USE_PROCEDURAL_ARRAY) };
 public:
-    typedef ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<typename UniformTypeListOfLength_t<Factor2_, DimensionOf_f<Factor1_>::V>::T>, Scalar_, ResultUseArrayType_> T;
+    typedef ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<typename UniformTypeListOfLength_t<DimensionOf_f<Factor1_>::V,Factor2_>::T>, Scalar_, ResultUseArrayType_> T;
     typedef ImplementationOf_t<Factor2_, Scalar_, UseArrayType_> RowType;
 };
 

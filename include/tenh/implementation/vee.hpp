@@ -187,7 +187,7 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
     static Scalar scalar_factor_for_component (MultiIndex const &m) { return Scalar(1); }
     static ComponentIndex vector_index_of (MultiIndex const &m)
     {
-        MultiIndex n = sorted<typename MultiIndex::IndexTypeList,std::greater<Uint32> >(m);
+        MultiIndex n = sorted<std::greater<Uint32> >(m);
         return ComponentIndex(VectorIndexComputer_t<MultiIndex>::compute(n), CHECK_RANGE);
     }
 
