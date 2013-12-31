@@ -10,6 +10,7 @@
 
 #include "tenh/conceptual/diagonalbased2tensorproduct.hpp"
 #include "tenh/conceptual/directsum.hpp"
+#include "tenh/conceptual/scalarbased2tensorproduct.hpp"
 #include "tenh/implementation/implementationof.hpp"
 #include "tenh/interface/vector.hpp"
 #include "tenh/meta/tuple.hpp"
@@ -284,7 +285,10 @@ private:
     {
         STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<ConceptTypeList,IsTensorProductOfBasedVectorSpaces_p>::V
                                ||
-                               EachTypeSatisfies_f<ConceptTypeList,IsDiagonal2TensorProductOfBasedVectorSpaces_p>::V), MUST_BE_TYPELIST_OF_DIAGONAL_OR_2_TENSORS)
+                               EachTypeSatisfies_f<ConceptTypeList,IsDiagonal2TensorProductOfBasedVectorSpaces_p>::V
+                               ||
+                               EachTypeSatisfies_f<ConceptTypeList,IsScalar2TensorProductOfBasedVectorSpaces_p>::V),
+                              MUST_BE_TYPELIST_OF_SCALAR_OR_DIAGONAL_OR_2_TENSORS)
     };
     typedef typename FactorNOfEachTypeIn_f<0,ConceptTypeList>::T SummandTypeList0;
     typedef typename FactorNOfEachTypeIn_f<1,ConceptTypeList>::T SummandTypeList1;

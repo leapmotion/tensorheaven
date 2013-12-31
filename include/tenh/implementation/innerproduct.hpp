@@ -8,8 +8,8 @@
 
 #include "tenh/core.hpp"
 
-#include "tenh/implementation/diagonal2tensor.hpp"
 #include "tenh/implementation/directsum.hpp"
+#include "tenh/implementation/scalar2tensor.hpp"
 #include "tenh/implementation/tensorproduct.hpp"
 #include "tenh/interface/vector.hpp"
 
@@ -36,14 +36,14 @@ struct InnerProduct_f<BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<Orthono
 private:
     typedef BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<OrthonormalBasisId_> > BasedVectorSpace;
     typedef typename DualOf_f<BasedVectorSpace>::T DualOfBasedVectorSpace;
-    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<DualOfBasedVectorSpace,DualOfBasedVectorSpace> Diagonal2Tensor;
+    typedef Scalar2TensorProductOfBasedVectorSpaces_c<DualOfBasedVectorSpace,DualOfBasedVectorSpace> Scalar2Tensor;
     typedef ComponentGenerator_t<Scalar_,
-                                 DimensionOf_f<Diagonal2Tensor>::V,
-                                 constant_component_generator_evaluator<Scalar_,DimensionOf_f<Diagonal2Tensor>::V,1>,
+                                 DimensionOf_f<Scalar2Tensor>::V,
+                                 constant_component_generator_evaluator<Scalar_,DimensionOf_f<Scalar2Tensor>::V,1>,
                                  StandardInnerProduct> ComponentGenerator;
     InnerProduct_f();
 public:
-    typedef ImplementationOf_t<Diagonal2Tensor,Scalar_,UseProceduralArray_t<ComponentGenerator> > T;
+    typedef ImplementationOf_t<Scalar2Tensor,Scalar_,UseProceduralArray_t<ComponentGenerator> > T;
 };
 
 // ///////////////////////////////////////////////////////////////////////////
