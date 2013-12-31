@@ -8,12 +8,15 @@
 
 #include "tenh/core.hpp"
 
-#include "tenh/meta/typelist_utility.hpp"
+#include "tenh/componentindex.hpp" // technically not conceptual code, but close enough.
 #include "tenh/conceptual/concept.hpp"
 #include "tenh/conceptual/embeddableintensorproduct.hpp"
+#include "tenh/conceptual/linearembedding.hpp"
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/conceptual/vectorspace.hpp"
 #include "tenh/mathutil.hpp"
+#include "tenh/meta/typelist_utility.hpp"
+#include "tenh/multiindex.hpp" // technically not conceptual code, but close enough.
 
 namespace Tenh {
 
