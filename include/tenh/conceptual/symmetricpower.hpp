@@ -298,11 +298,12 @@ SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> sym (Factor_ const &)
 // specialization for 1st symmetric power -- both the 1st symmetric and 1st
 // tensor power of a vector space are naturally isomorphic to the vector space
 // itself, so the embedding is effectively the identity.
-template <typename Factor_, typename Scalar_>
+template <typename Factor_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
 struct LinearEmbedding_c<SymmetricPowerOfBasedVectorSpace_c<1,Factor_>,
                          typename TensorPowerOfBasedVectorSpace_f<1,Factor_>::T,
                          Scalar_,
-                         NaturalEmbedding>
+                         NaturalEmbedding,
+                         ENABLE_EXCEPTIONS_>
 {
 private:
     typedef SymmetricPowerOfBasedVectorSpace_c<1,Factor_> Sym;
@@ -313,6 +314,7 @@ public:
     typedef ComponentIndex_t<DimensionOf_f<Sym>::V> SymComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<TPow>::V> TPowComponentIndex;
 
+    // because this always returns false, there is no need for the other two functions to ever throw.
     static bool embedded_component_is_procedural_zero (TPowComponentIndex const &) { return false; }
     static Scalar_ scalar_factor_for_embedded_component (TPowComponentIndex const &) { return Scalar_(1); }
     static SymComponentIndex source_component_index_for_embedded_component (TPowComponentIndex const &i) { return i; }
@@ -322,11 +324,12 @@ public:
     static TPowComponentIndex source_component_index_for_coembedded_component (SymComponentIndex const &i, Uint32) { return i; }
 };
 
-template <Uint32 ORDER_, typename Factor_, typename Scalar_>
+template <Uint32 ORDER_, typename Factor_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
 struct LinearEmbedding_c<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,
                          typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T,
                          Scalar_,
-                         NaturalEmbedding>
+                         NaturalEmbedding,
+                         ENABLE_EXCEPTIONS_>
 {
 private:
     typedef SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> Sym;
@@ -337,6 +340,7 @@ public:
     typedef ComponentIndex_t<DimensionOf_f<Sym>::V> SymComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<TPow>::V> TPowComponentIndex;
 
+    // because this always returns false, there is no need for the other two functions to ever throw.
     static bool embedded_component_is_procedural_zero (TPowComponentIndex const &i) { return false; }
     static Scalar_ scalar_factor_for_embedded_component (TPowComponentIndex const &i) { return Scalar_(1); }
     static SymComponentIndex source_component_index_for_embedded_component (TPowComponentIndex const &i)
@@ -350,7 +354,8 @@ public:
         typedef LinearEmbedding_c<SymmetricPowerOfBasedVectorSpace_c<NEXT_ORDER_DOWN,Factor_>,
                                   typename TensorPowerOfBasedVectorSpace_f<NEXT_ORDER_DOWN,Factor_>::T,
                                   Scalar_,
-                                  NaturalEmbedding> BodyLinearEmbedding;
+                                  NaturalEmbedding,
+                                  ENABLE_EXCEPTIONS_> BodyLinearEmbedding;
         // NOTE: this is really inefficient because it converts to and then from a ComponentIndex.
         // it could be better implemented using a private scalar_factor_for_embedded_component(MultiIndex)
         return SymComponentIndex(  binomial_coefficient(m.head().value() + ORDER_ - 1, ORDER_)

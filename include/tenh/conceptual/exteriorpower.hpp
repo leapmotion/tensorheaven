@@ -288,11 +288,12 @@ ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_> ext (Factor_ const &)
 // specialization for 1st exterior power -- both the 1st exterior and 1st
 // tensor power of a vector space are naturally isomorphic to the vector space
 // itself, so the embedding is effectively the identity.
-template <typename Factor_, typename Scalar_>
+template <typename Factor_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
 struct LinearEmbedding_c<ExteriorPowerOfBasedVectorSpace_c<1,Factor_>,
                          typename TensorPowerOfBasedVectorSpace_f<1,Factor_>::T,
                          Scalar_,
-                         NaturalEmbedding>
+                         NaturalEmbedding,
+                         ENABLE_EXCEPTIONS_>
 {
 private:
     typedef ExteriorPowerOfBasedVectorSpace_c<1,Factor_> Ext;
@@ -312,11 +313,12 @@ public:
     static TPowComponentIndex source_component_index_for_coembedded_component (ExtComponentIndex const &i, Uint32) { return i; }
 };
 
-template <Uint32 ORDER_, typename Factor_, typename Scalar_>
+template <Uint32 ORDER_, typename Factor_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
 struct LinearEmbedding_c<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,
                          typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T,
                          Scalar_,
-                         NaturalEmbedding>
+                         NaturalEmbedding,
+                         ENABLE_EXCEPTIONS_>
 {
 private:
     typedef ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_> Ext;
@@ -352,7 +354,8 @@ public:
         typedef LinearEmbedding_c<ExteriorPowerOfBasedVectorSpace_c<NEXT_ORDER_DOWN,Factor_>,
                                   typename TensorPowerOfBasedVectorSpace_f<NEXT_ORDER_DOWN,Factor_>::T,
                                   Scalar_,
-                                  NaturalEmbedding> BodyLinearEmbedding;
+                                  NaturalEmbedding,
+                                  ENABLE_EXCEPTIONS_> BodyLinearEmbedding;
         // NOTE: this is really inefficient because it converts to and then from a ComponentIndex.
         // it could be better implemented using a private scalar_factor_for_embedded_component(MultiIndex)
         return sign * BodyLinearEmbedding::scalar_factor_for_embedded_component(m.body().as_component_index());
@@ -368,7 +371,8 @@ public:
         typedef LinearEmbedding_c<ExteriorPowerOfBasedVectorSpace_c<NEXT_ORDER_DOWN,Factor_>,
                                   typename TensorPowerOfBasedVectorSpace_f<NEXT_ORDER_DOWN,Factor_>::T,
                                   Scalar_,
-                                  NaturalEmbedding> BodyLinearEmbedding;
+                                  NaturalEmbedding,
+                                  ENABLE_EXCEPTIONS_> BodyLinearEmbedding;
         // NOTE: this is really inefficient because it converts to and then from a ComponentIndex.
         // it could be better implemented using a private scalar_factor_for_embedded_component(MultiIndex)
         return ExtComponentIndex(  binomial_coefficient(m.head().value(), ORDER_)

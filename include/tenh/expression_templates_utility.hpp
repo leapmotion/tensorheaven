@@ -739,7 +739,7 @@ struct IndexEmbedder_t
 
         EmbeddingCodomainComponentIndex j(m.template el<SOURCE_INDEX_TYPE_INDEX>());
 
-        typedef LinearEmbedding_c<EmbeddingDomain,EmbeddingCodomain_,Scalar,EmbeddingId_> LinearEmbedding;
+        typedef LinearEmbedding_c<EmbeddingDomain,EmbeddingCodomain_,Scalar,EmbeddingId_,DISABLE_EXCEPTIONS> LinearEmbedding;
         if (LinearEmbedding::embedded_component_is_procedural_zero(j))
             return Scalar(0);
 
@@ -822,7 +822,7 @@ struct IndexCoembedder_t
         CoembeddingCodomainComponentIndex j(m.template el<SOURCE_INDEX_TYPE_INDEX>());
 
         // the domain and codomain are reversed because of a contravariance property
-        typedef LinearEmbedding_c<CoembeddingCodomain_,CoembeddingDomain,Scalar,EmbeddingId_> LinearEmbedding;
+        typedef LinearEmbedding_c<CoembeddingCodomain_,CoembeddingDomain,Scalar,EmbeddingId_,DISABLE_EXCEPTIONS> LinearEmbedding;
         Scalar retval(0);
         Uint32 term_count = LinearEmbedding::term_count_for_coembedded_component(j);
         for (Uint32 term = 0; term < term_count; ++term)

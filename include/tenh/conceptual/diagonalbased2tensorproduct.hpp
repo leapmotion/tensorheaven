@@ -235,11 +235,12 @@ Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_> diag2 (TensorProd
 // linear embedding of diagonal 2-tensor into corresponding tensor product
 // ///////////////////////////////////////////////////////////////////////////
 
-template <typename Factor0_, typename Factor1_, typename Scalar_>
+template <typename Factor0_, typename Factor1_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
 struct LinearEmbedding_c<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,
                          TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0_,TypeList_t<Factor1_> > >,
                          Scalar_,
-                         NaturalEmbedding>
+                         NaturalEmbedding,
+                         ENABLE_EXCEPTIONS_>
 {
 private:
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_> Diag2;
@@ -281,11 +282,12 @@ public:
 // corresponding 2nd symmetric power
 // ///////////////////////////////////////////////////////////////////////////
 
-template <typename Factor_, typename Scalar_>
+template <typename Factor_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
 struct LinearEmbedding_c<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor_,Factor_>,
                          SymmetricPowerOfBasedVectorSpace_c<2,Factor_>,
                          Scalar_,
-                         NaturalEmbedding>
+                         NaturalEmbedding,
+                         ENABLE_EXCEPTIONS_>
 {
 private:
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<Factor_,Factor_> Diag2;
