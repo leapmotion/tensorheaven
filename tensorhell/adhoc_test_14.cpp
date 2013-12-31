@@ -1,5 +1,6 @@
 #include "adhoc_test.hpp"
 
+#include "tenh/implementation/scalar2tensor.hpp"
 #include "tenh/interop/eigen_linearsolve.hpp"
 
 // ///////////////////////////////////////////////////////////////////////////////////////////
@@ -431,6 +432,119 @@ void test_diag2tensor_embedding ()
     }
 }
 
+void test_scalar2tensor_embedding ()
+{
+    std::cout << "testing natural scalar2tensor embedding/coembedding\n";
+
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > B3;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,Basis_c<Generic> > B4;
+    typedef Scalar2TensorProductOfBasedVectorSpaces_c<B3,B4> Scalar2;
+    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B3,B4> Diag2;
+    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B3,TypeList_t<B4> > > Tensor2;
+    typedef SymmetricPowerOfBasedVectorSpace_c<2,B3> Sym2;
+    typedef Scalar2TensorProductOfBasedVectorSpaces_c<B3,B3> Scalar2OfB3;
+
+    typedef double Scalar;
+    typedef ImplementationOf_t<B3,Scalar> V3;
+    typedef ImplementationOf_t<B4,Scalar> V4;
+    typedef ImplementationOf_t<Diag2,Scalar> D;
+    typedef ImplementationOf_t<Scalar2,Scalar> Sc;
+    typedef ImplementationOf_t<Scalar2OfB3,Scalar> ScOfB3;
+    typedef ImplementationOf_t<Tensor2,Scalar> T;
+    typedef ImplementationOf_t<Sym2,Scalar> S;
+
+    B3 b3;
+    B4 b4;
+    Scalar2 scalar2;
+    Diag2 diag2;
+    Scalar2OfB3 scalar2ofb3;
+    DualOf_f<Scalar2>::T dual_of_scalar2;
+    Tensor2 tensor2;
+    Sym2 sym2;
+    DualOf_f<Tensor2>::T dual_of_tensor2;
+    AbstractIndex_c<'i'> i;
+    AbstractIndex_c<'j'> j;
+    AbstractIndex_c<'k'> k;
+    AbstractIndex_c<'l'> l;
+
+    {
+        Sc d(uniform_tuple<Scalar>(2));
+        std::cout << FORMAT_VALUE(d) << '\n';
+        std::cout << FORMAT_VALUE(d.split(i*j)) << '\n';
+        std::cout << FORMAT_VALUE(d(i).embed(i,tensor2,j)) << '\n';
+        std::cout << FORMAT_VALUE(d(i).embed(i,tensor2,j).split(j,k*l)) << '\n';
+        std::cout << FORMAT_VALUE(d.embed(tensor2,j)) << '\n';
+        std::cout << FORMAT_VALUE(d.embed(tensor2,j).split(j,k*l)) << '\n';
+
+        T t(uniform_tuple<Scalar>( 1,  2,  3,  4) |
+            uniform_tuple<Scalar>( 5,  6,  7,  8) |
+            uniform_tuple<Scalar>( 9, 10, 11, 12));
+        std::cout << FORMAT_VALUE(t) << '\n';
+        std::cout << FORMAT_VALUE(t(i*j)) << '\n';
+        std::cout << FORMAT_VALUE(t(i).coembed(i,scalar2,j)) << '\n';
+        std::cout << FORMAT_VALUE(t(i).coembed(i,scalar2,j).split(j,k*l)) << '\n';
+        std::cout << FORMAT_VALUE(t.coembed(scalar2,j)) << '\n';
+        std::cout << FORMAT_VALUE(t.coembed(scalar2,j).split(j,k*l)) << '\n';
+        std::cout << '\n';
+    }
+
+    // this should produce a type error (nonexistence of LinearEmbedding_c from scalar2 to dual_of_tensor2)
+    // std::cout << FORMAT_VALUE(d.embed(dual_of_tensor2,j)) << '\n';
+    // this should produce a type error (nonexistence of LinearEmbedding_c from dual_of_scalar2 to tensor2)
+    // std::cout << FORMAT_VALUE(t.coembed(dual_of_scalar2,j)) << '\n';
+
+    {
+        V3 u(uniform_tuple<Scalar>(1, 2, 3));
+        V4 v(uniform_tuple<Scalar>(4, 5, 6, 7));
+        std::cout << FORMAT_VALUE(u) << '\n';
+        std::cout << FORMAT_VALUE(v) << '\n';
+        std::cout << FORMAT_VALUE(u(i)*v(j)) << '\n';
+        std::cout << FORMAT_VALUE((u(i)*v(j)).bundle(i*j,tensor2,k).coembed(k,scalar2,l)) << '\n';
+        std::cout << '\n';
+    }
+
+    {
+        ScOfB3 d(uniform_tuple<Scalar>(2));
+        std::cout << FORMAT_VALUE(d) << '\n';
+        std::cout << FORMAT_VALUE(d.split(i*j)) << '\n';
+        std::cout << FORMAT_VALUE(d(i).embed(i,sym2,j)) << '\n';
+        std::cout << FORMAT_VALUE(d(i).embed(i,sym2,j).split(j,k*l)) << '\n';
+        std::cout << FORMAT_VALUE(d.embed(sym2,j)) << '\n';
+        std::cout << FORMAT_VALUE(d.embed(sym2,j).split(j,k*l)) << '\n';
+
+        S s(uniform_tuple<Scalar>( 1) |
+            uniform_tuple<Scalar>( 2, 3) |
+            uniform_tuple<Scalar>( 4, 5, 6));
+        std::cout << FORMAT_VALUE(s) << '\n';
+        std::cout << FORMAT_VALUE(s.split(i*j)) << '\n';
+        std::cout << FORMAT_VALUE(s(i).coembed(i,scalar2ofb3,j)) << '\n';
+        std::cout << FORMAT_VALUE(s(i).coembed(i,scalar2ofb3,j).split(j,k*l)) << '\n';
+        std::cout << FORMAT_VALUE(s.coembed(scalar2ofb3,j)) << '\n';
+        std::cout << FORMAT_VALUE(s.coembed(scalar2ofb3,j).split(j,k*l)) << '\n';
+        std::cout << '\n';
+    }
+
+    {
+        Sc s(uniform_tuple<Scalar>(2));
+        std::cout << FORMAT_VALUE(s) << '\n';
+        std::cout << FORMAT_VALUE(s.split(i*j)) << '\n';
+        std::cout << FORMAT_VALUE(s(i).embed(i,diag2,j)) << '\n';
+        std::cout << FORMAT_VALUE(s(i).embed(i,diag2,j).split(j,k*l)) << '\n';
+        std::cout << FORMAT_VALUE(s.embed(diag2,j)) << '\n';
+        std::cout << FORMAT_VALUE(s.embed(diag2,j).split(j,k*l)) << '\n';
+
+        D d(uniform_tuple<Scalar>(1, 2, 3));
+        std::cout << FORMAT_VALUE(d) << '\n';
+        std::cout << FORMAT_VALUE(d.split(i*j)) << '\n';
+        std::cout << FORMAT_VALUE(d(i).coembed(i,scalar2,j)) << '\n';
+        std::cout << FORMAT_VALUE(d(i).coembed(i,scalar2,j).split(j,k*l)) << '\n';
+        std::cout << FORMAT_VALUE(d.coembed(scalar2,j)) << '\n';
+        std::cout << FORMAT_VALUE(d.coembed(scalar2,j).split(j,k*l)) << '\n';
+        std::cout << '\n';
+    }
+}
+
+
 template <Uint32 ORDER_, typename Factor_>
 void test_exterior_power_embedding_templatized ()
 {
@@ -592,7 +706,7 @@ void test_type_system_helper_functions ()
     std::cout << FORMAT_VALUE(type_string_of(bvs3 * (bvs4 * bvs3))) << '\n';
     std::cout << FORMAT_VALUE(type_string_of((bvs3 * bvs4) * (bvs4 * bvs3))) << '\n';
     std::cout << '\n';
-    std::cout << FORMAT_VALUE(type_string_of(diag(bvs3*bvs4))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(diag2(bvs3*bvs4))) << '\n';
     std::cout << '\n';
     std::cout << FORMAT_VALUE(type_string_of(ext<3>(bvs3))) << '\n';
     std::cout << '\n';

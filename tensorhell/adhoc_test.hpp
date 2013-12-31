@@ -409,6 +409,7 @@ void test_tensor_contraction ();
 // 2
 // ///////////////////////////////////////////////////////////////////////////////////////////
 
+void test_scalar2tensor ();
 void test_wedge ();
 void test_vee ();
 
@@ -512,6 +513,7 @@ void test_implementation_of_vector_construction_via_vector_i ();
 void test_const_component_arrays ();
 void test_identity_embedding ();
 void test_diag2tensor_embedding ();
+void test_scalar2tensor_embedding ();
 void test_exterior_power_embedding ();
 void test_symmetric_power_embedding ();
 void test_embed_coembed_adjointness ();

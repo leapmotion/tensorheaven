@@ -38,7 +38,7 @@ struct Diagonal2TensorProduct_c
 };
 
 template <typename Factor1_, typename Factor2_>
-struct IsConcept_f<Diagonal2TensorProduct_c<Factor1_, Factor2_> >
+struct IsConcept_f<Diagonal2TensorProduct_c<Factor1_,Factor2_> >
 {
     static bool const V = true;
 private:
@@ -53,7 +53,7 @@ private:
 };
 
 template <typename Factor1_, typename Factor2_>
-struct IsDiagonal2TensorProduct_f<Diagonal2TensorProduct_c<Factor1_, Factor2_> >
+struct IsDiagonal2TensorProduct_f<Diagonal2TensorProduct_c<Factor1_,Factor2_> >
 {
     static bool const V = true;
 private:
@@ -84,7 +84,6 @@ public:
     typedef TypeList_t<As_Basis,
             TypeList_t<As_Diagonal2TensorProduct> > ParentTypeList;
 
-    static Uint32 const ORDER = 2;
     typedef typename As_Basis::Id Id;
     typedef Factor1_ Factor1;
     typedef Factor2_ Factor2;
@@ -96,7 +95,7 @@ public:
 };
 
 template <typename Factor1_, typename Factor2_>
-struct IsConcept_f<Diagonal2TensorProductOfBases_c<Factor1_, Factor2_> >
+struct IsConcept_f<Diagonal2TensorProductOfBases_c<Factor1_,Factor2_> >
 {
     static bool const V = true;
 private:
@@ -111,7 +110,7 @@ private:
 };
 
 template <typename Factor1_, typename Factor2_>
-struct IsDiagonal2TensorProductOfBases_f<Diagonal2TensorProductOfBases_c<Factor1_, Factor2_> >
+struct IsDiagonal2TensorProductOfBases_f<Diagonal2TensorProductOfBases_c<Factor1_,Factor2_> >
 {
     static bool const V = true;
 private:
@@ -227,7 +226,7 @@ private:
 
 // for now, just do diagonal 2-tensor product of based vector spaces
 template <typename Factor1_, typename Factor2_>
-Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> diag (TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,TypeList_t<Factor2_> > > const &)
+Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> diag2 (TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,TypeList_t<Factor2_> > > const &)
 {
     return Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>();
 }
@@ -251,9 +250,10 @@ public:
     typedef ComponentIndex_t<DimensionOf_f<Tensor2>::V> Tensor2ComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<Factor1_>::V> Factor1ComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<Factor2_>::V> Factor2ComponentIndex;
+private:
     typedef MultiIndex_t<TypeList_t<Factor1ComponentIndex,
                          TypeList_t<Factor2ComponentIndex> > > Tensor2MultiIndex;
-
+public:
     static bool embedded_component_is_procedural_zero (Tensor2ComponentIndex const &i)
     {
         Tensor2MultiIndex m(i); // does the row-major indexing conversion

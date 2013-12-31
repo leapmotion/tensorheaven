@@ -1,8 +1,29 @@
 #include "adhoc_test.hpp"
 
+#include "tenh/implementation/scalar2tensor.hpp"
+
 // ///////////////////////////////////////////////////////////////////////////////////////////
 // 2
 // ///////////////////////////////////////////////////////////////////////////////////////////
+
+void test_scalar2tensor ()
+{
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > B3;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,Basis_c<Generic> > B4;
+    typedef Scalar2TensorProductOfBasedVectorSpaces_c<B3,B4> Scalar2;
+
+    typedef double Scalar;
+    typedef ImplementationOf_t<Scalar2,Scalar> Sc;
+
+    Sc sc(fill_with(3));
+    AbstractIndex_c<'i'> i;
+    AbstractIndex_c<'j'> j;
+    AbstractIndex_c<'k'> k;
+    std::cout << "testing scalar 2-tensors\n";
+    std::cout << FORMAT_VALUE(sc) << '\n';
+    std::cout << FORMAT_VALUE(sc.split(i*j)) << '\n';
+    std::cout << '\n';
+}
 
 void test_wedge ()
 {
