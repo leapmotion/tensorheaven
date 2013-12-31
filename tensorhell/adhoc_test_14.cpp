@@ -349,55 +349,86 @@ void test_diag2tensor_embedding ()
     typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,Basis_c<Generic> > B4;
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B3,B4> Diag2;
     typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B3,TypeList_t<B4> > > Tensor2;
+    typedef SymmetricPowerOfBasedVectorSpace_c<2,B3> Sym2;
+    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B3,B3> Diag2OfB3;
 
     typedef double Scalar;
     typedef ImplementationOf_t<B3,Scalar> V3;
     typedef ImplementationOf_t<B4,Scalar> V4;
     typedef ImplementationOf_t<Diag2,Scalar> D;
+    typedef ImplementationOf_t<Diag2OfB3,Scalar> DOfB3;
     typedef ImplementationOf_t<Tensor2,Scalar> T;
+    typedef ImplementationOf_t<Sym2,Scalar> S;
 
     B3 b3;
     B4 b4;
     Diag2 diag2;
+    Diag2OfB3 diag2ofb3;
     DualOf_f<Diag2>::T dual_of_diag2;
     Tensor2 tensor2;
+    Sym2 sym2;
     DualOf_f<Tensor2>::T dual_of_tensor2;
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
     AbstractIndex_c<'k'> k;
     AbstractIndex_c<'l'> l;
 
-    D d(uniform_tuple<Scalar>(2, 1, 3));
-    std::cout << FORMAT_VALUE(d) << '\n';
-    std::cout << FORMAT_VALUE(d.split(i*j)) << '\n';
-    std::cout << FORMAT_VALUE(d(i).embed(i,tensor2,j)) << '\n';
-    std::cout << FORMAT_VALUE(d(i).embed(i,tensor2,j).split(j,k*l)) << '\n';
-    std::cout << FORMAT_VALUE(d.embed(tensor2,j)) << '\n';
-    std::cout << FORMAT_VALUE(d.embed(tensor2,j).split(j,k*l)) << '\n';
+    {
+        D d(uniform_tuple<Scalar>(2, 1, 3));
+        std::cout << FORMAT_VALUE(d) << '\n';
+        std::cout << FORMAT_VALUE(d.split(i*j)) << '\n';
+        std::cout << FORMAT_VALUE(d(i).embed(i,tensor2,j)) << '\n';
+        std::cout << FORMAT_VALUE(d(i).embed(i,tensor2,j).split(j,k*l)) << '\n';
+        std::cout << FORMAT_VALUE(d.embed(tensor2,j)) << '\n';
+        std::cout << FORMAT_VALUE(d.embed(tensor2,j).split(j,k*l)) << '\n';
 
-    T t(uniform_tuple<Scalar>( 1,  2,  3,  4) |
-        uniform_tuple<Scalar>( 5,  6,  7,  8) |
-        uniform_tuple<Scalar>( 9, 10, 11, 12));
-    std::cout << FORMAT_VALUE(t) << '\n';
-    std::cout << FORMAT_VALUE(t(i*j)) << '\n';
-    std::cout << FORMAT_VALUE(t(i).coembed(i,diag2,j)) << '\n';
-    std::cout << FORMAT_VALUE(t(i).coembed(i,diag2,j).split(j,k*l)) << '\n';
-    std::cout << FORMAT_VALUE(t.coembed(diag2,j)) << '\n';
-    std::cout << FORMAT_VALUE(t.coembed(diag2,j).split(j,k*l)) << '\n';
-    std::cout << '\n';
+        T t(uniform_tuple<Scalar>( 1,  2,  3,  4) |
+            uniform_tuple<Scalar>( 5,  6,  7,  8) |
+            uniform_tuple<Scalar>( 9, 10, 11, 12));
+        std::cout << FORMAT_VALUE(t) << '\n';
+        std::cout << FORMAT_VALUE(t(i*j)) << '\n';
+        std::cout << FORMAT_VALUE(t(i).coembed(i,diag2,j)) << '\n';
+        std::cout << FORMAT_VALUE(t(i).coembed(i,diag2,j).split(j,k*l)) << '\n';
+        std::cout << FORMAT_VALUE(t.coembed(diag2,j)) << '\n';
+        std::cout << FORMAT_VALUE(t.coembed(diag2,j).split(j,k*l)) << '\n';
+        std::cout << '\n';
+    }
 
     // this should produce a type error (nonexistence of LinearEmbedding_c from diag2 to dual_of_tensor2)
     // std::cout << FORMAT_VALUE(d.embed(dual_of_tensor2,j)) << '\n';
     // this should produce a type error (nonexistence of LinearEmbedding_c from dual_of_diag2 to tensor2)
     // std::cout << FORMAT_VALUE(t.coembed(dual_of_diag2,j)) << '\n';
 
-    V3 u(uniform_tuple<Scalar>(1, 2, 3));
-    V4 v(uniform_tuple<Scalar>(4, 5, 6, 7));
-    std::cout << FORMAT_VALUE(u) << '\n';
-    std::cout << FORMAT_VALUE(v) << '\n';
-    std::cout << FORMAT_VALUE(u(i)*v(j)) << '\n';
-    std::cout << FORMAT_VALUE((u(i)*v(j)).bundle(i*j,tensor2,k).coembed(k,diag2,l)) << '\n';
-    std::cout << '\n';
+    {
+        V3 u(uniform_tuple<Scalar>(1, 2, 3));
+        V4 v(uniform_tuple<Scalar>(4, 5, 6, 7));
+        std::cout << FORMAT_VALUE(u) << '\n';
+        std::cout << FORMAT_VALUE(v) << '\n';
+        std::cout << FORMAT_VALUE(u(i)*v(j)) << '\n';
+        std::cout << FORMAT_VALUE((u(i)*v(j)).bundle(i*j,tensor2,k).coembed(k,diag2,l)) << '\n';
+        std::cout << '\n';
+    }
+
+    {
+        DOfB3 d(uniform_tuple<Scalar>(2, 1, 3));
+        std::cout << FORMAT_VALUE(d) << '\n';
+        std::cout << FORMAT_VALUE(d.split(i*j)) << '\n';
+        std::cout << FORMAT_VALUE(d(i).embed(i,sym2,j)) << '\n';
+        std::cout << FORMAT_VALUE(d(i).embed(i,sym2,j).split(j,k*l)) << '\n';
+        std::cout << FORMAT_VALUE(d.embed(sym2,j)) << '\n';
+        std::cout << FORMAT_VALUE(d.embed(sym2,j).split(j,k*l)) << '\n';
+
+        S s(uniform_tuple<Scalar>( 1) |
+            uniform_tuple<Scalar>( 2, 3) |
+            uniform_tuple<Scalar>( 4, 5, 6));
+        std::cout << FORMAT_VALUE(s) << '\n';
+        std::cout << FORMAT_VALUE(s.split(i*j)) << '\n';
+        std::cout << FORMAT_VALUE(s(i).coembed(i,diag2ofb3,j)) << '\n';
+        std::cout << FORMAT_VALUE(s(i).coembed(i,diag2ofb3,j).split(j,k*l)) << '\n';
+        std::cout << FORMAT_VALUE(s.coembed(diag2ofb3,j)) << '\n';
+        std::cout << FORMAT_VALUE(s.coembed(diag2ofb3,j).split(j,k*l)) << '\n';
+        std::cout << '\n';
+    }
 }
 
 template <Uint32 ORDER_, typename Factor_>

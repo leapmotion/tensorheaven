@@ -12,6 +12,7 @@
 #include "tenh/conceptual/concept.hpp"
 #include "tenh/conceptual/embeddableintensorproduct.hpp"
 #include "tenh/conceptual/linearembedding.hpp"
+#include "tenh/conceptual/symmetricpower.hpp"
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/multiindex.hpp" // technically not conceptual code, but close enough.
 
@@ -246,7 +247,6 @@ private:
     typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,TypeList_t<Factor2_> > > Tensor2;
     static bool const FACTOR1DIM_LEQ_FACTOR2DIM = DimensionOf_f<Factor1_>::V <= DimensionOf_f<Factor2_>::V;
 public:
-
     typedef ComponentIndex_t<DimensionOf_f<Diag2>::V> Diag2ComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<Tensor2>::V> Tensor2ComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<Factor1_>::V> Factor1ComponentIndex;
@@ -273,6 +273,55 @@ public:
     static Tensor2ComponentIndex source_component_index_for_coembedded_component (Diag2ComponentIndex const &i, Uint32)
     {
         return Tensor2MultiIndex(i.value(), i.value(), DONT_CHECK_RANGE).as_component_index();
+    }
+};
+
+// ///////////////////////////////////////////////////////////////////////////
+// linear embedding of diagonal 2-tensor of uniform factor type into
+// corresponding 2nd symmetric power
+// ///////////////////////////////////////////////////////////////////////////
+
+template <typename Factor_, typename Scalar_>
+struct LinearEmbedding_c<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor_,Factor_>,
+                         SymmetricPowerOfBasedVectorSpace_c<2,Factor_>,
+                         Scalar_,
+                         NaturalEmbedding>
+{
+private:
+    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<Factor_,Factor_> Diag2;
+    typedef SymmetricPowerOfBasedVectorSpace_c<2,Factor_> Sym2;
+public:
+    typedef ComponentIndex_t<DimensionOf_f<Diag2>::V> Diag2ComponentIndex;
+    typedef ComponentIndex_t<DimensionOf_f<Sym2>::V> Sym2ComponentIndex;
+    typedef ComponentIndex_t<DimensionOf_f<Factor_>::V> FactorComponentIndex;
+
+    static bool embedded_component_is_procedural_zero (Sym2ComponentIndex const &i)
+    {
+        // Sym2 uses the lower-triangular indexing (which doesn't depend on the dimension of Factor_)
+        Uint32 t = index_of_greatest_simplicial_number_leq(i.value(), 2);
+        // std::cout << FORMAT_VALUE(i.value()) << ", " << FORMAT_VALUE(t) << '\n';
+        FactorComponentIndex row(t-1, DONT_CHECK_RANGE);
+        FactorComponentIndex col(i.value() - t*(t-1)/2, DONT_CHECK_RANGE);
+        // off-diagonals are procedural zeros
+        return row.value() != col.value();
+    }
+    static Scalar_ scalar_factor_for_embedded_component (Sym2ComponentIndex const &) { return Scalar_(1); }
+    static Diag2ComponentIndex source_component_index_for_embedded_component (Sym2ComponentIndex const &i)
+    {
+        // Sym2 uses the lower-triangular indexing (which doesn't depend on the dimension of Factor_)
+        Uint32 t = index_of_greatest_simplicial_number_leq(i.value(), 2);
+        FactorComponentIndex row(t-1, DONT_CHECK_RANGE);
+        FactorComponentIndex col(i.value() - t*(t-1)/2, DONT_CHECK_RANGE);
+        // FactorComponentIndex and Diag2ComponentIndex are the same C++ type by dimensionality
+        return row;
+    }
+
+    static Uint32 term_count_for_coembedded_component (Diag2ComponentIndex const &) { return 1; }
+    static Scalar_ scalar_factor_for_coembedded_component (Diag2ComponentIndex const &, Uint32) { return Scalar_(1); }
+    static Sym2ComponentIndex source_component_index_for_coembedded_component (Diag2ComponentIndex const &i, Uint32)
+    {
+        Uint32 k = i.value();
+        return Sym2ComponentIndex(k + (k*(k+1))/2, DONT_CHECK_RANGE);
     }
 };
 
