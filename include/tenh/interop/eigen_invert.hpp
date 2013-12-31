@@ -14,34 +14,34 @@
 namespace Tenh {
 
 // returns true iff the tensor was actually considered to be invertible (by Eigen::MatrixBase::computeInverseWithCheck)
-template <typename Derived1_,
-          typename Derived2_,
+template <typename Derived0_,
+          typename Derived1_,
           typename Scalar_,
+          typename Factor0_,
           typename Factor1_,
-          typename Factor2_,
           ComponentQualifier COMPONENT_QUALIFIER_>
-bool invert_2tensor (Tensor_i<Derived1_,
+bool invert_2tensor (Tensor_i<Derived0_,
                               Scalar_,
-                              TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,
-                                                                 TypeList_t<Factor2_> > >,
+                              TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0_,
+                                                                 TypeList_t<Factor1_> > >,
                               COMPONENT_QUALIFIER_> const &t,
-                     Tensor_i<Derived2_,
+                     Tensor_i<Derived1_,
                               Scalar_,
-                              TensorProductOfBasedVectorSpaces_c<TypeList_t<typename DualOf_f<Factor2_>::T,
-                                                                 TypeList_t<typename DualOf_f<Factor1_>::T> > >,
+                              TensorProductOfBasedVectorSpaces_c<TypeList_t<typename DualOf_f<Factor1_>::T,
+                                                                 TypeList_t<typename DualOf_f<Factor0_>::T> > >,
                               COMPONENTS_ARE_NONCONST_MEMORY> &t_inverse)
 {
-    STATIC_ASSERT(DimensionOf_f<Factor1_>::V == DimensionOf_f<Factor2_>::V, FACTOR_DIMENSIONS_MUST_BE_EQUAL);
+    STATIC_ASSERT(DimensionOf_f<Factor0_>::V == DimensionOf_f<Factor1_>::V, FACTOR_DIMENSIONS_MUST_BE_EQUAL);
     // create Eigen Maps for each of the parameters -- this way no copying is necessary;
     // the t tensor's components are read directly by Eigen, and t_inverse's components
     // are directly written to by Eigen.
     typedef Eigen::Matrix<Scalar_,
+                          DimensionOf_f<Factor0_>::V,
                           DimensionOf_f<Factor1_>::V,
-                          DimensionOf_f<Factor2_>::V,
                           Eigen::RowMajor> EigenMatrixType;
-    typename EigenMapOf2Tensor_const_f<Factor1_,Factor2_,Scalar_>::T eigen_map_of_t(EigenMap_of_2tensor(t));
-    typename EigenMapOf2Tensor_nonconst_f<typename DualOf_f<Factor2_>::T,
-                                          typename DualOf_f<Factor1_>::T,
+    typename EigenMapOf2Tensor_const_f<Factor0_,Factor1_,Scalar_>::T eigen_map_of_t(EigenMap_of_2tensor(t));
+    typename EigenMapOf2Tensor_nonconst_f<typename DualOf_f<Factor1_>::T,
+                                          typename DualOf_f<Factor0_>::T,
                                           Scalar_>::T eigen_map_of_t_inverse(EigenMap_of_2tensor(t_inverse));
     Eigen::FullPivLU<EigenMatrixType> lu(eigen_map_of_t);
 
@@ -52,16 +52,16 @@ bool invert_2tensor (Tensor_i<Derived1_,
 }
 
 // returns true iff the tensor was actually considered to be invertible (by Eigen::MatrixBase::computeInverseWithCheck)
-template <typename Derived1_,
-          typename Derived2_,
+template <typename Derived0_,
+          typename Derived1_,
           typename Scalar_,
           typename Factor_,
           ComponentQualifier COMPONENT_QUALIFIER_>
-bool invert_2tensor (EmbeddableAsTensor_i<Derived1_,
+bool invert_2tensor (EmbeddableAsTensor_i<Derived0_,
                                           Scalar_,
                                           SymmetricPowerOfBasedVectorSpace_c<2,Factor_>,
                                           COMPONENT_QUALIFIER_> const &s,
-                     EmbeddableAsTensor_i<Derived2_,
+                     EmbeddableAsTensor_i<Derived1_,
                                           Scalar_,
                                           SymmetricPowerOfBasedVectorSpace_c<2,typename DualOf_f<Factor_>::T>,
                                           COMPONENTS_ARE_NONCONST_MEMORY> &s_inverse)

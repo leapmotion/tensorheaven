@@ -23,22 +23,22 @@ namespace Tenh {
 // ///////////////////////////////////////////////////////////////////////////
 
 // formal "diagonal 2-tensor product" of symbols
-template <typename Factor1_, typename Factor2_>
+template <typename Factor0_, typename Factor1_>
 struct Diagonal2TensorProduct_c
 {
     typedef EmptyTypeList ParentTypeList;
 
+    typedef Factor0_ Factor0;
     typedef Factor1_ Factor1;
-    typedef Factor2_ Factor2;
 
     static std::string type_as_string ()
     {
-        return "Diagonal2TensorProduct_c<" + type_string_of<Factor1_>() + ',' + type_string_of<Factor2_>() + '>';
+        return "Diagonal2TensorProduct_c<" + type_string_of<Factor0_>() + ',' + type_string_of<Factor1_>() + '>';
     }
 };
 
-template <typename Factor1_, typename Factor2_>
-struct IsConcept_f<Diagonal2TensorProduct_c<Factor1_,Factor2_> >
+template <typename Factor0_, typename Factor1_>
+struct IsConcept_f<Diagonal2TensorProduct_c<Factor0_,Factor1_> >
 {
     static bool const V = true;
 private:
@@ -52,8 +52,8 @@ private:
     IsDiagonal2TensorProduct_f();
 };
 
-template <typename Factor1_, typename Factor2_>
-struct IsDiagonal2TensorProduct_f<Diagonal2TensorProduct_c<Factor1_,Factor2_> >
+template <typename Factor0_, typename Factor1_>
+struct IsDiagonal2TensorProduct_f<Diagonal2TensorProduct_c<Factor0_,Factor1_> >
 {
     static bool const V = true;
 private:
@@ -69,33 +69,33 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Diagonal2TensorProduct);
 // Diagonal2TensorProductOfBases_c
 // ///////////////////////////////////////////////////////////////////////////
 
-template <typename Factor1_, typename Factor2_>
+template <typename Factor0_, typename Factor1_>
 struct Diagonal2TensorProductOfBases_c
 {
 private:
     enum
     {
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IS_BASIS_UNIQUELY(Factor1_), MUST_BE_BASIS, FACTOR1),
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IS_BASIS_UNIQUELY(Factor2_), MUST_BE_BASIS, FACTOR2)
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IS_BASIS_UNIQUELY(Factor0_), MUST_BE_BASIS, FACTOR0),
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IS_BASIS_UNIQUELY(Factor1_), MUST_BE_BASIS, FACTOR1)
     };
-    typedef Basis_c<Diagonal2TensorProduct_c<Factor1_,Factor2_> > As_Basis;
-    typedef Diagonal2TensorProduct_c<Factor1_, Factor2_> As_Diagonal2TensorProduct;
+    typedef Basis_c<Diagonal2TensorProduct_c<Factor0_,Factor1_> > As_Basis;
+    typedef Diagonal2TensorProduct_c<Factor0_, Factor1_> As_Diagonal2TensorProduct;
 public:
     typedef TypeList_t<As_Basis,
             TypeList_t<As_Diagonal2TensorProduct> > ParentTypeList;
 
     typedef typename As_Basis::Id Id;
+    typedef Factor0_ Factor0;
     typedef Factor1_ Factor1;
-    typedef Factor2_ Factor2;
 
     static std::string type_as_string ()
     {
-        return "Diagonal2TensorProductOfBases_c<" + type_string_of<Factor1_>() + ',' + type_string_of<Factor2_>() + '>';
+        return "Diagonal2TensorProductOfBases_c<" + type_string_of<Factor0_>() + ',' + type_string_of<Factor1_>() + '>';
     }
 };
 
-template <typename Factor1_, typename Factor2_>
-struct IsConcept_f<Diagonal2TensorProductOfBases_c<Factor1_,Factor2_> >
+template <typename Factor0_, typename Factor1_>
+struct IsConcept_f<Diagonal2TensorProductOfBases_c<Factor0_,Factor1_> >
 {
     static bool const V = true;
 private:
@@ -109,8 +109,8 @@ private:
     IsDiagonal2TensorProductOfBases_f();
 };
 
-template <typename Factor1_, typename Factor2_>
-struct IsDiagonal2TensorProductOfBases_f<Diagonal2TensorProductOfBases_c<Factor1_,Factor2_> >
+template <typename Factor0_, typename Factor1_>
+struct IsDiagonal2TensorProductOfBases_f<Diagonal2TensorProductOfBases_c<Factor0_,Factor1_> >
 {
     static bool const V = true;
 private:
@@ -126,25 +126,25 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Diagonal2TensorProductOfBases);
 // Diagonal2TensorProductOfBasedVectorSpaces_c
 // ///////////////////////////////////////////////////////////////////////////
 
-template <typename Factor1_, typename Factor2_>
+template <typename Factor0_, typename Factor1_>
 struct Diagonal2TensorProductOfBasedVectorSpaces_c
 {
 private:
     enum
     {
+        STATIC_ASSERT_IN_ENUM__UNIQUE(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor0_), MUST_BE_BASED_VECTOR_SPACE, FACTOR0),
         STATIC_ASSERT_IN_ENUM__UNIQUE(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor1_), MUST_BE_BASED_VECTOR_SPACE, FACTOR1),
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor2_), MUST_BE_BASED_VECTOR_SPACE, FACTOR2),
-        STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename ScalarFieldOf_f<Factor1_>::T,typename ScalarFieldOf_f<Factor2_>::T>::V), ALL_FACTORS_MUST_HAVE_SAME_FIELD),
+        STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename ScalarFieldOf_f<Factor0_>::T,typename ScalarFieldOf_f<Factor1_>::T>::V), ALL_FACTORS_MUST_HAVE_SAME_FIELD),
     };
-    typedef TypeList_t<Factor1_,TypeList_t<Factor2_> > FactorTypeList;
+    typedef TypeList_t<Factor0_,TypeList_t<Factor1_> > FactorTypeList;
 
-    typedef VectorSpace_c<typename ScalarFieldOf_f<Factor1_>::T,
-                          (DimensionOf_f<Factor1_>::V < DimensionOf_f<Factor2_>::V) ? DimensionOf_f<Factor1_>::V : DimensionOf_f<Factor2_>::V,
-                          Diagonal2TensorProduct_c<Factor1_,Factor2_> > UnderlyingVectorSpace;
+    typedef VectorSpace_c<typename ScalarFieldOf_f<Factor0_>::T,
+                          (DimensionOf_f<Factor0_>::V < DimensionOf_f<Factor1_>::V) ? DimensionOf_f<Factor0_>::V : DimensionOf_f<Factor1_>::V,
+                          Diagonal2TensorProduct_c<Factor0_,Factor1_> > UnderlyingVectorSpace;
 
     typedef BasedVectorSpace_c<UnderlyingVectorSpace,
-                               Diagonal2TensorProductOfBases_c<typename BasisOf_f<Factor1_>::T,
-                                                               typename BasisOf_f<Factor2_>::T> > As_BasedVectorSpace;
+                               Diagonal2TensorProductOfBases_c<typename BasisOf_f<Factor0_>::T,
+                                                               typename BasisOf_f<Factor1_>::T> > As_BasedVectorSpace;
     typedef EmbeddableInTensorProductOfBasedVectorSpaces_c<TensorProductOfBasedVectorSpaces_c<FactorTypeList>,
                                                            TensorProductOfVectorSpaces_c<FactorTypeList> > As_EmbeddableInTensorProductOfBasedVectorSpaces;
 public:
@@ -152,17 +152,17 @@ public:
             TypeList_t<As_EmbeddableInTensorProductOfBasedVectorSpaces> > ParentTypeList;
 
     typedef typename As_BasedVectorSpace::Id Id;
+    typedef Factor0_ Factor0;
     typedef Factor1_ Factor1;
-    typedef Factor2_ Factor2;
 
     static std::string type_as_string ()
     {
-        return "Diagonal2TensorProductOfBasedVectorSpaces_c<" + type_string_of<Factor1_>() + ',' + type_string_of<Factor2_>() + '>';
+        return "Diagonal2TensorProductOfBasedVectorSpaces_c<" + type_string_of<Factor0_>() + ',' + type_string_of<Factor1_>() + '>';
     }
 };
 
-template <typename Factor1_, typename Factor2_>
-struct IsConcept_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >
+template <typename Factor0_, typename Factor1_>
+struct IsConcept_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_> >
 {
     static bool const V = true;
 private:
@@ -176,8 +176,8 @@ private:
     IsDiagonal2TensorProductOfBasedVectorSpaces_f();
 };
 
-template <typename Factor1_, typename Factor2_>
-struct IsDiagonal2TensorProductOfBasedVectorSpaces_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> >
+template <typename Factor0_, typename Factor1_>
+struct IsDiagonal2TensorProductOfBasedVectorSpaces_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_> >
 {
     static bool const V = true;
 private:
@@ -190,10 +190,10 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Diagonal2TensorProductOfBasedVectorSpa
 #define AS_DIAGONAL_2_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(Concept) UniqueDiagonal2TensorProductOfBasedVectorSpacesStructureOf_f<Concept>::T
 
 // TODO: verify that this mathematical claim is true
-template <typename Factor1, typename Factor2>
-struct DualOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1,Factor2> >
+template <typename Factor0, typename Factor1>
+struct DualOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0,Factor1> >
 {
-    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<typename DualOf_f<Factor1>::T,typename DualOf_f<Factor2>::T> T;
+    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<typename DualOf_f<Factor0>::T,typename DualOf_f<Factor1>::T> T;
 private:
     DualOf_f();
 };
@@ -204,18 +204,18 @@ struct Diagonal2TensorProductOfBasedVectorSpaces_f
 {
 private:
     enum { STATIC_ASSERT_IN_ENUM(FactorTypeList_::LENGTH == 2, LENGTH_MUST_BE_EXACTLY_2) };
-    typedef typename FactorTypeList_::HeadType Factor1;
-    typedef typename FactorTypeList_::BodyTypeList::HeadType Factor2;
+    typedef typename FactorTypeList_::HeadType Factor0;
+    typedef typename FactorTypeList_::BodyTypeList::HeadType Factor1;
     Diagonal2TensorProductOfBasedVectorSpaces_f();
 public:
-    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1,Factor2> T;
+    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0,Factor1> T;
 };
 
 // specialization for FactorTypeListOf_f
-template <typename Factor1_, typename Factor2_>
-struct BaseProperty_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,FactorTypeList>
+template <typename Factor0_, typename Factor1_>
+struct BaseProperty_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,FactorTypeList>
 {
-    typedef TypeList_t<Factor1_,TypeList_t<Factor2_> > T;
+    typedef TypeList_t<Factor0_,TypeList_t<Factor1_> > T;
 private:
     BaseProperty_f();
 };
@@ -225,34 +225,34 @@ private:
 // ///////////////////////////////////////////////////////////////////////////
 
 // for now, just do diagonal 2-tensor product of based vector spaces
-template <typename Factor1_, typename Factor2_>
-Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> diag2 (TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,TypeList_t<Factor2_> > > const &)
+template <typename Factor0_, typename Factor1_>
+Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_> diag2 (TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0_,TypeList_t<Factor1_> > > const &)
 {
-    return Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>();
+    return Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>();
 }
 
 // ///////////////////////////////////////////////////////////////////////////
 // linear embedding of diagonal 2-tensor into corresponding tensor product
 // ///////////////////////////////////////////////////////////////////////////
 
-template <typename Factor1_, typename Factor2_, typename Scalar_>
-struct LinearEmbedding_c<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,
-                         TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,TypeList_t<Factor2_> > >,
+template <typename Factor0_, typename Factor1_, typename Scalar_>
+struct LinearEmbedding_c<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,
+                         TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0_,TypeList_t<Factor1_> > >,
                          Scalar_,
                          NaturalEmbedding>
 {
 private:
-    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_> Diag2;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,TypeList_t<Factor2_> > > Tensor2;
-    static bool const FACTOR1DIM_LEQ_FACTOR2DIM = DimensionOf_f<Factor1_>::V <= DimensionOf_f<Factor2_>::V;
+    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_> Diag2;
+    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0_,TypeList_t<Factor1_> > > Tensor2;
+    static bool const FACTOR0DIM_LEQ_FACTOR1DIM = DimensionOf_f<Factor0_>::V <= DimensionOf_f<Factor1_>::V;
 public:
     typedef ComponentIndex_t<DimensionOf_f<Diag2>::V> Diag2ComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<Tensor2>::V> Tensor2ComponentIndex;
+    typedef ComponentIndex_t<DimensionOf_f<Factor0_>::V> Factor0ComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<Factor1_>::V> Factor1ComponentIndex;
-    typedef ComponentIndex_t<DimensionOf_f<Factor2_>::V> Factor2ComponentIndex;
 private:
-    typedef MultiIndex_t<TypeList_t<Factor1ComponentIndex,
-                         TypeList_t<Factor2ComponentIndex> > > Tensor2MultiIndex;
+    typedef MultiIndex_t<TypeList_t<Factor0ComponentIndex,
+                         TypeList_t<Factor1ComponentIndex> > > Tensor2MultiIndex;
 public:
     static bool embedded_component_is_procedural_zero (Tensor2ComponentIndex const &i)
     {
@@ -265,7 +265,7 @@ public:
     {
         assert(!embedded_component_is_procedural_zero(i)); // this may potentially slow stuff down too much
         Tensor2MultiIndex m(i); // does the row-major indexing conversion
-        return m.template el<(FACTOR1DIM_LEQ_FACTOR2DIM ? 0 : 1)>();
+        return m.template el<(FACTOR0DIM_LEQ_FACTOR1DIM ? 0 : 1)>();
     }
 
     static Uint32 term_count_for_coembedded_component (Diag2ComponentIndex const &) { return 1; }

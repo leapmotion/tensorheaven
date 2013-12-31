@@ -142,18 +142,18 @@ template <typename Procedural2TensorImplementationTypeList_> struct TensorProduc
 template <typename Procedural2TensorImplementationTypeList_> struct ConceptualTypeOfTensorProductOfProcedural2Tensors_f;
 
 // template specialization for tensor products of diagonal 2-tensors
-template <typename Factor1_,
-          typename Factor2_,
+template <typename Factor0_,
+          typename Factor1_,
           typename Scalar_,
           typename UseArrayType_,
           typename Derived_,
           typename Procedural2TensorImplementationBodyTypeList_>
 struct ConceptualTypeOfTensorProductOfProcedural2Tensors_f<
-    TypeList_t<ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,Scalar_,UseArrayType_,Derived_>,
+    TypeList_t<ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_>,
                Procedural2TensorImplementationBodyTypeList_> >
 {
 private:
-    typedef TypeList_t<ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor1_,Factor2_>,Scalar_,UseArrayType_,Derived_>,
+    typedef TypeList_t<ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_>,
                        Procedural2TensorImplementationBodyTypeList_> Procedural2TensorImplementationTypeList;
     typedef typename ConceptOfEachTypeIn_f<Procedural2TensorImplementationTypeList>::T ConceptTypeList;
     enum { STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<ConceptTypeList,IsDiagonal2TensorProductOfBasedVectorSpaces_p>::V), MUST_BE_TYPELIST_OF_DIAGONAL_2_TENSORS) };
@@ -167,18 +167,18 @@ public:
 };
 
 // template specialization for tensor products of general 2-tensors
-template <typename Factor1_,
-          typename Factor2_,
+template <typename Factor0_,
+          typename Factor1_,
           typename Scalar_,
           typename UseArrayType_,
           typename Derived_,
           typename Procedural2TensorImplementationBodyTypeList_>
 struct ConceptualTypeOfTensorProductOfProcedural2Tensors_f<
-    TypeList_t<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,TypeList_t<Factor2_> > >,Scalar_,UseArrayType_,Derived_>,
+    TypeList_t<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0_,TypeList_t<Factor1_> > >,Scalar_,UseArrayType_,Derived_>,
                Procedural2TensorImplementationBodyTypeList_> >
 {
 private:
-    typedef TypeList_t<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,TypeList_t<Factor2_> > >,Scalar_,UseArrayType_,Derived_>,
+    typedef TypeList_t<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0_,TypeList_t<Factor1_> > >,Scalar_,UseArrayType_,Derived_>,
                        Procedural2TensorImplementationBodyTypeList_> Procedural2TensorImplementationTypeList;
     typedef typename ConceptOfEachTypeIn_f<Procedural2TensorImplementationTypeList>::T ConceptTypeList;
     enum
@@ -205,8 +205,8 @@ Scalar_ tensor_product_of_2_tensors (ComponentIndex_t<DimensionOf_f<ConceptualTy
     STATIC_ASSERT_TYPES_ARE_EQUAL(ConceptualTypeOfTensorProduct_, ConceptualTypeOfTensorProduct);
     typedef typename FactorTypeListOf_f<ConceptualTypeOfTensorProduct_>::T FactorTypeList;
     STATIC_ASSERT((FactorTypeList::LENGTH == 2), LENGTH_MUST_BE_EXACTLY_2);
-    typedef typename FactorTypeList::HeadType Factor1;
-    typedef typename FactorTypeList::BodyTypeList::HeadType Factor2;
+    typedef typename FactorTypeList::HeadType Factor0;
+    typedef typename FactorTypeList::BodyTypeList::HeadType Factor1;
     typedef typename Procedural2TensorImplementationTypeList_::HeadType HeadImplementation;
     typedef typename TensorProductOfProcedural2Tensors_f<typename Procedural2TensorImplementationTypeList_::BodyTypeList>::T BodyImplementation;
     HeadImplementation head_implementation;
@@ -219,8 +219,8 @@ Scalar_ tensor_product_of_2_tensors (ComponentIndex_t<DimensionOf_f<ConceptualTy
     AbstractIndex_c<'Q'> Q;
     AbstractIndex_c<'r'> r;
     return (head_implementation.split(u*v)*body_implementation.split(k*l))
-           .bundle_with_no_type_check(u*k,Factor1(),P)
-           .bundle_with_no_type_check(v*l,Factor2(),Q)
+           .bundle_with_no_type_check(u*k,Factor0(),P)
+           .bundle_with_no_type_check(v*l,Factor1(),Q)
            .bundle(P*Q,ConceptualTypeOfTensorProduct_(),r)
            [MultiIndex_t<TypeList_t<ComponentIndex> >(i)];
 }

@@ -13,52 +13,52 @@
 
 namespace Tenh {
 
-template <typename Factor1_, typename Factor2_, typename Scalar_>
+template <typename Factor0_, typename Factor1_, typename Scalar_>
 struct EigenMapOf2Tensor_const_f
 {
     typedef Eigen::Map<Eigen::Matrix<Scalar_,
+                                     DimensionOf_f<Factor0_>::V,
                                      DimensionOf_f<Factor1_>::V,
-                                     DimensionOf_f<Factor2_>::V,
                                      Eigen::RowMajor> const> T;
 };
 
-template <typename Factor1_, typename Factor2_, typename Scalar_>
+template <typename Factor0_, typename Factor1_, typename Scalar_>
 struct EigenMapOf2Tensor_nonconst_f
 {
     typedef Eigen::Map<Eigen::Matrix<Scalar_,
+                                     DimensionOf_f<Factor0_>::V,
                                      DimensionOf_f<Factor1_>::V,
-                                     DimensionOf_f<Factor2_>::V,
                                      Eigen::RowMajor> > T;
 };
 
 // const version
 template <typename Derived_,
           typename Scalar_,
-          typename Factor1_,
-          typename Factor2_>
-typename EigenMapOf2Tensor_const_f<Factor1_,Factor2_,Scalar_>::T
+          typename Factor0_,
+          typename Factor1_>
+typename EigenMapOf2Tensor_const_f<Factor0_,Factor1_,Scalar_>::T
     EigenMap_of_2tensor (Tensor_i<Derived_,
                                   Scalar_,
-                                  TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,
-                                                                     TypeList_t<Factor2_> > >,
+                                  TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0_,
+                                                                     TypeList_t<Factor1_> > >,
                                   COMPONENTS_ARE_NONCONST_MEMORY> const &t)
 {
-    return typename EigenMapOf2Tensor_const_f<Factor1_,Factor2_,Scalar_>::T(t.as_derived().pointer_to_allocation());
+    return typename EigenMapOf2Tensor_const_f<Factor0_,Factor1_,Scalar_>::T(t.as_derived().pointer_to_allocation());
 }
 
 // non-const version
 template <typename Derived_,
           typename Scalar_,
-          typename Factor1_,
-          typename Factor2_>
-typename EigenMapOf2Tensor_nonconst_f<Factor1_,Factor2_,Scalar_>::T
+          typename Factor0_,
+          typename Factor1_>
+typename EigenMapOf2Tensor_nonconst_f<Factor0_,Factor1_,Scalar_>::T
     EigenMap_of_2tensor (Tensor_i<Derived_,
                                   Scalar_,
-                                  TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,
-                                                                     TypeList_t<Factor2_> > >,
+                                  TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0_,
+                                                                     TypeList_t<Factor1_> > >,
                                   COMPONENTS_ARE_NONCONST_MEMORY> &t)
 {
-    return typename EigenMapOf2Tensor_nonconst_f<Factor1_,Factor2_,Scalar_>::T(t.as_derived().pointer_to_allocation());
+    return typename EigenMapOf2Tensor_nonconst_f<Factor0_,Factor1_,Scalar_>::T(t.as_derived().pointer_to_allocation());
 }
 
 template <typename Type_, typename Scalar_>
@@ -97,24 +97,24 @@ typename EigenMapOfVector_nonconst_f<BasedVectorSpace_,Scalar_>::T
 
 template <typename Derived_,
           typename Scalar_,
-          typename Factor1_,
-          typename Factor2_>
+          typename Factor0_,
+          typename Factor1_>
 Scalar_ determinant_of_2tensor (Tensor_i<Derived_,
                                          Scalar_,
-                                         TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,
-                                                                            TypeList_t<Factor2_> > >,
+                                         TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0_,
+                                                                            TypeList_t<Factor1_> > >,
                                          COMPONENTS_ARE_NONCONST_MEMORY> const &t)
 {
-    STATIC_ASSERT(DimensionOf_f<Factor1_>::V == DimensionOf_f<Factor2_>::V, FACTOR_DIMENSIONS_MUST_BE_EQUAL);
+    STATIC_ASSERT(DimensionOf_f<Factor0_>::V == DimensionOf_f<Factor1_>::V, FACTOR_DIMENSIONS_MUST_BE_EQUAL);
     // create Eigen Maps for the parameter -- this way no copying is necessary;
     // the t tensor's components are read directly by Eigen.
     typedef Eigen::Matrix<Scalar_,
+                          DimensionOf_f<Factor0_>::V,
                           DimensionOf_f<Factor1_>::V,
-                          DimensionOf_f<Factor2_>::V,
                           Eigen::RowMajor> EigenMatrixType;
-    typename EigenMapOf2Tensor_const_f<Factor1_,Factor2_,Scalar_>::T eigen_map_of_t(EigenMap_of_2tensor(t));
+    typename EigenMapOf2Tensor_const_f<Factor0_,Factor1_,Scalar_>::T eigen_map_of_t(EigenMap_of_2tensor(t));
 
-    if (DimensionOf_f<Factor1_>::V > 4)
+    if (DimensionOf_f<Factor0_>::V > 4)
     {
         Eigen::FullPivLU<EigenMatrixType> lu(eigen_map_of_t);
         return lu.determinant();
