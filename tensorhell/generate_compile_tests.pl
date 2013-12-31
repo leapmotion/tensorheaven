@@ -68,6 +68,7 @@ FILE:
             my $include_path = $1;
             $outfile =~ s/.hpp$/.cpp/;
             $function_name =~ s/\/|\./_/g;
+            $function_name =~ s/^_+//;
 
             open(my $fh, ">", "$output_directory/$outfile") or die "Failed to open file: $output_directory/$outfile\n";
             print $fh <<"EOT";
