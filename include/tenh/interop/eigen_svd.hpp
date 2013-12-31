@@ -7,6 +7,9 @@
 #define TENH_INTEROP_EIGEN_SVD_HPP_
 
 #include "tenh/core.hpp"
+
+#include "tenh/conceptual/directsum.hpp"
+#include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/interop/eigen.hpp"
 #include "tenh/implementation/diagonal2tensor.hpp"
 #include "tenh/implementation/tensor.hpp"

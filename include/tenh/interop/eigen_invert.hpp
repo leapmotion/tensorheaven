@@ -8,6 +8,8 @@
 
 #include "tenh/core.hpp"
 
+#include "tenh/conceptual/symmetricpower.hpp"
+#include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/interop/eigen.hpp"
 #include "tenh/implementation/tensor.hpp"
 

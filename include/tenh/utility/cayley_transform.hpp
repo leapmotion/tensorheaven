@@ -8,6 +8,7 @@
 
 #include "tenh/core.hpp"
 
+#include "tenh/implementation/identity.hpp"
 #include "tenh/implementation/innerproduct.hpp"
 #include "tenh/utility/functions.hpp"
 

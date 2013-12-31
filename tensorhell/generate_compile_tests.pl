@@ -63,11 +63,11 @@ FILE:
         elsif ($file =~ /.hpp$/)
         {
             my $outfile = $file;
-            my $function_name = $file;
+            my $function_name = "$input_directory/$file";
             "$input_directory/$file" =~ /(tenh\/.*)/;
             my $include_path = $1;
             $outfile =~ s/.hpp$/.cpp/;
-            $function_name =~ s/\/|\./_/;
+            $function_name =~ s/\/|\./_/g;
 
             open(my $fh, ">", "$output_directory/$outfile") or die "Failed to open file: $output_directory/$outfile\n";
             print $fh <<"EOT";

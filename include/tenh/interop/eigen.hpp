@@ -8,6 +8,9 @@
 
 #include "tenh/core.hpp"
 
+#include "tenh/conceptual/vectorspace.hpp"
+#include "tenh/implementation/tensor.hpp"
+
 #include "Eigen/Core"
 #include "Eigen/LU"
 

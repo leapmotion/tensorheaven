@@ -6,6 +6,8 @@
 #ifndef TENH_INTEROP_EIGEN_LDLT_HPP_
 #define TENH_INTEROP_EIGEN_LDLT_HPP_
 
+// this file needs to be updated to the new syntax.
+#if 0
 #include "tenh/core.hpp"
 #include "tenh/interop/eigen.hpp"
 #include "tenh/tensor2.hpp"
@@ -94,5 +96,6 @@ void LDLT_Solve (Tensor2Symmetric_t<Factor> const & a,
 }
 
 } // end of namespace Tenh
+#endif
 
 #endif // TENH_INTEROP_EIGEN_LDLT_HPP_

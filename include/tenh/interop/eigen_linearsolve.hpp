@@ -8,9 +8,11 @@
 
 #include "tenh/core.hpp"
 
-#include "Eigen/SVD"
 #include "tenh/conceptual/tensorproduct.hpp"
+#include "tenh/implementation/innerproduct.hpp"
 #include "tenh/interop/eigen.hpp"
+
+#include "Eigen/SVD"
 
 namespace Tenh {
 

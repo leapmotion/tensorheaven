@@ -11,6 +11,7 @@
 
 #include "tenh/core.hpp"
 
+#include "tenh/componentindex.hpp"
 #include "tenh/conceptual/concept.hpp"
 #include "tenh/meta/typelist.hpp"
 #include "tenh/meta/typelist_utility.hpp"

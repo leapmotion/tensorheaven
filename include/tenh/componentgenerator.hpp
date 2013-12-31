@@ -8,6 +8,7 @@
 
 #include "tenh/core.hpp"
 
+#include "tenh/componentindex.hpp"
 #include "tenh/meta/typestringof.hpp"
 
 namespace Tenh {
