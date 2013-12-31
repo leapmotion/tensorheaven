@@ -111,6 +111,19 @@ struct IsImplementationOf_f<ImplementationOf_t<Concept_,Scalar_,UseArrayType_,De
     static bool const V = true;
 };
 
+// because there will be so many template specializations of ImplementationOf_t, all
+// with what would be identical type_as_string functions, just do it via metafunction once.
+template <typename Concept_, typename Scalar_, typename UseArrayType_, typename Derived_>
+struct TypeStringOf_t<ImplementationOf_t<Concept_,Scalar_,UseArrayType_,Derived_> >
+{
+    static std::string eval ()
+    {
+        return "ImplementationOf_t<" + type_string_of<Concept_>() + ','
+                                     + type_string_of<Scalar_>() + ','
+                                     + type_string_of<UseArrayType_>() + ',';
+    }
+};
+
 template <typename T_> struct ComponentQualifierOfArrayType_f;
 
 template <bool COMPONENTS_ARE_CONST_>

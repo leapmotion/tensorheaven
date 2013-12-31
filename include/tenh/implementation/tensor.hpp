@@ -181,13 +181,6 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
     using Parent_Tensor_i::component_is_procedural_zero;
     using Parent_Tensor_i::scalar_factor_for_component;
     using Parent_Tensor_i::vector_index_of;
-
-    static std::string type_as_string ()
-    {
-        return "ImplementationOf_t<" + type_string_of<Concept>() + ','
-                                     + type_string_of<Scalar>() + ','
-                                     + type_string_of<UseArrayType_>() + '>';
-    }
 };
 
 template <typename FactorTypeList_, typename Scalar_, typename UseArrayType_, typename Derived_>

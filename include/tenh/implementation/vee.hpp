@@ -191,20 +191,10 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
         return ComponentIndex(VectorIndexComputer_t<MultiIndex>::compute(n), CHECK_RANGE);
     }
 
-    static std::string type_as_string ()
-    {
-        return "ImplementationOf_t<" + type_string_of<Concept>() + ','
-                                     + type_string_of<Scalar>() + ','
-                                     + type_string_of<UseArrayType_>() + ',';
-    }
-
 private:
 
-    template <typename BundleIndexTypeList, typename BundledIndex, Uint32 ORD>
-    struct BundleIndexComputer_t;
-
-    template<typename T, typename I = int>
-    struct VectorIndexComputer_t;
+    template <typename BundleIndexTypeList, typename BundledIndex, Uint32 ORD> struct BundleIndexComputer_t;
+    template<typename T, typename I = int> struct VectorIndexComputer_t;
 };
 
 template <Uint32 ORDER_, typename Factor_, typename Scalar_, typename UseArrayType_, typename Derived_>

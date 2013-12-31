@@ -250,13 +250,6 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTypeList_>,Scala
     //     STATIC_ASSERT((SummandTypeList_::LENGTH > N), ATTEMPTED_ACCESS_PAST_LIST_END);
     //     return typename ElementType_f<N>::T(pointer_to_allocation() + OffsetForComponent_f<SummandTypeList_,N>::V)(i);
     // }
-
-    static std::string type_as_string ()
-    {
-        return "ImplementationOf_t<" + type_string_of<Concept>() + ','
-                                     + type_string_of<Scalar>() + ','
-                                     + type_string_of<UseArrayType_>() + '>';
-    }
 };
 
 template <typename SummandTypeList_, typename Scalar_, typename UseArrayType_, typename Derived_>

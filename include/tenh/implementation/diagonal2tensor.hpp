@@ -201,13 +201,6 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,F
     static bool component_is_procedural_zero (MultiIndex const &m) { return m.template el<0>().value() != m.template el<1>().value(); }
     static Scalar scalar_factor_for_component (MultiIndex const &) { return Scalar(1); }
     static ComponentIndex vector_index_of (MultiIndex const &m) { return ComponentIndex(m.template el<0>().value(), DONT_CHECK_RANGE); }
-
-    static std::string type_as_string ()
-    {
-        return "ImplementationOf_t<" + type_string_of<Concept>() + ','
-                                     + type_string_of<Scalar>() + ','
-                                     + type_string_of<UseArrayType_>() + '>';
-    }
 };
 
 template <typename Factor0_, typename Factor1_, typename Scalar_, typename UseArrayType_, typename Derived_>
