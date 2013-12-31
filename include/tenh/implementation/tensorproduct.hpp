@@ -10,6 +10,7 @@
 
 #include "tenh/conceptual/abstractindex.hpp"
 #include "tenh/conceptual/diagonalbased2tensorproduct.hpp"
+#include "tenh/conceptual/scalarbased2tensorproduct.hpp"
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/implementation/implementationof.hpp"
 #include "tenh/implementation/tensor.hpp"
@@ -140,6 +141,31 @@ template <typename Procedural2TensorImplementationTypeList_> struct TensorProduc
 // current state of the conceptual hierarchy) a non-symmetric tensor.
 
 template <typename Procedural2TensorImplementationTypeList_> struct ConceptualTypeOfTensorProductOfProcedural2Tensors_f;
+
+// template specialization for tensor products of scalar 2-tensors
+template <typename Factor0_,
+          typename Factor1_,
+          typename Scalar_,
+          typename UseArrayType_,
+          typename Derived_,
+          typename Procedural2TensorImplementationBodyTypeList_>
+struct ConceptualTypeOfTensorProductOfProcedural2Tensors_f<
+    TypeList_t<ImplementationOf_t<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_>,
+               Procedural2TensorImplementationBodyTypeList_> >
+{
+private:
+    typedef TypeList_t<ImplementationOf_t<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_>,
+                       Procedural2TensorImplementationBodyTypeList_> Procedural2TensorImplementationTypeList;
+    typedef typename ConceptOfEachTypeIn_f<Procedural2TensorImplementationTypeList>::T ConceptTypeList;
+    enum { STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<ConceptTypeList,IsScalar2TensorProductOfBasedVectorSpaces_p>::V), MUST_BE_TYPELIST_OF_SCALAR_2_TENSORS) };
+    typedef typename FactorNOfEachTypeIn_f<0,ConceptTypeList>::T Factor0TypeList;
+    typedef typename FactorNOfEachTypeIn_f<1,ConceptTypeList>::T Factor1TypeList;
+    typedef TensorProductOfBasedVectorSpaces_c<Factor0TypeList> Factor0TensorProduct;
+    typedef TensorProductOfBasedVectorSpaces_c<Factor1TypeList> Factor1TensorProduct;
+    ConceptualTypeOfTensorProductOfProcedural2Tensors_f();
+public:
+    typedef Scalar2TensorProductOfBasedVectorSpaces_c<Factor0TensorProduct,Factor1TensorProduct> T;
+};
 
 // template specialization for tensor products of diagonal 2-tensors
 template <typename Factor0_,
