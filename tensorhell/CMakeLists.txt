@@ -137,3 +137,5 @@ include_directories(${tensorheaven_test_SOURCE_DIR}/../include
                     ${tensorheaven_test_SOURCE_DIR}/lvd
                     ${tensorheaven_test_SOURCE_DIR}/standard
                     ${tensorheaven_test_SOURCE_DIR}/tenh_utility_test)
+
+add_subdirectory(compile_tests)
