@@ -61,21 +61,21 @@ private:
     BinomialCoefficient_t();
 };
 
-inline Uint32 index_of_greatest_triangular_number_less_than(Uint32 x, Uint32 d, Uint32 iteration = 0)
+inline Uint32 index_of_greatest_simplicial_number_leq (Uint32 x, Uint32 d, Uint32 iteration = 0)
 {
     return (binomial_coefficient(iteration,d) > x) ?
            iteration - 1 :
-           index_of_greatest_triangular_number_less_than(x,d,iteration+1);
+           index_of_greatest_simplicial_number_leq(x,d,iteration+1);
 }
 
 template<Uint32 X, Uint32 D, Uint32 iteration=0>
-struct IndexOfGreatestTriangularNumberLessThan_t
+struct IndexOfGreatestSimplicialNumberLEQ_t
 {
     static const Uint32 V = If_f<(BinomialCoefficient_t<iteration,D>::V > X),
                                  Value_t<Uint32,iteration-1>,
-                                 IndexOfGreatestTriangularNumberLessThan_t<X,D,iteration+1> >::T::V;
+                                 IndexOfGreatestSimplicialNumberLEQ_t<X,D,iteration+1> >::T::V;
 private:
-    IndexOfGreatestTriangularNumberLessThan_t();
+    IndexOfGreatestSimplicialNumberLEQ_t();
 };
 
 } // end of namespace Tenh

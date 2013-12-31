@@ -222,7 +222,7 @@ struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scal
 {
     static MultiIndex_t<BundleIndexTypeList> compute (BundledIndex const &b)
     {
-        return MultiIndex_t<BundleIndexTypeList>(typename BundleIndexTypeList::HeadType(index_of_greatest_triangular_number_less_than(b.value(),ORD), CHECK_RANGE), BundleIndexComputer_t<typename BundleIndexTypeList::BodyTypeList, BundledIndex, ORD-1>::compute(BundledIndex(b.value() - binomial_coefficient(index_of_greatest_triangular_number_less_than(b.value(),ORD), ORD), CHECK_RANGE)));
+        return MultiIndex_t<BundleIndexTypeList>(typename BundleIndexTypeList::HeadType(index_of_greatest_simplicial_number_leq(b.value(),ORD), CHECK_RANGE), BundleIndexComputer_t<typename BundleIndexTypeList::BodyTypeList, BundledIndex, ORD-1>::compute(BundledIndex(b.value() - binomial_coefficient(index_of_greatest_simplicial_number_leq(b.value(),ORD), ORD), CHECK_RANGE)));
     }
 };
 
@@ -232,7 +232,7 @@ struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scal
 {
     static MultiIndex_t<TypeList_t<FactorType> > compute (BundledIndex const &b)
     {
-        return MultiIndex_t<TypeList_t<FactorType> >(FactorType(index_of_greatest_triangular_number_less_than(b.value(),ORD), CHECK_RANGE));
+        return MultiIndex_t<TypeList_t<FactorType> >(FactorType(index_of_greatest_simplicial_number_leq(b.value(),ORD), CHECK_RANGE));
     }
 };
 
