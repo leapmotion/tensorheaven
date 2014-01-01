@@ -11,7 +11,6 @@
 
 #include "tenh/core.hpp"
 
-#include "tenh/componentindex.hpp"
 #include "tenh/conceptual/concept.hpp"
 #include "tenh/meta/typelist.hpp"
 #include "tenh/meta/typelist_utility.hpp"
@@ -35,7 +34,7 @@ inline std::string abstract_index_symbol_as_string (AbstractIndexSymbol symbol, 
         return use_quotes_for_alphabetic ? ('\'' + std::string(1, char(symbol)) + '\'') : std::string(1, char(symbol));
     // otherwise use i_###, where ### is the symbol value
     else
-        return "i_" + AS_STRING(Uint32(symbol));
+        return "i_" + FORMAT(Uint32(symbol));
 }
 
 // for use in operator () for creation of expression templates (indexed tensor expressions)

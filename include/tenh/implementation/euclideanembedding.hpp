@@ -33,7 +33,7 @@ struct EuclideanSpaceId_t
 {
     static Uint32 const DIMENSION = DIMENSION_;
 
-    static std::string type_as_string () { return "EuclideanSpaceId_t<" + AS_STRING(DIMENSION_) + '>'; }
+    static std::string type_as_string () { return "EuclideanSpaceId_t<" + FORMAT(DIMENSION_) + '>'; }
 };
 
 template <Uint32 DIMENSION_>

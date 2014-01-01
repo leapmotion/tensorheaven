@@ -106,8 +106,8 @@ struct ExpressionTemplate_IndexedObject_t
                                                      + type_string_of<FactorTypeList>() + ','
                                                      + type_string_of<DimIndexTypeList>() + ','
                                                      + type_string_of<SummedDimIndexTypeList_>() + ','
-                                                     + AS_STRING(FORCE_CONST_) + ','
-                                                     + AS_STRING(CHECK_FOR_ALIASING_) + ','
+                                                     + FORMAT(FORCE_CONST_) + ','
+                                                     + FORMAT(CHECK_FOR_ALIASING_) + ','
                                                      + type_string_of<Derived_>() + '>';
     }
 
@@ -304,8 +304,8 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList
                                                      + type_string_of<FactorTypeList>() + ','
                                                      + type_string_of<DimIndexTypeList>() + ','
                                                      + type_string_of<EmptyTypeList>() + ','
-                                                     + AS_STRING(DONT_FORCE_CONST) + ','
-                                                     + AS_STRING(CHECK_FOR_ALIASING_) + ','
+                                                     + FORMAT(DONT_FORCE_CONST) + ','
+                                                     + FORMAT(CHECK_FOR_ALIASING_) + ','
                                                      + type_string_of<Derived_>() + '>';
     }
 
@@ -401,7 +401,7 @@ public:
     {
         return "ExpressionTemplate_Addition_t<" + type_string_of<LeftOperand>() + ','
                                                 + type_string_of<RightOperand>() + ','
-                                                + '\'' + AS_STRING(OPERATOR) + '\'' + '>';
+                                                + '\'' + FORMAT(OPERATOR) + '\'' + '>';
     }
 
 private:
@@ -489,7 +489,7 @@ struct ExpressionTemplate_ScalarMultiplication_t
     {
         return "ExpressionTemplate_ScalarMultiplication_t<" + type_string_of<Operand>() + ','
                                                             + type_string_of<Scalar>() + ','
-                                                            + '\'' + AS_STRING(OPERATOR) + '\'' + '>';
+                                                            + '\'' + FORMAT(OPERATOR) + '\'' + '>';
     }
 
 private:

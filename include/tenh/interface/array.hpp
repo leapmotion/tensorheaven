@@ -61,7 +61,7 @@ struct Array_i
     {
         return "Array_i<" + type_string_of<Derived_>() + ','
                           + type_string_of<Component_>() + ','
-                          + AS_STRING(COMPONENT_COUNT_) + ','
+                          + FORMAT(COMPONENT_COUNT_) + ','
                           + component_qualifier_as_string(COMPONENT_QUALIFIER_) + '>';
     }
 };

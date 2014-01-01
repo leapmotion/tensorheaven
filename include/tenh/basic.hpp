@@ -97,7 +97,7 @@ public:
 
     static std::string type_as_string ()
     {
-        return "Vec<" + AS_STRING(DIMENSION_) + ','
+        return "Vec<" + FORMAT(DIMENSION_) + ','
                       + type_string_of<Scalar_>() + ','
                       + type_string_of<Basis_>() + ','
                       + type_string_of<UseArrayType_>() + ','
@@ -216,8 +216,8 @@ public:
 
     static std::string type_as_string ()
     {
-        return "Op<" + AS_STRING(CODOMAIN_DIMENSION_) + ','
-                     + AS_STRING(DOMAIN_DIMENSION_) + ','
+        return "Op<" + FORMAT(CODOMAIN_DIMENSION_) + ','
+                     + FORMAT(DOMAIN_DIMENSION_) + ','
                      + type_string_of<Scalar_>() + ','
                      + type_string_of<CodomainBasis_>() + ','
                      + type_string_of<DomainBasis_>() + ','

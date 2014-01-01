@@ -109,7 +109,7 @@ struct TypeStringOf_t<LinearEmbedding_c<Domain_,Codomain_,Scalar_,EmbeddingId_,E
                                     + type_string_of<Codomain_>() + ','
                                     + type_string_of<Scalar_>() + ','
                                     + type_string_of<EmbeddingId_>() + ','
-                                    + AS_STRING(ENABLE_EXCEPTIONS_) + '>';
+                                    + FORMAT(ENABLE_EXCEPTIONS_) + '>';
     }
 };
 

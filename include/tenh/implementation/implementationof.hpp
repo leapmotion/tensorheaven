@@ -24,7 +24,7 @@ namespace Tenh {
 // these are for the UseArrayType parameter in ImplementationOf_t
 
 template <bool COMPONENTS_ARE_CONST_>
-struct UseMemberArray_t { static std::string type_as_string () { return "UseMemberArray_t<" + AS_STRING(COMPONENTS_ARE_CONST_) + '>'; } };
+struct UseMemberArray_t { static std::string type_as_string () { return "UseMemberArray_t<" + FORMAT(COMPONENTS_ARE_CONST_) + '>'; } };
 template <bool COMPONENTS_ARE_CONST_> struct DualOf_f<UseMemberArray_t<COMPONENTS_ARE_CONST_> >
 {
     typedef UseMemberArray_t<COMPONENTS_ARE_CONST_> T;
@@ -46,7 +46,7 @@ private:
 };
 
 template <bool COMPONENTS_ARE_CONST_>
-struct UsePreallocatedArray_t { static std::string type_as_string () { return "UsePreallocatedArray_t<" + AS_STRING(COMPONENTS_ARE_CONST_) + '>'; } };
+struct UsePreallocatedArray_t { static std::string type_as_string () { return "UsePreallocatedArray_t<" + FORMAT(COMPONENTS_ARE_CONST_) + '>'; } };
 template <bool COMPONENTS_ARE_CONST_> struct DualOf_f<UsePreallocatedArray_t<COMPONENTS_ARE_CONST_> >
 {
     typedef UsePreallocatedArray_t<COMPONENTS_ARE_CONST_> T;

@@ -142,7 +142,7 @@ struct SymmetricIndex_t
     static SymmetricIndex const V;
     // operator SymmetricIndex () const { return V; }
 
-    static std::string type_as_string () { return "SymmetricIndex_t<" + AS_STRING(I_) + ',' + AS_STRING(J_) + '>'; }
+    static std::string type_as_string () { return "SymmetricIndex_t<" + FORMAT(I_) + ',' + FORMAT(J_) + '>'; }
 };
 
 template <uint I_, uint J_>

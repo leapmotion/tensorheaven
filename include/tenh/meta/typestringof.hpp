@@ -17,11 +17,6 @@
 
 namespace Tenh {
 
-/// @def AS_STRING(X)
-/// @brief Converts built-in types to `std::string` for ease of building type strings.
-#define AS_STRING(x) static_cast<std::ostringstream &>(std::ostringstream().flush() << x).str()
-
-
 /// @struct TypeStringOf_t typestringof.hpp "tenh/meta/typestringof.hpp"
 /// @brief Template Meta Function to obtain a string from a typename.
 /// @details TypeStringOf_t requires that any user-defined types that it may be passed have a static member
@@ -61,7 +56,7 @@ struct TypeStringOf_t<Type_t<T_> >
 template <typename T_, T_ VALUE_>
 struct TypeStringOf_t<Value_t<T_,VALUE_> >
 {
-    static std::string eval () { return "Value_t<" + TypeStringOf_t<T_>::eval() + ',' + AS_STRING(VALUE_) + '>'; }
+    static std::string eval () { return "Value_t<" + TypeStringOf_t<T_>::eval() + ',' + FORMAT(VALUE_) + '>'; }
 };
 
 template <> struct TypeStringOf_t<NullValue> { static std::string eval () { return "NullValue"; } };

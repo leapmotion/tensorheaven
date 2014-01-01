@@ -78,7 +78,7 @@ struct ProceduralArray_t
     {
         // TODO: figure out how to provide stringified type info for the component_generator_ template param.
         return "ProceduralArray_t<" + type_string_of<Component_>() + ','
-                                   + AS_STRING(COMPONENT_COUNT_) + ','
+                                   + FORMAT(COMPONENT_COUNT_) + ','
                                    + type_string_of<ComponentGenerator_>() + '>';
     }
 };

@@ -32,7 +32,7 @@ struct ExteriorPower_c
 
     static std::string type_as_string ()
     {
-        return "ExteriorPower_c<" + AS_STRING(ORDER_) + ',' + type_string_of<Factor_>() + '>';
+        return "ExteriorPower_c<" + FORMAT(ORDER_) + ',' + type_string_of<Factor_>() + '>';
     }
 };
 
@@ -82,7 +82,7 @@ public:
 
     static std::string type_as_string ()
     {
-        return "ExteriorPowerOfVectorSpace_c<" + AS_STRING(ORDER_) + ',' + type_string_of<Factor_>() + '>';
+        return "ExteriorPowerOfVectorSpace_c<" + FORMAT(ORDER_) + ',' + type_string_of<Factor_>() + '>';
     }
 };
 
@@ -130,7 +130,7 @@ public:
 
     static std::string type_as_string ()
     {
-        return "ExteriorPowerOfBasis_c<" + AS_STRING(ORDER_) + ',' + type_string_of<Factor_>() + '>';
+        return "ExteriorPowerOfBasis_c<" + FORMAT(ORDER_) + ',' + type_string_of<Factor_>() + '>';
     }
 };
 
@@ -228,7 +228,7 @@ public:
 
     static std::string type_as_string ()
     {
-        return "ExteriorPowerOfBasedVectorSpace_c<" + AS_STRING(ORDER_) + ',' + type_string_of<Factor_>() + '>';
+        return "ExteriorPowerOfBasedVectorSpace_c<" + FORMAT(ORDER_) + ',' + type_string_of<Factor_>() + '>';
     }
 };
 

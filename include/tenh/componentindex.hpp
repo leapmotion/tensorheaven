@@ -65,7 +65,7 @@ struct ComponentIndex_t
 #endif // __clang_version__
 
     /// For use with TypeStringOf_t.
-    static std::string type_as_string () { return "ComponentIndex_t<" + AS_STRING(COMPONENT_COUNT) + '>'; }
+    static std::string type_as_string () { return "ComponentIndex_t<" + FORMAT(COMPONENT_COUNT) + '>'; }
 
 private:
 

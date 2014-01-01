@@ -44,7 +44,7 @@ struct DimIndex_t
     static std::string type_as_string ()
     {
         return std::string("DimIndex_t<") + abstract_index_symbol_as_string(SYMBOL) + ',' 
-                                          + AS_STRING(DIM) + '>';
+                                          + FORMAT(DIM) + '>';
     }
 };
 

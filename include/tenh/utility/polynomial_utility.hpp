@@ -23,7 +23,7 @@ struct VariableStringComputer
         MultiIndex m = sorted<std::less<Uint32> >(n);
         Uint32 last = m.value_of_index(0, DONT_CHECK_RANGE);
         Uint32 count = 1;
-        std::string result = "x" + AS_STRING(last);
+        std::string result = "x" + FORMAT(last);
         for (Uint32 i = 1; i < MultiIndex::LENGTH; ++i)
         {
             if (m.value_of_index(i, DONT_CHECK_RANGE) == last)
@@ -35,15 +35,15 @@ struct VariableStringComputer
                 last = m.value_of_index(i, DONT_CHECK_RANGE);
                 if (count != 1)
                 {
-                    result += "^" + AS_STRING(count);
+                    result += "^" + FORMAT(count);
                 }
-                result += "*x" + AS_STRING(last);
+                result += "*x" + FORMAT(last);
                 count = 1;
             }
         }
         if (count != 1)
         {
-            result += "^" + AS_STRING(count);
+            result += "^" + FORMAT(count);
         }
 
         return result;
@@ -70,7 +70,7 @@ struct VariableStringComputer<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,
     static std::string compute(typename HomogeneousPolynomial<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,1,VectorSpaceId_>,Basis_>,Scalar>::Sym::MultiIndex const &n)
     {
         typedef typename HomogeneousPolynomial<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,1,VectorSpaceId_>,Basis_>,Scalar>::Sym::MultiIndex MultiIndex;
-        return "x" + ((MultiIndex::LENGTH > 1) ? "^" + AS_STRING(MultiIndex::LENGTH) : "");
+        return "x" + ((MultiIndex::LENGTH > 1) ? "^" + FORMAT(MultiIndex::LENGTH) : "");
     }
 private:
     VariableStringComputer();
@@ -99,7 +99,7 @@ struct VariableStringComputer<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,
                 last = m.value_of_index(i, DONT_CHECK_RANGE);
                 if (count != 1)
                 {
-                    result += "^" + AS_STRING(count);
+                    result += "^" + FORMAT(count);
                 }
                 result += "*";
                 result.push_back(vars[last]);
@@ -108,7 +108,7 @@ struct VariableStringComputer<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,
         }
         if (count != 1)
         {
-            result += "^" + AS_STRING(count);
+            result += "^" + FORMAT(count);
         }
 
         return result;
@@ -140,7 +140,7 @@ struct VariableStringComputer<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,
                 last = m.value_of_index(i, DONT_CHECK_RANGE);
                 if (count != 1)
                 {
-                    result += "^" + AS_STRING(count);
+                    result += "^" + FORMAT(count);
                 }
                 result += "*";
                 result.push_back(vars[last]);
@@ -150,7 +150,7 @@ struct VariableStringComputer<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,
         }
         if (count != 1)
         {
-            result += "^" + AS_STRING(count);
+            result += "^" + FORMAT(count);
         }
 
         return result;

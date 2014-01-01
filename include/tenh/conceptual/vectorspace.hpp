@@ -33,7 +33,7 @@ struct VectorSpace_c
     static std::string type_as_string ()
     {
         return "VectorSpace_c<" + type_string_of<ScalarField_>() + ','
-                                + AS_STRING(DIMENSION_) + ','
+                                + FORMAT(DIMENSION_) + ','
                                 + type_string_of<Id_>() + '>';
     }
 };

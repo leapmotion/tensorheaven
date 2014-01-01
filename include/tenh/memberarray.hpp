@@ -111,8 +111,8 @@ struct MemberArray_t
     static std::string type_as_string ()
     {
         return "MemberArray_t<" + type_string_of<Component_>() + ','
-                                + AS_STRING(COMPONENT_COUNT_) + ','
-                                + AS_STRING(COMPONENTS_ARE_CONST_) + '>';
+                                + FORMAT(COMPONENT_COUNT_) + ','
+                                + FORMAT(COMPONENTS_ARE_CONST_) + '>';
     }
 
 protected:
