@@ -261,10 +261,18 @@ public:
         // it's a procedural zero if the component is off the diagonal.
         return m.template el<0>().value() != m.template el<1>().value();
     }
-    static Scalar_ scalar_factor_for_embedded_component (Tensor2ComponentIndex const &) { return Scalar_(1); }
+    static Scalar_ scalar_factor_for_embedded_component (Tensor2ComponentIndex const &i)
+    {
+        if (ENABLE_EXCEPTIONS_ && embedded_component_is_procedural_zero(i))
+            throw std::domain_error(FORMAT(i.value()) + " is not in the domain of scalar_factor_for_embedded_component");
+
+        return Scalar_(1);
+    }
     static Diag2ComponentIndex source_component_index_for_embedded_component (Tensor2ComponentIndex const &i)
     {
-        assert(!embedded_component_is_procedural_zero(i)); // this may potentially slow stuff down too much
+        if (ENABLE_EXCEPTIONS_ && embedded_component_is_procedural_zero(i))
+            throw std::domain_error(FORMAT(i.value()) + " is not in the domain of scalar_factor_for_embedded_component");
+
         Tensor2MultiIndex m(i); // does the row-major indexing conversion
         return m.template el<(FACTOR0DIM_LEQ_FACTOR1DIM ? 0 : 1)>();
     }
@@ -307,9 +315,18 @@ public:
         // off-diagonals are procedural zeros
         return row.value() != col.value();
     }
-    static Scalar_ scalar_factor_for_embedded_component (Sym2ComponentIndex const &) { return Scalar_(1); }
+    static Scalar_ scalar_factor_for_embedded_component (Sym2ComponentIndex const &i)
+    {
+        if (ENABLE_EXCEPTIONS_ && embedded_component_is_procedural_zero(i))
+            throw std::domain_error(FORMAT(i.value()) + " is not in the domain of scalar_factor_for_embedded_component");
+
+        return Scalar_(1);
+    }
     static Diag2ComponentIndex source_component_index_for_embedded_component (Sym2ComponentIndex const &i)
     {
+        if (ENABLE_EXCEPTIONS_ && embedded_component_is_procedural_zero(i))
+            throw std::domain_error(FORMAT(i.value()) + " is not in the domain of scalar_factor_for_embedded_component");
+
         // Sym2 uses the lower-triangular indexing (which doesn't depend on the dimension of Factor_)
         Uint32 t = index_of_greatest_simplicial_number_leq(i.value(), 2);
         FactorComponentIndex row(t-1, DONT_CHECK_RANGE);

@@ -343,6 +343,9 @@ public:
     }
     static Scalar_ scalar_factor_for_embedded_component (TPowComponentIndex const &i)
     {
+        if (ENABLE_EXCEPTIONS_ && embedded_component_is_procedural_zero(i))
+            throw std::domain_error(FORMAT(i.value()) + " is not in the domain of scalar_factor_for_embedded_component");
+
         TPowMultiIndex m(i); // this does the row-major conversion
 
         int sign = 1;
@@ -362,6 +365,9 @@ public:
     }
     static ExtComponentIndex source_component_index_for_embedded_component (TPowComponentIndex const &i)
     {
+        if (ENABLE_EXCEPTIONS_ && embedded_component_is_procedural_zero(i))
+            throw std::domain_error(FORMAT(i.value()) + " is not in the domain of scalar_factor_for_embedded_component");
+
         TPowMultiIndex m(i); // this does the row-major conversion
         // sort into non-increasing order -- choosing this instead of non-decreasing
         // makes certain formulas not depend on the dimension of Factor_

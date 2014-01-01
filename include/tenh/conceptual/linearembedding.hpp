@@ -145,6 +145,7 @@ bool linear_embedding_is_consistent (LinearEmbedding_c<Domain_,Codomain_,Scalar_
     typedef ComponentIndex_t<DimensionOf_f<Domain_>::V> DomainComponentIndex;   
     typedef ComponentIndex_t<DimensionOf_f<Codomain_>::V> CodomainComponentIndex;
 
+    bool errors_were_encountered = false;
     std::ostringstream errors;
     errors << type_string_of<LinearEmbedding>() << " consistency check errors:\n";
 
@@ -167,6 +168,7 @@ bool linear_embedding_is_consistent (LinearEmbedding_c<Domain_,Codomain_,Scalar_
                 // correctly for that particular input value.
             } catch (std::logic_error const &e) {
                 errors << e.what() << '\n'; // record the error
+                errors_were_encountered = true;
             }
             try {
                 // if the component is a procedural zero, expect a domain_error exception.
@@ -181,6 +183,7 @@ bool linear_embedding_is_consistent (LinearEmbedding_c<Domain_,Codomain_,Scalar_
                 // correctly for that particular input value.
             } catch (std::logic_error const &e) {
                 errors << e.what() << '\n'; // record the error
+                errors_were_encountered = true;
             }
         }
         // otherwise expect no exception out of each of 
@@ -197,6 +200,7 @@ bool linear_embedding_is_consistent (LinearEmbedding_c<Domain_,Codomain_,Scalar_
                        << ") returned false, but an exception \"" << e.what()
                        << "\" was caught when calling scalar_factor_for_embedded_component("
                        << i.value() << ").\n"; // record the error
+                errors_were_encountered = true;
             }
             try {
                 // if the component is a procedural zero, expect a domain_error exception.
@@ -208,6 +212,7 @@ bool linear_embedding_is_consistent (LinearEmbedding_c<Domain_,Codomain_,Scalar_
                        << ") returned false, but an exception \"" << e.what()
                        << "\" was caught when calling source_component_index_for_embedded_component("
                        << i.value() << ").\n"; // record the error
+                errors_were_encountered = true;
             }
         }
     }
@@ -218,8 +223,7 @@ bool linear_embedding_is_consistent (LinearEmbedding_c<Domain_,Codomain_,Scalar_
     if (error_string != NULL)
         *error_string = errors.str();
 
-    // if nothing threw, then the check passed.
-    return true;
+    return !errors_were_encountered;
 }
 
 } // end of namespace Tenh

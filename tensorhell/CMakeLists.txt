@@ -116,6 +116,7 @@ set(test_SRCS
     standard/test_basic_vector5.cpp
     standard/test_dimindex.cpp
     standard/test_expressiontemplate_reindex.cpp
+    standard/test_linearembedding.cpp
     standard/test_list.cpp
     standard/test_split_and_bundle.cpp
     standard/test_tuple.cpp

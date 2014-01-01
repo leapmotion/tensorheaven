@@ -265,9 +265,18 @@ public:
         // it's a procedural zero if the component is off the diagonal.
         return m.template el<0>().value() != m.template el<1>().value();
     }
-    static Scalar_ scalar_factor_for_embedded_component (Tensor2ComponentIndex const &) { return Scalar_(1); }
+    static Scalar_ scalar_factor_for_embedded_component (Tensor2ComponentIndex const &i)
+    {
+        if (ENABLE_EXCEPTIONS_ && embedded_component_is_procedural_zero(i))
+            throw std::domain_error(FORMAT(i.value()) + " is not in the domain of scalar_factor_for_embedded_component");
+
+        return Scalar_(1);
+    }
     static Scalar2ComponentIndex source_component_index_for_embedded_component (Tensor2ComponentIndex const &i)
     {
+        if (ENABLE_EXCEPTIONS_ && embedded_component_is_procedural_zero(i))
+            throw std::domain_error(FORMAT(i.value()) + " is not in the domain of scalar_factor_for_embedded_component");
+
         // there is only one component for a scalar 2-tensor -- zero.
         return Scalar2ComponentIndex(0, DONT_CHECK_RANGE);
     }
@@ -311,9 +320,18 @@ public:
         // off-diagonals are procedural zeros
         return row.value() != col.value();
     }
-    static Scalar_ scalar_factor_for_embedded_component (Sym2ComponentIndex const &) { return Scalar_(1); }
+    static Scalar_ scalar_factor_for_embedded_component (Sym2ComponentIndex const &i)
+    {
+        if (ENABLE_EXCEPTIONS_ && embedded_component_is_procedural_zero(i))
+            throw std::domain_error(FORMAT(i.value()) + " is not in the domain of scalar_factor_for_embedded_component");
+
+        return Scalar_(1);
+    }
     static Scalar2ComponentIndex source_component_index_for_embedded_component (Sym2ComponentIndex const &i)
     {
+        if (ENABLE_EXCEPTIONS_ && embedded_component_is_procedural_zero(i))
+            throw std::domain_error(FORMAT(i.value()) + " is not in the domain of scalar_factor_for_embedded_component");
+
         return Scalar2ComponentIndex(0, DONT_CHECK_RANGE);
     }
 
@@ -349,6 +367,7 @@ public:
     typedef ComponentIndex_t<DimensionOf_f<Factor0_>::V> Factor0ComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<Factor1_>::V> Factor1ComponentIndex;
 
+    // because this always returns false, there is no need for the other two functions to ever throw.
     static bool embedded_component_is_procedural_zero (Diag2ComponentIndex const &) { return false; }
     static Scalar_ scalar_factor_for_embedded_component (Diag2ComponentIndex const &) { return Scalar_(1); }
     static Scalar2ComponentIndex source_component_index_for_embedded_component (Diag2ComponentIndex const &i)

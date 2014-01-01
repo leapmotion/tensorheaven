@@ -16,6 +16,7 @@
 // #include "test_interop_eigen_euclideanlyembedded.hpp"
 // #include "test_interop_eigen_inversion.hpp"
 // #include "test_interop_eigen_ldlt.hpp"
+#include "test_linearembedding.hpp"
 #include "test_list.hpp"
 #include "test_split_and_bundle.hpp"
 #include "test_tuple.hpp"
@@ -62,6 +63,7 @@ int main (int argc, char **argv, char **envp)
 //         Test::InteropEigen::Inversion::AddTests(interop_eigen_dir);
 //     }
 
+    Test::LinearEmbedding::AddTests(root);
     Test::List::AddTests(root);
     Test::SplitAndBundle::AddTests(root);
     Test::Tuple::AddTests(root);
