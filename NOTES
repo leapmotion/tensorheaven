@@ -642,6 +642,10 @@
     * More assembler code investigation
 - Documentation
     * High level abstract math documents (e.g. linear algebraic category theory)
+        - Linear algebraic category theory
+        - Linear algebraic constructions
+            ~ Choices of bases for various things (e.g. so that dual/sym-power functors commute)
+            ~ Induced multilinear forms
     * Journal articles
         - Conceptual layer, conceptual inheritance
         - Tensor type theory (navigating the type system, e.g. parenthesizing tensor products

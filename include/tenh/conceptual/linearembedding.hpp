@@ -125,6 +125,17 @@ private:
 public:
     typedef ComponentIndex_t<DimensionOf_f<OnBasedVectorSpace_>::V> ComponentIndex;
 
+    struct CoembedIndexIterator
+    {
+        CoembedIndexIterator (ComponentIndex const &i) : m(i) { }
+        void operator ++ () { ++m; }
+        bool is_not_at_end () const { return m.is_not_at_end(); }
+        Scalar_ scale_factor () const { return Scalar_(1); }
+        ComponentIndex const &component_index () const { return m; }
+    private:
+        ComponentIndex m;
+    };
+
     // because this always returns false, there is no need for the other two functions to ever throw.
     static bool embedded_component_is_procedural_zero (ComponentIndex const &) { return false; }
     static Scalar_ scalar_factor_for_embedded_component (ComponentIndex const &) { return Scalar_(1); }

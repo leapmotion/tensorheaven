@@ -255,6 +255,18 @@ public:
     typedef ComponentIndex_t<DimensionOf_f<Tensor2>::V> Tensor2ComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<Factor0_>::V> Factor0ComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<Factor1_>::V> Factor1ComponentIndex;
+
+    struct CoembedIndexIterator
+    {
+        CoembedIndexIterator (Scalar2ComponentIndex const &) : m() { }
+        void operator ++ () { m.increment_by(DimensionOf_f<Tensor2>::V + 1); }
+        bool is_not_at_end () const { return m.is_not_at_end(); }
+        Scalar_ scale_factor () const { return Scalar_(1); }
+        Tensor2ComponentIndex const &component_index () const { return m; }
+    private:
+        Tensor2ComponentIndex m;
+    };
+
 private:
     typedef MultiIndex_t<TypeList_t<Factor0ComponentIndex,
                          TypeList_t<Factor1ComponentIndex> > > Tensor2MultiIndex;
@@ -309,6 +321,18 @@ public:
     typedef ComponentIndex_t<DimensionOf_f<Diag2>::V> Scalar2ComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<Sym2>::V> Sym2ComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<Factor_>::V> FactorComponentIndex;
+
+    struct CoembedIndexIterator
+    {
+        CoembedIndexIterator (Scalar2ComponentIndex const &) : m(), m_increment(2) { }
+        void operator ++ () { m.increment_by(m_increment); ++m_increment; } // increment triangularly
+        bool is_not_at_end () const { return m.is_not_at_end(); }
+        Scalar_ scale_factor () const { return Scalar_(1); }
+        Sym2ComponentIndex const &component_index () const { return m; }
+    private:
+        Sym2ComponentIndex m;
+        Uint32 m_increment;
+    };
 
     static bool embedded_component_is_procedural_zero (Sym2ComponentIndex const &i)
     {
@@ -366,6 +390,17 @@ public:
     typedef ComponentIndex_t<DimensionOf_f<Diag2>::V> Diag2ComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<Factor0_>::V> Factor0ComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<Factor1_>::V> Factor1ComponentIndex;
+
+    struct CoembedIndexIterator
+    {
+        CoembedIndexIterator (Scalar2ComponentIndex const &) : m() { }
+        void operator ++ () { ++m; }
+        bool is_not_at_end () const { return m.is_not_at_end(); }
+        Scalar_ scale_factor () const { return Scalar_(1); }
+        Diag2ComponentIndex const &component_index () const { return m; }
+    private:
+        Diag2ComponentIndex m;
+    };
 
     // because this always returns false, there is no need for the other two functions to ever throw.
     static bool embedded_component_is_procedural_zero (Diag2ComponentIndex const &) { return false; }

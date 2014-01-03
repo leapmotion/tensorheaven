@@ -251,6 +251,18 @@ public:
     typedef ComponentIndex_t<DimensionOf_f<Tensor2>::V> Tensor2ComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<Factor0_>::V> Factor0ComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<Factor1_>::V> Factor1ComponentIndex;
+
+    struct CoembedIndexIterator
+    {
+        CoembedIndexIterator (Diag2ComponentIndex const &i) : m(i.value(), DONT_CHECK_RANGE) { }
+        void operator ++ () { m.set_to_end(); } // there is only one Tensor2ComponentIndex per Diag2ComponentIndex
+        bool is_not_at_end () const { return m.is_not_at_end(); }
+        Scalar_ scale_factor () const { return Scalar_(1); }
+        Tensor2ComponentIndex const &component_index () const { return m; }
+    private:
+        Tensor2ComponentIndex m;
+    };
+
 private:
     typedef MultiIndex_t<TypeList_t<Factor0ComponentIndex,
                          TypeList_t<Factor1ComponentIndex> > > Tensor2MultiIndex;
@@ -304,6 +316,17 @@ public:
     typedef ComponentIndex_t<DimensionOf_f<Diag2>::V> Diag2ComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<Sym2>::V> Sym2ComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<Factor_>::V> FactorComponentIndex;
+
+    struct CoembedIndexIterator
+    {
+        CoembedIndexIterator (Diag2ComponentIndex const &i) : m(i.value() + (i.value()*(i.value()+1))/2, DONT_CHECK_RANGE) { }
+        void operator ++ () { m.set_to_end(); } // there is only one Sym2ComponentIndex per Diag2ComponentIndex
+        bool is_not_at_end () const { return m.is_not_at_end(); }
+        Scalar_ scale_factor () const { return Scalar_(1); }
+        Diag2ComponentIndex const &component_index () const { return m; }
+    private:
+        Diag2ComponentIndex m;
+    };
 
     static bool embedded_component_is_procedural_zero (Sym2ComponentIndex const &i)
     {

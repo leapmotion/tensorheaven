@@ -393,6 +393,11 @@ void test_diag2tensor_embedding ()
         std::cout << FORMAT_VALUE(t.coembed(diag2,j)) << '\n';
         std::cout << FORMAT_VALUE(t.coembed(diag2,j).split(j,k*l)) << '\n';
         std::cout << '\n';
+
+        T::Dual t_dual(uniform_tuple<Scalar>( 1,  2,  3,  4) |
+                       uniform_tuple<Scalar>( 5,  6,  7,  8) |
+                       uniform_tuple<Scalar>( 9, 10, 11, 12));
+        std::cout << "this should be exactly zero: " << FORMAT_VALUE(d.embed(tensor2,j)*t_dual(j) - d(i)*t_dual.coembed(dual_of_diag2,i)) << '\n';
     }
 
     // this should produce a type error (nonexistence of LinearEmbedding_c from diag2 to dual_of_tensor2)
@@ -486,6 +491,11 @@ void test_scalar2tensor_embedding ()
         std::cout << FORMAT_VALUE(t.coembed(scalar2,j)) << '\n';
         std::cout << FORMAT_VALUE(t.coembed(scalar2,j).split(j,k*l)) << '\n';
         std::cout << '\n';
+
+        T::Dual t_dual(uniform_tuple<Scalar>( 1,  2,  3,  4) |
+                       uniform_tuple<Scalar>( 5,  6,  7,  8) |
+                       uniform_tuple<Scalar>( 9, 10, 11, 12));
+        std::cout << "this should be exactly zero: " << FORMAT_VALUE(d.embed(tensor2,j)*t_dual(j) - d(i)*t_dual.coembed(dual_of_scalar2,i)) << '\n';
     }
 
     // this should produce a type error (nonexistence of LinearEmbedding_c from scalar2 to dual_of_tensor2)
