@@ -1371,10 +1371,10 @@ int main (int argc, char **argv)
         Scalar big_o_bound(0);
         typedef BigFunction_t<BasedVectorSpace,Scalar> BigFunction;
         BigFunction big_function;
-        typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace,
-                                                   TypeList_t<DualOf_f<BasedVectorSpace>::T> > > CodomainSpace;
-        typedef TensorProduct_c<TypeList_t<StandardInnerProduct,
-                                TypeList_t<StandardInnerProduct> > > CodomainInnerProductId;
+//         typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace,
+//                                                    TypeList_t<DualOf_f<BasedVectorSpace>::T> > > CodomainSpace;
+//         typedef TensorProduct_c<TypeList_t<StandardInnerProduct,
+//                                 TypeList_t<StandardInnerProduct> > > CodomainInnerProductId;
         TaylorPolynomialVerifier_t<BasedVectorSpace,Scalar,StandardInnerProduct,Scalar,BigFunction> verifier;
         for (Uint32 i = 0; i < SAMPLES; ++i)
         {

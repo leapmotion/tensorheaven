@@ -51,7 +51,7 @@ void constructor_fill_with (Context const &context)
 template <typename Vector_>
 void assignment (Context const &context)
 {
-    typedef typename Vector_::Scalar Scalar;
+//     typedef typename Vector_::Scalar Scalar;
     Vector_ u(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);
     Vector_ const v(Tenh::fill_with(3));
     Vector_ w(Tenh::Static<Tenh::WithoutInitialization>::SINGLETON);

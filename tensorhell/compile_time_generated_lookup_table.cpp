@@ -221,7 +221,7 @@ int main (int argc, char **argv)
             cout << "lookup(" << i << ") = " << lookup[i] << '\n';
     }
 
-    typedef SymmetricIndex_t<2,1> S;
+//     typedef SymmetricIndex_t<2,1> S;
 #define PRINT_SYMMETRIC_INDEX_HASH(i,j) cout << "SymmetricIndexHash_f<" << i << "," << j << ">::V = " \
                                              << SymmetricIndexHash_f<SymmetricIndex_t<i,j> >::V << '\n'
     PRINT_SYMMETRIC_INDEX_HASH(0,0);

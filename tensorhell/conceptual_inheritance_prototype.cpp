@@ -705,7 +705,7 @@ int main (int argc, char **argv)
             cout << FORMAT_VALUE(type_string_of<M>()) << '\n';
             typedef Map_t<int,float,Map_t<bool,char> > Map1;
             typedef Map_t<int,float,Map_t<char,double> > Map2;
-            typedef Map_t<int,double,Map_t<char,double> > Map3;
+//             typedef Map_t<int,double,Map_t<char,double> > Map3;
             cout << FORMAT_VALUE(type_string_of<Map1>()) << '\n';
             cout << FORMAT_VALUE(type_string_of<Map2>()) << '\n';
             cout << FORMAT_VALUE(type_string_of<MapUnion_t<TypeList_t<Map1> >::T>()) << '\n';

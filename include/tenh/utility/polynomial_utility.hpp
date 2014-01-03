@@ -213,10 +213,6 @@ std::ostream &operator << (std::ostream &out, MultivariatePolynomial<0,BasedVect
 template <Uint32 DEG, typename BasedVectorSpace_, typename Scalar>
 std::ostream &operator << (std::ostream &out, MultivariatePolynomial<DEG,BasedVectorSpace_,Scalar> const &poly)
 {
-    typedef MultivariatePolynomial<DEG,BasedVectorSpace_,Scalar> PolyType;
-    typedef typename PolyType::Sym::ComponentIndex ComponentIndex;
-    typedef typename PolyType::Sym::MultiIndex MultiIndex;
-
     if (poly.term().is_exactly_zero())
     {
         if (poly.body().is_exactly_zero())
