@@ -136,7 +136,7 @@ void test_reindexed_AbstractIndexTypeList (Context const &context)
     assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<J>::T,P>::V));
     assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<P>::T,K>::V));
 
-    static Tenh::AbstractIndexSymbol const OFFSET = 'k'; // this is the max of {'j','k','p'}
+    // static Tenh::AbstractIndexSymbol const OFFSET = 'k'; // this is the max of {'j','k','p'}
 
     I i;
     J j;

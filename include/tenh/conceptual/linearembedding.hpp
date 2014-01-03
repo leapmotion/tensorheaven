@@ -22,7 +22,7 @@ namespace Tenh {
 // * embed requires:
 //     ~ static bool embedded_component_is_procedural_zero (ComponentIndex_t<UPSTAIRS_DIM> const &)
 //     ~ static Scalar_ scalar_factor_for_embedded_component (ComponentIndex_t<UPSTAIRS_DIM> const &i)
-//         // preferably is always 1, or is always plus-or-minus 1. 
+//         // preferably is always 1, or is always plus-or-minus 1.
 //         // only needs to be defined for when embedded_component_is_procedural_zero(i) is false.
 //         // should throw std::domain_error if embedded_component_is_procedural_zero(i) is false (and exceptions are enabled)
 //     ~ static ComponentIndex_t<DOWNSTAIRS_DIM> source_component_index_for_embedded_component (ComponentIndex_t<UPSTAIRS_DIM> const &i)
@@ -84,7 +84,7 @@ static bool const DISABLE_EXCEPTIONS = false;
 // specification of particular embeddings (e.g. NaturalEmbedding, IdentityEmbedding).
 // If ENABLE_EXCEPTIONS_ is true, then the functions are required to throw on invalid
 // input -- in particular, scalar_factor_for_embedded_component(i) and
-// source_component_index_for_embedded_component(i) should throw iff 
+// source_component_index_for_embedded_component(i) should throw iff
 // embedded_component_is_procedural_zero(i) returns true.  this mode is used
 // by the linear_embedding_is_consistent checker function.
 template <typename Domain_,
@@ -142,7 +142,7 @@ bool linear_embedding_is_consistent (LinearEmbedding_c<Domain_,Codomain_,Scalar_
                                      std::string *error_string = NULL)
 {
     typedef LinearEmbedding_c<Domain_,Codomain_,Scalar_,EmbeddingId_,ENABLE_EXCEPTIONS> LinearEmbedding;
-    typedef ComponentIndex_t<DimensionOf_f<Domain_>::V> DomainComponentIndex;   
+    typedef ComponentIndex_t<DimensionOf_f<Domain_>::V> DomainComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<Codomain_>::V> CodomainComponentIndex;
 
     bool errors_were_encountered = false;
@@ -159,9 +159,10 @@ bool linear_embedding_is_consistent (LinearEmbedding_c<Domain_,Codomain_,Scalar_
                 // if the component is a procedural zero, expect a domain_error exception.
                 // otherwise, no exception should be thrown.
                 Scalar_ s(LinearEmbedding::scalar_factor_for_embedded_component(i));
+                (void) s;
                 // if we got this far, then it is an error.
-                throw std::logic_error("embedded_component_is_procedural_zero(" + FORMAT(i.value()) + 
-                                       ") returned true but scalar_factor_for_embedded_component(" + 
+                throw std::logic_error("embedded_component_is_procedural_zero(" + FORMAT(i.value()) +
+                                       ") returned true but scalar_factor_for_embedded_component(" +
                                        FORMAT(i.value()) + ") failed to throw.");
             } catch (std::domain_error const &e) { // note that domain_error inherits logic_error.
                 // catching this exception indicates scalar_factor_for_embedded_component functioned
@@ -174,9 +175,10 @@ bool linear_embedding_is_consistent (LinearEmbedding_c<Domain_,Codomain_,Scalar_
                 // if the component is a procedural zero, expect a domain_error exception.
                 // otherwise, no exception should be thrown.
                 DomainComponentIndex d(LinearEmbedding::source_component_index_for_embedded_component(i));
+                (void) d;
                 // if we got this far, then it is an error.
-                throw std::logic_error("embedded_component_is_procedural_zero(" + FORMAT(i.value()) + 
-                                       ") returned true but source_component_index_for_embedded_component(" + 
+                throw std::logic_error("embedded_component_is_procedural_zero(" + FORMAT(i.value()) +
+                                       ") returned true but source_component_index_for_embedded_component(" +
                                        FORMAT(i.value()) + ") failed to throw.");
             } catch (std::domain_error const &e) { // note that domain_error inherits logic_error.
                 // catching this exception indicates source_component_index_for_embedded_component functioned
@@ -186,7 +188,7 @@ bool linear_embedding_is_consistent (LinearEmbedding_c<Domain_,Codomain_,Scalar_
                 errors_were_encountered = true;
             }
         }
-        // otherwise expect no exception out of each of 
+        // otherwise expect no exception out of each of
         // scalar_factor_for_embedded_component and source_component_index_for_embedded_component
         else
         {
@@ -194,6 +196,7 @@ bool linear_embedding_is_consistent (LinearEmbedding_c<Domain_,Codomain_,Scalar_
                 // if the component is a procedural zero, expect a domain_error exception.
                 // otherwise, no exception should be thrown.
                 Scalar_ s(LinearEmbedding::scalar_factor_for_embedded_component(i));
+                (void) s;
                 // if we got this far, then it is correct.
             } catch (std::exception const &e) {
                 errors << "embedded_component_is_procedural_zero(" << i.value()
@@ -206,6 +209,7 @@ bool linear_embedding_is_consistent (LinearEmbedding_c<Domain_,Codomain_,Scalar_
                 // if the component is a procedural zero, expect a domain_error exception.
                 // otherwise, no exception should be thrown.
                 DomainComponentIndex d(LinearEmbedding::source_component_index_for_embedded_component(i));
+                (void) d;
                 // if we got this far, then it is correct.
             } catch (std::exception const &e) {
                 errors << "embedded_component_is_procedural_zero(" << i.value()

@@ -361,14 +361,14 @@ void test_diag2tensor_embedding ()
     typedef ImplementationOf_t<Tensor2,Scalar> T;
     typedef ImplementationOf_t<Sym2,Scalar> S;
 
-    B3 b3;
-    B4 b4;
+    // B3 b3;
+    // B4 b4;
     Diag2 diag2;
     Diag2OfB3 diag2ofb3;
-    DualOf_f<Diag2>::T dual_of_diag2;
+    // DualOf_f<Diag2>::T dual_of_diag2;
     Tensor2 tensor2;
     Sym2 sym2;
-    DualOf_f<Tensor2>::T dual_of_tensor2;
+    // DualOf_f<Tensor2>::T dual_of_tensor2;
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
     AbstractIndex_c<'k'> k;
@@ -453,15 +453,15 @@ void test_scalar2tensor_embedding ()
     typedef ImplementationOf_t<Tensor2,Scalar> T;
     typedef ImplementationOf_t<Sym2,Scalar> S;
 
-    B3 b3;
-    B4 b4;
+    // B3 b3;
+    // B4 b4;
     Scalar2 scalar2;
     Diag2 diag2;
     Scalar2OfB3 scalar2ofb3;
-    DualOf_f<Scalar2>::T dual_of_scalar2;
+    // DualOf_f<Scalar2>::T dual_of_scalar2;
     Tensor2 tensor2;
     Sym2 sym2;
-    DualOf_f<Tensor2>::T dual_of_tensor2;
+    // DualOf_f<Tensor2>::T dual_of_tensor2;
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
     AbstractIndex_c<'k'> k;
@@ -557,14 +557,14 @@ void test_exterior_power_embedding_templatized ()
     typedef ImplementationOf_t<Ext,Scalar> E;
     typedef ImplementationOf_t<TPow,Scalar> T;
 
-    Factor_ v;
-    Ext ext;
+    // Factor_ v;
+    // Ext ext;
     TPow tpow;
 
-    AbstractIndex_c<'i'> i;
+    // AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
-    AbstractIndex_c<'k'> k;
-    AbstractIndex_c<'l'> l;
+    // AbstractIndex_c<'k'> k;
+    // AbstractIndex_c<'l'> l;
 
     E e(Static<WithoutInitialization>::SINGLETON);
     for (typename E::ComponentIndex it; it.is_not_at_end(); ++it)
@@ -599,14 +599,14 @@ void test_symmetric_power_embedding_templatized ()
     typedef ImplementationOf_t<Sym,Scalar> S;
     typedef ImplementationOf_t<TPow,Scalar> T;
 
-    Factor_ v;
-    Sym sym;
+    // Factor_ v;
+    // Sym sym;
     TPow tpow;
 
-    AbstractIndex_c<'i'> i;
+    // AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
-    AbstractIndex_c<'k'> k;
-    AbstractIndex_c<'l'> l;
+    // AbstractIndex_c<'k'> k;
+    // AbstractIndex_c<'l'> l;
 
     S s(Static<WithoutInitialization>::SINGLETON);
     for (typename S::ComponentIndex it; it.is_not_at_end(); ++it)
@@ -644,16 +644,16 @@ void test_embed_coembed_adjointness ()
     typedef ImplementationOf_t<Diag2,Scalar> D;
     typedef ImplementationOf_t<Tensor2,Scalar> T;
 
-    B3 b3;
-    B4 b4;
-    Diag2 diag2;
+    // B3 b3;
+    // B4 b4;
+    // Diag2 diag2;
     DualOf_f<Diag2>::T dual_of_diag2;
     Tensor2 tensor2;
-    DualOf_f<Tensor2>::T dual_of_tensor2;
+    // DualOf_f<Tensor2>::T dual_of_tensor2;
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
-    AbstractIndex_c<'k'> k;
-    AbstractIndex_c<'l'> l;
+    // AbstractIndex_c<'k'> k;
+    // AbstractIndex_c<'l'> l;
 
     D d(uniform_tuple<Scalar>(2, 1, 3));
     T::Dual t(uniform_tuple<Scalar>( 1,  2,  3,  4) |
@@ -688,7 +688,7 @@ void test_type_system_helper_functions ()
     std::cout << '\n';
     Basis_c<Generic> b;
     VectorSpace_c<RealField,3,Generic> v3;
-    VectorSpace_c<RealField,4,Generic> v4;
+    // VectorSpace_c<RealField,4,Generic> v4;
     std::cout << FORMAT_VALUE(type_string_of(bvs(v3, b))) << '\n';
     std::cout << FORMAT_VALUE(type_string_of(bvs<3>(real_field, generic))) << '\n';
     std::cout << '\n';

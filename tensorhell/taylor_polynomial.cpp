@@ -350,8 +350,8 @@ struct TaylorPolynomialVerifier_t<ParameterSpace_,Scalar_,StandardInnerProduct,S
                                 Vector_i<Derived1_,Scalar_,ParameterSpace_,COMPONENT_QUALIFIER1_> const &evaluation_point) const
     {
         AbstractIndex_c<'i'> i;
-        AbstractIndex_c<'j'> j;
-        AbstractIndex_c<'p'> p;
+        // AbstractIndex_c<'j'> j;
+        // AbstractIndex_c<'p'> p;
         // V delta(Static<WithoutInitialization>::SINGLETON);
         // delta(i).no_alias() = evaluation_point(i) - based_at_point(i);
         // return evaluate_2nd_order_via_delta(o, based_at_point, delta);
@@ -667,8 +667,8 @@ public:
     template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
     Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENT_QUALIFIER_> const &x) const
     {
-        AbstractIndex_c<'i'> i;
-        AbstractIndex_c<'j'> j;
+        // AbstractIndex_c<'i'> i;
+        // AbstractIndex_c<'j'> j;
         // return Scalar_(1) / (Scalar_(1) + x(i)*m_inner_product.split(i*j)*x(j));
         return Scalar_(1) / (Scalar_(1) + m_inner_product(x, x));
     }
@@ -833,7 +833,7 @@ public:
     template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
     D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENT_QUALIFIER_> const &x) const
     {
-        AbstractIndex_c<'i'> i;
+        // AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
         AbstractIndex_c<'k'> k;
         AbstractIndex_c<'p'> p;
@@ -932,8 +932,8 @@ struct QuadraticFunction_t
     template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
     Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENT_QUALIFIER_> const &x) const
     {
-        AbstractIndex_c<'i'> i;
-        AbstractIndex_c<'j'> j;
+        // AbstractIndex_c<'i'> i;
+        // AbstractIndex_c<'j'> j;
         // return Scalar_(1) - x(i)*m_inner_product.split(i*j)*x(j);
         // return m0 + m1(i)*x(i) + m2.split(i*j)*x(i)*x(j);
         return m0 + m1(x) + m2(x, x);
@@ -992,7 +992,7 @@ struct BigFunction_t
     {
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
-        AbstractIndex_c<'p'> p;
+        // AbstractIndex_c<'p'> p;
         // chain rule
         D1 retval(Static<WithoutInitialization>::SINGLETON);
         retval(j) = m_q.D_function(m_cayley_transform.function(x))(i)

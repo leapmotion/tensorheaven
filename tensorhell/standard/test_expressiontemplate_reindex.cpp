@@ -358,8 +358,8 @@ void IndexSplitToIndex_t (Context const &context)
 
     I i;
     J j;
-    K k;
-    L l;
+    // K k;
+    // L l;
     // hacky, but effective, way of ensuring the reindexed expression template is what it's supposed to be.
     // verify that the operations of index-expression-split-to-index and reindexing commute.
     assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(i).split(i,j)).type_as_string()),
@@ -392,9 +392,9 @@ void Eval_t (Context const &context)
     Tensor t(Tenh::fill_with(3));
 
     I i;
-    J j;
-    K k;
-    L l;
+    // J j;
+    // K k;
+    // L l;
     // hacky, but effective, way of ensuring the reindexed expression template is what it's supposed to be.
     // verify that the operations of index-expression-eval and reindexing commute.
     assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(i).eval()).type_as_string()),

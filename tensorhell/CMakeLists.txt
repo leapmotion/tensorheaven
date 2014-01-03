@@ -14,13 +14,13 @@ include_directories(${tensorheaven_test_SOURCE_DIR}/include ${EIGEN_INCLUDE_DIR}
 set(BASE_MSVC_FLAGS /arch:SSE2)
 # misnomer: The above MSVC flags are not used in Debug mode
 set(PRODUCTION_MSVC_FLAGS /GL /Ox /Oi /Ot /Ob2 )
-set(BASE_GCC_FLAGS -std=c++0x -fpermissive -msse2 -Wall -Wno-reorder -Wno-strict-aliasing -Wno-missing-braces -Wno-uninitialized -Wno-sequence-point )
+set(BASE_GCC_FLAGS -std=c++0x -msse2 -Wall -Wno-reorder -Wno-strict-aliasing -Wno-missing-braces -Wno-uninitialized -Wno-sequence-point )
 if(BUILD_64_BIT)
   set(BASE_GCC_FLAGS ${BASE_GCC_FLAGS} -fPIC )
 else()
   set(BASE_GCC_FLAGS ${BASE_GCC_FLAGS} -m32 )
 endif()
-set(BASE_CLANG_FLAGS -std=c++11 -Wall -Wno-deprecated-declarations -Wno-address-of-temporary -Wno-dynamic-class-memaccess -Wno-overloaded-virtual -Wno-missing-braces -Wno-unneeded-internal-declaration -Wno-reorder )
+set(BASE_CLANG_FLAGS -std=c++1y -stdlib=libc++ -Wall -Wno-deprecated-declarations -Wno-address-of-temporary -Wno-dynamic-class-memaccess -Wno-overloaded-virtual -Wno-missing-braces -Wno-unneeded-internal-declaration -Wno-reorder -Wno-local-type-template-args )
 set(PRODUCTION_GCC_FLAGS "")
 if(BUILD_WINDOWS)
   set(COMPILER_DEBUG_FLAGS /Zi /D_DEBUG /MDd /Od /fp:except /D_CRT_SECURE_NO_WARNINGS /D_SCL_SECURE_NO_WARNINGS=1 /RTC1 /MP)
@@ -44,8 +44,8 @@ else() # clang or gcc
   set(NOPRODUCTION_LINKER_FLAGS "")
   set(PRODUCTION_LINKER_FLAGS "")
   if(BUILD_MAC)
-    set(COMPILER_DEBUG_FLAGS ${COMPILER_DEBUG_FLAGS} -mmacosx-version-min=10.4 -fvisibility=hidden)
-    set(COMPILER_RELEASE_FLAGS ${COMPILER_RELEASE_FLAGS} -mmacosx-version-min=10.4 -fvisibility=hidden)
+    set(COMPILER_DEBUG_FLAGS ${COMPILER_DEBUG_FLAGS} -mmacosx-version-min=10.7 -fvisibility=hidden)
+    set(COMPILER_RELEASE_FLAGS ${COMPILER_RELEASE_FLAGS} -mmacosx-version-min=10.7 -fvisibility=hidden)
     set(STRIPPED_EXE_LINKER_FLAGS "-Xlinker -unexported_symbol -Xlinker \"*\" -Xlinker -dead_strip -Xlinker -dead_strip_dylibs")
   else()
     set(STRIPPED_EXE_LINKER_FLAGS " ")
@@ -60,13 +60,19 @@ else() # clang or gcc
   endif()
 endif()
 
-if(BUILD_WINDOWS)
+if(WIN32)
   set(COMPILER_FLAGS ${COMPILER_FLAGS} ${BASE_MSVC_FLAGS})
-elseif(BUILD_MAC)
+elseif(APPLE)
   set(COMPILER_FLAGS ${COMPILER_FLAGS} ${BASE_CLANG_FLAGS})
 else() # Linux
   set(COMPILER_FLAGS ${COMPILER_FLAGS} ${BASE_GCC_FLAGS})
 endif()
+
+foreach(arg ${COMPILER_FLAGS})
+  set(TEMP_COMPILER_FLAG_LIST "${TEMP_COMPILER_FLAG_LIST} ${arg}")
+endforeach(arg ${COMPILER_FLAGS})
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TEMP_COMPILER_FLAG_LIST}")
 
 # temp tests
 add_executable(algebraic_expression_prototype algebraic_expression_prototype.cpp)

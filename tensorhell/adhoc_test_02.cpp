@@ -18,7 +18,7 @@ void test_scalar2tensor ()
     Sc sc(fill_with(3));
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
-    AbstractIndex_c<'k'> k;
+    // AbstractIndex_c<'k'> k;
     std::cout << "testing scalar 2-tensors\n";
     std::cout << FORMAT_VALUE(sc) << '\n';
     std::cout << FORMAT_VALUE(sc.split(i*j)) << '\n';
