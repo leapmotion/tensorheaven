@@ -8,20 +8,34 @@ find_path(BOOST_INCLUDE_DIR "boost" PATHS $ENV{BOOST_INCLUDE_DIR} NO_DEFAULT_PAT
 OPTION(ASM_EXAM "Keep ASM intermediaries for inspection of compiler optimizations." OFF)
 OPTION(NO_OPTIMIZE "Compile without optimization (useful for debugging; not implemented for MSVC currently)." OFF)
 
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  set(MSVC 1)
+  set(CLANG 0)
+  set(GCC 0)
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  set(MSVC 0)
+  set(CLANG 1)
+  set(GCC 0)
+else() #GCC
+  set(MSVC 0)
+  set(CLANG 0)
+  set(GCC 1)
+endif()
+
 # the root directory of the project (the one containing the tenh/ dir) is the only necessary include dir
 include_directories(${tensorheaven_test_SOURCE_DIR}/include ${EIGEN_INCLUDE_DIR} ${BOOST_INCLUDE_DIR})
 
 set(BASE_MSVC_FLAGS /arch:SSE2)
 # misnomer: The above MSVC flags are not used in Debug mode
 set(PRODUCTION_MSVC_FLAGS /GL /Ox /Oi /Ot /Ob2 )
-set(BASE_GCC_FLAGS -Wall -Werror ) #-msse2 -Wno-reorder -Wno-strict-aliasing -Wno-missing-braces -Wno-uninitialized -Wno-sequence-point )
-set(BASE_CLANG_FLAGS -Wall -Werror -Wno-local-type-template-args ) #-stdlib=libc++ -Wall -Wno-deprecated-declarations -Wno-address-of-temporary -Wno-dynamic-class-memaccess -Wno-overloaded-virtual -Wno-missing-braces -Wno-unneeded-internal-declaration -Wno-reorder -Wno-local-type-template-args )
+set(BASE_GCC_FLAGS -Wall -Werror -Wno-unused-local-typedefs ) #-msse2 -Wno-reorder -Wno-strict-aliasing -Wno-missing-braces -Wno-uninitialized -Wno-sequence-point )
+set(BASE_CLANG_FLAGS -Wall -Werror -Wno-local-type-template-args -Wno-tautological-constant-out-of-range-compare ) #-stdlib=libc++ -Wall -Wno-deprecated-declarations -Wno-address-of-temporary -Wno-dynamic-class-memaccess -Wno-overloaded-virtual -Wno-missing-braces -Wno-unneeded-internal-declaration -Wno-reorder -Wno-local-type-template-args )
 set(PRODUCTION_GCC_FLAGS "")
-if(WIN32)
+if(MSVC)
   set(COMPILER_DEBUG_FLAGS /Zi /D_DEBUG /MDd /Od /fp:except /D_CRT_SECURE_NO_WARNINGS /D_SCL_SECURE_NO_WARNINGS=1 /RTC1 /MP)
   set(COMPILER_RELEASE_FLAGS /Zi /D NDEBUG /D _CRT_SECURE_NO_WARNINGS /MD /O2 /fp:fast /WX /MP)
   if(NO_OPTIMIZE)
-    # TODO: implement NO_OPTIMIZE for windows
+    # TODO: implement NO_OPTIMIZE for MSVC
   endif()
   # USE_PRODUCTION_FLAGS will replace /Od or /O2 with /Ox /Ob2 /Oi /Ot, adds ~20% compile time
   set(COMPILER_NOPRODUCTION_FLAGS /Zi )
@@ -55,11 +69,11 @@ else() # clang or gcc
   endif()
 endif()
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+if(MSVC)
   set(COMPILER_FLAGS ${COMPILER_FLAGS} ${BASE_MSVC_FLAGS})
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+elseif(CLANG)
   set(COMPILER_FLAGS ${COMPILER_FLAGS} ${BASE_CLANG_FLAGS})
-else() # GCC
+else() # Linux
   set(COMPILER_FLAGS ${COMPILER_FLAGS} ${BASE_GCC_FLAGS})
 endif()
 
@@ -68,6 +82,19 @@ foreach(arg ${COMPILER_FLAGS})
 endforeach(arg ${COMPILER_FLAGS})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TEMP_COMPILER_FLAG_LIST}")
+
+foreach(arg ${COMPILER_DEBUG_FLAGS})
+  set(TEMP_COMPILER_DEBUG_FLAG_LIST "${TEMP_COMPILER_DEBUG_FLAG_LIST} ${arg}")
+endforeach(arg ${COMPILER_DEBUG_FLAGS})
+
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} ${TEMP_COMPILER_DEBUG_FLAG_LIST}")
+
+foreach(arg ${COMPILER_RELEASE_FLAGS})
+  set(TEMP_COMPILER_RELEASE_FLAG_LIST "${TEMP_COMPILER_RELEASE_FLAG_LIST} ${arg}")
+endforeach(arg ${COMPILER_DEBUG_FLAGS})
+
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} ${TEMP_COMPILER_RELEASE_FLAG_LIST}")
+
 
 # temp tests
 add_executable(algebraic_expression_prototype algebraic_expression_prototype.cpp)

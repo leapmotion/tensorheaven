@@ -31,12 +31,10 @@ void randomize (long double &d, long double mean = 0, long double sigma = 10);
 template <typename T>
 void randomize (std::complex<T> &z, std::complex<T> mean = 0, std::complex<T> sigma = 10)
 {
-	T temp;
-    randomize(temp, mean.real(), abs(sigma));
-	z.real(temp);
-    randomize(temp, mean.imag(), abs(sigma));
-	z.imag(temp);
-
+    T real, imag;
+    randomize(real, mean.real(), abs(sigma));
+    randomize(imag, mean.imag(), abs(sigma));
+    z = std::complex<T>(real,imag);
 }
 
 }

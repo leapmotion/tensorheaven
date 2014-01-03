@@ -213,7 +213,7 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
     int gradient_descent = 0;
     int conjugate_gradient = 0;
     int newtons_method = 0;
-    bool tolerance_was_attained = false;
+    // bool tolerance_was_attained = false;
 
     while (iteration_count < MAX_ITERATION_COUNT)
     {
@@ -232,7 +232,7 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
 
         if (g_norm <= tolerance)
         {
-            tolerance_was_attained = true;
+            // tolerance_was_attained = true;
             if (minimum != NULL)
                 *minimum = current_value;
             break;
