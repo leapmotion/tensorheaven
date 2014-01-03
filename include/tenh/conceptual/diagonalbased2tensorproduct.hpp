@@ -254,11 +254,12 @@ public:
 
     struct CoembedIndexIterator
     {
-        CoembedIndexIterator (Diag2ComponentIndex const &i) : m(i.value(), DONT_CHECK_RANGE) { }
+        CoembedIndexIterator (Diag2ComponentIndex const &i) : m(i.value() * (DimensionOf_f<Factor1_>::V+1), DONT_CHECK_RANGE) { }
         void operator ++ () { m.set_to_end(); } // there is only one Tensor2ComponentIndex per Diag2ComponentIndex
         bool is_not_at_end () const { return m.is_not_at_end(); }
         Scalar_ scale_factor () const { return Scalar_(1); }
-        Tensor2ComponentIndex const &component_index () const { return m; }
+        typedef Tensor2ComponentIndex ComponentIndexReturnType;
+        ComponentIndexReturnType const &component_index () const { return m; }
     private:
         Tensor2ComponentIndex m;
     };
@@ -288,13 +289,6 @@ public:
         Tensor2MultiIndex m(i); // does the row-major indexing conversion
         return m.template el<(FACTOR0DIM_LEQ_FACTOR1DIM ? 0 : 1)>();
     }
-
-    static Uint32 term_count_for_coembedded_component (Diag2ComponentIndex const &) { return 1; }
-    static Scalar_ scalar_factor_for_coembedded_component (Diag2ComponentIndex const &, Uint32) { return Scalar_(1); }
-    static Tensor2ComponentIndex source_component_index_for_coembedded_component (Diag2ComponentIndex const &i, Uint32)
-    {
-        return Tensor2MultiIndex(i.value(), i.value(), DONT_CHECK_RANGE).as_component_index();
-    }
 };
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -323,9 +317,10 @@ public:
         void operator ++ () { m.set_to_end(); } // there is only one Sym2ComponentIndex per Diag2ComponentIndex
         bool is_not_at_end () const { return m.is_not_at_end(); }
         Scalar_ scale_factor () const { return Scalar_(1); }
-        Diag2ComponentIndex const &component_index () const { return m; }
+        typedef Sym2ComponentIndex ComponentIndexReturnType;
+        ComponentIndexReturnType const &component_index () const { return m; }
     private:
-        Diag2ComponentIndex m;
+        Sym2ComponentIndex m;
     };
 
     static bool embedded_component_is_procedural_zero (Sym2ComponentIndex const &i)
@@ -356,14 +351,6 @@ public:
         FactorComponentIndex col(i.value() - t*(t-1)/2, DONT_CHECK_RANGE);
         // FactorComponentIndex and Diag2ComponentIndex are the same C++ type by dimensionality
         return row;
-    }
-
-    static Uint32 term_count_for_coembedded_component (Diag2ComponentIndex const &) { return 1; }
-    static Scalar_ scalar_factor_for_coembedded_component (Diag2ComponentIndex const &, Uint32) { return Scalar_(1); }
-    static Sym2ComponentIndex source_component_index_for_coembedded_component (Diag2ComponentIndex const &i, Uint32)
-    {
-        Uint32 k = i.value();
-        return Sym2ComponentIndex(k + (k*(k+1))/2, DONT_CHECK_RANGE);
     }
 };
 

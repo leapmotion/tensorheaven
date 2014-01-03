@@ -259,10 +259,11 @@ public:
     struct CoembedIndexIterator
     {
         CoembedIndexIterator (Scalar2ComponentIndex const &) : m() { }
-        void operator ++ () { m.increment_by(DimensionOf_f<Tensor2>::V + 1); }
+        void operator ++ () { m.increment_by(DimensionOf_f<Factor1_>::V+1, DONT_CHECK_RANGE); } // want it to exceed range to indicate end
         bool is_not_at_end () const { return m.is_not_at_end(); }
         Scalar_ scale_factor () const { return Scalar_(1); }
-        Tensor2ComponentIndex const &component_index () const { return m; }
+        typedef Tensor2ComponentIndex ComponentIndexReturnType;
+        ComponentIndexReturnType const &component_index () const { return m; }
     private:
         Tensor2ComponentIndex m;
     };
@@ -292,13 +293,6 @@ public:
         // there is only one component for a scalar 2-tensor -- zero.
         return Scalar2ComponentIndex(0, DONT_CHECK_RANGE);
     }
-
-    static Uint32 term_count_for_coembedded_component (Scalar2ComponentIndex const &) { return DIM; }
-    static Scalar_ scalar_factor_for_coembedded_component (Scalar2ComponentIndex const &, Uint32) { return Scalar_(1); }
-    static Tensor2ComponentIndex source_component_index_for_coembedded_component (Scalar2ComponentIndex const &, Uint32 term)
-    {
-        return Tensor2MultiIndex(term, term, DONT_CHECK_RANGE).as_component_index();
-    }
 };
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -325,10 +319,11 @@ public:
     struct CoembedIndexIterator
     {
         CoembedIndexIterator (Scalar2ComponentIndex const &) : m(), m_increment(2) { }
-        void operator ++ () { m.increment_by(m_increment); ++m_increment; } // increment triangularly
+        void operator ++ () { m.increment_by(m_increment, DONT_CHECK_RANGE); ++m_increment; } // increment triangularly
         bool is_not_at_end () const { return m.is_not_at_end(); }
         Scalar_ scale_factor () const { return Scalar_(1); }
-        Sym2ComponentIndex const &component_index () const { return m; }
+        typedef Sym2ComponentIndex ComponentIndexReturnType;
+        ComponentIndexReturnType const &component_index () const { return m; }
     private:
         Sym2ComponentIndex m;
         Uint32 m_increment;
@@ -357,13 +352,6 @@ public:
             throw std::domain_error(FORMAT(i.value()) + " is not in the domain of scalar_factor_for_embedded_component");
 
         return Scalar2ComponentIndex(0, DONT_CHECK_RANGE);
-    }
-
-    static Uint32 term_count_for_coembedded_component (Scalar2ComponentIndex const &) { return DIM; }
-    static Scalar_ scalar_factor_for_coembedded_component (Scalar2ComponentIndex const &, Uint32) { return Scalar_(1); }
-    static Sym2ComponentIndex source_component_index_for_coembedded_component (Scalar2ComponentIndex const &, Uint32 term)
-    {
-        return Sym2ComponentIndex(term + (term*(term+1))/2, DONT_CHECK_RANGE);
     }
 };
 
@@ -397,7 +385,8 @@ public:
         void operator ++ () { ++m; }
         bool is_not_at_end () const { return m.is_not_at_end(); }
         Scalar_ scale_factor () const { return Scalar_(1); }
-        Diag2ComponentIndex const &component_index () const { return m; }
+        typedef Diag2ComponentIndex ComponentIndexReturnType;
+        ComponentIndexReturnType const &component_index () const { return m; }
     private:
         Diag2ComponentIndex m;
     };
@@ -409,13 +398,6 @@ public:
     {
         // there is only one component for a scalar 2-tensor -- zero.
         return Scalar2ComponentIndex(0, DONT_CHECK_RANGE);
-    }
-
-    static Uint32 term_count_for_coembedded_component (Scalar2ComponentIndex const &) { return DIM; }
-    static Scalar_ scalar_factor_for_coembedded_component (Scalar2ComponentIndex const &, Uint32) { return Scalar_(1); }
-    static Diag2ComponentIndex source_component_index_for_coembedded_component (Scalar2ComponentIndex const &, Uint32 term)
-    {
-        return Diag2ComponentIndex(term, DONT_CHECK_RANGE);
     }
 };
 

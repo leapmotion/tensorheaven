@@ -732,10 +732,6 @@ struct IndexEmbedder_t
     {
         typedef ComponentIndex_t<DimensionOf_f<EmbeddingCodomain_>::V> EmbeddingCodomainComponentIndex;
         typedef ComponentIndex_t<DimensionOf_f<EmbeddingDomain>::V> EmbeddingDomainComponentIndex;
-        // TODO: the use of UseMemberArray_t<COMPONENTS_ARE_NONCONST> here is arbitrary because it's just used to access a
-        // static method.  figure out if this is a problem
-        typedef ImplementationOf_t<EmbeddingDomain,Scalar,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > ImplementationOfSourceFactor;
-        typedef typename ImplementationOfSourceFactor::MultiIndex EmbeddingDomainMultiIndex;
 
         EmbeddingCodomainComponentIndex j(m.template el<SOURCE_INDEX_TYPE_INDEX>());
 
@@ -814,25 +810,20 @@ struct IndexCoembedder_t
     {
         typedef ComponentIndex_t<DimensionOf_f<CoembeddingCodomain_>::V> CoembeddingCodomainComponentIndex;
         typedef ComponentIndex_t<DimensionOf_f<CoembeddingDomain>::V> CoembeddingDomainComponentIndex;
-        // TODO: the use of UseMemberArray_t<COMPONENTS_ARE_NONCONST> here is arbitrary because it's just used to access a
-        // static method.  figure out if this is a problem
-        typedef ImplementationOf_t<CoembeddingDomain,Scalar,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > ImplementationOfSourceFactor;
-        typedef typename ImplementationOfSourceFactor::MultiIndex CoembeddingDomainMultiIndex;
 
         CoembeddingCodomainComponentIndex j(m.template el<SOURCE_INDEX_TYPE_INDEX>());
 
         // the domain and codomain are reversed because of a contravariance property
         typedef LinearEmbedding_c<CoembeddingCodomain_,CoembeddingDomain,Scalar,EmbeddingId_,DISABLE_EXCEPTIONS> LinearEmbedding;
         Scalar retval(0);
-        Uint32 term_count = LinearEmbedding::term_count_for_coembedded_component(j);
-        for (Uint32 term = 0; term < term_count; ++term)
+        for (typename LinearEmbedding::CoembedIndexIterator it(j); it.is_not_at_end(); ++it)
         {
-            CoembeddingDomainComponentIndex i(LinearEmbedding::source_component_index_for_coembedded_component(j, term));
+            STATIC_ASSERT_TYPES_ARE_EQUAL(typename LinearEmbedding::CoembedIndexIterator::ComponentIndexReturnType, CoembeddingDomainComponentIndex);
             // this replaces the CoembeddedAbstractIndexType_ portion with SourceAbstractIndexType_
             typename Operand_::MultiIndex c_rebundled(m.template leading_list<SOURCE_INDEX_TYPE_INDEX>()
-                                                     |
-                                                     (i >>= m.template trailing_list<SOURCE_INDEX_TYPE_INDEX+1>()));
-            retval += LinearEmbedding::scalar_factor_for_coembedded_component(j, term) * m_operand[c_rebundled];
+                                                      |
+                                                      (it.component_index() >>= m.template trailing_list<SOURCE_INDEX_TYPE_INDEX+1>()));
+            retval += it.scale_factor() * m_operand[c_rebundled];
         }
         return retval;
     }

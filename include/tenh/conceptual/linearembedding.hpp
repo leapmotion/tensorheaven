@@ -131,6 +131,7 @@ public:
         void operator ++ () { ++m; }
         bool is_not_at_end () const { return m.is_not_at_end(); }
         Scalar_ scale_factor () const { return Scalar_(1); }
+        typedef ComponentIndex ComponentIndexReturnType;
         ComponentIndex const &component_index () const { return m; }
     private:
         ComponentIndex m;
@@ -140,10 +141,6 @@ public:
     static bool embedded_component_is_procedural_zero (ComponentIndex const &) { return false; }
     static Scalar_ scalar_factor_for_embedded_component (ComponentIndex const &) { return Scalar_(1); }
     static ComponentIndex source_component_index_for_embedded_component (ComponentIndex const &i) { return i; }
-
-    static Uint32 term_count_for_coembedded_component (ComponentIndex const &) { return 1; }
-    static Scalar_ scalar_factor_for_coembedded_component (ComponentIndex const &, Uint32) { return Scalar_(1); }
-    static ComponentIndex source_component_index_for_coembedded_component (ComponentIndex const &i, Uint32) { return i; }
 };
 
 // this can be used to verify that the functions associated with coembed are
