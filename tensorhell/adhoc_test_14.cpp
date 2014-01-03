@@ -365,7 +365,7 @@ void test_diag2tensor_embedding ()
     // B4 b4;
     Diag2 diag2;
     Diag2OfB3 diag2ofb3;
-    // DualOf_f<Diag2>::T dual_of_diag2;
+    DualOf_f<Diag2>::T dual_of_diag2;
     Tensor2 tensor2;
     Sym2 sym2;
     // DualOf_f<Tensor2>::T dual_of_tensor2;
@@ -463,7 +463,7 @@ void test_scalar2tensor_embedding ()
     Scalar2 scalar2;
     Diag2 diag2;
     Scalar2OfB3 scalar2ofb3;
-    // DualOf_f<Scalar2>::T dual_of_scalar2;
+    DualOf_f<Scalar2>::T dual_of_scalar2;
     Tensor2 tensor2;
     Sym2 sym2;
     // DualOf_f<Tensor2>::T dual_of_tensor2;
