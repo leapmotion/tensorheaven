@@ -12,6 +12,7 @@
 #include "tenh/conceptual/concept.hpp"
 #include "tenh/conceptual/dual.hpp"
 #include "tenh/conceptual/field.hpp"
+#include "tenh/conceptual/linearembedding.hpp"
 
 namespace Tenh {
 
@@ -366,6 +367,40 @@ BasedVectorSpace_c<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,OrthonormalBasis_c
 {
     return BasedVectorSpace_c<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,OrthonormalBasis_c<Id_> >();
 }
+
+// ///////////////////////////////////////////////////////////////////////////
+// linear embedding of a based vector space into itself (identity)
+// ///////////////////////////////////////////////////////////////////////////
+
+// id for identity embedding
+struct IdentityEmbedding { static std::string type_as_string () { return "IdentityEmbedding"; } };
+
+// canonical identity embedding
+template <typename OnBasedVectorSpace_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
+struct LinearEmbedding_c<OnBasedVectorSpace_,OnBasedVectorSpace_,Scalar_,IdentityEmbedding,ENABLE_EXCEPTIONS_>
+{
+private:
+    enum { STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(OnBasedVectorSpace_), MUST_BE_BASED_VECTOR_SPACE) };
+public:
+    typedef ComponentIndex_t<DimensionOf_f<OnBasedVectorSpace_>::V> ComponentIndex;
+
+    struct CoembedIndexIterator
+    {
+        CoembedIndexIterator (ComponentIndex const &i) : m(i) { }
+        void operator ++ () { ++m; }
+        bool is_not_at_end () const { return m.is_not_at_end(); }
+        Scalar_ scale_factor () const { return Scalar_(1); }
+        typedef ComponentIndex ComponentIndexReturnType;
+        ComponentIndex const &component_index () const { return m; }
+    private:
+        ComponentIndex m;
+    };
+
+    // because this always returns false, there is no need for the other two functions to ever throw.
+    static bool embedded_component_is_procedural_zero (ComponentIndex const &) { return false; }
+    static Scalar_ scalar_factor_for_embedded_component (ComponentIndex const &) { return Scalar_(1); }
+    static ComponentIndex source_component_index_for_embedded_component (ComponentIndex const &i) { return i; }
+};
 
 } // end of namespace Tenh
 
