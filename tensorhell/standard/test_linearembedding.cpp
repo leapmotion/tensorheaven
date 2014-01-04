@@ -11,6 +11,7 @@
 #include "tenh/conceptual/linearembedding.hpp"
 #include "tenh/conceptual/scalarbased2tensorproduct.hpp"
 #include "tenh/conceptual/symmetricpower.hpp"
+#include "tenh/conceptual/utility/linearembedding_checker.hpp"
 
 // this is included last because it redefines the `assert` macro,
 // which would be bad for the above includes.

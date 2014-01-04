@@ -1,10 +1,10 @@
 // ///////////////////////////////////////////////////////////////////////////
-// tenh/conceptual/conceptualinheritancegraph.hpp by Vector Dods, created 2013/09/12
+// tenh/conceptual/utility/conceptualinheritancegraph.hpp by Vector Dods, created 2013/09/12
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#ifndef TENH_CONCEPTUAL_CONCEPTUALINHERITANCEGRAPH_HPP_
-#define TENH_CONCEPTUAL_CONCEPTUALINHERITANCEGRAPH_HPP_
+#ifndef TENH_CONCEPTUAL_UTILITY_CONCEPTUALINHERITANCEGRAPH_HPP_
+#define TENH_CONCEPTUAL_UTILITY_CONCEPTUALINHERITANCEGRAPH_HPP_
 
 #include "tenh/core.hpp"
 
@@ -238,4 +238,4 @@ void add_concept_hierarchy_to_graph (Concept_ const &root, Graph &g)
 
 } // end of namespace Tenh
 
-#endif // TENH_CONCEPTUAL_CONCEPTUALINHERITANCEGRAPH_HPP_
+#endif // TENH_CONCEPTUAL_UTILITY_CONCEPTUALINHERITANCEGRAPH_HPP_
