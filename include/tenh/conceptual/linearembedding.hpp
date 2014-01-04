@@ -95,6 +95,21 @@ template <typename Domain_,
           bool ENABLE_EXCEPTIONS_>
 struct LinearEmbedding_c;
 
+// this metafunction exists so that some measure of indirection can be used in specifying
+// linear embeddings -- e.g. the "natural embedding" of a tensor product into itself
+// (needed for completeness) is the identity embedding, which is already defined in
+// vectorspace.hpp.  the default definition of this function just gives the corresponding
+// LinearEmbedding_c.
+template <typename Domain_,
+          typename Codomain_,
+          typename Scalar_,
+          typename EmbeddingId_,
+          bool ENABLE_EXCEPTIONS_>
+struct LinearEmbedding_f
+{
+    typedef LinearEmbedding_c<Domain_,Codomain_,Scalar_,EmbeddingId_,ENABLE_EXCEPTIONS_> T;
+};
+
 template <typename Domain_,
           typename Codomain_,
           typename Scalar_,
@@ -102,7 +117,7 @@ template <typename Domain_,
           bool ENABLE_EXCEPTIONS_>
 struct CoembedIndexIterator_f
 {
-    typedef typename LinearEmbedding_c<Domain_,Codomain_,Scalar_,EmbeddingId_,ENABLE_EXCEPTIONS_>::CoembedIndexIterator T;
+    typedef typename LinearEmbedding_f<Domain_,Codomain_,Scalar_,EmbeddingId_,ENABLE_EXCEPTIONS_>::T::CoembedIndexIterator T;
 };
 
 // because there will be so many template specializations of LinearEmbedding_c, all
@@ -140,7 +155,7 @@ struct CoembedLookupTable_t
     CoembedLookupTable_t ()
     {
         // compute the table
-        typedef LinearEmbedding_c<Domain_,Codomain_,Scalar_,EmbeddingId_,DISABLE_EXCEPTIONS> LinearEmbedding;
+        typedef typename LinearEmbedding_f<Domain_,Codomain_,Scalar_,EmbeddingId_,DISABLE_EXCEPTIONS>::T LinearEmbedding;
         for (CodomainComponentIndex i; i.is_not_at_end(); ++i)
         {
             if (!LinearEmbedding::embedded_component_is_procedural_zero(i))

@@ -470,6 +470,25 @@ TensorProductOfBasedVectorSpaces_c<TypeList_t<TensorProductOfBasedVectorSpaces_c
                                               TypeList_t<TensorProductOfBasedVectorSpaces_c<RhsFactorTypeList_> > > >();
 }
 
+// ///////////////////////////////////////////////////////////////////////////
+// linear embedding of tensor product into itself (needed for completeness)
+// ///////////////////////////////////////////////////////////////////////////
+
+// just use the identity embedding
+template <typename FactorTypeList_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
+struct LinearEmbedding_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,
+                         TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,
+                         Scalar_,
+                         NaturalEmbedding,
+                         ENABLE_EXCEPTIONS_>
+{
+private:
+    typedef TensorProductOfBasedVectorSpaces_c<FactorTypeList_> TensorProduct;
+    LinearEmbedding_f ();
+public:
+    typedef LinearEmbedding_c<TensorProduct,TensorProduct,Scalar_,IdentityEmbedding,ENABLE_EXCEPTIONS_> T;
+};
+
 } // end of namespace Tenh
 
 #endif // TENH_CONCEPTUAL_TENSORPRODUCT_HPP_

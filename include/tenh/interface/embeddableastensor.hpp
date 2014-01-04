@@ -155,8 +155,9 @@ struct EmbeddableAsTensor_i
     // e.g. if X is this object, and u and v are vectors dual to the factor
     // types of TensorProductOfBasedVectorSpaces, then
     //   X(u, v)
-    // evaluates as
-    //   X.split(i*j)*u(i)*v(j).
+    // is equivalent to
+    //   X.split(i*j)*u(i)*v(j)
+    // though is implemented using coembed, which should be close to optimally efficient.
     // this is a special case for when ORDER == 2, i.e. it is a bilinear form.
     template <typename Derived0_,
               typename BasedVectorSpace0_,
@@ -168,26 +169,32 @@ struct EmbeddableAsTensor_i
                          Vector_i<Derived1_,Scalar_,BasedVectorSpace1_,COMPONENT_QUALIFIER1_> const &v1) const
     {
         STATIC_ASSERT(ORDER == 2, ORDER_MUST_BE_EXACTLY_2);
+        TensorProductOfBasedVectorSpaces upstairs;
+        EmbeddableInTensorProductOfBasedVectorSpaces_ downstairs;
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
-        // TODO: eventually replace with project (the arguments will be projected),
-        // as this is where a frequent and very important optimization will occur
-        return split(i*j)*v0(i)*v1(j);
+        AbstractIndex_c<'p'> p;
+        AbstractIndex_c<'q'> q;
+        return operator()(p) * (v0(i)*v1(j)).bundle(i*j,dual(upstairs),q).coembed(q,dual(downstairs),p);
     }
     // this is for using this object as a multilinear form.
     // e.g. if X is this object, and v_1, ..., v_k are vectors dual to the factor
     // types of TensorProductOfBasedVectorSpaces, then
     //   X(tuple(v_1, ..., v_k))
-    // evaluates as
-    //   X.split(i_1*...*i_k)*v_1(i_1)*...*v_k(i_k).
+    // is equivalent to
+    //   X.split(i_1*...*i_k)*v_1(i_1)*...*v_k(i_k)
+    // though is implemented using coembed, which should be close to optimally efficient.
     template <typename ParameterTypeList_>
-    Scalar_ operator () (List_t<ParameterTypeList_> const &p) const
+    Scalar_ operator () (List_t<ParameterTypeList_> const &l) const
     {
         STATIC_ASSERT(Length_f<ParameterTypeList_>::V == ORDER, ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
         typedef typename AbstractIndexRangeTypeList_f<Length_f<ParameterTypeList_>::V,667>::T AbstractIndexTypeList;
-        // TODO: eventually replace with project (the arguments will be projected),
-        // as this is where a frequent and very important optimization will occur
-        return split(AbstractIndexTypeList())*indexed_parameter_list(p, AbstractIndexTypeList());
+        TensorProductOfBasedVectorSpaces upstairs;
+        EmbeddableInTensorProductOfBasedVectorSpaces_ downstairs;
+        AbstractIndex_c<'p'> p;
+        AbstractIndex_c<'q'> q;
+        AbstractIndexTypeList a;
+        return operator()(p) * indexed_parameter_list(l,a).bundle(a,dual(upstairs),q).coembed(q,dual(downstairs),p);
     }
 
     static bool component_is_procedural_zero (MultiIndex const &m) { return as_derived().component_is_procedural_zero(m); }

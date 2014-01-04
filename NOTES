@@ -220,7 +220,7 @@
 - MSVC doesn't like the following code, when e is a 3-tensor implementation and i is an
   AbstractIndex_c<'i'>:  FORMAT_VALUE(e(i).eval()) (this probably has something to do with
   the derived type passed into ExpressionTemplate_IndexedObject_t when the indexed expression
-  is created.  Note that FORMAT_VALUE(e(i|j|k).eval()) works normally.
+  is created.  Note that FORMAT_VALUE(e(i*j*k).eval()) works normally.
 - TODO: verify that bundle is a left-inverse to split, and then make it so that bundle actually
   left-cancels split.  verifying that bundle actually left-inverts split will require some
   special "no optimize" syntax though, or a verification at the reindexing level.
@@ -316,27 +316,27 @@
   operator can be taken.
 
 
-###Notes for generalized embed/project (generalizations of split/bundle)
-- The "embed" and "project" operations are defined via the following properties:
+###Notes for generalized embed/coembed (generalizations of split/bundle)
+- The "embed" and "coembed" operations are defined via the following properties:
     * Accessing components of an "embedded" vector/tensor should be a sparse operation
       involving no fractions (e.g. direct component access for vees, or plus-or-minus 1
       times a direct component access for wedges).  This no-fraction constraint is
       so that integral scalar representations can be used.
-    * "embed" and "project" should be mutually adjoint with respect to the relevant
+    * "embed" and "coembed" should be mutually adjoint with respect to the relevant
       natural pairings.  That is,
-        A(i).embed(i,UpstairsSpace(),j)*B(j) - A(i)*B(j).project(j,DownstairsSpace(),i)
+        A(i).embed(i,UpstairsSpace(),j)*B(j) - A(i)*B(j).coembed(j,DownstairsSpace(),i)
       should give the zero scalar.
 - There should be abbreviated calls so that the above expression is
-    A.embed(UpstairsSpace(),j)*B(j) - A(i)*B.project(DownStairsSpace(),i)
+    A.embed(UpstairsSpace(),j)*B(j) - A(i)*B.coembed(DownStairsSpace(),i)
 - The point of this theory is that doing a natural pairing "upstairs" doesn't take
   advantage of the symmetries available "downstairs", so it's ostensibly more efficient
-  to project and do the natural pairing "downstairs".
+  to coembed and do the natural pairing "downstairs".
     * for example, if D is a diagonal 2-tensor of type V^* \otimes V^*, and x and y are
       vectors of type V, then
         D(i).embed(i,V^* \otimes V^*,j).split(j,a|b)*x(a)*y(b)
       is the expression for use of D as a bilinear form, but this doesn't use its
       symmetry.  This would be more optimally expressed as
-        D(i)*(x(a)*y(b)).bundle(a|b,V \otimes V,j).project(j,Diag2TensorSpace,i),
+        D(i)*(x(a)*y(b)).bundle(a|b,V \otimes V,j).coembed(j,Diag2TensorSpace,i),
       where the projection would essentially compute the vector
         (x[0]*y[0], x[1]*y[1], ..., x[n-1]*y[n-1]),
       which would then be naturally paired with the diagonal (as a vector).
@@ -351,9 +351,9 @@
   various spaces.  It is possible that some spaces may not embed nicely (e.g. an
   arbitrary subspace of a given based vector space), and those cases should probably
   just use a full embedding 2-tensor (which is the most general way to do it), so
-    B(j)*embedding_2_tensor(j|i)*A(i) - A(i)*projection_2_tensor(i|j)*B(j)
+    B(j)*embedding_2_tensor(j|i)*A(i) - A(i)*coembedding_2_tensor(i|j)*B(j)
   should give the zero scalar.
-- If the "embed" and "project" expression templates were formulated as full 2-tensors
+- If the "embed" and "coembed" expression templates were formulated as full 2-tensors
   (i.e. matrices), then their mutual adjointness manifests as their matrices being
   transposes of one another.
 - The reindexing maps should be done in the conceptual layer, since they are independent
@@ -362,7 +362,7 @@
   then the expression
     x(i)*B(i|j)*y(j)
   would be replaced (via some metaprogramming optimization) with
-    B(p)*(x(i)*y(j)).bundle(i|j,V \otimes V,q).project(q,SpaceWithSymmetry,p),
+    B(p)*(x(i)*y(j)).bundle(i|j,V \otimes V,q).coembed(q,SpaceWithSymmetry,p),
   thereby providing optimization without cluttering up the notation/usage from the
   perspective of the user.
 - What is required to implement embed/coembed is the following:
@@ -409,7 +409,7 @@
 
 ###Notes for refined indexed expressions
 - In addition to creating abstract multi-indices via the | operator, e.g.
-    x(i)*g(i|j)*y(j)
+    x(i)*g(i*j)*y(j)
   make "direct sums" of induces, e.g. if x and y are vectors of type U and V respectively,
   and a is in (U \oplus V)^*, then
     a(i+j)*(x(i) + y(j))
@@ -420,8 +420,6 @@
   error.  The reason is that as the "i+j" direct sum index is iterated over, only one of
   i or j should be able to produce nonzero values in quantities that they each index, so
   the expression "should" be equal to zero, if it means anything at all.
-- It then makes sense to change operator | to operator * with regard to creating
-  multi-indices, as they could fairly be called tensor products of indices.
 - Then the operator precedence of * and + could be correctly used to make sense of
   expressions like
     T(i*j + k),
