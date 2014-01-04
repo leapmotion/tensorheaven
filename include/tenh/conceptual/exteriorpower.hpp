@@ -304,13 +304,21 @@ public:
     typedef ComponentIndex_t<DimensionOf_f<Ext>::V> ExtComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<TPow>::V> TPowComponentIndex;
 
+    struct CoembedIndexIterator
+    {
+        CoembedIndexIterator (ExtComponentIndex const &i) : m(i) { }
+        void operator ++ () { m.set_to_end(); } // there is only one TPowComponentIndex per SymComponentIndex
+        bool is_not_at_end () const { return m.is_not_at_end(); }
+        Scalar_ scale_factor () const { return Scalar_(1); }
+        typedef TPowComponentIndex ComponentIndexReturnType;
+        ComponentIndexReturnType const &component_index () const { return m; }
+    private:
+        TPowComponentIndex m;
+    };
+
     static bool embedded_component_is_procedural_zero (TPowComponentIndex const &) { return false; }
     static Scalar_ scalar_factor_for_embedded_component (TPowComponentIndex const &) { return Scalar_(1); }
     static ExtComponentIndex source_component_index_for_embedded_component (TPowComponentIndex const &i) { return i; }
-
-    static Uint32 term_count_for_coembedded_component (ExtComponentIndex const &) { return 1; }
-    static Scalar_ scalar_factor_for_coembedded_component (ExtComponentIndex const &, Uint32) { return Scalar_(1); }
-    static TPowComponentIndex source_component_index_for_coembedded_component (ExtComponentIndex const &i, Uint32) { return i; }
 };
 
 template <Uint32 ORDER_, typename Factor_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
@@ -328,6 +336,18 @@ private:
 public:
     typedef ComponentIndex_t<DimensionOf_f<Ext>::V> ExtComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<TPow>::V> TPowComponentIndex;
+
+    struct CoembedIndexIterator // TEMPORARY DUMMY IMPLEMENTATION THAT IS WRONG
+    {
+        CoembedIndexIterator (ExtComponentIndex const &i) : m(i.value(), DONT_CHECK_RANGE) { }
+        void operator ++ () { m.set_to_end(); }
+        bool is_not_at_end () const { return m.is_not_at_end(); }
+        Scalar_ scale_factor () const { return Scalar_(1); }
+        typedef TPowComponentIndex ComponentIndexReturnType;
+        ComponentIndexReturnType const &component_index () const { return m; }
+    private:
+        TPowComponentIndex m;
+    };
 
     static bool embedded_component_is_procedural_zero (TPowComponentIndex const &i)
     {
@@ -384,28 +404,6 @@ public:
         return ExtComponentIndex(  binomial_coefficient(m.head().value(), ORDER_)
                                  + BodyLinearEmbedding::source_component_index_for_embedded_component(m.body().as_component_index()).value());
     }
-
-    // static Uint32 term_count_for_coembedded_component (ExtComponentIndex const &)
-    // {
-    //     return Factorial_t<ORDER_>::V;
-    // }
-    // // i corresponds to a unique multiindex M that is sorted in
-    // // nondecreasing order.  this index has an isotropy subgroup H of the
-    // // symmetric group G on ORDER_ letters.  the quotient of G by H is not
-    // // necessarily a group (because H is not necessarily normal).  picking
-    // // a section of this quotient map gives a set of representative permutations
-    // // whose action on M give all TPowMultiIndex values for M.  the signs of the
-    // // representative permutations give the scalar factor for the coembedded
-    // // components.
-    // static Scalar_ scalar_factor_for_coembedded_component (ExtComponentIndex const &i, Uint32 term)
-    // {
-    //     // if a Gray coding scheme is used to map [0, term) to the non-invariant
-    //     // permutations of the multiindex M corresponding to i, such that the
-    //     // parity of the index in [0, term) gives the sign of the permutation.
-    // }
-    // static TPowComponentIndex source_component_index_for_coembedded_component (ExtComponentIndex const &i, Uint32 term)
-    // {
-    // }
 };
 
 } // end of namespace Tenh

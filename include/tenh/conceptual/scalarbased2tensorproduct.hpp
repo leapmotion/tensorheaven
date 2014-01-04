@@ -259,8 +259,8 @@ public:
     struct CoembedIndexIterator
     {
         CoembedIndexIterator (Scalar2ComponentIndex const &) : m() { }
-        void operator ++ () { m.increment_by(DimensionOf_f<Factor1_>::V+1, DONT_CHECK_RANGE); } // want it to exceed range to indicate end
-        bool is_not_at_end () const { return m.is_not_at_end(); }
+        void operator ++ () { m.increment_by(DimensionOf_f<Factor1_>::V+1, DONT_CHECK_RANGE); }
+        bool is_not_at_end () const { return m.value() < (DimensionOf_f<Factor1_>::V+1)*DIM; }
         Scalar_ scale_factor () const { return Scalar_(1); }
         typedef Tensor2ComponentIndex ComponentIndexReturnType;
         ComponentIndexReturnType const &component_index () const { return m; }

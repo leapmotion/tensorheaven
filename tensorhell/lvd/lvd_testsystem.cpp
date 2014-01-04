@@ -665,12 +665,13 @@ unsigned int Directory::SpawnScheduled (char *argv0, char **envp, string const &
             ++failure_count;
 
         // generate the report
-        cerr << test_path << ' ';
         if (actual_result == test_case.m_expected_result)
-            cerr << "passed" << endl;
+        {
+            // cerr << test_path << " passed" << endl;
+        }
         else
         {
-            cerr << "FAILED! expected " << ResultString(test_case.m_expected_result);
+            cerr << test_path << " FAILED! expected " << ResultString(test_case.m_expected_result);
             switch (test_case.m_expected_result)
             {
                 case RESULT_NO_ERROR:
@@ -706,9 +707,10 @@ unsigned int Directory::SpawnScheduled (char *argv0, char **envp, string const &
             // print the message to stderr
             if (!message.empty())
             {
-                cerr << message;
+                cerr << endl << message;
                 if (*message.rbegin() != '\n')
                     cerr << endl;
+                cerr << endl;
             }
         }
     }

@@ -387,7 +387,7 @@ public:
     struct CoembedIndexIterator
     {
         CoembedIndexIterator (ComponentIndex const &i) : m(i) { }
-        void operator ++ () { ++m; }
+        void operator ++ () { m.set_to_end(); } // the components are in one-to-one correspondence
         bool is_not_at_end () const { return m.is_not_at_end(); }
         Scalar_ scale_factor () const { return Scalar_(1); }
         typedef ComponentIndex ComponentIndexReturnType;

@@ -314,14 +314,22 @@ public:
     typedef ComponentIndex_t<DimensionOf_f<Sym>::V> SymComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<TPow>::V> TPowComponentIndex;
 
+    struct CoembedIndexIterator
+    {
+        CoembedIndexIterator (SymComponentIndex const &i) : m(i) { }
+        void operator ++ () { m.set_to_end(); } // there is only one TPowComponentIndex per SymComponentIndex
+        bool is_not_at_end () const { return m.is_not_at_end(); }
+        Scalar_ scale_factor () const { return Scalar_(1); }
+        typedef TPowComponentIndex ComponentIndexReturnType;
+        ComponentIndexReturnType const &component_index () const { return m; }
+    private:
+        TPowComponentIndex m;
+    };
+
     // because this always returns false, there is no need for the other two functions to ever throw.
     static bool embedded_component_is_procedural_zero (TPowComponentIndex const &) { return false; }
     static Scalar_ scalar_factor_for_embedded_component (TPowComponentIndex const &) { return Scalar_(1); }
     static SymComponentIndex source_component_index_for_embedded_component (TPowComponentIndex const &i) { return i; }
-
-    static Uint32 term_count_for_coembedded_component (SymComponentIndex const &) { return 1; }
-    static Scalar_ scalar_factor_for_coembedded_component (SymComponentIndex const &, Uint32) { return Scalar_(1); }
-    static TPowComponentIndex source_component_index_for_coembedded_component (SymComponentIndex const &i, Uint32) { return i; }
 };
 
 template <Uint32 ORDER_, typename Factor_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
@@ -339,6 +347,18 @@ private:
 public:
     typedef ComponentIndex_t<DimensionOf_f<Sym>::V> SymComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<TPow>::V> TPowComponentIndex;
+
+    struct CoembedIndexIterator // TEMPORARY DUMMY IMPLEMENTATION THAT IS WRONG
+    {
+        CoembedIndexIterator (SymComponentIndex const &i) : m(i.value(), DONT_CHECK_RANGE) { }
+        void operator ++ () { m.set_to_end(); }
+        bool is_not_at_end () const { return m.is_not_at_end(); }
+        Scalar_ scale_factor () const { return Scalar_(1); }
+        typedef TPowComponentIndex ComponentIndexReturnType;
+        ComponentIndexReturnType const &component_index () const { return m; }
+    private:
+        TPowComponentIndex m;
+    };
 
     // because this always returns false, there is no need for the other two functions to ever throw.
     static bool embedded_component_is_procedural_zero (TPowComponentIndex const &i) { return false; }
