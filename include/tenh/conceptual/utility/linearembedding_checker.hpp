@@ -107,6 +107,7 @@ bool linear_embedding_is_consistent (LinearEmbedding_c<Domain_,Codomain_,Scalar_
                                      std::string *error_string = NULL)
 {
     typedef LinearEmbedding_c<Domain_,Codomain_,Scalar_,EmbeddingId_,ENABLE_EXCEPTIONS> LinearEmbedding;
+    typedef typename CoembedIndexIterator_f<Domain_,Codomain_,Scalar_,EmbeddingId_,ENABLE_EXCEPTIONS>::T CoembedIndexIterator;
     typedef ComponentIndex_t<DimensionOf_f<Domain_>::V> DomainComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<Codomain_>::V> CodomainComponentIndex;
 
@@ -237,7 +238,7 @@ bool linear_embedding_is_consistent (LinearEmbedding_c<Domain_,Codomain_,Scalar_
     CoembeddingComponentIndexMap coembedding_component_index;
     for (DomainComponentIndex i; i.is_not_at_end(); ++i)
     {
-        for (typename LinearEmbedding::CoembedIndexIterator j(i); j.is_not_at_end(); ++j)
+        for (CoembedIndexIterator j(i); j.is_not_at_end(); ++j)
         {
             coembedding_scale_factor[i].insert(j.scale_factor());
             coembedding_component_index[i].insert(j.component_index());
@@ -298,7 +299,7 @@ bool linear_embedding_is_consistent (LinearEmbedding_c<Domain_,Codomain_,Scalar_
     EmbeddingSourceComponentIndexMap coembedding_inverse_component_index;
     for (DomainComponentIndex i; i.is_not_at_end(); ++i)
     {
-        for (typename LinearEmbedding::CoembedIndexIterator j(i); j.is_not_at_end(); ++j)
+        for (CoembedIndexIterator j(i); j.is_not_at_end(); ++j)
         {
 //             coembedding_inverse_maps_domain.insert(j.component_index());
             coembedding_inverse_scale_factor[j.component_index()] = j.scale_factor();

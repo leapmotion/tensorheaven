@@ -337,18 +337,6 @@ public:
     typedef ComponentIndex_t<DimensionOf_f<Ext>::V> ExtComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<TPow>::V> TPowComponentIndex;
 
-    struct CoembedIndexIterator // TEMPORARY DUMMY IMPLEMENTATION THAT IS WRONG
-    {
-        CoembedIndexIterator (ExtComponentIndex const &i) : m(i.value(), DONT_CHECK_RANGE) { }
-        void operator ++ () { m.set_to_end(); }
-        bool is_not_at_end () const { return m.is_not_at_end(); }
-        Scalar_ scale_factor () const { return Scalar_(1); }
-        typedef TPowComponentIndex ComponentIndexReturnType;
-        ComponentIndexReturnType const &component_index () const { return m; }
-    private:
-        TPowComponentIndex m;
-    };
-
     static bool embedded_component_is_procedural_zero (TPowComponentIndex const &i)
     {
         TPowMultiIndex m(i); // this does the row-major conversion
@@ -404,6 +392,19 @@ public:
         return ExtComponentIndex(  binomial_coefficient(m.head().value(), ORDER_)
                                  + BodyLinearEmbedding::source_component_index_for_embedded_component(m.body().as_component_index()).value());
     }
+};
+
+template <Uint32 ORDER_, typename Factor_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
+struct CoembedIndexIterator_f<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,
+                              typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T,
+                              Scalar_,
+                              NaturalEmbedding,
+                              ENABLE_EXCEPTIONS_>
+{
+    typedef LookupTableCoembedIndexIterator_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,
+                                              typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T,
+                                              Scalar_,
+                                              NaturalEmbedding> T;
 };
 
 } // end of namespace Tenh

@@ -815,10 +815,11 @@ struct IndexCoembedder_t
 
         // the domain and codomain are reversed because of a contravariance property
         typedef LinearEmbedding_c<CoembeddingCodomain_,CoembeddingDomain,Scalar,EmbeddingId_,DISABLE_EXCEPTIONS> LinearEmbedding;
+        typedef typename CoembedIndexIterator_f<CoembeddingCodomain_,CoembeddingDomain,Scalar,EmbeddingId_,DISABLE_EXCEPTIONS>::T CoembedIndexIterator;
         Scalar retval(0);
-        for (typename LinearEmbedding::CoembedIndexIterator it(j); it.is_not_at_end(); ++it)
+        for (CoembedIndexIterator it(j); it.is_not_at_end(); ++it)
         {
-            STATIC_ASSERT_TYPES_ARE_EQUAL(typename LinearEmbedding::CoembedIndexIterator::ComponentIndexReturnType, CoembeddingDomainComponentIndex);
+            STATIC_ASSERT_TYPES_ARE_EQUAL(typename CoembedIndexIterator::ComponentIndexReturnType, CoembeddingDomainComponentIndex);
             // this replaces the CoembeddedAbstractIndexType_ portion with SourceAbstractIndexType_
             typename Operand_::MultiIndex c_rebundled(m.template leading_list<SOURCE_INDEX_TYPE_INDEX>()
                                                       |
