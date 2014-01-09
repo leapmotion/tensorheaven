@@ -99,6 +99,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} ${TEMP_COMPILER_RELEASE_FLAG_LIS
 # temp tests
 add_executable(algebraic_expression_prototype algebraic_expression_prototype.cpp)
 # add_executable(asm_exam asm_exam.cpp asm_exam_separate_functions.cpp)
+add_executable(c++11_usage_prototype c++11_usage_prototype.cpp)
 add_executable(compile_time_generated_lookup_table compile_time_generated_lookup_table.cpp)
 add_executable(conceptual_inheritance_prototype conceptual_inheritance_prototype.cpp)
 # add_executable(list list.cpp)
@@ -106,6 +107,8 @@ add_executable(prettyprint prettyprint.cpp)
 add_executable(typelist typelist.cpp)
 add_executable(taylor_polynomial taylor_polynomial.cpp)
 add_executable(typetuple typetuple.cpp)
+
+set_source_files_properties(c++11_usage_prototype.cpp PROPERTIES COMPILE_FLAGS -std=c++11)
 
 set(adhoc_test_SRCS
     adhoc_test.cpp
