@@ -304,6 +304,59 @@ struct Concat_f<Typle_t<Head0_,Body0_...>,Typle_t<Head1_,Body1_...>>
     typedef Typle_t<Head0_,Body0_...,Head1_,Body1_...> T;
 };
 
+template <typename Typle_> struct Tuple_t;
+
+template <>
+struct Tuple_t<Typle_t<>>
+{
+    Tuple_t () { }
+
+    void print_guts (std::ostream &out) const { }
+};
+
+template <typename Head_>
+struct Tuple_t<Typle_t<Head_>>
+{
+    Tuple_t (Head_ const &h) : m_head(h) { }
+
+    void print_guts (std::ostream &out) const { out << m_head; }
+
+    Head_ m_head;
+};
+
+template <typename Head_, typename... Body_>
+struct Tuple_t<Typle_t<Head_,Body_...>>
+{
+    typedef Tuple_t<Typle_t<Body_...>> BodyTuple;
+
+    Tuple_t (Head_ const &h, BodyTuple const &b) : m_head(h), m_body_tuple(b) { }
+    Tuple_t (Head_ const &h, Body_... body) : m_head(h), m_body_tuple(body...) { }
+
+    void print_guts (std::ostream &out) const
+    {
+        out << m_head << ',';
+        m_body_tuple.print_guts(out);
+    }
+
+    Head_ m_head;
+    BodyTuple m_body_tuple;
+};
+
+template <typename... Ts_>
+Tuple_t<Typle_t<Ts_...>> tuple (Ts_... ts)
+{
+    return Tuple_t<Typle_t<Ts_...>>(ts...);
+}
+
+template <typename Typle_>
+std::ostream &operator << (std::ostream &out, Tuple_t<Typle_> const &t)
+{
+//     out << "Tuple_t<" << type_string_of<Typle_>() << ">(";
+    out << '(';
+    t.print_guts(out);
+    return out << ')';
+}
+
 void prototyping_for_variadic_templates ()
 {
     std::cout << "prototyping_for_variadic_templates();\n";
@@ -320,6 +373,11 @@ void prototyping_for_variadic_templates ()
     std::cout << FORMAT_VALUE(type_string_of<T0>()) << '\n';
     std::cout << FORMAT_VALUE(type_string_of<T1>()) << '\n';
     std::cout << FORMAT_VALUE((type_string_of<Concat_f<T0,T1>::T>())) << '\n';
+
+    typedef Tuple_t<Typle_t<int,char,double>> Triple;
+    std::cout << FORMAT_VALUE(Triple(3,'a',4.0)) << '\n';
+    std::cout << FORMAT_VALUE(::tuple(3,'a',4.0)) << '\n';
+    std::cout << FORMAT_VALUE(::tuple(3,'a',4.0,true,false,"hee hee")) << '\n';
 
     std::cout << '\n';
 }
