@@ -8,7 +8,7 @@
 
 #include "tenh/core.hpp"
 
-#include "tenh/implementation/diagonal2tensor.hpp"
+#include "tenh/implementation/scalar2tensor.hpp"
 
 namespace Tenh {
 
@@ -21,12 +21,12 @@ template <typename OnBasedVectorSpace_, typename Scalar_>
 struct Identity_f
 {
 private:
-    typedef Diagonal2TensorProductOfBasedVectorSpaces_c<OnBasedVectorSpace_,
-                                                        typename DualOf_f<OnBasedVectorSpace_>::T> Diagonal2Tensor;
-    typedef typename ComponentGenerator_Constant_f<Scalar_,DimensionOf_f<Diagonal2Tensor>::V,1>::T ComponentGenerator;
+    typedef Scalar2TensorProductOfBasedVectorSpaces_c<OnBasedVectorSpace_,
+                                                      typename DualOf_f<OnBasedVectorSpace_>::T> Scalar2Tensor;
+    typedef typename ComponentGenerator_Constant_f<Scalar_,DimensionOf_f<Scalar2Tensor>::V,1>::T ComponentGenerator;
     Identity_f ();
 public:
-    typedef ImplementationOf_t<Diagonal2Tensor,Scalar_,UseProceduralArray_t<ComponentGenerator> > T;
+    typedef ImplementationOf_t<Scalar2Tensor,Scalar_,UseProceduralArray_t<ComponentGenerator> > T;
 };
 
 } // end of namespace Tenh
