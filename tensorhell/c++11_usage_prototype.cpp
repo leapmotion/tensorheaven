@@ -270,7 +270,7 @@ struct TypeStringOfVariadicTemplate_t<VERBOSE_,Head_,Body_...>
     static std::string eval () { return TypeStringOf_t<Head_,VERBOSE_>::eval() + ',' + TypeStringOfVariadicTemplate_t<VERBOSE_,Body_...>::eval(); }
 };
 
-template <typename... Ts_> struct Typle_t;
+template <typename... Ts_> struct Typle_t; // tuple of types.  typle.
 
 typedef Typle_t<> EmptyTyple; // is there any point in this anymore, instead of just using Typle_t<> ?
 
@@ -334,7 +334,7 @@ struct Tuple_t<Typle_t<Head_,Body_...>>
 
     void print_guts (std::ostream &out) const
     {
-        out << m_head << ',';
+        out << m_head << ", ";
         m_body_tuple.print_guts(out);
     }
 
@@ -351,7 +351,6 @@ Tuple_t<Typle_t<Ts_...>> tuple (Ts_... ts)
 template <typename Typle_>
 std::ostream &operator << (std::ostream &out, Tuple_t<Typle_> const &t)
 {
-//     out << "Tuple_t<" << type_string_of<Typle_>() << ">(";
     out << '(';
     t.print_guts(out);
     return out << ')';
