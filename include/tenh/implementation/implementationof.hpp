@@ -113,8 +113,8 @@ struct IsImplementationOf_f<ImplementationOf_t<Concept_,Scalar_,UseArrayType_,De
 
 // because there will be so many template specializations of ImplementationOf_t, all
 // with what would be identical type_as_string functions, just do it via metafunction once.
-template <typename Concept_, typename Scalar_, typename UseArrayType_, typename Derived_>
-struct TypeStringOf_t<ImplementationOf_t<Concept_,Scalar_,UseArrayType_,Derived_> >
+template <typename Concept_, typename Scalar_, typename UseArrayType_, typename Derived_, bool VERBOSE_>
+struct TypeStringOf_t<ImplementationOf_t<Concept_,Scalar_,UseArrayType_,Derived_>,VERBOSE_>
 {
     static std::string eval ()
     {

@@ -517,6 +517,22 @@
   or perhaps the embed/project stuff could happen before it.
 
 
+###Notes for terse type strings
+- The goal is to provide human-readable (i.e. non-template-notation) strings for the
+  many types in tenh as compactly as possible, especially the conceptual types.
+- Things that represent mathematical objects (e.g. vector spaces, tensor products)
+  should be written in a notation not dissimilar from standard mathematical notation.
+  The functions that generate instances of the various conceptual types would be
+  a reasonable basis for the notation, and furthermore, it would be ideal to have
+  those two be identical.
+- Perhaps there should also be a "latex string" for the mathematical types.
+- Perhaps the terse type strings don't need to uniquely identify the types.
+- Which types need to have such a string?
+    * All _c types
+    * All _t types
+- by default the terse string will be the same as the verbose (i.e. existing) type string
+
+
 ###Notes for [probable] upgrade to C++11 (to happen after "version 1.0" is reached)
 - TODO: look into C++11 support for embedded (and other) compilers that we might have to
   deal with in the future.

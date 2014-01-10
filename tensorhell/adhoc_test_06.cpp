@@ -8,11 +8,11 @@ void test_pretty_typestringof ()
 {
     typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,Basis_c<X> > BasedVectorSpace;
     typedef TensorPowerOfBasedVectorSpace_f<4,BasedVectorSpace>::T TensorPower;
-    std::cout << '\n' << Pretty<TypeStringOf_t<TensorPower> >() << '\n';
-    std::cout << '\n' << Pretty<TypeStringOf_t<TensorPower>,0>() << '\n';
-    std::cout << '\n' << Pretty<TypeStringOf_t<TensorPower>,1>() << '\n';
-    std::cout << '\n' << Pretty<TypeStringOf_t<TensorPower>,2>() << '\n';
-    std::cout << '\n' << Pretty<TypeStringOf_t<TensorPower>,3>() << '\n';
+    std::cout << '\n' << Pretty<TypeStringOf_t<TensorPower,VERBOSE> >() << '\n';
+    std::cout << '\n' << Pretty<TypeStringOf_t<TensorPower,VERBOSE>,0>() << '\n';
+    std::cout << '\n' << Pretty<TypeStringOf_t<TensorPower,VERBOSE>,1>() << '\n';
+    std::cout << '\n' << Pretty<TypeStringOf_t<TensorPower,VERBOSE>,2>() << '\n';
+    std::cout << '\n' << Pretty<TypeStringOf_t<TensorPower,VERBOSE>,3>() << '\n';
     std::cout << '\n';
     std::cout << "shortify_depth = 0\n";
     std::cout << "OSTRICH 0 "; print_pretty_typestring(std::cout, "Blah<x", 0);          std::cout << '\n' << '\n';

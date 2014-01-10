@@ -127,7 +127,7 @@ template <typename Domain_,
           typename Scalar_,
           typename EmbeddingId_,
           bool ENABLE_EXCEPTIONS_>
-struct TypeStringOf_t<LinearEmbedding_c<Domain_,Codomain_,Scalar_,EmbeddingId_,ENABLE_EXCEPTIONS_> >
+struct TypeStringOf_t<LinearEmbedding_c<Domain_,Codomain_,Scalar_,EmbeddingId_,ENABLE_EXCEPTIONS_>,VERBOSE>
 {
     static std::string eval ()
     {

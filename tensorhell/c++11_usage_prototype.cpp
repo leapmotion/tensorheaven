@@ -261,13 +261,13 @@ struct TypeStringOfVariadicTemplate_t<>
 template <typename Head_>
 struct TypeStringOfVariadicTemplate_t<Head_>
 {
-    static std::string eval () { return TypeStringOf_t<Head_>::eval(); }
+    static std::string eval () { return TypeStringOf_t<Head_,VERBOSE>::eval(); }
 };
 
 template <typename Head_, typename... Body_>
 struct TypeStringOfVariadicTemplate_t<Head_,Body_...>
 {
-    static std::string eval () { return TypeStringOf_t<Head_>::eval() + ',' + TypeStringOfVariadicTemplate_t<Body_...>::eval(); }
+    static std::string eval () { return TypeStringOf_t<Head_,VERBOSE>::eval() + ',' + TypeStringOfVariadicTemplate_t<Body_...>::eval(); }
 };
 
 template <typename... Ts_> struct Typle_t;

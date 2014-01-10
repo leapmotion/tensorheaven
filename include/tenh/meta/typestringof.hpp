@@ -17,6 +17,9 @@
 
 namespace Tenh {
 
+static bool const VERBOSE = true;
+static bool const TERSE = false;
+
 /// @struct TypeStringOf_t typestringof.hpp "tenh/meta/typestringof.hpp"
 /// @brief Template Meta Function to obtain a string from a typename.
 /// @details TypeStringOf_t requires that any user-defined types that it may be passed have a static member
@@ -24,56 +27,56 @@ namespace Tenh {
 /// @tparam T The type to generate a string for.
 
 // by default we call the type's type_as_string static member.
-template <typename T> struct TypeStringOf_t { static std::string eval () { return T::type_as_string(); } };
+template <typename T, bool VERBOSE_> struct TypeStringOf_t { static std::string eval () { return T::type_as_string(); } };
 
 /// @cond false
 // template overloads to accomodate built in types and types in the std namespace.
-template <> struct TypeStringOf_t<Sint8> { static std::string eval () { return "Sint8"; } };
-template <> struct TypeStringOf_t<Uint8> { static std::string eval () { return "Uint8"; } };
-template <> struct TypeStringOf_t<Sint16> { static std::string eval () { return "Sint16"; } };
-template <> struct TypeStringOf_t<Uint16> { static std::string eval () { return "Uint16"; } };
-template <> struct TypeStringOf_t<Sint32> { static std::string eval () { return "Sint32"; } };
-template <> struct TypeStringOf_t<Uint32> { static std::string eval () { return "Uint32"; } };
-template <> struct TypeStringOf_t<Sint64> { static std::string eval () { return "Sint64"; } };
-template <> struct TypeStringOf_t<Uint64> { static std::string eval () { return "Uint64"; } };
-template <> struct TypeStringOf_t<bool> { static std::string eval () { return "bool"; } };
-template <> struct TypeStringOf_t<float> { static std::string eval () { return "float"; } };
-template <> struct TypeStringOf_t<double> { static std::string eval () { return "double"; } };
-template <> struct TypeStringOf_t<long double> { static std::string eval () { return "long double"; } };
-template <> struct TypeStringOf_t<std::string> { static std::string eval () { return "std::string"; } };
-template <typename T>
-struct TypeStringOf_t<std::complex<T> >
+template <bool VERBOSE_> struct TypeStringOf_t<Sint8,VERBOSE_> { static std::string eval () { return "Sint8"; } };
+template <bool VERBOSE_> struct TypeStringOf_t<Uint8,VERBOSE_> { static std::string eval () { return "Uint8"; } };
+template <bool VERBOSE_> struct TypeStringOf_t<Sint16,VERBOSE_> { static std::string eval () { return "Sint16"; } };
+template <bool VERBOSE_> struct TypeStringOf_t<Uint16,VERBOSE_> { static std::string eval () { return "Uint16"; } };
+template <bool VERBOSE_> struct TypeStringOf_t<Sint32,VERBOSE_> { static std::string eval () { return "Sint32"; } };
+template <bool VERBOSE_> struct TypeStringOf_t<Uint32,VERBOSE_> { static std::string eval () { return "Uint32"; } };
+template <bool VERBOSE_> struct TypeStringOf_t<Sint64,VERBOSE_> { static std::string eval () { return "Sint64"; } };
+template <bool VERBOSE_> struct TypeStringOf_t<Uint64,VERBOSE_> { static std::string eval () { return "Uint64"; } };
+template <bool VERBOSE_> struct TypeStringOf_t<bool,VERBOSE_> { static std::string eval () { return "bool"; } };
+template <bool VERBOSE_> struct TypeStringOf_t<float,VERBOSE_> { static std::string eval () { return "float"; } };
+template <bool VERBOSE_> struct TypeStringOf_t<double,VERBOSE_> { static std::string eval () { return "double"; } };
+template <bool VERBOSE_> struct TypeStringOf_t<long double,VERBOSE_> { static std::string eval () { return "long double"; } };
+template <bool VERBOSE_> struct TypeStringOf_t<std::string,VERBOSE_> { static std::string eval () { return "std::string"; } };
+template <typename T, bool VERBOSE_>
+struct TypeStringOf_t<std::complex<T>,VERBOSE_>
 {
-    static std::string eval () { return "complex<" + TypeStringOf_t<T>::eval() + '>'; }
+    static std::string eval () { return "complex<" + TypeStringOf_t<T,VERBOSE_>::eval() + '>'; }
 };
 
-template <typename T_>
-struct TypeStringOf_t<Type_t<T_> >
+template <typename T_, bool VERBOSE_>
+struct TypeStringOf_t<Type_t<T_>,VERBOSE_>
 {
-    static std::string eval () { return "Type_t<" + TypeStringOf_t<T_>::eval() + '>'; }
+    static std::string eval () { return "Type_t<" + TypeStringOf_t<T_,VERBOSE_>::eval() + '>'; }
 };
 
-template <typename T_, T_ VALUE_>
-struct TypeStringOf_t<Value_t<T_,VALUE_> >
+template <typename T_, T_ VALUE_, bool VERBOSE_>
+struct TypeStringOf_t<Value_t<T_,VALUE_>,VERBOSE_>
 {
-    static std::string eval () { return "Value_t<" + TypeStringOf_t<T_>::eval() + ',' + FORMAT(VALUE_) + '>'; }
+    static std::string eval () { return "Value_t<" + TypeStringOf_t<T_,VERBOSE_>::eval() + ',' + FORMAT(VALUE_) + '>'; }
 };
 
-template <> struct TypeStringOf_t<NullValue> { static std::string eval () { return "NullValue"; } };
+template <bool VERBOSE_> struct TypeStringOf_t<NullValue,VERBOSE_> { static std::string eval () { return "NullValue"; } };
 /// @endcond
 
 /// @brief Overload for operator<< to stream objects of type TypeStringOf_t
-template <typename T_>
-std::ostream &operator << (std::ostream &out, TypeStringOf_t<T_> const &)
+template <typename T_, bool VERBOSE_>
+std::ostream &operator << (std::ostream &out, TypeStringOf_t<T_,VERBOSE_> const &)
 {
-    return out << TypeStringOf_t<T_>::eval();
+    return out << TypeStringOf_t<T_,VERBOSE_>::eval();
 }
 
 /// @brief Returns the type string of the given type instance.
 template <typename T_>
 std::string type_string_of (T_ const &)
 {
-    return TypeStringOf_t<T_>::eval();
+    return TypeStringOf_t<T_,VERBOSE>::eval();
 }
 
 /// @brief Returns the type string of the given explicitly specified type T_.
@@ -81,7 +84,7 @@ std::string type_string_of (T_ const &)
 template <typename T_>
 std::string type_string_of ()
 {
-    return TypeStringOf_t<T_>::eval();
+    return TypeStringOf_t<T_,VERBOSE>::eval();
 }
 
 /// @struct Pretty typestringof.hpp "tenh/meta/typestringof.hpp"
@@ -185,10 +188,10 @@ inline void print_pretty_typestring (std::ostream &out,
 }
 
 /// @brief Overload for operator<< to stream objects of type Pretty
-template <typename T_, Uint32 SHORTIFY_DEPTH_>
-std::ostream &operator << (std::ostream &out, Pretty<TypeStringOf_t<T_>,SHORTIFY_DEPTH_> const &)
+template <typename T_, bool VERBOSE_, Uint32 SHORTIFY_DEPTH_>
+std::ostream &operator << (std::ostream &out, Pretty<TypeStringOf_t<T_,VERBOSE_>,SHORTIFY_DEPTH_> const &)
 {
-    print_pretty_typestring(out, TypeStringOf_t<T_>::eval(), SHORTIFY_DEPTH_);
+    print_pretty_typestring(out, TypeStringOf_t<T_,VERBOSE_>::eval(), SHORTIFY_DEPTH_);
     return out;
 }
 
@@ -197,7 +200,7 @@ template <Uint32 SHORTIFY_DEPTH_, typename T_>
 std::string pretty_type_string_of (T_ const &)
 {
     std::ostringstream out;
-    print_pretty_typestring(out, TypeStringOf_t<T_>::eval(), SHORTIFY_DEPTH_);
+    print_pretty_typestring(out, TypeStringOf_t<T_,VERBOSE>::eval(), SHORTIFY_DEPTH_);
     return out.str();
 }
 
@@ -207,7 +210,7 @@ template <Uint32 SHORTIFY_DEPTH_, typename T_>
 std::string pretty_type_string_of ()
 {
     std::ostringstream out;
-    print_pretty_typestring(out, TypeStringOf_t<T_>::eval(), SHORTIFY_DEPTH_);
+    print_pretty_typestring(out, TypeStringOf_t<T_,VERBOSE>::eval(), SHORTIFY_DEPTH_);
     return out.str();
 }
 

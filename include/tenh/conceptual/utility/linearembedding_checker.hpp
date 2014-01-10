@@ -24,20 +24,20 @@ namespace Tenh {
 // forward declaration of DimensionOf_f metafunction
 template <typename Concept_> struct DimensionOf_f;
 
-template <typename Domain_, typename Codomain_, typename Compare_, typename Allocator_>
-struct TypeStringOf_t<std::map<Domain_,Codomain_,Compare_,Allocator_> >
+template <typename Domain_, typename Codomain_, typename Compare_, typename Allocator_, bool VERBOSE_>
+struct TypeStringOf_t<std::map<Domain_,Codomain_,Compare_,Allocator_>,VERBOSE_>
 {
     static std::string eval () { return "std::map<" + type_string_of<Domain_>() + ',' + type_string_of<Codomain_>() + '>'; }
 };
 
-template <typename Element_, typename Compare_, typename Allocator_>
-struct TypeStringOf_t<std::set<Element_,Compare_,Allocator_> >
+template <typename Element_, typename Compare_, typename Allocator_, bool VERBOSE_>
+struct TypeStringOf_t<std::set<Element_,Compare_,Allocator_>,VERBOSE_>
 {
     static std::string eval () { return "std::set<" + type_string_of<Element_>() + '>'; }
 };
 
-template <typename Element_, typename Allocator_>
-struct TypeStringOf_t<std::vector<Element_,Allocator_> >
+template <typename Element_, typename Allocator_, bool VERBOSE_>
+struct TypeStringOf_t<std::vector<Element_,Allocator_>,VERBOSE_>
 {
     static std::string eval () { return "std::vector<" + type_string_of<Element_>() + '>'; }
 };

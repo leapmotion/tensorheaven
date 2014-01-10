@@ -214,11 +214,11 @@ void add_parent_concept_type_list_to_graph_recursive (
     Graph &g)
 {
     // add the parent nodes and edges connecting concept to them
-    Graph::Node concept_node(FORMAT((Pretty<TypeStringOf_t<Concept_>,SHORTIFY_DEPTH_>())),
-                             FORMAT((Pretty<TypeStringOf_t<Concept_>,0>())));
+    Graph::Node concept_node(FORMAT((Pretty<TypeStringOf_t<Concept_,VERBOSE>,SHORTIFY_DEPTH_>())),
+                             FORMAT((Pretty<TypeStringOf_t<Concept_,VERBOSE>,0>())));
     assert(g.nodes().find(concept_node) != g.nodes().end());
-    Graph::Node parent_node(FORMAT((Pretty<TypeStringOf_t<HeadType_>,SHORTIFY_DEPTH_>())),
-                            FORMAT((Pretty<TypeStringOf_t<HeadType_>,0>())));
+    Graph::Node parent_node(FORMAT((Pretty<TypeStringOf_t<HeadType_,VERBOSE>,SHORTIFY_DEPTH_>())),
+                            FORMAT((Pretty<TypeStringOf_t<HeadType_,VERBOSE>,0>())));
     g.add_node(parent_node);
     g.add_edge(concept_node, parent_node);
     add_parent_concept_type_list_to_graph_recursive<SHORTIFY_DEPTH_>(concept, BodyTypeList_(), g);
@@ -230,8 +230,8 @@ void add_parent_concept_type_list_to_graph_recursive (
 template <Uint32 SHORTIFY_DEPTH_, typename Concept_>
 void add_concept_hierarchy_to_graph (Concept_ const &root, Graph &g)
 {
-    Graph::Node n(FORMAT((Pretty<TypeStringOf_t<Concept_>,SHORTIFY_DEPTH_>())),
-                  FORMAT((Pretty<TypeStringOf_t<Concept_>,0>())));
+    Graph::Node n(FORMAT((Pretty<TypeStringOf_t<Concept_,VERBOSE>,SHORTIFY_DEPTH_>())),
+                  FORMAT((Pretty<TypeStringOf_t<Concept_,VERBOSE>,0>())));
     g.add_node(n);
     add_parent_concept_type_list_to_graph_recursive<SHORTIFY_DEPTH_>(root, typename Concept_::ParentTypeList(), g);
 }
