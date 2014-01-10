@@ -513,9 +513,9 @@ TensorProductOfBasedVectorSpaces_c<TypeList_t<TensorProductOfBasedVectorSpaces_c
                                               TypeList_t<TensorProductOfBasedVectorSpaces_c<RhsFactorTypeList_> > > >();
 }
 
+// tensor power of a bvs -- use as tensor<3>(bvs)
 template <Uint32 ORDER_, typename Factor_>
-typename EnableIf_f<IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_),
-                    typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T>::T tensor (Factor_ const &)
+typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T tensor (Factor_ const &)
 {
     return typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T();
 }
