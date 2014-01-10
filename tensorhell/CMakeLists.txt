@@ -28,8 +28,8 @@ include_directories(${tensorheaven_test_SOURCE_DIR}/include ${EIGEN_INCLUDE_DIR}
 set(BASE_MSVC_FLAGS /arch:SSE2)
 # misnomer: The above MSVC flags are not used in Debug mode
 set(PRODUCTION_MSVC_FLAGS /GL /Ox /Oi /Ot /Ob2 )
-set(BASE_GCC_FLAGS -Wall -Werror -Wno-unused-local-typedefs -Wno-attributes ) #-msse2 -Wno-reorder -Wno-strict-aliasing -Wno-missing-braces -Wno-uninitialized -Wno-sequence-point )
-set(BASE_CLANG_FLAGS -Wall -Werror -Wno-local-type-template-args -Wno-tautological-compare ) #-stdlib=libc++ -Wall -Wno-deprecated-declarations -Wno-address-of-temporary -Wno-dynamic-class-memaccess -Wno-overloaded-virtual -Wno-missing-braces -Wno-unneeded-internal-declaration -Wno-reorder -Wno-local-type-template-args )
+set(BASE_GCC_FLAGS -std=c++11 -Wall -Werror -Wno-unused-local-typedefs -Wno-attributes ) #-msse2 -Wno-reorder -Wno-strict-aliasing -Wno-missing-braces -Wno-uninitialized -Wno-sequence-point )
+set(BASE_CLANG_FLAGS -std=c++11 -stdlib=libc++ -Wall -Werror -Wno-local-type-template-args -Wno-tautological-compare ) #-stdlib=libc++ -Wall -Wno-deprecated-declarations -Wno-address-of-temporary -Wno-dynamic-class-memaccess -Wno-overloaded-virtual -Wno-missing-braces -Wno-unneeded-internal-declaration -Wno-reorder -Wno-local-type-template-args )
 set(PRODUCTION_GCC_FLAGS "")
 if(MSVC)
   set(COMPILER_DEBUG_FLAGS /Zi /D_DEBUG /MDd /Od /fp:except /D_CRT_SECURE_NO_WARNINGS /D_SCL_SECURE_NO_WARNINGS=1 /RTC1 /MP)
