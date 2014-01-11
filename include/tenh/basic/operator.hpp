@@ -117,7 +117,7 @@ public:
     }
     // TODO: a "no alias" version of operator= -- this probably requires adding a no_alias() method to this class.
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "Operator<" + type_string_of<Domain_>() + ','
                            + type_string_of<Codomain_>() + ','

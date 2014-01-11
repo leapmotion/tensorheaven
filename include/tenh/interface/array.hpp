@@ -57,7 +57,7 @@ struct Array_i
         out << '}';
     }
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "Array_i<" + type_string_of<Derived_>() + ','
                           + type_string_of<Component_>() + ','

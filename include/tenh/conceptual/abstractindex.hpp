@@ -48,7 +48,7 @@ public:
 
     static AbstractIndexSymbol const SYMBOL = SYMBOL_;
 
-    static std::string type_as_string () { return std::string("AbstractIndex_c<") + abstract_index_symbol_as_string(SYMBOL_) + '>'; }
+    static std::string type_as_string (bool verbose) { return std::string("AbstractIndex_c<") + abstract_index_symbol_as_string(SYMBOL_) + '>'; }
 };
 
 template <AbstractIndexSymbol SYMBOL_>

@@ -23,11 +23,12 @@ static bool const TERSE = false;
 /// @struct TypeStringOf_t typestringof.hpp "tenh/meta/typestringof.hpp"
 /// @brief Template Meta Function to obtain a string from a typename.
 /// @details TypeStringOf_t requires that any user-defined types that it may be passed have a static member
-/// function `type_as_string()` which returns a `std::string` containing the name of that type.
+/// function `type_as_string(bool verbose)` which returns a `std::string` containing the name of that type,
+/// where the verbose parameter indicates if it should uniquely specify the type, or be a terse representation.
 /// @tparam T The type to generate a string for.
 
 // by default we call the type's type_as_string static member.
-template <typename T, bool VERBOSE_> struct TypeStringOf_t { static std::string eval () { return T::type_as_string(); } };
+template <typename T_, bool VERBOSE_> struct TypeStringOf_t { static std::string eval () { return T_::type_as_string(VERBOSE_); } };
 
 /// @cond false
 // template overloads to accomodate built in types and types in the std namespace.

@@ -33,7 +33,7 @@ public:
     typedef SummandTypeList_ SummandTypeList;
     static Uint32 const SUMMAND_COUNT = SummandTypeList::LENGTH;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "DirectSum_c<" + type_string_of<SummandTypeList_>() + '>';
     }
@@ -158,7 +158,7 @@ public:
 
     typedef typename As_VectorSpace::Id Id;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "DirectSumOfVectorSpaces_c<" + type_string_of<SummandTypeList_>() + '>';
     }
@@ -219,7 +219,7 @@ public:
 
     typedef typename As_Basis::Id Id;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "DirectSumOfBases_c<" + type_string_of<SummandTypeList_>() + '>';
     }
@@ -282,7 +282,7 @@ public:
 
     typedef typename As_BasedVectorSpace::Id Id;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "BasedDirectSumOfVectorSpaces_c<" + type_string_of<DirectSumOfVectorSpaces_>() + ','
                                                      + type_string_of<Basis_>() + '>';
@@ -346,7 +346,7 @@ public:
 
     typedef typename As_BasedDirectSumOfVectorSpaces::Id Id;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "DirectSumOfBasedVectorSpaces_c<" + type_string_of<SummandTypeList_>() + '>';
     }

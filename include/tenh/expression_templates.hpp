@@ -100,7 +100,7 @@ struct ExpressionTemplate_IndexedObject_t
 
     Object const &object () const { return m_object; }
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "ExpressionTemplate_IndexedObject_t<" + type_string_of<Object>() + ','
                                                      + type_string_of<FactorTypeList>() + ','
@@ -298,7 +298,7 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList
 
     Object &object () const { return m_object; }
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "ExpressionTemplate_IndexedObject_t<" + type_string_of<Object>() + ','
                                                      + type_string_of<FactorTypeList>() + ','
@@ -397,7 +397,7 @@ public:
     LeftOperand const &left_operand () const { return m_left_operand; }
     RightOperand const &right_operand () const { return m_right_operand; }
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "ExpressionTemplate_Addition_t<" + type_string_of<LeftOperand>() + ','
                                                 + type_string_of<RightOperand>() + ','
@@ -485,7 +485,7 @@ struct ExpressionTemplate_ScalarMultiplication_t
     Operand const &operand () const { return m_operand; }
     Scalar const &scalar_operand () const { return m_scalar_operand; }
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "ExpressionTemplate_ScalarMultiplication_t<" + type_string_of<Operand>() + ','
                                                             + type_string_of<Scalar>() + ','
@@ -581,7 +581,7 @@ struct ExpressionTemplate_Multiplication_t
     LeftOperand const &left_operand () const { return m_left_operand; }
     RightOperand const &right_operand () const { return m_right_operand; }
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "ExpressionTemplate_Multiplication_t<" + type_string_of<LeftOperand>() + ','
                                                       + type_string_of<RightOperand>() + '>';
@@ -668,7 +668,7 @@ public:
 
     Operand const &operand () const { return m_bundler.operand(); }
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "ExpressionTemplate_IndexBundle_t<" + type_string_of<Operand>() + ','
                                                    + type_string_of<BundleAbstractIndexTypeList>() + ','
@@ -765,7 +765,7 @@ public:
 
     Operand const &operand () const { return m_splitter.operand(); }
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "ExpressionTemplate_IndexSplit_t<" + type_string_of<Operand>() + ','
                                                   + type_string_of<SourceAbstractIndexType>() + ','
@@ -858,7 +858,7 @@ public:
 
     Operand const &operand () const { return m_splitter.operand(); }
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "ExpressionTemplate_IndexSplitToIndex_t<" + type_string_of<Operand>() + ','
                                                          + type_string_of<SourceAbstractIndexType>() + ','
@@ -954,7 +954,7 @@ public:
 
     Operand_ const &operand () const { return m_embedder.operand(); }
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "ExpressionTemplate_IndexEmbed_t<" + type_string_of<Operand_>() + ','
                                                   + type_string_of<SourceAbstractIndexType_>() + ','
@@ -1056,7 +1056,7 @@ public:
 
     Operand_ const &operand () const { return m_coembedder.operand(); }
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "ExpressionTemplate_IndexCoembed_t<" + type_string_of<Operand_>() + ','
                                                     + type_string_of<SourceAbstractIndexType_>() + ','

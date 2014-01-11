@@ -20,7 +20,7 @@ struct Field_c
 
 	typedef Id_ Id;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "Field_c<" + type_string_of<Id_>() + '>';
     }
@@ -58,7 +58,7 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Field);
 
 struct RealNumbers
 {
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "RealNumbers";
     }

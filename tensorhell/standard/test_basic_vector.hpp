@@ -30,7 +30,7 @@ namespace Test {
 namespace Basic {
 namespace Vector {
 
-struct X { static std::string type_as_string () { return "X"; } };
+struct X { static std::string type_as_string (bool verbose) { return "X"; } };
 
 template <typename Vector_>
 void constructor_without_initialization (Context const &context)

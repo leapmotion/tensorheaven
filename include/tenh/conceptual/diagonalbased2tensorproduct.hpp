@@ -31,7 +31,7 @@ struct Diagonal2TensorProduct_c
     typedef Factor0_ Factor0;
     typedef Factor1_ Factor1;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "Diagonal2TensorProduct_c<" + type_string_of<Factor0_>() + ',' + type_string_of<Factor1_>() + '>';
     }
@@ -88,7 +88,7 @@ public:
     typedef Factor0_ Factor0;
     typedef Factor1_ Factor1;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "Diagonal2TensorProductOfBases_c<" + type_string_of<Factor0_>() + ',' + type_string_of<Factor1_>() + '>';
     }
@@ -155,7 +155,7 @@ public:
     typedef Factor0_ Factor0;
     typedef Factor1_ Factor1;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "Diagonal2TensorProductOfBasedVectorSpaces_c<" + type_string_of<Factor0_>() + ',' + type_string_of<Factor1_>() + '>';
     }

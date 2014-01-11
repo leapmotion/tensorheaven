@@ -31,7 +31,7 @@ struct VectorSpace_c
     static Uint32 const DIMENSION = DIMENSION_;
     typedef Id_ Id;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "VectorSpace_c<" + type_string_of<ScalarField_>() + ','
                                 + FORMAT(DIMENSION_) + ','
@@ -148,7 +148,7 @@ public:
     typedef typename As_VectorSpace::Id Id;
     typedef Basis_ Basis;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "BasedVectorSpace_c<" + type_string_of<VectorSpace_>() + ',' + type_string_of<Basis_>() + '>';
     }
@@ -373,7 +373,7 @@ BasedVectorSpace_c<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,OrthonormalBasis_c
 // ///////////////////////////////////////////////////////////////////////////
 
 // id for identity embedding
-struct IdentityEmbedding { static std::string type_as_string () { return "IdentityEmbedding"; } };
+struct IdentityEmbedding { static std::string type_as_string (bool verbose) { return "IdentityEmbedding"; } };
 
 // canonical identity embedding
 template <typename OnBasedVectorSpace_, typename Scalar_, bool ENABLE_EXCEPTIONS_>

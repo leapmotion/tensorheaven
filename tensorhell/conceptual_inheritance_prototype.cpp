@@ -21,7 +21,7 @@ struct EmptyMap
     typedef EmptyTypeList DomainElementTypeList;
     typedef EmptyTypeList CodomainElementTypeList;
 
-    static std::string type_as_string () { return "EmptyMap"; }
+    static std::string type_as_string (bool verbose) { return "EmptyMap"; }
 };
 
 // recursive definition of Map_t
@@ -43,7 +43,7 @@ public:
     // make sure that DomainElementTypeList contains no duplicates (necessary for the map to be well-defined)
     enum { __ = Assert<(ElementsHavingMultiplicity_t<DomainElementTypeList,1>::T::LENGTH == DomainElementTypeList::LENGTH)>::V };
 
-    static std::string type_as_string () { return "Map_t( " + domain_codomain_element_pairs_as_string() + " )"; }
+    static std::string type_as_string (bool verbose) { return "Map_t( " + domain_codomain_element_pairs_as_string() + " )"; }
     static std::string domain_codomain_element_pairs_as_string ()
     {
         std::string retval('(' + type_string_of<DomainElement>() + " |-> " + type_string_of<CodomainElement>() + ')');
@@ -62,7 +62,7 @@ struct Map_t<DomainElement,CodomainElement,EmptyMap>
     typedef TypeList_t<DomainElement> DomainElementTypeList;
     typedef TypeList_t<CodomainElement> CodomainElementTypeList;
 
-    static std::string type_as_string () { return "Map_t( " + domain_codomain_element_pairs_as_string() + " )"; }
+    static std::string type_as_string (bool verbose) { return "Map_t( " + domain_codomain_element_pairs_as_string() + " )"; }
     static std::string domain_codomain_element_pairs_as_string ()
     {
         return '(' + type_string_of<DomainElement>() + " |-> " + type_string_of<CodomainElement>() + ')';
@@ -184,7 +184,7 @@ labeling scheme on each structure.
 */
 
 // for creating domain types for StructureDisambiguationMap
-#define MAKE_ID_STRUCT(Name) struct Name { static std::string type_as_string () { return #Name; } }
+#define MAKE_ID_STRUCT(Name) struct Name { static std::string type_as_string (bool verbose) { return #Name; } }
 
 #define AS_NAMED_STRUCTURE(Concept,StructureName) EvalMap_t<TotalStructureDisambiguationMapOf_f<Concept>::T,StructureName>::T
 
@@ -333,7 +333,7 @@ struct Monoid_c
     typedef Operation_ Operation;
     static bool const IS_ABELIAN = IS_ABELIAN_;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "Monoid_c<" + type_string_of<Identity>() + ','
                            + type_string_of<Operation>() + ','
@@ -372,7 +372,7 @@ public:
     typedef Inversion_ Inversion;
     static bool const IS_ABELIAN = IS_ABELIAN_;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "Group_c<" + type_string_of<Identity>() + ','
                           + type_string_of<Operation>() + ','
@@ -424,7 +424,7 @@ public:
     typedef Multiplication_ Multiplication;
     static bool const IS_COMMUTATIVE = IS_COMMUTATIVE_;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "Ring_c<" + type_string_of<AdditiveIdentity>() + ','
                          + type_string_of<Addition>() + ','
@@ -488,7 +488,7 @@ public:
     typedef Multiplication_ Multiplication;
     typedef MultiplicativeInverse_ MultiplicativeInverse;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "Field_c<" + type_string_of<AdditiveIdentity>() + ','
                           + type_string_of<Addition>() + ','

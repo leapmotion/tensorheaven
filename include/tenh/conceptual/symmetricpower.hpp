@@ -29,7 +29,7 @@ struct SymmetricPower_c
     typedef Factor_ Factor;
     typedef typename UniformTypeListOfLength_t<ORDER_,Factor_>::T FactorTypeList;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "SymmetricPower_c<" + FORMAT(ORDER) + ',' + type_string_of<Factor>() + '>';
     }
@@ -78,7 +78,7 @@ public:
     typedef typename As_VectorSpace::Id Id;
     typedef Factor_ Factor;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "SymmetricPowerOfVectorSpace_c<" + FORMAT(ORDER_) + ',' + type_string_of<Factor>() + '>';
     }
@@ -127,7 +127,7 @@ public:
     typedef typename As_Basis::Id Id;
     typedef Factor_ Factor;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "SymmetricPowerOfBasis_c<" + FORMAT(ORDER) + ',' + type_string_of<Factor>() + '>';
     }
@@ -177,7 +177,7 @@ public:
 
     typedef typename As_BasedVectorSpace::Id Id;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "BasedSymmetricPowerOfVectorSpace_c<" + type_string_of<SymmetricPowerOfVectorSpace_>() + ','
                                                      + type_string_of<Basis_>() + '>';
@@ -236,7 +236,7 @@ public:
     typedef typename As_BasedSymmetricPowerOfVectorSpace::Id Id;
     typedef Factor_ Factor;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "SymmetricPowerOfBasedVectorSpace_c<" + FORMAT(ORDER_) + ',' + type_string_of<Factor_>() + '>';
     }

@@ -338,7 +338,7 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
         return ExpressionTemplate_Eval_t<Derived>(as_derived());
     }
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "ExpressionTemplate_i<" + type_string_of<Derived_>() + ','
                                        + type_string_of<Scalar_>() + ','

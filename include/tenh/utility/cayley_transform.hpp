@@ -62,7 +62,7 @@ namespace ComponentGeneratorEvaluator {
 
 } // end of namespace ComponentGeneratorEvaluator
 
-struct HatId { static std::string type_as_string () { return "Hat"; } };
+struct HatId { static std::string type_as_string (bool verbose) { return "Hat"; } };
 
 template <typename BasedVectorSpace_, typename Scalar_>
 struct HatTensor_f

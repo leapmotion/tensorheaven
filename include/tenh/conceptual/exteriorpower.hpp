@@ -30,7 +30,7 @@ struct ExteriorPower_c
     typedef Factor_ Factor;
     typedef typename UniformTypeListOfLength_t<ORDER_,Factor_>::T FactorTypeList;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "ExteriorPower_c<" + FORMAT(ORDER_) + ',' + type_string_of<Factor_>() + '>';
     }
@@ -80,7 +80,7 @@ public:
     typedef typename As_VectorSpace::Id Id;
     typedef Factor_ Factor;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "ExteriorPowerOfVectorSpace_c<" + FORMAT(ORDER_) + ',' + type_string_of<Factor_>() + '>';
     }
@@ -128,7 +128,7 @@ public:
     typedef typename As_Basis::Id Id;
     typedef Factor_ Factor;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "ExteriorPowerOfBasis_c<" + FORMAT(ORDER_) + ',' + type_string_of<Factor_>() + '>';
     }
@@ -178,7 +178,7 @@ public:
 
     typedef typename As_BasedVectorSpace::Id Id;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "BasedExteriorPowerOfVectorSpace_c<" + type_string_of<ExteriorPowerOfVectorSpace_>() + ','
                                                     + type_string_of<Basis_>() + '>';
@@ -226,7 +226,7 @@ public:
     typedef typename As_BasedExteriorPowerOfVectorSpace::Id Id;
     typedef Factor_ Factor;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "ExteriorPowerOfBasedVectorSpace_c<" + FORMAT(ORDER_) + ',' + type_string_of<Factor_>() + '>';
     }

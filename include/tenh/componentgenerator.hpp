@@ -30,7 +30,7 @@ struct ComponentGenerator_t
     typedef Component_ (*Evaluator)(ComponentIndex const &);
     static Evaluator const evaluate;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "ComponentGenerator_t<" + type_string_of<Component_>() + ','
                                        + FORMAT(COMPONENT_COUNT_) + ','
@@ -75,7 +75,7 @@ Component_ constant_component_generator_evaluator (ComponentIndex_t<COMPONENT_CO
 }
 
 template <Sint32 VALUE_>
-struct ComponentGenerator_Constant { static std::string type_as_string () { return "ComponentGenerator_Constant<" + FORMAT(VALUE_) + '>'; } };
+struct ComponentGenerator_Constant { static std::string type_as_string (bool verbose) { return "ComponentGenerator_Constant<" + FORMAT(VALUE_) + '>'; } };
 
 template <typename Component_, Uint32 COMPONENT_COUNT_, Sint32 VALUE_>
 struct ComponentGenerator_Constant_f
@@ -98,7 +98,7 @@ Component_ characteristic_component_generator_evaluator (ComponentIndex_t<COMPON
 }
 
 template <Uint32 INDEX_>
-struct ComponentGenerator_Characteristic { static std::string type_as_string () { return "ComponentGenerator_Characteristic<" + FORMAT(INDEX_) + '>'; } };
+struct ComponentGenerator_Characteristic { static std::string type_as_string (bool verbose) { return "ComponentGenerator_Characteristic<" + FORMAT(INDEX_) + '>'; } };
 
 template <typename Component_, Uint32 COMPONENT_COUNT_, Uint32 INDEX_>
 struct ComponentGenerator_Characteristic_f

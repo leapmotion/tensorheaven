@@ -20,7 +20,7 @@ struct Dual_c
 	typedef Primal_ Primal; // this probably doesn't really need to be here
 	typedef Primal Dual;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "Dual_c<" + type_string_of<Primal_>() + '>';
     }
@@ -64,7 +64,7 @@ private:
 
 /// @brief A type for use as a generic identifier, e.g. in a Basis_c.
 /// @headerfile core.hpp "tenh/core.hpp"
-struct SelfDualGeneric { static std::string type_as_string () { return "SelfDualGeneric"; } };
+struct SelfDualGeneric { static std::string type_as_string (bool verbose) { return "SelfDualGeneric"; } };
 
 // template specialization to make the SelfDualGeneric type self-dual.  Note that
 // Generic is NOT self-dual.

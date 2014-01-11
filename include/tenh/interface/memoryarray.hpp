@@ -83,7 +83,7 @@ struct MemoryArray_i
     Component_ const *pointer_to_allocation () const { return as_derived().pointer_to_allocation(); }
     QualifiedComponent *pointer_to_allocation () { return as_derived().pointer_to_allocation(); }
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "MemoryArray_i<" + type_string_of<Derived_>() + ','
                                 + type_string_of<Component_>() + ','

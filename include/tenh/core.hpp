@@ -34,7 +34,7 @@ private:
 
 public:
 
-    static std::string type_as_string () { return "NullType"; }
+    static std::string type_as_string (bool verbose) { return "NullType"; }
 };
 
 /// @brief For making the construction of something without initialization explicit and ugly.
@@ -58,7 +58,7 @@ struct FillWith_t
 
 	T_ const &value () const { return m; }
 
-	static std::string type_as_string () { return "FillWith_t<" + type_string_of<T_>() + '>'; }
+	static std::string type_as_string (bool verbose) { return "FillWith_t<" + type_string_of<T_>() + '>'; }
 
 private:
 
@@ -79,7 +79,7 @@ FillWith_t<T_> fill_with (T_ const &t)
 
 /// @brief A type for use as a generic identifier, e.g. in a Basis_c.
 /// @headerfile core.hpp "tenh/core.hpp"
-struct Generic { static std::string type_as_string () { return "Generic"; } };
+struct Generic { static std::string type_as_string (bool verbose) { return "Generic"; } };
 
 /// @brief For use when you want to return a const reference to various constants.
 ///  The default implementation is to provide a default-constructed static

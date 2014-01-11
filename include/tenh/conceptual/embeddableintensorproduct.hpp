@@ -26,7 +26,7 @@ struct EmbeddableInTensorProductOfVectorSpaces_c
 
     typedef Exactly_TensorProductOfVectorSpaces_ TensorProductOfVectorSpaces;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "EmbeddableInTensorProductOfVectorSpaces_c<" + type_string_of<Exactly_TensorProductOfVectorSpaces_>() + '>';
     }
@@ -81,7 +81,7 @@ public:
 
     typedef Exactly_TensorProductOfBasedVectorSpaces_ TensorProductOfBasedVectorSpaces;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "EmbeddableInTensorProductOfBasedVectorSpaces_c<" + type_string_of<Exactly_TensorProductOfBasedVectorSpaces_>() + ','
                                                                  + type_string_of<Exactly_TensorProductOfVectorSpaces_>() + '>';

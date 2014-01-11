@@ -19,9 +19,9 @@ namespace Test {
 namespace Basic {
 namespace Operator {
 
-struct X { static std::string type_as_string () { return "X"; } };
-struct Y { static std::string type_as_string () { return "Y"; } };
-struct Z { static std::string type_as_string () { return "Z"; } };
+struct X { static std::string type_as_string (bool verbose) { return "X"; } };
+struct Y { static std::string type_as_string (bool verbose) { return "Y"; } };
+struct Z { static std::string type_as_string (bool verbose) { return "Z"; } };
 
 template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
 void constructor_without_initialization (Context const &context)

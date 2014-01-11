@@ -248,7 +248,7 @@ struct Vector_i
     static Scalar scalar_factor_for_component (MultiIndex const &m) { return Scalar(1); }
     static ComponentIndex vector_index_of (MultiIndex const &m) { return m.head(); }
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "Vector_i<" + type_string_of<Derived>() + ','
                            + type_string_of<Scalar>() + ','

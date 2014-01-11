@@ -27,7 +27,7 @@ template <typename BasedVectorSpace_, typename InnerProductId_, typename Scalar_
 // ///////////////////////////////////////////////////////////////////////////
 
 // corresponds to the identity matrix
-struct StandardInnerProduct { static std::string type_as_string () { return "StandardInnerProduct"; } };
+struct StandardInnerProduct { static std::string type_as_string (bool verbose) { return "StandardInnerProduct"; } };
 
 // template specialization for standard inner product on a based vector space having orthonormal basis
 template <typename VectorSpace_, typename OrthonormalBasisId_, typename Scalar_>

@@ -76,7 +76,7 @@ namespace Tenh {
 //     functions required by embed.
 
 // id for when there is a canonical embedding of one space into another -- this will be the default
-struct NaturalEmbedding { static std::string type_as_string () { return "NaturalEmbedding"; } };
+struct NaturalEmbedding { static std::string type_as_string (bool verbose) { return "NaturalEmbedding"; } };
 
 static bool const ENABLE_EXCEPTIONS = true;
 static bool const DISABLE_EXCEPTIONS = false;

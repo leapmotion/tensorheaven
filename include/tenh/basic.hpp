@@ -95,7 +95,7 @@ public:
 
     using Parent_Vector::operator =;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "Vec<" + FORMAT(DIMENSION_) + ','
                       + type_string_of<Scalar_>() + ','
@@ -214,7 +214,7 @@ public:
 
     using Parent_Operator::operator =;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "Op<" + FORMAT(CODOMAIN_DIMENSION_) + ','
                      + FORMAT(DOMAIN_DIMENSION_) + ','

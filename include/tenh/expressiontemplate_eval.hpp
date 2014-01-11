@@ -101,7 +101,7 @@ struct ExpressionTemplate_Eval_t
 
     Operand const &operand () const { return m_operand; }
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "ExpressionTemplate_Eval_t<" + type_string_of<Operand>() + '>';
     }

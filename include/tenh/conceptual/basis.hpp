@@ -24,7 +24,7 @@ struct Basis_c
 
     typedef Id_ Id;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "Basis_c<" + type_string_of<Id_>() + '>';
     }
@@ -75,7 +75,7 @@ struct OrthonormalBasis_c
 
     typedef Id_ Id;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "OrthonormalBasis_c<" + type_string_of<Id_>() + '>';
     }

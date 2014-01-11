@@ -530,7 +530,8 @@
 - Which types need to have such a string?
     * All _c types
     * All _t types
-- by default the terse string will be the same as the verbose (i.e. existing) type string
+- By default the terse string will be the same as the verbose (i.e. existing) type string
+- In strings that require parentheses, the goal should be to use the minimal amount.
 
 
 ###Notes for [probable] upgrade to C++11 (to happen after "version 1.0" is reached)

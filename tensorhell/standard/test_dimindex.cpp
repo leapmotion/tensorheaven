@@ -91,14 +91,14 @@ void test_reindexed (Context const &context)
 
     // ensure that the reindexed<...>() function works on DimIndex_t types, using a
     // hacky, but effective, way to compare them (via type_as_string).
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(Tenh::DimIndex_t<'i',10>())).type_as_string(),
-              (Tenh::DimIndex_t<'j',10>().type_as_string())); // expected value
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(Tenh::DimIndex_t<'j',20>())).type_as_string(),
-              (Tenh::DimIndex_t<'P',20>().type_as_string())); // expected value
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(Tenh::DimIndex_t<'k',30>())).type_as_string(),
-              (Tenh::DimIndex_t<OFFSET+'k',30>().type_as_string())); // expected value
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(Tenh::DimIndex_t<'P',40>())).type_as_string(),
-              (Tenh::DimIndex_t<'k',40>().type_as_string())); // expected value
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(Tenh::DimIndex_t<'i',10>())).type_as_string(Tenh::VERBOSE),
+              (Tenh::DimIndex_t<'j',10>().type_as_string(Tenh::VERBOSE))); // expected value
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(Tenh::DimIndex_t<'j',20>())).type_as_string(Tenh::VERBOSE),
+              (Tenh::DimIndex_t<'P',20>().type_as_string(Tenh::VERBOSE))); // expected value
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(Tenh::DimIndex_t<'k',30>())).type_as_string(Tenh::VERBOSE),
+              (Tenh::DimIndex_t<OFFSET+'k',30>().type_as_string(Tenh::VERBOSE))); // expected value
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(Tenh::DimIndex_t<'P',40>())).type_as_string(Tenh::VERBOSE),
+              (Tenh::DimIndex_t<'k',40>().type_as_string(Tenh::VERBOSE))); // expected value
 }
 
 void AddTests (Directory &parent)

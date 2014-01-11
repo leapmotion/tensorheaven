@@ -108,7 +108,7 @@ struct MemberArray_t
         return intersection_start < intersection_end;
     }
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "MemberArray_t<" + type_string_of<Component_>() + ','
                                 + FORMAT(COMPONENT_COUNT_) + ','

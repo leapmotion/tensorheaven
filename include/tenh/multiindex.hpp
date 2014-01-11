@@ -228,7 +228,7 @@ public:
         return *static_cast<typename TrailingListType_t<INDEX>::T *>(&(this->Parent::template trailing_list<INDEX>()));
     };
 
-    static std::string type_as_string () { return "MultiIndex_t<" + type_string_of<IndexTypeList>() + '>'; }
+    static std::string type_as_string (bool verbose) { return "MultiIndex_t<" + type_string_of<IndexTypeList>() + '>'; }
 };
 
 // template specializations for the IndexTypeList list corner cases
@@ -397,7 +397,7 @@ public:
         return *static_cast<typename TrailingListType_t<INDEX>::T *>(&(this->Parent::template trailing_list<INDEX>()));
     };
 
-    static std::string type_as_string () { return "MultiIndex_t<" + type_string_of<IndexTypeList>() + '>'; }
+    static std::string type_as_string (bool verbose) { return "MultiIndex_t<" + type_string_of<IndexTypeList>() + '>'; }
 };
 
 template <>
@@ -429,7 +429,7 @@ struct MultiIndex_t<EmptyTypeList> : public List_t<EmptyTypeList>
     BodyMultiIndex const &body () const { return *static_cast<BodyMultiIndex const *>(&Parent::body()); }
     BodyMultiIndex &body () { return *static_cast<BodyMultiIndex *>(&Parent::body()); }
 
-    static std::string type_as_string () { return "MultiIndex_t<" + type_string_of<IndexTypeList>() + '>'; }
+    static std::string type_as_string (bool verbose) { return "MultiIndex_t<" + type_string_of<IndexTypeList>() + '>'; }
 };
 
 

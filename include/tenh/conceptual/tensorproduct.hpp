@@ -34,7 +34,7 @@ public:
     typedef FactorTypeList_ FactorTypeList;
     static Uint32 const ORDER = FactorTypeList::LENGTH;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "TensorProduct_c<" + type_string_of<FactorTypeList_>() + '>';
     }
@@ -162,7 +162,7 @@ public:
 
     typedef typename As_VectorSpace::Id Id;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "TensorProductOfVectorSpaces_c<" + type_string_of<FactorTypeList_>() + '>';
     }
@@ -223,7 +223,7 @@ public:
 
     typedef typename As_Basis::Id Id;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "TensorProductOfBases_c<" + type_string_of<FactorTypeList_>() + '>';
     }
@@ -286,7 +286,7 @@ public:
 
     typedef typename As_BasedVectorSpace::Id Id;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "BasedTensorProductOfVectorSpaces_c<" + type_string_of<TensorProductOfVectorSpaces_>() + ','
                                                      + type_string_of<Basis_>() + '>';
@@ -352,7 +352,7 @@ public:
 
     typedef typename As_BasedTensorProductOfVectorSpaces::Id Id;
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "TensorProductOfBasedVectorSpaces_c<" + type_string_of<FactorTypeList_>() + '>';
     }

@@ -28,7 +28,7 @@ struct EmptyTypeList
 
     static Uint32 length () { return LENGTH; } // this is necessary to avoid a linker error complaining about undefined LENGTH member
 
-    static std::string type_as_string (bool with_angle_brackets = true) { return with_angle_brackets ? "TypeList_t<>" : ""; }
+    static std::string type_as_string (bool verbose, bool with_angle_brackets = true) { return with_angle_brackets ? "TypeList_t<>" : ""; }
     /// @endcond
 };
 
@@ -50,12 +50,12 @@ struct TypeList_t
     static Uint32 length () { return LENGTH; }
 
     /// For use with TypeStringOf_t.
-    static std::string type_as_string (bool with_angle_brackets = true)
+    static std::string type_as_string (bool verbose, bool with_angle_brackets = true)
     {
         return std::string(with_angle_brackets ? "TypeList_t<" : "") +
                type_string_of<HeadType>() +
                std::string(BodyTypeList::LENGTH > 0 ? "," : "") +
-               BodyTypeList::type_as_string(false) + // no brackets, so it's not cluttered from nesting
+               BodyTypeList::type_as_string(verbose, false) + // no brackets, so it's not cluttered from nesting
                std::string(with_angle_brackets ? ">" : "");
     }
 };

@@ -7,15 +7,15 @@
 using namespace Tenh;
 using namespace std;
 
-struct A { static std::string type_as_string () { return "A"; } };
-struct B { static std::string type_as_string () { return "B"; } };
-struct C { static std::string type_as_string () { return "C"; } };
-struct D { static std::string type_as_string () { return "D"; } };
+struct A { static std::string type_as_string (bool verbose) { return "A"; } };
+struct B { static std::string type_as_string (bool verbose) { return "B"; } };
+struct C { static std::string type_as_string (bool verbose) { return "C"; } };
+struct D { static std::string type_as_string (bool verbose) { return "D"; } };
 
-struct T { static std::string type_as_string () { return "T"; } };
-struct U { static std::string type_as_string () { return "U"; } };
-struct V { static std::string type_as_string () { return "V"; } };
-struct W { static std::string type_as_string () { return "W"; } };
+struct T { static std::string type_as_string (bool verbose) { return "T"; } };
+struct U { static std::string type_as_string (bool verbose) { return "U"; } };
+struct V { static std::string type_as_string (bool verbose) { return "V"; } };
+struct W { static std::string type_as_string (bool verbose) { return "W"; } };
 
 template <typename T_> struct IsFloat_f { static bool const V = false; };
 template <> struct IsFloat_f<float> { static bool const V = true; };

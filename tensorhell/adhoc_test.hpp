@@ -9,12 +9,12 @@
 #include "tenh/conceptual/abstractindex.hpp"
 #include "tenh/conceptual/basis.hpp"
 #include "tenh/conceptual/diagonalbased2tensorproduct.hpp"
-#include "tenh/conceptual/dual.hpp"
 #include "tenh/conceptual/exteriorpower.hpp"
 #include "tenh/conceptual/symmetricpower.hpp"
 #include "tenh/conceptual/tensorproduct.hpp"
-#include "tenh/conceptual/vectorspace.hpp"
 #include "tenh/conceptual/utility/conceptualinheritancegraph.hpp"
+#include "tenh/conceptual/vectorspace.hpp"
+#include "tenh/conceptual/dual.hpp"
 #include "tenh/expressiontemplate_eval.hpp"
 #include "tenh/memberarray.hpp"
 #include "tenh/implementation/alt.hpp"
@@ -36,17 +36,17 @@
 
 struct X
 {
-    static std::string type_as_string () { return "X"; }
+    static std::string type_as_string (bool verbose) { return "X"; }
 };
 
 struct Y
 {
-    static std::string type_as_string () { return "Y"; }
+    static std::string type_as_string (bool verbose) { return "Y"; }
 };
 
 struct Z
 {
-    static std::string type_as_string () { return "Z"; }
+    static std::string type_as_string (bool verbose) { return "Z"; }
 };
 
 using namespace Tenh;
@@ -93,7 +93,7 @@ Scalar_ standard_basis_vector_generator (ComponentIndex_t<DIMENSION_> const &i)
 template <Uint32 DIMENSION_, Uint32 K_>
 struct StandardBasisVectorGeneratorId
 {
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "StandardBasisVectorGenerator<" + FORMAT(DIMENSION_) + ',' + FORMAT(K_) + '>';
     }
@@ -123,7 +123,7 @@ Scalar_ counting_vector_generator (ComponentIndex_t<DIM_> const &i)
 }
 
 template <Uint32 DIM_>
-struct CountingVectorGeneratorId { static std::string type_as_string () { return "CountingVectorGenerator<" + FORMAT(DIM_) + '>'; } };
+struct CountingVectorGeneratorId { static std::string type_as_string (bool verbose) { return "CountingVectorGenerator<" + FORMAT(DIM_) + '>'; } };
 
 template <typename Scalar_, Uint32 DIM_, Uint32 K_>
 void test_procedural_array_0 ()
@@ -135,7 +135,7 @@ void test_procedural_array_0 ()
                                  StandardBasisVectorGeneratorId<DIM_,K_> > ComponentGenerator;
     typedef ProceduralArray_t<Scalar_,DIM_,ComponentGenerator> A;
     A a;
-    std::cout << FORMAT_VALUE(a.type_as_string()) << '\n';
+    std::cout << FORMAT_VALUE(a.type_as_string(VERBOSE)) << '\n';
     for (typename A::ComponentIndex i; i.is_not_at_end(); ++i)
         std::cout << FORMAT_VALUE(i) << ", " << FORMAT_VALUE(a[i]) << '\n';
     std::cout << '\n';
@@ -151,7 +151,7 @@ void test_procedural_array_1 ()
                                  CountingVectorGeneratorId<DIM_> > ComponentGenerator;
     typedef ProceduralArray_t<Scalar_,DIM_,ComponentGenerator> A;
     A a;
-    std::cout << FORMAT_VALUE(a.type_as_string()) << '\n';
+    std::cout << FORMAT_VALUE(a.type_as_string(VERBOSE)) << '\n';
     for (typename A::ComponentIndex i; i.is_not_at_end(); ++i)
         std::cout << FORMAT_VALUE(i) << ", " << FORMAT_VALUE(a[i]) << '\n';
     std::cout << '\n';
@@ -171,7 +171,7 @@ Scalar_ identity_matrix_generator (ComponentIndex_t<DIM_*DIM_> const &i)
     return row == col ? Scalar_(1) : Scalar_(0);
 }
 
-struct IdentityMatrixGeneratorId { static std::string type_as_string () { return "IdentityMatrixGenerator"; } };
+struct IdentityMatrixGeneratorId { static std::string type_as_string (bool verbose) { return "IdentityMatrixGenerator"; } };
 
 template <typename Scalar_, typename BasedVectorSpace_>
 void test_procedural_identity_tensor ()

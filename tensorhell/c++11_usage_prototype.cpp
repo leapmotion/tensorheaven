@@ -20,7 +20,7 @@ using namespace Tenh;
 // decltype
 // ///////////////////////////////////////////////////////////////////////////
 
-struct X { static std::string type_as_string () { return "X"; } };
+struct X { static std::string type_as_string (bool verbose) { return "X"; } };
 
 void prototyping_for_decltype ()
 {
@@ -249,25 +249,25 @@ void prototyping_for_strongly_typed_enums ()
 // variadic templates
 // ///////////////////////////////////////////////////////////////////////////
 
-template <typename... Body_>
+template <bool VERBOSE_, typename... Body_>
 struct TypeStringOfVariadicTemplate_t;
 
-template <>
-struct TypeStringOfVariadicTemplate_t<>
+template <bool VERBOSE_>
+struct TypeStringOfVariadicTemplate_t<VERBOSE_>
 {
     static std::string eval () { return ""; }
 };
 
-template <typename Head_>
-struct TypeStringOfVariadicTemplate_t<Head_>
+template <bool VERBOSE_, typename Head_>
+struct TypeStringOfVariadicTemplate_t<VERBOSE_,Head_>
 {
-    static std::string eval () { return TypeStringOf_t<Head_,VERBOSE>::eval(); }
+    static std::string eval () { return TypeStringOf_t<Head_,VERBOSE_>::eval(); }
 };
 
-template <typename Head_, typename... Body_>
-struct TypeStringOfVariadicTemplate_t<Head_,Body_...>
+template <bool VERBOSE_, typename Head_, typename... Body_>
+struct TypeStringOfVariadicTemplate_t<VERBOSE_,Head_,Body_...>
 {
-    static std::string eval () { return TypeStringOf_t<Head_,VERBOSE>::eval() + ',' + TypeStringOfVariadicTemplate_t<Body_...>::eval(); }
+    static std::string eval () { return TypeStringOf_t<Head_,VERBOSE_>::eval() + ',' + TypeStringOfVariadicTemplate_t<VERBOSE_,Body_...>::eval(); }
 };
 
 template <typename... Ts_> struct Typle_t;
@@ -283,10 +283,10 @@ struct Typle_t<Head_,Body_...>
 
 namespace Tenh {
 
-template <typename... Ts_>
-struct TypeStringOf_t<Typle_t<Ts_...>>
+template <bool VERBOSE_, typename... Ts_>
+struct TypeStringOf_t<Typle_t<Ts_...>,VERBOSE_>
 {
-    static std::string eval () { return "Typle_t<" + TypeStringOfVariadicTemplate_t<Ts_...>::eval() + '>'; }
+    static std::string eval () { return "Typle_t<" + TypeStringOfVariadicTemplate_t<VERBOSE_,Ts_...>::eval() + '>'; }
 };
 
 } // end of namespace Tenh

@@ -56,7 +56,7 @@ Scalar_ sym (ComponentIndex_t<COMPONENT_COUNT_> const &i)
 template <Uint32 ORDER_, typename Factor_>
 struct SymId_t
 {
-    static std::string type_as_string () { return "Sym<" + FORMAT(ORDER_) + ',' + type_string_of<Factor_>() + '>'; }
+    static std::string type_as_string (bool verbose) { return "Sym<" + FORMAT(ORDER_) + ',' + type_string_of<Factor_>() + '>'; }
 };
 
 // template specialization for standard inner product on a based vector space having orthonormal basis

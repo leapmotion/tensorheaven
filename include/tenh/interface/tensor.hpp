@@ -148,7 +148,7 @@ struct Tensor_i
     static Scalar scalar_factor_for_component (MultiIndex const &) { return Scalar(1); }
     static ComponentIndex vector_index_of (MultiIndex const &m) { return ComponentIndex(m.value(), DONT_CHECK_RANGE); }
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "Tensor_i<" + type_string_of<Derived>() + ','
                            + type_string_of<Scalar>() + ','

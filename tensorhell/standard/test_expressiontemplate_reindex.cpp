@@ -72,12 +72,12 @@ void vector_based_IndexedObject_t (Context const &context)
         // it's supposed to be (via type_as_string).  what's being tested is essentially
         // the commutativity of the operations of creating an ExpressionTemplate_IndexedObject_t
         // and reindexing.
-        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(v(j))).type_as_string(),
-                  v(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j)).type_as_string()); // expected value
-        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(v(k))).type_as_string(),
-                  v(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(k)).type_as_string()); // expected value
-        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(v(p))).type_as_string(),
-                  v(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(p)).type_as_string()); // expected value
+        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(v(j))).type_as_string(Tenh::VERBOSE),
+                  v(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j)).type_as_string(Tenh::VERBOSE)); // expected value
+        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(v(k))).type_as_string(Tenh::VERBOSE),
+                  v(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(k)).type_as_string(Tenh::VERBOSE)); // expected value
+        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(v(p))).type_as_string(Tenh::VERBOSE),
+                  v(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(p)).type_as_string(Tenh::VERBOSE)); // expected value
     }
 }
 
@@ -129,18 +129,18 @@ void tensor_based_IndexedObject_t (Context const &context)
         P p;
         Tensor t(Tenh::fill_with(0));
         // hacky, but effective, way of ensuring the reindexed expression template is what it's supposed to be.
-        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(j*k))).type_as_string(),
-                  t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j*k)).type_as_string()); // expected value
-        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(k*p))).type_as_string(),
-                  t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(k*p)).type_as_string()); // expected value
+        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(j*k))).type_as_string(Tenh::VERBOSE),
+                  t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j*k)).type_as_string(Tenh::VERBOSE)); // expected value
+        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(k*p))).type_as_string(Tenh::VERBOSE),
+                  t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(k*p)).type_as_string(Tenh::VERBOSE)); // expected value
 
         // single-indexed expressions
-        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(j))).type_as_string(),
-                  t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j)).type_as_string()); // expected value
-        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(k))).type_as_string(),
-                  t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(k)).type_as_string()); // expected value
-        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(p))).type_as_string(),
-                  t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(p)).type_as_string()); // expected value
+        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(j))).type_as_string(Tenh::VERBOSE),
+                  t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j)).type_as_string(Tenh::VERBOSE)); // expected value
+        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(k))).type_as_string(Tenh::VERBOSE),
+                  t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(k)).type_as_string(Tenh::VERBOSE)); // expected value
+        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(p))).type_as_string(Tenh::VERBOSE),
+                  t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(p)).type_as_string(Tenh::VERBOSE)); // expected value
     }
 }
 
@@ -170,15 +170,15 @@ void Addition_t (Context const &context)
     K k;
     // hacky, but effective, way of ensuring the reindexed expression template is what it's supposed to be.
     // verify that the operations of index-expression-addition and reindexing commute.
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(i) + y(i))).type_as_string(),
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(i) + y(i))).type_as_string(Tenh::VERBOSE),
               (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(i)) +
-               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(i))).type_as_string()); // expected value
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(j) + y(j))).type_as_string(),
+               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(i))).type_as_string(Tenh::VERBOSE)); // expected value
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(j) + y(j))).type_as_string(Tenh::VERBOSE),
               (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(j)) +
-               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(j))).type_as_string()); // expected value
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(k) + y(k))).type_as_string(),
+               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(j))).type_as_string(Tenh::VERBOSE)); // expected value
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(k) + y(k))).type_as_string(Tenh::VERBOSE),
               (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(k)) +
-               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(k))).type_as_string()); // expected value
+               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(k))).type_as_string(Tenh::VERBOSE)); // expected value
 }
 
 void ScalarMultiplication_t (Context const &context)
@@ -207,12 +207,12 @@ void ScalarMultiplication_t (Context const &context)
     K k;
     // hacky, but effective, way of ensuring the reindexed expression template is what it's supposed to be.
     // verify that the operations of index-expression-scalar-multiplication and reindexing commute.
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(i) * Scalar(3))).type_as_string(),
-              (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(i)) * Scalar(3)).type_as_string()); // expected value
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(j) * Scalar(3))).type_as_string(),
-              (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(j)) * Scalar(3)).type_as_string()); // expected value
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(k) * Scalar(3))).type_as_string(),
-              (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(k)) * Scalar(3)).type_as_string()); // expected value
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(i) * Scalar(3))).type_as_string(Tenh::VERBOSE),
+              (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(i)) * Scalar(3)).type_as_string(Tenh::VERBOSE)); // expected value
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(j) * Scalar(3))).type_as_string(Tenh::VERBOSE),
+              (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(j)) * Scalar(3)).type_as_string(Tenh::VERBOSE)); // expected value
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(k) * Scalar(3))).type_as_string(Tenh::VERBOSE),
+              (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(k)) * Scalar(3)).type_as_string(Tenh::VERBOSE)); // expected value
 }
 
 void Multiplication_t (Context const &context)
@@ -241,25 +241,25 @@ void Multiplication_t (Context const &context)
     K k;
     // hacky, but effective, way of ensuring the reindexed expression template is what it's supposed to be.
     // verify that the operations of index-expression-multiplication and reindexing commute.
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(i) * y(i))).type_as_string(),
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(i) * y(i))).type_as_string(Tenh::VERBOSE),
               (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(i)) *
-               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(i))).type_as_string()); // expected value
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(j) * y(j))).type_as_string(),
+               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(i))).type_as_string(Tenh::VERBOSE)); // expected value
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(j) * y(j))).type_as_string(Tenh::VERBOSE),
               (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(j)) *
-               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(j))).type_as_string()); // expected value
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(k) * y(k))).type_as_string(),
+               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(j))).type_as_string(Tenh::VERBOSE)); // expected value
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(k) * y(k))).type_as_string(Tenh::VERBOSE),
               (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(k)) *
-               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(k))).type_as_string()); // expected value
+               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(k))).type_as_string(Tenh::VERBOSE)); // expected value
 
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(i) * y(j))).type_as_string(),
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(i) * y(j))).type_as_string(Tenh::VERBOSE),
               (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(i)) *
-               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(j))).type_as_string()); // expected value
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(j) * y(k))).type_as_string(),
+               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(j))).type_as_string(Tenh::VERBOSE)); // expected value
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(j) * y(k))).type_as_string(Tenh::VERBOSE),
               (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(j)) *
-               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(k))).type_as_string()); // expected value
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(k) * y(i))).type_as_string(),
+               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(k))).type_as_string(Tenh::VERBOSE)); // expected value
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(k) * y(i))).type_as_string(Tenh::VERBOSE),
               (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(k)) *
-               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(i))).type_as_string()); // expected value
+               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(i))).type_as_string(Tenh::VERBOSE)); // expected value
 }
 
 void IndexBundle_t (Context const &context)
@@ -291,11 +291,11 @@ void IndexBundle_t (Context const &context)
     L l;
     // hacky, but effective, way of ensuring the reindexed expression template is what it's supposed to be.
     // verify that the operations of index-expression-bundle and reindexing commute.
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(i*j*k).bundle(i*j*k,TensorProduct(),l)).type_as_string()),
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(i*j*k).bundle(i*j*k,TensorProduct(),l)).type_as_string(Tenh::VERBOSE)),
               (t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i*j*k))
                .bundle(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i*j*k),
                        TensorProduct(),
-                       Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(l))).type_as_string()); // expected value
+                       Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(l))).type_as_string(Tenh::VERBOSE)); // expected value
 }
 
 void IndexSplit_t (Context const &context)
@@ -327,10 +327,10 @@ void IndexSplit_t (Context const &context)
     L l;
     // hacky, but effective, way of ensuring the reindexed expression template is what it's supposed to be.
     // verify that the operations of index-expression-split and reindexing commute.
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(i).split(i,j*k*l)).type_as_string()),
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(i).split(i,j*k*l)).type_as_string(Tenh::VERBOSE)),
               (t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i))
                .split(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i),
-                      Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j*k*l))).type_as_string()); // expected value
+                      Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j*k*l))).type_as_string(Tenh::VERBOSE)); // expected value
 }
 
 void IndexSplitToIndex_t (Context const &context)
@@ -362,10 +362,10 @@ void IndexSplitToIndex_t (Context const &context)
     // L l;
     // hacky, but effective, way of ensuring the reindexed expression template is what it's supposed to be.
     // verify that the operations of index-expression-split-to-index and reindexing commute.
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(i).split(i,j)).type_as_string()),
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(i).split(i,j)).type_as_string(Tenh::VERBOSE)),
               (t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i))
                .split(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i),
-                      Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j))).type_as_string()); // expected value
+                      Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j))).type_as_string(Tenh::VERBOSE)); // expected value
 }
 
 void Eval_t (Context const &context)
@@ -397,8 +397,8 @@ void Eval_t (Context const &context)
     // L l;
     // hacky, but effective, way of ensuring the reindexed expression template is what it's supposed to be.
     // verify that the operations of index-expression-eval and reindexing commute.
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(i).eval()).type_as_string()),
-              (t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i)).eval().type_as_string())); // expected value
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(i).eval()).type_as_string(Tenh::VERBOSE)),
+              (t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i)).eval().type_as_string(Tenh::VERBOSE))); // expected value
 }
 
 void fancy_expression (Context const &context)
@@ -434,11 +434,11 @@ void fancy_expression (Context const &context)
     L l;
     // hacky, but effective, way of ensuring the reindexed expression template is what it's supposed to be.
     // verify that the operations of composing this fancy expression and reindexing commute.
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(Scalar(3) * t(i*j*k)*a(j*k*l) + x(i)*c(l))).type_as_string(),
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(Scalar(3) * t(i*j*k)*a(j*k*l) + x(i)*c(l))).type_as_string(Tenh::VERBOSE),
               (Scalar(3) * t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i*j*k))
                          * a(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j*k*l))
                          + x(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i))
-                         * c(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(l))).type_as_string()); // expected value
+                         * c(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(l))).type_as_string(Tenh::VERBOSE)); // expected value
 }
 
 void AddTests (Directory &parent)

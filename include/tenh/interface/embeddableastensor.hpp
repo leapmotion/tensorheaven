@@ -201,7 +201,7 @@ struct EmbeddableAsTensor_i
     static Scalar scalar_factor_for_component (MultiIndex const &m) { return as_derived().scalar_factor_for_component(m); }
     static ComponentIndex vector_index_of (MultiIndex const &m) { return as_derived().vector_index_of(m); }
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "EmbeddableAsTensor_i<" + type_string_of<Derived>() + ','
                                        + type_string_of<Scalar>() + ','

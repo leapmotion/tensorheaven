@@ -78,7 +78,7 @@ public:
         return reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(m_derived_expression_template);
     }
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         return "Reindexable_t<" + type_string_of<ExpressionTemplate_>() + ',' + type_string_of<FreeDimIndexTypeList_>() + '>';
     }

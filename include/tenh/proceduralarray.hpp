@@ -74,7 +74,7 @@ struct ProceduralArray_t
     QualifiedComponent *pointer_to_allocation () { return NULL; }
     bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const { return false; }
 
-    static std::string type_as_string ()
+    static std::string type_as_string (bool verbose)
     {
         // TODO: figure out how to provide stringified type info for the component_generator_ template param.
         return "ProceduralArray_t<" + type_string_of<Component_>() + ','

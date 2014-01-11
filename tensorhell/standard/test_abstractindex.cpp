@@ -112,14 +112,14 @@ void test_reindexed (Context const &context)
 
     // ensure that the reindexed<...>() function works on AbstractIndex_c types, using a
     // hacky, but effective, way to compare them (via type_as_string).
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(Tenh::AbstractIndex_c<'i'>())).type_as_string(),
-              Tenh::AbstractIndex_c<'j'>().type_as_string()); // expected value
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(Tenh::AbstractIndex_c<'j'>())).type_as_string(),
-              Tenh::AbstractIndex_c<'P'>().type_as_string()); // expected value
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(Tenh::AbstractIndex_c<'k'>())).type_as_string(),
-              Tenh::AbstractIndex_c<OFFSET+'k'>().type_as_string()); // expected value
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(Tenh::AbstractIndex_c<'P'>())).type_as_string(),
-              Tenh::AbstractIndex_c<'k'>().type_as_string()); // expected value
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(Tenh::AbstractIndex_c<'i'>())).type_as_string(Tenh::VERBOSE),
+              Tenh::AbstractIndex_c<'j'>().type_as_string(Tenh::VERBOSE)); // expected value
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(Tenh::AbstractIndex_c<'j'>())).type_as_string(Tenh::VERBOSE),
+              Tenh::AbstractIndex_c<'P'>().type_as_string(Tenh::VERBOSE)); // expected value
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(Tenh::AbstractIndex_c<'k'>())).type_as_string(Tenh::VERBOSE),
+              Tenh::AbstractIndex_c<OFFSET+'k'>().type_as_string(Tenh::VERBOSE)); // expected value
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(Tenh::AbstractIndex_c<'P'>())).type_as_string(Tenh::VERBOSE),
+              Tenh::AbstractIndex_c<'k'>().type_as_string(Tenh::VERBOSE)); // expected value
 }
 
 void test_reindexed_AbstractIndexTypeList (Context const &context)
@@ -145,18 +145,18 @@ void test_reindexed_AbstractIndexTypeList (Context const &context)
     // ensure that the reindexed<...>() function works on AbstractIndex_c types, using a
     // hacky, but effective, way to compare them (via type_as_string).
     // verify that abstract index concatenation and reindexing commute.
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i*j)).type_as_string(),
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i*j)).type_as_string(Tenh::VERBOSE),
               (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i)*
-               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j)).type_as_string()); // expected value
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j*j*p*i)).type_as_string(),
+               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j)).type_as_string(Tenh::VERBOSE)); // expected value
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j*j*p*i)).type_as_string(Tenh::VERBOSE),
               (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j)*
                Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j)*
                Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(p)*
-               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i)).type_as_string()); // expected value
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(k*p*i)).type_as_string(),
+               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i)).type_as_string(Tenh::VERBOSE)); // expected value
+    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(k*p*i)).type_as_string(Tenh::VERBOSE),
               (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(k)*
                Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(p)*
-               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i)).type_as_string()); // expected value
+               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i)).type_as_string(Tenh::VERBOSE)); // expected value
 }
 
 void AddTests (Directory &parent)
