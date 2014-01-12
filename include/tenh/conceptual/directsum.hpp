@@ -8,6 +8,8 @@
 
 #include "tenh/core.hpp"
 
+#include <type_traits>
+
 #include "tenh/conceptual/concept.hpp"
 #include "tenh/conceptual/basis.hpp"
 #include "tenh/conceptual/dual.hpp"
@@ -395,10 +397,10 @@ private:
 // for now, just do direct sum of based vector spaces
 
 template <typename LhsBasedVectorSpace_, typename RhsBasedVectorSpace_>
-typename EnableIf_f<(IS_BASED_VECTOR_SPACE_UNIQUELY(LhsBasedVectorSpace_) &&
-                     IS_BASED_VECTOR_SPACE_UNIQUELY(RhsBasedVectorSpace_)),
-                    DirectSumOfBasedVectorSpaces_c<TypeList_t<LhsBasedVectorSpace_,
-                                                   TypeList_t<RhsBasedVectorSpace_> > > >::T
+typename std::enable_if<(IS_BASED_VECTOR_SPACE_UNIQUELY(LhsBasedVectorSpace_) &&
+                         IS_BASED_VECTOR_SPACE_UNIQUELY(RhsBasedVectorSpace_)),
+                        DirectSumOfBasedVectorSpaces_c<TypeList_t<LhsBasedVectorSpace_,
+                                                       TypeList_t<RhsBasedVectorSpace_> > > >::type
     operator + (LhsBasedVectorSpace_ const &, RhsBasedVectorSpace_ const &)
 {
     return DirectSumOfBasedVectorSpaces_c<TypeList_t<LhsBasedVectorSpace_,
