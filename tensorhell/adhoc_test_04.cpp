@@ -6,8 +6,8 @@
 
 void test_vector_power_thingy ()
 {
-    typedef VectorSpace_c<RealField,4,X> VSX;
-    typedef Basis_c<X> BasisX;
+    typedef VectorSpace_c<RealField,4,IdX> VSX;
+    typedef Basis_c<IdX> BasisX;
     typedef BasedVectorSpace_c<VSX,BasisX> BasedX;
     typedef ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<4,BasedX>,float> Sym;
     typedef ImplementationOf_t<BasedX,float> Vec;
@@ -26,9 +26,9 @@ void test_vector_power_thingy ()
 
 void test_a_bunch_of_stuff ()
 {
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,Basis_c<X> > BasedX;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,Y>,Basis_c<Y> > BasedY;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Z>,Basis_c<Z> > BasedZ;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,IdX>,Basis_c<IdX> > BasedX;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,IdY>,Basis_c<IdY> > BasedY;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,IdZ>,Basis_c<IdZ> > BasedZ;
 
     {
         std::cout << "member array\n";
@@ -37,7 +37,7 @@ void test_a_bunch_of_stuff ()
         std::cout << FORMAT_VALUE(v) << '\n';
         std::cout << '\n';
 
-        // the following should cause a compile error regarding UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST>
+        // the following should cause a compile error regarding UsePreallocatedArray
         //float components[3] = {8.0f, 10.0f, 11.0f};
         //V w(&components[0]);
     }
@@ -58,7 +58,7 @@ void test_a_bunch_of_stuff ()
         for (V::ComponentIndex j; j.is_not_at_end(); ++j)
             std::cout << FORMAT_VALUE(v[j]) << '\n';
 
-        // the following should cause a compile error regarding UseMemberArray_t<COMPONENTS_ARE_NONCONST>
+        // the following should cause a compile error regarding UseMemberArray
         //V w(1.0f, 2.0f, 4.0f);
 
         typedef ImplementationOf_t<BasedY,float,UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST> > W;

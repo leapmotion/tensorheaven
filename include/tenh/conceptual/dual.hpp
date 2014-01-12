@@ -22,7 +22,10 @@ struct Dual_c
 
     static std::string type_as_string (bool verbose)
     {
-        return "Dual_c<" + type_string_of<Primal_>() + '>';
+        if (verbose)
+            return "Dual_c<" + type_string_of<Primal_>() + '>';
+        else
+            return "dual(" + terse_string_of<Primal_>() + ')';
     }
 };
 

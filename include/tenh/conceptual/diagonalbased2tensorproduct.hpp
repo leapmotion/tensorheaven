@@ -33,7 +33,10 @@ struct Diagonal2TensorProduct_c
 
     static std::string type_as_string (bool verbose)
     {
-        return "Diagonal2TensorProduct_c<" + type_string_of<Factor0_>() + ',' + type_string_of<Factor1_>() + '>';
+        if (verbose)
+            return "Diagonal2TensorProduct_c<" + type_string_of<Factor0_>() + ',' + type_string_of<Factor1_>() + '>';
+        else
+            return "diag2(" + terse_string_of<Factor0_>() + ',' + terse_string_of<Factor1_>() + ')';
     }
 };
 
@@ -90,7 +93,10 @@ public:
 
     static std::string type_as_string (bool verbose)
     {
-        return "Diagonal2TensorProductOfBases_c<" + type_string_of<Factor0_>() + ',' + type_string_of<Factor1_>() + '>';
+        if (verbose)
+            return "Diagonal2TensorProductOfBases_c<" + type_string_of<Factor0_>() + ',' + type_string_of<Factor1_>() + '>';
+        else
+            return "diag2(" + terse_string_of<Factor0_>() + ',' + terse_string_of<Factor1_>() + ')';
     }
 };
 
@@ -157,7 +163,10 @@ public:
 
     static std::string type_as_string (bool verbose)
     {
-        return "Diagonal2TensorProductOfBasedVectorSpaces_c<" + type_string_of<Factor0_>() + ',' + type_string_of<Factor1_>() + '>';
+        if (verbose)
+            return "Diagonal2TensorProductOfBasedVectorSpaces_c<" + type_string_of<Factor0_>() + ',' + type_string_of<Factor1_>() + '>';
+        else
+            return "diag2(" + terse_string_of<Factor0_>() + ',' + terse_string_of<Factor1_>() + ')';
     }
 };
 
@@ -223,6 +232,13 @@ private:
 // ///////////////////////////////////////////////////////////////////////////
 // helper functions for easing use of the type system
 // ///////////////////////////////////////////////////////////////////////////
+
+// for now, just do diagonal 2-tensor product of based vector spaces
+template <typename Factor0_, typename Factor1_>
+Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_> diag2 (Factor0_ const &, Factor1_ const &)
+{
+    return Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>();
+}
 
 // for now, just do diagonal 2-tensor product of based vector spaces
 template <typename Factor0_, typename Factor1_>

@@ -34,17 +34,17 @@
 #include "tenh/utility/polynomial.hpp"
 #include "tenh/utility/polynomial_utility.hpp"
 
-struct X
+struct IdX
 {
     static std::string type_as_string (bool verbose) { return "X"; }
 };
 
-struct Y
+struct IdY
 {
     static std::string type_as_string (bool verbose) { return "Y"; }
 };
 
-struct Z
+struct IdZ
 {
     static std::string type_as_string (bool verbose) { return "Z"; }
 };
@@ -207,7 +207,7 @@ template <typename Scalar_, typename VectorSpace_>
 void test_standard_euclidean_inner_product ()
 {
     std::cout << "test_standard_euclidean_inner_product<" << type_string_of<Scalar_>() << ',' << type_string_of<VectorSpace_>() << ">\n";
-    typedef typename InnerProduct_f<BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<X> >,StandardInnerProduct,Scalar_>::T InnerProduct;
+    typedef typename InnerProduct_f<BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<IdX> >,StandardInnerProduct,Scalar_>::T InnerProduct;
     InnerProduct g;
     std::cout << FORMAT_VALUE(g) << '\n';
     AbstractIndex_c<'P'> P;
@@ -270,7 +270,7 @@ void test_tensor_power_of_euclidean_embedding ()
 template <typename Scalar_, Uint32 ORDER_, Uint32 DIMENSION_>
 void test_sym ()
 {
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,DIMENSION_,X>,Basis_c<X> > BasedVectorSpace;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,DIMENSION_,IdX>,Basis_c<IdX> > BasedVectorSpace;
     std::cout << "testing Sym_f<" << type_string_of<Scalar_>() << ',' << ORDER_ << ',' << DIMENSION_ << ">\n";
     typedef typename Sym_f<ORDER_,BasedVectorSpace,Scalar_>::T Sym;
     Sym sym;
@@ -281,7 +281,7 @@ void test_sym ()
 template <typename Scalar_, Uint32 ORDER_, Uint32 DIMENSION_>
 void test_alt ()
 {
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,DIMENSION_,X>,Basis_c<X> > BasedVectorSpace;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,DIMENSION_,IdX>,Basis_c<IdX> > BasedVectorSpace;
     std::cout << "testing Alt_f<" << type_string_of<Scalar_>() << ',' << ORDER_ << ',' << DIMENSION_ << ">\n";
     typedef typename Alt_f<ORDER_,BasedVectorSpace,Scalar_>::T Alt;
     Alt alt;
@@ -372,8 +372,8 @@ void test_split_index_to_index_order_3 ()
 template <Uint32 DIM_>
 void test_tensor_printing_0 ()
 {
-    typedef VectorSpace_c<RealField,DIM_,X> VSX;
-    typedef Basis_c<X> BasisX;
+    typedef VectorSpace_c<RealField,DIM_,IdX> VSX;
+    typedef Basis_c<IdX> BasisX;
     typedef BasedVectorSpace_c<VSX,BasisX> BasedX;
     test_tensor_printing<BasedX,1>(std::cout);
     test_tensor_printing<BasedX,2>(std::cout);
@@ -518,5 +518,11 @@ void test_exterior_power_embedding ();
 void test_symmetric_power_embedding ();
 void test_embed_coembed_adjointness ();
 void test_type_system_helper_functions ();
+
+// ///////////////////////////////////////////////////////////////////////////////////////////
+// 15
+// ///////////////////////////////////////////////////////////////////////////////////////////
+
+void test_terse_strings ();
 
 #endif // TENSORHELL_ADHOC_TEST_HPP_

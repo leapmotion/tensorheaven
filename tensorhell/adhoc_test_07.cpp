@@ -7,7 +7,7 @@
 void test_eigen_map_of_2_tensor ()
 {
     std::cout << "testing EigenMap_of_2tensor\n";
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,Basis_c<X> > BasedVectorSpace;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,IdX>,Basis_c<IdX> > BasedVectorSpace;
     typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace,
                                                 TypeList_t<BasedVectorSpace> > > TensorProduct;
     typedef ImplementationOf_t<TensorProduct,float> T;
@@ -73,8 +73,8 @@ void test_eigen_map_of_2_tensor ()
 
 void test_split_index_to_index_order_1 ()
 {
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,Basis_c<X> > BasedVectorSpaceX;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Y>,Basis_c<Y> > BasedVectorSpaceY;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,IdX>,Basis_c<IdX> > BasedVectorSpaceX;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,IdY>,Basis_c<IdY> > BasedVectorSpaceY;
     typedef TensorPowerOfBasedVectorSpace_f<1,BasedVectorSpaceX>::T TensorPower;
     typedef SymmetricPowerOfBasedVectorSpace_c<1,BasedVectorSpaceX> SymmetricPower;
     typedef ExteriorPowerOfBasedVectorSpace_c<1,BasedVectorSpaceX> ExteriorPower;
@@ -85,8 +85,8 @@ void test_split_index_to_index_order_1 ()
 
 void test_split_index_to_index_order_2 ()
 {
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,Basis_c<X> > BasedVectorSpaceX;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Y>,Basis_c<Y> > BasedVectorSpaceY;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,IdX>,Basis_c<IdX> > BasedVectorSpaceX;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,IdY>,Basis_c<IdY> > BasedVectorSpaceY;
     typedef TensorPowerOfBasedVectorSpace_f<2,BasedVectorSpaceX>::T TensorPower;
     typedef SymmetricPowerOfBasedVectorSpace_c<2,BasedVectorSpaceX> SymmetricPower;
     typedef ExteriorPowerOfBasedVectorSpace_c<2,BasedVectorSpaceX> ExteriorPower;
@@ -99,8 +99,8 @@ void test_split_index_to_index_order_2 ()
 
 void test_split_index_to_index_order_3 ()
 {
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,Basis_c<X> > BasedVectorSpaceX;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Y>,Basis_c<Y> > BasedVectorSpaceY;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,IdX>,Basis_c<IdX> > BasedVectorSpaceX;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,IdY>,Basis_c<IdY> > BasedVectorSpaceY;
     typedef TensorPowerOfBasedVectorSpace_f<3,BasedVectorSpaceX>::T TensorPower;
     typedef SymmetricPowerOfBasedVectorSpace_c<3,BasedVectorSpaceX> SymmetricPower;
     typedef ExteriorPowerOfBasedVectorSpace_c<3,BasedVectorSpaceX> ExteriorPower;

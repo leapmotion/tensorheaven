@@ -11,8 +11,8 @@ void test_embeddable_as_tensor_as_multilinear_form ()
 {
     std::cout << "EmbeddableAsTensor_i as multilinear form\n";
 
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,OrthonormalBasis_c<X> > B3;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,X>,OrthonormalBasis_c<X> > B4;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,IdX>,OrthonormalBasis_c<IdX> > B3;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,IdX>,OrthonormalBasis_c<IdX> > B4;
     typedef DualOf_f<B3>::T DualOfB3;
     typedef DualOf_f<B4>::T DualOfB4;
     typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<DualOfB3,TypeList_t<DualOfB4> > > TensorProduct;

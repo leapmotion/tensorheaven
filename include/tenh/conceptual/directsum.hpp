@@ -16,6 +16,18 @@
 
 namespace Tenh {
 
+inline std::string plus_separated_terse_string_of (EmptyTypeList const &)
+{
+    return "";
+}
+
+template <typename SummandHeadType_, typename SummandBodyTypeList_>
+std::string plus_separated_terse_string_of (TypeList_t<SummandHeadType_,SummandBodyTypeList_> const &)
+{
+    std::string body_string(plus_separated_terse_string_of(SummandBodyTypeList_()));
+    return terse_string_of<SummandHeadType_>() + (body_string.empty() ? "" : '+' + body_string);
+}
+
 // ///////////////////////////////////////////////////////////////////////////
 // DirectSum_c
 // ///////////////////////////////////////////////////////////////////////////
@@ -35,7 +47,10 @@ public:
 
     static std::string type_as_string (bool verbose)
     {
-        return "DirectSum_c<" + type_string_of<SummandTypeList_>() + '>';
+        if (verbose)
+            return "DirectSum_c<" + type_string_of<SummandTypeList_>() + '>';
+        else
+            return '(' + plus_separated_terse_string_of(SummandTypeList_()) + ')';
     }
 };
 
@@ -160,7 +175,10 @@ public:
 
     static std::string type_as_string (bool verbose)
     {
-        return "DirectSumOfVectorSpaces_c<" + type_string_of<SummandTypeList_>() + '>';
+        if (verbose)
+            return "DirectSumOfVectorSpaces_c<" + type_string_of<SummandTypeList_>() + '>';
+        else
+            return '(' + plus_separated_terse_string_of(SummandTypeList_()) + ')';
     }
 };
 
@@ -221,7 +239,10 @@ public:
 
     static std::string type_as_string (bool verbose)
     {
-        return "DirectSumOfBases_c<" + type_string_of<SummandTypeList_>() + '>';
+        if (verbose)
+            return "DirectSumOfBases_c<" + type_string_of<SummandTypeList_>() + '>';
+        else
+            return '(' + plus_separated_terse_string_of(SummandTypeList_()) + ')';
     }
 };
 
@@ -284,8 +305,11 @@ public:
 
     static std::string type_as_string (bool verbose)
     {
-        return "BasedDirectSumOfVectorSpaces_c<" + type_string_of<DirectSumOfVectorSpaces_>() + ','
+        if (verbose)
+            return "BasedDirectSumOfVectorSpaces_c<" + type_string_of<DirectSumOfVectorSpaces_>() + ','
                                                      + type_string_of<Basis_>() + '>';
+        else
+            return '(' + terse_string_of<DirectSumOfVectorSpaces_>() + ',' + terse_string_of<Basis_>() + ')';
     }
 };
 
@@ -340,7 +364,7 @@ private:
 
     typedef typename PropertyOfEachInTypeList_f<SummandTypeList_,Basis>::T BasisTypeList;
     typedef BasedDirectSumOfVectorSpaces_c<DirectSumOfVectorSpaces_c<SummandTypeList_>,
-                                               DirectSumOfBases_c<BasisTypeList> > As_BasedDirectSumOfVectorSpaces;
+                                           DirectSumOfBases_c<BasisTypeList> > As_BasedDirectSumOfVectorSpaces;
 public:
     typedef TypeList_t<As_BasedDirectSumOfVectorSpaces> ParentTypeList;
 
@@ -348,7 +372,10 @@ public:
 
     static std::string type_as_string (bool verbose)
     {
-        return "DirectSumOfBasedVectorSpaces_c<" + type_string_of<SummandTypeList_>() + '>';
+        if (verbose)
+            return "DirectSumOfBasedVectorSpaces_c<" + type_string_of<SummandTypeList_>() + '>';
+        else
+            return '(' + plus_separated_terse_string_of(SummandTypeList_()) + ')';
     }
 };
 

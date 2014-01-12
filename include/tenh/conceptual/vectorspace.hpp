@@ -33,9 +33,12 @@ struct VectorSpace_c
 
     static std::string type_as_string (bool verbose)
     {
-        return "VectorSpace_c<" + type_string_of<ScalarField_>() + ','
-                                + FORMAT(DIMENSION_) + ','
-                                + type_string_of<Id_>() + '>';
+        if (verbose)
+            return "VectorSpace_c<" + type_string_of<ScalarField_>() + ','
+                                    + FORMAT(DIMENSION_) + ','
+                                    + type_string_of<Id_>() + '>';
+        else
+            return terse_string_of<Id_>();
     }
 };
 
@@ -150,7 +153,10 @@ public:
 
     static std::string type_as_string (bool verbose)
     {
-        return "BasedVectorSpace_c<" + type_string_of<VectorSpace_>() + ',' + type_string_of<Basis_>() + '>';
+        if (verbose)
+            return "BasedVectorSpace_c<" + type_string_of<VectorSpace_>() + ',' + type_string_of<Basis_>() + '>';
+        else
+            return '(' + terse_string_of<VectorSpace_>() + ',' + terse_string_of<Basis_>() + ')';
     }
 };
 

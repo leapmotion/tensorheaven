@@ -40,8 +40,8 @@ void test_multiindex_sort_2 ()
 void test_zero_dimensional_vector_space ()
 {
     // testing 0-dimensional vector spaces
-    typedef VectorSpace_c<RealField,0,X> VSX;
-    typedef Basis_c<X> BasisX;
+    typedef VectorSpace_c<RealField,0,IdX> VSX;
+    typedef Basis_c<IdX> BasisX;
     typedef BasedVectorSpace_c<VSX,BasisX> BasedX;
     typedef ImplementationOf_t<BasedX,float> Vector;
     Vector v(fill_with(0));
@@ -52,8 +52,8 @@ void test_zero_dimensional_vector_space ()
 
 void test_Diagonal2Tensor ()
 {
-    typedef VectorSpace_c<RealField,4,X> VSX;
-    typedef Basis_c<X> BasisX;
+    typedef VectorSpace_c<RealField,4,IdX> VSX;
+    typedef Basis_c<IdX> BasisX;
     typedef BasedVectorSpace_c<VSX,BasisX> BasedX;
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<DualOf_f<BasedX>::T,DualOf_f<BasedX>::T> Diag;
     typedef ImplementationOf_t<Diag,float> D;

@@ -7,7 +7,7 @@
 void test_poly_in_3_dim ()
 {
     std::cout << "Polynomials in 3 dimensions." << '\n';
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,Basis_c<X> > BasedVectorSpace;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,IdX>,Basis_c<IdX> > BasedVectorSpace;
     typedef MultivariatePolynomial<2,BasedVectorSpace> PolyType;
     PolyType::SymDual w(fill_with(0));
     MultivariatePolynomial<1,BasedVectorSpace>::SymDual x(fill_with(1));

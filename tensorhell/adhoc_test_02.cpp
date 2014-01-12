@@ -27,8 +27,8 @@ void test_scalar2tensor ()
 
 void test_wedge ()
 {
-    typedef VectorSpace_c<RealField,5,X> VSX;
-    typedef Basis_c<X> B;
+    typedef VectorSpace_c<RealField,5,IdX> VSX;
+    typedef Basis_c<IdX> B;
     typedef BasedVectorSpace_c<VSX,B> BasedX;
 
     STATIC_ASSERT(HasBasedVectorSpaceStructure_f<BasedX>::V, MUST_BE_BASED_VECTOR_SPACE);
@@ -91,8 +91,8 @@ void test_wedge ()
 
 void test_vee ()
 {
-    typedef VectorSpace_c<RealField,3,X> VSX;
-    typedef Basis_c<X> B;
+    typedef VectorSpace_c<RealField,3,IdX> VSX;
+    typedef Basis_c<IdX> B;
     typedef BasedVectorSpace_c<VSX,B> BasedX;
 
     STATIC_ASSERT(HasBasedVectorSpaceStructure_f<BasedX>::V, MUST_BE_BASED_VECTOR_SPACE);

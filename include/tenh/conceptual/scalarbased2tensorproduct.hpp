@@ -34,7 +34,10 @@ struct Scalar2TensorProduct_c
 
     static std::string type_as_string (bool verbose)
     {
-        return "Scalar2TensorProduct_c<" + type_string_of<Factor0_>() + ',' + type_string_of<Factor1_>() + '>';
+        if (verbose)
+            return "Scalar2TensorProduct_c<" + type_string_of<Factor0_>() + ',' + type_string_of<Factor1_>() + '>';
+        else
+            return "scalar2(" + terse_string_of<Factor0_>() + ',' + terse_string_of<Factor1_>() + ')';
     }
 };
 
@@ -91,7 +94,10 @@ public:
 
     static std::string type_as_string (bool verbose)
     {
-        return "Scalar2TensorProductOfBases_c<" + type_string_of<Factor0_>() + ',' + type_string_of<Factor1_>() + '>';
+        if (verbose)
+            return "Scalar2TensorProductOfBases_c<" + type_string_of<Factor0_>() + ',' + type_string_of<Factor1_>() + '>';
+        else
+            return "scalar2(" + terse_string_of<Factor0_>() + ',' + terse_string_of<Factor1_>() + ')';
     }
 };
 
@@ -158,7 +164,10 @@ public:
 
     static std::string type_as_string (bool verbose)
     {
-        return "Scalar2TensorProductOfBasedVectorSpaces_c<" + type_string_of<Factor0_>() + ',' + type_string_of<Factor1_>() + '>';
+        if (verbose)
+            return "Scalar2TensorProductOfBasedVectorSpaces_c<" + type_string_of<Factor0_>() + ',' + type_string_of<Factor1_>() + '>';
+        else
+            return "scalar2(" + terse_string_of<Factor0_>() + ',' + terse_string_of<Factor1_>() + ')';
     }
 };
 
@@ -224,6 +233,13 @@ private:
 // ///////////////////////////////////////////////////////////////////////////
 // helper functions for easing use of the type system
 // ///////////////////////////////////////////////////////////////////////////
+
+// for now, just do scalar 2-tensor product of based vector spaces
+template <typename Factor0_, typename Factor1_>
+Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_> scalar2 (Factor0_ const &, Factor1_ const &)
+{
+    return Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>();
+}
 
 // for now, just do scalar 2-tensor product of based vector spaces
 template <typename Factor0_, typename Factor1_>

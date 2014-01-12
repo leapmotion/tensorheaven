@@ -8,8 +8,8 @@ void test_zero_vector ()
 {
     std::cout << "zero vector\n";
 
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,OrthonormalBasis_c<X> > B3;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,X>,OrthonormalBasis_c<X> > B4;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,IdX>,OrthonormalBasis_c<IdX> > B3;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,IdX>,OrthonormalBasis_c<IdX> > B4;
     typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B3,TypeList_t<B4> > > TensorProduct;
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B3,B4> Diagonal2TensorProduct;
     typedef DirectSumOfBasedVectorSpaces_c<TypeList_t<B3,TypeList_t<B4> > > DirectSum;
@@ -37,8 +37,8 @@ void test_basis_vectors ()
 {
     std::cout << "basis vectors\n";
 
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,OrthonormalBasis_c<X> > B3;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,X>,OrthonormalBasis_c<X> > B4;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,IdX>,OrthonormalBasis_c<IdX> > B3;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,IdX>,OrthonormalBasis_c<IdX> > B4;
     typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B3,TypeList_t<B4> > > TensorProduct;
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B3,B4> Diagonal2TensorProduct;
     typedef DirectSumOfBasedVectorSpaces_c<TypeList_t<B3,TypeList_t<B4> > > DirectSum;

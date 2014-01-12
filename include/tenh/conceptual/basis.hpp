@@ -26,7 +26,10 @@ struct Basis_c
 
     static std::string type_as_string (bool verbose)
     {
-        return "Basis_c<" + type_string_of<Id_>() + '>';
+        if (verbose)
+            return "Basis_c<" + type_string_of<Id_>() + '>';
+        else
+            return terse_string_of<Id_>();
     }
 };
 
@@ -77,7 +80,10 @@ struct OrthonormalBasis_c
 
     static std::string type_as_string (bool verbose)
     {
-        return "OrthonormalBasis_c<" + type_string_of<Id_>() + '>';
+        if (verbose)
+            return "OrthonormalBasis_c<" + type_string_of<Id_>() + '>';
+        else
+            return terse_string_of<Id_>();
     }
 };
 

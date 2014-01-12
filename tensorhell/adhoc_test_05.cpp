@@ -14,24 +14,24 @@ void test_procedural_stuff ()
 
     test_procedural_array_1<float,7>();
 
-    test_procedural_identity_tensor<float,BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,Basis_c<X> > >();
+    test_procedural_identity_tensor<float,BasedVectorSpace_c<VectorSpace_c<RealField,3,IdX>,Basis_c<IdX> > >();
 }
 
 void test_inner_product_and_euclidean_stuff ()
 {
-    test_standard_euclidean_inner_product<float,VectorSpace_c<RealField,4,X> >();
+    test_standard_euclidean_inner_product<float,VectorSpace_c<RealField,4,IdX> >();
 
     {
-        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,OrthonormalBasis_c<X> > BasedVectorSpace;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,IdX>,OrthonormalBasis_c<IdX> > BasedVectorSpace;
         test_tensor_power_of_inner_product<float,1,BasedVectorSpace,StandardInnerProduct>();
         test_tensor_power_of_inner_product<float,2,BasedVectorSpace,StandardInnerProduct>();
         test_tensor_power_of_inner_product<float,3,BasedVectorSpace,StandardInnerProduct>();
     }
 
-    test_euclidean_embedding_of_standard_euclidean_space<float,VectorSpace_c<RealField,4,X> >();
+    test_euclidean_embedding_of_standard_euclidean_space<float,VectorSpace_c<RealField,4,IdX> >();
 
     {
-        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,OrthonormalBasis_c<X> > BasedVectorSpace;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,IdX>,OrthonormalBasis_c<IdX> > BasedVectorSpace;
         test_tensor_power_of_euclidean_embedding<float,1,BasedVectorSpace,StandardInnerProduct>();
         test_tensor_power_of_euclidean_embedding<float,2,BasedVectorSpace,StandardInnerProduct>();
         test_tensor_power_of_euclidean_embedding<float,3,BasedVectorSpace,StandardInnerProduct>();
@@ -42,7 +42,7 @@ void test_products_of_procedural_stuff ()
 {
     {
         std::cout << "testing StandardBasisVector_f\n";
-        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,OrthonormalBasis_c<X> > BasedVectorSpace;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,IdX>,OrthonormalBasis_c<IdX> > BasedVectorSpace;
         std::cout << FORMAT_VALUE((StandardBasisVector_f<BasedVectorSpace,float,0>::T())) << '\n';
         std::cout << FORMAT_VALUE((StandardBasisVector_f<BasedVectorSpace,float,1>::T())) << '\n';
         std::cout << FORMAT_VALUE((StandardBasisVector_f<BasedVectorSpace,float,2>::T())) << '\n';
@@ -51,7 +51,7 @@ void test_products_of_procedural_stuff ()
 
     {
         std::cout << "testing TensorProductOfProceduralVectors_f\n";
-        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,OrthonormalBasis_c<X> > BasedVectorSpace;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,IdX>,OrthonormalBasis_c<IdX> > BasedVectorSpace;
         typedef StandardBasisVector_f<BasedVectorSpace,float,0>::T E0;
         typedef StandardBasisVector_f<BasedVectorSpace,float,1>::T E1;
         typedef StandardBasisVector_f<BasedVectorSpace,float,2>::T E2;
@@ -95,9 +95,9 @@ void test_products_of_procedural_stuff ()
 
     {
         std::cout << "testing TensorProductOfProcedural2Tensors_f (for general 2-tensors)\n";
-        typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,X>,OrthonormalBasis_c<X> > BasedX;
-        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Y>,OrthonormalBasis_c<Y> > BasedY;
-        typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Z>,OrthonormalBasis_c<Z> > BasedZ;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,IdX>,OrthonormalBasis_c<IdX> > BasedX;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,IdY>,OrthonormalBasis_c<IdY> > BasedY;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,IdZ>,OrthonormalBasis_c<IdZ> > BasedZ;
         typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedX,TypeList_t<BasedY> > > TensorProductA;
         typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedY,TypeList_t<BasedZ> > > TensorProductB;
         typedef float Scalar;
@@ -135,24 +135,24 @@ void test_products_of_procedural_stuff ()
 
     {
         std::cout << "testing TensorProductOfProcedural2Tensors_f (for diagonal 2-tensors)\n";
-        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,OrthonormalBasis_c<X> > BasedX;
-        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Y>,OrthonormalBasis_c<Y> > BasedY;
-        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Z>,OrthonormalBasis_c<Z> > BasedZ;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,IdX>,OrthonormalBasis_c<IdX> > BasedX;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,IdY>,OrthonormalBasis_c<IdY> > BasedY;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,5,IdZ>,OrthonormalBasis_c<IdZ> > BasedZ;
         typedef Diagonal2TensorProductOfBasedVectorSpaces_c<BasedX,BasedY> TensorProductA;
         typedef Diagonal2TensorProductOfBasedVectorSpaces_c<BasedY,BasedZ> TensorProductB;
         typedef float Scalar;
         typedef ImplementationOf_t<TensorProductA,
                                    Scalar,
                                    UseProceduralArray_t<ComponentGenerator_t<Scalar,
-                                                                            DimensionOf_f<TensorProductA>::V,
-                                                                            counting_vector_generator<Scalar,DimensionOf_f<TensorProductA>::V>,
-                                                                            CountingVectorGeneratorId<DimensionOf_f<TensorProductA>::V> > > > ImplementationA;
+                                                                             DimensionOf_f<TensorProductA>::V,
+                                                                             counting_vector_generator<Scalar,DimensionOf_f<TensorProductA>::V>,
+                                                                             CountingVectorGeneratorId<DimensionOf_f<TensorProductA>::V> > > > ImplementationA;
         typedef ImplementationOf_t<TensorProductB,
                                    Scalar,
                                    UseProceduralArray_t<ComponentGenerator_t<Scalar,
-                                                                            DimensionOf_f<TensorProductB>::V,
-                                                                            counting_vector_generator<Scalar,DimensionOf_f<TensorProductB>::V>,
-                                                                            CountingVectorGeneratorId<DimensionOf_f<TensorProductB>::V> > > > ImplementationB;
+                                                                             DimensionOf_f<TensorProductB>::V,
+                                                                             counting_vector_generator<Scalar,DimensionOf_f<TensorProductB>::V>,
+                                                                             CountingVectorGeneratorId<DimensionOf_f<TensorProductB>::V> > > > ImplementationB;
         {
             std::cout << FORMAT_VALUE(ImplementationA()) << '\n';
             typedef TensorProductOfProcedural2Tensors_f<TypeList_t<ImplementationA> >::T TProdOfImpl;
@@ -177,9 +177,9 @@ void test_products_of_procedural_stuff ()
 
     {
         std::cout << "testing TensorProductOfProcedural2Tensors_f (for scalar 2-tensors)\n";
-        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,OrthonormalBasis_c<X> > BasedX;
-        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Y>,OrthonormalBasis_c<Y> > BasedY;
-        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Z>,OrthonormalBasis_c<Z> > BasedZ;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,IdX>,OrthonormalBasis_c<IdX> > BasedX;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,IdY>,OrthonormalBasis_c<IdY> > BasedY;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,IdZ>,OrthonormalBasis_c<IdZ> > BasedZ;
         typedef Scalar2TensorProductOfBasedVectorSpaces_c<BasedX,BasedY> TensorProductA;
         typedef Scalar2TensorProductOfBasedVectorSpaces_c<BasedY,BasedZ> TensorProductB;
         typedef float Scalar;

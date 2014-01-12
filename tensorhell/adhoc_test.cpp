@@ -74,5 +74,7 @@ int main (int, char **)
     test_embed_coembed_adjointness();
     test_type_system_helper_functions();
 
+    test_terse_strings();
+
     return 0;
 }

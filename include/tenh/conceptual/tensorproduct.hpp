@@ -17,6 +17,34 @@
 
 namespace Tenh {
 
+inline std::string asterisk_separated_terse_string_of (EmptyTypeList const &)
+{
+    return "";
+}
+
+template <typename FactorHeadType_, typename FactorBodyTypeList_>
+std::string asterisk_separated_terse_string_of (TypeList_t<FactorHeadType_,FactorBodyTypeList_> const &)
+{
+    std::string body_string(asterisk_separated_terse_string_of(FactorBodyTypeList_()));
+    return terse_string_of<FactorHeadType_>() + (body_string.empty() ? "" : '*' + body_string);
+}
+
+template <typename FactorHeadType_, typename FactorBodyTypeList_>
+typename EnableIf_f<!TypeListIsUniform_t<TypeList_t<FactorHeadType_,FactorBodyTypeList_> >::V ||
+                    TypesAreEqual_f<FactorBodyTypeList_,EmptyTypeList>::V,
+                    std::string>::T terse_string_of_tensor_product (TypeList_t<FactorHeadType_,FactorBodyTypeList_> const &)
+{
+    return '(' + asterisk_separated_terse_string_of(TypeList_t<FactorHeadType_,FactorBodyTypeList_>()) + ')';
+}
+
+template <typename FactorHeadType_, typename FactorBodyTypeList_>
+typename EnableIf_f<TypeListIsUniform_t<TypeList_t<FactorHeadType_,FactorBodyTypeList_> >::V &&
+                    !TypesAreEqual_f<FactorBodyTypeList_,EmptyTypeList>::V,
+                    std::string>::T terse_string_of_tensor_product (TypeList_t<FactorHeadType_,FactorBodyTypeList_> const &)
+{
+    return "tensor<" + FORMAT((Length_f<TypeList_t<FactorHeadType_,FactorBodyTypeList_> >::V)) + '>' + terse_string_of<FactorHeadType_>();
+}
+
 // ///////////////////////////////////////////////////////////////////////////
 // TensorProduct_c
 // ///////////////////////////////////////////////////////////////////////////
@@ -36,7 +64,10 @@ public:
 
     static std::string type_as_string (bool verbose)
     {
-        return "TensorProduct_c<" + type_string_of<FactorTypeList_>() + '>';
+        if (verbose)
+            return "TensorProduct_c<" + type_string_of<FactorTypeList_>() + '>';
+        else
+            return terse_string_of_tensor_product(FactorTypeList_());
     }
 };
 
@@ -164,7 +195,10 @@ public:
 
     static std::string type_as_string (bool verbose)
     {
-        return "TensorProductOfVectorSpaces_c<" + type_string_of<FactorTypeList_>() + '>';
+        if (verbose)
+            return "TensorProductOfVectorSpaces_c<" + type_string_of<FactorTypeList_>() + '>';
+        else
+            return terse_string_of_tensor_product(FactorTypeList_());
     }
 };
 
@@ -225,7 +259,10 @@ public:
 
     static std::string type_as_string (bool verbose)
     {
-        return "TensorProductOfBases_c<" + type_string_of<FactorTypeList_>() + '>';
+        if (verbose)
+            return "TensorProductOfBases_c<" + type_string_of<FactorTypeList_>() + '>';
+        else
+            return terse_string_of_tensor_product(FactorTypeList_());
     }
 };
 
@@ -288,8 +325,11 @@ public:
 
     static std::string type_as_string (bool verbose)
     {
-        return "BasedTensorProductOfVectorSpaces_c<" + type_string_of<TensorProductOfVectorSpaces_>() + ','
-                                                     + type_string_of<Basis_>() + '>';
+        if (verbose)
+            return "BasedTensorProductOfVectorSpaces_c<" + type_string_of<TensorProductOfVectorSpaces_>() + ','
+                                                         + type_string_of<Basis_>() + '>';
+        else
+            return '(' + terse_string_of<TensorProductOfVectorSpaces_>() + ',' + terse_string_of<Basis_>() + ')';
     }
 };
 
@@ -354,7 +394,10 @@ public:
 
     static std::string type_as_string (bool verbose)
     {
-        return "TensorProductOfBasedVectorSpaces_c<" + type_string_of<FactorTypeList_>() + '>';
+        if (verbose)
+            return "TensorProductOfBasedVectorSpaces_c<" + type_string_of<FactorTypeList_>() + '>';
+        else
+            return terse_string_of_tensor_product(FactorTypeList_());
     }
 };
 
@@ -468,6 +511,13 @@ TensorProductOfBasedVectorSpaces_c<TypeList_t<TensorProductOfBasedVectorSpaces_c
 {
     return TensorProductOfBasedVectorSpaces_c<TypeList_t<TensorProductOfBasedVectorSpaces_c<LhsFactorTypeList_>,
                                               TypeList_t<TensorProductOfBasedVectorSpaces_c<RhsFactorTypeList_> > > >();
+}
+
+template <Uint32 ORDER_, typename Factor_>
+typename EnableIf_f<IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_),
+                    typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T>::T tensor (Factor_ const &)
+{
+    return typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T();
 }
 
 // ///////////////////////////////////////////////////////////////////////////

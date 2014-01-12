@@ -22,7 +22,10 @@ struct Field_c
 
     static std::string type_as_string (bool verbose)
     {
-        return "Field_c<" + type_string_of<Id_>() + '>';
+        if (verbose)
+            return "Field_c<" + type_string_of<Id_>() + '>';
+        else
+            return terse_string_of<Id_>();
     }
 };
 
@@ -60,7 +63,7 @@ struct RealNumbers
 {
     static std::string type_as_string (bool verbose)
     {
-        return "RealNumbers";
+        return verbose ? "RealNumbers" : "R";
     }
 private:
     RealNumbers();

@@ -126,7 +126,8 @@ set(adhoc_test_SRCS
     adhoc_test_11.cpp
     adhoc_test_12.cpp
     adhoc_test_13.cpp
-    adhoc_test_14.cpp)
+    adhoc_test_14.cpp
+    adhoc_test_15.cpp)
 add_executable(adhoc_test ${adhoc_test_SRCS})
 
 # test-framework-using tests

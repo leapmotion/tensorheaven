@@ -31,7 +31,10 @@ struct SymmetricPower_c
 
     static std::string type_as_string (bool verbose)
     {
-        return "SymmetricPower_c<" + FORMAT(ORDER) + ',' + type_string_of<Factor>() + '>';
+        if (verbose)
+            return "SymmetricPower_c<" + FORMAT(ORDER_) + ',' + type_string_of<Factor_>() + '>';
+        else
+            return "sym<" + FORMAT(ORDER_) + ">(" + terse_string_of<Factor_>() + ')';
     }
 };
 
@@ -80,7 +83,10 @@ public:
 
     static std::string type_as_string (bool verbose)
     {
-        return "SymmetricPowerOfVectorSpace_c<" + FORMAT(ORDER_) + ',' + type_string_of<Factor>() + '>';
+        if (verbose)
+            return "SymmetricPowerOfVectorSpace_c<" + FORMAT(ORDER_) + ',' + type_string_of<Factor>() + '>';
+        else
+            return "sym<" + FORMAT(ORDER_) + ">(" + terse_string_of<Factor_>() + ')';
     }
 };
 
@@ -129,7 +135,10 @@ public:
 
     static std::string type_as_string (bool verbose)
     {
-        return "SymmetricPowerOfBasis_c<" + FORMAT(ORDER) + ',' + type_string_of<Factor>() + '>';
+        if (verbose)
+            return "SymmetricPowerOfBasis_c<" + FORMAT(ORDER) + ',' + type_string_of<Factor>() + '>';
+        else
+            return "sym<" + FORMAT(ORDER_) + ">(" + terse_string_of<Factor_>() + ')';
     }
 };
 
@@ -179,8 +188,11 @@ public:
 
     static std::string type_as_string (bool verbose)
     {
-        return "BasedSymmetricPowerOfVectorSpace_c<" + type_string_of<SymmetricPowerOfVectorSpace_>() + ','
-                                                     + type_string_of<Basis_>() + '>';
+        if (verbose)
+            return "BasedSymmetricPowerOfVectorSpace_c<" + type_string_of<SymmetricPowerOfVectorSpace_>() + ','
+                                                         + type_string_of<Basis_>() + '>';
+        else
+            return '(' + terse_string_of<SymmetricPowerOfVectorSpace_>() + ',' + terse_string_of<Basis_>() + ')';
     }
 };
 
@@ -238,7 +250,10 @@ public:
 
     static std::string type_as_string (bool verbose)
     {
-        return "SymmetricPowerOfBasedVectorSpace_c<" + FORMAT(ORDER_) + ',' + type_string_of<Factor_>() + '>';
+        if (verbose)
+            return "SymmetricPowerOfBasedVectorSpace_c<" + FORMAT(ORDER_) + ',' + type_string_of<Factor_>() + '>';
+        else
+            return "sym<" + FORMAT(ORDER_) + '>' + terse_string_of<Factor_>();
     }
 };
 

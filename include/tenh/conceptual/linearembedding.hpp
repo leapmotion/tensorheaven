@@ -139,6 +139,19 @@ struct TypeStringOf_t<LinearEmbedding_c<Domain_,Codomain_,Scalar_,EmbeddingId_,E
     }
 };
 
+template <typename Domain_,
+          typename Codomain_,
+          typename Scalar_,
+          typename EmbeddingId_,
+          bool ENABLE_EXCEPTIONS_>
+struct TypeStringOf_t<LinearEmbedding_c<Domain_,Codomain_,Scalar_,EmbeddingId_,ENABLE_EXCEPTIONS_>,TERSE>
+{
+    static std::string eval ()
+    {
+        return '(' + terse_string_of<EmbeddingId_>() + " : " + terse_string_of<Domain_>() + " -> " + terse_string_of<Codomain_>() + ')';
+    }
+};
+
 template <typename Concept_> struct DimensionOf_f; // forward declaration
 
 template <typename Domain_,

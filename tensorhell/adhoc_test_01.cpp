@@ -8,8 +8,8 @@ void test_vector_contraction ()
 {
     std::cout << "testing vector contraction\n";
 
-    typedef VectorSpace_c<RealField,3,X> VSX;
-    typedef Basis_c<X> B;
+    typedef VectorSpace_c<RealField,3,IdX> VSX;
+    typedef Basis_c<IdX> B;
     typedef BasedVectorSpace_c<VSX,B> BasedX;
 
     typedef ImplementationOf_t<BasedX,float> V;
@@ -50,12 +50,12 @@ void test_tensor_contraction ()
 {
     std::cout << "testing tensor contraction\n";
 
-    typedef VectorSpace_c<RealField,3,X> VSX;
-    typedef Basis_c<X> BX;
+    typedef VectorSpace_c<RealField,3,IdX> VSX;
+    typedef Basis_c<IdX> BX;
     typedef BasedVectorSpace_c<VSX,BX> BasedX;
 
-    typedef VectorSpace_c<RealField,2,Y> VSY;
-    typedef Basis_c<Y> BY;
+    typedef VectorSpace_c<RealField,2,IdY> VSY;
+    typedef Basis_c<IdY> BY;
     typedef BasedVectorSpace_c<VSY,BY> BasedY;
 
     typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedX,TypeList_t<DualOf_f<BasedY>::T> > > TPBVS;

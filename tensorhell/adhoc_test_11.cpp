@@ -7,7 +7,7 @@
 void test_poly_in_4_dim ()
 {
     std::cout << "Polynomials in 4 dimensions." << '\n';
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,X>,Basis_c<X> > BasedVectorSpace;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,IdX>,Basis_c<IdX> > BasedVectorSpace;
     typedef MultivariatePolynomial<2,BasedVectorSpace> PolyType;
     PolyType::SymDual w(fill_with(0));
     MultivariatePolynomial<1,BasedVectorSpace>::SymDual x(fill_with(1));
@@ -43,7 +43,7 @@ void test_poly_in_4_dim ()
 void test_polynomial_serialization ()
 {
     std::cout << "serializing Polynomials in 4 dimensions." << '\n';
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,X>,Basis_c<X> > BasedVectorSpace;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,IdX>,Basis_c<IdX> > BasedVectorSpace;
     typedef MultivariatePolynomial<2,BasedVectorSpace> PolyType;
     PolyType::SymDual w(fill_with(0));
     MultivariatePolynomial<1,BasedVectorSpace>::SymDual x(fill_with(1));
@@ -70,28 +70,28 @@ void test_polynomial_serialization ()
 void test_polynomial_multiplication ()
 {
     std::cout << "Polynomial multiplication tests." << '\n';
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,X>,Basis_c<X> > BasedVectorSpace;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,IdX>,Basis_c<IdX> > BasedVectorSpace;
     typedef MultivariatePolynomial<1,BasedVectorSpace> PolyType;
     PolyType::SymDual x(fill_with(0)),y(fill_with(0));
     x[PolyType::SymDual::ComponentIndex(0, CHECK_RANGE)] = 1.0f;
     y[PolyType::SymDual::ComponentIndex(1, CHECK_RANGE)] = 1.0f;
 
-    PolyType X(x,0), Y(y,0);
+    PolyType IdX(x,0), IdY(y,0);
 
-    std::cout << X << '\n';
-    std::cout << Y << '\n';
-    std::cout << X*X << '\n';
-    std::cout << Y*Y << '\n';
-    std::cout << X*Y << '\n';
-    std::cout << (X*X)*(Y*Y) + 3 << '\n';
-    std::cout << (X*Y)*(X*Y) << '\n';
-    std::cout << 17 + X*X*Y*Y << '\n';
+    std::cout << IdX << '\n';
+    std::cout << IdY << '\n';
+    std::cout << IdX*IdX << '\n';
+    std::cout << IdY*IdY << '\n';
+    std::cout << IdX*IdY << '\n';
+    std::cout << (IdX*IdX)*(IdY*IdY) + 3 << '\n';
+    std::cout << (IdX*IdY)*(IdX*IdY) << '\n';
+    std::cout << 17 + IdX*IdX*IdY*IdY << '\n';
 }
 
 void test_tuple_initialization ()
 {
     std::cout << "testing tuple-based initialization\n";
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,12,X>,Basis_c<X> > BVS;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,12,IdX>,Basis_c<IdX> > BVS;
     typedef ImplementationOf_t<BVS,float,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > U;
     float array[12];
     typedef ImplementationOf_t<BVS,float,UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST> > V;

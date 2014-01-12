@@ -6,7 +6,7 @@
 
 void test_Basis_c ()
 {
-    typedef Basis_c<X> Basis;
+    typedef Basis_c<IdX> Basis;
     typedef DualOf_f<Basis>::T DualBasis;
     typedef DualOf_f<DualBasis>::T DualDualBasis;
     std::cout << "Basis = "  << type_string_of<Basis>() << '\n'
@@ -21,7 +21,7 @@ void test_Basis_c ()
 
 void test_VectorSpace_c ()
 {
-    typedef VectorSpace_c<RealField,3,X> VectorSpace;
+    typedef VectorSpace_c<RealField,3,IdX> VectorSpace;
     typedef DualOf_f<VectorSpace>::T DualVectorSpace;
     typedef DualOf_f<DualVectorSpace>::T DualDualVectorSpace;
     std::cout << "VectorSpace = "  << type_string_of<VectorSpace>() << '\n'
@@ -38,8 +38,8 @@ void test_VectorSpace_c ()
 
 void test_BasedVectorSpace_c ()
 {
-    typedef VectorSpace_c<RealField,3,X> VectorSpace;
-    typedef Basis_c<Y> Basis;
+    typedef VectorSpace_c<RealField,3,IdX> VectorSpace;
+    typedef Basis_c<IdY> Basis;
     typedef BasedVectorSpace_c<VectorSpace,Basis> BasedVectorSpace;
     // BasedVectorSpace::Index i;
     typedef DualOf_f<BasedVectorSpace>::T DualBasedVectorSpace;
@@ -64,7 +64,7 @@ void test_BasedVectorSpace_c ()
 
 void test_TensorProduct_c ()
 {
-    typedef TypeList_t<X,TypeList_t<int,TypeList_t<float> > > TypeList;
+    typedef TypeList_t<IdX,TypeList_t<int,TypeList_t<float> > > TypeList;
     typedef TensorProduct_c<TypeList> TensorProduct;
     typedef DualOf_f<TensorProduct>::T DualTensorProduct;
     typedef DualOf_f<DualTensorProduct>::T DualDualTensorProduct;
@@ -80,9 +80,9 @@ void test_TensorProduct_c ()
 
 void test_TensorProductOfVectorSpaces_c ()
 {
-    typedef VectorSpace_c<RealField,3,X> X3;
-    typedef VectorSpace_c<RealField,4,Y> Y4;
-    typedef VectorSpace_c<RealField,5,Z> Z5;
+    typedef VectorSpace_c<RealField,3,IdX> X3;
+    typedef VectorSpace_c<RealField,4,IdY> Y4;
+    typedef VectorSpace_c<RealField,5,IdZ> Z5;
     typedef TensorProductOfVectorSpaces_c<TypeList_t<X3,TypeList_t<Y4,TypeList_t<Z5> > > > T;
     typedef DualOf_f<T>::T DualT;
     typedef DualOf_f<DualT>::T DualDualT;
@@ -98,9 +98,9 @@ void test_TensorProductOfVectorSpaces_c ()
 
 void test_TensorProductOfBases_c ()
 {
-    typedef Basis_c<X> BX;
-    typedef Basis_c<Y> BY;
-    typedef Basis_c<Z> BZ;
+    typedef Basis_c<IdX> BX;
+    typedef Basis_c<IdY> BY;
+    typedef Basis_c<IdZ> BZ;
     typedef TensorProductOfBases_c<TypeList_t<BX,TypeList_t<BY,TypeList_t<BZ> > > > T;
     typedef DualOf_f<T>::T DualT;
     typedef DualOf_f<DualT>::T DualDualT;
@@ -116,12 +116,12 @@ void test_TensorProductOfBases_c ()
 
 void test_BasedTensorProductStuff ()
 {
-    typedef VectorSpace_c<RealField,3,X> X3;
-    typedef VectorSpace_c<RealField,4,Y> Y4;
-    typedef VectorSpace_c<RealField,5,Z> Z5;
-    typedef Basis_c<X> BX;
-    typedef Basis_c<Y> BY;
-    typedef Basis_c<Z> BZ;
+    typedef VectorSpace_c<RealField,3,IdX> X3;
+    typedef VectorSpace_c<RealField,4,IdY> Y4;
+    typedef VectorSpace_c<RealField,5,IdZ> Z5;
+    typedef Basis_c<IdX> BX;
+    typedef Basis_c<IdY> BY;
+    typedef Basis_c<IdZ> BZ;
     typedef BasedVectorSpace_c<X3,BX> BasedX;
     typedef BasedVectorSpace_c<Y4,BY> BasedY;
     typedef BasedVectorSpace_c<Z5,BZ> BasedZ;
@@ -200,7 +200,7 @@ void test_BasedTensorProductStuff ()
 
 void test_SymmetricPower_c ()
 {
-    typedef SymmetricPower_c<3,X> SymmetricPower;
+    typedef SymmetricPower_c<3,IdX> SymmetricPower;
     typedef DualOf_f<SymmetricPower>::T DualSymmetricPower;
     typedef DualOf_f<DualSymmetricPower>::T DualDualSymmetricPower;
     std::cout << "SymmetricPower = "  << type_string_of<SymmetricPower>() << '\n'
@@ -215,7 +215,7 @@ void test_SymmetricPower_c ()
 
 void test_SymmetricPowerOfVectorSpace_c ()
 {
-    typedef VectorSpace_c<RealField,5,X> X5;
+    typedef VectorSpace_c<RealField,5,IdX> X5;
     typedef SymmetricPowerOfVectorSpace_c<3,X5> T;
     typedef DualOf_f<T>::T DualT;
     typedef DualOf_f<DualT>::T DualDualT;
@@ -231,7 +231,7 @@ void test_SymmetricPowerOfVectorSpace_c ()
 
 void test_SymmetricPowerOfBasis_c ()
 {
-    typedef Basis_c<X> BX;
+    typedef Basis_c<IdX> BX;
     typedef SymmetricPowerOfBasis_c<3,BX> T;
     typedef DualOf_f<T>::T DualT;
     typedef DualOf_f<DualT>::T DualDualT;
@@ -247,8 +247,8 @@ void test_SymmetricPowerOfBasis_c ()
 
 void test_BasedSymmetricPowerStuff ()
 {
-    typedef VectorSpace_c<RealField,5,X> X5;
-    typedef Basis_c<X> BX;
+    typedef VectorSpace_c<RealField,5,IdX> X5;
+    typedef Basis_c<IdX> BX;
     typedef BasedVectorSpace_c<X5,BX> BasedX;
     assert(HasBasedVectorSpaceStructure_f<BasedX>::V);
 

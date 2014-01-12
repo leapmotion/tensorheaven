@@ -32,7 +32,10 @@ struct ExteriorPower_c
 
     static std::string type_as_string (bool verbose)
     {
-        return "ExteriorPower_c<" + FORMAT(ORDER_) + ',' + type_string_of<Factor_>() + '>';
+        if (verbose)
+            return "ExteriorPower_c<" + FORMAT(ORDER_) + ',' + type_string_of<Factor_>() + '>';
+        else
+            return "ext<" + FORMAT(ORDER_) + ">(" + terse_string_of<Factor_>() + ')';
     }
 };
 
@@ -82,7 +85,10 @@ public:
 
     static std::string type_as_string (bool verbose)
     {
-        return "ExteriorPowerOfVectorSpace_c<" + FORMAT(ORDER_) + ',' + type_string_of<Factor_>() + '>';
+        if (verbose)
+            return "ExteriorPowerOfVectorSpace_c<" + FORMAT(ORDER_) + ',' + type_string_of<Factor_>() + '>';
+        else
+            return "ext<" + FORMAT(ORDER_) + ">(" + terse_string_of<Factor_>() + ')';
     }
 };
 
@@ -130,7 +136,10 @@ public:
 
     static std::string type_as_string (bool verbose)
     {
-        return "ExteriorPowerOfBasis_c<" + FORMAT(ORDER_) + ',' + type_string_of<Factor_>() + '>';
+        if (verbose)
+            return "ExteriorPowerOfBasis_c<" + FORMAT(ORDER_) + ',' + type_string_of<Factor_>() + '>';
+        else
+            return "ext<" + FORMAT(ORDER_) + ">(" + terse_string_of<Factor_>() + ')';
     }
 };
 
@@ -180,8 +189,11 @@ public:
 
     static std::string type_as_string (bool verbose)
     {
-        return "BasedExteriorPowerOfVectorSpace_c<" + type_string_of<ExteriorPowerOfVectorSpace_>() + ','
-                                                    + type_string_of<Basis_>() + '>';
+        if (verbose)
+            return "BasedExteriorPowerOfVectorSpace_c<" + type_string_of<ExteriorPowerOfVectorSpace_>() + ','
+                                                        + type_string_of<Basis_>() + '>';
+        else
+            return '(' + terse_string_of<ExteriorPowerOfVectorSpace_>() + ',' + terse_string_of<Basis_>() + ')';
     }
 };
 
@@ -228,7 +240,10 @@ public:
 
     static std::string type_as_string (bool verbose)
     {
-        return "ExteriorPowerOfBasedVectorSpace_c<" + FORMAT(ORDER_) + ',' + type_string_of<Factor_>() + '>';
+        if (verbose)
+            return "ExteriorPowerOfBasedVectorSpace_c<" + FORMAT(ORDER_) + ',' + type_string_of<Factor_>() + '>';
+        else
+            return "ext<" + FORMAT(ORDER_) + '>' + terse_string_of<Factor_>();
     }
 };
 
