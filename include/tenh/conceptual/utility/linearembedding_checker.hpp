@@ -104,7 +104,7 @@ std::set<Element_,Compare_,Allocator_> set_union (std::set<Element_,Compare_,All
 // consistent with those of embed, for a particular linear embedding.
 template <typename Domain_, typename Codomain_, typename Scalar_, typename EmbeddingId_>
 bool linear_embedding_is_consistent (LinearEmbedding_c<Domain_,Codomain_,Scalar_,EmbeddingId_,ENABLE_EXCEPTIONS> const &,
-                                     std::string *error_string = NULL)
+                                     std::string *error_string = nullptr)
 {
     typedef LinearEmbedding_c<Domain_,Codomain_,Scalar_,EmbeddingId_,ENABLE_EXCEPTIONS> LinearEmbedding;
     typedef typename CoembedIndexIterator_f<Domain_,Codomain_,Scalar_,EmbeddingId_,ENABLE_EXCEPTIONS>::T CoembedIndexIterator;
@@ -200,7 +200,7 @@ bool linear_embedding_is_consistent (LinearEmbedding_c<Domain_,Codomain_,Scalar_
     if (errors_were_encountered)
     {
         // return the error string if it was requested.
-        if (error_string != NULL)
+        if (error_string != nullptr)
             *error_string = errors.str();
         return false;
     }
@@ -288,7 +288,7 @@ bool linear_embedding_is_consistent (LinearEmbedding_c<Domain_,Codomain_,Scalar_
     if (errors_were_encountered)
     {
         // return the error string if it was requested.
-        if (error_string != NULL)
+        if (error_string != nullptr)
             *error_string = errors.str();
         return false;
     }
@@ -327,7 +327,7 @@ bool linear_embedding_is_consistent (LinearEmbedding_c<Domain_,Codomain_,Scalar_
     }
 
     // return the error string if it was requested.
-    if (error_string != NULL)
+    if (error_string != nullptr)
         *error_string = errors.str();
 
     return !errors_were_encountered;

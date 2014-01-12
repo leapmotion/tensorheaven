@@ -41,13 +41,13 @@ struct PreallocatedArray_t
     typedef typename Parent_MemoryArray_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
     typedef typename Parent_MemoryArray_i::QualifiedComponent QualifiedComponent;
 
-    explicit PreallocatedArray_t (WithoutInitialization const &) : m_pointer_to_allocation(NULL) { }
+    explicit PreallocatedArray_t (WithoutInitialization const &) : m_pointer_to_allocation(nullptr) { }
     explicit PreallocatedArray_t (QualifiedComponent *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         m_pointer_to_allocation(pointer_to_allocation)
     {
-        if (check_pointer && m_pointer_to_allocation == NULL)
-            throw std::invalid_argument("invalid pointer_to_allocation argument (must be non-NULL)");
+        if (check_pointer && m_pointer_to_allocation == nullptr)
+            throw std::invalid_argument("invalid pointer_to_allocation argument (must be non-null)");
     }
 
 // this is to allow 0-component arrays to work (necessary for 0-dimensional vectors)
@@ -62,8 +62,8 @@ struct PreallocatedArray_t
         :
         m_pointer_to_allocation(pointer_to_allocation)
     {
-        if (check_pointer && m_pointer_to_allocation == NULL)
-            throw std::invalid_argument("invalid pointer_to_allocation argument (must be non-NULL)");
+        if (check_pointer && m_pointer_to_allocation == nullptr)
+            throw std::invalid_argument("invalid pointer_to_allocation argument (must be non-null)");
         for (Uint32 i = 0; i < COMPONENT_COUNT; ++i)
             m_pointer_to_allocation[i] = Component_(fill_with.value());
     }
@@ -82,8 +82,8 @@ struct PreallocatedArray_t
         STATIC_ASSERT((TypeListIsUniform_t<TypeList>::V), TYPELIST_MUST_BE_UNIFORM);
         STATIC_ASSERT_TYPES_ARE_EQUAL(HeadType_,Component_);
         STATIC_ASSERT(TypeList::LENGTH == COMPONENT_COUNT, LENGTHS_MUST_BE_EQUAL);
-        if (check_pointer && m_pointer_to_allocation == NULL)
-            throw std::invalid_argument("invalid pointer_to_allocation argument (must be non-NULL)");
+        if (check_pointer && m_pointer_to_allocation == nullptr)
+            throw std::invalid_argument("invalid pointer_to_allocation argument (must be non-null)");
         memcpy(m_pointer_to_allocation, x.as_member_array().pointer_to_allocation(), allocation_size_in_bytes());
     }
 
@@ -92,13 +92,13 @@ struct PreallocatedArray_t
 
     ComponentAccessConstReturnType operator [] (ComponentIndex const &i) const
     {
-        assert(m_pointer_to_allocation != NULL && "you didn't initialize the pointer_to_allocation value");
+        assert(m_pointer_to_allocation != nullptr && "you didn't initialize the pointer_to_allocation value");
         assert(i.is_not_at_end() && "you used ComponentIndex_t(x, DONT_RANGE_CHECK) inappropriately");
         return m_pointer_to_allocation[i.value()];
     }
     ComponentAccessNonConstReturnType operator [] (ComponentIndex const &i)
     {
-        assert(m_pointer_to_allocation != NULL && "you didn't initialize the pointer_to_allocation value");
+        assert(m_pointer_to_allocation != nullptr && "you didn't initialize the pointer_to_allocation value");
         assert(i.is_not_at_end() && "you used ComponentIndex_t(x, DONT_RANGE_CHECK) inappropriately");
         return m_pointer_to_allocation[i.value()];
     }

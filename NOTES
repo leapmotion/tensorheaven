@@ -598,6 +598,7 @@
 - Using a sentinel type e.g. for "fill with" turns out to be a great way to get around constructor
   choice ambiguity.  This ambiguity was a problem when we wanted to use conversion operators on
   expression templates that weren't conversion to the scalar type.
+- TODO: write about combination of decltype keyword with functions which produce conceptual types
 
 
 ###Notes from Tensor Heaven future planning

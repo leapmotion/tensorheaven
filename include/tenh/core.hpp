@@ -129,7 +129,7 @@ static bool const DONT_CHECK_RANGE = false;
 ///  The default check parameter value should be CHECK_POINTER, which is more expensive,
 ///  but if you know what you're doing, you can pass in DONT_CHECK_POINTER to avoid the
 ///  pointer check and gain efficiency (e.g. if you know for a fact that the pointer is
-///  non-NULL).  This is a compromise between completely correct program behavior and
+///  non-null).  This is a compromise between completely correct program behavior and
 ///  program efficiency.
 /// @todo TODO: should these be moved to preallocatedarray.hpp? (if they're only used there)
 static bool const CHECK_POINTER = true;

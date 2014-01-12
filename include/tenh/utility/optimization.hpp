@@ -182,7 +182,7 @@ template <typename InnerProductId_, typename ObjectiveFunction_, typename BasedV
 ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const &func,
                                                         ImplementationOf_t<BasedVectorSpace_,Scalar_,GuessUseArrayType_,Derived_> const &guess,
                                                         Scalar_ tolerance,
-                                                        Scalar_ *minimum = NULL)
+                                                        Scalar_ *minimum = nullptr)
 {
     typedef ImplementationOf_t<BasedVectorSpace_,Scalar_> VectorType;
     typedef typename InnerProduct_f<BasedVectorSpace_,InnerProductId_,Scalar_>::T VectorInnerProductType;
@@ -233,7 +233,7 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
         if (g_norm <= tolerance)
         {
             // tolerance_was_attained = true;
-            if (minimum != NULL)
+            if (minimum != nullptr)
                 *minimum = current_value;
             break;
         }
@@ -449,7 +449,7 @@ ImplementationOf_t<BasedVectorSpace_,typename ObjectiveFunction_::Scalar>
                                  typename ObjectiveFunction_::Scalar search_radius,
                                  Uint32 sample_count = 10000,
                                  Uint32 max_iteration_count = 8,
-                                 typename ObjectiveFunction_::Scalar *minimum = NULL)
+                                 typename ObjectiveFunction_::Scalar *minimum = nullptr)
 {
     typedef typename ObjectiveFunction_::Scalar Scalar;
     assert(search_radius > Scalar(0) && "search_radius must be positive");
@@ -484,7 +484,7 @@ ImplementationOf_t<BasedVectorSpace_,typename ObjectiveFunction_::Scalar>
         search_radius /= Scalar(2);
     }
 
-    if (minimum != NULL)
+    if (minimum != nullptr)
         *minimum = min;
 
     return minimizer;

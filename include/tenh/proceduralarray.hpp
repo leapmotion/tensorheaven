@@ -70,8 +70,8 @@ struct ProceduralArray_t
     // really just used so that stuff that uses ArrayStorage_f doesn't have to
     // jump through template hoops to declare the right thing.
     Uint32 allocation_size_in_bytes () const { return 0; }
-    Component_ const *pointer_to_allocation () const { return NULL; }
-    QualifiedComponent *pointer_to_allocation () { return NULL; }
+    Component_ const *pointer_to_allocation () const { return nullptr; }
+    QualifiedComponent *pointer_to_allocation () { return nullptr; }
     bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const { return false; }
 
     static std::string type_as_string ()
