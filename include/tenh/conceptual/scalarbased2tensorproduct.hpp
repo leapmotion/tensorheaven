@@ -8,6 +8,8 @@
 
 #include "tenh/core.hpp"
 
+#include <type_traits>
+
 #include "tenh/componentindex.hpp" // technically not conceptual code, but close enough.
 #include "tenh/conceptual/concept.hpp"
 #include "tenh/conceptual/diagonalbased2tensorproduct.hpp"
@@ -225,9 +227,47 @@ private:
 // helper functions for easing use of the type system
 // ///////////////////////////////////////////////////////////////////////////
 
+// some helper macros for the following different versions of diag2
+#define BOTH_FACTORS_ARE_BASES_UNIQUELY(Factor0, Factor1) (IS_BASIS_UNIQUELY(Factor0) && IS_BASIS_UNIQUELY(Factor1))
+#define BOTH_FACTORS_ARE_BASED_VECTOR_SPACES_UNIQUELY(Factor0, Factor1) (IS_BASED_VECTOR_SPACE_UNIQUELY(Factor0) && IS_BASED_VECTOR_SPACE_UNIQUELY(Factor1))
+
+// formal scalar 2-tensor product
+template <typename Factor0_, typename Factor1_>
+typename std::enable_if<(!BOTH_FACTORS_ARE_BASES_UNIQUELY(Factor0_,Factor1_) &&
+                         !BOTH_FACTORS_ARE_BASED_VECTOR_SPACES_UNIQUELY(Factor0_,Factor1_)),
+                        Scalar2TensorProduct_c<Factor0_,Factor1_> >::type
+    scalar2 (Factor0_ const &, Factor1_ const &)
+{
+    return Scalar2TensorProduct_c<Factor0_,Factor1_>();
+}
+
+// scalar 2-tensor product of bases
+template <typename Factor0_, typename Factor1_>
+typename std::enable_if<(BOTH_FACTORS_ARE_BASES_UNIQUELY(Factor0_,Factor1_) &&
+                         !BOTH_FACTORS_ARE_BASED_VECTOR_SPACES_UNIQUELY(Factor0_,Factor1_)),
+                        Scalar2TensorProductOfBases_c<Factor0_,Factor1_> >::type
+    scalar2 (Factor0_ const &, Factor1_ const &)
+{
+    return Scalar2TensorProductOfBases_c<Factor0_,Factor1_>();
+}
+
+// scalar 2-tensor product of based vector spaces
+template <typename Factor0_, typename Factor1_>
+typename std::enable_if<(!BOTH_FACTORS_ARE_BASES_UNIQUELY(Factor0_,Factor1_) &&
+                         BOTH_FACTORS_ARE_BASED_VECTOR_SPACES_UNIQUELY(Factor0_,Factor1_)),
+                        Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_> >::type
+    scalar2 (Factor0_ const &, Factor1_ const &)
+{
+    return Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>();
+}
+
+#undef BOTH_FACTORS_ARE_BASES_UNIQUELY
+#undef BOTH_FACTORS_ARE_BASED_VECTOR_SPACES_UNIQUELY
+
 // for now, just do scalar 2-tensor product of based vector spaces
 template <typename Factor0_, typename Factor1_>
-Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_> scalar2 (TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0_,TypeList_t<Factor1_> > > const &)
+Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>
+    scalar2 (TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0_,TypeList_t<Factor1_> > > const &)
 {
     return Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>();
 }
