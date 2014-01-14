@@ -167,7 +167,7 @@ struct SymmetricIndexHashInverse_Helper_f
     // 6 7 8 9
     // . . . . .
     typedef typename Tenh::If_f<(N_ < K_),
-                                Tenh::Type_t<SymmetricIndex_t<K_-1,N_> >,
+                                Type_t<SymmetricIndex_t<K_-1,N_> >,
                                 SymmetricIndexHashInverse_Helper_f<N_-K_,K_+1> >::T::T T;
 };
 

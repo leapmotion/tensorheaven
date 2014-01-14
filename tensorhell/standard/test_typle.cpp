@@ -108,6 +108,8 @@ void test_EachTypeSatisfies (Context const &context)
     static_assert(!Tenh::Hippo::EachTypeSatisfies_f<Tenh::Typle_t<int>,IsFloatingPointType_e>::V, "error");
     static_assert(Tenh::Hippo::EachTypeSatisfies_f<Tenh::Typle_t<float,double>,IsFloatingPointType_e>::V, "error");
     static_assert(!Tenh::Hippo::EachTypeSatisfies_f<Tenh::Typle_t<int,double>,IsFloatingPointType_e>::V, "error");
+
+    // there is currently no runtime test code here, but that could change
 }
 
 void test_Sum (Context const &context)
@@ -120,6 +122,8 @@ void test_Sum (Context const &context)
     static_assert(Tenh::Hippo::Sum_f<Tenh::Typle_t<Zero,One>,int>::V == 1, "error");
     static_assert(Tenh::Hippo::Sum_f<Tenh::Typle_t<One,One>,int>::V == 2, "error");
     static_assert(Tenh::Hippo::Sum_f<Tenh::Typle_t<One,One,Three>,int>::V == 5, "error");
+
+    // there is currently no runtime test code here, but that could change
 }
 
 void test_Product (Context const &context)
@@ -134,6 +138,8 @@ void test_Product (Context const &context)
     static_assert(Tenh::Hippo::Product_f<Tenh::Typle_t<One,One,Three>,int>::V == 3, "error");
     static_assert(Tenh::Hippo::Product_f<Tenh::Typle_t<Three,Three>,int>::V == 9, "error");
     static_assert(Tenh::Hippo::Product_f<Tenh::Typle_t<Three,Three,Three>,int>::V == 27, "error");
+
+    // there is currently no runtime test code here, but that could change
 }
 
 void test_Min (Context const &context)
@@ -146,6 +152,8 @@ void test_Min (Context const &context)
     static_assert(Tenh::Hippo::Min_f<Tenh::Typle_t<One,One>,int>::V == 1, "error");
     static_assert(Tenh::Hippo::Min_f<Tenh::Typle_t<One,One,Three>,int>::V == 1, "error");
     static_assert(Tenh::Hippo::Min_f<Tenh::Typle_t<Three,Three>,int>::V == 3, "error");
+
+    // there is currently no runtime test code here, but that could change
 }
 
 void test_Max (Context const &context)
@@ -158,6 +166,29 @@ void test_Max (Context const &context)
     static_assert(Tenh::Hippo::Max_f<Tenh::Typle_t<One,One>,int>::V == 1, "error");
     static_assert(Tenh::Hippo::Max_f<Tenh::Typle_t<One,One,Three>,int>::V == 3, "error");
     static_assert(Tenh::Hippo::Max_f<Tenh::Typle_t<Three,Three>,int>::V == 3, "error");
+
+    // there is currently no runtime test code here, but that could change
+}
+
+void test_Element (Context const &context)
+{
+    typedef Tenh::Typle_t<int,float,bool,char> T;
+    // uncommenting the following line should cause a static assert about Typle_t<> having no elements
+    //Tenh::Hippo::Element_f<Tenh::Typle_t<>,0>::T x;
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Hippo::Element_f<T,0>::T,int>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Hippo::Element_f<T,1>::T,float>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Hippo::Element_f<T,2>::T,bool>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Hippo::Element_f<T,3>::T,char>::V, "error");
+
+    // there is currently no runtime test code here, but that could change
+}
+
+void test_Contains (Context const &context)
+{
+    typedef Tenh::Typle_t<int,float,bool,char> T;
+    static_assert(!Tenh::Hippo::Contains_f<Tenh::Typle_t<>,int>::V, "error");
+
+    // there is currently no runtime test code here, but that could change
 }
 
 // template <typename TypeList, Uint32 INDEX, typename ExpectedLeadingTypeList>
@@ -263,6 +294,8 @@ void AddTests (Directory &parent)
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_Product, RESULT_NO_ERROR);
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_Min, RESULT_NO_ERROR);
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_Max, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, test_Element, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, test_Contains, RESULT_NO_ERROR);
 
     // add_leading_and_trailing_type_list_tests(dir);
 }

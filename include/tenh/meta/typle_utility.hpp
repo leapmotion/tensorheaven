@@ -209,35 +209,39 @@ struct Max_f<Typle_t<>,OperandType_>
     static OperandType_ const V = std::numeric_limits<OperandType_>::min();
 };
 
-/*
 /// @struct Element_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
-/// @brief Returns the INDEX_th element of the given TypeList_.
-/// @tparam TypeList_ the TypeList_t to access elements from.
+/// @brief Returns the INDEX_th element of the given Typle_.
+/// @tparam Typle_ the Typle_t to access elements from.
 /// @tparam INDEX_ the index of the element to access.
-template <typename TypeList_, Uint32 INDEX_>
+template <typename Typle_, Uint32 INDEX_>
 struct Element_f
 {
-private:
-    static Uint32 const I = (INDEX_ == 0) ? 0 : INDEX_-1;
-public:
-    /// The INDEX_th element of TypeList_.
-    typedef typename If_f<INDEX_ == 0,
-                          typename TypeList_::HeadType,
-                          typename Element_f<typename TypeList_::BodyTypeList,I>::T>::T T;
+    static_assert(!TypesAreEqual_f<Typle_,Typle_t<>>::V, "Typle_t<> has no elements");
 };
 
 /// @cond false
-template <Uint32 INDEX_>
-struct Element_f<EmptyTypeList,INDEX_>
+template <Uint32 INDEX_, typename Head_, typename... BodyTypes_>
+struct Element_f<Typle_t<Head_,BodyTypes_...>,INDEX_>
 {
-    // seems to be necessary
-    typedef NullType T;
+    static_assert(INDEX_ < Length_f<Typle_t<Head_,BodyTypes_...>>::V, "INDEX_ must be less than the length of the Typle_t");
+    typedef typename Element_f<Typle_t<BodyTypes_...>,INDEX_-1>::T T;
 };
-/// @endcond
+
+template <typename Head_, typename... BodyTypes_>
+struct Element_f<Typle_t<Head_,BodyTypes_...>,0>
+{
+    typedef Head_ T;
+};
 
 // TODO: figure out how to Doxygen-comment this, if at all.
 MAKE_2_ARY_TYPE_EVALUATOR(Element, Uint32, INDEX_);
 
+template <typename Typle_, typename Element_>
+struct Contains_f
+{
+    static bool const V = Or_f<typename OnEach_f<Typle_,TypesAreEqual_e<Element_>>::T>::V;
+};
+/*
 // TODO: could be implemented as Or_f<OnEach_f<TypeList_,TypesAreEqual_e>::T>::V
 template <typename TypeList_, typename Type_>
 struct Contains_f

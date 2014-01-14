@@ -202,15 +202,15 @@ template <typename T0_, typename T1_> struct TypesAreEqual_f { static bool const
 template <typename T_> struct TypesAreEqual_f<T_,T_> { static bool const V = true; operator bool () const { return V; } };
 /// @endcond
 
+MAKE_2_ARY_VALUE_EVALUATOR(TypesAreEqual, bool, typename, T1_);
 
 /// @brief Compile-time conditional. Contains one of two types depending upon the boolean passed in.
 /// @headerfile core.hpp "tenh/meta/core.hpp"
 template <bool condition_, typename Then_, typename Else_> struct If_f;
 /// @cond false
-template <typename Then_, typename Else_> struct If_f<true, Then_, Else_> { typedef Then_ T; };
-template <typename Then_, typename Else_> struct If_f<false, Then_, Else_> { typedef Else_ T; };
+template <typename Then_, typename Else_> struct If_f<true,Then_,Else_> { typedef Then_ T; };
+template <typename Then_, typename Else_> struct If_f<false,Then_,Else_> { typedef Else_ T; };
 /// @endcond
-
 
 // ///////////////////////////////////////////////////////////////////////////
 // setup for int type templates
