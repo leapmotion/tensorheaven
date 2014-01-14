@@ -6,6 +6,7 @@
 #include "test_typle.hpp"
 
 #include "tenh/meta/typle.hpp"
+#include "tenh/meta/typle_utility.hpp"
 
 // this is included last because it redefines the `assert` macro,
 // which would be bad for the above includes.
@@ -30,6 +31,83 @@ void add_particular_tests_for_typle (Directory &parent)
 {
     Directory &dir = parent.GetSubDirectory(Tenh::type_string_of<Typle_>());
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(dir, "length", test_length<Typle_>, new Context::Data<Uint32>(EXPECTED_LENGTH), RESULT_NO_ERROR);
+}
+
+template <typename T_> struct IsFloatingPointType_f { static bool const V = false; };
+template <> struct IsFloatingPointType_f<float> { static bool const V = true; };
+template <> struct IsFloatingPointType_f<double> { static bool const V = true; };
+template <> struct IsFloatingPointType_f<long double> { static bool const V = true; };
+
+MAKE_1_ARY_VALUE_EVALUATOR(IsFloatingPointType, bool);
+
+void test_OnEach (Context const &context)
+{
+    typedef Tenh::Value_t<bool,true> True;
+    typedef Tenh::Value_t<bool,false> False;
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Hippo::OnEach_f<Tenh::Typle_t<>,IsFloatingPointType_e>::T,
+                                        Tenh::Typle_t<>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Hippo::OnEach_f<Tenh::Typle_t<int>,IsFloatingPointType_e>::T,
+                                        Tenh::Typle_t<False>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Hippo::OnEach_f<Tenh::Typle_t<float>,IsFloatingPointType_e>::T,
+                                        Tenh::Typle_t<True>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Hippo::OnEach_f<Tenh::Typle_t<float,int>,IsFloatingPointType_e>::T,
+                                        Tenh::Typle_t<True,False>>::V, "error");
+
+    // there is currently no runtime test code here, but that could change
+}
+
+void test_NegationOfPredicate (Context const &context)
+{
+    typedef Tenh::Value_t<bool,true> True;
+    typedef Tenh::Value_t<bool,false> False;
+    typedef Tenh::Hippo::NegationOfPredicate_e<IsFloatingPointType_e> IsntFloatingPointType_e;
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Hippo::OnEach_f<Tenh::Typle_t<>,IsntFloatingPointType_e>::T,
+                                        Tenh::Typle_t<>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Hippo::OnEach_f<Tenh::Typle_t<int>,IsntFloatingPointType_e>::T,
+                                        Tenh::Typle_t<True>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Hippo::OnEach_f<Tenh::Typle_t<float>,IsntFloatingPointType_e>::T,
+                                        Tenh::Typle_t<False>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Hippo::OnEach_f<Tenh::Typle_t<float,int>,IsntFloatingPointType_e>::T,
+                                        Tenh::Typle_t<False,True>>::V, "error");
+
+    // there is currently no runtime test code here, but that could change
+}
+
+void test_And (Context const &context)
+{
+    typedef Tenh::Value_t<bool,true> True;
+    typedef Tenh::Value_t<bool,false> False;
+    static_assert(Tenh::Hippo::And_f<Tenh::Typle_t<>>::V, "error");
+    static_assert(Tenh::Hippo::And_f<Tenh::Typle_t<True>>::V, "error");
+    static_assert(!Tenh::Hippo::And_f<Tenh::Typle_t<False>>::V, "error");
+    static_assert(Tenh::Hippo::And_f<Tenh::Typle_t<True,True>>::V, "error");
+    static_assert(!Tenh::Hippo::And_f<Tenh::Typle_t<False,True>>::V, "error");
+    static_assert(!Tenh::Hippo::And_f<Tenh::Typle_t<False,False>>::V, "error");
+
+    // there is currently no runtime test code here, but that could change
+}
+
+void test_Or (Context const &context)
+{
+    typedef Tenh::Value_t<bool,true> True;
+    typedef Tenh::Value_t<bool,false> False;
+    static_assert(!Tenh::Hippo::Or_f<Tenh::Typle_t<>>::V, "error");
+    static_assert(Tenh::Hippo::Or_f<Tenh::Typle_t<True>>::V, "error");
+    static_assert(!Tenh::Hippo::Or_f<Tenh::Typle_t<False>>::V, "error");
+    static_assert(Tenh::Hippo::Or_f<Tenh::Typle_t<True,True>>::V, "error");
+    static_assert(Tenh::Hippo::Or_f<Tenh::Typle_t<False,True>>::V, "error");
+    static_assert(!Tenh::Hippo::Or_f<Tenh::Typle_t<False,False>>::V, "error");
+
+    // there is currently no runtime test code here, but that could change
+}
+
+void test_EachTypeSatisfies (Context const &context)
+{
+    static_assert(Tenh::Hippo::EachTypeSatisfies_f<Tenh::Typle_t<>,IsFloatingPointType_e>::V, "error");
+    static_assert(Tenh::Hippo::EachTypeSatisfies_f<Tenh::Typle_t<float>,IsFloatingPointType_e>::V, "error");
+    static_assert(!Tenh::Hippo::EachTypeSatisfies_f<Tenh::Typle_t<int>,IsFloatingPointType_e>::V, "error");
+    static_assert(Tenh::Hippo::EachTypeSatisfies_f<Tenh::Typle_t<float,double>,IsFloatingPointType_e>::V, "error");
+    static_assert(!Tenh::Hippo::EachTypeSatisfies_f<Tenh::Typle_t<int,double>,IsFloatingPointType_e>::V, "error");
 }
 
 // template <typename TypeList, Uint32 INDEX, typename ExpectedLeadingTypeList>
@@ -126,6 +204,11 @@ void AddTests (Directory &parent)
     add_particular_tests_for_typle<Tenh::Typle_t<Sint32>,1>(dir);
     add_particular_tests_for_typle<Tenh::Typle_t<Sint32,Sint8>,2>(dir);
     add_particular_tests_for_typle<Tenh::Typle_t<Sint32,Sint8,double>,3>(dir);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, test_OnEach, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, test_NegationOfPredicate, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, test_And, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, test_Or, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, test_EachTypeSatisfies, RESULT_NO_ERROR);
 
     // add_leading_and_trailing_type_list_tests(dir);
 }

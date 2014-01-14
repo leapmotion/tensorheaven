@@ -130,7 +130,7 @@ struct MetaFunctionName##_e \
     struct Eval_f \
     { \
         static MetaFunctionValueType const V = MetaFunctionName##_f<T_>::V; \
-        typedef Value_t<MetaFunctionValueType,V> T; \
+        typedef Tenh::Value_t<MetaFunctionValueType,V> T; \
     }; \
 }
 
@@ -151,7 +151,7 @@ struct MetaFunctionName##_e \
     struct Eval_f \
     { \
         static MetaFunctionValueType const V = MetaFunctionName##_f<T_,Name2>::V; \
-        typedef Value_t<MetaFunctionValueType,V> T; \
+        typedef Tenh::Value_t<MetaFunctionValueType,V> T; \
     }; \
 }
 
@@ -172,7 +172,7 @@ struct MetaFunctionName##_e \
     struct Eval_f \
     { \
         static MetaFunctionValueType const V = MetaFunctionName##_f<T_,Name2,Name3>::V; \
-        typedef Value_t<MetaFunctionValueType,V> T; \
+        typedef Tenh::Value_t<MetaFunctionValueType,V> T; \
     }; \
 }
 

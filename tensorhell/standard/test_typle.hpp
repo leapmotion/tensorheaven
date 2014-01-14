@@ -21,7 +21,7 @@ namespace Typle {
 
 void AddTests (Lvd::TestSystem::Directory &parent);
 
-} // end of namespace TypeList
+} // end of namespace Typle
 } // end of namespace Test
 
 #endif // !defined(TEST_TYPLE_HPP_)

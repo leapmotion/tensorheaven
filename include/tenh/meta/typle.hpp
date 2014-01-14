@@ -19,6 +19,8 @@
 namespace Tenh {
 
 /// @cond false
+namespace Nonpublic {
+
 template <typename... Body_>
 struct CommaSeparatedStringOfVariadicTemplate_t;
 
@@ -39,6 +41,8 @@ struct CommaSeparatedStringOfVariadicTemplate_t<Head_,Body_...>
 {
     static std::string eval () { return TypeStringOf_t<Head_>::eval() + ',' + CommaSeparatedStringOfVariadicTemplate_t<Body_...>::eval(); }
 };
+
+} // end of namespace Nonpublic
 /// @endcond
 
 /// @struct Typle_t typle.hpp "tenh/meta/typle.hpp"
@@ -69,7 +73,7 @@ struct Typle_t<Head_,Body_...>
 template <typename... Ts_>
 struct TypeStringOf_t<Typle_t<Ts_...>>
 {
-    static std::string eval () { return "Typle_t<" + CommaSeparatedStringOfVariadicTemplate_t<Ts_...>::eval() + '>'; }
+    static std::string eval () { return "Typle_t<" + Nonpublic::CommaSeparatedStringOfVariadicTemplate_t<Ts_...>::eval() + '>'; }
 };
 /// @endcond
 

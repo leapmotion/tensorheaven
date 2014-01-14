@@ -9,6 +9,7 @@
 // this file should be included in all test source files
 
 #include "tenh/core.hpp"
+#include "tenh/meta/typestringof.hpp"
 
 using Tenh::Sint8;
 using Tenh::Uint8;
