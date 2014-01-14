@@ -189,7 +189,7 @@ public:
 template <typename OperandType_>
 struct Min_f<Typle_t<>,OperandType_>
 {
-    static OperandType_ const V = std::numeric_limits<OperandType_>::max();
+    static OperandType_ const V = NumericBound_t<OperandType_>::MAX;
 };
 
 template <typename Typle_, typename OperandType_>
@@ -206,7 +206,7 @@ public:
 template <typename OperandType_>
 struct Max_f<Typle_t<>,OperandType_>
 {
-    static OperandType_ const V = std::numeric_limits<OperandType_>::min();
+    static OperandType_ const V = NumericBound_t<OperandType_>::MIN;
 };
 
 /// @struct Element_f typle_utility.hpp "tenh/meta/typle_utility.hpp"

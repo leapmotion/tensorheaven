@@ -147,7 +147,7 @@ void test_Min (Context const &context)
     typedef Tenh::Value_t<int,0> Zero;
     typedef Tenh::Value_t<int,1> One;
     typedef Tenh::Value_t<int,3> Three;
-    static_assert(Tenh::Hippo::Min_f<Tenh::Typle_t<>,int>::V == std::numeric_limits<int>::max(), "error");
+    static_assert(Tenh::Hippo::Min_f<Tenh::Typle_t<>,int>::V == Tenh::NumericBound_t<int>::MAX, "error");
     static_assert(Tenh::Hippo::Min_f<Tenh::Typle_t<Zero,One>,int>::V == 0, "error");
     static_assert(Tenh::Hippo::Min_f<Tenh::Typle_t<One,One>,int>::V == 1, "error");
     static_assert(Tenh::Hippo::Min_f<Tenh::Typle_t<One,One,Three>,int>::V == 1, "error");
@@ -161,7 +161,7 @@ void test_Max (Context const &context)
     typedef Tenh::Value_t<int,0> Zero;
     typedef Tenh::Value_t<int,1> One;
     typedef Tenh::Value_t<int,3> Three;
-    static_assert(Tenh::Hippo::Max_f<Tenh::Typle_t<>,int>::V == std::numeric_limits<int>::min(), "error");
+    static_assert(Tenh::Hippo::Max_f<Tenh::Typle_t<>,int>::V == Tenh::NumericBound_t<int>::MIN, "error");
     static_assert(Tenh::Hippo::Max_f<Tenh::Typle_t<Zero,One>,int>::V == 1, "error");
     static_assert(Tenh::Hippo::Max_f<Tenh::Typle_t<One,One>,int>::V == 1, "error");
     static_assert(Tenh::Hippo::Max_f<Tenh::Typle_t<One,One,Three>,int>::V == 3, "error");

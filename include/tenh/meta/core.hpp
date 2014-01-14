@@ -23,14 +23,14 @@ namespace Tenh {
 //   Square_f<36>::V
 //   Length_f<TypeList_t<...> >::V
 //   FancyType_f<true>::T     or     typename FancyType_f<true>::T
-// 
+//
 // without knowing the domain/codomain, it's difficult to use this type
 // of metafunction in a higher-order function.  thus leading to...
 //
 // a "primitive" metafunction is a metafunction whose domain and codomain
 // are both types, and the evaluation of the function is done by dereferencing
 // a type T.  This makes the interface regular.  An example is
-// 
+//
 // template <typename T_>
 // struct DoubleOf_f
 // {
@@ -42,7 +42,7 @@ namespace Tenh {
 // "static ReturnType const V = VALUE" member so that extra dereferencing doesn't
 // need to be done.  A primitive function can have multiple parameters.
 //
-// an "evaluator" is a structure that has a primitive metafunction called 
+// an "evaluator" is a structure that has a primitive metafunction called
 // Eval_f inside.  it has the form:
 //
 // template <...>
@@ -78,7 +78,7 @@ struct MetaFunctionName##_e \
 // template <typename Arg1_, Type2 Name2> struct FunctionName_f { typedef ... T; };
 // then MAKE_2_ARY_TYPE_EVALUATOR(FunctionName, Type2, Name2) will define an
 // evaluator called FunctionName_e<Type2 Name2> for it; its Eval_f only takes
-// Arg1_ as a parameter -- the second parameter is specialized via the 
+// Arg1_ as a parameter -- the second parameter is specialized via the
 // parameterization of FunctionName_e.
 
 #define MAKE_2_ARY_TYPE_EVALUATOR(MetaFunctionName, Type2, Name2) \
@@ -96,7 +96,7 @@ struct MetaFunctionName##_e \
 // template <typename Arg1_, Type2 Name2, Type3 Name3> struct FunctionName_f { typedef ... T; };
 // then MAKE_2_ARY_TYPE_EVALUATOR(FunctionName, Type2, Name2, Type3, Name3) will define an
 // evaluator called FunctionName_e<Type2 Name2, Type3 Name3> for it; its Eval_f only takes
-// Arg1_ as a parameter -- the second and third parameters are specialized via the 
+// Arg1_ as a parameter -- the second and third parameters are specialized via the
 // parameterization of FunctionName_e.
 
 #define MAKE_3_ARY_TYPE_EVALUATOR(MetaFunctionName, Type2, Name2, Type3, Name3) \
@@ -133,7 +133,7 @@ struct MetaFunctionName##_e \
 // whose T type is of type Value_t<...> (e.g. Value_t<Uint32,123>), then
 // MAKE_2_ARY_VALUE_EVALUATOR(FunctionName, ReturnType, Type2, Name2) will define an
 // evaluator called FunctionName_e<Type2 Name2> for it; its Eval_f only takes
-// Arg1_ as a parameter -- the second parameter is specialized via the 
+// Arg1_ as a parameter -- the second parameter is specialized via the
 // parameterization of FunctionName_e.  In this case, Eval_f also has a static
 // const V value whose type is ReturnType.
 
@@ -154,7 +154,7 @@ struct MetaFunctionName##_e \
 // whose T type is of type Value_t<...> (e.g. Value_t<Uint32,123>), then
 // MAKE_2_ARY_TYPE_EVALUATOR(FunctionName, ReturnType, Type2, Name2, Type3, Name3) will define an
 // evaluator called FunctionName_e<Type2 Name2, Type3 Name3> for it; its Eval_f only takes
-// Arg1_ as a parameter -- the second and third parameters are specialized via the 
+// Arg1_ as a parameter -- the second and third parameters are specialized via the
 // parameterization of FunctionName_e.  In this case, Eval_f also has a static
 // const V value whose type is ReturnType.
 
@@ -275,6 +275,24 @@ typedef Integer<32>::Signed Sint32;
 typedef Integer<32>::Unsigned Uint32;
 typedef Integer<64>::Signed Sint64;
 typedef Integer<64>::Unsigned Uint64;
+
+// ///////////////////////////////////////////////////////////////////////////
+// this is what std::numeric_limits should actually provide (constexpr-ish usage)
+// ///////////////////////////////////////////////////////////////////////////
+
+template <typename NumericType_> struct NumericBound_t;
+
+template <> struct NumericBound_t<Sint8> { static Sint8 const MIN = Sint8(0x80); static Sint8 const MAX = Sint8(0x7F); };
+template <> struct NumericBound_t<Uint8> { static Uint8 const MIN = Uint8(0x00); static Uint8 const MAX = Uint8(0xFF); };
+
+template <> struct NumericBound_t<Sint16> { static Sint16 const MIN = Sint16(0x8000); static Sint16 const MAX = Sint16(0x7FFF); };
+template <> struct NumericBound_t<Uint16> { static Uint16 const MIN = Uint16(0x0000); static Uint16 const MAX = Uint16(0xFFFF); };
+
+template <> struct NumericBound_t<Sint32> { static Sint32 const MIN = Sint32(0x80000000); static Sint32 const MAX = Sint32(0x7FFFFFFF); };
+template <> struct NumericBound_t<Uint32> { static Uint32 const MIN = Uint32(0x00000000); static Uint32 const MAX = Uint32(0xFFFFFFFF); };
+
+template <> struct NumericBound_t<Sint64> { static Sint64 const MIN = Sint64(0x8000000000000000LL); static Sint64 const MAX = Sint64(0x7FFFFFFFFFFFFFFFLL); };
+template <> struct NumericBound_t<Uint64> { static Uint64 const MIN = Uint64(0x0000000000000000ULL); static Uint64 const MAX = Uint64(0xFFFFFFFFFFFFFFFFULL); };
 
 // ///////////////////////////////////////////////////////////////////////////
 // compile-time asserts for the above code
