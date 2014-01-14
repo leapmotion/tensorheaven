@@ -103,6 +103,15 @@ struct Length_f<Typle_t<Head_,Body_...>> { static Uint32 const V = 1 + Length_f<
 
 template <typename T0_, typename T1_> struct Concat2Typles_f;
 
+// for recursively constructing Typle_t, as is done throughout Tenh.
+template <typename Head_, typename BodyTyple_> struct HeadBodyTyple_f;
+
+template <typename Head_, typename... BodyTypes_>
+struct HeadBodyTyple_f<Head_,Typle_t<BodyTypes_...>>
+{
+    typedef Typle_t<Head_,BodyTypes_...> T;
+};
+
 // template <typename Head0_, typename... Body0_, typename Head1_, typename... Body1_>
 template <typename... LhsTypes_, typename... RhsTypes_>
 struct Concat2Typles_f<Typle_t<LhsTypes_...>,Typle_t<RhsTypes_...>>

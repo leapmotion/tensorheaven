@@ -61,13 +61,11 @@ struct CompositionOf_e<Typle_t<>>
 template <typename Typle_, typename FunctionEvaluator_>
 struct OnEach_f
 {
-    // typedef Typle_t<typename FunctionEvaluator_::template Eval_f<typename Head_f<Typle_>::T>::T,
-    //                 typename OnEach_f<typename BodyTyple_f<Typle_>::T,FunctionEvaluator_>::T> T;
 private:
     typedef typename FunctionEvaluator_::template Eval_f<typename Head_f<Typle_>::T>::T HeadEvaluation;
+    typedef typename OnEach_f<typename BodyTyple_f<Typle_>::T,FunctionEvaluator_>::T BodyOnEach;
 public:
-    typedef typename Concat2Typles_f<Typle_t<HeadEvaluation>,
-                                     typename OnEach_f<typename BodyTyple_f<Typle_>::T,FunctionEvaluator_>::T>::T T;
+    typedef typename HeadBodyTyple_f<HeadEvaluation,BodyOnEach>::T T;
 };
 
 template <typename FunctionEvaluator_>
