@@ -110,6 +110,56 @@ void test_EachTypeSatisfies (Context const &context)
     static_assert(!Tenh::Hippo::EachTypeSatisfies_f<Tenh::Typle_t<int,double>,IsFloatingPointType_e>::V, "error");
 }
 
+void test_Sum (Context const &context)
+{
+    typedef Tenh::Value_t<int,0> Zero;
+    typedef Tenh::Value_t<int,1> One;
+    typedef Tenh::Value_t<int,3> Three;
+    static_assert(Tenh::Hippo::Sum_f<Tenh::Typle_t<>,int>::V == 0, "error");
+    static_assert(Tenh::Hippo::Sum_f<Tenh::Typle_t<Zero>,int>::V == 0, "error");
+    static_assert(Tenh::Hippo::Sum_f<Tenh::Typle_t<Zero,One>,int>::V == 1, "error");
+    static_assert(Tenh::Hippo::Sum_f<Tenh::Typle_t<One,One>,int>::V == 2, "error");
+    static_assert(Tenh::Hippo::Sum_f<Tenh::Typle_t<One,One,Three>,int>::V == 5, "error");
+}
+
+void test_Product (Context const &context)
+{
+    typedef Tenh::Value_t<int,0> Zero;
+    typedef Tenh::Value_t<int,1> One;
+    typedef Tenh::Value_t<int,3> Three;
+    static_assert(Tenh::Hippo::Product_f<Tenh::Typle_t<>,int>::V == 1, "error");
+    static_assert(Tenh::Hippo::Product_f<Tenh::Typle_t<Zero>,int>::V == 0, "error");
+    static_assert(Tenh::Hippo::Product_f<Tenh::Typle_t<Zero,One>,int>::V == 0, "error");
+    static_assert(Tenh::Hippo::Product_f<Tenh::Typle_t<One,One>,int>::V == 1, "error");
+    static_assert(Tenh::Hippo::Product_f<Tenh::Typle_t<One,One,Three>,int>::V == 3, "error");
+    static_assert(Tenh::Hippo::Product_f<Tenh::Typle_t<Three,Three>,int>::V == 9, "error");
+    static_assert(Tenh::Hippo::Product_f<Tenh::Typle_t<Three,Three,Three>,int>::V == 27, "error");
+}
+
+void test_Min (Context const &context)
+{
+    typedef Tenh::Value_t<int,0> Zero;
+    typedef Tenh::Value_t<int,1> One;
+    typedef Tenh::Value_t<int,3> Three;
+    static_assert(Tenh::Hippo::Min_f<Tenh::Typle_t<>,int>::V == std::numeric_limits<int>::max(), "error");
+    static_assert(Tenh::Hippo::Min_f<Tenh::Typle_t<Zero,One>,int>::V == 0, "error");
+    static_assert(Tenh::Hippo::Min_f<Tenh::Typle_t<One,One>,int>::V == 1, "error");
+    static_assert(Tenh::Hippo::Min_f<Tenh::Typle_t<One,One,Three>,int>::V == 1, "error");
+    static_assert(Tenh::Hippo::Min_f<Tenh::Typle_t<Three,Three>,int>::V == 3, "error");
+}
+
+void test_Max (Context const &context)
+{
+    typedef Tenh::Value_t<int,0> Zero;
+    typedef Tenh::Value_t<int,1> One;
+    typedef Tenh::Value_t<int,3> Three;
+    static_assert(Tenh::Hippo::Max_f<Tenh::Typle_t<>,int>::V == std::numeric_limits<int>::min(), "error");
+    static_assert(Tenh::Hippo::Max_f<Tenh::Typle_t<Zero,One>,int>::V == 1, "error");
+    static_assert(Tenh::Hippo::Max_f<Tenh::Typle_t<One,One>,int>::V == 1, "error");
+    static_assert(Tenh::Hippo::Max_f<Tenh::Typle_t<One,One,Three>,int>::V == 3, "error");
+    static_assert(Tenh::Hippo::Max_f<Tenh::Typle_t<Three,Three>,int>::V == 3, "error");
+}
+
 // template <typename TypeList, Uint32 INDEX, typename ExpectedLeadingTypeList>
 // void test_leading_type_list (Context const &context)
 // {
@@ -209,6 +259,10 @@ void AddTests (Directory &parent)
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_And, RESULT_NO_ERROR);
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_Or, RESULT_NO_ERROR);
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_EachTypeSatisfies, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, test_Sum, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, test_Product, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, test_Min, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, test_Max, RESULT_NO_ERROR);
 
     // add_leading_and_trailing_type_list_tests(dir);
 }

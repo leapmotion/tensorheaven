@@ -54,6 +54,10 @@ template <typename T_> struct Head_f;
 template <typename T_> struct BodyTyple_f;
 template <typename T_> struct Length_f;
 
+MAKE_1_ARY_TYPE_EVALUATOR(Head);
+MAKE_1_ARY_TYPE_EVALUATOR(BodyTyple);
+MAKE_1_ARY_VALUE_EVALUATOR(Length, Uint32);
+
 /// @cond false
 template <>
 struct Typle_t<>

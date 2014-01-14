@@ -11,6 +11,165 @@
 
 namespace Tenh {
 
+// a "raw" metafunction has a domain and codomain one of which is not a
+// type, and whose evaluation consists of "dereferencing" a type T or a
+// value V via the scope operator.  some examples are
+//
+// template <Uint64 N_> struct Square_f { static Uint64 const V = N_*N_; };
+// template <typename TypeList_> struct Length_f { static Uint64 const V = ...; };
+// template <bool CONDITION_> struct FancyType_f { typedef ... T; };
+//
+// these raw metafunctions would be used as follows.
+//   Square_f<36>::V
+//   Length_f<TypeList_t<...> >::V
+//   FancyType_f<true>::T     or     typename FancyType_f<true>::T
+// 
+// without knowing the domain/codomain, it's difficult to use this type
+// of metafunction in a higher-order function.  thus leading to...
+//
+// a "primitive" metafunction is a metafunction whose domain and codomain
+// are both types, and the evaluation of the function is done by dereferencing
+// a type T.  This makes the interface regular.  An example is
+// 
+// template <typename T_>
+// struct DoubleOf_f
+// {
+//     typedef TypeList_t<T_,TypeList_t<T_> > T;
+// };
+//
+// the type can be a Value_t<ReturnType,VALUE> so that numeric-valued functions
+// can be defined.  In that case, it is helpful to also define a
+// "static ReturnType const V = VALUE" member so that extra dereferencing doesn't
+// need to be done.  A primitive function can have multiple parameters.
+//
+// an "evaluator" is a structure that has a primitive metafunction called 
+// Eval_f inside.  it has the form:
+//
+// template <...>
+// struct FunctionName_e
+// {
+//     template <typename Arg_> struct Eval_f { typedef ... T; };
+// };
+//
+// then FunctionName_e<...> can be passed into another template as a parameter
+// which essentially allows the use of higher-order functions.
+
+// ///////////////////////////////////////////////////////////////////////////
+// macros to make evaluator wrappers so that metafunctions can be passed
+// in as template parameters like in any real functional language
+// ///////////////////////////////////////////////////////////////////////////
+
+// if there is a primitive metafunction, say
+// template <typename Arg_> struct FunctionName_f { typedef ... T; };
+// then MAKE_1_ARY_TYPE_EVALUATOR(FunctionName) will define an evaluator
+// called FunctionName_e for it.
+
+#define MAKE_1_ARY_TYPE_EVALUATOR(MetaFunctionName) \
+struct MetaFunctionName##_e \
+{ \
+    template <typename T_> \
+    struct Eval_f \
+    { \
+        typedef typename MetaFunctionName##_f<T_>::T T; \
+    }; \
+}
+
+// if there is a primitive metafunction, say
+// template <typename Arg1_, Type2 Name2> struct FunctionName_f { typedef ... T; };
+// then MAKE_2_ARY_TYPE_EVALUATOR(FunctionName, Type2, Name2) will define an
+// evaluator called FunctionName_e<Type2 Name2> for it; its Eval_f only takes
+// Arg1_ as a parameter -- the second parameter is specialized via the 
+// parameterization of FunctionName_e.
+
+#define MAKE_2_ARY_TYPE_EVALUATOR(MetaFunctionName, Type2, Name2) \
+template <Type2 Name2> \
+struct MetaFunctionName##_e \
+{ \
+    template <typename T_> \
+    struct Eval_f \
+    { \
+        typedef typename MetaFunctionName##_f<T_,Name2>::T T; \
+    }; \
+}
+
+// if there is a "primitive" metafunction, say
+// template <typename Arg1_, Type2 Name2, Type3 Name3> struct FunctionName_f { typedef ... T; };
+// then MAKE_2_ARY_TYPE_EVALUATOR(FunctionName, Type2, Name2, Type3, Name3) will define an
+// evaluator called FunctionName_e<Type2 Name2, Type3 Name3> for it; its Eval_f only takes
+// Arg1_ as a parameter -- the second and third parameters are specialized via the 
+// parameterization of FunctionName_e.
+
+#define MAKE_3_ARY_TYPE_EVALUATOR(MetaFunctionName, Type2, Name2, Type3, Name3) \
+template <Type2 Name2, Type3 Name3> \
+struct MetaFunctionName##_e \
+{ \
+    template <typename T_> \
+    struct Eval_f \
+    { \
+        typedef typename MetaFunctionName##_f<T_,Name2,Name3>::T T; \
+    }; \
+}
+
+// if there is a "primitive" metafunction, say
+// template <typename Arg_> struct FunctionName_f { static ReturnType const V =  ...; };
+// whose T type is of type Value_t<...> (e.g. Value_t<Uint32,123>), then
+// MAKE_1_ARY_VALUE_EVALUATOR(FunctionName, ReturnType) will define an evaluator
+// called FunctionName_e for it.  In this case, Eval_f also has a static
+// const V value whose type is ReturnType.
+
+#define MAKE_1_ARY_VALUE_EVALUATOR(MetaFunctionName, MetaFunctionValueType) \
+struct MetaFunctionName##_e \
+{ \
+    template <typename T_> \
+    struct Eval_f \
+    { \
+        static MetaFunctionValueType const V = MetaFunctionName##_f<T_>::V; \
+        typedef Tenh::Value_t<MetaFunctionValueType,V> T; \
+    }; \
+}
+
+// if there is a "primitive" metafunction, say
+// template <typename Arg1_, Type2 Name2> struct FunctionName_f { static ReturnType const V =  ...; };
+// whose T type is of type Value_t<...> (e.g. Value_t<Uint32,123>), then
+// MAKE_2_ARY_VALUE_EVALUATOR(FunctionName, ReturnType, Type2, Name2) will define an
+// evaluator called FunctionName_e<Type2 Name2> for it; its Eval_f only takes
+// Arg1_ as a parameter -- the second parameter is specialized via the 
+// parameterization of FunctionName_e.  In this case, Eval_f also has a static
+// const V value whose type is ReturnType.
+
+#define MAKE_2_ARY_VALUE_EVALUATOR(MetaFunctionName, MetaFunctionValueType, Type2, Name2) \
+template <Type2 Name2> \
+struct MetaFunctionName##_e \
+{ \
+    template <typename T_> \
+    struct Eval_f \
+    { \
+        static MetaFunctionValueType const V = MetaFunctionName##_f<T_,Name2>::V; \
+        typedef Tenh::Value_t<MetaFunctionValueType,V> T; \
+    }; \
+}
+
+// if there is a "global" metafunction, say
+// template <typename Arg1_, Type2 Name2, Type3 Name3> struct FunctionName_f { static ReturnType const V =  ...; };
+// whose T type is of type Value_t<...> (e.g. Value_t<Uint32,123>), then
+// MAKE_2_ARY_TYPE_EVALUATOR(FunctionName, ReturnType, Type2, Name2, Type3, Name3) will define an
+// evaluator called FunctionName_e<Type2 Name2, Type3 Name3> for it; its Eval_f only takes
+// Arg1_ as a parameter -- the second and third parameters are specialized via the 
+// parameterization of FunctionName_e.  In this case, Eval_f also has a static
+// const V value whose type is ReturnType.
+
+#define MAKE_3_ARY_VALUE_EVALUATOR(MetaFunctionName, MetaFunctionValueType, Type2, Name2, Type3, Name3) \
+template <Type2 Name2, Type3 Name3> \
+struct MetaFunctionName##_e \
+{ \
+    template <typename T_> \
+    struct Eval_f \
+    { \
+        static MetaFunctionValueType const V = MetaFunctionName##_f<T_,Name2,Name3>::V; \
+        typedef Tenh::Value_t<MetaFunctionValueType,V> T; \
+    }; \
+}
+
 // ///////////////////////////////////////////////////////////////////////////
 // general template metaprogramming stuff
 // ///////////////////////////////////////////////////////////////////////////
@@ -22,15 +181,15 @@ template <bool condition_> struct Assert;
 template <> struct Assert<true> { static bool const V = true; operator bool () const { return V; } };
 /// @endcond
 
-/// @brief Wrapper type to contain a type, useful basically only in If_f statements.
-/// @headerfile core.hpp "tenh/meta/core.hpp"
-/// @note The type string for this is defined in typestringof.hpp.
-template <typename T_> struct Type_t { typedef T_ T; };
-
 /// @brief Wrapper type to contain a compile time constant of any template value parameter type.
 /// @headerfile core.hpp "tenh/meta/core.hpp"
 /// @note The type string for this is defined in typestringof.hpp.
 template <typename T_, T_ VALUE_> struct Value_t { typedef T_ T; static T_ const V = VALUE_; operator T_ () const { return VALUE_; } };
+
+template <typename T_> struct IsValue_f { static bool const V = false; };
+template <typename T_, T_ VALUE_> struct IsValue_f<Value_t<T_,VALUE_>> { static bool const V = true; };
+
+MAKE_1_ARY_VALUE_EVALUATOR(IsValue, bool);
 
 /// @brief Sentinel "value" type.
 /// @headerfile core.hpp "tenh/meta/core.hpp"

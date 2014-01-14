@@ -47,12 +47,6 @@ struct TypeStringOf_t<std::complex<T> >
     static std::string eval () { return "complex<" + TypeStringOf_t<T>::eval() + '>'; }
 };
 
-template <typename T_>
-struct TypeStringOf_t<Type_t<T_> >
-{
-    static std::string eval () { return "Type_t<" + TypeStringOf_t<T_>::eval() + '>'; }
-};
-
 template <typename T_, T_ VALUE_>
 struct TypeStringOf_t<Value_t<T_,VALUE_> >
 {

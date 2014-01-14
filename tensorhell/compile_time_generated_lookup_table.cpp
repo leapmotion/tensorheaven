@@ -11,6 +11,8 @@ using namespace Tenh;
 
 typedef unsigned long long int Uint;
 
+template <typename T_> struct Type_t { typedef T_ T; };
+
 /*
 // assuming Function_f_<K_>::V is increasing w.r.t. K_, this returns the
 // K_ such that Function_f_<K_>::V <= N_ < Function_f_<K_+1>::V.

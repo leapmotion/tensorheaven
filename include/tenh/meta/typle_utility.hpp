@@ -12,6 +12,8 @@
 
 #include "tenh/core.hpp"
 
+#include <limits>
+
 #include "tenh/meta/function.hpp"
 #include "tenh/meta/typle.hpp"
 
@@ -61,6 +63,7 @@ struct CompositionOf_e<Typle_t<>>
 template <typename Typle_, typename FunctionEvaluator_>
 struct OnEach_f
 {
+    static_assert(IsTyple_f<Typle_>::V, "template parameter Typle_ must be a Typle_t");
 private:
     typedef typename FunctionEvaluator_::template Eval_f<typename Head_f<Typle_>::T>::T HeadEvaluation;
     typedef typename OnEach_f<typename BodyTyple_f<Typle_>::T,FunctionEvaluator_>::T BodyOnEach;
@@ -97,7 +100,7 @@ template <typename Typle_>
 struct And_f
 {
     static_assert(IsTyple_f<Typle_>::V, "template parameter Typle_ must be a Typle_t");
-    // TODO: assert that each type is a Value_t<bool,...>
+    static_assert(IsValue_f<typename Head_f<Typle_>::T>::V, "each type must be a Value_t");
     static bool const V = Head_f<Typle_>::T::V && And_f<typename BodyTyple_f<Typle_>::T>::V;
 };
 
@@ -113,7 +116,7 @@ template <typename Typle_>
 struct Or_f
 {
     static_assert(IsTyple_f<Typle_>::V, "template parameter Typle_ must be a Typle_t");
-    // TODO: assert that each type is a Value_t<bool,...>
+    static_assert(IsValue_f<typename Head_f<Typle_>::T>::V, "each type must be a Value_t");
     static bool const V = Head_f<Typle_>::T::V || Or_f<typename BodyTyple_f<Typle_>::T>::V;
 };
 
@@ -136,133 +139,77 @@ MAKE_1_ARY_VALUE_EVALUATOR(Or, bool);
 template <typename Typle_, typename Predicate_>
 struct EachTypeSatisfies_f
 {
+    static_assert(IsTyple_f<Typle_>::V, "template parameter Typle_ must be a Typle_t");
     static bool const V = And_f<typename OnEach_f<Typle_,Predicate_>::T>::V;
 };
+
+MAKE_2_ARY_VALUE_EVALUATOR(EachTypeSatisfies, bool, typename, Predicate_);
 
 // ///////////////////////////////////////////////////////////////////////////
 // math
 // ///////////////////////////////////////////////////////////////////////////
-/*
-template <typename TypeList_, typename OperandType_>
+
+template <typename Typle_, typename OperandType_>
 struct Sum_f
 {
-private:
-    // TODO: assert that each type is a Value_t<OperandType_,...>
-public:
-    static OperandType_ const V = TypeList_::HeadType::V + Sum_f<typename TypeList_::BodyTypeList,OperandType_>::V;
+    static_assert(EachTypeSatisfies_f<Typle_,IsValue_e>::V, "each type must be a Value_t type");
+    static OperandType_ const V = Head_f<Typle_>::T::V + Sum_f<typename BodyTyple_f<Typle_>::T,OperandType_>::V;
 };
 
 template <typename OperandType_>
-struct Sum_f<EmptyTypeList,OperandType_>
+struct Sum_f<Typle_t<>,OperandType_>
 {
     static OperandType_ const V = 0;
 };
 
-template <typename TypeList_, typename OperandType_>
+template <typename Typle_, typename OperandType_>
 struct Product_f
 {
-private:
-    // TODO: assert that each type is a Value_t<OperandType_,...>
-public:
-    static OperandType_ const V = TypeList_::HeadType::V * Product_f<typename TypeList_::BodyTypeList,OperandType_>::V;
+    static_assert(EachTypeSatisfies_f<Typle_,IsValue_e>::V, "each type must be a Value_t type");
+    static OperandType_ const V = Head_f<Typle_>::T::V * Product_f<typename BodyTyple_f<Typle_>::T,OperandType_>::V;
 };
 
 template <typename OperandType_>
-struct Product_f<EmptyTypeList,OperandType_>
+struct Product_f<Typle_t<>,OperandType_>
 {
     static OperandType_ const V = 1;
 };
 
-// note that Min_f is not defined on EmptyTypeList
-template <typename TypeList_, typename OperandType_> struct Min_f;
-
-template <typename HeadType_, typename NextHeadType_, typename NextBodyTypeList_, typename OperandType_>
-struct Min_f<TypeList_t<HeadType_,TypeList_t<NextHeadType_,NextBodyTypeList_> >,OperandType_>
+template <typename Typle_, typename OperandType_>
+struct Min_f
 {
+    static_assert(EachTypeSatisfies_f<Typle_,IsValue_e>::V, "each type must be a Value_t type");
 private:
-    // TODO: assert that each type is a Value_t<OperandType_,...>
-    typedef TypeList_t<NextHeadType_,NextBodyTypeList_> BodyTypeList;
-    static OperandType_ const HEAD_V = HeadType_::V;
-    static OperandType_ const BODY_V = Min_f<BodyTypeList,OperandType_>::V;
+    static OperandType_ const HEAD_V = Head_f<Typle_>::T::V;
+    static OperandType_ const BODY_V = Min_f<typename BodyTyple_f<Typle_>::T,OperandType_>::V;
 public:
     static OperandType_ const V = (HEAD_V < BODY_V) ? HEAD_V : BODY_V;
 };
 
-template <typename HeadType_, typename OperandType_>
-struct Min_f<TypeList_t<HeadType_>,OperandType_>
+template <typename OperandType_>
+struct Min_f<Typle_t<>,OperandType_>
 {
-private:
-    // TODO: assert that each type is a Value_t<OperandType_,...>
-public:
-    static OperandType_ const V = HeadType_::V;
+    static OperandType_ const V = std::numeric_limits<OperandType_>::max();
 };
 
-// note that Max_f is not defined on EmptyTypeList
-template <typename TypeList_, typename OperandType_> struct Max_f;
-
-template <typename HeadType_, typename NextHeadType_, typename NextBodyTypeList_, typename OperandType_>
-struct Max_f<TypeList_t<HeadType_,TypeList_t<NextHeadType_,NextBodyTypeList_> >,OperandType_>
+template <typename Typle_, typename OperandType_>
+struct Max_f
 {
+    static_assert(EachTypeSatisfies_f<Typle_,IsValue_e>::V, "each type must be a Value_t type");
 private:
-    // TODO: assert that each type is a Value_t<OperandType_,...>
-    typedef TypeList_t<NextHeadType_,NextBodyTypeList_> BodyTypeList;
-    static OperandType_ const HEAD_V = HeadType_::V;
-    static OperandType_ const BODY_V = Max_f<BodyTypeList,OperandType_>::V;
+    static OperandType_ const HEAD_V = Head_f<Typle_>::T::V;
+    static OperandType_ const BODY_V = Max_f<typename BodyTyple_f<Typle_>::T,OperandType_>::V;
 public:
     static OperandType_ const V = (HEAD_V > BODY_V) ? HEAD_V : BODY_V;
 };
 
-template <typename HeadType_, typename OperandType_>
-struct Max_f<TypeList_t<HeadType_>,OperandType_>
+template <typename OperandType_>
+struct Max_f<Typle_t<>,OperandType_>
 {
-private:
-    // TODO: assert that each type is a Value_t<OperandType_,...>
-public:
-    static OperandType_ const V = HeadType_::V;
+    static OperandType_ const V = std::numeric_limits<OperandType_>::min();
 };
 
-// ///////////////////////////////////////////////////////////////////////////
-// TypeList_t specific stuff
-// ///////////////////////////////////////////////////////////////////////////
-
-template <typename TypeList_>
-struct Head_f
-{
-    typedef typename TypeList_::HeadType T;
-};
-
-// base case
-template <>
-struct Head_f<EmptyTypeList>
-{
-    // undefined on purpose
-};
-
-MAKE_1_ARY_TYPE_EVALUATOR(Head);
-
-template <typename TypeList_>
-struct Body_f
-{
-    typedef typename TypeList_::BodyTypeList T;
-};
-
-// base case
-template <>
-struct Body_f<EmptyTypeList>
-{
-    // undefined on purpose
-};
-
-MAKE_1_ARY_TYPE_EVALUATOR(Body);
-
-template <typename TypeList_>
-struct Length_f
-{
-    static Uint32 const V = TypeList_::LENGTH;
-};
-
-MAKE_1_ARY_VALUE_EVALUATOR(Length, Uint32);
-
+/*
 /// @struct Element_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Returns the INDEX_th element of the given TypeList_.
 /// @tparam TypeList_ the TypeList_t to access elements from.
