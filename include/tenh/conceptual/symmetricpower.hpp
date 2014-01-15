@@ -66,7 +66,7 @@ template <Uint32 ORDER_, typename Factor_>
 struct SymmetricPowerOfVectorSpace_c
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_VECTOR_SPACE), };
+    static_assert(IS_VECTOR_SPACE_UNIQUELY(Factor_), "Factor of SymmetricPowerOfVectorSpace_c must be a vector space.");
     typedef SymmetricPower_c<ORDER_,Factor_> As_SymmetricPower;
     typedef VectorSpace_c<typename ScalarFieldOf_f<Factor_>::T,BinomialCoefficient_t<DimensionOf_f<Factor_>::V + ORDER_ - 1, ORDER_>::V,SymmetricPower_c<ORDER_,typename Factor_::Id> > As_VectorSpace;
     typedef EmbeddableInTensorProductOfVectorSpaces_c<typename TensorPowerOfVectorSpace_f<ORDER_,Factor_>::T> As_EmbeddableInTensorProductOfVectorSpaces;
@@ -116,7 +116,7 @@ template <Uint32 ORDER_, typename Factor_>
 struct SymmetricPowerOfBasis_c
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM(IS_BASIS_UNIQUELY(Factor_), MUST_BE_BASIS) };
+    static_assert(IS_BASIS_UNIQUELY(Factor_), "Factor in SymmetricPowerofBasis_c must be a basis.");
     typedef SymmetricPower_c<ORDER_,Factor_> As_SymmetricPower;
     typedef Basis_c<SymmetricPower_c<ORDER_,Factor_> > As_Basis;
 public:
@@ -164,11 +164,8 @@ template <typename SymmetricPowerOfVectorSpace_, typename Basis_>
 struct BasedSymmetricPowerOfVectorSpace_c
 {
 private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IS_SYMMETRIC_POWER_OF_VECTOR_SPACE_UNIQUELY(SymmetricPowerOfVectorSpace_), MUST_BE_SYMMETRIC_POWER_OF_VECTOR_SPACE),
-        STATIC_ASSERT_IN_ENUM(IS_BASIS_UNIQUELY(Basis_), MUST_BE_BASIS),
-    };
+        static_assert(IS_SYMMETRIC_POWER_OF_VECTOR_SPACE_UNIQUELY(SymmetricPowerOfVectorSpace_), "SymmetriPowerOfVectorSpace must be a symmetric power of a vector space.");
+        static_assert(IS_BASIS_UNIQUELY(Basis_), "Basis must be a basis.");
     typedef SymmetricPowerOfVectorSpace_ As_SymmetricPowerOfVectorSpace;
     typedef BasedVectorSpace_c<SymmetricPowerOfVectorSpace_,Basis_> As_BasedVectorSpace;
 public:
@@ -223,7 +220,7 @@ template <Uint32 ORDER_, typename Factor_>
 struct SymmetricPowerOfBasedVectorSpace_c
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_BASED_VECTOR_SPACE) };
+    static_assert(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), "Factor of SymmetricPowerOfBasedVectorSpace_c must be a based vector space.");
     typedef BasedSymmetricPowerOfVectorSpace_c<SymmetricPowerOfVectorSpace_c<ORDER_,Factor_>,
                                                SymmetricPowerOfBasis_c<ORDER_,typename BasisOf_f<Factor_>::T> > As_BasedSymmetricPowerOfVectorSpace;
     typedef typename UniformTypeListOfLength_t<ORDER_,Factor_>::T FactorTypeList;

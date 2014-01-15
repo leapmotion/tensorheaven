@@ -54,7 +54,7 @@ template <typename ExpressionTemplate_, typename FreeDimIndexTypeList_, Uint32 F
 struct UniformlyIndexedExpressionTemplate_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_>,FREE_INDEX_COUNT_>
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM(Length_f<FreeDimIndexTypeList_>::V == FREE_INDEX_COUNT_, LENGTHS_MUST_BE_EQUAL) };
+    static_assert(Length_f<FreeDimIndexTypeList_>::V == FREE_INDEX_COUNT_, "The number of free indices in the Reindexable must match the free index count argument.");
     typedef Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_> Reindexable;
     typedef typename AbstractIndicesOfDimIndexTypeList_t<FreeDimIndexTypeList_>::T DomainAbstractIndexTypeList;
     typedef typename UniformAbstractIndexTypeList_f<FREE_INDEX_COUNT_>::T CodomainAbstractIndexTypeList;
@@ -113,7 +113,7 @@ template <typename ExpressionTemplate_, typename FreeDimIndexTypeList_, Uint32 F
 struct LhsIndexedContractionExpressionTemplate_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_>,FREE_INDEX_COUNT_>
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM(Length_f<FreeDimIndexTypeList_>::V == FREE_INDEX_COUNT_, LENGTHS_MUST_BE_EQUAL) };
+    static_assert(Length_f<FreeDimIndexTypeList_>::V == FREE_INDEX_COUNT_, "The number of free indices in the Reindexable must match the free index count argument.");
     typedef Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_> Reindexable;
     typedef typename AbstractIndicesOfDimIndexTypeList_t<FreeDimIndexTypeList_>::T DomainAbstractIndexTypeList;
     typedef typename LhsOfContractionAbstractIndexTypeList_f<FREE_INDEX_COUNT_>::T CodomainAbstractIndexTypeList;
@@ -172,7 +172,7 @@ template <typename ExpressionTemplate_, typename FreeDimIndexTypeList_, Uint32 F
 struct RhsIndexedContractionExpressionTemplate_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_>,FREE_INDEX_COUNT_>
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM(Length_f<FreeDimIndexTypeList_>::V == FREE_INDEX_COUNT_, LENGTHS_MUST_BE_EQUAL) };
+    static_assert(Length_f<FreeDimIndexTypeList_>::V == FREE_INDEX_COUNT_, "The number of free indices in the Reindexable must match the free index count argument.");
     typedef Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_> Reindexable;
     typedef typename AbstractIndicesOfDimIndexTypeList_t<FreeDimIndexTypeList_>::T DomainAbstractIndexTypeList;
     typedef typename RhsOfContractionAbstractIndexTypeList_f<FREE_INDEX_COUNT_>::T CodomainAbstractIndexTypeList;

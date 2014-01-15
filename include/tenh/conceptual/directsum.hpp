@@ -27,7 +27,7 @@ template <typename SummandTypeList_>
 struct DirectSum_c
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM(IsTypeList_f<SummandTypeList_>::V, MUST_BE_TYPELIST) };
+    static_assert(IsTypeList_f<SummandTypeList_>::V, "The SummandTypeList to DirectSum must be a TypeList.");
 
 public:
     typedef EmptyTypeList ParentTypeList;
@@ -143,12 +143,9 @@ template <typename SummandTypeList_>
 struct DirectSumOfVectorSpaces_c
 {
 private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IsTypeList_f<SummandTypeList_>::V, MUST_BE_TYPELIST),
-        STATIC_ASSERT_IN_ENUM(AllFactorsAreVectorSpaces_f<SummandTypeList_>::V, ALL_FACTORS_MUST_BE_VECTOR_SPACES),
-        STATIC_ASSERT_IN_ENUM(AllFactorsHaveTheSameField_f<SummandTypeList_>::V, ALL_FACTORS_MUST_HAVE_SAME_FIELD)
-    };
+    static_assert(IsTypeList_f<SummandTypeList_>::V, "The SummandTypeList to DirectSum must be a TypeList.");
+    static_assert(AllFactorsAreVectorSpaces_f<SummandTypeList_>::V, "All factors of a DirectSum must be vector spaces.");
+    static_assert(AllFactorsHaveTheSameField_f<SummandTypeList_>::V, "All factors of a DirectSum must have the same scalar field.");
 
     typedef DirectSum_c<SummandTypeList_> As_DirectSum;
     typedef VectorSpace_c<typename ScalarFieldOf_f<typename SummandTypeList_::HeadType>::T,
@@ -209,11 +206,8 @@ template <typename SummandTypeList_>
 struct DirectSumOfBases_c
 {
 private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IsTypeList_f<SummandTypeList_>::V, MUST_BE_TYPELIST),
-        STATIC_ASSERT_IN_ENUM(AllFactorsAreBases_f<SummandTypeList_>::V, ALL_FACTORS_MUST_BE_BASES)
-    };
+    static_assert(IsTypeList_f<SummandTypeList_>::V, "The SummandTypeList to DirectSum must be a TypeList.");
+    static_assert(AllFactorsAreBases_f<SummandTypeList_>::V, "All factors of DirectSumOfBases_c must be bases.");
     typedef DirectSum_c<SummandTypeList_> As_DirectSum;
     typedef Basis_c<DirectSum_c<typename IdsOfTypeList_t<SummandTypeList_>::T> > As_Basis;
 public:
@@ -270,11 +264,8 @@ template <typename DirectSumOfVectorSpaces_, typename Basis_>
 struct BasedDirectSumOfVectorSpaces_c
 {
 private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IS_DIRECT_SUM_OF_VECTOR_SPACES_UNIQUELY(DirectSumOfVectorSpaces_), MUST_BE_DIRECT_SUM_OF_VECTOR_SPACES),
-        STATIC_ASSERT_IN_ENUM(IS_BASIS_UNIQUELY(Basis_), MUST_BE_BASIS),
-    };
+    static_assert(IS_DIRECT_SUM_OF_VECTOR_SPACES_UNIQUELY(DirectSumOfVectorSpaces_), "DirectSumOfVectorSpaces must be a direct sum of vector spaces.");
+    static_assert(IS_BASIS_UNIQUELY(Basis_), "Basis must be a basis.");
 
     typedef DirectSumOfVectorSpaces_ As_DirectSumOfVectorSpaces;
     typedef BasedVectorSpace_c<DirectSumOfVectorSpaces_,Basis_> As_BasedVectorSpace;
@@ -334,11 +325,8 @@ template <typename SummandTypeList_>
 struct DirectSumOfBasedVectorSpaces_c
 {
 private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IsTypeList_f<SummandTypeList_>::V, MUST_BE_TYPELIST),
-        STATIC_ASSERT_IN_ENUM(AllFactorsAreBasedVectorSpaces_f<SummandTypeList_>::V, ALL_FACTORS_MUST_BE_BASED_VECTOR_SPACES),
-    };
+    static_assert(IsTypeList_f<SummandTypeList_>::V, "The SummandTypeList to DirectSum must be a TypeList.");
+    static_assert(AllFactorsAreBasedVectorSpaces_f<SummandTypeList_>::V, "All summands in DirectSumOfBasedVectorSpaces_c must be based vector spaces.");
 
     typedef typename PropertyOfEachInTypeList_f<SummandTypeList_,Basis>::T BasisTypeList;
     typedef BasedDirectSumOfVectorSpaces_c<DirectSumOfVectorSpaces_c<SummandTypeList_>,
@@ -450,7 +438,7 @@ DirectSumOfBasedVectorSpaces_c<TypeList_t<DirectSumOfBasedVectorSpaces_c<LhsSumm
 // struct TensorPowerOfVectorSpace_f
 // {
 // private:
-//     enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_VECTOR_SPACE) };
+//     static_assert(IS_VECTOR_SPACE_UNIQUELY(Factor_), "Must be vector space.");
 //     TensorPowerOfVectorSpace_f();
 // public:
 //     typedef DirectSumOfVectorSpaces_c<typename UniformTypeListOfLength_t<ORDER_,Factor_>::T> T;
@@ -460,7 +448,7 @@ DirectSumOfBasedVectorSpaces_c<TypeList_t<DirectSumOfBasedVectorSpaces_c<LhsSumm
 // struct TensorPowerOfBasedVectorSpace_f
 // {
 // private:
-//     enum { STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_BASED_VECTOR_SPACE) };
+//     static_assert(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), "Must be based vector space.");
 //     TensorPowerOfBasedVectorSpace_f();
 // public:
 //     typedef DirectSumOfBasedVectorSpaces_c<typename UniformTypeListOfLength_t<ORDER_,Factor_>::T> T;

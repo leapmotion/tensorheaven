@@ -67,7 +67,7 @@ template <Uint32 ORDER_, typename Factor_>
 struct ExteriorPowerOfVectorSpace_c
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_VECTOR_SPACE), };
+    static_assert(IS_VECTOR_SPACE_UNIQUELY(Factor_), "Factor of ExteriorPowerOfVectorSpace_c must be a vector space.");
 
     typedef ExteriorPower_c<ORDER_,Factor_> As_ExteriorPower;
     typedef VectorSpace_c<typename ScalarFieldOf_f<Factor_>::T,BinomialCoefficient_t<DimensionOf_f<Factor_>::V, ORDER_>::V,ExteriorPower_c<ORDER_,typename Factor_::Id> > As_VectorSpace;
@@ -118,7 +118,7 @@ template <Uint32 ORDER_, typename Factor_>
 struct ExteriorPowerOfBasis_c
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM(IS_BASIS_UNIQUELY(Factor_), MUST_BE_BASIS) };
+    static_assert(IS_BASIS_UNIQUELY(Factor_), "Factor in ExteriorPowerOfBasis_c must be a basis.");
     typedef ExteriorPower_c<ORDER_,Factor_> As_ExteriorPower;
     typedef Basis_c<ExteriorPower_c<ORDER_,Factor_> > As_Basis;
 public:
@@ -165,11 +165,8 @@ template <typename ExteriorPowerOfVectorSpace_, typename Basis_>
 struct BasedExteriorPowerOfVectorSpace_c
 {
 private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IS_EXTERIOR_POWER_OF_VECTOR_SPACE_UNIQUELY(ExteriorPowerOfVectorSpace_), MUST_BE_EXTERIOR_POWER_OF_VECTOR_SPACE),
-        STATIC_ASSERT_IN_ENUM(IS_BASIS_UNIQUELY(Basis_), MUST_BE_BASIS),
-    };
+    static_assert(IS_EXTERIOR_POWER_OF_VECTOR_SPACE_UNIQUELY(ExteriorPowerOfVectorSpace_), "ExteriorPowerOfVectorSpace must be an exterior power of a vector space.");
+    static_assert(IS_BASIS_UNIQUELY(Basis_), "Basis must be a basis.");
     typedef ExteriorPowerOfVectorSpace_ As_ExteriorPowerOfVectorSpace;
     typedef BasedVectorSpace_c<ExteriorPowerOfVectorSpace_,Basis_> As_BasedVectorSpace;
 public:
@@ -212,7 +209,7 @@ template <Uint32 ORDER_, typename Factor_>
 struct ExteriorPowerOfBasedVectorSpace_c
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_BASED_VECTOR_SPACE), };
+    static_assert(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), "Factor of ExteriorPowerOfBasedVectorSpace_c must be a based vector space.");
     typedef typename UniformTypeListOfLength_t<ORDER_,Factor_>::T FactorTypeList;
 
     typedef BasedExteriorPowerOfVectorSpace_c<ExteriorPowerOfVectorSpace_c<ORDER_,Factor_>,

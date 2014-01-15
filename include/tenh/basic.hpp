@@ -47,7 +47,7 @@ public:
         :
         Parent_Vector(fill_with)
     {
-        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
+        static_assert(IsUseMemberArray_f<UseArrayType_>::V, "Vec must be UseMemberArray in order to call the fill with constructor.");
     }
     // this is the tuple-based constructor
     template <typename HeadType_, typename BodyTypeList_>
@@ -55,7 +55,7 @@ public:
         :
         Parent_Vector(x.as_member_array())
     {
-        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
+        static_assert(IsUseMemberArray_f<UseArrayType_>::V, "Vec must be UseMemberArray in order to call the List constructor.");
     }
 
     // only use these if UsePreallocatedArray_t<...> is specified
@@ -64,7 +64,7 @@ public:
         :
         Parent_Vector(pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "Vec must be UsePreallocatedArray in order to call the pointer to allocation constructor.");
     }
     template <typename T_>
     Vec (FillWith_t<T_> const &fill_with,
@@ -72,7 +72,7 @@ public:
         :
         Parent_Vector(fill_with, pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "Vec must be UsePreallocatedArray in order to call the pointer to allocation constructor.");
     }
     // this is the tuple-based constructor
     template <typename HeadType_, typename BodyTypeList_>
@@ -81,7 +81,7 @@ public:
         :
         Parent_Vector(x, pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "Vec must be UsePreallocatedArray in order to call the pointer to allocation constructor.");
     }
 
     // only use this if UseProceduralArray_t<...> is specified or if the vector space is 0-dimensional
@@ -89,8 +89,8 @@ public:
         :
         Parent_Vector(WithoutInitialization()) // sort of meaningless constructor
     {
-        STATIC_ASSERT(IsUseProceduralArray_f<UseArrayType_>::V || DIMENSION_ == 0,
-                      MUST_BE_USE_PROCEDURAL_ARRAY_OR_BE_ZERO_DIMENSIONAL);
+        static_assert(IsUseProceduralArray_f<UseArrayType_>::V || DIMENSION_ == 0,
+                      "Vec must be procedural, or 0 dimensional to use the default constructor.");
     }
 
     using Parent_Vector::operator =;
@@ -167,7 +167,7 @@ public:
         :
         Parent_Operator(fill_with)
     {
-        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
+        static_assert(IsUseMemberArray_f<UseArrayType_>::V, "Op must be UseMemberArray in order to call the fill with constructor.");
     }
     // this is the tuple-based constructor
     template <typename HeadType_, typename BodyTypeList_>
@@ -175,7 +175,7 @@ public:
         :
         Parent_Operator(x.as_member_array())
     {
-        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
+        static_assert(IsUseMemberArray_f<UseArrayType_>::V, "Op must be UseMemberArray in order to call the List constructor.");
     }
 
     // only use these if UsePreallocatedArray_t<...> is specified
@@ -184,14 +184,14 @@ public:
         :
         Parent_Operator(pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "Op must be UsePreallocatedArray in order to call the pointer to allocation constructor.");
     }
     Op (Scalar_ const &fill_with,
         Scalar_ *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Operator(fill_with, pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "Op must be UsePreallocatedArray in order to call the pointer to allocation constructor.");
     }
     // this is the tuple-based constructor
     template <typename HeadType_, typename BodyTypeList_>
@@ -200,7 +200,7 @@ public:
         :
         Parent_Operator(x, pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "Op must be UsePreallocatedArray in order to call the pointer to allocation constructor.");
     }
 
     // only use this if UseProceduralArray_t<...> is specified or if the vector space is 0-dimensional
@@ -208,8 +208,8 @@ public:
         :
         Parent_Operator(WithoutInitialization()) // sort of meaningless constructor
     {
-        STATIC_ASSERT(IsUseProceduralArray_f<UseArrayType_>::V || DIM == 0,
-                      MUST_BE_USE_PROCEDURAL_ARRAY_OR_BE_ZERO_DIMENSIONAL);
+        static_assert(IsUseProceduralArray_f<UseArrayType_>::V || DIM == 0,
+                      "Op must be procedural, or 0 dimensional to use the default constructor.");
     }
 
     using Parent_Operator::operator =;

@@ -47,7 +47,7 @@ public:
         :
         Parent_Implementation(fill_with)
     {
-        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
+        static_assert(IsUseMemberArray_f<UseArrayType_>::V, "The fill with constructor on Vector can only be called if the Vector is UseMemberArray.");
     }
     // this is the tuple-based constructor
     template <typename HeadType_, typename BodyTypeList_>
@@ -55,7 +55,7 @@ public:
         :
         Parent_Implementation(x.as_member_array())
     {
-        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
+        static_assert(IsUseMemberArray_f<UseArrayType_>::V, "The List constructor on Vector can only be called if the Vector is UseMemberArray.");
     }
 
     // only use these if UsePreallocatedArray_t<...> is specified
@@ -64,7 +64,7 @@ public:
         :
         Parent_Implementation(pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "The pointer to allocation constructor on Vector can only be called if the Vector is UsePreallocatedArray");
     }
     template <typename T_>
     Vector (FillWith_t<T_> const &fill_with,
@@ -72,7 +72,7 @@ public:
         :
         Parent_Implementation(fill_with, pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "The pointer to allocation constructor on Vector can only be called if the Vector is UsePreallocatedArray");
     }
     // this is the tuple-based constructor
     template <typename HeadType_, typename BodyTypeList_>
@@ -81,7 +81,7 @@ public:
         :
         Parent_Implementation(x, pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "The pointer to allocation constructor on Vector can only be called if the Vector is UsePreallocatedArray");
     }
 
     // only use this if UseProceduralArray_t<...> is specified or if the vector space is 0-dimensional
@@ -89,16 +89,16 @@ public:
         :
         Parent_Implementation(WithoutInitialization()) // sort of meaningless constructor
     {
-        STATIC_ASSERT(IsUseProceduralArray_f<UseArrayType_>::V || DimensionOf_f<BasedVectorSpace_>::V == 0,
-                      MUST_BE_USE_PROCEDURAL_ARRAY_OR_BE_ZERO_DIMENSIONAL);
+        static_assert(IsUseProceduralArray_f<UseArrayType_>::V || DimensionOf_f<BasedVectorSpace_>::V == 0,
+                      "To construct a Vector without arguments it must be procedural or dimension zero.");
     }
 
     template <typename ExpressionTemplate_, typename FreeDimIndexTypeList_>
     void operator = (Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_> const &rhs)
     {
-        STATIC_ASSERT(IsExpressionTemplate_f<ExpressionTemplate_>::V, MUST_BE_EXPRESSION_TEMPLATE);
-        STATIC_ASSERT_TYPES_ARE_EQUAL(typename ExpressionTemplate_::FreeDimIndexTypeList,FreeDimIndexTypeList_);
-        STATIC_ASSERT(Length_f<FreeDimIndexTypeList_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
+        static_assert(IsExpressionTemplate_f<ExpressionTemplate_>::V, "The type argument to Reindexable must be an ExpressionTemplate");
+        static_assert(TypesAreEqual_f<typename ExpressionTemplate_::FreeDimIndexTypeList,FreeDimIndexTypeList_>::V, "The FreeDimIndexTypeList of the Reindexable must be the FreeDimIndexTypeList of its ExpressionTemplate.");
+        static_assert(Length_f<FreeDimIndexTypeList_>::V == 1, "The Reindexable must have exactly one free index.");
         AbstractIndex_c<'i'> i;
         (*this)(i) = rhs(i);
     }

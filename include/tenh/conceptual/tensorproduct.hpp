@@ -28,7 +28,7 @@ template <typename FactorTypeList_>
 struct TensorProduct_c
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM(IsTypeList_f<FactorTypeList_>::V, MUST_BE_TYPELIST) };
+    static_assert(IsTypeList_f<FactorTypeList_>::V, "FactorTypeList of TensorProduct_c must be a type list.");
 
 public:
     typedef EmptyTypeList ParentTypeList;
@@ -145,12 +145,9 @@ template <typename FactorTypeList_>
 struct TensorProductOfVectorSpaces_c
 {
 private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IsTypeList_f<FactorTypeList_>::V, MUST_BE_TYPELIST),
-        STATIC_ASSERT_IN_ENUM(AllFactorsAreVectorSpaces_f<FactorTypeList_>::V, ALL_FACTORS_MUST_BE_VECTOR_SPACES),
-        STATIC_ASSERT_IN_ENUM(AllFactorsHaveTheSameField_f<FactorTypeList_>::V, ALL_FACTORS_MUST_HAVE_SAME_FIELD)
-    };
+        static_assert(IsTypeList_f<FactorTypeList_>::V, "FactorTypeList of TensorProductOfVectorSpaces_c must be a type list.");
+        static_assert(AllFactorsAreVectorSpaces_f<FactorTypeList_>::V, "All factors of TensorProductOfVectorSpaces_c must be vector spaces.");
+        static_assert(AllFactorsHaveTheSameField_f<FactorTypeList_>::V, "All factors of TensorProductOfVectorSpaces_c must have the same scalar field.");
 
     typedef TensorProduct_c<FactorTypeList_> As_TensorProduct;
     typedef VectorSpace_c<typename ScalarFieldOf_f<typename FactorTypeList_::HeadType>::T,
@@ -213,11 +210,8 @@ template <typename FactorTypeList_>
 struct TensorProductOfBases_c
 {
 private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IsTypeList_f<FactorTypeList_>::V, MUST_BE_TYPELIST),
-        STATIC_ASSERT_IN_ENUM(AllFactorsAreBases_f<FactorTypeList_>::V, ALL_FACTORS_MUST_BE_BASES)
-    };
+    static_assert(IsTypeList_f<FactorTypeList_>::V, "FactorTypeList of TensorProductOfBases_c must be a type list.");
+    static_assert(AllFactorsAreBases_f<FactorTypeList_>::V, "All factors of TensorProductOfBases_c must be bases.");
     typedef TensorProduct_c<FactorTypeList_> As_TensorProduct;
     typedef Basis_c<TensorProduct_c<typename IdsOfTypeList_t<FactorTypeList_>::T> > As_Basis;
 public:
@@ -274,11 +268,8 @@ template <typename TensorProductOfVectorSpaces_, typename Basis_>
 struct BasedTensorProductOfVectorSpaces_c
 {
 private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IS_TENSOR_PRODUCT_OF_VECTOR_SPACES_UNIQUELY(TensorProductOfVectorSpaces_), MUST_BE_TENSOR_PRODUCT_OF_VECTOR_SPACES),
-        STATIC_ASSERT_IN_ENUM(IS_BASIS_UNIQUELY(Basis_), MUST_BE_BASIS),
-    };
+    static_assert(IS_TENSOR_PRODUCT_OF_VECTOR_SPACES_UNIQUELY(TensorProductOfVectorSpaces_), "TensorProductOfVectorSpaces must be a tensor product of vector spaces.");
+    static_assert(IS_BASIS_UNIQUELY(Basis_), "Basis must be a basis.");
 
     typedef TensorProductOfVectorSpaces_ As_TensorProductOfVectorSpaces;
     typedef BasedVectorSpace_c<TensorProductOfVectorSpaces_,Basis_> As_BasedVectorSpace;
@@ -338,11 +329,8 @@ template <typename FactorTypeList_>
 struct TensorProductOfBasedVectorSpaces_c
 {
 private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IsTypeList_f<FactorTypeList_>::V, MUST_BE_TYPELIST),
-        STATIC_ASSERT_IN_ENUM(AllFactorsAreBasedVectorSpaces_f<FactorTypeList_>::V, ALL_FACTORS_MUST_BE_BASED_VECTOR_SPACES),
-    };
+    static_assert(IsTypeList_f<FactorTypeList_>::V, "FactorTypeList of TensorProductOfBasedVectorSpaces_c must be a type list.");
+    static_assert(AllFactorsAreBasedVectorSpaces_f<FactorTypeList_>::V, "All factors of TensorProductOfBasedVectorSpaces_c must be based vector spaces.");
 
     typedef typename PropertyOfEachInTypeList_f<FactorTypeList_,Basis>::T BasisTypeList;
     typedef BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_c<FactorTypeList_>,
@@ -412,7 +400,7 @@ template <Uint32 ORDER_, typename Factor_>
 struct TensorPowerOfVectorSpace_f
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_VECTOR_SPACE) };
+    static_assert(IS_VECTOR_SPACE_UNIQUELY(Factor_), "Factor of TensorPowerOfVectorSpace_f must be a vector space.");
     TensorPowerOfVectorSpace_f();
 public:
     typedef TensorProductOfVectorSpaces_c<typename UniformTypeListOfLength_t<ORDER_,Factor_>::T> T;
@@ -422,7 +410,7 @@ template <Uint32 ORDER_, typename Factor_>
 struct TensorPowerOfBasedVectorSpace_f
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_BASED_VECTOR_SPACE) };
+    static_assert(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), "Factor of TensorPowerOfBasedVectorSpace_f must be a based vector space.");
     TensorPowerOfBasedVectorSpace_f();
 public:
     typedef TensorProductOfBasedVectorSpaces_c<typename UniformTypeListOfLength_t<ORDER_,Factor_>::T> T;

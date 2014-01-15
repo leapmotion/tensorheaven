@@ -158,7 +158,7 @@ template <typename Concept, typename ConceptualStructurePredicate>
 struct UniqueConceptualStructureOf_f
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM((HasUniqueConceptualStructure_f<Concept,ConceptualStructurePredicate>::V), MUST_HAVE_UNIQUE_CONCEPTUAL_STRUCTURE) };
+    static_assert((HasUniqueConceptualStructure_f<Concept,ConceptualStructurePredicate>::V), "Concept must have a unique conceptual structure to be used in UniqueConceptualStructureOf_f.");
     UniqueConceptualStructureOf_f();
 public:
     typedef typename ConceptualStructuresOf_f<Concept,ConceptualStructurePredicate>::T::HeadType T;
@@ -200,7 +200,7 @@ private: \
 template <typename Concept> struct Unique##ConceptName##StructureOf_f \
 { \
 private: \
-    enum { STATIC_ASSERT_IN_ENUM(HasUnique##ConceptName##Structure_f<Concept>::V, MUST_HAVE_UNIQUE_CONCEPTUAL_STRUCTURE) }; \
+    static_assert(HasUnique##ConceptName##Structure_f<Concept>::V, "Concept must have a unique " #ConceptName " structure."); \
     Unique##ConceptName##StructureOf_f(); \
 public: \
     typedef typename UniqueConceptualStructureOf_f<Concept,Is##ConceptName##_p>::T T; \
@@ -257,7 +257,7 @@ struct Property_f
 {
 private:
     typedef typename MultiProperty_f<Concept_,PropertyId_>::T MultiProperty;
-    enum { STATIC_ASSERT_IN_ENUM(MultiProperty::LENGTH == 1, PROPERTY_IS_NOT_WELL_DEFINED) };
+    static_assert(MultiProperty::LENGTH == 1, "Property is not well defined.");
     Property_f();
 public:
     typedef typename MultiProperty::HeadType T;

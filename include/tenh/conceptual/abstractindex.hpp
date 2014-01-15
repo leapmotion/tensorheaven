@@ -41,9 +41,8 @@ inline std::string abstract_index_symbol_as_string (AbstractIndexSymbol symbol, 
 template <AbstractIndexSymbol SYMBOL_>
 struct AbstractIndex_c
 {
-private:
-    enum { STATIC_ASSERT_IN_ENUM((SYMBOL_ > 0), ABSTRACT_INDEX_SYMBOL_MUST_BE_POSITIVE) };
-public:
+    static_assert((SYMBOL_ > 0), "AbstractIndex symbol must be positive.");
+
     typedef EmptyTypeList ParentTypeList;
 
     static AbstractIndexSymbol const SYMBOL = SYMBOL_;

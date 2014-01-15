@@ -19,15 +19,10 @@ namespace Tenh {
 template <typename ExpressionTemplate_, typename FreeDimIndexTypeList_ = typename ExpressionTemplate_::FreeDimIndexTypeList>
 struct Reindexable_t : public ExpressionOperand_i<Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_>,Length_f<FreeDimIndexTypeList_>::V>
 {
-private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<ExpressionTemplate_>::V, MUST_BE_EXPRESSION_TEMPLATE),
-        STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<FreeDimIndexTypeList_,IsDimIndex_p>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES),
-        STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename ExpressionTemplate_::FreeDimIndexTypeList,FreeDimIndexTypeList_>::V), TYPES_MUST_BE_EQUAL)
-    };
 
-public:
+    static_assert(IsExpressionTemplate_f<ExpressionTemplate_>::V, "The type argument to Reindexable must be an ExpressionTemplate.");
+    static_assert((EachTypeSatisfies_f<FreeDimIndexTypeList_,IsDimIndex_p>::V), "The FreeDimIndexTypeList in Reindexable must only contain DimIndexes.");
+    static_assert((TypesAreEqual_f<typename ExpressionTemplate_::FreeDimIndexTypeList,FreeDimIndexTypeList_>::V), "The FreeDimIndexTypeList in Reindexable must be the FreeDimIndexTypeList of the ExpressionTemplate.");
 
     typedef typename ExpressionTemplate_::Derived DerivedExpressionTemplate;
     typedef typename ExpressionTemplate_::MultiIndex MultiIndex;
@@ -39,7 +34,7 @@ public:
 
     operator Scalar () const
     {
-        STATIC_ASSERT_TYPELIST_IS_EMPTY(typename ExpressionTemplate_::FreeDimIndexTypeList);
+        static_assert(TypesAreEqual_f<typename ExpressionTemplate_::FreeDimIndexTypeList, EmptyTypeList>::V, "You cannot conver a Reindexable to a scalar unless the FreeDimIndexTypeList is empty.");
         return Scalar(m_derived_expression_template);
     }
     Scalar operator [] (MultiIndex const &m) const { return m_derived_expression_template[m]; }
@@ -47,7 +42,7 @@ public:
     // for when there are no free indices
     DerivedExpressionTemplate const &operator () (EmptyTypeList const &) const
     {
-        STATIC_ASSERT_TYPELIST_IS_EMPTY(typename ExpressionTemplate_::FreeDimIndexTypeList);
+        static_assert(TypesAreEqual_f<typename ExpressionTemplate_::FreeDimIndexTypeList, EmptyTypeList>::V, "You can only call operator() with an EmptyTypeList on a Reindexable if the FreeDimIndexTypeList is empty as well.");
         return m_derived_expression_template;
     }
 
@@ -58,7 +53,7 @@ public:
         operator () (AbstractIndex_c<SYMBOL_> const &) const
     {
         typedef typename ExpressionTemplate_::FreeDimIndexTypeList FreeDimIndexTypeList;
-        STATIC_ASSERT(FreeDimIndexTypeList::LENGTH == 1, LENGTH_MUST_BE_EXACTLY_1);
+        static_assert(FreeDimIndexTypeList::LENGTH == 1, "You can only call operator() with a single AbstractIndex on a Reindexable if the FreeDimIndexTypeList has length 1.");
         typedef typename AbstractIndicesOfDimIndexTypeList_t<FreeDimIndexTypeList>::T DomainAbstractIndexTypeList;
         typedef TypeList_t<AbstractIndex_c<SYMBOL_> > CodomainAbstractIndexTypeList;
         return reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(m_derived_expression_template);
@@ -72,7 +67,7 @@ public:
     {
         typedef typename ExpressionTemplate_::FreeDimIndexTypeList FreeDimIndexTypeList;
         typedef TypeList_t<AbstractIndexHeadType_,AbstractIndexBodyTypeList_> AbstractIndexTypeList;
-        STATIC_ASSERT(Length_f<FreeDimIndexTypeList>::V == Length_f<AbstractIndexTypeList>::V, LENGTHS_MUST_BE_EQUAL);
+        static_assert(Length_f<FreeDimIndexTypeList>::V == Length_f<AbstractIndexTypeList>::V, "The list of AbstractIndices passed into operator() on a Reindexable must have the same length as the FreeDimIndexTypeList.");
         typedef typename AbstractIndicesOfDimIndexTypeList_t<FreeDimIndexTypeList>::T DomainAbstractIndexTypeList;
         typedef TypeList_t<AbstractIndexHeadType_,AbstractIndexBodyTypeList_> CodomainAbstractIndexTypeList;
         return reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(m_derived_expression_template);

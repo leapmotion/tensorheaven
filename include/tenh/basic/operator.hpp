@@ -59,7 +59,7 @@ public:
         :
         Parent_Implementation(fill_with)
     {
-        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
+        static_assert(IsUseMemberArray_f<UseArrayType_>::V, "Fill with constructor on Operator requires UseMemberArray.");
     }
     // this is the tuple-based constructor
     template <typename HeadType_, typename BodyTypeList_>
@@ -67,7 +67,7 @@ public:
         :
         Parent_Implementation(x.as_member_array())
     {
-        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
+        static_assert(IsUseMemberArray_f<UseArrayType_>::V, "List constructor on Operator requires UseMemberArray.");
     }
 
     // only use these if UsePreallocatedArray_t<...> is specified
@@ -76,7 +76,7 @@ public:
         :
         Parent_Implementation(pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "Pointer to data constructor on Operator requires UsePreallocatedArray.");
     }
     template <typename T_>
     Operator (FillWith_t<T_> const &fill_with,
@@ -84,7 +84,7 @@ public:
         :
         Parent_Implementation(fill_with, pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "Pointer to data constructor on Operator requires UsePreallocatedArray.");
     }
     // this is the tuple-based constructor
     template <typename HeadType_, typename BodyTypeList_>
@@ -93,7 +93,7 @@ public:
         :
         Parent_Implementation(x, pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "Pointer to data constructor on Operator requires UsePreallocatedArray.");
     }
 
     // only use this if UseProceduralArray_t<...> is specified or if the vector space is 0-dimensional
@@ -101,16 +101,16 @@ public:
         :
         Parent_Implementation(WithoutInitialization()) // sort of meaningless constructor
     {
-        STATIC_ASSERT(IsUseProceduralArray_f<UseArrayType_>::V || DimensionOf_f<TensorProduct>::V == 0,
-                      MUST_BE_USE_PROCEDURAL_ARRAY_OR_BE_ZERO_DIMENSIONAL);
+        static_assert(IsUseProceduralArray_f<UseArrayType_>::V || DimensionOf_f<TensorProduct>::V == 0,
+                      "Constructing an Operator without arguments requires the dimension be 0, or the data to be procedurally generated.");
     }
 
     template <typename ExpressionTemplate_, typename FreeDimIndexTypeList_>
     void operator = (Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_> const &rhs)
     {
-        STATIC_ASSERT(IsExpressionTemplate_f<ExpressionTemplate_>::V, MUST_BE_EXPRESSION_TEMPLATE);
-        STATIC_ASSERT_TYPES_ARE_EQUAL(typename ExpressionTemplate_::FreeDimIndexTypeList,FreeDimIndexTypeList_);
-        STATIC_ASSERT(Length_f<FreeDimIndexTypeList_>::V == 2, LENGTH_MUST_BE_EXACTLY_2);
+        static_assert(IsExpressionTemplate_f<ExpressionTemplate_>::V, "The Reindexable on the right hand side of Operator's operator= must be an ExpressionTemplate");
+        static_assert(TypesAreEqual_f<typename ExpressionTemplate_::FreeDimIndexTypeList,FreeDimIndexTypeList_>::V, "The FreeDimIndexTypeLists on either side of operator= must match.");
+        static_assert(Length_f<FreeDimIndexTypeList_>::V == 2, "An expression template must have exactly two free indices to assign it to an Operator.");
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
         (*this)(i*j) = rhs(i*j);

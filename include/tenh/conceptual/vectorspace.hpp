@@ -25,7 +25,7 @@ struct VectorSpace_c
 {
     typedef EmptyTypeList ParentTypeList;
 
-    enum { STATIC_ASSERT_IN_ENUM(IS_FIELD_UNIQUELY(ScalarField_), MUST_BE_FIELD) };
+    static_assert(IS_FIELD_UNIQUELY(ScalarField_), "ScalarField of VectorSpace_c must be a field.");
 
     typedef ScalarField_ ScalarField;
     static Uint32 const DIMENSION = DIMENSION_;
@@ -135,11 +135,8 @@ template <typename VectorSpace_, typename Basis_>
 struct BasedVectorSpace_c
 {
 private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(VectorSpace_), MUST_BE_VECTOR_SPACE),
-        STATIC_ASSERT_IN_ENUM(IS_BASIS_UNIQUELY(Basis_), MUST_BE_BASIS)
-    };
+        static_assert(IS_VECTOR_SPACE_UNIQUELY(VectorSpace_), MUST_BE_VECTOR_SPACE);
+        static_assert(IS_BASIS_UNIQUELY(Basis_), MUST_BE_BASIS);
 
     typedef VectorSpace_ As_VectorSpace;
 public:
@@ -279,7 +276,7 @@ template <typename SummandTypeList_>
 struct SumOfDimensions_t
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(typename SummandTypeList_::HeadType), MUST_BE_VECTOR_SPACE) };
+    enum { static_assert_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(typename SummandTypeList_::HeadType), MUST_BE_VECTOR_SPACE) };
     SumOfDimensions_t();
 public:
     static Uint32 const V = DimensionOf_f<typename SummandTypeList_::HeadType>::V +
@@ -298,7 +295,7 @@ template <typename FactorTypeList_>
 struct ProductOfDimensions_t
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(typename FactorTypeList_::HeadType), MUST_BE_VECTOR_SPACE) };
+    enum { static_assert_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(typename FactorTypeList_::HeadType), MUST_BE_VECTOR_SPACE) };
     ProductOfDimensions_t();
 public:
     static Uint32 const V = DimensionOf_f<typename FactorTypeList_::HeadType>::V *
@@ -380,7 +377,7 @@ template <typename OnBasedVectorSpace_, typename Scalar_, bool ENABLE_EXCEPTIONS
 struct LinearEmbedding_c<OnBasedVectorSpace_,OnBasedVectorSpace_,Scalar_,IdentityEmbedding,ENABLE_EXCEPTIONS_>
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(OnBasedVectorSpace_), MUST_BE_BASED_VECTOR_SPACE) };
+    enum { static_assert_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(OnBasedVectorSpace_), MUST_BE_BASED_VECTOR_SPACE) };
 public:
     typedef ComponentIndex_t<DimensionOf_f<OnBasedVectorSpace_>::V> ComponentIndex;
 

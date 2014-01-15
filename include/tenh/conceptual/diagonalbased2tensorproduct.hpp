@@ -75,11 +75,8 @@ template <typename Factor0_, typename Factor1_>
 struct Diagonal2TensorProductOfBases_c
 {
 private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IS_BASIS_UNIQUELY(Factor0_), MUST_BE_BASIS, FACTOR0),
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IS_BASIS_UNIQUELY(Factor1_), MUST_BE_BASIS, FACTOR1)
-    };
+    static_assert(IS_BASIS_UNIQUELY(Factor0_), "Factor 0 must be a basis.");
+    static_assert(IS_BASIS_UNIQUELY(Factor1_), "Factor 1 must be a basis.");
     typedef Basis_c<Diagonal2TensorProduct_c<Factor0_,Factor1_> > As_Basis;
     typedef Diagonal2TensorProduct_c<Factor0_, Factor1_> As_Diagonal2TensorProduct;
 public:
@@ -132,12 +129,9 @@ template <typename Factor0_, typename Factor1_>
 struct Diagonal2TensorProductOfBasedVectorSpaces_c
 {
 private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor0_), MUST_BE_BASED_VECTOR_SPACE, FACTOR0),
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor1_), MUST_BE_BASED_VECTOR_SPACE, FACTOR1),
-        STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename ScalarFieldOf_f<Factor0_>::T,typename ScalarFieldOf_f<Factor1_>::T>::V), ALL_FACTORS_MUST_HAVE_SAME_FIELD),
-    };
+    static_assert(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor0_), "Factor 0 must be a based vector space.");
+    static_assert(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor1_), "Factor 1 must be a based vector space.");
+    static_assert((TypesAreEqual_f<typename ScalarFieldOf_f<Factor0_>::T,typename ScalarFieldOf_f<Factor1_>::T>::V), "All factors must have the same scalar field.");
     typedef TypeList_t<Factor0_,TypeList_t<Factor1_> > FactorTypeList;
 
     typedef VectorSpace_c<typename ScalarFieldOf_f<Factor0_>::T,
@@ -205,7 +199,7 @@ template <typename FactorTypeList_>
 struct Diagonal2TensorProductOfBasedVectorSpaces_f
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM(FactorTypeList_::LENGTH == 2, LENGTH_MUST_BE_EXACTLY_2) };
+    static_assert(FactorTypeList_::LENGTH == 2, "The FactorTypeList to a diagonal 2 tensor product must have length 2.");
     typedef typename FactorTypeList_::HeadType Factor0;
     typedef typename FactorTypeList_::BodyTypeList::HeadType Factor1;
     Diagonal2TensorProductOfBasedVectorSpaces_f();
