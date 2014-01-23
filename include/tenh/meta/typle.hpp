@@ -89,6 +89,8 @@ template <typename T_> struct IsTyple_f { static bool const V = false; };
 template <typename... Ts_> struct IsTyple_f<Typle_t<Ts_...>> { static bool const V = true; };
 /// @endcond
 
+MAKE_1_ARY_VALUE_EVALUATOR(IsTyple, bool);
+
 
 
 // NOTE: this stuff should move into a newly-created typle_utility.hpp

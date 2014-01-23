@@ -80,6 +80,8 @@
 - make a "2-tensor out of LinearEmbedding_c" procedural 2-tensor (is this actually useful?)
 - make an abstracted summation function/facility so that different methods for summation can
   be implemented -- e.g. fast-naive, or sorted-for-accuracy, etc.
+- make unary evaluators for all metafunctions in typle_utility.hpp and add tests for them in
+  test_typle.cpp
 
 
 ###implemented features/items:
@@ -521,8 +523,6 @@
 - TODO: look into C++11 support for embedded (and other) compilers that we might have to
   deal with in the future.
 - "Template typedefs" are possible through "alias declarations" in C++11:
-
-  C++11 added alias declarations, which are generalization of typedef, allowing templates:
 
         template <size_t N>
         using Vector = Matrix<N, 1>;
