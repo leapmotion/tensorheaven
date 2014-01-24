@@ -77,6 +77,8 @@ struct OnEach_f<Typle_t<>,FunctionEvaluator_>
     typedef Typle_t<> T;
 };
 
+MAKE_2_ARY_TYPE_EVALUATOR(OnEach, typename, FunctionEvaluator_);
+
 // ///////////////////////////////////////////////////////////////////////////
 // logic
 // ///////////////////////////////////////////////////////////////////////////
@@ -162,6 +164,8 @@ struct Sum_f<Typle_t<>,OperandType_>
     static OperandType_ const V = 0;
 };
 
+MAKE_2_ARY_VALUE_EVALUATOR(Sum, OperandType_, typename, OperandType_);
+
 template <typename Typle_, typename OperandType_>
 struct Product_f
 {
@@ -174,6 +178,8 @@ struct Product_f<Typle_t<>,OperandType_>
 {
     static OperandType_ const V = 1;
 };
+
+MAKE_2_ARY_VALUE_EVALUATOR(Product, OperandType_, typename, OperandType_);
 
 template <typename Typle_, typename OperandType_>
 struct Min_f
@@ -192,6 +198,8 @@ struct Min_f<Typle_t<>,OperandType_>
     static OperandType_ const V = NumericBound_t<OperandType_>::MAX;
 };
 
+MAKE_2_ARY_VALUE_EVALUATOR(Min, OperandType_, typename, OperandType_);
+
 template <typename Typle_, typename OperandType_>
 struct Max_f
 {
@@ -208,6 +216,8 @@ struct Max_f<Typle_t<>,OperandType_>
 {
     static OperandType_ const V = NumericBound_t<OperandType_>::MIN;
 };
+
+MAKE_2_ARY_VALUE_EVALUATOR(Max, OperandType_, typename, OperandType_);
 
 /// @struct Element_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Returns the INDEX_th element of the given Typle_.
@@ -368,6 +378,8 @@ struct UniqueTypesIn_f<Typle_t<>,UsedTyple_>
 };
 /// @endcond
 
+MAKE_1_ARY_TYPE_EVALUATOR(UniqueTypesIn);
+
 /// @struct OccurrenceCount_t typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Counts how often a type occurres in a Typle_t.
 /// @tparam Typle_ the Typle_t to check.
@@ -388,6 +400,12 @@ struct OccurrenceCount_f<Typle_t<>,Type_>
 };
 /// @endcond
 
+MAKE_2_ARY_VALUE_EVALUATOR(OccurrenceCount, Uint32, typename, Type_);
+
+namespace NonPublic {
+
+/// @cond false
+
 /// @struct ElementsOfTypleHavingMultiplicity_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Finds all of the elements of UniqueTyple_ which occur in Typle_ exactly MULTIPLICITY_ times.
 /// @tparam Typle_ the Typle_t to search within.
@@ -405,7 +423,6 @@ public:
                           InBody>::T T;
 };
 
-/// @cond false
 template <typename Typle_, Uint32 MULTIPLICITY_>
 struct ElementsOfTypleHavingMultiplicity_f<Typle_,Typle_t<>,MULTIPLICITY_>
 {
@@ -414,6 +431,7 @@ struct ElementsOfTypleHavingMultiplicity_f<Typle_,Typle_t<>,MULTIPLICITY_>
 };
 /// @endcond
 
+} // end of namespace NonPublic
 
 /// @struct ElementsHavingMultiplicity_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Returns a Typle_t of the elements of Typle_ which occur exactly MULTIPLICITY_ times.
@@ -425,8 +443,10 @@ struct ElementsHavingMultiplicity_f
 private:
     typedef typename UniqueTypesIn_f<Typle_>::T UniqueTyple;
 public:
-    typedef typename ElementsOfTypleHavingMultiplicity_f<Typle_,UniqueTyple,MULTIPLICITY_>::T T;
+    typedef typename NonPublic::ElementsOfTypleHavingMultiplicity_f<Typle_,UniqueTyple,MULTIPLICITY_>::T T;
 };
+
+MAKE_2_ARY_TYPE_EVALUATOR(ElementsHavingMultiplicity, Uint32, MULTIPLICITY_);
 
 /// @struct ElementsOfTypleSatisfying_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Returns a Typle_t of all of the elements of Typle_ which satisfy a given predicate.
@@ -452,6 +472,8 @@ struct ElementsOfTypleSatisfying_f<Typle_t<>,Predicate_e_>
 };
 /// @endcond
 
+MAKE_2_ARY_TYPE_EVALUATOR(ElementsOfTypleSatisfying, typename, Predicate_e_);
+
 /// @struct ContainsDuplicates_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Determines if a Typle_t contains any duplicate types.
 /// @tparam Typle_ the Typle_t to examine for duplicates.
@@ -460,6 +482,8 @@ struct ContainsDuplicates_f
 {
     static bool const V = Length_f<typename UniqueTypesIn_f<Typle_>::T>::V < Length_f<Typle_>::V;
 };
+
+MAKE_1_ARY_VALUE_EVALUATOR(ContainsDuplicates, bool);
 
 /// @struct IsASubsetOf_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Determines if all of the types in the first Typle_t are contained in the second,
@@ -487,6 +511,8 @@ struct IsASubsetOf_f<Typle_t<>,TypleB_>
 };
 /// @endcond
 
+MAKE_2_ARY_VALUE_EVALUATOR(IsASubsetOf, bool, typename, TypleB_);
+
 /// @struct AreEqualAsSets_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Determines if the typles contain the same types (set equality, ignoring repeated elements).
 /// @tparam TypleA_,TypleB_ the Typle_t to check for equality.
@@ -495,6 +521,8 @@ struct AreEqualAsSets_f
 {
     static bool const V = IsASubsetOf_f<TypleA_,TypleB_>::V && IsASubsetOf_f<TypleB_,TypleA_>::V;
 };
+
+MAKE_2_ARY_VALUE_EVALUATOR(AreEqualAsSets, bool, typename, TypleB_);
 
 /// @struct HasNontrivialIntersectionAsSets_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Checks to sett if there is even a single type that is common to both Typle_t.
@@ -513,6 +541,8 @@ struct HasNontrivialIntersectionAsSets_f<Typle_t<>,TypleB_>
     static bool const V = false;
 };
 /// @endcond
+
+MAKE_2_ARY_VALUE_EVALUATOR(HasNontrivialIntersectionAsSets, bool, typename, TypleB_);
 
 /// @struct IntersectionAsSets_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Generates a Typle_t containing all of the types common to both Typle_t supplied.
@@ -535,6 +565,8 @@ struct IntersectionAsSets_f<Typle_t<>,TypleB_>
     typedef Typle_t<> T;
 };
 /// @endcond
+
+MAKE_2_ARY_TYPE_EVALUATOR(IntersectionAsSets, typename, TypleB_);
 
 // renders the subtraction of TypleB_ from TypleA_, as sets
 /// @struct SetSubtraction_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
@@ -560,6 +592,8 @@ struct SetSubtraction_f<Typle_t<>,TypleB_>
     typedef Typle_t<> T;
 };
 /// @endcond
+
+MAKE_2_ARY_TYPE_EVALUATOR(SetSubtraction, typename, TypleB_);
 
 /// @struct EachTypleHasEqualLength_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Checks that all supplied Typle_t have the same length.
@@ -591,6 +625,7 @@ struct EachTypleHasEqualLength_f<Typle_t<>>
 };
 /// @endcond
 
+MAKE_1_ARY_VALUE_EVALUATOR(EachTypleHasEqualLength, bool);
 
 /// @struct Zip_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief "Zips" a list of Typle_t into a Typle_t of tuples.
@@ -628,6 +663,7 @@ struct Zip_f<Typle_t<>>
 };
 /// @endcond
 
+MAKE_1_ARY_TYPE_EVALUATOR(Zip);
 
 /// @struct Unzip_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief The inverse to Zip_f -- e.g. (('a',1),('b',2),('c',3)) turns into (('a','b','c'),(1,2,3)).
@@ -639,6 +675,7 @@ struct Unzip_f
     typedef typename Zip_f<ZippedTyples_>::T T; // Zip_f is its own inverse
 };
 
+MAKE_1_ARY_TYPE_EVALUATOR(Unzip);
 
 /// @struct UniformTypleOfLength_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Generates a Typle_t with a specified length, containing only one type.
@@ -658,6 +695,9 @@ struct UniformTypleOfLength_f<0,Type_>
 };
 /// @endcond
 
+// NOTE: technically can't make an evaluator for UniformTypleOfLength_f, because its first
+// parameter is not a type, but a Uint32.  to add this capability would require changing
+// how evaluators are declared somewhat.
 
 /// @struct TypleIsUniform_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Returns true if (and only if) every element of the given Typle_t is the same.
@@ -687,6 +727,8 @@ struct TypleIsUniform_f<Typle_t<>>
     static bool const V = true;
 };
 /// @endcond
+
+MAKE_1_ARY_VALUE_EVALUATOR(TypleIsUniform, bool);
 
 } // end of namespace Hippo
 

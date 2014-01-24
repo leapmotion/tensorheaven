@@ -50,8 +50,15 @@ struct CommaSeparatedStringOfVariadicTemplate_t<Head_,Body_...>
 /// @tparam Ts_... the comma-separated, ordered list of types.
 template <typename... Ts_> struct Typle_t;
 
+/// @struct Head_f typle.hpp "tenh/meta/typle.hpp"
+/// @brief Returns the first type in the argument Typle_t if nonempty; otherwise is undefined.
 template <typename T_> struct Head_f;
+/// @struct BodyTyple_f typle.hpp "tenh/meta/typle.hpp"
+/// @brief Returns the Typle_t containing the "rest" of the types in the argument Typle_t if
+/// nonempty; otherwise is undefined.
 template <typename T_> struct BodyTyple_f;
+/// @struct Length_f typle.hpp "tenh/meta/typle.hpp"
+/// @brief Returns the length of the argument Typle_t.
 template <typename T_> struct Length_f;
 
 MAKE_1_ARY_TYPE_EVALUATOR(Head);
@@ -82,8 +89,7 @@ struct TypeStringOf_t<Typle_t<Ts_...>>
 /// @endcond
 
 /// @struct IsTyple_f typle.hpp "tenh/meta/typle.hpp"
-/// @brief Simple function to determine if a type is a Typle_t<...>.
-/// @tparam T the type to test.
+/// @brief Simple function to determine if the argument type is a Typle_t<...>.
 template <typename T_> struct IsTyple_f { static bool const V = false; };
 /// @cond false
 template <typename... Ts_> struct IsTyple_f<Typle_t<Ts_...>> { static bool const V = true; };
@@ -92,9 +98,7 @@ template <typename... Ts_> struct IsTyple_f<Typle_t<Ts_...>> { static bool const
 MAKE_1_ARY_VALUE_EVALUATOR(IsTyple, bool);
 
 
-
-// NOTE: this stuff should move into a newly-created typle_utility.hpp
-
+/// @cond false
 template <typename Head_, typename... Body_>
 struct Head_f<Typle_t<Head_,Body_...>> { typedef Head_ T; };
 
@@ -106,26 +110,31 @@ struct Length_f<Typle_t<>> { static Uint32 const V = 0; };
 
 template <typename Head_, typename... Body_>
 struct Length_f<Typle_t<Head_,Body_...>> { static Uint32 const V = 1 + Length_f<Typle_t<Body_...>>::V; };
+/// @endcond
 
+/// @struct Concat2Typles_f typle.hpp "tenh/meta/typle.hpp"
+/// @brief Returns a Typle_t whose contents are the concatenation of the types
+/// in the argument Typle_t types.
 template <typename T0_, typename T1_> struct Concat2Typles_f;
-
-// for recursively constructing Typle_t, as is done throughout Tenh.
+/// @struct HeadBodyTyple_f typle.hpp "tenh/meta/typle.hpp"
+/// @brief Constructs a Typle_t recursively, instead of variadically; via a head type and a body Typle_t.
 template <typename Head_, typename BodyTyple_> struct HeadBodyTyple_f;
+/// @struct ConcatTyples_f typle.hpp "tenh/meta/typle.hpp"
+/// @brief Returns the concatenation of the argument typles.
+template <typename... Ts_> struct ConcatTyples_f;
 
-template <typename Head_, typename... BodyTypes_>
-struct HeadBodyTyple_f<Head_,Typle_t<BodyTypes_...>>
-{
-    typedef Typle_t<Head_,BodyTypes_...> T;
-};
-
-// template <typename Head0_, typename... Body0_, typename Head1_, typename... Body1_>
+/// @cond false
 template <typename... LhsTypes_, typename... RhsTypes_>
 struct Concat2Typles_f<Typle_t<LhsTypes_...>,Typle_t<RhsTypes_...>>
 {
     typedef Typle_t<LhsTypes_...,RhsTypes_...> T;
 };
 
-template <typename... Ts_> struct ConcatTyples_f;
+template <typename Head_, typename... BodyTypes_>
+struct HeadBodyTyple_f<Head_,Typle_t<BodyTypes_...>>
+{
+    typedef Typle_t<Head_,BodyTypes_...> T;
+};
 
 template <> struct ConcatTyples_f<> { typedef Typle_t<> T; };
 
@@ -135,6 +144,7 @@ struct ConcatTyples_f<HeadTyple_,BodyTyples_...>
     static_assert(IsTyple_f<HeadTyple_>::V, "each argument must be a Typle_t");
     typedef typename Concat2Typles_f<HeadTyple_,typename ConcatTyples_f<BodyTyples_...>::T>::T T;
 };
+/// @endcond
 
 // for concatenating typles
 
