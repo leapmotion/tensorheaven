@@ -23,7 +23,7 @@ namespace Tenh {
 // higher-order metafunctions
 // ///////////////////////////////////////////////////////////////////////////
 
-namespace Hippo { // temp namespace until Typle_t is gone
+namespace Hippo { // temp namespace until TypeList_t is gone
 
 // composition of metafunctions -- each type in the typelist must be an evaluator.
 
@@ -359,6 +359,7 @@ MAKE_3_ARY_TYPE_EVALUATOR(TypleRange, Uint32, START_INDEX_, Uint32, END_INDEX_);
 template <typename Typle_, typename UsedTyple_ = Typle_t<>>
 struct UniqueTypesIn_f
 {
+    static_assert(IsTyple_f<Typle_>::V, "Typle_ must be a Typle_t");
 private:
     typedef typename Head_f<Typle_>::T Head;
     typedef typename BodyTyple_f<Typle_>::T BodyTyple;
