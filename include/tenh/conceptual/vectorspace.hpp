@@ -23,7 +23,7 @@ namespace Tenh {
 template <typename ScalarField_, Uint32 DIMENSION_, typename Id_>
 struct VectorSpace_c
 {
-    typedef EmptyTypeList ParentTypeList;
+    typedef Typle_t<> ParentTyple;
 
     static_assert(IS_FIELD_UNIQUELY(ScalarField_), "ScalarField of VectorSpace_c must be a field.");
 
@@ -126,6 +126,10 @@ private:
     ScalarFieldOf_f();
 };
 
+MAKE_1_ARY_VALUE_EVALUATOR(DimensionOf, Uint32);
+MAKE_1_ARY_TYPE_EVALUATOR(IdOf);
+MAKE_1_ARY_TYPE_EVALUATOR(ScalarFieldOf);
+
 // ///////////////////////////////////////////////////////////////////////////
 // BasedVectorSpace_c
 // ///////////////////////////////////////////////////////////////////////////
@@ -140,7 +144,7 @@ private:
 
     typedef VectorSpace_ As_VectorSpace;
 public:
-    typedef TypeList_t<As_VectorSpace> ParentTypeList;
+    typedef Typle_t<As_VectorSpace> ParentTyple;
 
     typedef typename As_VectorSpace::Id Id;
     typedef Basis_ Basis;
@@ -208,106 +212,46 @@ private:
     BasisOf_f();
 };
 
-// TODO: Replace with predicate-based thing
-template <typename SummandTypeList_>
-struct AllFactorsAreVectorSpaces_f
+// helper metafunctions
+
+template <typename Typle_>
+struct AllTypesHaveUniqueVectorSpaceStructures_f
 {
-    static bool const V = HasVectorSpaceStructure_f<typename SummandTypeList_::HeadType>::V &&
-                          AllFactorsAreVectorSpaces_f<typename SummandTypeList_::BodyTypeList>::V;
+    static bool const V = Hippo::And_f<typename Hippo::OnEach_f<Typle_,HasUniqueVectorSpaceStructure_e>::T>::V;
 private:
-    AllFactorsAreVectorSpaces_f();
+    AllTypesHaveUniqueVectorSpaceStructures_f ();
 };
 
-template <>
-struct AllFactorsAreVectorSpaces_f<EmptyTypeList>
+template <typename Typle_>
+struct AllTypesHaveUniqueBasedVectorSpaceStructures_f
 {
-    static bool const V = true;
+    static bool const V = Hippo::And_f<typename Hippo::OnEach_f<Typle_,HasUniqueBasedVectorSpaceStructure_e>::T>::V;
 private:
-    AllFactorsAreVectorSpaces_f();
+    AllTypesHaveUniqueBasedVectorSpaceStructures_f ();
 };
 
-template <typename FactorTypeList_>
-struct AllFactorsAreBasedVectorSpaces_f
+template <typename Typle_>
+struct AllTypesHaveSameScalarField_f
 {
-    static bool const V = HasBasedVectorSpaceStructure_f<typename FactorTypeList_::HeadType>::V &&
-                          AllFactorsAreBasedVectorSpaces_f<typename FactorTypeList_::BodyTypeList>::V;
+    static bool const V = Hippo::TypleIsUniform_f<typename Hippo::OnEach_f<Typle_,ScalarFieldOf_e>::T>::V;
 private:
-    AllFactorsAreBasedVectorSpaces_f();
+    AllTypesHaveSameScalarField_f ();
 };
 
-template <>
-struct AllFactorsAreBasedVectorSpaces_f<EmptyTypeList>
+template <typename Typle_>
+struct SumOfDimensions_f
 {
-    static bool const V = true;
+    static Uint32 const V = Hippo::Sum_f<typename Hippo::OnEach_f<Typle_,DimensionOf_e>::T,Uint32>::V;
 private:
-    AllFactorsAreBasedVectorSpaces_f();
+    SumOfDimensions_f ();
 };
 
-template <typename SummandTypeList_>
-struct AllFactorsHaveTheSameField_f
+template <typename Typle_>
+struct ProductOfDimensions_f
 {
+    static Uint32 const V = Hippo::Product_f<typename Hippo::OnEach_f<Typle_,DimensionOf_e>::T,Uint32>::V;
 private:
-    typedef typename SummandTypeList_::HeadType HeadType;
-    typedef typename SummandTypeList_::BodyTypeList BodyTypeList;
-    AllFactorsHaveTheSameField_f();
-public:
-    static bool const V = TypesAreEqual_f<typename ScalarFieldOf_f<HeadType>::T,
-                                          typename ScalarFieldOf_f<typename BodyTypeList::HeadType>::T>::V &&
-                          AllFactorsHaveTheSameField_f<BodyTypeList>::V;
-};
-
-template <typename HeadType>
-struct AllFactorsHaveTheSameField_f<TypeList_t<HeadType> >
-{
-    static bool const V = true;
-private:
-    AllFactorsHaveTheSameField_f();
-};
-
-template <>
-struct AllFactorsHaveTheSameField_f<EmptyTypeList>
-{
-    static bool const V = true;
-private:
-    AllFactorsHaveTheSameField_f();
-};
-
-template <typename SummandTypeList_>
-struct SumOfDimensions_t
-{
-private:
-    enum { static_assert_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(typename SummandTypeList_::HeadType), MUST_BE_VECTOR_SPACE) };
-    SumOfDimensions_t();
-public:
-    static Uint32 const V = DimensionOf_f<typename SummandTypeList_::HeadType>::V +
-                            SumOfDimensions_t<typename SummandTypeList_::BodyTypeList>::V;
-};
-
-template <>
-struct SumOfDimensions_t<EmptyTypeList>
-{
-    static Uint32 const V = 0;
-private:
-    SumOfDimensions_t();
-};
-
-template <typename FactorTypeList_>
-struct ProductOfDimensions_t
-{
-private:
-    enum { static_assert_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(typename FactorTypeList_::HeadType), MUST_BE_VECTOR_SPACE) };
-    ProductOfDimensions_t();
-public:
-    static Uint32 const V = DimensionOf_f<typename FactorTypeList_::HeadType>::V *
-                            ProductOfDimensions_t<typename FactorTypeList_::BodyTypeList>::V;
-};
-
-template <>
-struct ProductOfDimensions_t<EmptyTypeList>
-{
-    static Uint32 const V = 1; // a 0-tensor is the scalar field by convention
-private:
-    ProductOfDimensions_t();
+    ProductOfDimensions_f ();
 };
 
 // ///////////////////////////////////////////////////////////////////////////

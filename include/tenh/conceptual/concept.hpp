@@ -8,9 +8,9 @@
 
 #include "tenh/core.hpp"
 
-#include "tenh/meta/typelist.hpp"
-#include "tenh/meta/typelist_utility.hpp"
 #include "tenh/meta/typestringof.hpp"
+#include "tenh/meta/typle.hpp"
+#include "tenh/meta/typle_utility.hpp"
 
 // This header defines helper meta functions fo defining and using conceptual inheritence in mathematical code.
 // Here is an example object template for the concept Concept Example, which has a Parent Concept structure.
@@ -21,7 +21,7 @@ struct ConceptExample_c
 private:
     typedef ParentConcept_c<Parameter_> As_ParentConcept;
 public:
-    typedef TypeList_t<As_ParentConcept> ParentTypeList;
+    typedef Typle_t<As_ParentConcept> ParentTypeList;
 
     // ...
 };
@@ -48,7 +48,8 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(ConceptExample);
 namespace Tenh {
 
 // a Concept is a struct that has a ParentTypeList (which is a TypeList_t)
-template <typename T> struct IsConcept_f
+template <typename T>
+struct IsConcept_f
 {
     static bool const V = false;
 private:
@@ -57,71 +58,71 @@ private:
 
 // default definition for non-concepts -- no parents
 template <typename Concept_, bool ACTUALLY_IS_CONCEPT_ = IsConcept_f<Concept_>::V>
-struct ParentTypeListOfConcept_f;
+struct ParentTypleOfConcept_f;
 
-// template specialization for non-concepts -- EmptyTypeList
+// template specialization for non-concepts -- Typle_t<>
 template <typename Concept_>
-struct ParentTypeListOfConcept_f<Concept_,false>
+struct ParentTypleOfConcept_f<Concept_,false>
 {
-    typedef EmptyTypeList T;
+    typedef Typle_t<> T;
 };
 
-// template specialization for concepts -- uses Concept_::ParentTypeList
+// template specialization for concepts -- uses Concept_::ParentTyple
 template <typename Concept_>
-struct ParentTypeListOfConcept_f<Concept_,true>
+struct ParentTypleOfConcept_f<Concept_,true>
 {
-    typedef typename Concept_::ParentTypeList T;
+    typedef typename Concept_::ParentTyple T;
 };
 
 // parent-traversing metafunctions
 
-template <typename ParentTypeList>
+template <typename ParentTyple_>
 struct AncestorsOf_Recursive_f;
 
 // "ancestors" of Concept include Concept as a trivial ancestor -- if Concept
-// isn't actually a concept, T will be EmptyTypeList
-template <typename Concept>
+// isn't actually a concept, T will be Typle_t<>
+template <typename Concept_>
 struct AncestorsOf_f
 {
 private:
     AncestorsOf_f();
 public:
-    typedef TypeList_t<Concept,
-                       typename AncestorsOf_Recursive_f<typename ParentTypeListOfConcept_f<Concept>::T>::T> T;
+    typedef typename Hippo::HeadBodyTyple_f<Concept_,
+                                            typename AncestorsOf_Recursive_f<typename ParentTypleOfConcept_f<Concept_>::T>::T>::T T;
 };
 
-template <typename ParentTypeList>
+template <typename ParentTyple_>
 struct AncestorsOf_Recursive_f
 {
     // depth-first traversal of the ancestor tree
-    typedef typename ConcatenationOfTypeLists_t<typename AncestorsOf_f<typename ParentTypeList::HeadType>::T,
-                                                typename AncestorsOf_Recursive_f<typename ParentTypeList::BodyTypeList>::T>::T T;
+    typedef typename Hippo::Concat2Typles_f<typename AncestorsOf_f<typename Hippo::Head_f<ParentTyple_>::T>::T,
+                                            typename AncestorsOf_Recursive_f<typename Hippo::BodyTyple_f<ParentTyple_>::T>::T>::T T;
 private:
     AncestorsOf_Recursive_f();
 };
 
-template <typename HeadType>
-struct AncestorsOf_Recursive_f<TypeList_t<HeadType> >
+template <typename Head_>
+struct AncestorsOf_Recursive_f<Typle_t<Head_> >
 {
     // depth-first traversal of the ancestor tree
-    typedef typename AncestorsOf_f<HeadType>::T T;
+    typedef typename AncestorsOf_f<Head_>::T T;
 private:
     AncestorsOf_Recursive_f();
 };
 
 template <>
-struct AncestorsOf_Recursive_f<EmptyTypeList>
+struct AncestorsOf_Recursive_f<Typle_t<>>
 {
     // depth-first traversal of the ancestor tree
-    typedef EmptyTypeList T;
+    typedef Typle_t<> T;
 private:
     AncestorsOf_Recursive_f();
 };
 
-template <typename Concept, typename Predicate>
+template <typename Concept_, typename Predicate_e_>
 struct AncestorsSatisfyingPredicate_f
 {
-    typedef typename ElementsOfTypeListSatisfyingPredicate_t<typename AncestorsOf_f<Concept>::T,Predicate>::T T;
+    typedef typename Hippo::ElementsOfTypleSatisfying_f<typename AncestorsOf_f<Concept_>::T,Predicate_e_>::T T;
 private:
     AncestorsSatisfyingPredicate_f();
 };
@@ -129,82 +130,72 @@ private:
 // for recursively retrieving various conceptual structures
 
 // note that if Concept isn't actually a concept, then T will be EmptyTypeList.
-template <typename Concept, typename ConceptualStructurePredicate>
+template <typename Concept_, typename ConceptualStructurePredicate_e_>
 struct ConceptualStructuresOf_f
 {
 private:
     ConceptualStructuresOf_f();
 public:
-    typedef typename UniqueTypesIn_t<typename AncestorsSatisfyingPredicate_f<Concept,ConceptualStructurePredicate>::T>::T T;
+    typedef typename Hippo::UniqueTypesIn_f<typename AncestorsSatisfyingPredicate_f<Concept_,ConceptualStructurePredicate_e_>::T>::T T;
 };
 
-template <typename Concept, typename ConceptualStructurePredicate>
+template <typename Concept_, typename ConceptualStructurePredicate_e_>
 struct HasConceptualStructure_f
 {
-    static bool const V = ConceptualStructuresOf_f<Concept,ConceptualStructurePredicate>::T::LENGTH > 0;
+    static bool const V = Hippo::Length_f<typename ConceptualStructuresOf_f<Concept_,ConceptualStructurePredicate_e_>::T>::V > 0;
 private:
     HasConceptualStructure_f();
 };
 
-template <typename Concept, typename ConceptualStructurePredicate>
+template <typename Concept_, typename ConceptualStructurePredicate_e_>
 struct HasUniqueConceptualStructure_f
 {
-    static bool const V = ConceptualStructuresOf_f<Concept,ConceptualStructurePredicate>::T::LENGTH == 1;
+    static bool const V = Hippo::Length_f<typename ConceptualStructuresOf_f<Concept_,ConceptualStructurePredicate_e_>::T>::V == 1;
 private:
     HasUniqueConceptualStructure_f();
 };
 
-template <typename Concept, typename ConceptualStructurePredicate>
+template <typename Concept_, typename ConceptualStructurePredicate_e_>
 struct UniqueConceptualStructureOf_f
 {
+    static_assert(HasUniqueConceptualStructure_f<Concept_,ConceptualStructurePredicate_e_>::V, "UniqueConceptualStructureOf_f is only well-defined if there is exactly one such structure");
 private:
-    static_assert((HasUniqueConceptualStructure_f<Concept,ConceptualStructurePredicate>::V), "Concept must have a unique conceptual structure to be used in UniqueConceptualStructureOf_f.");
     UniqueConceptualStructureOf_f();
 public:
-    typedef typename ConceptualStructuresOf_f<Concept,ConceptualStructurePredicate>::T::HeadType T;
+    typedef typename Hippo::Head_f<typename ConceptualStructuresOf_f<Concept_,ConceptualStructurePredicate_e_>::T>::T T;
 };
 
 // easy way to provide Concept-specific structure metafunctions
 #define DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(ConceptName) \
-struct Is##ConceptName##_p \
+MAKE_1_ARY_VALUE_EVALUATOR(Is##ConceptName, bool); \
+template <typename Concept_> struct ConceptName##StructuresOf_f \
 { \
-    template <typename T> \
-    struct Eval_t \
-    { \
-        static bool const V = Is##ConceptName##_f<T>::V; \
-    private: \
-        Eval_t(); \
-    }; \
-private: \
-    Is##ConceptName##_p(); \
-}; \
-\
-template <typename Concept> struct ConceptName##StructuresOf_f \
-{ \
-    typedef typename ConceptualStructuresOf_f<Concept,Is##ConceptName##_p>::T T; \
+    typedef typename ConceptualStructuresOf_f<Concept_,Is##ConceptName##_e>::T T; \
 private: \
     ConceptName##StructuresOf_f(); \
 }; \
-template <typename Concept> struct Has##ConceptName##Structure_f \
+template <typename Concept_> struct Has##ConceptName##Structure_f \
 { \
-    static bool const V = HasConceptualStructure_f<Concept,Is##ConceptName##_p>::V; \
+    static bool const V = HasConceptualStructure_f<Concept_,Is##ConceptName##_e>::V; \
 private: \
     Has##ConceptName##Structure_f(); \
 }; \
-template <typename Concept> struct HasUnique##ConceptName##Structure_f \
+template <typename Concept_> struct HasUnique##ConceptName##Structure_f \
 { \
-    static bool const V = HasUniqueConceptualStructure_f<Concept,Is##ConceptName##_p>::V; \
+    static bool const V = HasUniqueConceptualStructure_f<Concept_,Is##ConceptName##_e>::V; \
 private: \
     HasUnique##ConceptName##Structure_f(); \
 }; \
-template <typename Concept> struct Unique##ConceptName##StructureOf_f \
+template <typename Concept_> struct Unique##ConceptName##StructureOf_f \
 { \
+    typedef typename UniqueConceptualStructureOf_f<Concept_,Is##ConceptName##_e>::T T; \
 private: \
-    static_assert(HasUnique##ConceptName##Structure_f<Concept>::V, "Concept must have a unique " #ConceptName " structure."); \
     Unique##ConceptName##StructureOf_f(); \
-public: \
-    typedef typename UniqueConceptualStructureOf_f<Concept,Is##ConceptName##_p>::T T; \
-}
+}; \
+MAKE_1_ARY_TYPE_EVALUATOR(ConceptName##StructuresOf); \
+MAKE_1_ARY_VALUE_EVALUATOR(Has##ConceptName##Structure, bool); \
+MAKE_1_ARY_VALUE_EVALUATOR(HasUnique##ConceptName##Structure, bool); \
+MAKE_1_ARY_TYPE_EVALUATOR(Unique##ConceptName##StructureOf)
 
 // ///////////////////////////////////////////////////////////////////////////
 // conceptual property accessor machinery
@@ -222,21 +213,21 @@ private:
     BaseProperty_f();
 };
 
-template <typename TypeList_, typename PropertyId_>
-struct BasePropertyOfEachInTypeList_f
+template <typename Typle_, typename PropertyId_>
+struct BasePropertyOfEachInTyple_f
 {
-    typedef TypeList_t<typename BaseProperty_f<typename TypeList_::HeadType,PropertyId_>::T,
-                       typename BasePropertyOfEachInTypeList_f<typename TypeList_::BodyTypeList,PropertyId_>::T> T;
+    typedef typename Hippo::HeadBodyTyple_f<typename BaseProperty_f<typename Hippo::Head_f<Typle_>::T,PropertyId_>::T,
+                                            typename BasePropertyOfEachInTyple_f<typename Hippo::BodyTyple_f<Typle_>::T,PropertyId_>::T>::T T;
 private:
-    BasePropertyOfEachInTypeList_f();
+    BasePropertyOfEachInTyple_f();
 };
 
 template <typename PropertyId_>
-struct BasePropertyOfEachInTypeList_f<EmptyTypeList,PropertyId_>
+struct BasePropertyOfEachInTyple_f<Typle_t<>,PropertyId_>
 {
-    typedef EmptyTypeList T;
+    typedef Typle_t<> T;
 private:
-    BasePropertyOfEachInTypeList_f();
+    BasePropertyOfEachInTyple_f();
 };
 
 // gives a list of the unique values of the given property, taken from all ancestors.
@@ -244,11 +235,11 @@ template <typename Concept_, typename PropertyId_>
 struct MultiProperty_f
 {
 private:
-    typedef typename BasePropertyOfEachInTypeList_f<typename AncestorsOf_f<Concept_>::T,PropertyId_>::T PropertyOfEach;
-    typedef typename UniqueTypesIn_t<PropertyOfEach>::T UniquePropertyTypeList;
+    typedef typename BasePropertyOfEachInTyple_f<typename AncestorsOf_f<Concept_>::T,PropertyId_>::T PropertyOfEach;
+    typedef typename Hippo::UniqueTypesIn_f<PropertyOfEach>::T UniquePropertyTyple;
     MultiProperty_f();
 public:
-    typedef typename SetSubtraction_t<UniquePropertyTypeList,TypeList_t<NullValue> >::T T;
+    typedef typename Hippo::SetSubtraction_f<UniquePropertyTyple,Typle_t<NullValue> >::T T;
 };
 
 // if MultiProperty_f has exactly one element, returns that.
@@ -257,10 +248,10 @@ struct Property_f
 {
 private:
     typedef typename MultiProperty_f<Concept_,PropertyId_>::T MultiProperty;
-    static_assert(MultiProperty::LENGTH == 1, "Property is not well defined.");
+    static_assert(Hippo::Length_f<MultiProperty>::V == 1, "property is not well-defined");
     Property_f();
 public:
-    typedef typename MultiProperty::HeadType T;
+    typedef typename Hippo::Head_f<MultiProperty>::T T;
 };
 
 // if Property_f is a Value_t, returns the value.
@@ -274,23 +265,23 @@ public:
     static typename ValueType::T const V = ValueType::V;
 };
 
-// constructs a TypeList_t whose elements are the results of Property_f on each element
-template <typename TypeList_, typename PropertyId_>
-struct PropertyOfEachInTypeList_f
+// constructs a Typle_t whose elements are the results of Property_f on each element
+template <typename Typle_, typename PropertyId_>
+struct PropertyOfEachInTyple_f
 {
-    typedef TypeList_t<typename Property_f<typename TypeList_::HeadType,PropertyId_>::T,
-                       typename PropertyOfEachInTypeList_f<typename TypeList_::BodyTypeList,PropertyId_>::T> T;
+    typedef typename Hippo::HeadBodyTyple_f<typename Property_f<typename Hippo::Head_f<Typle_>::T,PropertyId_>::T,
+                                            typename PropertyOfEachInTyple_f<typename Hippo::BodyTyple_f<Typle_>::T,PropertyId_>::T>::T T;
 private:
-    PropertyOfEachInTypeList_f();
+    PropertyOfEachInTyple_f();
 };
 
 // base case
 template <typename PropertyId_>
-struct PropertyOfEachInTypeList_f<EmptyTypeList,PropertyId_>
+struct PropertyOfEachInTyple_f<Typle_t<>,PropertyId_>
 {
-    typedef EmptyTypeList T;
+    typedef Typle_t<> T;
 private:
-    PropertyOfEachInTypeList_f();
+    PropertyOfEachInTyple_f();
 };
 
 } // end of namespace Tenh

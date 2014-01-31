@@ -202,29 +202,32 @@ inline std::ostream &operator << (std::ostream &out, Graph const &g)
 
 // base case
 template <Uint32 SHORTIFY_DEPTH_, typename Concept_>
-void add_parent_concept_type_list_to_graph_recursive (Concept_ const &, EmptyTypeList const &, Graph &g)
+void add_parent_concept_typle_to_graph_recursive (Concept_ const &, Typle_t<> const &parent_concept_typle, Graph &g)
 {
     // nothing to add
 }
 
-template <Uint32 SHORTIFY_DEPTH_, typename Concept_, typename HeadType_, typename BodyTypeList_>
-void add_parent_concept_type_list_to_graph_recursive (
+template <Uint32 SHORTIFY_DEPTH_, typename Concept_, typename... Types_>
+void add_parent_concept_typle_to_graph_recursive (
     Concept_ const &concept,
-    TypeList_t<HeadType_,BodyTypeList_> const &,// This is the parent_concept_type_list
+    Typle_t<Types_...> const &parent_concept_typle,
     Graph &g)
 {
+    typedef Typle_t<Types_...> ParentConceptTyple;
+    typedef typename Hippo::Head_f<ParentConceptTyple>::T ParentConceptHead;
+    typedef typename Hippo::BodyTyple_f<ParentConceptTyple>::T ParentConceptBodyTyple;
     // add the parent nodes and edges connecting concept to them
     Graph::Node concept_node(FORMAT((Pretty<TypeStringOf_t<Concept_>,SHORTIFY_DEPTH_>())),
                              FORMAT((Pretty<TypeStringOf_t<Concept_>,0>())));
     assert(g.nodes().find(concept_node) != g.nodes().end());
-    Graph::Node parent_node(FORMAT((Pretty<TypeStringOf_t<HeadType_>,SHORTIFY_DEPTH_>())),
-                            FORMAT((Pretty<TypeStringOf_t<HeadType_>,0>())));
+    Graph::Node parent_node(FORMAT((Pretty<TypeStringOf_t<ParentConceptHead>,SHORTIFY_DEPTH_>())),
+                            FORMAT((Pretty<TypeStringOf_t<ParentConceptHead>,0>())));
     g.add_node(parent_node);
     g.add_edge(concept_node, parent_node);
-    add_parent_concept_type_list_to_graph_recursive<SHORTIFY_DEPTH_>(concept, BodyTypeList_(), g);
+    add_parent_concept_typle_to_graph_recursive<SHORTIFY_DEPTH_>(concept, ParentConceptBodyTyple(), g);
 
     // call this function recursively on each parent
-    add_parent_concept_type_list_to_graph_recursive<SHORTIFY_DEPTH_>(HeadType_(), typename HeadType_::ParentTypeList(), g);
+    add_parent_concept_typle_to_graph_recursive<SHORTIFY_DEPTH_>(ParentConceptHead(), typename ParentConceptHead::ParentTyple(), g);
 }
 
 template <Uint32 SHORTIFY_DEPTH_, typename Concept_>
@@ -233,7 +236,7 @@ void add_concept_hierarchy_to_graph (Concept_ const &root, Graph &g)
     Graph::Node n(FORMAT((Pretty<TypeStringOf_t<Concept_>,SHORTIFY_DEPTH_>())),
                   FORMAT((Pretty<TypeStringOf_t<Concept_>,0>())));
     g.add_node(n);
-    add_parent_concept_type_list_to_graph_recursive<SHORTIFY_DEPTH_>(root, typename Concept_::ParentTypeList(), g);
+    add_parent_concept_typle_to_graph_recursive<SHORTIFY_DEPTH_>(root, typename Concept_::ParentTyple(), g);
 }
 
 } // end of namespace Tenh

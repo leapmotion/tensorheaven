@@ -145,13 +145,13 @@ template <typename FactorTypeList_>
 struct TensorProductOfVectorSpaces_c
 {
 private:
-        static_assert(IsTypeList_f<FactorTypeList_>::V, "FactorTypeList of TensorProductOfVectorSpaces_c must be a type list.");
-        static_assert(AllFactorsAreVectorSpaces_f<FactorTypeList_>::V, "All factors of TensorProductOfVectorSpaces_c must be vector spaces.");
-        static_assert(AllFactorsHaveTheSameField_f<FactorTypeList_>::V, "All factors of TensorProductOfVectorSpaces_c must have the same scalar field.");
+    static_assert(IsTypeList_f<FactorTypeList_>::V, "FactorTypeList of TensorProductOfVectorSpaces_c must be a type list.");
+    static_assert(AllFactorsAreVectorSpaces_f<FactorTypeList_>::V, "All factors of TensorProductOfVectorSpaces_c must be vector spaces.");
+    static_assert(AllFactorsHaveTheSameField_f<FactorTypeList_>::V, "All factors of TensorProductOfVectorSpaces_c must have the same scalar field.");
 
     typedef TensorProduct_c<FactorTypeList_> As_TensorProduct;
     typedef VectorSpace_c<typename ScalarFieldOf_f<typename FactorTypeList_::HeadType>::T,
-                          ProductOfDimensions_t<FactorTypeList_>::V,
+                          ProductOfDimensions_f<FactorTypeList_>::V,
                           TensorProduct_c<typename IdsOfTypeList_t<FactorTypeList_>::T> > As_VectorSpace;
     typedef EmbeddableInTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_c> As_EmbeddableInTensorProductOfVectorSpaces;
 public:
@@ -331,8 +331,7 @@ struct TensorProductOfBasedVectorSpaces_c
 private:
     static_assert(IsTypeList_f<FactorTypeList_>::V, "FactorTypeList of TensorProductOfBasedVectorSpaces_c must be a type list.");
     static_assert(AllFactorsAreBasedVectorSpaces_f<FactorTypeList_>::V, "All factors of TensorProductOfBasedVectorSpaces_c must be based vector spaces.");
-
-    typedef typename PropertyOfEachInTypeList_f<FactorTypeList_,Basis>::T BasisTypeList;
+    typedef typename PropertyOfEachInTyple_f<FactorTypeList_,Basis>::T BasisTypeList;
     typedef BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_c<FactorTypeList_>,
                                                TensorProductOfBases_c<BasisTypeList> > As_BasedTensorProductOfVectorSpaces;
     typedef EmbeddableInTensorProductOfBasedVectorSpaces_c<TensorProductOfBasedVectorSpaces_c,TensorProductOfVectorSpaces_c<FactorTypeList_> > As_EmbeddableInTensorProductOfBasedVectorSpaces;

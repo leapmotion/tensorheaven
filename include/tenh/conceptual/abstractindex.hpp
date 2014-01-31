@@ -12,8 +12,8 @@
 #include "tenh/core.hpp"
 
 #include "tenh/conceptual/concept.hpp"
-#include "tenh/meta/typelist.hpp"
-#include "tenh/meta/typelist_utility.hpp"
+#include "tenh/meta/typle.hpp"
+#include "tenh/meta/typle_utility.hpp"
 
 namespace Tenh {
 
@@ -41,9 +41,9 @@ inline std::string abstract_index_symbol_as_string (AbstractIndexSymbol symbol, 
 template <AbstractIndexSymbol SYMBOL_>
 struct AbstractIndex_c
 {
-    static_assert((SYMBOL_ > 0), "AbstractIndex symbol must be positive.");
+    static_assert(SYMBOL_ > 0, "AbstractIndex symbol must be positive.");
 
-    typedef EmptyTypeList ParentTypeList;
+    typedef Typle_t<> ParentTyple;
 
     static AbstractIndexSymbol const SYMBOL = SYMBOL_;
 
@@ -65,8 +65,6 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(AbstractIndex);
 // special convenience macros
 #define IS_ABSTRACT_INDEX_UNIQUELY(Concept) HasUniqueAbstractIndexStructure_f<Concept>::V
 #define AS_ABSTRACT_INDEX(Concept) UniqueAbstractIndexStructureOf_f<Concept>::T
-
-MAKE_1_ARY_VALUE_EVALUATOR(IsAbstractIndex, bool);
 
 // property IDs
 
@@ -91,62 +89,60 @@ MAKE_1_ARY_VALUE_EVALUATOR(SymbolOf, AbstractIndexSymbol);
 // ///////////////////////////////////////////////////////////////////////////
 
 // for creating multiindices
-template <AbstractIndexSymbol SYMBOL1_, AbstractIndexSymbol SYMBOL2_>
-TypeList_t<AbstractIndex_c<SYMBOL1_>,TypeList_t<AbstractIndex_c<SYMBOL2_> > > operator * (
-    AbstractIndex_c<SYMBOL1_> const &,
-    AbstractIndex_c<SYMBOL2_> const &)
+template <AbstractIndexSymbol SYMBOL0_, AbstractIndexSymbol SYMBOL1_>
+Typle_t<AbstractIndex_c<SYMBOL0_>,AbstractIndex_c<SYMBOL1_>> operator * (
+    AbstractIndex_c<SYMBOL0_> const &,
+    AbstractIndex_c<SYMBOL1_> const &)
 {
-    return TypeList_t<AbstractIndex_c<SYMBOL1_>,TypeList_t<AbstractIndex_c<SYMBOL2_> > >();
+    return Typle_t<AbstractIndex_c<SYMBOL0_>,AbstractIndex_c<SYMBOL1_>>();
 }
 
 // for creating multiindices
 template <AbstractIndexSymbol SYMBOL_>
-TypeList_t<AbstractIndex_c<SYMBOL_> > operator * (
-    EmptyTypeList const &,
+Typle_t<AbstractIndex_c<SYMBOL_>> operator * (
+    Typle_t<> const &,
     AbstractIndex_c<SYMBOL_> const &)
 {
-    return TypeList_t<AbstractIndex_c<SYMBOL_> >();
+    return Typle_t<AbstractIndex_c<SYMBOL_>>();
 }
 
 // for creating multiindices
 template <AbstractIndexSymbol SYMBOL_>
-TypeList_t<AbstractIndex_c<SYMBOL_> > operator * (
+Typle_t<AbstractIndex_c<SYMBOL_>> operator * (
     AbstractIndex_c<SYMBOL_> const &,
-    EmptyTypeList const &)
+    Typle_t<> const &)
 {
-    return TypeList_t<AbstractIndex_c<SYMBOL_> >();
+    return Typle_t<AbstractIndex_c<SYMBOL_>>();
 }
 
 // for creating multiindices
-template <AbstractIndexSymbol SYMBOL1_, typename BodyTypeList_, AbstractIndexSymbol SYMBOL2_>
-typename ConcatenationOfTypeLists_t<TypeList_t<AbstractIndex_c<SYMBOL1_>,BodyTypeList_>,
-                                    TypeList_t<AbstractIndex_c<SYMBOL2_> > >::T operator * (
-    TypeList_t<AbstractIndex_c<SYMBOL1_>,BodyTypeList_> const &,
-    AbstractIndex_c<SYMBOL2_> const &)
+template <AbstractIndexSymbol SYMBOL_, typename... Types_>
+typename Hippo::Concat2Typles_f<Typle_t<Types_...>,Typle_t<AbstractIndex_c<SYMBOL_>>>::T operator * (
+    Typle_t<Types_...> const &,
+    AbstractIndex_c<SYMBOL_> const &)
 {
-    return typename ConcatenationOfTypeLists_t<TypeList_t<AbstractIndex_c<SYMBOL1_>,BodyTypeList_>,
-                                               TypeList_t<AbstractIndex_c<SYMBOL2_> > >::T();
+    return typename Hippo::Concat2Typles_f<Typle_t<Types_...>,Typle_t<AbstractIndex_c<SYMBOL_>>>::T();
 }
 
 // for creating multiindices
-template <AbstractIndexSymbol SYMBOL1_, AbstractIndexSymbol SYMBOL2_, typename BodyTypeList_>
-TypeList_t<AbstractIndex_c<SYMBOL1_>,TypeList_t<AbstractIndex_c<SYMBOL2_>,BodyTypeList_> > operator * (
-    AbstractIndex_c<SYMBOL1_> const &,
-    TypeList_t<AbstractIndex_c<SYMBOL2_>,BodyTypeList_> const &)
+template <AbstractIndexSymbol SYMBOL_, typename... Types_>
+typename Hippo::Concat2Typles_f<Typle_t<AbstractIndex_c<SYMBOL_>>,Typle_t<Types_...>>::T operator * (
+    AbstractIndex_c<SYMBOL_> const &,
+    Typle_t<Types_...> const &)
 {
-    return TypeList_t<AbstractIndex_c<SYMBOL1_>,TypeList_t<AbstractIndex_c<SYMBOL2_>,BodyTypeList_> >();
+    return typename Hippo::Concat2Typles_f<Typle_t<AbstractIndex_c<SYMBOL_>>,Typle_t<Types_...>>::T();
 }
 
 // for creating multiindices
-template <AbstractIndexSymbol SYMBOL1_, typename BodyTypeList1_,
-          AbstractIndexSymbol SYMBOL2_, typename BodyTypeList2_>
-typename ConcatenationOfTypeLists_t<TypeList_t<AbstractIndex_c<SYMBOL1_>,BodyTypeList1_>,
-                                    TypeList_t<AbstractIndex_c<SYMBOL2_>,BodyTypeList2_> >::T operator * (
-    TypeList_t<AbstractIndex_c<SYMBOL1_>,BodyTypeList1_> const &,
-    TypeList_t<AbstractIndex_c<SYMBOL2_>,BodyTypeList2_> const &)
+template <AbstractIndexSymbol SYMBOL0_, typename... Types0_,
+          AbstractIndexSymbol SYMBOL1_, typename... Types1_>
+typename Hippo::Concat2Typles_f<Typle_t<AbstractIndex_c<SYMBOL0_>,Types0_...>,
+                                Typle_t<AbstractIndex_c<SYMBOL1_>,Types1_...>>::T operator * (
+    Typle_t<AbstractIndex_c<SYMBOL0_>,Types0_...> const &,
+    Typle_t<AbstractIndex_c<SYMBOL1_>,Types1_...> const &)
 {
-    return typename ConcatenationOfTypeLists_t<TypeList_t<AbstractIndex_c<SYMBOL1_>,BodyTypeList1_>,
-                                               TypeList_t<AbstractIndex_c<SYMBOL2_>,BodyTypeList2_> >::T();
+    return typename Hippo::Concat2Typles_f<Typle_t<AbstractIndex_c<SYMBOL0_>,Types0_...>,
+                                           Typle_t<AbstractIndex_c<SYMBOL1_>,Types1_...>>::T();
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -154,33 +150,34 @@ typename ConcatenationOfTypeLists_t<TypeList_t<AbstractIndex_c<SYMBOL1_>,BodyTyp
 // ///////////////////////////////////////////////////////////////////////////
 
 template <Uint32 INDEX_COUNT_, AbstractIndexSymbol STARTING_SYMBOL_>
-struct AbstractIndexRangeTypeList_f
+struct AbstractIndexRangeTyple_f
 {
-    typedef TypeList_t<AbstractIndex_c<STARTING_SYMBOL_>,
-                       typename AbstractIndexRangeTypeList_f<INDEX_COUNT_-1,STARTING_SYMBOL_+1>::T> T;
+    typedef typename Hippo::HeadBodyTyple_f<AbstractIndex_c<STARTING_SYMBOL_>,
+                                            typename AbstractIndexRangeTyple_f<INDEX_COUNT_-1,STARTING_SYMBOL_+1>::T>::T T;
 };
 
 template <AbstractIndexSymbol STARTING_SYMBOL_>
-struct AbstractIndexRangeTypeList_f<0,STARTING_SYMBOL_>
+struct AbstractIndexRangeTyple_f<0,STARTING_SYMBOL_>
 {
-    typedef EmptyTypeList T;
+    typedef Typle_t<> T;
 };
 
 // ///////////////////////////////////////////////////////////////////////////
 // for stringifying an abstract multiindex
 // ///////////////////////////////////////////////////////////////////////////
 
-template <AbstractIndexSymbol HEAD_SYMBOL, typename BodyAbstractIndexTypeList>
-std::string symbol_string_of_abstract_index_type_list (TypeList_t<AbstractIndex_c<HEAD_SYMBOL>,BodyAbstractIndexTypeList> const &)
+template <AbstractIndexSymbol HEAD_SYMBOL_, typename... Types_>
+std::string symbol_string_of_abstract_index_typle (Typle_t<AbstractIndex_c<HEAD_SYMBOL_>,Types_...> const &)
 {
-    return abstract_index_symbol_as_string(HEAD_SYMBOL, DONT_USE_QUOTES_FOR_ALPHABETIC)
+    typedef Typle_t<Types_...> BodyTyple;
+    return abstract_index_symbol_as_string(HEAD_SYMBOL_, DONT_USE_QUOTES_FOR_ALPHABETIC)
            +
-           ((BodyAbstractIndexTypeList::LENGTH > 0) ?
-            '*' + symbol_string_of_abstract_index_type_list(BodyAbstractIndexTypeList()) :
+           ((Hippo::Length_f<BodyTyple>::V > 0) ?
+            '*' + symbol_string_of_abstract_index_typle(BodyTyple()) :
             std::string());
 }
 
-inline std::string symbol_string_of_abstract_index_type_list (EmptyTypeList)
+inline std::string symbol_string_of_abstract_index_typle (Typle_t<> const &)
 {
     return std::string();
 }

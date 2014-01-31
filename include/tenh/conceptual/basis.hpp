@@ -20,7 +20,7 @@ namespace Tenh {
 template <typename Id_>
 struct Basis_c
 {
-    typedef EmptyTypeList ParentTypeList;
+    typedef Typle_t<> ParentTyple;
 
     typedef Id_ Id;
 
@@ -44,7 +44,7 @@ template <typename T_> struct IsBasis_f
 private:
     IsBasis_f();
 };
-template <typename Id_> struct IsBasis_f<Basis_c<Id_> >
+template <typename Id_> struct IsBasis_f<Basis_c<Id_>>
 {
     static bool const V = true;
 private:
@@ -57,7 +57,7 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Basis);
 #define AS_BASIS(Concept) UniqueBasisStructureOf_f<Concept>::T
 
 template <typename Id_>
-struct DualOf_f<Basis_c<Id_> >
+struct DualOf_f<Basis_c<Id_>>
 {
     typedef Basis_c<typename DualOf_f<Id_>::T> T;
 private:
@@ -71,7 +71,7 @@ private:
 template <typename Id_>
 struct OrthonormalBasis_c
 {
-    typedef TypeList_t<Basis_c<Id_> > ParentTypeList;
+    typedef Typle_t<Basis_c<Id_>> ParentTyple;
 
     typedef Id_ Id;
 
@@ -95,7 +95,7 @@ template <typename T_> struct IsOrthonormalBasis_f
 private:
     IsOrthonormalBasis_f();
 };
-template <typename Id_> struct IsOrthonormalBasis_f<OrthonormalBasis_c<Id_> >
+template <typename Id_> struct IsOrthonormalBasis_f<OrthonormalBasis_c<Id_>>
 {
     static bool const V = true;
 private:
@@ -108,45 +108,62 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(OrthonormalBasis);
 #define AS_ORTHONORMAL_BASIS(Concept) UniqueOrthonormalBasisStructureOf_f<Concept>::T
 
 template <typename Id_>
-struct DualOf_f<OrthonormalBasis_c<Id_> >
+struct DualOf_f<OrthonormalBasis_c<Id_>>
 {
     typedef OrthonormalBasis_c<typename DualOf_f<Id_>::T> T;
 private:
     DualOf_f();
 };
 
-template <typename SummandTypeList_>
+template <typename Typle_>
+struct AllTypesHaveBasisStructures_f // TEMP
+{
+    static bool const V = Hippo::And_f<typename Hippo::OnEach_f<Typle_,HasBasisStructure_e>::T>::V;
+};
+
+template <typename Typle_>
+struct AllTypesHaveUniqueBasisStructures_f
+{
+    static bool const V = Hippo::And_f<typename Hippo::OnEach_f<Typle_,HasUniqueBasisStructure_e>::T>::V;
+};
+
+MAKE_1_ARY_VALUE_EVALUATOR(AllTypesHaveUniqueBasisStructures, bool);
+
+/*
+// TODO: change usage of this into EachTypeSatisfiesPredicate_f (or whatever)
+template <typename SummandTyple_>
 struct AllFactorsAreBases_f
 {
-    static bool const V = HasBasisStructure_f<typename SummandTypeList_::HeadType>::V &&
-                          AllFactorsAreBases_f<typename SummandTypeList_::BodyTypeList>::V;
+    static bool const V = HasBasisStructure_f<typename Hippo::Head_f<SummandTyple_>::T>::V &&
+                          AllFactorsAreBases_f<typename Hippo::BodyTyple_f<SummandTyple_>::T>::V;
 private:
     AllFactorsAreBases_f();
 };
 
 template <>
-struct AllFactorsAreBases_f<EmptyTypeList>
+struct AllFactorsAreBases_f<Typle_t<>>
 {
     static bool const V = true;
 private:
     AllFactorsAreBases_f();
 };
-
-template <typename TypeList>
-struct IdsOfTypeList_t
+*/
+// TODO: use OnEach_f
+template <typename Typle_>
+struct IdsOfTyple_f
 {
-    typedef TypeList_t<typename TypeList::HeadType::Id,
-                       typename IdsOfTypeList_t<typename TypeList::BodyTypeList>::T> T;
+    typedef typename Hippo::HeadBodyTyple_f<typename Hippo::Head_f<Typle_>::T::Id,
+                                            typename IdsOfTyple_f<typename Hippo::BodyTyple_f<Typle_>::T>::T>::T T;
 private:
-    IdsOfTypeList_t();
+    IdsOfTyple_f();
 };
 
 template <>
-struct IdsOfTypeList_t<EmptyTypeList>
+struct IdsOfTyple_f<Typle_t<>>
 {
-    typedef EmptyTypeList T;
+    typedef Typle_t<> T;
 private:
-    IdsOfTypeList_t();
+    IdsOfTyple_f();
 };
 
 // ///////////////////////////////////////////////////////////////////////////

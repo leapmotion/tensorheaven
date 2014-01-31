@@ -8,8 +8,8 @@
 
 #include "tenh/core.hpp"
 
-#include "tenh/meta/typelist.hpp"
 #include "tenh/meta/typestringof.hpp"
+#include "tenh/meta/typle.hpp"
 
 namespace Tenh {
 
@@ -44,20 +44,20 @@ private:
     DualOf_f();
 };
 
-// template specialization to take dual of each element in a TypeList_t 
-// -- essentially making the DualOf_f and TypeList_t functors commute.
-template <typename HeadType, typename BodyTypeList>
-struct DualOf_f<TypeList_t<HeadType,BodyTypeList> >
+// template specialization to take dual of each element in a Typle_t 
+// -- essentially making the DualOf_f and Typle_t functors commute.
+template <typename Head_, typename... BodyTypes_>
+struct DualOf_f<Typle_t<Head_,BodyTypes_...>>
 {
-    typedef TypeList_t<typename DualOf_f<HeadType>::T,typename DualOf_f<BodyTypeList>::T> T;
+    typedef typename Hippo::HeadBodyTyple_f<typename DualOf_f<Head_>::T,typename DualOf_f<Typle_t<BodyTypes_...>>::T>::T T;
 private:
     DualOf_f();
 };
 
 template <>
-struct DualOf_f<EmptyTypeList>
+struct DualOf_f<Typle_t<>>
 {
-    typedef EmptyTypeList T;
+    typedef Typle_t<> T;
 private:
     DualOf_f();
 };

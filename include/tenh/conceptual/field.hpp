@@ -16,7 +16,7 @@ namespace Tenh {
 template <typename Id_>
 struct Field_c
 {
-    typedef EmptyTypeList ParentTypeList;
+    typedef Typle_t<> ParentTyple;
 
 	typedef Id_ Id;
 
