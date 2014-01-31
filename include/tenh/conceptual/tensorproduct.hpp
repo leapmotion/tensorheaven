@@ -15,7 +15,8 @@
 #include "tenh/conceptual/dual.hpp"
 #include "tenh/conceptual/embeddableintensorproduct.hpp"
 #include "tenh/conceptual/vectorspace.hpp"
-#include "tenh/meta/typelist.hpp"
+#include "tenh/meta/typle.hpp"
+#include "tenh/meta/typle_utility.hpp"
 
 namespace Tenh {
 
@@ -24,26 +25,24 @@ namespace Tenh {
 // ///////////////////////////////////////////////////////////////////////////
 
 // generic tensor product of formal symbols (e.g. identifiers, builtin C++ types, etc)
-template <typename FactorTypeList_>
+template <typename FactorTyple_>
 struct TensorProduct_c
 {
-private:
-    static_assert(IsTypeList_f<FactorTypeList_>::V, "FactorTypeList of TensorProduct_c must be a type list.");
+    static_assert(IsTyple_f<FactorTyple_>::V, "FactorTyple_ must be a Typle_t");
 
-public:
-    typedef EmptyTypeList ParentTypeList;
+    typedef Typle_t<> ParentTyple;
 
-    typedef FactorTypeList_ FactorTypeList;
-    static Uint32 const ORDER = FactorTypeList::LENGTH;
+    typedef FactorTyple_ FactorTyple;
+    static Uint32 const ORDER = Hippo::Length_f<FactorTyple>::V;
 
     static std::string type_as_string ()
     {
-        return "TensorProduct_c<" + type_string_of<FactorTypeList_>() + '>';
+        return "TensorProduct_c<" + type_string_of<FactorTyple_>() + '>';
     }
 };
 
-template <typename FactorTypeList_>
-struct IsConcept_f<TensorProduct_c<FactorTypeList_> >
+template <typename FactorTyple_>
+struct IsConcept_f<TensorProduct_c<FactorTyple_> >
 {
     static bool const V = true;
 private:
@@ -56,7 +55,7 @@ template <typename T> struct IsTensorProduct_f
 private:
     IsTensorProduct_f();
 };
-template <typename FactorTypeList_> struct IsTensorProduct_f<TensorProduct_c<FactorTypeList_> >
+template <typename FactorTyple_> struct IsTensorProduct_f<TensorProduct_c<FactorTyple_> >
 {
     static bool const V = true;
 private:
@@ -68,10 +67,10 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(TensorProduct);
 #define IS_TENSOR_PRODUCT_UNIQUELY(Concept) HasUniqueTensorProductStructure_f<Concept>::V
 #define AS_TENSOR_PRODUCT(Concept) UniqueTensorProductStructureOf_f<Concept>::T
 
-template <typename FactorTypeList_>
-struct DualOf_f<TensorProduct_c<FactorTypeList_> >
+template <typename FactorTyple_>
+struct DualOf_f<TensorProduct_c<FactorTyple_> >
 {
-    typedef TensorProduct_c<typename DualOf_f<FactorTypeList_>::T> T;
+    typedef TensorProduct_c<typename DualOf_f<FactorTyple_>::T> T;
 private:
     DualOf_f();
 };
@@ -79,38 +78,38 @@ private:
 // property IDs
 
 struct Order; // could this be a forward declaration? Looks like yes.
-struct FactorTypeList; // could this be a forward declaration? Looks like yes.
+struct FactorTyple; // could this be a forward declaration? Looks like yes.
 struct TensorPowerFactor; // could this be a forward declaration? Looks like yes.
 
 // BaseProperty_f accessors
 
-template <typename FactorTypeList_>
-struct BaseProperty_f<TensorProduct_c<FactorTypeList_>,Order>
+template <typename FactorTyple_>
+struct BaseProperty_f<TensorProduct_c<FactorTyple_>,Order>
 {
-    typedef Value_t<Uint32,FactorTypeList_::LENGTH> T;
+    typedef Value_t<Uint32,Hippo::Length_f<FactorTyple_>::V> T;
 private:
     BaseProperty_f();
 };
 
-template <typename FactorTypeList_>
-struct BaseProperty_f<TensorProduct_c<FactorTypeList_>,FactorTypeList>
+template <typename FactorTyple_>
+struct BaseProperty_f<TensorProduct_c<FactorTyple_>,FactorTyple>
 {
-    typedef FactorTypeList_ T;
+    typedef FactorTyple_ T;
 private:
     BaseProperty_f();
 };
 
-// this function is only well-defined if FactorTypeList_ is uniform and has at least one element
-template <typename FactorTypeList_>
-struct BaseProperty_f<TensorProduct_c<FactorTypeList_>,TensorPowerFactor>
+// this function is only well-defined if FactorTyple_ is uniform and has at least one element
+template <typename FactorTyple_>
+struct BaseProperty_f<TensorProduct_c<FactorTyple_>,TensorPowerFactor>
 {
 private:
-    static bool const THERE_IS_A_UNIQUE_FACTOR = FactorTypeList_::LENGTH >= 1 &&
-                                                 TypeListIsUniform_t<FactorTypeList_>::V;
+    static bool const THERE_IS_A_UNIQUE_FACTOR = Hippo::Length_f<FactorTyple_>::V >= 1 &&
+                                                 Hippo::TypleIsUniform_f<FactorTyple_>::V;
     BaseProperty_f();
 public:
     typedef typename If_f<THERE_IS_A_UNIQUE_FACTOR,
-                          typename FactorTypeList_::HeadType,
+                          typename Hippo::Head_f<FactorTyple_>::T,
                           NullValue>::T T;
 };
 
@@ -124,7 +123,7 @@ private:
 };
 template <typename Concept_> struct FactorTypeListOf_f
 {
-    typedef typename Property_f<Concept_,FactorTypeList>::T T;
+    typedef typename Property_f<Concept_,FactorTyple>::T T;
 private:
     FactorTypeListOf_f();
 };
@@ -140,35 +139,31 @@ private:
 // ///////////////////////////////////////////////////////////////////////////
 
 
-// FactorTypeList_ must be a TypeList_t of VectorSpace_c types
-template <typename FactorTypeList_>
+template <typename FactorTyple_>
 struct TensorProductOfVectorSpaces_c
 {
+    static_assert(IsTyple_f<FactorTyple_>::V, "FactorTyple_ must be a Typle_t");
+    static_assert(AllTypesHaveUniqueVectorSpaceStructures_f<FactorTyple_>::V, "all factors must have unique vector space structures");
+    static_assert(AllTypesHaveSameScalarField_f<FactorTyple_>::V, "all factor vector spaces must have the same scalar field");
 private:
-    static_assert(IsTypeList_f<FactorTypeList_>::V, "FactorTypeList of TensorProductOfVectorSpaces_c must be a type list.");
-    static_assert(AllFactorsAreVectorSpaces_f<FactorTypeList_>::V, "All factors of TensorProductOfVectorSpaces_c must be vector spaces.");
-    static_assert(AllFactorsHaveTheSameField_f<FactorTypeList_>::V, "All factors of TensorProductOfVectorSpaces_c must have the same scalar field.");
-
-    typedef TensorProduct_c<FactorTypeList_> As_TensorProduct;
-    typedef VectorSpace_c<typename ScalarFieldOf_f<typename FactorTypeList_::HeadType>::T,
-                          ProductOfDimensions_f<FactorTypeList_>::V,
-                          TensorProduct_c<typename IdsOfTypeList_t<FactorTypeList_>::T> > As_VectorSpace;
+    typedef TensorProduct_c<FactorTyple_> As_TensorProduct;
+    typedef VectorSpace_c<typename ScalarFieldOf_f<typename Hippo::Head_f<FactorTyple_>::T>::T,
+                          ProductOfDimensions_f<FactorTyple_>::V,
+                          TensorProduct_c<typename IdsOfTyple_f<FactorTyple_>::T> > As_VectorSpace;
     typedef EmbeddableInTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_c> As_EmbeddableInTensorProductOfVectorSpaces;
 public:
-    typedef TypeList_t<As_TensorProduct,
-            TypeList_t<As_VectorSpace,
-            TypeList_t<As_EmbeddableInTensorProductOfVectorSpaces> > > ParentTypeList;
+    typedef Typle_t<As_TensorProduct,As_VectorSpace,As_EmbeddableInTensorProductOfVectorSpaces> ParentTyple;
 
     typedef typename As_VectorSpace::Id Id;
 
     static std::string type_as_string ()
     {
-        return "TensorProductOfVectorSpaces_c<" + type_string_of<FactorTypeList_>() + '>';
+        return "TensorProductOfVectorSpaces_c<" + type_string_of<FactorTyple_>() + '>';
     }
 };
 
-template <typename FactorTypeList_>
-struct IsConcept_f<TensorProductOfVectorSpaces_c<FactorTypeList_> >
+template <typename FactorTyple_>
+struct IsConcept_f<TensorProductOfVectorSpaces_c<FactorTyple_> >
 {
     static bool const V = true;
 private:
@@ -181,7 +176,7 @@ template <typename T> struct IsTensorProductOfVectorSpaces_f
 private:
     IsTensorProductOfVectorSpaces_f();
 };
-template <typename FactorTypeList_> struct IsTensorProductOfVectorSpaces_f<TensorProductOfVectorSpaces_c<FactorTypeList_> >
+template <typename FactorTyple_> struct IsTensorProductOfVectorSpaces_f<TensorProductOfVectorSpaces_c<FactorTyple_> >
 {
     static bool const V = true;
 private:
@@ -193,10 +188,10 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(TensorProductOfVectorSpaces);
 #define IS_TENSOR_PRODUCT_OF_VECTOR_SPACES_UNIQUELY(Concept) HasUniqueTensorProductOfVectorSpacesStructure_f<Concept>::V
 #define AS_TENSOR_PRODUCT_OF_VECTOR_SPACES(Concept) UniqueTensorProductOfVectorSpacesStructureOf_f<Concept>::T
 
-template <typename FactorTypeList_>
-struct DualOf_f<TensorProductOfVectorSpaces_c<FactorTypeList_> >
+template <typename FactorTyple_>
+struct DualOf_f<TensorProductOfVectorSpaces_c<FactorTyple_> >
 {
-    typedef TensorProductOfVectorSpaces_c<typename DualOf_f<FactorTypeList_>::T> T;
+    typedef TensorProductOfVectorSpaces_c<typename DualOf_f<FactorTyple_>::T> T;
 private:
     DualOf_f();
 };
@@ -205,28 +200,28 @@ private:
 // TensorProductOfBases_c
 // ///////////////////////////////////////////////////////////////////////////
 
-// FactorTypeList_ must be a TypeList_t of Basis_c types
-template <typename FactorTypeList_>
+template <typename FactorTyple_>
 struct TensorProductOfBases_c
 {
+    static_assert(IsTyple_f<FactorTyple_>::V, "FactorTyple_ must be a Typle_t");
+    static_assert(AllTypesHaveBasisStructures_f<FactorTyple_>::V, "all factors must be bases");
+    static_assert(AllTypesHaveUniqueBasisStructures_f<FactorTyple_>::V, "all factors must have unique basis structures");
 private:
-    static_assert(IsTypeList_f<FactorTypeList_>::V, "FactorTypeList of TensorProductOfBases_c must be a type list.");
-    static_assert(AllFactorsAreBases_f<FactorTypeList_>::V, "All factors of TensorProductOfBases_c must be bases.");
-    typedef TensorProduct_c<FactorTypeList_> As_TensorProduct;
-    typedef Basis_c<TensorProduct_c<typename IdsOfTypeList_t<FactorTypeList_>::T> > As_Basis;
+    typedef TensorProduct_c<FactorTyple_> As_TensorProduct;
+    typedef Basis_c<TensorProduct_c<typename IdsOfTyple_f<FactorTyple_>::T> > As_Basis;
 public:
-    typedef TypeList_t<As_TensorProduct, TypeList_t<As_Basis> > ParentTypeList;
+    typedef Typle_t<As_TensorProduct,As_Basis> ParentTyple;
 
     typedef typename As_Basis::Id Id;
 
     static std::string type_as_string ()
     {
-        return "TensorProductOfBases_c<" + type_string_of<FactorTypeList_>() + '>';
+        return "TensorProductOfBases_c<" + type_string_of<FactorTyple_>() + '>';
     }
 };
 
-template <typename FactorTypeList_>
-struct IsConcept_f<TensorProductOfBases_c<FactorTypeList_> >
+template <typename FactorTyple_>
+struct IsConcept_f<TensorProductOfBases_c<FactorTyple_> >
 {
     static bool const V = true;
 private:
@@ -239,7 +234,7 @@ template <typename T> struct IsTensorProductOfBases_f
 private:
     IsTensorProductOfBases_f();
 };
-template <typename FactorTypeList_> struct IsTensorProductOfBases_f<TensorProductOfBases_c<FactorTypeList_> >
+template <typename FactorTyple_> struct IsTensorProductOfBases_f<TensorProductOfBases_c<FactorTyple_> >
 {
     static bool const V = true;
 private:
@@ -251,10 +246,10 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(TensorProductOfBases);
 #define IS_TENSOR_PRODUCT_OF_BASES_UNIQUELY(Concept) HasUniqueTensorProductOfBasesStructure_f<Concept>::V
 #define AS_TENSOR_PRODUCT_OF_BASES(Concept) UniqueTensorProductOfBasesStructureOf_f<Concept>::T
 
-template <typename FactorTypeList_>
-struct DualOf_f<TensorProductOfBases_c<FactorTypeList_> >
+template <typename FactorTyple_>
+struct DualOf_f<TensorProductOfBases_c<FactorTyple_> >
 {
-    typedef TensorProductOfBases_c<typename DualOf_f<FactorTypeList_>::T> T;
+    typedef TensorProductOfBases_c<typename DualOf_f<FactorTyple_>::T> T;
 private:
     DualOf_f();
 };
@@ -267,15 +262,13 @@ private:
 template <typename TensorProductOfVectorSpaces_, typename Basis_>
 struct BasedTensorProductOfVectorSpaces_c
 {
+    static_assert(IS_TENSOR_PRODUCT_OF_VECTOR_SPACES_UNIQUELY(TensorProductOfVectorSpaces_), "TensorProductOfVectorSpaces_ must have unique tensor product of vector spaces structure");
+    static_assert(IS_BASIS_UNIQUELY(Basis_), "Basis_ must have unique basis structure");
 private:
-    static_assert(IS_TENSOR_PRODUCT_OF_VECTOR_SPACES_UNIQUELY(TensorProductOfVectorSpaces_), "TensorProductOfVectorSpaces must be a tensor product of vector spaces.");
-    static_assert(IS_BASIS_UNIQUELY(Basis_), "Basis must be a basis.");
-
     typedef TensorProductOfVectorSpaces_ As_TensorProductOfVectorSpaces;
     typedef BasedVectorSpace_c<TensorProductOfVectorSpaces_,Basis_> As_BasedVectorSpace;
 public:
-    typedef TypeList_t<As_TensorProductOfVectorSpaces,
-            TypeList_t<As_BasedVectorSpace> > ParentTypeList;
+    typedef Typle_t<As_TensorProductOfVectorSpaces,As_BasedVectorSpace> ParentTyple;
 
     typedef typename As_BasedVectorSpace::Id Id;
 
@@ -324,31 +317,30 @@ private:
 // TensorProductOfBasedVectorSpaces_c
 // ///////////////////////////////////////////////////////////////////////////
 
-// FactorTypeList_ must be a TypeList_t of BasedVectorSpace_c types
-template <typename FactorTypeList_>
+template <typename FactorTyple_>
 struct TensorProductOfBasedVectorSpaces_c
 {
+    static_assert(IsTyple_f<FactorTyple_>::V, "FactorTyple_ must be a Typle_t");
+    static_assert(AllTypesHaveUniqueBasedVectorSpaceStructures_f<FactorTyple_>::V, "all summands must have unique based vector space structures");
 private:
-    static_assert(IsTypeList_f<FactorTypeList_>::V, "FactorTypeList of TensorProductOfBasedVectorSpaces_c must be a type list.");
-    static_assert(AllFactorsAreBasedVectorSpaces_f<FactorTypeList_>::V, "All factors of TensorProductOfBasedVectorSpaces_c must be based vector spaces.");
-    typedef typename PropertyOfEachInTyple_f<FactorTypeList_,Basis>::T BasisTypeList;
-    typedef BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_c<FactorTypeList_>,
-                                               TensorProductOfBases_c<BasisTypeList> > As_BasedTensorProductOfVectorSpaces;
-    typedef EmbeddableInTensorProductOfBasedVectorSpaces_c<TensorProductOfBasedVectorSpaces_c,TensorProductOfVectorSpaces_c<FactorTypeList_> > As_EmbeddableInTensorProductOfBasedVectorSpaces;
+    typedef typename PropertyOfEachInTyple_f<FactorTyple_,Basis>::T BasisTyple;
+    typedef BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_c<FactorTyple_>,
+                                               TensorProductOfBases_c<BasisTyple>> As_BasedTensorProductOfVectorSpaces;
+    typedef EmbeddableInTensorProductOfBasedVectorSpaces_c<TensorProductOfBasedVectorSpaces_c,
+                                                           TensorProductOfVectorSpaces_c<FactorTyple_>> As_EmbeddableInTensorProductOfBasedVectorSpaces;
 public:
-    typedef TypeList_t<As_BasedTensorProductOfVectorSpaces,
-            TypeList_t<As_EmbeddableInTensorProductOfBasedVectorSpaces> > ParentTypeList;
+    typedef Typle_t<As_BasedTensorProductOfVectorSpaces,As_EmbeddableInTensorProductOfBasedVectorSpaces> ParentTyple;
 
     typedef typename As_BasedTensorProductOfVectorSpaces::Id Id;
 
     static std::string type_as_string ()
     {
-        return "TensorProductOfBasedVectorSpaces_c<" + type_string_of<FactorTypeList_>() + '>';
+        return "TensorProductOfBasedVectorSpaces_c<" + type_string_of<FactorTyple_>() + '>';
     }
 };
 
-template <typename FactorTypeList_>
-struct IsConcept_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >
+template <typename FactorTyple_>
+struct IsConcept_f<TensorProductOfBasedVectorSpaces_c<FactorTyple_> >
 {
     static bool const V = true;
 private:
@@ -361,7 +353,7 @@ template <typename T> struct IsTensorProductOfBasedVectorSpaces_f
 private:
     IsTensorProductOfBasedVectorSpaces_f();
 };
-template <typename FactorTypeList_> struct IsTensorProductOfBasedVectorSpaces_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >
+template <typename FactorTyple_> struct IsTensorProductOfBasedVectorSpaces_f<TensorProductOfBasedVectorSpaces_c<FactorTyple_> >
 {
     static bool const V = true;
 private:
@@ -375,10 +367,10 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(TensorProductOfBasedVectorSpaces);
 
 // there is a natural identification of a tensor product of vector spaces with the
 // tensor product of the dual of the vector spaces
-template <typename FactorTypeList_>
-struct DualOf_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >
+template <typename FactorTyple_>
+struct DualOf_f<TensorProductOfBasedVectorSpaces_c<FactorTyple_> >
 {
-    typedef TensorProductOfBasedVectorSpaces_c<typename DualOf_f<FactorTypeList_>::T> T;
+    typedef TensorProductOfBasedVectorSpaces_c<typename DualOf_f<FactorTyple_>::T> T;
 private:
     DualOf_f();
 };
@@ -390,7 +382,7 @@ private:
 template <Uint32 ORDER_, typename Factor_>
 struct TensorPower_f
 {
-    typedef TensorProduct_c<typename UniformTypeListOfLength_t<ORDER_,Factor_>::T> T;
+    typedef TensorProduct_c<typename Hippo::UniformTypleOfLength_f<ORDER_,Factor_>::T> T;
 private:
     TensorPower_f();
 };
@@ -398,21 +390,21 @@ private:
 template <Uint32 ORDER_, typename Factor_>
 struct TensorPowerOfVectorSpace_f
 {
+    static_assert(HasVectorSpaceStructure_f<Factor_>::V, "Factor_ must be a vector space");
+    static_assert(IS_VECTOR_SPACE_UNIQUELY(Factor_), "Factor_ must have a unique vector space structure");
+    typedef TensorProductOfVectorSpaces_c<typename Hippo::UniformTypleOfLength_f<ORDER_,Factor_>::T> T;
 private:
-    static_assert(IS_VECTOR_SPACE_UNIQUELY(Factor_), "Factor of TensorPowerOfVectorSpace_f must be a vector space.");
     TensorPowerOfVectorSpace_f();
-public:
-    typedef TensorProductOfVectorSpaces_c<typename UniformTypeListOfLength_t<ORDER_,Factor_>::T> T;
 };
 
 template <Uint32 ORDER_, typename Factor_>
 struct TensorPowerOfBasedVectorSpace_f
 {
+    static_assert(HasBasedVectorSpaceStructure_f<Factor_>::V, "Factor_ must be a based vector space");
+    static_assert(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), "Factor_ must have a unique based vector space structure");
+    typedef TensorProductOfBasedVectorSpaces_c<typename Hippo::UniformTypleOfLength_f<ORDER_,Factor_>::T> T;
 private:
-    static_assert(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), "Factor of TensorPowerOfBasedVectorSpace_f must be a based vector space.");
     TensorPowerOfBasedVectorSpace_f();
-public:
-    typedef TensorProductOfBasedVectorSpaces_c<typename UniformTypeListOfLength_t<ORDER_,Factor_>::T> T;
 };
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -425,38 +417,36 @@ template <typename LhsBasedVectorSpace_,
           typename RhsBasedVectorSpace_>
 typename std::enable_if<(IS_BASED_VECTOR_SPACE_UNIQUELY(LhsBasedVectorSpace_) &&
                          IS_BASED_VECTOR_SPACE_UNIQUELY(RhsBasedVectorSpace_)),
-                        TensorProductOfBasedVectorSpaces_c<TypeList_t<LhsBasedVectorSpace_,
-                                                           TypeList_t<RhsBasedVectorSpace_> > > >::type
+                        TensorProductOfBasedVectorSpaces_c<Typle_t<LhsBasedVectorSpace_,
+                                                                   RhsBasedVectorSpace_>>>::type
     operator * (LhsBasedVectorSpace_ const &, RhsBasedVectorSpace_ const &)
 {
-    return TensorProductOfBasedVectorSpaces_c<TypeList_t<LhsBasedVectorSpace_,
-                                              TypeList_t<RhsBasedVectorSpace_> > >();
+    return TensorProductOfBasedVectorSpaces_c<Typle_t<LhsBasedVectorSpace_,RhsBasedVectorSpace_>>();
 }
 
-template <typename FactorTypeList_, typename BasedVectorSpace_>
-TensorProductOfBasedVectorSpaces_c<typename ConcatenationOfTypeLists_t<FactorTypeList_,
-                                                                       TypeList_t<BasedVectorSpace_> >::T>
-    operator * (TensorProductOfBasedVectorSpaces_c<FactorTypeList_> const &, BasedVectorSpace_ const &)
+template <typename FactorTyple_, typename BasedVectorSpace_>
+TensorProductOfBasedVectorSpaces_c<typename Hippo::Concat2Typles_f<FactorTyple_,
+                                                                   Typle_t<BasedVectorSpace_> >::T>
+    operator * (TensorProductOfBasedVectorSpaces_c<FactorTyple_> const &, BasedVectorSpace_ const &)
 {
-    return TensorProductOfBasedVectorSpaces_c<typename ConcatenationOfTypeLists_t<FactorTypeList_,
-                                                                                  TypeList_t<BasedVectorSpace_> >::T>();
+    return typename Hippo::Concat2Typles_f<FactorTyple_,Typle_t<BasedVectorSpace_> >::T();
 }
 
-template <typename FactorTypeList_, typename BasedVectorSpace_>
-TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_,FactorTypeList_> >
-    operator * (BasedVectorSpace_ const &, TensorProductOfBasedVectorSpaces_c<FactorTypeList_> const &)
+template <typename FactorTyple_, typename BasedVectorSpace_>
+TensorProductOfBasedVectorSpaces_c<typename Hippo::HeadBodyTyple_f<BasedVectorSpace_,FactorTyple_>::T>
+    operator * (BasedVectorSpace_ const &, TensorProductOfBasedVectorSpaces_c<FactorTyple_> const &)
 {
-    return TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_,FactorTypeList_> >();
+    return TensorProductOfBasedVectorSpaces_c<typename Hippo::HeadBodyTyple_f<BasedVectorSpace_,FactorTyple_>::T>();
 }
 
-template <typename LhsFactorTypeList_, typename RhsFactorTypeList_>
-TensorProductOfBasedVectorSpaces_c<TypeList_t<TensorProductOfBasedVectorSpaces_c<LhsFactorTypeList_>,
-                                   TypeList_t<TensorProductOfBasedVectorSpaces_c<RhsFactorTypeList_> > > >
-    operator * (TensorProductOfBasedVectorSpaces_c<LhsFactorTypeList_> const &,
-                TensorProductOfBasedVectorSpaces_c<RhsFactorTypeList_> const &)
+template <typename LhsFactorTyple_, typename RhsFactorTyple_>
+TensorProductOfBasedVectorSpaces_c<Typle_t<TensorProductOfBasedVectorSpaces_c<LhsFactorTyple_>,
+                                           TensorProductOfBasedVectorSpaces_c<RhsFactorTyple_>>>
+    operator * (TensorProductOfBasedVectorSpaces_c<LhsFactorTyple_> const &,
+                TensorProductOfBasedVectorSpaces_c<RhsFactorTyple_> const &)
 {
-    return TensorProductOfBasedVectorSpaces_c<TypeList_t<TensorProductOfBasedVectorSpaces_c<LhsFactorTypeList_>,
-                                              TypeList_t<TensorProductOfBasedVectorSpaces_c<RhsFactorTypeList_> > > >();
+    return TensorProductOfBasedVectorSpaces_c<Typle_t<TensorProductOfBasedVectorSpaces_c<LhsFactorTyple_>,
+                                                      TensorProductOfBasedVectorSpaces_c<RhsFactorTyple_>>>();
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -464,15 +454,15 @@ TensorProductOfBasedVectorSpaces_c<TypeList_t<TensorProductOfBasedVectorSpaces_c
 // ///////////////////////////////////////////////////////////////////////////
 
 // just use the identity embedding
-template <typename FactorTypeList_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
-struct LinearEmbedding_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,
-                         TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,
+template <typename FactorTyple_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
+struct LinearEmbedding_f<TensorProductOfBasedVectorSpaces_c<FactorTyple_>,
+                         TensorProductOfBasedVectorSpaces_c<FactorTyple_>,
                          Scalar_,
                          NaturalEmbedding,
                          ENABLE_EXCEPTIONS_>
 {
 private:
-    typedef TensorProductOfBasedVectorSpaces_c<FactorTypeList_> TensorProduct;
+    typedef TensorProductOfBasedVectorSpaces_c<FactorTyple_> TensorProduct;
     LinearEmbedding_f ();
 public:
     typedef LinearEmbedding_c<TensorProduct,TensorProduct,Scalar_,IdentityEmbedding,ENABLE_EXCEPTIONS_> T;

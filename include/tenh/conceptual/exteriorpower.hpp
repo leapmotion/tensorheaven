@@ -15,7 +15,6 @@
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/conceptual/vectorspace.hpp"
 #include "tenh/mathutil.hpp"
-#include "tenh/meta/typelist_utility.hpp"
 #include "tenh/multiindex.hpp" // technically not conceptual code, but close enough.
 
 namespace Tenh {
@@ -24,11 +23,11 @@ namespace Tenh {
 template <Uint32 ORDER_, typename Factor_>
 struct ExteriorPower_c
 {
-    typedef EmptyTypeList ParentTypeList;
+    typedef Typle_t<> ParentTyple;
 
     static Uint32 const ORDER = ORDER_;
     typedef Factor_ Factor;
-    typedef typename UniformTypeListOfLength_t<ORDER_,Factor_>::T FactorTypeList;
+    typedef typename Hippo::UniformTypleOfLength_f<ORDER_,Factor_>::T FactorTyple;
 
     static std::string type_as_string ()
     {
@@ -37,7 +36,7 @@ struct ExteriorPower_c
 };
 
 template <Uint32 ORDER_, typename Factor_>
-struct IsConcept_f<ExteriorPower_c<ORDER_,Factor_> >
+struct IsConcept_f<ExteriorPower_c<ORDER_,Factor_>>
 {
     static bool const V = true;
 private:
@@ -50,7 +49,7 @@ template <typename T> struct IsExteriorPower_f
 private:
     IsExteriorPower_f();
 };
-template <Uint32 ORDER, typename Factor> struct IsExteriorPower_f<ExteriorPower_c<ORDER,Factor> >
+template <Uint32 ORDER, typename Factor> struct IsExteriorPower_f<ExteriorPower_c<ORDER,Factor>>
 {
     static bool const V = true;
 private:
@@ -66,16 +65,14 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(ExteriorPower);
 template <Uint32 ORDER_, typename Factor_>
 struct ExteriorPowerOfVectorSpace_c
 {
+    static_assert(IS_VECTOR_SPACE_UNIQUELY(Factor_), "Factor_ must have unique vector space structure");
 private:
-    static_assert(IS_VECTOR_SPACE_UNIQUELY(Factor_), "Factor of ExteriorPowerOfVectorSpace_c must be a vector space.");
-
+    static Uint32 const VECTOR_SPACE_DIMENSION = BinomialCoefficient_t<DimensionOf_f<Factor_>::V,ORDER_>::V;
     typedef ExteriorPower_c<ORDER_,Factor_> As_ExteriorPower;
-    typedef VectorSpace_c<typename ScalarFieldOf_f<Factor_>::T,BinomialCoefficient_t<DimensionOf_f<Factor_>::V, ORDER_>::V,ExteriorPower_c<ORDER_,typename Factor_::Id> > As_VectorSpace;
+    typedef VectorSpace_c<typename ScalarFieldOf_f<Factor_>::T,VECTOR_SPACE_DIMENSION,ExteriorPower_c<ORDER_,typename Factor_::Id> > As_VectorSpace;
     typedef EmbeddableInTensorProductOfVectorSpaces_c<typename TensorPowerOfVectorSpace_f<ORDER_,Factor_>::T> As_EmbeddableInTensorProductOfVectorSpaces;
 public:
-    typedef TypeList_t<As_ExteriorPower,
-            TypeList_t<As_VectorSpace,
-            TypeList_t<As_EmbeddableInTensorProductOfVectorSpaces> > > ParentTypeList;
+    typedef Typle_t<As_ExteriorPower,As_VectorSpace,As_EmbeddableInTensorProductOfVectorSpaces> ParentTyple;
 
     typedef typename As_VectorSpace::Id Id;
     typedef Factor_ Factor;
@@ -87,7 +84,7 @@ public:
 };
 
 template <Uint32 ORDER_, typename Factor_>
-struct IsConcept_f<ExteriorPowerOfVectorSpace_c<ORDER_,Factor_> >
+struct IsConcept_f<ExteriorPowerOfVectorSpace_c<ORDER_,Factor_>>
 {
     static bool const V = true;
 private:
@@ -117,13 +114,12 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(ExteriorPowerOfVectorSpace);
 template <Uint32 ORDER_, typename Factor_>
 struct ExteriorPowerOfBasis_c
 {
+    static_assert(IS_BASIS_UNIQUELY(Factor_), "Factor_ must have unique basis structure");
 private:
-    static_assert(IS_BASIS_UNIQUELY(Factor_), "Factor in ExteriorPowerOfBasis_c must be a basis.");
     typedef ExteriorPower_c<ORDER_,Factor_> As_ExteriorPower;
-    typedef Basis_c<ExteriorPower_c<ORDER_,Factor_> > As_Basis;
+    typedef Basis_c<ExteriorPower_c<ORDER_,Factor_>> As_Basis;
 public:
-    typedef TypeList_t<As_ExteriorPower,
-            TypeList_t<As_Basis> > ParentTypeList;
+    typedef Typle_t<As_ExteriorPower,As_Basis> ParentTyple;
 
     typedef typename As_Basis::Id Id;
     typedef Factor_ Factor;
@@ -135,7 +131,7 @@ public:
 };
 
 template <Uint32 ORDER_, typename Factor_>
-struct IsConcept_f<ExteriorPowerOfBasis_c<ORDER_,Factor_> >
+struct IsConcept_f<ExteriorPowerOfBasis_c<ORDER_,Factor_>>
 {
     static bool const V = true;
 private:
@@ -148,7 +144,7 @@ template <typename T> struct IsExteriorPowerOfBasis_f
 private:
     IsExteriorPowerOfBasis_f();
 };
-template <Uint32 ORDER, typename Factor> struct IsExteriorPowerOfBasis_f<ExteriorPowerOfBasis_c<ORDER,Factor> >
+template <Uint32 ORDER, typename Factor> struct IsExteriorPowerOfBasis_f<ExteriorPowerOfBasis_c<ORDER,Factor>>
 {
     static bool const V = true;
 private:
@@ -164,14 +160,13 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(ExteriorPowerOfBasis);
 template <typename ExteriorPowerOfVectorSpace_, typename Basis_>
 struct BasedExteriorPowerOfVectorSpace_c
 {
+    static_assert(IS_EXTERIOR_POWER_OF_VECTOR_SPACE_UNIQUELY(ExteriorPowerOfVectorSpace_), "ExteriorPowerOfVectorSpace_ must have unique exterior power of vector space structure");
+    static_assert(IS_BASIS_UNIQUELY(Basis_), "Basis_ must have unique basis structure");
 private:
-    static_assert(IS_EXTERIOR_POWER_OF_VECTOR_SPACE_UNIQUELY(ExteriorPowerOfVectorSpace_), "ExteriorPowerOfVectorSpace must be an exterior power of a vector space.");
-    static_assert(IS_BASIS_UNIQUELY(Basis_), "Basis must be a basis.");
     typedef ExteriorPowerOfVectorSpace_ As_ExteriorPowerOfVectorSpace;
     typedef BasedVectorSpace_c<ExteriorPowerOfVectorSpace_,Basis_> As_BasedVectorSpace;
 public:
-    typedef TypeList_t<As_ExteriorPowerOfVectorSpace,
-            TypeList_t<As_BasedVectorSpace> > ParentTypeList;
+    typedef Typle_t<As_ExteriorPowerOfVectorSpace,As_BasedVectorSpace> ParentTyple;
 
     typedef typename As_BasedVectorSpace::Id Id;
 
@@ -187,7 +182,7 @@ struct IsConcept_f<BasedExteriorPowerOfVectorSpace_c<ExteriorPowerOfVectorSpace,
 { static bool const V = true; };
 
 template <typename T> struct IsBasedExteriorPowerOfVectorSpace_f { static bool const V = false; };
-template <typename ExteriorPowerOfVectorSpace, typename Basis> struct IsBasedExteriorPowerOfVectorSpace_f<BasedExteriorPowerOfVectorSpace_c<ExteriorPowerOfVectorSpace,Basis> > { static bool const V = true; };
+template <typename ExteriorPowerOfVectorSpace, typename Basis> struct IsBasedExteriorPowerOfVectorSpace_f<BasedExteriorPowerOfVectorSpace_c<ExteriorPowerOfVectorSpace,Basis>> { static bool const V = true; };
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(BasedExteriorPowerOfVectorSpace);
 // special convenience macros
@@ -208,17 +203,16 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(BasedExteriorPowerOfVectorSpace);
 template <Uint32 ORDER_, typename Factor_>
 struct ExteriorPowerOfBasedVectorSpace_c
 {
+    static_assert(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), "Factor_ must have unique based vector space structure");
 private:
-    static_assert(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), "Factor of ExteriorPowerOfBasedVectorSpace_c must be a based vector space.");
-    typedef typename UniformTypeListOfLength_t<ORDER_,Factor_>::T FactorTypeList;
+    typedef typename Hippo::UniformTypleOfLength_f<ORDER_,Factor_>::T FactorTyple;
 
     typedef BasedExteriorPowerOfVectorSpace_c<ExteriorPowerOfVectorSpace_c<ORDER_,Factor_>,
                                               ExteriorPowerOfBasis_c<ORDER_,typename BasisOf_f<Factor_>::T> > As_BasedExteriorPowerOfVectorSpace;
     typedef EmbeddableInTensorProductOfBasedVectorSpaces_c<typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T,
                                                            typename TensorPowerOfVectorSpace_f<ORDER_,Factor_>::T> As_EmbeddableInTensorProductOfBasedVectorSpaces;
 public:
-    typedef TypeList_t<As_BasedExteriorPowerOfVectorSpace,
-            TypeList_t<As_EmbeddableInTensorProductOfBasedVectorSpaces> > ParentTypeList;
+    typedef Typle_t<As_BasedExteriorPowerOfVectorSpace,As_EmbeddableInTensorProductOfBasedVectorSpaces> ParentTyple;
 
     typedef typename As_BasedExteriorPowerOfVectorSpace::Id Id;
     typedef Factor_ Factor;
@@ -230,7 +224,7 @@ public:
 };
 
 template <Uint32 ORDER_, typename Factor_>
-struct IsConcept_f<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_> >
+struct IsConcept_f<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>>
 {
     static bool const V = true;
 private:
@@ -243,7 +237,7 @@ template <typename T_> struct IsExteriorPowerOfBasedVectorSpace_f
 private:
     IsExteriorPowerOfBasedVectorSpace_f();
 };
-template <Uint32 ORDER_, typename Factor_> struct IsExteriorPowerOfBasedVectorSpace_f<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_> >
+template <Uint32 ORDER_, typename Factor_> struct IsExteriorPowerOfBasedVectorSpace_f<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>>
 {
     static bool const V = true;
 private:
@@ -258,7 +252,7 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(ExteriorPowerOfBasedVectorSpace);
 // in the category of based vector spaces, the dual space functor commutes
 // with the kth exterior power functor.
 template <Uint32 ORDER_, typename Factor_>
-struct DualOf_f<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_> >
+struct DualOf_f<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>>
 {
     typedef ExteriorPowerOfBasedVectorSpace_c<ORDER_,typename DualOf_f<Factor_>::T> T;
 private:

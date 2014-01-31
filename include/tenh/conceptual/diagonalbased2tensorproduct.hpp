@@ -28,7 +28,7 @@ namespace Tenh {
 template <typename Factor0_, typename Factor1_>
 struct Diagonal2TensorProduct_c
 {
-    typedef EmptyTypeList ParentTypeList;
+    typedef Typle_t<> ParentTyple;
 
     typedef Factor0_ Factor0;
     typedef Factor1_ Factor1;
@@ -40,7 +40,7 @@ struct Diagonal2TensorProduct_c
 };
 
 template <typename Factor0_, typename Factor1_>
-struct IsConcept_f<Diagonal2TensorProduct_c<Factor0_,Factor1_> >
+struct IsConcept_f<Diagonal2TensorProduct_c<Factor0_,Factor1_>>
 {
     static bool const V = true;
 private:
@@ -55,7 +55,7 @@ private:
 };
 
 template <typename Factor0_, typename Factor1_>
-struct IsDiagonal2TensorProduct_f<Diagonal2TensorProduct_c<Factor0_,Factor1_> >
+struct IsDiagonal2TensorProduct_f<Diagonal2TensorProduct_c<Factor0_,Factor1_>>
 {
     static bool const V = true;
 private:
@@ -74,14 +74,13 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Diagonal2TensorProduct);
 template <typename Factor0_, typename Factor1_>
 struct Diagonal2TensorProductOfBases_c
 {
+    static_assert(IS_BASIS_UNIQUELY(Factor0_), "Factor0_ must have unique basis structure");
+    static_assert(IS_BASIS_UNIQUELY(Factor1_), "Factor1_ must have unique basis structure");
 private:
-    static_assert(IS_BASIS_UNIQUELY(Factor0_), "Factor 0 must be a basis.");
-    static_assert(IS_BASIS_UNIQUELY(Factor1_), "Factor 1 must be a basis.");
-    typedef Basis_c<Diagonal2TensorProduct_c<Factor0_,Factor1_> > As_Basis;
-    typedef Diagonal2TensorProduct_c<Factor0_, Factor1_> As_Diagonal2TensorProduct;
+    typedef Basis_c<Diagonal2TensorProduct_c<Factor0_,Factor1_>> As_Basis;
+    typedef Diagonal2TensorProduct_c<Factor0_,Factor1_> As_Diagonal2TensorProduct;
 public:
-    typedef TypeList_t<As_Basis,
-            TypeList_t<As_Diagonal2TensorProduct> > ParentTypeList;
+    typedef Typle_t<As_Basis,As_Diagonal2TensorProduct> ParentTyple;
 
     typedef typename As_Basis::Id Id;
     typedef Factor0_ Factor0;
@@ -94,7 +93,7 @@ public:
 };
 
 template <typename Factor0_, typename Factor1_>
-struct IsConcept_f<Diagonal2TensorProductOfBases_c<Factor0_,Factor1_> >
+struct IsConcept_f<Diagonal2TensorProductOfBases_c<Factor0_,Factor1_>>
 {
     static bool const V = true;
 private:
@@ -109,7 +108,7 @@ private:
 };
 
 template <typename Factor0_, typename Factor1_>
-struct IsDiagonal2TensorProductOfBases_f<Diagonal2TensorProductOfBases_c<Factor0_,Factor1_> >
+struct IsDiagonal2TensorProductOfBases_f<Diagonal2TensorProductOfBases_c<Factor0_,Factor1_>>
 {
     static bool const V = true;
 private:
@@ -128,24 +127,24 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Diagonal2TensorProductOfBases);
 template <typename Factor0_, typename Factor1_>
 struct Diagonal2TensorProductOfBasedVectorSpaces_c
 {
+    static_assert(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor0_), "Factor0_ must have unique based vector space structure");
+    static_assert(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor1_), "Factor1_ must have unique based vector space structure");
+    static_assert(TypesAreEqual_f<typename ScalarFieldOf_f<Factor0_>::T,typename ScalarFieldOf_f<Factor1_>::T>::V, "all factors must have the same scalar field");
 private:
-    static_assert(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor0_), "Factor 0 must be a based vector space.");
-    static_assert(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor1_), "Factor 1 must be a based vector space.");
-    static_assert((TypesAreEqual_f<typename ScalarFieldOf_f<Factor0_>::T,typename ScalarFieldOf_f<Factor1_>::T>::V), "All factors must have the same scalar field.");
-    typedef TypeList_t<Factor0_,TypeList_t<Factor1_> > FactorTypeList;
+    typedef Typle_t<Factor0_,Factor1_> FactorTyple;
 
+    static Uint32 const VECTOR_SPACE_DIMENSION = (DimensionOf_f<Factor0_>::V < DimensionOf_f<Factor1_>::V) ? DimensionOf_f<Factor0_>::V : DimensionOf_f<Factor1_>::V;
     typedef VectorSpace_c<typename ScalarFieldOf_f<Factor0_>::T,
-                          (DimensionOf_f<Factor0_>::V < DimensionOf_f<Factor1_>::V) ? DimensionOf_f<Factor0_>::V : DimensionOf_f<Factor1_>::V,
-                          Diagonal2TensorProduct_c<Factor0_,Factor1_> > UnderlyingVectorSpace;
+                          VECTOR_SPACE_DIMENSION,
+                          Diagonal2TensorProduct_c<Factor0_,Factor1_>> UnderlyingVectorSpace;
 
     typedef BasedVectorSpace_c<UnderlyingVectorSpace,
                                Diagonal2TensorProductOfBases_c<typename BasisOf_f<Factor0_>::T,
-                                                               typename BasisOf_f<Factor1_>::T> > As_BasedVectorSpace;
-    typedef EmbeddableInTensorProductOfBasedVectorSpaces_c<TensorProductOfBasedVectorSpaces_c<FactorTypeList>,
-                                                           TensorProductOfVectorSpaces_c<FactorTypeList> > As_EmbeddableInTensorProductOfBasedVectorSpaces;
+                                                               typename BasisOf_f<Factor1_>::T>> As_BasedVectorSpace;
+    typedef EmbeddableInTensorProductOfBasedVectorSpaces_c<TensorProductOfBasedVectorSpaces_c<FactorTyple>,
+                                                           TensorProductOfVectorSpaces_c<FactorTyple>> As_EmbeddableInTensorProductOfBasedVectorSpaces;
 public:
-    typedef TypeList_t<As_BasedVectorSpace,
-            TypeList_t<As_EmbeddableInTensorProductOfBasedVectorSpaces> > ParentTypeList;
+    typedef Typle_t<As_BasedVectorSpace,As_EmbeddableInTensorProductOfBasedVectorSpaces> ParentTyple;
 
     typedef typename As_BasedVectorSpace::Id Id;
     typedef Factor0_ Factor0;
@@ -187,21 +186,21 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Diagonal2TensorProductOfBasedVectorSpa
 
 // TODO: verify that this mathematical claim is true
 template <typename Factor0, typename Factor1>
-struct DualOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0,Factor1> >
+struct DualOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0,Factor1>>
 {
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<typename DualOf_f<Factor0>::T,typename DualOf_f<Factor1>::T> T;
 private:
     DualOf_f();
 };
 
-// convenience metafunction for using a FactorTypeList_ instead of two separate factors
-template <typename FactorTypeList_>
+// convenience metafunction for using a FactorTyple_ instead of two separate factors
+template <typename FactorTyple_>
 struct Diagonal2TensorProductOfBasedVectorSpaces_f
 {
+    static_assert(Hippo::Length_f<FactorTyple_>::V == 2, "there must be exactly 2 factors");
 private:
-    static_assert(FactorTypeList_::LENGTH == 2, "The FactorTypeList to a diagonal 2 tensor product must have length 2.");
-    typedef typename FactorTypeList_::HeadType Factor0;
-    typedef typename FactorTypeList_::BodyTypeList::HeadType Factor1;
+    typedef typename Hippo::Element_f<FactorTyple_,0>::T Factor0;
+    typedef typename Hippo::Element_f<FactorTyple_,1>::T Factor1;
     Diagonal2TensorProductOfBasedVectorSpaces_f();
 public:
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0,Factor1> T;
@@ -209,9 +208,9 @@ public:
 
 // specialization for FactorTypeListOf_f
 template <typename Factor0_, typename Factor1_>
-struct BaseProperty_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,FactorTypeList>
+struct BaseProperty_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,FactorTyple>
 {
-    typedef TypeList_t<Factor0_,TypeList_t<Factor1_> > T;
+    typedef Typle_t<Factor0_,Factor1_> T;
 private:
     BaseProperty_f();
 };
@@ -228,7 +227,7 @@ private:
 template <typename Factor0_, typename Factor1_>
 typename std::enable_if<(!BOTH_FACTORS_ARE_BASES_UNIQUELY(Factor0_,Factor1_) &&
                          !BOTH_FACTORS_ARE_BASED_VECTOR_SPACES_UNIQUELY(Factor0_,Factor1_)),
-                        Diagonal2TensorProduct_c<Factor0_,Factor1_> >::type
+                        Diagonal2TensorProduct_c<Factor0_,Factor1_>>::type
     diag2 (Factor0_ const &, Factor1_ const &)
 {
     return Diagonal2TensorProduct_c<Factor0_,Factor1_>();
@@ -238,7 +237,7 @@ typename std::enable_if<(!BOTH_FACTORS_ARE_BASES_UNIQUELY(Factor0_,Factor1_) &&
 template <typename Factor0_, typename Factor1_>
 typename std::enable_if<(BOTH_FACTORS_ARE_BASES_UNIQUELY(Factor0_,Factor1_) &&
                          !BOTH_FACTORS_ARE_BASED_VECTOR_SPACES_UNIQUELY(Factor0_,Factor1_)),
-                        Diagonal2TensorProductOfBases_c<Factor0_,Factor1_> >::type
+                        Diagonal2TensorProductOfBases_c<Factor0_,Factor1_>>::type
     diag2 (Factor0_ const &, Factor1_ const &)
 {
     return Diagonal2TensorProductOfBases_c<Factor0_,Factor1_>();
@@ -248,7 +247,7 @@ typename std::enable_if<(BOTH_FACTORS_ARE_BASES_UNIQUELY(Factor0_,Factor1_) &&
 template <typename Factor0_, typename Factor1_>
 typename std::enable_if<(!BOTH_FACTORS_ARE_BASES_UNIQUELY(Factor0_,Factor1_) &&
                          BOTH_FACTORS_ARE_BASED_VECTOR_SPACES_UNIQUELY(Factor0_,Factor1_)),
-                        Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_> >::type
+                        Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>>::type
     diag2 (Factor0_ const &, Factor1_ const &)
 {
     return Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>();
@@ -260,7 +259,7 @@ typename std::enable_if<(!BOTH_FACTORS_ARE_BASES_UNIQUELY(Factor0_,Factor1_) &&
 // diagonal 2-tensor product of based vector spaces (from associated 2-tensor type)
 template <typename Factor0_, typename Factor1_>
 Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>
-    diag2 (TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0_,TypeList_t<Factor1_> > > const &)
+    diag2 (TensorProductOfBasedVectorSpaces_c<Typle_t<Factor0_,Factor1_>> const &)
 {
     return Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>();
 }
@@ -271,14 +270,14 @@ Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>
 
 template <typename Factor0_, typename Factor1_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
 struct LinearEmbedding_c<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,
-                         TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0_,TypeList_t<Factor1_> > >,
+                         TensorProductOfBasedVectorSpaces_c<Typle_t<Factor0_,Factor1_>>,
                          Scalar_,
                          NaturalEmbedding,
                          ENABLE_EXCEPTIONS_>
 {
 private:
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_> Diag2;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0_,TypeList_t<Factor1_> > > Tensor2;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<Factor0_,Factor1_>> Tensor2;
     static bool const FACTOR0DIM_LEQ_FACTOR1DIM = DimensionOf_f<Factor0_>::V <= DimensionOf_f<Factor1_>::V;
 public:
     typedef ComponentIndex_t<DimensionOf_f<Diag2>::V> Diag2ComponentIndex;

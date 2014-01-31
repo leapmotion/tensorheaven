@@ -139,7 +139,6 @@ MAKE_1_ARY_TYPE_EVALUATOR(UniformDirectSumSummandOf);
 // DirectSumOfVectorSpaces_c
 // ///////////////////////////////////////////////////////////////////////////
 
-// SummandTyple_ must be a Typle_t of VectorSpace_c types
 template <typename SummandTyple_>
 struct DirectSumOfVectorSpaces_c
 {
@@ -200,13 +199,12 @@ private:
 // DirectSumOfBases_c
 // ///////////////////////////////////////////////////////////////////////////
 
-// SummandTyple_ must be a Typle_t of Basis_c types
 template <typename SummandTyple_>
 struct DirectSumOfBases_c
 {
     static_assert(IsTyple_f<SummandTyple_>::V, "SummandTyple_ must be a Typle_t");
     static_assert(AllTypesHaveBasisStructures_f<SummandTyple_>::V, "all summands must be bases");
-    static_assert(AllTypesHaveUniqueBasisStructures_f<SummandTyple_>::V, "all summands must be bases");
+    static_assert(AllTypesHaveUniqueBasisStructures_f<SummandTyple_>::V, "all summands must have unique basis structures");
 private:
     typedef DirectSum_c<SummandTyple_> As_DirectSum;
     typedef Basis_c<DirectSum_c<typename IdsOfTyple_f<SummandTyple_>::T>> As_Basis;
@@ -318,7 +316,6 @@ private:
 // DirectSumOfBasedVectorSpaces_c
 // ///////////////////////////////////////////////////////////////////////////
 
-// SummandTyple_ must be a Typle_t of BasedVectorSpace_c types
 template <typename SummandTyple_>
 struct DirectSumOfBasedVectorSpaces_c
 {

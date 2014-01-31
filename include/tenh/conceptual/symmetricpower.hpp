@@ -23,11 +23,11 @@ namespace Tenh {
 template <Uint32 ORDER_, typename Factor_>
 struct SymmetricPower_c
 {
-    typedef EmptyTypeList ParentTypeList;
+    typedef Typle_t<> ParentTyple;
 
     static Uint32 const ORDER = ORDER_;
     typedef Factor_ Factor;
-    typedef typename UniformTypeListOfLength_t<ORDER_,Factor_>::T FactorTypeList;
+    typedef typename Hippo::UniformTypleOfLength_f<ORDER_,Factor_>::T FactorTyple;
 
     static std::string type_as_string ()
     {
@@ -36,7 +36,7 @@ struct SymmetricPower_c
 };
 
 template <Uint32 ORDER_, typename Factor_>
-struct IsConcept_f<SymmetricPower_c<ORDER_,Factor_> >
+struct IsConcept_f<SymmetricPower_c<ORDER_,Factor_>>
 {
     static bool const V = true;
 private:
@@ -49,7 +49,7 @@ template <typename T> struct IsSymmetricPower_f
 private:
     IsSymmetricPower_f();
 };
-template <Uint32 ORDER, typename Factor> struct IsSymmetricPower_f<SymmetricPower_c<ORDER,Factor> >
+template <Uint32 ORDER, typename Factor> struct IsSymmetricPower_f<SymmetricPower_c<ORDER,Factor>>
 {
     static bool const V = true;
 private:
@@ -65,15 +65,14 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(SymmetricPower);
 template <Uint32 ORDER_, typename Factor_>
 struct SymmetricPowerOfVectorSpace_c
 {
+    static_assert(IS_VECTOR_SPACE_UNIQUELY(Factor_), "Factor_ must have a unique vector space structure");
 private:
-    static_assert(IS_VECTOR_SPACE_UNIQUELY(Factor_), "Factor of SymmetricPowerOfVectorSpace_c must be a vector space.");
+    static Uint32 const VECTOR_SPACE_DIMENSION = BinomialCoefficient_t<DimensionOf_f<Factor_>::V+ORDER_-1,ORDER_>::V;
     typedef SymmetricPower_c<ORDER_,Factor_> As_SymmetricPower;
-    typedef VectorSpace_c<typename ScalarFieldOf_f<Factor_>::T,BinomialCoefficient_t<DimensionOf_f<Factor_>::V + ORDER_ - 1, ORDER_>::V,SymmetricPower_c<ORDER_,typename Factor_::Id> > As_VectorSpace;
+    typedef VectorSpace_c<typename ScalarFieldOf_f<Factor_>::T,VECTOR_SPACE_DIMENSION,SymmetricPower_c<ORDER_,typename Factor_::Id> > As_VectorSpace;
     typedef EmbeddableInTensorProductOfVectorSpaces_c<typename TensorPowerOfVectorSpace_f<ORDER_,Factor_>::T> As_EmbeddableInTensorProductOfVectorSpaces;
 public:
-    typedef TypeList_t<As_SymmetricPower,
-            TypeList_t<As_VectorSpace,
-            TypeList_t<As_EmbeddableInTensorProductOfVectorSpaces> > > ParentTypeList;
+    typedef Typle_t<As_SymmetricPower,As_VectorSpace,As_EmbeddableInTensorProductOfVectorSpaces> ParentTyple;
 
     typedef typename As_VectorSpace::Id Id;
     typedef Factor_ Factor;
@@ -85,7 +84,7 @@ public:
 };
 
 template <Uint32 ORDER_, typename Factor_>
-struct IsConcept_f<SymmetricPowerOfVectorSpace_c<ORDER_,Factor_> >
+struct IsConcept_f<SymmetricPowerOfVectorSpace_c<ORDER_,Factor_>>
 {
     static bool const V = true;
 private:
@@ -98,7 +97,7 @@ template <typename T> struct IsSymmetricPowerOfVectorSpace_f
 private:
     IsSymmetricPowerOfVectorSpace_f();
 };
-template <Uint32 ORDER, typename Factor> struct IsSymmetricPowerOfVectorSpace_f<SymmetricPowerOfVectorSpace_c<ORDER,Factor> >
+template <Uint32 ORDER, typename Factor> struct IsSymmetricPowerOfVectorSpace_f<SymmetricPowerOfVectorSpace_c<ORDER,Factor>>
 {
     static bool const V = true;
 private:
@@ -115,13 +114,12 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(SymmetricPowerOfVectorSpace);
 template <Uint32 ORDER_, typename Factor_>
 struct SymmetricPowerOfBasis_c
 {
+    static_assert(IS_BASIS_UNIQUELY(Factor_), "Factor_ must have a unique basis structure");
 private:
-    static_assert(IS_BASIS_UNIQUELY(Factor_), "Factor in SymmetricPowerofBasis_c must be a basis.");
     typedef SymmetricPower_c<ORDER_,Factor_> As_SymmetricPower;
-    typedef Basis_c<SymmetricPower_c<ORDER_,Factor_> > As_Basis;
+    typedef Basis_c<SymmetricPower_c<ORDER_,Factor_>> As_Basis;
 public:
-    typedef TypeList_t<As_SymmetricPower,
-            TypeList_t<As_Basis> > ParentTypeList;
+    typedef Typle_t<As_SymmetricPower,As_Basis> ParentTyple;
 
     static Uint32 const ORDER = As_SymmetricPower::ORDER;
     typedef typename As_Basis::Id Id;
@@ -134,7 +132,7 @@ public:
 };
 
 template <Uint32 ORDER_, typename Factor_>
-struct IsConcept_f<SymmetricPowerOfBasis_c<ORDER_,Factor_> >
+struct IsConcept_f<SymmetricPowerOfBasis_c<ORDER_,Factor_>>
 {
     static bool const V = true;
 private:
@@ -147,7 +145,7 @@ template <typename T> struct IsSymmetricPowerOfBasis_f
 private:
     IsSymmetricPowerOfBasis_f();
 };
-template <Uint32 ORDER, typename Factor> struct IsSymmetricPowerOfBasis_f<SymmetricPowerOfBasis_c<ORDER,Factor> >
+template <Uint32 ORDER, typename Factor> struct IsSymmetricPowerOfBasis_f<SymmetricPowerOfBasis_c<ORDER,Factor>>
 {
     static bool const V = true;
 private:
@@ -163,14 +161,13 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(SymmetricPowerOfBasis);
 template <typename SymmetricPowerOfVectorSpace_, typename Basis_>
 struct BasedSymmetricPowerOfVectorSpace_c
 {
+    static_assert(IS_SYMMETRIC_POWER_OF_VECTOR_SPACE_UNIQUELY(SymmetricPowerOfVectorSpace_), "SymmetricPowerOfVectorSpace_ must have unique symmetric power of vector space structure");
+    static_assert(IS_BASIS_UNIQUELY(Basis_), "Basis_ must have unique basis structure");
 private:
-        static_assert(IS_SYMMETRIC_POWER_OF_VECTOR_SPACE_UNIQUELY(SymmetricPowerOfVectorSpace_), "SymmetriPowerOfVectorSpace must be a symmetric power of a vector space.");
-        static_assert(IS_BASIS_UNIQUELY(Basis_), "Basis must be a basis.");
     typedef SymmetricPowerOfVectorSpace_ As_SymmetricPowerOfVectorSpace;
     typedef BasedVectorSpace_c<SymmetricPowerOfVectorSpace_,Basis_> As_BasedVectorSpace;
 public:
-    typedef TypeList_t<As_SymmetricPowerOfVectorSpace,
-            TypeList_t<As_BasedVectorSpace> > ParentTypeList;
+    typedef Typle_t<As_SymmetricPowerOfVectorSpace,As_BasedVectorSpace> ParentTyple;
 
     typedef typename As_BasedVectorSpace::Id Id;
 
@@ -219,16 +216,15 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(BasedSymmetricPowerOfVectorSpace);
 template <Uint32 ORDER_, typename Factor_>
 struct SymmetricPowerOfBasedVectorSpace_c
 {
+    static_assert(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), "Factor_ must have unique based vector space structure");
 private:
-    static_assert(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), "Factor of SymmetricPowerOfBasedVectorSpace_c must be a based vector space.");
     typedef BasedSymmetricPowerOfVectorSpace_c<SymmetricPowerOfVectorSpace_c<ORDER_,Factor_>,
-                                               SymmetricPowerOfBasis_c<ORDER_,typename BasisOf_f<Factor_>::T> > As_BasedSymmetricPowerOfVectorSpace;
-    typedef typename UniformTypeListOfLength_t<ORDER_,Factor_>::T FactorTypeList;
+                                               SymmetricPowerOfBasis_c<ORDER_,typename BasisOf_f<Factor_>::T>> As_BasedSymmetricPowerOfVectorSpace;
+    typedef typename Hippo::UniformTypleOfLength_f<ORDER_,Factor_>::T FactorTyple;
     typedef EmbeddableInTensorProductOfBasedVectorSpaces_c<typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T,
                                                            typename TensorPowerOfVectorSpace_f<ORDER_,Factor_>::T> As_EmbeddableInTensorProductOfBasedVectorSpaces;
 public:
-    typedef TypeList_t<As_BasedSymmetricPowerOfVectorSpace,
-            TypeList_t<As_EmbeddableInTensorProductOfBasedVectorSpaces> > ParentTypeList;
+    typedef Typle_t<As_BasedSymmetricPowerOfVectorSpace,As_EmbeddableInTensorProductOfBasedVectorSpaces> ParentTyple;
 
     typedef typename As_BasedSymmetricPowerOfVectorSpace::Id Id;
     typedef Factor_ Factor;
@@ -240,7 +236,7 @@ public:
 };
 
 template <Uint32 ORDER_, typename Factor_>
-struct IsConcept_f<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> >
+struct IsConcept_f<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>>
 {
     static bool const V = true;
 private:
@@ -253,7 +249,7 @@ template <typename T> struct IsSymmetricPowerOfBasedVectorSpace_f
 private:
     IsSymmetricPowerOfBasedVectorSpace_f();
 };
-template <Uint32 ORDER_, typename Factor_> struct IsSymmetricPowerOfBasedVectorSpace_f<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> >
+template <Uint32 ORDER_, typename Factor_> struct IsSymmetricPowerOfBasedVectorSpace_f<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>>
 {
     static bool const V = true;
 private:
@@ -268,7 +264,7 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(SymmetricPowerOfBasedVectorSpace);
 // in the category of based vector spaces, the dual space functor commutes
 // with the kth symmetric power functor, modulo a particular natural isomorphism.
 template <Uint32 ORDER_, typename Factor_>
-struct DualOf_f<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> >
+struct DualOf_f<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>>
 {
     typedef SymmetricPowerOfBasedVectorSpace_c<ORDER_,typename DualOf_f<Factor_>::T> T;
 private:
@@ -363,7 +359,7 @@ public:
                                   ENABLE_EXCEPTIONS_> BodyLinearEmbedding;
         // NOTE: this is really inefficient because it converts to and then from a ComponentIndex.
         // it could be better implemented using a private scalar_factor_for_embedded_component(MultiIndex)
-        return SymComponentIndex(  binomial_coefficient(m.head().value() + ORDER_ - 1, ORDER_)
+        return SymComponentIndex(  binomial_coefficient(m.head().value()+ORDER_-1, ORDER_)
                                  + BodyLinearEmbedding::source_component_index_for_embedded_component(m.body().as_component_index()).value());
     }
 };

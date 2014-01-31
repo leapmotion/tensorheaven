@@ -22,7 +22,7 @@ struct EmbeddableInTensorProductOfVectorSpaces_c
 {
     // NOTE: we can't static-assert that the template parameters are the types that they're required to be,
     // since the concept hierarchy isn't fully available in this file.
-    typedef EmptyTypeList ParentTypeList;
+    typedef Typle_t<> ParentTyple;
 
     typedef Exactly_TensorProductOfVectorSpaces_ TensorProductOfVectorSpaces;
 
@@ -77,7 +77,7 @@ private:
     // since the concept hierarchy isn't fully available in this file.
     typedef EmbeddableInTensorProductOfVectorSpaces_c<Exactly_TensorProductOfVectorSpaces_> As_EmbeddableInTensorProductOfVectorSpaces;
 public:
-    typedef TypeList_t<As_EmbeddableInTensorProductOfVectorSpaces> ParentTypeList;
+    typedef Typle_t<As_EmbeddableInTensorProductOfVectorSpaces> ParentTyple;
 
     typedef Exactly_TensorProductOfBasedVectorSpaces_ TensorProductOfBasedVectorSpaces;
 
