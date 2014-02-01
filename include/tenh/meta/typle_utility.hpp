@@ -226,7 +226,7 @@ MAKE_2_ARY_VALUE_EVALUATOR(Max, OperandType_, typename, OperandType_);
 template <typename Typle_, Uint32 INDEX_>
 struct Element_f
 {
-    static_assert(!TypesAreEqual_f<Typle_,Typle_t<>>::V, "Typle_t<> has no elements");
+    static_assert(!TypesAreEqual_f<Typle_,Typle_t<>>::V, "Typle_t<> has no elements to access");
 };
 
 /// @cond false
