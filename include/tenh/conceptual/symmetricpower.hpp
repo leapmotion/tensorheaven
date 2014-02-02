@@ -302,7 +302,7 @@ private:
     typedef SymmetricPowerOfBasedVectorSpace_c<1,Factor_> Sym;
     typedef typename TensorPowerOfBasedVectorSpace_f<1,Factor_>::T TPow;
     typedef ComponentIndex_t<DimensionOf_f<Factor_>::V> FactorComponentIndex;
-    typedef MultiIndex_t<typename UniformTypeListOfLength_t<1,FactorComponentIndex>::T> TPowMultiIndex;
+    typedef MultiIndex_t<typename Hippo::UniformTypleOfLength_f<1,FactorComponentIndex>::T> TPowMultiIndex;
 public:
     typedef ComponentIndex_t<DimensionOf_f<Sym>::V> SymComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<TPow>::V> TPowComponentIndex;
@@ -336,7 +336,7 @@ private:
     typedef SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> Sym;
     typedef typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T TPow;
     typedef ComponentIndex_t<DimensionOf_f<Factor_>::V> FactorComponentIndex;
-    typedef MultiIndex_t<typename UniformTypeListOfLength_t<ORDER_,FactorComponentIndex>::T> TPowMultiIndex;
+    typedef MultiIndex_t<typename Hippo::UniformTypleOfLength_f<ORDER_,FactorComponentIndex>::T> TPowMultiIndex;
 public:
     typedef ComponentIndex_t<DimensionOf_f<Sym>::V> SymComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<TPow>::V> TPowComponentIndex;

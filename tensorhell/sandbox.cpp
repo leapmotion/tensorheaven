@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "tenh/list.hpp"
+#include "tenh/implementation/directsum.hpp"
 #include "tenh/implementation/tensor.hpp"
 #include "tenh/implementation/vector.hpp"
 
@@ -205,6 +206,28 @@ int main (int argc, char **argv)
 		V2 v2(uniform_tuple<Scalar>(4, 3));
 		V3 v3(uniform_tuple<Scalar>(1, 0, 5));
 		std::cout << FORMAT_VALUE(a23(i*j)*v2(i)*v3(j)) << '\n';
+		std::cout << '\n';
+	}
+
+	{
+		decltype(bvs(generic_real_vs<2>(), generic_basis())) b2;
+		decltype(bvs(generic_real_vs<3>(), generic_basis())) b3;
+		decltype(bvs(generic_real_vs<4>(), generic_basis())) b4;
+		typedef double Scalar;
+		typedef ImplementationOf_t<decltype(b2+b3),Scalar> S23;
+		typedef ImplementationOf_t<decltype(b2+b3+b4),Scalar> S234;
+
+		S23 s23(uniform_tuple<Scalar>(1, 2, 3, 4, 5));
+		std::cout << FORMAT_VALUE(type_string_of<S23::Concept>()) << '\n';
+		std::cout << FORMAT_VALUE(s23) << '\n';
+		std::cout << '\n';
+
+		S23::Dual a23(uniform_tuple<Scalar>(5, -1, 3, 4, 2));
+		std::cout << FORMAT_VALUE(a23) << '\n';
+		std::cout << FORMAT_VALUE(a23(s23)) << '\n';
+		AbstractIndex_c<'i'> i;
+		std::cout << FORMAT_VALUE(a23(i)*s23(i)) << '\n';
+
 		std::cout << '\n';
 	}
 
