@@ -58,7 +58,7 @@ struct ImplementationOf_t<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Fac
     typedef typename Parent_EmbeddableAsTensor_i::QualifiedComponent QualifiedComponent;
 
     typedef typename Parent_EmbeddableAsTensor_i::TensorProductOfBasedVectorSpaces TensorProductOfBasedVectorSpaces;
-    typedef typename Parent_EmbeddableAsTensor_i::FactorTypeList FactorTypeList;
+    typedef typename Parent_EmbeddableAsTensor_i::FactorTyple FactorTyple;
     typedef typename Parent_EmbeddableAsTensor_i::MultiIndex MultiIndex;
     static Uint32 const ORDER = 2;
     typedef Factor0_ Factor0;
@@ -113,8 +113,8 @@ struct ImplementationOf_t<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Fac
         STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
     }
     // this is the tuple-based constructor
-    template <typename HeadType_, typename BodyTypeList_>
-    ImplementationOf_t (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x)
+    template <typename Typle_>
+    ImplementationOf_t (List_t<Typle_> const &x)
         :
         Parent_Array_i(x.as_member_array())
     {
@@ -151,8 +151,8 @@ struct ImplementationOf_t<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Fac
         STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
     }
     // this is the tuple-based constructor
-    template <typename HeadType_, typename BodyTypeList_>
-    ImplementationOf_t (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x,
+    template <typename Typle_>
+    ImplementationOf_t (List_t<Typle_> const &x,
                         QualifiedComponent *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Array_i(x, pointer_to_allocation, check_pointer)
@@ -168,14 +168,14 @@ struct ImplementationOf_t<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Fac
         STATIC_ASSERT(IsUseProceduralArray_f<UseArrayType_>::V, MUST_BE_USE_PROCEDURAL_ARRAY);
     }
 
-    template <typename BundleIndexTypeList, typename BundledIndex>
-    static MultiIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)
+    template <typename BundleIndexTyple, typename BundledIndex>
+    static MultiIndex_t<BundleIndexTyple> bundle_index_map (BundledIndex const &b)
     {
         // STATIC_ASSERT(IsDimIndex_f<BundledIndex>::V, MUST_BE_DIM_INDEX);
-        // STATIC_ASSERT(BundleIndexTypeList::LENGTH == 2, LENGTH_MUST_BE_EXACTLY_2);
-        // typedef MultiIndex_t<BundleIndexTypeList> MultiIndex;
-        // typedef typename BundleIndexTypeList::HeadType Index1;
-        // typedef typename BundleIndexTypeList::BodyTypeList::HeadType Index2;
+        // STATIC_ASSERT(BundleIndexTyple::LENGTH == 2, LENGTH_MUST_BE_EXACTLY_2);
+        // typedef MultiIndex_t<BundleIndexTyple> MultiIndex;
+        // typedef typename BundleIndexTyple::HeadType Index1;
+        // typedef typename BundleIndexTyple::BodyTyple::HeadType Index2;
         // STATIC_ASSERT(IsDimIndex_f<Index1>::V, MUST_BE_DIM_INDEX);
         // STATIC_ASSERT(IsDimIndex_f<Index2>::V, MUST_BE_DIM_INDEX);
         // STATIC_ASSERT(Index1::COMPONENT_COUNT == DimensionOf_f<Factor0_>::V, DIMENSIONS_MUST_MATCH);

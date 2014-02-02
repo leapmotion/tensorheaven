@@ -3,6 +3,7 @@
 #include "tenh/list.hpp"
 #include "tenh/implementation/diagonal2tensor.hpp"
 #include "tenh/implementation/directsum.hpp"
+#include "tenh/implementation/scalar2tensor.hpp"
 #include "tenh/implementation/tensor.hpp"
 #include "tenh/implementation/vector.hpp"
 #include "tenh/implementation/vee.hpp"
@@ -143,6 +144,7 @@ int main (int argc, char **argv)
     std::cout << '\n';
 
     {
+        std::cout << "testing tuples\n";
         auto t(tuple(3, 'a', "blah", true, 3.01, -123));
         std::cout << FORMAT_VALUE(type_string_of(t)) << '\n';
         std::cout << FORMAT_VALUE(t) << '\n';
@@ -155,6 +157,7 @@ int main (int argc, char **argv)
     }
 
     {
+        std::cout << "testing vectors\n";
         typedef decltype(bvs(generic_real_vs<3>(), generic_basis())) B;
         typedef double Scalar;
         typedef ImplementationOf_t<B,Scalar> V;
@@ -182,6 +185,7 @@ int main (int argc, char **argv)
     }
 
     {
+        std::cout << "testing tensors\n";
         decltype(bvs(generic_real_vs<2>(), generic_basis())) b2;
         decltype(bvs(generic_real_vs<3>(), generic_basis())) b3;
         decltype(bvs(generic_real_vs<4>(), generic_basis())) b4;
@@ -213,6 +217,7 @@ int main (int argc, char **argv)
     }
 
     {
+        std::cout << "testing direct sums\n";
         decltype(bvs(generic_real_vs<2>(), generic_basis())) b2;
         decltype(bvs(generic_real_vs<3>(), generic_basis())) b3;
         decltype(bvs(generic_real_vs<4>(), generic_basis())) b4;
@@ -235,6 +240,7 @@ int main (int argc, char **argv)
     }
 
     {
+        std::cout << "testing list conversions\n";
         typedef DimIndex_t<'i',3> Di3;
         typedef DimIndex_t<'j',4> Dj4;
         typedef ComponentIndex_t<3> C3;
@@ -255,6 +261,7 @@ int main (int argc, char **argv)
     }
 
     {
+        std::cout << "testing multiindex conversions\n";
         typedef DimIndex_t<'i',3> Di3;
         typedef DimIndex_t<'j',4> Dj4;
         typedef ComponentIndex_t<3> C3;
@@ -275,6 +282,7 @@ int main (int argc, char **argv)
     }
 
     {
+        std::cout << "testing diagonal 2-tensors\n";
         decltype(bvs(generic_real_vs<2>(), generic_basis())) b2;
         decltype(bvs(generic_real_vs<3>(), generic_basis())) b3;
         typedef double Scalar;
@@ -305,6 +313,38 @@ int main (int argc, char **argv)
     }
 
     {
+        std::cout << "testing scalar 2-tensors\n";
+        decltype(bvs(generic_real_vs<2>(), generic_basis())) b2;
+        decltype(bvs(generic_real_vs<3>(), generic_basis())) b3;
+        typedef double Scalar;
+        typedef ImplementationOf_t<decltype(scalar2(b2,b3)),Scalar> S23;
+
+        S23 s23(uniform_tuple<Scalar>(2));
+        std::cout << FORMAT_VALUE(type_string_of<S23::Concept>()) << '\n';
+        std::cout << FORMAT_VALUE(s23) << '\n';
+
+        S23::Dual a23(uniform_tuple<Scalar>(5));
+        std::cout << FORMAT_VALUE(a23) << '\n';
+        std::cout << FORMAT_VALUE(a23(s23)) << '\n';
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        std::cout << FORMAT_VALUE(a23(i)*s23(i)) << '\n';
+
+        typedef ImplementationOf_t<decltype(b2),Scalar> V2;
+        typedef ImplementationOf_t<decltype(b3),Scalar> V3;
+        V2 v2(uniform_tuple<Scalar>(4, 3));
+        V3 v3(uniform_tuple<Scalar>(2, 1, -3));
+        std::cout << FORMAT_VALUE(v2) << '\n';
+        std::cout << FORMAT_VALUE(v3) << '\n';
+        std::cout << FORMAT_VALUE(a23.split(i*j)) << '\n';
+        std::cout << FORMAT_VALUE(v2(i)*v3(j)) << '\n';
+        std::cout << FORMAT_VALUE(a23.split(i*j)*v2(i)*v3(j)) << '\n';
+
+        std::cout << '\n';
+    }
+
+    {
+        std::cout << "testing symmetric powers\n";
         decltype(bvs(generic_real_vs<3>(), generic_basis())) b3;
         typedef double Scalar;
         typedef ImplementationOf_t<decltype(sym<3>(b3)),Scalar> Sym;
@@ -324,6 +364,7 @@ int main (int argc, char **argv)
     }
 
     {
+        std::cout << "testing exterior powers\n";
         decltype(bvs(generic_real_vs<3>(), generic_basis())) b3;
         typedef double Scalar;
         typedef ImplementationOf_t<decltype(ext<3>(b3)),Scalar> Ext;
