@@ -449,6 +449,12 @@ TensorProductOfBasedVectorSpaces_c<Typle_t<TensorProductOfBasedVectorSpaces_c<Lh
                                                       TensorProductOfBasedVectorSpaces_c<RhsFactorTyple_>>>();
 }
 
+template <Uint32 ORDER_, typename Factor_>
+typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T tensor (Factor_ const &)
+{
+    return typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T();
+}
+
 // ///////////////////////////////////////////////////////////////////////////
 // linear embedding of tensor product into itself (needed for completeness)
 // ///////////////////////////////////////////////////////////////////////////

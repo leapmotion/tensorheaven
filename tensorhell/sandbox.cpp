@@ -5,6 +5,8 @@
 #include "tenh/implementation/directsum.hpp"
 #include "tenh/implementation/tensor.hpp"
 #include "tenh/implementation/vector.hpp"
+#include "tenh/implementation/vee.hpp"
+#include "tenh/implementation/wedge.hpp"
 
 using namespace Tenh;
 
@@ -298,6 +300,44 @@ int main (int argc, char **argv)
         std::cout << FORMAT_VALUE(a23.split(i*j)) << '\n';
         std::cout << FORMAT_VALUE(v2(i)*v3(j)) << '\n';
         std::cout << FORMAT_VALUE(a23.split(i*j)*v2(i)*v3(j)) << '\n';
+
+        std::cout << '\n';
+    }
+
+    {
+        decltype(bvs(generic_real_vs<3>(), generic_basis())) b3;
+        typedef double Scalar;
+        typedef ImplementationOf_t<decltype(sym<3>(b3)),Scalar> Sym;
+        Sym s(Static<WithoutInitialization>::SINGLETON);
+        for (Sym::ComponentIndex i; i.is_not_at_end(); ++i)
+            s[i] = i.value() + 1;
+        std::cout << FORMAT_VALUE(type_string_of(s)) << '\n';
+        std::cout << FORMAT_VALUE(s) << '\n';
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        AbstractIndex_c<'k'> k;
+        AbstractIndex_c<'p'> p;
+        std::cout << FORMAT_VALUE(s.embed(tensor<3>(b3),p).split(p,i*j*k)) << '\n';
+        std::cout << FORMAT_VALUE(s.embed(tensor<3>(b3),p).split(p,i*j*k) - s.embed(tensor<3>(b3),p).split(p,j*i*k)) << '\n';
+
+        std::cout << '\n';
+    }
+
+    {
+        decltype(bvs(generic_real_vs<3>(), generic_basis())) b3;
+        typedef double Scalar;
+        typedef ImplementationOf_t<decltype(ext<3>(b3)),Scalar> Ext;
+        Ext w(Static<WithoutInitialization>::SINGLETON);
+        for (Ext::ComponentIndex i; i.is_not_at_end(); ++i)
+            w[i] = i.value() + 1;
+        std::cout << FORMAT_VALUE(type_string_of(w)) << '\n';
+        std::cout << FORMAT_VALUE(w) << '\n';
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        AbstractIndex_c<'k'> k;
+        AbstractIndex_c<'p'> p;
+        std::cout << FORMAT_VALUE(w.embed(tensor<3>(b3),p).split(p,i*j*k)) << '\n';
+        std::cout << FORMAT_VALUE(w.embed(tensor<3>(b3),p).split(p,i*j*k) + w.embed(tensor<3>(b3),p).split(p,j*i*k)) << '\n';
 
         std::cout << '\n';
     }

@@ -172,10 +172,10 @@ struct Vector_i
     //   X(tuple(v))
     // evaluates as
     //   X(i)*v(i).
-    template <typename ParameterTyple_>
-    Scalar_ operator () (List_t<ParameterTyple_> const &p) const
+    template <typename Typle_>
+    Scalar_ operator () (List_t<Typle_> const &p) const
     {
-        STATIC_ASSERT(Hippo::Length_f<ParameterTyple_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
+        STATIC_ASSERT(Hippo::Length_f<Typle_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
         AbstractIndex_c<'i'> i;
         return operator()(i)*p.head()(i);
     }

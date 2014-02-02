@@ -559,26 +559,26 @@ private:
 };
 
 template <typename MultiIndex_>
-struct MultiIndexMultiplicity_f
+struct MultiIndexMultiplicity_t
 {
     static_assert(IsMultiIndex_f<MultiIndex_>::V, "MultiIndex_ must be a MultiIndex_t");
     static_assert(Hippo::TypleIsUniform_f<typename MultiIndex_::IndexTyple>::V, "MultiIndex_ must have uniform component types");
     static Uint32 eval (MultiIndex_ const &m, Uint32 count = 1)
     {
         return count * ((m.head() == m.body().head()) ? 
-                        MultiIndexMultiplicity_f<typename MultiIndex_::BodyMultiIndex>::eval(m.body(),count + 1) :
-                        MultiIndexMultiplicity_f<typename MultiIndex_::BodyMultiIndex>::eval(m.body(),1));
+                        MultiIndexMultiplicity_t<typename MultiIndex_::BodyMultiIndex>::eval(m.body(),count + 1) :
+                        MultiIndexMultiplicity_t<typename MultiIndex_::BodyMultiIndex>::eval(m.body(),1));
     }
 private:
-    MultiIndexMultiplicity_f();
+    MultiIndexMultiplicity_t();
 };
 
 template<typename IndexType_>
-struct MultiIndexMultiplicity_f<MultiIndex_t<Typle_t<IndexType_>>>
+struct MultiIndexMultiplicity_t<MultiIndex_t<Typle_t<IndexType_>>>
 {
     static Uint32 eval (MultiIndex_t<Typle_t<IndexType_>> const &m, Uint32 count = 1) { return count; }
 private:
-    MultiIndexMultiplicity_f();
+    MultiIndexMultiplicity_t();
 };
 
 

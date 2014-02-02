@@ -53,7 +53,7 @@ struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scal
     typedef typename Parent_EmbeddableAsTensor_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
     typedef typename Parent_EmbeddableAsTensor_i::QualifiedComponent QualifiedComponent;
 
-    typedef typename Parent_EmbeddableAsTensor_i::FactorTypeList FactorTypeList;
+    typedef typename Parent_EmbeddableAsTensor_i::FactorTyple FactorTyple;
     typedef typename Parent_EmbeddableAsTensor_i::MultiIndex MultiIndex;
     static Uint32 const ORDER = ORDER_;
     typedef Factor_ Factor;
@@ -105,8 +105,8 @@ struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scal
         STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
     }
     // this is the tuple-based constructor
-    template <typename HeadType_, typename BodyTypeList_>
-    ImplementationOf_t (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x)
+    template <typename Typle_>
+    ImplementationOf_t (List_t<Typle_> const &x)
         :
         Parent_Array_i(x.as_member_array())
     {
@@ -143,8 +143,8 @@ struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scal
         STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
     }
     // this is the tuple-based constructor
-    template <typename HeadType_, typename BodyTypeList_>
-    ImplementationOf_t (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x,
+    template <typename Typle_>
+    ImplementationOf_t (List_t<Typle_> const &x,
                         QualifiedComponent *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Array_i(x, pointer_to_allocation, check_pointer)
@@ -160,12 +160,12 @@ struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scal
         STATIC_ASSERT(IsUseProceduralArray_f<UseArrayType_>::V, MUST_BE_USE_PROCEDURAL_ARRAY);
     }
 
-    template <typename BundleIndexTypeList, typename BundledIndex>
-    static MultiIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)
+    template <typename BundleIndexTyple, typename BundledIndex>
+    static MultiIndex_t<BundleIndexTyple> bundle_index_map (BundledIndex const &b)
     {
         //STATIC_ASSERT(IsDimIndex_f<BundledIndex>::V, MUST_BE_COMPONENT_INDEX);
         // this constructor breaks the vector index apart into a row-major multi-index
-        return BundleIndexComputer_t<BundleIndexTypeList, BundledIndex, ORDER>::compute(b);
+        return BundleIndexComputer_t<BundleIndexTyple, BundledIndex, ORDER>::compute(b);
     }
 
     using Parent_Array_i::as_derived;
@@ -192,7 +192,7 @@ struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scal
 
 private:
 
-    template <typename BundleIndexTypeList, typename BundledIndex, Uint32 ORD> struct BundleIndexComputer_t;
+    template <typename BundleIndexTyple, typename BundledIndex, Uint32 ORD> struct BundleIndexComputer_t;
     template<typename T, typename I = int> struct VectorIndexComputer_t;
     template<typename T, typename I = int> struct SignComputer_t;
 };
@@ -205,22 +205,24 @@ template <Uint32 INDEX_>
 typename ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_,Derived_>::template BasisVector_f<INDEX_>::T const ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_,Derived_>::BasisVector_f<INDEX_>::V;
 
 template <Uint32 ORDER_, typename Factor_, typename Scalar_, typename UseArrayType_, typename Derived_>
-template <typename BundleIndexTypeList, typename BundledIndex, Uint32 ORD>
+template <typename BundleIndexTyple, typename BundledIndex, Uint32 ORD>
 struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_,Derived_>::BundleIndexComputer_t
 {
-    static MultiIndex_t<BundleIndexTypeList> compute (BundledIndex const &b)
+    static MultiIndex_t<BundleIndexTyple> compute (BundledIndex const &b)
     {
-        return MultiIndex_t<BundleIndexTypeList>(typename BundleIndexTypeList::HeadType(index_of_greatest_simplicial_number_leq(b.value(),ORD), CHECK_RANGE), BundleIndexComputer_t<typename BundleIndexTypeList::BodyTypeList, BundledIndex, ORD-1>::compute(BundledIndex(b.value() - binomial_coefficient(index_of_greatest_simplicial_number_leq(b.value(),ORD), ORD), CHECK_RANGE)));
+        typedef typename Hippo::Head_f<BundleIndexTyple>::T BundleIndexHead;
+        typedef typename Hippo::BodyTyple_f<BundleIndexTyple>::T BundleIndexBodyTyple;
+        return MultiIndex_t<BundleIndexTyple>(BundleIndexHead(index_of_greatest_simplicial_number_leq(b.value(),ORD), CHECK_RANGE), BundleIndexComputer_t<BundleIndexBodyTyple, BundledIndex, ORD-1>::compute(BundledIndex(b.value() - binomial_coefficient(index_of_greatest_simplicial_number_leq(b.value(),ORD), ORD), CHECK_RANGE)));
     }
 };
 
 template <Uint32 ORDER_, typename Factor_, typename Scalar_, typename UseArrayType_, typename Derived_>
 template <typename FactorType, typename BundledIndex, Uint32 ORD>
-struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_,Derived_>::BundleIndexComputer_t<TypeList_t<FactorType>, BundledIndex, ORD>
+struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_,Derived_>::BundleIndexComputer_t<Typle_t<FactorType>, BundledIndex, ORD>
 {
-    static MultiIndex_t<TypeList_t<FactorType> > compute (BundledIndex const &b)
+    static MultiIndex_t<Typle_t<FactorType> > compute (BundledIndex const &b)
     {
-        return MultiIndex_t<TypeList_t<FactorType> >(FactorType(index_of_greatest_simplicial_number_leq(b.value(),ORD), CHECK_RANGE));
+        return MultiIndex_t<Typle_t<FactorType> >(FactorType(index_of_greatest_simplicial_number_leq(b.value(),ORD), CHECK_RANGE));
     }
 };
 
@@ -236,9 +238,9 @@ struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scal
 
 template <Uint32 ORDER_, typename Factor_, typename Scalar_, typename UseArrayType_, typename Derived_>
 template <typename I>
-struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_,Derived_>::VectorIndexComputer_t<MultiIndex_t<EmptyTypeList>, I>
+struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_,Derived_>::VectorIndexComputer_t<MultiIndex_t<Typle_t<>>, I>
 {
-    static Uint32 compute (MultiIndex_t<EmptyTypeList> const &)
+    static Uint32 compute (MultiIndex_t<Typle_t<>> const &)
     {
         return 0;
     }
@@ -265,9 +267,9 @@ struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scal
 
 template <Uint32 ORDER_, typename Factor_, typename Scalar_, typename UseArrayType_, typename Derived_>
 template <typename I>
-struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_,Derived_>::SignComputer_t<MultiIndex_t<EmptyTypeList>, I>
+struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_,Derived_>::SignComputer_t<MultiIndex_t<Typle_t<>>, I>
 {
-    static Scalar_ compute (MultiIndex_t<EmptyTypeList> const &m)
+    static Scalar_ compute (MultiIndex_t<Typle_t<>> const &m)
     {
         return Scalar_(1);
     }
