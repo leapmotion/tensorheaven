@@ -63,16 +63,14 @@ struct MultiIndex_t : List_t<IndexTyple_>
     }
 
     MultiIndex_t (MultiIndex_t<Typle_t<>> const &) { } // default construction
-    MultiIndex_t (MultiIndex_t<Typle_t<HeadIndexType> > const &leading_multi_index)
-        :
-        Parent(leading_multi_index)
-    { }
-    // this includes the copy constructor
+    // this includes the copy constructor (probably)
     template <typename OtherIndexTyple_>
-    MultiIndex_t (MultiIndex_t<Typle_t<OtherIndexTyple_>> const &leading_multi_index)
+    MultiIndex_t (MultiIndex_t<OtherIndexTyple_> const &leading_multi_index)
         :
         Parent(leading_multi_index)
-    { }
+    {
+        static_assert(IsTyple_f<OtherIndexTyple_>::V, "OtherIndexTyple_ must be a Typle_t");
+    }
 
 private:
     static Uint32 const BODY_COMPONENT_COUNT_OR_ONE = If_f<BodyMultiIndex::COMPONENT_COUNT==0,
@@ -257,7 +255,9 @@ struct MultiIndex_t<Typle_t<HeadIndexType_>> : public List_t<Typle_t<HeadIndexTy
     MultiIndex_t (MultiIndex_t<OtherIndexTyple_> const &leading_multi_index)
         :
         Parent(leading_multi_index)
-    { }
+    {
+        static_assert(IsTyple_f<OtherIndexTyple_>::V, "OtherIndexTyple_ must be a Typle_t");
+    }
 
     bool operator == (MultiIndex_t const &m) const { return this->head() == m.head(); }
     bool operator != (MultiIndex_t const &m) const { return this->head() != m.head(); }
