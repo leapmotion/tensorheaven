@@ -23,7 +23,7 @@ template <typename FactorTyple_>
 struct FactorComponentIndexTyple_f
 {
     typedef typename Hippo::HeadBodyTyple_f<ComponentIndex_t<DimensionOf_f<typename Hippo::Head_f<FactorTyple_>::T>::V>,
-                                            typename FactorComponentIndexTyple_f<typename Hippo::BodyTyple_f<FactorTyple_>::T>::T> T;
+                                            typename FactorComponentIndexTyple_f<typename Hippo::BodyTyple_f<FactorTyple_>::T>::T>::T T;
 };
 
 template <typename HeadType_>
@@ -187,8 +187,8 @@ struct EmbeddableAsTensor_i
     template <typename ParameterTyple_>
     Scalar_ operator () (List_t<ParameterTyple_> const &l) const
     {
-        STATIC_ASSERT(Length_f<ParameterTyple_>::V == ORDER, ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
-        typedef typename AbstractIndexRangeTyple_f<Length_f<ParameterTyple_>::V,667>::T AbstractIndexTyple;
+        STATIC_ASSERT(Hippo::Length_f<ParameterTyple_>::V == ORDER, ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
+        typedef typename AbstractIndexRangeTyple_f<Hippo::Length_f<ParameterTyple_>::V,667>::T AbstractIndexTyple;
         TensorProductOfBasedVectorSpaces upstairs;
         EmbeddableInTensorProductOfBasedVectorSpaces_ downstairs;
         AbstractIndex_c<'p'> p;

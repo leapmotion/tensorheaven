@@ -9,7 +9,6 @@
 #include "tenh/core.hpp"
 
 #include "tenh/list.hpp"
-#include "tenh/meta/typetuple.hpp"
 
 namespace Tenh {
 
