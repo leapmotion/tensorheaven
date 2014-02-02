@@ -129,7 +129,7 @@ private:
 
 // for recursively retrieving various conceptual structures
 
-// note that if Concept isn't actually a concept, then T will be EmptyTypeList.
+// note that if Concept isn't actually a concept, then T will be Typle_t<>.
 template <typename Concept_, typename ConceptualStructurePredicate_e_>
 struct ConceptualStructuresOf_f
 {

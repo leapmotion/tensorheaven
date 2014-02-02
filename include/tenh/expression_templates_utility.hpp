@@ -16,7 +16,6 @@
 #include "tenh/dimindex.hpp"
 #include "tenh/implementation/implementationof.hpp"
 #include "tenh/interface/expressiontemplate.hpp"
-#include "tenh/meta/typelist.hpp"
 #include "tenh/multiindex.hpp"
 
 namespace Tenh {
@@ -25,173 +24,168 @@ namespace Tenh {
 
 // for this to work correctly on DimIndex_t types, the dimensions must be correct (i.e. the
 // primal/dual vector space checking must already be done).  TODO: redesign-away this caveat
-template <typename IndexTypeList>
-struct SummedIndexTypeList_t
+template <typename IndexTyple_>
+struct SummedIndexTyple_f
 {
-    typedef typename ElementsHavingMultiplicity_t<IndexTypeList,2>::T T;
+    typedef typename Hippo::ElementsHavingMultiplicity_f<IndexTyple_,2>::T T;
 private:
-    SummedIndexTypeList_t();
+    SummedIndexTyple_f();
 };
 
 // for this to work correctly on DimIndex_t types, the dimensions must be correct (i.e. the
 // primal/dual vector space checking must already be done).  TODO: redesign-away this caveat
-template <typename IndexTypeList>
-struct FreeIndexTypeList_t
+template <typename IndexTyple_>
+struct FreeIndexTyple_f
 {
-    typedef typename ElementsHavingMultiplicity_t<IndexTypeList,1>::T T;
+    typedef typename Hippo::ElementsHavingMultiplicity_f<IndexTyple_,1>::T T;
 private:
-    FreeIndexTypeList_t();
+    FreeIndexTyple_f();
 };
 
-template <typename FreeIndexTypeList>
-struct IndexIsFree_t
+// TODO: make into "raw" metafunction and make evaluator using macro
+template <typename FreeIndexTyple_>
+struct IndexIsFree_e
 {
-    enum { STATIC_ASSERT_IN_ENUM(IsTypeList_f<FreeIndexTypeList>::V, MUST_BE_TYPELIST) };
+    static_assert(IsTyple_f<FreeIndexTyple_>::V, "FreeIndexTyple_ must be a Typle_t");
 
-    template <typename T>
-    struct Eval_t
+    template <typename T_>
+    struct Eval_f
     {
-        enum
-        {
-            STATIC_ASSERT_IN_ENUM(IsTypeList_f<T>::V, MUST_BE_TYPELIST),
-            STATIC_ASSERT_IN_ENUM(T::LENGTH == 2, LENGTH_MUST_BE_EXACTLY_2)
-        };
-        typedef typename T::HeadType Factor;
-        typedef typename T::BodyTypeList::HeadType Index;
-        static bool const V = Contains_f<FreeIndexTypeList,Index>::V;
+        static_assert(IsTyple_f<T_>::V, "template argument must be a Typle_t");
+        static_assert(Hippo::Length_f<T_>::V == 2, "length of Typle_t argument must be exactly 2");
+        // typedef typename Hippo::Element_f<T_,0>::T Factor;
+        typedef typename Hippo::Element_f<T_,1>::T Index;
+        static bool const V = Hippo::Contains_f<FreeIndexTyple_,Index>::V;
     };
 private:
-    IndexIsFree_t();
+    IndexIsFree_e();
 };
 
-template <typename Unzipped>
-struct FreeFactorTypeListHelper_t
+template <typename Unzipped_>
+struct FreeFactorTypleHelper_f
 {
-    typedef typename Unzipped::HeadType T;
+    typedef typename Hippo::Head_f<Unzipped_>::T T;
 private:
-    FreeFactorTypeListHelper_t();
+    FreeFactorTypleHelper_f();
 };
 
 template <>
-struct FreeFactorTypeListHelper_t<EmptyTypeList>
+struct FreeFactorTypleHelper_f<Typle_t<>>
 {
-    typedef EmptyTypeList T;
+    typedef Typle_t<> T;
 private:
-    FreeFactorTypeListHelper_t();
+    FreeFactorTypleHelper_f();
 };
 
 // for this to work correctly on DimIndex_t types, the dimensions must be correct (i.e. the
 // primal/dual vector space checking must already be done).  TODO: redesign-away this caveat
-template <typename FactorTypeList, typename IndexTypeList>
-struct FreeFactorTypeList_t
+template <typename FactorTyple_, typename IndexTyple_>
+struct FreeFactorTyple_f
 {
 private:
-    typedef typename Zip_t<TypeList_t<FactorTypeList,TypeList_t<IndexTypeList> > >::T FactorAndIndexPairTypeList;
-    typedef typename FreeIndexTypeList_t<IndexTypeList>::T FreeIndexTypeList;
-    typedef typename ElementsOfTypeListSatisfyingPredicate_t<FactorAndIndexPairTypeList,IndexIsFree_t<FreeIndexTypeList> >::T FreeFactorAndIndexPairTypeList;
-    typedef typename Unzip_t<FreeFactorAndIndexPairTypeList>::T Unzipped;
-    enum { STATIC_ASSERT_IN_ENUM((Unzipped::LENGTH == 0 || Unzipped::LENGTH == 2), LENGTH_MUST_BE_EXACTLY_0_OR_2) };
-    FreeFactorTypeList_t();
+    typedef typename Hippo::Zip_f<Typle_t<FactorTyple_,IndexTyple_>>::T FactorAndIndexPairTyple;
+    typedef typename FreeIndexTyple_f<IndexTyple_>::T FreeIndexTyple;
+    typedef typename Hippo::ElementsOfTypleSatisfying_f<FactorAndIndexPairTyple,IndexIsFree_e<FreeIndexTyple>>::T FreeFactorAndIndexPairTyple;
+    typedef typename Hippo::Unzip_f<FreeFactorAndIndexPairTyple>::T Unzipped;
+    enum { STATIC_ASSERT_IN_ENUM((Hippo::Length_f<Unzipped>::V == 0 || Hippo::Length_f<Unzipped>::V == 2), LENGTH_MUST_BE_EXACTLY_0_OR_2) };
+    FreeFactorTyple_f();
 public:
-    // each pair in FreeFactorAndIndexPairTypeList is a (factor, index) TypeList_t
-    typedef typename FreeFactorTypeListHelper_t<Unzipped>::T T;
+    // each pair in FreeFactorAndIndexPairTyple is a (factor, index) Typle_t
+    typedef typename FreeFactorTypleHelper_f<Unzipped>::T T;
 };
 
-template <typename AbstractIndexTypeList, typename SummedAbstractIndexTypeList, typename AbstractIndex>
-struct SummedAbstractIndexPairElementIndices_t
+template <typename AbstractIndexTyple_, typename SummedAbstractIndexTyple_, typename AbstractIndex>
+struct SummedAbstractIndexPairElementIndices_f
 {
-private:
     enum
     {
         STATIC_ASSERT_IN_ENUM(IsAbstractIndex_f<AbstractIndex>::V, MUST_BE_ABSTRACT_INDEX),
-        STATIC_ASSERT_IN_ENUM((Occurrence_t<AbstractIndexTypeList,AbstractIndex>::COUNT == 2), MUST_OCCUR_EXACTLY_TWICE)
+        STATIC_ASSERT_IN_ENUM((Hippo::OccurrenceCount_f<AbstractIndexTyple_,AbstractIndex>::V == 2), MUST_OCCUR_EXACTLY_TWICE)
     };
-    SummedAbstractIndexPairElementIndices_t();
-public:
-    static Uint32 const FIRST = IndexOfFirstOccurrence_f<AbstractIndexTypeList,AbstractIndex>::V;
+    static Uint32 const FIRST = Hippo::IndexOfFirstOccurrence_f<AbstractIndexTyple_,AbstractIndex>::V;
 private:
-    static Uint32 const FIRST_MATCHING_IN_REST = IndexOfFirstOccurrence_f<typename TrailingTypeList_f<AbstractIndexTypeList,FIRST+1>::T,AbstractIndex>::V;
+    SummedAbstractIndexPairElementIndices_f();
+    static Uint32 const FIRST_MATCHING_IN_REST = Hippo::IndexOfFirstOccurrence_f<typename Hippo::TrailingTyple_f<AbstractIndexTyple_,FIRST+1>::T,AbstractIndex>::V;
 public:
     static Uint32 const SECOND = FIRST + 1 + FIRST_MATCHING_IN_REST;
 };
 
 template <typename FirstFactor, typename SecondFactor>
-struct SummationIsNaturalPairing_t
+struct SummationIsNaturalPairing_f
 {
+    static bool const V = TypesAreEqual_f<FirstFactor,typename DualOf_f<SecondFactor>::T>::V;
 private:
-    SummationIsNaturalPairing_t();
-public:
-    static bool const V = TypesAreEqual_f<FirstFactor,typename DualOf_f<SecondFactor>::T>::V; //true;
+    SummationIsNaturalPairing_f();
 };
 
-template <typename FactorTypeList, typename AbstractIndexTypeList, typename SummedAbstractIndexTypeList, typename AbstractIndex>
-struct FactorsOfSummation_t
+template <typename FactorTyple, typename AbstractIndexTyple, typename SummedAbstractIndexTyple, typename AbstractIndex>
+struct FactorsOfSummation_f
 {
-    typedef SummedAbstractIndexPairElementIndices_t<AbstractIndexTypeList,SummedAbstractIndexTypeList,AbstractIndex> Pair;
-    typedef typename Element_f<FactorTypeList,Pair::FIRST>::T FirstFactor;
-    typedef typename Element_f<FactorTypeList,Pair::SECOND>::T SecondFactor;
+    typedef SummedAbstractIndexPairElementIndices_f<AbstractIndexTyple,SummedAbstractIndexTyple,AbstractIndex> Pair;
+    typedef typename Hippo::Element_f<FactorTyple,Pair::FIRST>::T FirstFactor;
+    typedef typename Hippo::Element_f<FactorTyple,Pair::SECOND>::T SecondFactor;
 private:
     enum
     {
-        STATIC_ASSERT_IN_ENUM((FactorTypeList::LENGTH == AbstractIndexTypeList::LENGTH), MUST_HAVE_EQUAL_LENGTHS),
+        STATIC_ASSERT_IN_ENUM((Hippo::Length_f<FactorTyple>::V == Hippo::Length_f<AbstractIndexTyple>::V), MUST_HAVE_EQUAL_LENGTHS),
         STATIC_ASSERT_IN_ENUM__UNIQUE(HasBasedVectorSpaceStructure_f<FirstFactor>::V, MUST_BE_BASED_VECTOR_SPACE, FIRSTFACTOR),
         STATIC_ASSERT_IN_ENUM__UNIQUE(HasBasedVectorSpaceStructure_f<SecondFactor>::V, MUST_BE_BASED_VECTOR_SPACE, SECONDFACTOR)
     };
-    FactorsOfSummation_t();
+    FactorsOfSummation_f();
 };
 
-template <typename FactorTypeList, typename AbstractIndexTypeList, typename SummedAbstractIndexTypeList>
-struct AllSummationsAreNaturalPairings_t
+template <typename FactorTyple, typename AbstractIndexTyple, typename SummedAbstractIndexTyple>
+struct AllSummationsAreNaturalPairings_f
 {
 private:
-    typedef FactorsOfSummation_t<FactorTypeList,
-                                 AbstractIndexTypeList,
-                                 SummedAbstractIndexTypeList,
-                                 typename SummedAbstractIndexTypeList::HeadType> FactorsOfSummation;
-    static bool const V_HEAD = SummationIsNaturalPairing_t<typename FactorsOfSummation::FirstFactor,
+    typedef FactorsOfSummation_f<FactorTyple,
+                                 AbstractIndexTyple,
+                                 SummedAbstractIndexTyple,
+                                 typename Hippo::Head_f<SummedAbstractIndexTyple>::T> FactorsOfSummation;
+    static bool const V_HEAD = SummationIsNaturalPairing_f<typename FactorsOfSummation::FirstFactor,
                                                            typename FactorsOfSummation::SecondFactor>::V;
-    static bool const V_BODY = AllSummationsAreNaturalPairings_t<FactorTypeList,
-                                                                 AbstractIndexTypeList,
-                                                                 typename SummedAbstractIndexTypeList::BodyTypeList>::V;
-    AllSummationsAreNaturalPairings_t();
+    static bool const V_BODY = AllSummationsAreNaturalPairings_f<FactorTyple,
+                                                                 AbstractIndexTyple,
+                                                                 typename Hippo::BodyTyple_f<SummedAbstractIndexTyple>::T>::V;
+    AllSummationsAreNaturalPairings_f();
 public:
     static bool const V = V_HEAD && V_BODY;
 };
 
-template <typename FactorTypeList, typename AbstractIndexTypeList>
-struct AllSummationsAreNaturalPairings_t<FactorTypeList,AbstractIndexTypeList,EmptyTypeList>
+template <typename FactorTyple, typename AbstractIndexTyple>
+struct AllSummationsAreNaturalPairings_f<FactorTyple,AbstractIndexTyple,Typle_t<>>
 {
     static bool const V = true; // so this can be used in STATIC_ASSERT_IN_ENUM
 private:
-    AllSummationsAreNaturalPairings_t();
+    AllSummationsAreNaturalPairings_f();
 };
 
 // this is designed to handle trace-type expression templates, such as u(i,i) or v(i,j,i)
-// technically SummedDimIndexTypeList is a redundant argument (as it is derivable from TensorDimIndexTypeList),
-// but it is necessary so that a template specialization can be made for when it is EmptyTypeList.
-template <typename Tensor, typename TensorDimIndexTypeList, typename SummedDimIndexTypeList>
+// technically SummedDimIndexTyple is a redundant argument (as it is derivable from TensorDimIndexTyple),
+// but it is necessary so that a template specialization can be made for when it is Typle_t<>.
+template <typename Tensor, typename TensorDimIndexTyple, typename SummedDimIndexTyple>
 struct UnarySummation_t
 {
 private:
-    typedef typename AbstractIndicesOfDimIndexTypeList_t<TensorDimIndexTypeList>::T AbstractIndexTypeList;
-    typedef typename AbstractIndicesOfDimIndexTypeList_t<SummedDimIndexTypeList>::T SummedAbstractIndexTypeList;
+    typedef typename AbstractIndicesOfDimIndexTyple_f<TensorDimIndexTyple>::T AbstractIndexTyple;
+    typedef typename AbstractIndicesOfDimIndexTyple_f<SummedDimIndexTyple>::T SummedAbstractIndexTyple;
     enum
     {
-        STATIC_ASSERT_IN_ENUM((AllSummationsAreNaturalPairings_t<typename Tensor::FactorTypeList,
-                                                                 AbstractIndexTypeList,
-                                                                 SummedAbstractIndexTypeList>::V), ALL_SUMMATIONS_MUST_BE_NATURAL_PAIRINGS)
+        STATIC_ASSERT_IN_ENUM((AllSummationsAreNaturalPairings_f<typename Tensor::FactorTyple,
+                                                                 AbstractIndexTyple,
+                                                                 SummedAbstractIndexTyple>::V), ALL_SUMMATIONS_MUST_BE_NATURAL_PAIRINGS)
     };
 public:
 
     typedef typename Tensor::Scalar Scalar;
-    typedef typename FreeIndexTypeList_t<TensorDimIndexTypeList>::T FreeDimIndexTypeList;
-    typedef MultiIndex_t<FreeDimIndexTypeList> MultiIndex;
+    typedef typename FreeIndexTyple_f<TensorDimIndexTyple>::T FreeDimIndexTyple;
+    typedef MultiIndex_t<FreeDimIndexTyple> MultiIndex;
 
     static Scalar eval (Tensor const &tensor, MultiIndex const &m)
     {
-        typedef typename ConcatenationOfTypeLists_t<FreeDimIndexTypeList,SummedDimIndexTypeList>::T TotalDimIndexTypeList;
-        typedef MultiIndex_t<TotalDimIndexTypeList> TotalMultiIndex;
-        typedef MultiIndex_t<SummedDimIndexTypeList> SummedMultiIndex;
+        typedef typename Hippo::Concat2Typles_f<FreeDimIndexTyple,SummedDimIndexTyple>::T TotalDimIndexTyple;
+        typedef MultiIndex_t<TotalDimIndexTyple> TotalMultiIndex;
+        typedef MultiIndex_t<SummedDimIndexTyple> SummedMultiIndex;
 
         // the operands take indices that are a subset of the summed indices and free indices.
 
@@ -200,11 +194,11 @@ public:
         TotalMultiIndex t(m);
         Scalar retval(0);
         // get the map which produces the MultiIndex for each tensor from the TotalMultiIndex t
-        typedef MultiIndexMap_t<TotalDimIndexTypeList,TensorDimIndexTypeList> TensorIndexMap;
+        typedef MultiIndexMap_t<TotalDimIndexTyple,TensorDimIndexTyple> TensorIndexMap;
         static typename TensorIndexMap::EvalMapType const tensor_index_map = TensorIndexMap::eval;
         // t = (f,s), which is a concatenation of the free access indices and the summed access indices.
         // s is a reference to the second part, which is what is iterated over in the summation.
-        for (SummedMultiIndex &s = t.template trailing_list<FreeDimIndexTypeList::LENGTH>(); s.is_not_at_end(); ++s)
+        for (SummedMultiIndex &s = t.template trailing_list<Hippo::Length_f<FreeDimIndexTyple>::V>(); s.is_not_at_end(); ++s)
             // TODO: when the dual-vector-space/conceptual refactor is done, this summation_component_factor
             // should go away, since this is a non-natural pairing, and it causes C++ plumbing issues
             // (getting the C++ scalar type from the index, where the index will only be aware of the
@@ -214,47 +208,47 @@ public:
     }
 };
 
-template <typename Tensor, typename TensorDimIndexTypeList>
-struct UnarySummation_t<Tensor,TensorDimIndexTypeList,EmptyTypeList>
+template <typename Tensor, typename TensorDimIndexTyple>
+struct UnarySummation_t<Tensor,TensorDimIndexTyple,Typle_t<>>
 {
     // no summations to check the natural pairing for
 
     typedef typename Tensor::Scalar Scalar;
-    typedef typename FreeIndexTypeList_t<TensorDimIndexTypeList>::T FreeDimIndexTypeList;
-    typedef MultiIndex_t<FreeDimIndexTypeList> MultiIndex;
+    typedef typename FreeIndexTyple_f<TensorDimIndexTyple>::T FreeDimIndexTyple;
+    typedef MultiIndex_t<FreeDimIndexTyple> MultiIndex;
 
     static Scalar eval (Tensor const &tensor, MultiIndex const &m) { return tensor[m]; }
 };
 
-template <typename LeftOperand, typename RightOperand, typename FreeDimIndexTypeList, typename SummedDimIndexTypeList>
+template <typename LeftOperand, typename RightOperand, typename FreeDimIndexTyple, typename SummedDimIndexTyple>
 struct BinarySummation_t
 {
 private:
-    typedef typename ConcatenationOfTypeLists_t<typename LeftOperand::FreeFactorTypeList,
-                                                typename RightOperand::FreeFactorTypeList>::T FactorTypeList;
-    typedef typename ConcatenationOfTypeLists_t<typename LeftOperand::FreeDimIndexTypeList,
-                                                typename RightOperand::FreeDimIndexTypeList>::T DimIndexTypeList;
-    typedef typename AbstractIndicesOfDimIndexTypeList_t<DimIndexTypeList>::T AbstractIndexTypeList;
-    typedef typename AbstractIndicesOfDimIndexTypeList_t<SummedDimIndexTypeList>::T SummedAbstractIndexTypeList;
+    typedef typename Hippo::Concat2Typles_f<typename LeftOperand::FreeFactorTyple,
+                                            typename RightOperand::FreeFactorTyple>::T FactorTyple;
+    typedef typename Hippo::Concat2Typles_f<typename LeftOperand::FreeDimIndexTyple,
+                                            typename RightOperand::FreeDimIndexTyple>::T DimIndexTyple;
+    typedef typename AbstractIndicesOfDimIndexTyple_f<DimIndexTyple>::T AbstractIndexTyple;
+    typedef typename AbstractIndicesOfDimIndexTyple_f<SummedDimIndexTyple>::T SummedAbstractIndexTyple;
     enum
     {
         STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<LeftOperand>::V, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<RightOperand>::V, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename LeftOperand::Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM((SummedDimIndexTypeList::LENGTH > 0), LENGTH_MUST_BE_POSITIVE),
-        STATIC_ASSERT_IN_ENUM((AllSummationsAreNaturalPairings_t<FactorTypeList,
-                                                                 AbstractIndexTypeList,
-                                                                 SummedAbstractIndexTypeList>::V), ALL_SUMMATIONS_MUST_BE_NATURAL_PAIRINGS)
+        STATIC_ASSERT_IN_ENUM((Hippo::Length_f<SummedDimIndexTyple>::V > 0), LENGTH_MUST_BE_POSITIVE),
+        STATIC_ASSERT_IN_ENUM((AllSummationsAreNaturalPairings_f<FactorTyple,
+                                                                 AbstractIndexTyple,
+                                                                 SummedAbstractIndexTyple>::V), ALL_SUMMATIONS_MUST_BE_NATURAL_PAIRINGS)
     };
 public:
     typedef typename LeftOperand::Scalar Scalar;
-    typedef MultiIndex_t<FreeDimIndexTypeList> MultiIndex;
+    typedef MultiIndex_t<FreeDimIndexTyple> MultiIndex;
 
     static Scalar eval (LeftOperand const &left_operand, RightOperand const &right_operand, MultiIndex const &m)
     {
-        typedef typename ConcatenationOfTypeLists_t<FreeDimIndexTypeList,SummedDimIndexTypeList>::T TotalDimIndexTypeList;
-        typedef MultiIndex_t<TotalDimIndexTypeList> TotalMultiIndex;
-        typedef MultiIndex_t<SummedDimIndexTypeList> SummedMultiIndex;
+        typedef typename Hippo::Concat2Typles_f<FreeDimIndexTyple,SummedDimIndexTyple>::T TotalDimIndexTyple;
+        typedef MultiIndex_t<TotalDimIndexTyple> TotalMultiIndex;
+        typedef MultiIndex_t<SummedDimIndexTyple> SummedMultiIndex;
 
         // the operands take indices that are a subset of the summed indices and free indices.
 
@@ -263,13 +257,13 @@ public:
         TotalMultiIndex t(m);
         Scalar retval(0);
         // get the map which produces the MultiIndex for each operand from the TotalMultiIndex t
-        typedef MultiIndexMap_t<TotalDimIndexTypeList,typename LeftOperand::FreeDimIndexTypeList> LeftOperandIndexMap;
-        typedef MultiIndexMap_t<TotalDimIndexTypeList,typename RightOperand::FreeDimIndexTypeList> RightOperandIndexMap;
+        typedef MultiIndexMap_t<TotalDimIndexTyple,typename LeftOperand::FreeDimIndexTyple> LeftOperandIndexMap;
+        typedef MultiIndexMap_t<TotalDimIndexTyple,typename RightOperand::FreeDimIndexTyple> RightOperandIndexMap;
         static typename LeftOperandIndexMap::EvalMapType const left_operand_index_map = LeftOperandIndexMap::eval;
         static typename RightOperandIndexMap::EvalMapType const right_operand_index_map = RightOperandIndexMap::eval;
         // t = (f,s), which is a concatenation of the free access indices and the summed access indices.
         // s is a reference to the second part, which is what is iterated over in the summation.
-        for (SummedMultiIndex &s = t.template trailing_list<FreeDimIndexTypeList::LENGTH>(); s.is_not_at_end(); ++s)
+        for (SummedMultiIndex &s = t.template trailing_list<Hippo::Length_f<FreeDimIndexTyple>::V>(); s.is_not_at_end(); ++s)
             retval += left_operand[left_operand_index_map(t)] *
                       right_operand[right_operand_index_map(t)];// *
                       //summation_component_factor(s);
@@ -278,8 +272,8 @@ public:
 };
 
 // template specialization handles summation over no indices
-template <typename LeftOperand, typename RightOperand, typename FreeDimIndexTypeList>
-struct BinarySummation_t<LeftOperand,RightOperand,FreeDimIndexTypeList,EmptyTypeList>
+template <typename LeftOperand, typename RightOperand, typename FreeDimIndexTyple>
+struct BinarySummation_t<LeftOperand,RightOperand,FreeDimIndexTyple,Typle_t<>>
 {
 private:
     enum
@@ -287,19 +281,19 @@ private:
         STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<LeftOperand>::V, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<RightOperand>::V, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename LeftOperand::Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<FreeDimIndexTypeList,IsDimIndex_p>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES)
+        STATIC_ASSERT_IN_ENUM((Hippo::EachTypeSatisfies_f<FreeDimIndexTyple,IsDimIndex_e>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES)
         // no summation, so no need to check naturality of pairings
     };
 public:
 
     typedef typename LeftOperand::Scalar Scalar;
-    typedef MultiIndex_t<FreeDimIndexTypeList> MultiIndex;
+    typedef MultiIndex_t<FreeDimIndexTyple> MultiIndex;
 
     static Scalar eval (LeftOperand const &left_operand, RightOperand const &right_operand, MultiIndex const &m)
     {
         // get the map which produces the MultiIndex for each operand from the free indices m
-        typedef MultiIndexMap_t<FreeDimIndexTypeList,typename LeftOperand::FreeDimIndexTypeList> LeftOperandIndexMap;
-        typedef MultiIndexMap_t<FreeDimIndexTypeList,typename RightOperand::FreeDimIndexTypeList> RightOperandIndexMap;
+        typedef MultiIndexMap_t<FreeDimIndexTyple,typename LeftOperand::FreeDimIndexTyple> LeftOperandIndexMap;
+        typedef MultiIndexMap_t<FreeDimIndexTyple,typename RightOperand::FreeDimIndexTyple> RightOperandIndexMap;
         static typename LeftOperandIndexMap::EvalMapType const left_operand_index_map = LeftOperandIndexMap::eval;
         static typename RightOperandIndexMap::EvalMapType const right_operand_index_map = RightOperandIndexMap::eval;
         return left_operand[left_operand_index_map(m)] * right_operand[right_operand_index_map(m)];
@@ -308,103 +302,103 @@ public:
 
 
 template <typename LeftOperand, typename RightOperand>
-struct FreeDimIndexTypeListOfMultiplication_t
+struct FreeDimIndexTypleOfMultiplication_f
 {
 private:
     // the free indices are the single-occurrence indices of the concatenated
     // list of free indices from the left and right operands
-    typedef typename ConcatenationOfTypeLists_t<typename LeftOperand::FreeDimIndexTypeList,
-                                                typename RightOperand::FreeDimIndexTypeList>::T CombinedFreeDimIndexTypeList;
-    FreeDimIndexTypeListOfMultiplication_t();
+    typedef typename Hippo::Concat2Typles_f<typename LeftOperand::FreeDimIndexTyple,
+                                            typename RightOperand::FreeDimIndexTyple>::T CombinedFreeDimIndexTyple;
+    FreeDimIndexTypleOfMultiplication_f();
 public:
-    typedef typename ElementsHavingMultiplicity_t<CombinedFreeDimIndexTypeList,1>::T T;
+    typedef typename Hippo::ElementsHavingMultiplicity_f<CombinedFreeDimIndexTyple,1>::T T;
 };
 
 template <typename LeftOperand, typename RightOperand>
-struct SummedDimIndexTypeListOfMultiplication_t
+struct SummedDimIndexTypleOfMultiplication_f
 {
 private:
     // the free indices are the single-occurrence indices of the concatenated
     // list of free indices from the left and right operands
-    typedef typename ConcatenationOfTypeLists_t<typename LeftOperand::FreeDimIndexTypeList,
-                                                typename RightOperand::FreeDimIndexTypeList>::T CombinedFreeDimIndexTypeList;
-    SummedDimIndexTypeListOfMultiplication_t();
+    typedef typename Hippo::Concat2Typles_f<typename LeftOperand::FreeDimIndexTyple,
+                                            typename RightOperand::FreeDimIndexTyple>::T CombinedFreeDimIndexTyple;
+    SummedDimIndexTypleOfMultiplication_f();
 public:
     // the summed indices (at this level) are the double-occurrences indices
     // of the concatenated list of free indices from the left and right operands
-    typedef typename ElementsHavingMultiplicity_t<CombinedFreeDimIndexTypeList,2>::T T;
+    typedef typename Hippo::ElementsHavingMultiplicity_f<CombinedFreeDimIndexTyple,2>::T T;
 };
 
 template <typename LeftOperand, typename RightOperand>
-struct UsedDimIndexTypeListOfMultiplication_t
+struct UsedDimIndexTypleOfMultiplication_f
 {
 private:
-    typedef typename SummedDimIndexTypeListOfMultiplication_t<LeftOperand,RightOperand>::T SummedDimIndexTypeList;
-    UsedDimIndexTypeListOfMultiplication_t();
+    typedef typename SummedDimIndexTypleOfMultiplication_f<LeftOperand,RightOperand>::T SummedDimIndexTyple;
+    UsedDimIndexTypleOfMultiplication_f();
 public:
     // typelist of used indices which are prohibited from using higher up in the AST
-    typedef typename UniqueTypesIn_t<
-        typename ConcatenationOfTypeLists_t<
-            typename ConcatenationOfTypeLists_t<typename LeftOperand::UsedDimIndexTypeList,
-                                                typename RightOperand::UsedDimIndexTypeList>::T,
-            SummedDimIndexTypeList>::T>::T T;
+    typedef typename Hippo::UniqueTypesIn_f<
+        typename Hippo::ConcatTyples_f<
+            typename LeftOperand::UsedDimIndexTyple,
+            typename RightOperand::UsedDimIndexTyple,
+            SummedDimIndexTyple>::T>::T T;
 };
 
 template <typename LeftOperand, typename RightOperand>
-struct FreeFactorTypeListOfMultiplication_t
+struct FreeFactorTypleOfMultiplication_f
 {
 private:
-    typedef typename ConcatenationOfTypeLists_t<typename LeftOperand::FreeFactorTypeList,
-                                                typename RightOperand::FreeFactorTypeList>::T CombinedFactorTypeList;
-    typedef typename ConcatenationOfTypeLists_t<typename LeftOperand::FreeDimIndexTypeList,
-                                                typename RightOperand::FreeDimIndexTypeList>::T CombinedDimIndexTypeList;
-    FreeFactorTypeListOfMultiplication_t();
+    typedef typename Hippo::Concat2Typles_f<typename LeftOperand::FreeFactorTyple,
+                                            typename RightOperand::FreeFactorTyple>::T CombinedFactorTyple;
+    typedef typename Hippo::Concat2Typles_f<typename LeftOperand::FreeDimIndexTyple,
+                                            typename RightOperand::FreeDimIndexTyple>::T CombinedDimIndexTyple;
+    FreeFactorTypleOfMultiplication_f();
 public:
-    typedef typename FreeFactorTypeList_t<CombinedFactorTypeList,CombinedDimIndexTypeList>::T T;
+    typedef typename FreeFactorTyple_f<CombinedFactorTyple,CombinedDimIndexTyple>::T T;
 };
 
 
 
-template <typename AbstractIndexTypeList, typename FactorTypeList, typename ExtractionAbstractIndexTypeList>
-struct ExtractFactorsForAbstractIndices_t
+template <typename AbstractIndexTyple, typename FactorTyple, typename ExtractionAbstractIndexTyple>
+struct ExtractFactorsForAbstractIndices_f
 {
 private:
     enum
     {
-        STATIC_ASSERT_IN_ENUM((Occurrence_t<AbstractIndexTypeList,typename ExtractionAbstractIndexTypeList::HeadType>::COUNT == 1), MUST_OCCUR_EXACTLY_ONCE),
-        STATIC_ASSERT_IN_ENUM((IsASubsetOf_t<ExtractionAbstractIndexTypeList,AbstractIndexTypeList>::V), MUST_BE_SUBSET_OF)
+        STATIC_ASSERT_IN_ENUM((Hippo::OccurrenceCount_f<AbstractIndexTyple,typename Hippo::Head_f<ExtractionAbstractIndexTyple>::T>::V == 1), MUST_OCCUR_EXACTLY_ONCE),
+        STATIC_ASSERT_IN_ENUM((Hippo::IsASubsetOf_f<ExtractionAbstractIndexTyple,AbstractIndexTyple>::V), MUST_BE_SUBSET_OF)
     };
-    static Uint32 const INDEX = IndexOfFirstOccurrence_f<AbstractIndexTypeList,typename ExtractionAbstractIndexTypeList::HeadType>::V;
-    ExtractFactorsForAbstractIndices_t();
+    static Uint32 const INDEX = Hippo::IndexOfFirstOccurrence_f<AbstractIndexTyple,typename Hippo::Head_f<ExtractionAbstractIndexTyple>::T>::V;
+    ExtractFactorsForAbstractIndices_f();
 public:
-    typedef TypeList_t<typename Element_f<FactorTypeList,INDEX>::T,
-                       typename ExtractFactorsForAbstractIndices_t<AbstractIndexTypeList,
-                                                                   FactorTypeList,
-                                                                   typename ExtractionAbstractIndexTypeList::BodyTypeList>::T> T;
+    typedef Hippo::HeadBodyTyple_f<typename Hippo::Element_f<FactorTyple,INDEX>::T,
+                                   typename ExtractFactorsForAbstractIndices_f<AbstractIndexTyple,
+                                                                               FactorTyple,
+                                                                               typename Hippo::BodyTyple_f<ExtractionAbstractIndexTyple>::T>::T> T;
 };
 
-template <typename AbstractIndexTypeList, typename FactorTypeList>
-struct ExtractFactorsForAbstractIndices_t<AbstractIndexTypeList,FactorTypeList,EmptyTypeList>
+template <typename AbstractIndexTyple, typename FactorTyple>
+struct ExtractFactorsForAbstractIndices_f<AbstractIndexTyple,FactorTyple,Typle_t<>>
 {
-    typedef EmptyTypeList T;
+    typedef Typle_t<> T;
 private:
-    ExtractFactorsForAbstractIndices_t();
+    ExtractFactorsForAbstractIndices_f();
 };
 
 // TODO: Scalar will go away once the bundle map is moved into the conceptual layer.
-template <typename Scalar, typename BundleDimIndexTypeList, typename ResultingFactorType, typename ResultingDimIndexType>
+template <typename Scalar, typename BundleDimIndexTyple, typename ResultingFactorType, typename ResultingDimIndexType>
 struct BundleIndexMap_t
 {
-    typedef MultiIndex_t<BundleDimIndexTypeList> (*T) (ResultingDimIndexType const &);
+    typedef MultiIndex_t<BundleDimIndexTyple> (*T) (ResultingDimIndexType const &);
     static T const V;
 private:
     BundleIndexMap_t();
 };
 
 // TODO: the use of UseMemberArray_t<COMPONENTS_ARE_NONCONST> is somewhat arbitrary -- should this be addressed somehow?
-template <typename Scalar, typename BundleDimIndexTypeList, typename ResultingFactorType, typename ResultingDimIndexType>
-typename BundleIndexMap_t<Scalar,BundleDimIndexTypeList,ResultingFactorType,ResultingDimIndexType>::T const BundleIndexMap_t<Scalar,BundleDimIndexTypeList,ResultingFactorType,ResultingDimIndexType>::V =
-    ImplementationOf_t<ResultingFactorType,Scalar,UseMemberArray_t<COMPONENTS_ARE_NONCONST> >::template bundle_index_map<BundleDimIndexTypeList,ResultingDimIndexType>;
+template <typename Scalar, typename BundleDimIndexTyple, typename ResultingFactorType, typename ResultingDimIndexType>
+typename BundleIndexMap_t<Scalar,BundleDimIndexTyple,ResultingFactorType,ResultingDimIndexType>::T const BundleIndexMap_t<Scalar,BundleDimIndexTyple,ResultingFactorType,ResultingDimIndexType>::V =
+    ImplementationOf_t<ResultingFactorType,Scalar,UseMemberArray_t<COMPONENTS_ARE_NONCONST> >::template bundle_index_map<BundleDimIndexTyple,ResultingDimIndexType>;
 
 // TEMP: until the indexed expressions are flexible enough to safely do
 // head/body recursion (e.g. in tensor product of procedural 2-tensors)
@@ -412,17 +406,17 @@ static bool const DONT_CHECK_FACTOR_TYPES = true;
 static bool const CHECK_FACTOR_TYPES = false;
 
 // not an expression template, but just something that handles the bundled indices
-template <typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType, bool DONT_CHECK_FACTOR_TYPES_>
+template <typename Operand, typename BundleAbstractIndexTyple, typename ResultingFactorType, typename ResultingAbstractIndexType, bool DONT_CHECK_FACTOR_TYPES_>
 struct IndexBundle_t
 {
-    typedef typename AbstractIndicesOfDimIndexTypeList_t<typename Operand::FreeDimIndexTypeList>::T OperandFreeAbstractIndexTypeList;
+    typedef typename AbstractIndicesOfDimIndexTyple_f<typename Operand::FreeDimIndexTyple>::T OperandFreeAbstractIndexTyple;
 
     enum
     {
         STATIC_ASSERT_IN_ENUM(IS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_VECTOR_SPACES_UNIQUELY(ResultingFactorType), MUST_BE_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES),
         STATIC_ASSERT_IN_ENUM(IsAbstractIndex_f<ResultingAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX),
-        STATIC_ASSERT_IN_ENUM((IsASubsetOf_t<BundleAbstractIndexTypeList,OperandFreeAbstractIndexTypeList>::V), BUNDLE_INDICES_MUST_BE_FREE),
-        STATIC_ASSERT_IN_ENUM((!Contains_f<BundleAbstractIndexTypeList,ResultingAbstractIndexType>::V), BUNDLE_AND_RESULTING_MUST_BE_DISTINCT),
+        STATIC_ASSERT_IN_ENUM((Hippo::IsASubsetOf_f<BundleAbstractIndexTyple,OperandFreeAbstractIndexTyple>::V), BUNDLE_INDICES_MUST_BE_FREE),
+        STATIC_ASSERT_IN_ENUM((!Hippo::Contains_f<BundleAbstractIndexTyple,ResultingAbstractIndexType>::V), BUNDLE_AND_RESULTING_MUST_BE_DISTINCT),
         STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<Operand>::V, OPERAND_IS_EXPRESSION_TEMPLATE)
     };
 
@@ -435,58 +429,60 @@ struct IndexBundle_t
     // P to get i*k*l, and then j*m*n*i*k*l is transformed to i*j*k*l*m*n to get the component from
     // Operand).
 
-    typedef typename DimIndexTypeListOf_t<typename Operand::FreeFactorTypeList,
-                                          OperandFreeAbstractIndexTypeList>::T OperandFreeDimIndexTypeList;
-    typedef typename ExtractFactorsForAbstractIndices_t<OperandFreeAbstractIndexTypeList,
-                                                        typename Operand::FreeFactorTypeList,
-                                                        BundleAbstractIndexTypeList>::T BundleFactorTypeList;
-    typedef typename DimIndexTypeListOf_t<BundleFactorTypeList,
-                                          BundleAbstractIndexTypeList>::T BundleDimIndexTypeList;
+    typedef typename DimIndexTypleOf_f<typename Operand::FreeFactorTyple,
+                                       OperandFreeAbstractIndexTyple>::T OperandFreeDimIndexTyple;
+    typedef typename ExtractFactorsForAbstractIndices_f<OperandFreeAbstractIndexTyple,
+                                                        typename Operand::FreeFactorTyple,
+                                                        BundleAbstractIndexTyple>::T BundleFactorTyple;
+    typedef typename DimIndexTypleOf_f<BundleFactorTyple,
+                                       BundleAbstractIndexTyple>::T BundleDimIndexTyple;
     typedef DimIndex_t<ResultingAbstractIndexType::SYMBOL,
                        DimensionOf_f<ResultingFactorType>::V> ResultingDimIndexType;
 
 private:
 
-    typedef typename FactorTypeListOf_f<typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(ResultingFactorType)::TensorProductOfBasedVectorSpaces>::T ResultingFactorTypeFactorTypeList;
+    typedef typename FactorTypleOf_f<typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(ResultingFactorType)::TensorProductOfBasedVectorSpaces>::T ResultingFactorTypeFactorTyple;
     enum
     {
         STATIC_ASSERT_IN_ENUM(DONT_CHECK_FACTOR_TYPES_ ||
-                              (TypesAreEqual_f<BundleFactorTypeList,ResultingFactorTypeFactorTypeList>::V),
+                              (TypesAreEqual_f<BundleFactorTyple,ResultingFactorTypeFactorTyple>::V),
                               BUNDLE_FACTORS_MUST_MATCH)
     };
 
 public:
 
     // zip the stuff so that the transformations can act on both the DimIndex_t and factor lists
-    typedef typename Zip_t<TypeList_t<OperandFreeDimIndexTypeList,
-                           TypeList_t<typename Operand::FreeFactorTypeList> > >::T OperandFreeDimIndexAndFactorTypeList;
-    typedef TypeList_t<ResultingDimIndexType,TypeList_t<ResultingFactorType> > ResultingDimIndexAndFactorType;
-    typedef typename Zip_t<TypeList_t<BundleDimIndexTypeList,
-                           TypeList_t<BundleFactorTypeList> > >::T BundleDimIndexAndFactorTypeList;
+    typedef typename Hippo::Zip_f<Typle_t<OperandFreeDimIndexTyple,
+                                          typename Operand::FreeFactorTyple>>::T OperandFreeDimIndexAndFactorTyple;
+    typedef Typle_t<ResultingDimIndexType,ResultingFactorType> ResultingDimIndexAndFactorType;
+    typedef typename Hippo::Zip_f<Typle_t<BundleDimIndexTyple,
+                                          BundleFactorTyple>>::T BundleDimIndexAndFactorTyple;
 
-    // ResultingDimIndexAndFactorType comes last.  DimIndexAndFactorTypeList may have summed indices
-    typedef typename SetSubtraction_t<
-        typename ConcatenationOfTypeLists_t<OperandFreeDimIndexAndFactorTypeList,
-                                            TypeList_t<ResultingDimIndexAndFactorType> >::T,
-        BundleDimIndexAndFactorTypeList>::T DimIndexAndFactorTypeList;
-    // this seems like it should be the same as OperandFreeDimIndexAndFactorTypeList, but it has
-    // the indices in BundleDimIndexAndFactorTypeList coming last.
-    typedef typename ConcatenationOfTypeLists_t<
-        typename SetSubtraction_t<OperandFreeDimIndexAndFactorTypeList,BundleDimIndexAndFactorTypeList>::T,
-        BundleDimIndexAndFactorTypeList>::T UnpackedDimIndexAndFactorTypeList;
+    // ResultingDimIndexAndFactorType comes last.  DimIndexAndFactorTyple may have summed indices
+    typedef typename Hippo::SetSubtraction_f<
+        typename Hippo::Concat2Typles_f<OperandFreeDimIndexAndFactorTyple,
+                                        Typle_t<ResultingDimIndexAndFactorType>>::T,
+        BundleDimIndexAndFactorTyple>::T DimIndexAndFactorTyple;
+    // this seems like it should be the same as OperandFreeDimIndexAndFactorTyple, but it has
+    // the indices in BundleDimIndexAndFactorTyple coming last.
+    typedef typename Hippo::Concat2Typles_f<
+        typename Hippo::SetSubtraction_f<OperandFreeDimIndexAndFactorTyple,BundleDimIndexAndFactorTyple>::T,
+        BundleDimIndexAndFactorTyple>::T UnpackedDimIndexAndFactorTyple;
 
     // unzip the stuff
-    typedef typename Unzip_t<DimIndexAndFactorTypeList>::T DimIndexAndFactorTypeList_Unzipped;
-    typedef typename Unzip_t<UnpackedDimIndexAndFactorTypeList>::T UnpackedDimIndexAndFactorTypeList_Unzipped;
-    typedef typename DimIndexAndFactorTypeList_Unzipped::BodyTypeList::HeadType FactorTypeList;
-    typedef typename DimIndexAndFactorTypeList_Unzipped::HeadType DimIndexTypeList;
-    typedef typename UnpackedDimIndexAndFactorTypeList_Unzipped::HeadType UnpackedDimIndexTypeList;
+    typedef typename Hippo::Unzip_f<DimIndexAndFactorTyple>::T DimIndexAndFactorTyple_Unzipped;
+    typedef typename Hippo::Unzip_f<UnpackedDimIndexAndFactorTyple>::T UnpackedDimIndexAndFactorTyple_Unzipped;
+    // typedef typename DimIndexAndFactorTyple_Unzipped::BodyTyple::HeadType FactorTyple;
+    // typedef typename DimIndexAndFactorTyple_Unzipped::HeadType DimIndexTyple;
+    typedef typename Hippo::Element_f<DimIndexAndFactorTyple_Unzipped,0>::T DimIndexTyple;
+    typedef typename Hippo::Element_f<DimIndexAndFactorTyple_Unzipped,1>::T FactorTyple;
+    typedef typename Hippo::Head_f<UnpackedDimIndexAndFactorTyple_Unzipped>::T UnpackedDimIndexTyple;
 
     // finally, define the multi-index and bundle index map.
-    typedef MultiIndex_t<DimIndexTypeList> MultiIndex;
+    typedef MultiIndex_t<DimIndexTyple> MultiIndex;
     typedef typename Operand::Scalar Scalar;
     typedef BundleIndexMap_t<Scalar,
-                             BundleDimIndexTypeList,
+                             BundleDimIndexTyple,
                              ResultingFactorType,
                              ResultingDimIndexType> BundleIndexMap;
 
@@ -496,7 +492,7 @@ public:
     {
         // replace the head of m with the separate indices that it bundles.
         // use MultiIndexMap_t to place the indices in the correct order.
-        typedef MultiIndexMap_t<UnpackedDimIndexTypeList,typename Operand::FreeDimIndexTypeList> OperandIndexMap;
+        typedef MultiIndexMap_t<UnpackedDimIndexTyple,typename Operand::FreeDimIndexTyple> OperandIndexMap;
         static typename OperandIndexMap::EvalMapType const operand_index_map = OperandIndexMap::eval;
         static typename BundleIndexMap::T const bundle_index_map = BundleIndexMap::V;
         // | is concatenation of MultiIndex_t instances
@@ -520,75 +516,75 @@ private:
 };
 
 // not an expression template, but just something that handles the split indices
-template <typename Operand, typename SourceAbstractIndexType, typename SplitAbstractIndexTypeList>
+template <typename Operand, typename SourceAbstractIndexType, typename SplitAbstractIndexTyple>
 struct IndexSplitter_t
 {
-    typedef typename AbstractIndicesOfDimIndexTypeList_t<typename Operand::FreeDimIndexTypeList>::T OperandFreeAbstractIndexTypeList;
+    typedef typename AbstractIndicesOfDimIndexTyple_f<typename Operand::FreeDimIndexTyple>::T OperandFreeAbstractIndexTyple;
 
     enum
     {
         STATIC_ASSERT_IN_ENUM(IsAbstractIndex_f<SourceAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX),
-        STATIC_ASSERT_IN_ENUM((Contains_f<OperandFreeAbstractIndexTypeList,SourceAbstractIndexType>::V), SOURCE_INDEX_MUST_BE_FREE),
-        STATIC_ASSERT_IN_ENUM((!HasNontrivialIntersectionAsSets_t<TypeList_t<SourceAbstractIndexType>,SplitAbstractIndexTypeList>::V), SOURCE_AND_SPLIT_MUST_BE_DISTINCT),
+        STATIC_ASSERT_IN_ENUM((Hippo::Contains_f<OperandFreeAbstractIndexTyple,SourceAbstractIndexType>::V), SOURCE_INDEX_MUST_BE_FREE),
+        STATIC_ASSERT_IN_ENUM((!Hippo::HasNontrivialIntersectionAsSets_f<Typle_t<SourceAbstractIndexType>,SplitAbstractIndexTyple>::V), SOURCE_AND_SPLIT_MUST_BE_DISTINCT),
         STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<Operand>::V, OPERAND_IS_EXPRESSION_TEMPLATE)
     };
 
     typedef typename Operand::Scalar Scalar;
-    // we must replace SourceAbstractIndexType with MultiIndex_t<SplitAbstractIndexTypeList> in the index type list
-    static Uint32 const SOURCE_INDEX_TYPE_INDEX = IndexOfFirstOccurrence_f<OperandFreeAbstractIndexTypeList,SourceAbstractIndexType>::V;
-    typedef typename Element_f<typename Operand::FreeFactorTypeList,SOURCE_INDEX_TYPE_INDEX>::T SourceFactor;
+    // we must replace SourceAbstractIndexType with MultiIndex_t<SplitAbstractIndexTyple> in the index type list
+    static Uint32 const SOURCE_INDEX_TYPE_INDEX = Hippo::IndexOfFirstOccurrence_f<OperandFreeAbstractIndexTyple,SourceAbstractIndexType>::V;
+    typedef typename Hippo::Element_f<typename Operand::FreeFactorTyple,SOURCE_INDEX_TYPE_INDEX>::T SourceFactor;
 
     typedef typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(SourceFactor)::TensorProductOfBasedVectorSpaces EmbeddingTensorProduct;
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM__UNIQUE((OrderOf_f<EmbeddingTensorProduct>::V == SplitAbstractIndexTypeList::LENGTH), MUST_HAVE_EQUAL_LENGTHS, FREEFACTORTYPELIST)
+        STATIC_ASSERT_IN_ENUM__UNIQUE((OrderOf_f<EmbeddingTensorProduct>::V == Hippo::Length_f<SplitAbstractIndexTyple>::V), MUST_HAVE_EQUAL_LENGTHS, FREEFACTORTYPELIST)
     };
 
-    typedef typename ConcatenationOfTypeLists_t<
-        typename LeadingTypeList_f<typename Operand::FreeFactorTypeList,SOURCE_INDEX_TYPE_INDEX>::T,
-        typename ConcatenationOfTypeLists_t<
-            typename FactorTypeListOf_f<EmbeddingTensorProduct>::T,
-            typename TrailingTypeList_f<typename Operand::FreeFactorTypeList,SOURCE_INDEX_TYPE_INDEX+1>::T
+    typedef typename Hippo::Concat2Typles_f<
+        typename Hippo::LeadingTyple_f<typename Operand::FreeFactorTyple,SOURCE_INDEX_TYPE_INDEX>::T,
+        typename Hippo::Concat2Typles_f<
+            typename FactorTypleOf_f<EmbeddingTensorProduct>::T,
+            typename Hippo::TrailingTyple_f<typename Operand::FreeFactorTyple,SOURCE_INDEX_TYPE_INDEX+1>::T
             >::T
-        >::T FactorTypeList;
-    typedef typename ConcatenationOfTypeLists_t<
-        typename LeadingTypeList_f<typename Operand::FreeDimIndexTypeList,SOURCE_INDEX_TYPE_INDEX>::T,
-        typename ConcatenationOfTypeLists_t<
-            SplitAbstractIndexTypeList,
-            typename TrailingTypeList_f<typename Operand::FreeDimIndexTypeList,SOURCE_INDEX_TYPE_INDEX+1>::T
+        >::T FactorTyple;
+    typedef typename Hippo::Concat2Typles_f<
+        typename Hippo::LeadingTyple_f<typename Operand::FreeDimIndexTyple,SOURCE_INDEX_TYPE_INDEX>::T,
+        typename Hippo::Concat2Typles_f<
+            SplitAbstractIndexTyple,
+            typename Hippo::TrailingTyple_f<typename Operand::FreeDimIndexTyple,SOURCE_INDEX_TYPE_INDEX+1>::T
             >::T
-        >::T AbstractIndexTypeList;
-    typedef typename DimIndexTypeListOf_t<FactorTypeList,AbstractIndexTypeList>::T DimIndexTypeList;
-    typedef typename ConcatenationOfTypeLists_t<typename Operand::UsedDimIndexTypeList,SplitAbstractIndexTypeList>::T UsedDimIndexTypeList;
-    typedef MultiIndex_t<DimIndexTypeList> MultiIndex;
+        >::T AbstractIndexTyple;
+    typedef typename DimIndexTypleOf_f<FactorTyple,AbstractIndexTyple>::T DimIndexTyple;
+    typedef typename Hippo::Concat2Typles_f<typename Operand::UsedDimIndexTyple,SplitAbstractIndexTyple>::T UsedDimIndexTyple;
+    typedef MultiIndex_t<DimIndexTyple> MultiIndex;
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM__UNIQUE((FactorTypeList::LENGTH == DimIndexTypeList::LENGTH), MUST_HAVE_EQUAL_LENGTHS, FACTORTYPELIST)
+        STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::Length_f<FactorTyple>::V == Hippo::Length_f<DimIndexTyple>::V), MUST_HAVE_EQUAL_LENGTHS, FACTORTYPELIST)
     };
 
     IndexSplitter_t (Operand const &operand) : m_operand(operand) { }
 
     Scalar operator [] (MultiIndex const &m) const
     {
-        typedef typename DimIndexTypeListOf_t<typename FactorTypeListOf_f<typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_VECTOR_SPACES(SourceFactor)::TensorProductOfVectorSpaces>::T,
-                                              SplitAbstractIndexTypeList>::T SourceFactorDimIndexTypeList;
+        typedef typename DimIndexTypleOf_f<typename FactorTypleOf_f<typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_VECTOR_SPACES(SourceFactor)::TensorProductOfVectorSpaces>::T,
+                                           SplitAbstractIndexTyple>::T SourceFactorDimIndexTyple;
         typedef ComponentIndex_t<DimensionOf_f<SourceFactor>::V> SourceFactorComponentIndex;
-        typedef MultiIndex_t<SourceFactorDimIndexTypeList> SourceFactorMultiIndex;
+        typedef MultiIndex_t<SourceFactorDimIndexTyple> SourceFactorMultiIndex;
         // TODO: the use of UseMemberArray_t<COMPONENTS_ARE_NONCONST> here is arbitrary because it's just used to access a
         // static method.  figure out if this is a problem
         typedef ImplementationOf_t<SourceFactor,Scalar,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > ImplementationOfSourceFactor;
 
-        SourceFactorMultiIndex s(m.template range<SOURCE_INDEX_TYPE_INDEX,SOURCE_INDEX_TYPE_INDEX+SplitAbstractIndexTypeList::LENGTH>());
+        SourceFactorMultiIndex s(m.template range<SOURCE_INDEX_TYPE_INDEX,SOURCE_INDEX_TYPE_INDEX+Hippo::Length_f<SplitAbstractIndexTyple>::V>());
         if (ImplementationOfSourceFactor::component_is_procedural_zero(s))
             return Scalar(0);
 
         SourceFactorComponentIndex i(ImplementationOfSourceFactor::vector_index_of(s));
-        // this replaces the SplitAbstractIndexTypeList portion with SourceAbstractIndexType
+        // this replaces the SplitAbstractIndexTyple portion with SourceAbstractIndexType
         typename Operand::MultiIndex c_rebundled(m.template leading_list<SOURCE_INDEX_TYPE_INDEX>()
                                                  |
-                                                 (i >>= m.template trailing_list<SOURCE_INDEX_TYPE_INDEX+SplitAbstractIndexTypeList::LENGTH>()));
+                                                 (i >>= m.template trailing_list<SOURCE_INDEX_TYPE_INDEX+Hippo::Length_f<SplitAbstractIndexTyple>::V>()));
         return ImplementationOfSourceFactor::scalar_factor_for_component(s) * m_operand[c_rebundled];
     }
 
@@ -610,40 +606,38 @@ private:
 template <typename Operand, typename SourceAbstractIndexType, typename SplitAbstractIndexType>
 struct IndexSplitToIndex_t
 {
-    typedef typename AbstractIndicesOfDimIndexTypeList_t<typename Operand::FreeDimIndexTypeList>::T OperandFreeAbstractIndexTypeList;
+    typedef typename AbstractIndicesOfDimIndexTyple_f<typename Operand::FreeDimIndexTyple>::T OperandFreeAbstractIndexTyple;
 
     enum
     {
         STATIC_ASSERT_IN_ENUM__UNIQUE(IsAbstractIndex_f<SourceAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX, SOURCE),
         STATIC_ASSERT_IN_ENUM__UNIQUE(IsAbstractIndex_f<SplitAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX, SPLIT),
-        STATIC_ASSERT_IN_ENUM((Contains_f<OperandFreeAbstractIndexTypeList,SourceAbstractIndexType>::V), SOURCE_INDEX_MUST_BE_FREE),
+        STATIC_ASSERT_IN_ENUM((Hippo::Contains_f<OperandFreeAbstractIndexTyple,SourceAbstractIndexType>::V), SOURCE_INDEX_MUST_BE_FREE),
         STATIC_ASSERT_IN_ENUM((!TypesAreEqual_f<SourceAbstractIndexType,SplitAbstractIndexType>::V), SOURCE_AND_SPLIT_MUST_BE_DISTINCT),
         STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<Operand>::V, OPERAND_IS_EXPRESSION_TEMPLATE)
     };
 
     typedef typename Operand::Scalar Scalar;
     // we must replace SourceAbstractIndexType with SplitAbstractIndexType in the index type list
-    static Uint32 const SOURCE_INDEX_TYPE_INDEX = IndexOfFirstOccurrence_f<OperandFreeAbstractIndexTypeList,SourceAbstractIndexType>::V;
-    typedef typename Element_f<typename Operand::FreeFactorTypeList,SOURCE_INDEX_TYPE_INDEX>::T SourceFactor;
+    static Uint32 const SOURCE_INDEX_TYPE_INDEX = Hippo::IndexOfFirstOccurrence_f<OperandFreeAbstractIndexTyple,SourceAbstractIndexType>::V;
+    typedef typename Hippo::Element_f<typename Operand::FreeFactorTyple,SOURCE_INDEX_TYPE_INDEX>::T SourceFactor;
 
     typedef typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(SourceFactor)::TensorProductOfBasedVectorSpaces EmbeddingTensorProduct;
-    typedef typename ConcatenationOfTypeLists_t<
-        typename LeadingTypeList_f<typename Operand::FreeFactorTypeList,SOURCE_INDEX_TYPE_INDEX>::T,
-        TypeList_t<EmbeddingTensorProduct,
-                   typename TrailingTypeList_f<typename Operand::FreeFactorTypeList,SOURCE_INDEX_TYPE_INDEX+1>::T>
-        >::T FactorTypeList;
-    typedef typename ConcatenationOfTypeLists_t<
-        typename LeadingTypeList_f<typename Operand::FreeDimIndexTypeList,SOURCE_INDEX_TYPE_INDEX>::T,
-        TypeList_t<SplitAbstractIndexType,
-                   typename TrailingTypeList_f<typename Operand::FreeDimIndexTypeList,SOURCE_INDEX_TYPE_INDEX+1>::T>
-        >::T AbstractIndexTypeList;
-    typedef typename DimIndexTypeListOf_t<FactorTypeList,AbstractIndexTypeList>::T DimIndexTypeList;
-    typedef typename ConcatenationOfTypeLists_t<typename Operand::UsedDimIndexTypeList,TypeList_t<SplitAbstractIndexType> >::T UsedDimIndexTypeList;
-    typedef MultiIndex_t<DimIndexTypeList> MultiIndex;
+    typedef typename Hippo::ConcatTyples_f<
+        typename Hippo::LeadingTyple_f<typename Operand::FreeFactorTyple,SOURCE_INDEX_TYPE_INDEX>::T,
+        Typle_t<EmbeddingTensorProduct>,
+        typename Hippo::TrailingTyple_f<typename Operand::FreeFactorTyple,SOURCE_INDEX_TYPE_INDEX+1>::T>::T FactorTyple;
+    typedef typename Hippo::ConcatTyples_f<
+        typename Hippo::LeadingTyple_f<typename Operand::FreeDimIndexTyple,SOURCE_INDEX_TYPE_INDEX>::T,
+        Typle_t<SplitAbstractIndexType>,
+        typename Hippo::TrailingTyple_f<typename Operand::FreeDimIndexTyple,SOURCE_INDEX_TYPE_INDEX+1>::T>::T AbstractIndexTyple;
+    typedef typename DimIndexTypleOf_f<FactorTyple,AbstractIndexTyple>::T DimIndexTyple;
+    typedef typename Hippo::Concat2Typles_f<typename Operand::UsedDimIndexTyple,Typle_t<SplitAbstractIndexType>>::T UsedDimIndexTyple;
+    typedef MultiIndex_t<DimIndexTyple> MultiIndex;
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM__UNIQUE((FactorTypeList::LENGTH == DimIndexTypeList::LENGTH), MUST_HAVE_EQUAL_LENGTHS, FACTORTYPELIST)
+        STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::Length_f<FactorTyple>::V == Hippo::Length_f<DimIndexTyple>::V), MUST_HAVE_EQUAL_LENGTHS, FACTORTYPELIST)
     };
 
     IndexSplitToIndex_t (Operand const &operand) : m_operand(operand) { }
@@ -691,39 +685,37 @@ template <typename Operand_,
           typename EmbeddingId_>
 struct IndexEmbedder_t
 {
-    typedef typename AbstractIndicesOfDimIndexTypeList_t<typename Operand_::FreeDimIndexTypeList>::T OperandFreeAbstractIndexTypeList;
+    typedef typename AbstractIndicesOfDimIndexTyple_f<typename Operand_::FreeDimIndexTyple>::T OperandFreeAbstractIndexTyple;
 
     enum
     {
         STATIC_ASSERT_IN_ENUM__UNIQUE(IsAbstractIndex_f<SourceAbstractIndexType_>::V, MUST_BE_ABSTRACT_INDEX, SOURCE),
         STATIC_ASSERT_IN_ENUM__UNIQUE(IsAbstractIndex_f<EmbeddedAbstractIndexType_>::V, MUST_BE_ABSTRACT_INDEX, EMBEDDED),
-        STATIC_ASSERT_IN_ENUM((Contains_f<OperandFreeAbstractIndexTypeList,SourceAbstractIndexType_>::V), SOURCE_INDEX_MUST_BE_FREE),
+        STATIC_ASSERT_IN_ENUM((Hippo::Contains_f<OperandFreeAbstractIndexTyple,SourceAbstractIndexType_>::V), SOURCE_INDEX_MUST_BE_FREE),
         STATIC_ASSERT_IN_ENUM((!TypesAreEqual_f<SourceAbstractIndexType_,EmbeddedAbstractIndexType_>::V), SOURCE_AND_EMBEDDED_MUST_BE_DISTINCT),
         STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<Operand_>::V, OPERAND_IS_EXPRESSION_TEMPLATE)
     };
 
     typedef typename Operand_::Scalar Scalar;
     // we must replace SourceAbstractIndexType_ with EmbeddedAbstractIndexType_ in the index type list
-    static Uint32 const SOURCE_INDEX_TYPE_INDEX = IndexOfFirstOccurrence_f<OperandFreeAbstractIndexTypeList,SourceAbstractIndexType_>::V;
-    typedef typename Element_f<typename Operand_::FreeFactorTypeList,SOURCE_INDEX_TYPE_INDEX>::T EmbeddingDomain;
+    static Uint32 const SOURCE_INDEX_TYPE_INDEX = Hippo::IndexOfFirstOccurrence_f<OperandFreeAbstractIndexTyple,SourceAbstractIndexType_>::V;
+    typedef typename Hippo::Element_f<typename Operand_::FreeFactorTyple,SOURCE_INDEX_TYPE_INDEX>::T EmbeddingDomain;
 
-    typedef typename ConcatenationOfTypeLists_t<
-        typename LeadingTypeList_f<typename Operand_::FreeFactorTypeList,SOURCE_INDEX_TYPE_INDEX>::T,
-        TypeList_t<EmbeddingCodomain_,
-                   typename TrailingTypeList_f<typename Operand_::FreeFactorTypeList,SOURCE_INDEX_TYPE_INDEX+1>::T>
-        >::T FactorTypeList;
-    typedef typename ConcatenationOfTypeLists_t<
-        typename LeadingTypeList_f<typename Operand_::FreeDimIndexTypeList,SOURCE_INDEX_TYPE_INDEX>::T,
-        TypeList_t<EmbeddedAbstractIndexType_,
-                   typename TrailingTypeList_f<typename Operand_::FreeDimIndexTypeList,SOURCE_INDEX_TYPE_INDEX+1>::T>
-        >::T AbstractIndexTypeList;
-    typedef typename DimIndexTypeListOf_t<FactorTypeList,AbstractIndexTypeList>::T DimIndexTypeList;
-    typedef typename ConcatenationOfTypeLists_t<typename Operand_::UsedDimIndexTypeList,TypeList_t<EmbeddedAbstractIndexType_> >::T UsedDimIndexTypeList;
-    typedef MultiIndex_t<DimIndexTypeList> MultiIndex;
+    typedef typename Hippo::ConcatTyples_f<
+        typename Hippo::LeadingTyple_f<typename Operand_::FreeFactorTyple,SOURCE_INDEX_TYPE_INDEX>::T,
+        Typle_t<EmbeddingCodomain_>,
+        typename Hippo::TrailingTyple_f<typename Operand_::FreeFactorTyple,SOURCE_INDEX_TYPE_INDEX+1>::T>::T FactorTyple;
+    typedef typename Hippo::ConcatTyples_f<
+        typename Hippo::LeadingTyple_f<typename Operand_::FreeDimIndexTyple,SOURCE_INDEX_TYPE_INDEX>::T,
+        Typle_t<EmbeddedAbstractIndexType_>,
+        typename Hippo::TrailingTyple_f<typename Operand_::FreeDimIndexTyple,SOURCE_INDEX_TYPE_INDEX+1>::T>::T AbstractIndexTyple;
+    typedef typename DimIndexTypleOf_f<FactorTyple,AbstractIndexTyple>::T DimIndexTyple;
+    typedef typename Hippo::Concat2Typles_f<typename Operand_::UsedDimIndexTyple,Typle_t<EmbeddedAbstractIndexType_>>::T UsedDimIndexTyple;
+    typedef MultiIndex_t<DimIndexTyple> MultiIndex;
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM__UNIQUE((FactorTypeList::LENGTH == DimIndexTypeList::LENGTH), MUST_HAVE_EQUAL_LENGTHS, FACTORTYPELIST)
+        STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::Length_f<FactorTyple>::V == Hippo::Length_f<DimIndexTyple>::V), MUST_HAVE_EQUAL_LENGTHS, FACTORTYPELIST)
     };
 
     IndexEmbedder_t (Operand_ const &operand) : m_operand(operand) { }
@@ -769,39 +761,37 @@ template <typename Operand_,
           typename EmbeddingId_>
 struct IndexCoembedder_t
 {
-    typedef typename AbstractIndicesOfDimIndexTypeList_t<typename Operand_::FreeDimIndexTypeList>::T OperandFreeAbstractIndexTypeList;
+    typedef typename AbstractIndicesOfDimIndexTyple_f<typename Operand_::FreeDimIndexTyple>::T OperandFreeAbstractIndexTyple;
 
     enum
     {
         STATIC_ASSERT_IN_ENUM__UNIQUE(IsAbstractIndex_f<SourceAbstractIndexType_>::V, MUST_BE_ABSTRACT_INDEX, SOURCE),
         STATIC_ASSERT_IN_ENUM__UNIQUE(IsAbstractIndex_f<CoembeddedAbstractIndexType_>::V, MUST_BE_ABSTRACT_INDEX, EMBEDDED),
-        STATIC_ASSERT_IN_ENUM((Contains_f<OperandFreeAbstractIndexTypeList,SourceAbstractIndexType_>::V), SOURCE_INDEX_MUST_BE_FREE),
+        STATIC_ASSERT_IN_ENUM((Hippo::Contains_f<OperandFreeAbstractIndexTyple,SourceAbstractIndexType_>::V), SOURCE_INDEX_MUST_BE_FREE),
         STATIC_ASSERT_IN_ENUM((!TypesAreEqual_f<SourceAbstractIndexType_,CoembeddedAbstractIndexType_>::V), SOURCE_AND_EMBEDDED_MUST_BE_DISTINCT),
         STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<Operand_>::V, OPERAND_IS_EXPRESSION_TEMPLATE)
     };
 
     typedef typename Operand_::Scalar Scalar;
     // we must replace SourceAbstractIndexType_ with CoembeddedAbstractIndexType_ in the index type list
-    static Uint32 const SOURCE_INDEX_TYPE_INDEX = IndexOfFirstOccurrence_f<OperandFreeAbstractIndexTypeList,SourceAbstractIndexType_>::V;
-    typedef typename Element_f<typename Operand_::FreeFactorTypeList,SOURCE_INDEX_TYPE_INDEX>::T CoembeddingDomain;
+    static Uint32 const SOURCE_INDEX_TYPE_INDEX = Hippo::IndexOfFirstOccurrence_f<OperandFreeAbstractIndexTyple,SourceAbstractIndexType_>::V;
+    typedef typename Hippo::Element_f<typename Operand_::FreeFactorTyple,SOURCE_INDEX_TYPE_INDEX>::T CoembeddingDomain;
 
-    typedef typename ConcatenationOfTypeLists_t<
-        typename LeadingTypeList_f<typename Operand_::FreeFactorTypeList,SOURCE_INDEX_TYPE_INDEX>::T,
-        TypeList_t<CoembeddingCodomain_,
-                   typename TrailingTypeList_f<typename Operand_::FreeFactorTypeList,SOURCE_INDEX_TYPE_INDEX+1>::T>
-        >::T FactorTypeList;
-    typedef typename ConcatenationOfTypeLists_t<
-        typename LeadingTypeList_f<typename Operand_::FreeDimIndexTypeList,SOURCE_INDEX_TYPE_INDEX>::T,
-        TypeList_t<CoembeddedAbstractIndexType_,
-                   typename TrailingTypeList_f<typename Operand_::FreeDimIndexTypeList,SOURCE_INDEX_TYPE_INDEX+1>::T>
-        >::T AbstractIndexTypeList;
-    typedef typename DimIndexTypeListOf_t<FactorTypeList,AbstractIndexTypeList>::T DimIndexTypeList;
-    typedef typename ConcatenationOfTypeLists_t<typename Operand_::UsedDimIndexTypeList,TypeList_t<CoembeddedAbstractIndexType_> >::T UsedDimIndexTypeList;
-    typedef MultiIndex_t<DimIndexTypeList> MultiIndex;
+    typedef typename Hippo::ConcatTyples_f<
+        typename Hippo::LeadingTyple_f<typename Operand_::FreeFactorTyple,SOURCE_INDEX_TYPE_INDEX>::T,
+        Typle_t<CoembeddingCodomain_>,
+        typename Hippo::TrailingTyple_f<typename Operand_::FreeFactorTyple,SOURCE_INDEX_TYPE_INDEX+1>::T>::T FactorTyple;
+    typedef typename Hippo::ConcatTyples_f<
+        typename Hippo::LeadingTyple_f<typename Operand_::FreeDimIndexTyple,SOURCE_INDEX_TYPE_INDEX>::T,
+        Typle_t<CoembeddedAbstractIndexType_>,
+        typename Hippo::TrailingTyple_f<typename Operand_::FreeDimIndexTyple,SOURCE_INDEX_TYPE_INDEX+1>::T>::T AbstractIndexTyple;
+    typedef typename DimIndexTypleOf_f<FactorTyple,AbstractIndexTyple>::T DimIndexTyple;
+    typedef typename Hippo::Concat2Typles_f<typename Operand_::UsedDimIndexTyple,Typle_t<CoembeddedAbstractIndexType_>>::T UsedDimIndexTyple;
+    typedef MultiIndex_t<DimIndexTyple> MultiIndex;
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM__UNIQUE((FactorTypeList::LENGTH == DimIndexTypeList::LENGTH), MUST_HAVE_EQUAL_LENGTHS, FACTORTYPELIST)
+        STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::Length_f<FactorTyple>::V == Hippo::Length_f<DimIndexTyple>::V), MUST_HAVE_EQUAL_LENGTHS, FACTORTYPELIST)
     };
 
     IndexCoembedder_t (Operand_ const &operand) : m_operand(operand) { }

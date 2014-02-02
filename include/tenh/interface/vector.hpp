@@ -39,11 +39,11 @@ struct Vector_i
     static Uint32 const DIM = DimensionOf_f<BasedVectorSpace>::V;
 
     typedef ComponentIndex_t<DIM> ComponentIndex;
-    typedef MultiIndex_t<TypeList_t<ComponentIndex> > MultiIndex;
+    typedef MultiIndex_t<Typle_t<ComponentIndex>> MultiIndex;
 
     // this is necessary so that ExpressionTemplate_IndexedObject_t knows that a vector is
     // a 1-tensor having a particular type.
-    typedef TypeList_t<BasedVectorSpace> FactorTypeList;
+    typedef Typle_t<BasedVectorSpace> FactorTyple;
 
     static ComponentQualifier const COMPONENT_QUALIFIER = COMPONENT_QUALIFIER_;
     typedef typename ComponentQualifier_m<Scalar_,COMPONENT_QUALIFIER_>::ComponentAccessConstReturnType ComponentAccessConstReturnType;
@@ -92,18 +92,18 @@ struct Vector_i
     ComponentAccessNonConstReturnType operator [] (ComponentIndex const &i) { return as_derived().operator[](i); }
 
     template <typename Index_>
-    ComponentAccessConstReturnType operator [] (MultiIndex_t<TypeList_t<Index_> > const &m) const { return as_derived().operator[](m.head()); }
+    ComponentAccessConstReturnType operator [] (MultiIndex_t<Typle_t<Index_>> const &m) const { return as_derived().operator[](m.head()); }
     template <typename Index_>
-    ComponentAccessNonConstReturnType operator [] (MultiIndex_t<TypeList_t<Index_> > const &m) { return as_derived().operator[](m.head()); }
+    ComponentAccessNonConstReturnType operator [] (MultiIndex_t<Typle_t<Index_>> const &m) { return as_derived().operator[](m.head()); }
 
     // because the return type for "operator () (...) const" is an abomination, use this helper.
     template <AbstractIndexSymbol SYMBOL_>
     struct IndexedExpressionConstType_f
     {
         typedef ExpressionTemplate_IndexedObject_t<Vector_i,
-                                                   TypeList_t<BasedVectorSpace>,
-                                                   TypeList_t<DimIndex_t<SYMBOL_,DIM> >,
-                                                   EmptyTypeList,
+                                                   Typle_t<BasedVectorSpace>,
+                                                   Typle_t<DimIndex_t<SYMBOL_,DIM>>,
+                                                   Typle_t<>,
                                                    FORCE_CONST,
                                                    CHECK_FOR_ALIASING> T;
     };
@@ -112,9 +112,9 @@ struct Vector_i
     struct IndexedExpressionNonConstType_f
     {
         typedef ExpressionTemplate_IndexedObject_t<Vector_i,
-                                                   TypeList_t<BasedVectorSpace>,
-                                                   TypeList_t<DimIndex_t<SYMBOL_,DIM> >,
-                                                   EmptyTypeList,
+                                                   Typle_t<BasedVectorSpace>,
+                                                   Typle_t<DimIndex_t<SYMBOL_,DIM>>,
+                                                   Typle_t<>,
                                                    DONT_FORCE_CONST,
                                                    CHECK_FOR_ALIASING> T;
     };
@@ -140,13 +140,13 @@ struct Vector_i
     }
 
     template <AbstractIndexSymbol SYMBOL_>
-    typename IndexedExpressionConstType_f<SYMBOL_>::T operator () (TypeList_t<AbstractIndex_c<SYMBOL_> > const &) const
+    typename IndexedExpressionConstType_f<SYMBOL_>::T operator () (Typle_t<AbstractIndex_c<SYMBOL_>> const &) const
     {
         STATIC_ASSERT((SYMBOL_ != '\0'), ABSTRACT_INDEX_SYMBOL_MUST_BE_POSITIVE);
         return typename IndexedExpressionConstType_f<SYMBOL_>::T(as_derived());
     }
     template <AbstractIndexSymbol SYMBOL_>
-    typename IndexedExpressionNonConstType_f<SYMBOL_>::T operator () (TypeList_t<AbstractIndex_c<SYMBOL_> > const &)
+    typename IndexedExpressionNonConstType_f<SYMBOL_>::T operator () (Typle_t<AbstractIndex_c<SYMBOL_>> const &)
     {
         STATIC_ASSERT((SYMBOL_ != '\0'), ABSTRACT_INDEX_SYMBOL_MUST_BE_POSITIVE);
         return typename IndexedExpressionNonConstType_f<SYMBOL_>::T(as_derived());
@@ -172,10 +172,10 @@ struct Vector_i
     //   X(tuple(v))
     // evaluates as
     //   X(i)*v(i).
-    template <typename ParameterTypeList_>
-    Scalar_ operator () (List_t<ParameterTypeList_> const &p) const
+    template <typename ParameterTyple_>
+    Scalar_ operator () (List_t<ParameterTyple_> const &p) const
     {
-        STATIC_ASSERT(Length_f<ParameterTypeList_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
+        STATIC_ASSERT(Hippo::Length_f<ParameterTyple_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
         AbstractIndex_c<'i'> i;
         return operator()(i)*p.head()(i);
     }

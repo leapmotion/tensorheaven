@@ -499,10 +499,10 @@ struct IsASubsetOf_f
 };
 
 /// @cond false
-// template <typename TypeListAHead_, typename TypleB_>
-// struct IsASubsetOf_f<Typle_t<TypeListAHead_>,TypleB_>
+// template <typename TypleAHead_, typename TypleB_>
+// struct IsASubsetOf_f<Typle_t<TypleAHead_>,TypleB_>
 // {
-//     static bool const V = Contains_f<TypleB_,TypeListAHead_>::V;
+//     static bool const V = Contains_f<TypleB_,TypleAHead_>::V;
 // };
 
 template <typename TypleB_>
@@ -582,7 +582,6 @@ private:
                           Typle_t<>,
                           Typle_t<typename Head_f<TypleA_>::T> >::T HeadTyple;
 public:
-    // typedef typename ConcatenationOfTypeLists_t<HeadTypeList,typename SetSubtraction_f<typename TypleA_::BodyTypeList,TypleB_>::T>::T T;
     typedef typename Concat2Typles_f<HeadTyple,typename SetSubtraction_f<typename BodyTyple_f<TypleA_>::T,TypleB_>::T>::T T;
 };
 
@@ -686,6 +685,8 @@ template <Uint32 LENGTH_, typename Type_>
 struct UniformTypleOfLength_f
 {
     typedef typename HeadBodyTyple_f<Type_,typename UniformTypleOfLength_f<LENGTH_-1,Type_>::T>::T T;
+private:
+    UniformTypleOfLength_f ();
 };
 
 /// @cond false
@@ -693,6 +694,8 @@ template <typename Type_>
 struct UniformTypleOfLength_f<0,Type_>
 {
     typedef Typle_t<> T;
+private:
+    UniformTypleOfLength_f ();
 };
 /// @endcond
 
@@ -711,6 +714,7 @@ struct TypleIsUniform_f<Typle_t<Head_,BodyTypes_...> >
 {
 private:
     typedef Typle_t<BodyTypes_...> BodyTyple;
+    TypleIsUniform_f ();
 public:
     static bool const V = TypesAreEqual_f<Head_,typename Head_f<BodyTyple>::T>::V &&
                           TypleIsUniform_f<BodyTyple>::V;
@@ -730,6 +734,25 @@ struct TypleIsUniform_f<Typle_t<>>
 /// @endcond
 
 MAKE_1_ARY_VALUE_EVALUATOR(TypleIsUniform, bool);
+
+/// @struct TypeOfUniformTyple_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
+/// @brief Returns the unique type of a uniform typle, assuming it is uniform.  This is
+/// not defined for Typle_t<> (the empty typle).
+/// @tparam Typle_ the Typle_t whose uniform type to return.
+template <typename Typle_> struct TypeOfUniformTyple_f;
+
+/// @cond false
+template <typename Head_, typename... BodyTypes_>
+struct TypeOfUniformTyple_f<Typle_t<Head_,BodyTypes_...> >
+{
+private:
+    typedef Typle_t<Head_,BodyTypes_...> Typle;
+    static_assert(TypleIsUniform_f<Typle>::V, "parameter typle must be uniform");
+    TypeOfUniformTyple_f ();
+public:
+    typedef Head_ T;
+};
+/// @endcond
 
 } // end of namespace Hippo
 

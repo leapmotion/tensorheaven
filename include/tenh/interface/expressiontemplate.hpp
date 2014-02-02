@@ -21,10 +21,10 @@ namespace Tenh {
 // compile-time interface for expression templates
 // ////////////////////////////////////////////////////////////////////////////
 
-template <typename Operand, typename BundleAbstractIndexTypeList, typename ResultingFactorType, typename ResultingAbstractIndexType, bool DONT_CHECK_FACTOR_TYPES_>
+template <typename Operand, typename BundleAbstractIndexTyple, typename ResultingFactorType, typename ResultingAbstractIndexType, bool DONT_CHECK_FACTOR_TYPES_>
 struct ExpressionTemplate_IndexBundle_t;
 
-template <typename Operand, typename SourceIndexType, typename SplitIndexTypeList>
+template <typename Operand, typename SourceIndexType, typename SplitIndexTyple>
 struct ExpressionTemplate_IndexSplit_t;
 
 template <typename Operand, typename SourceAbstractIndexType, typename SplitAbstractIndexType>
@@ -50,34 +50,34 @@ struct ExpressionTemplate_Eval_t;
 // this is essentially a compile-time interface, requiring:
 // - a Derived type (should be the type of the thing that ultimately inherits this)
 // - a Scalar type (should be the scalar type of the expression template's tensor operand)
-// - a FreeDimIndexTypeList type (the free indices of this expression template)
-// - a UsedDimIndexTypeList type (the indices that have been used further down the AST)
+// - a FreeDimIndexTyple type (the free indices of this expression template)
+// - a UsedDimIndexTyple type (the indices that have been used further down the AST)
 // requires also particular methods:
 //   operator Scalar () const // conversion to scalar -- always declared, but should
 //                            // only compile if the conversion is well-defined (e.g. no free indices)
-//   Scalar operator [] (MultiIndex const &) const // accessor using MultiIndex_t<FreeDimIndexTypeList>
+//   Scalar operator [] (MultiIndex const &) const // accessor using MultiIndex_t<FreeDimIndexTyple>
 //   bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const // used in checking for aliasing
 template <typename Derived_,
           typename Scalar_,
-          typename FreeFactorTypeList_,
-          typename FreeDimIndexTypeList_,
-          typename UsedDimIndexTypeList_>
+          typename FreeFactorTyple_,
+          typename FreeDimIndexTyple_,
+          typename UsedDimIndexTyple_>
 struct ExpressionTemplate_i // _i is for "compile-time interface"
 {
     enum
     {
         STATIC_ASSERT_IN_ENUM((!TypesAreEqual_f<Derived_,NullType>::V), DERIVED_MUST_NOT_BE_NULL_TYPE),
-        STATIC_ASSERT_IN_ENUM__UNIQUE((EachTypeSatisfies_f<FreeDimIndexTypeList_,IsDimIndex_p>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, FREEDIMINDEXTYPELIST),
-        STATIC_ASSERT_IN_ENUM__UNIQUE((EachTypeSatisfies_f<UsedDimIndexTypeList_,IsDimIndex_p>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, USEDDIMINDEXTYPELIST)
+        STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::EachTypeSatisfies_f<FreeDimIndexTyple_,IsDimIndex_e>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, FREEDIMINDEXTYPELIST),
+        STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::EachTypeSatisfies_f<UsedDimIndexTyple_,IsDimIndex_e>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, USEDDIMINDEXTYPELIST)
     };
 
     typedef Derived_ Derived;
     // these typedefs make the Derived-specified typedefs available at the baseclass level,
     typedef Scalar_ Scalar;
-    typedef FreeFactorTypeList_ FreeFactorTypeList;
-    typedef FreeDimIndexTypeList_ FreeDimIndexTypeList;
-    typedef UsedDimIndexTypeList_ UsedDimIndexTypeList;
-    typedef MultiIndex_t<FreeDimIndexTypeList> MultiIndex;
+    typedef FreeFactorTyple_ FreeFactorTyple;
+    typedef FreeDimIndexTyple_ FreeDimIndexTyple;
+    typedef UsedDimIndexTyple_ UsedDimIndexTyple;
+    typedef MultiIndex_t<FreeDimIndexTyple> MultiIndex;
 
     // TODO: some consistency checks on the various types
 
@@ -101,15 +101,13 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     typename AssociatedFloatingPointType_t<Scalar>::T norm () const; // definition is in expressiontemplate_eval.hpp
 
     template <bool DONT_CHECK_FACTOR_TYPES_,
-              typename AbstractIndexHeadType,
-              typename AbstractIndexBodyTypeList,
               typename ResultingFactorType,
-              typename ResultingAbstractIndexType>
+              typename ResultingAbstractIndexType,
+              typename... AbstractIndexTypes_>
     struct BundleReturnType_f
     {
         typedef ExpressionTemplate_IndexBundle_t<Derived,
-                                                 TypeList_t<AbstractIndexHeadType,
-                                                            AbstractIndexBodyTypeList>,
+                                                 Typle_t<AbstractIndexTypes_...>,
                                                  ResultingFactorType,
                                                  ResultingAbstractIndexType,
                                                  DONT_CHECK_FACTOR_TYPES_> T;
@@ -118,31 +116,29 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     // method for "bundling" separate abstract indices into a single abstract index
     // of a more specific type (e.g. a 2-tensor, a fully symmetric 3-tensor, etc)
     // (m(j*i)*a(j*k)*m(k*l)).bundle(i*l,Q) -- bundle i,l into Q
-    template <typename AbstractIndexHeadType,
-              typename AbstractIndexBodyTypeList,
-              typename ResultingFactorType,
-              typename ResultingAbstractIndexType>
+    template <typename ResultingFactorType,
+              typename ResultingAbstractIndexType,
+              typename... AbstractIndexTypes_>
     typename BundleReturnType_f<false, // CHECK_FACTOR_TYPES
-                                AbstractIndexHeadType,
-                                AbstractIndexBodyTypeList,
                                 ResultingFactorType,
-                                ResultingAbstractIndexType>::T
-        bundle (TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> const &,
+                                ResultingAbstractIndexType,
+                                AbstractIndexTypes_...>::T
+        bundle (Typle_t<AbstractIndexTypes_...> const &,
                 ResultingFactorType const &,
                 ResultingAbstractIndexType const &) const
     {
+        typedef Typle_t<AbstractIndexTypes_...> AbstractIndexTyple;
         // make sure that ResultingAbstractIndexType actually is one
         STATIC_ASSERT(IsAbstractIndex_f<ResultingAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX);
         // make sure that the index type list actually contains AbstractIndex_c types
-        STATIC_ASSERT((EachTypeSatisfies_f<TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList>, IsAbstractIndex_p>::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
+        STATIC_ASSERT((Hippo::EachTypeSatisfies_f<AbstractIndexTyple,IsAbstractIndex_e>::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
         // make sure that ResultingFactorType is the correct conceptual type
         // TODO: there is probably a stronger type check (a type which is embeddable into a tensor space)
         STATIC_ASSERT(HasBasedVectorSpaceStructure_f<ResultingFactorType>::V, MUST_BE_BASED_VECTOR_SPACE);
         return typename BundleReturnType_f<false, // CHECK_FACTOR_TYPES
-                                           AbstractIndexHeadType,
-                                           AbstractIndexBodyTypeList,
                                            ResultingFactorType,
-                                           ResultingAbstractIndexType>::T(as_derived());
+                                           ResultingAbstractIndexType,
+                                           AbstractIndexTypes_...>::T(as_derived());
     }
 
     // method for "bundling" separate abstract indices into a single abstract index
@@ -151,42 +147,38 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     // NOTE: this is a temporary hack to allow bundles that are technically type
     // unsafe, but that function.  this is necessary until the indexing paradigm
     // is expressable enough to do head/body recursion with type correctness.
-    template <typename AbstractIndexHeadType,
-              typename AbstractIndexBodyTypeList,
-              typename ResultingFactorType,
-              typename ResultingAbstractIndexType>
+    template <typename ResultingFactorType,
+              typename ResultingAbstractIndexType,
+              typename... AbstractIndexTypes_>
     typename BundleReturnType_f<true, // DONT_CHECK_FACTOR_TYPES
-                                AbstractIndexHeadType,
-                                AbstractIndexBodyTypeList,
                                 ResultingFactorType,
-                                ResultingAbstractIndexType>::T
-        bundle_with_no_type_check (TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> const &,
+                                ResultingAbstractIndexType,
+                                AbstractIndexTypes_...>::T
+        bundle_with_no_type_check (Typle_t<AbstractIndexTypes_...> const &,
                                    ResultingFactorType const &,
                                    ResultingAbstractIndexType const &) const
     {
+        typedef Typle_t<AbstractIndexTypes_...> AbstractIndexTyple;
         // make sure that ResultingAbstractIndexType actually is one
         STATIC_ASSERT(IsAbstractIndex_f<ResultingAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX);
         // make sure that the index type list actually contains AbstractIndex_c types
-        STATIC_ASSERT((EachTypeSatisfies_f<TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList>, IsAbstractIndex_p>::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
+        STATIC_ASSERT((Hippo::EachTypeSatisfies_f<AbstractIndexTyple,IsAbstractIndex_e>::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
         // make sure that ResultingFactorType is the correct conceptual type
         // TODO: there is probably a stronger type check (a type which is embeddable into a tensor space)
         STATIC_ASSERT(HasBasedVectorSpaceStructure_f<ResultingFactorType>::V, MUST_BE_BASED_VECTOR_SPACE);
         return typename BundleReturnType_f<true, // DONT_CHECK_FACTOR_TYPES
-                                           AbstractIndexHeadType,
-                                           AbstractIndexBodyTypeList,
                                            ResultingFactorType,
-                                           ResultingAbstractIndexType>::T(as_derived());
+                                           ResultingAbstractIndexType,
+                                           AbstractIndexTypes_...>::T(as_derived());
     }
 
     template <typename SourceAbstractIndexType,
-              typename AbstractIndexHeadType,
-              typename AbstractIndexBodyTypeList>
+              typename... AbstractIndexTypes_>
     struct SplitReturnType_f
     {
         typedef ExpressionTemplate_IndexSplit_t<Derived,
                                                 SourceAbstractIndexType,
-                                                TypeList_t<AbstractIndexHeadType,
-                                                           AbstractIndexBodyTypeList> > T;
+                                                Typle_t<AbstractIndexTypes_...>> T;
     };
 
     // method for "splitting" the index of something that is "embeddable
@@ -197,21 +189,19 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     // essentially this embeds the indexed factor into a particular
     // tensor product, and forgets the symmetries of the indexed factor.
     template <typename SourceAbstractIndexType,
-              typename AbstractIndexHeadType,
-              typename AbstractIndexBodyTypeList>
+              typename... AbstractIndexTypes_>
     typename SplitReturnType_f<SourceAbstractIndexType,
-                               AbstractIndexHeadType,
-                               AbstractIndexBodyTypeList>::T
+                               AbstractIndexTypes_...>::T
         split (SourceAbstractIndexType const &,
-               TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> const &) const
+               Typle_t<AbstractIndexTypes_...> const &) const
     {
+        typedef Typle_t<AbstractIndexTypes_...> AbstractIndexTyple;
         // make sure that SourceAbstractIndexType actually is one
         STATIC_ASSERT(IsAbstractIndex_f<SourceAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX);
         // make sure that the index type list actually contains AbstractIndex_c types
-        STATIC_ASSERT((EachTypeSatisfies_f<TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList>, IsAbstractIndex_p>::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
+        STATIC_ASSERT((Hippo::EachTypeSatisfies_f<AbstractIndexTyple,IsAbstractIndex_e>::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
         return typename SplitReturnType_f<SourceAbstractIndexType,
-                                          AbstractIndexHeadType,
-                                          AbstractIndexBodyTypeList>::T(as_derived());
+                                          AbstractIndexTypes_...>::T(as_derived());
     }
     // method for "splitting" the index of something that is "embeddable
     // as tensor" into the vector index of the tensor product.  for example,
@@ -223,17 +213,20 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     // the indexed factor.
     // NOTE: this method will be deprecated when the "embed" feature exists.
     template <typename SourceAbstractIndexType, AbstractIndexSymbol SPLIT_ABSTRACT_INDEX_SYMBOL_>
-    ExpressionTemplate_IndexSplitToIndex_t<Derived,SourceAbstractIndexType,AbstractIndex_c<SPLIT_ABSTRACT_INDEX_SYMBOL_> >
+    ExpressionTemplate_IndexSplitToIndex_t<Derived,SourceAbstractIndexType,AbstractIndex_c<SPLIT_ABSTRACT_INDEX_SYMBOL_>>
         split (SourceAbstractIndexType const &,
                AbstractIndex_c<SPLIT_ABSTRACT_INDEX_SYMBOL_> const &) const
     {
         // make sure that SourceAbstractIndexType actually is one
         STATIC_ASSERT(IsAbstractIndex_f<SourceAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX);
-        return ExpressionTemplate_IndexSplitToIndex_t<Derived,SourceAbstractIndexType,AbstractIndex_c<SPLIT_ABSTRACT_INDEX_SYMBOL_> >(as_derived());
+        return ExpressionTemplate_IndexSplitToIndex_t<Derived,SourceAbstractIndexType,AbstractIndex_c<SPLIT_ABSTRACT_INDEX_SYMBOL_>>(as_derived());
     }
 
     // metafunction for determining the return type of the embed method.
-    template <typename SourceAbstractIndexType_, typename EmbeddingCodomain_, AbstractIndexSymbol EMBEDDED_ABSTRACT_INDEX_SYMBOL_, typename EmbeddingId_>
+    template <typename SourceAbstractIndexType_,
+              typename EmbeddingCodomain_,
+              AbstractIndexSymbol EMBEDDED_ABSTRACT_INDEX_SYMBOL_,
+              typename EmbeddingId_>
     struct EmbedReturnType_f
     {
         typedef ExpressionTemplate_IndexEmbed_t<Derived,
@@ -249,7 +242,10 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     //   diag(i).embed(i,TensorProduct(),j)
     // embeds the diagonal 2-tensor into the corresponding 2-tensor product
     // defined by the type TensorProduct, having index j.
-    template <typename EmbeddingId_, typename SourceAbstractIndexType_, typename EmbeddingCodomain_, AbstractIndexSymbol EMBEDDED_ABSTRACT_INDEX_SYMBOL_>
+    template <typename EmbeddingId_,
+              typename SourceAbstractIndexType_,
+              typename EmbeddingCodomain_,
+              AbstractIndexSymbol EMBEDDED_ABSTRACT_INDEX_SYMBOL_>
     typename EmbedReturnType_f<SourceAbstractIndexType_,
                                EmbeddingCodomain_,
                                EMBEDDED_ABSTRACT_INDEX_SYMBOL_,
@@ -266,7 +262,9 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
                                           EmbeddingId_>::T(as_derived());
     }
     // convenience method equivalent to embed_using<NaturalEmbedding>, e.g. for symmetric powers, etc.
-    template <typename SourceAbstractIndexType_, typename EmbeddingCodomain_, AbstractIndexSymbol EMBEDDED_ABSTRACT_INDEX_SYMBOL_>
+    template <typename SourceAbstractIndexType_,
+              typename EmbeddingCodomain_,
+              AbstractIndexSymbol EMBEDDED_ABSTRACT_INDEX_SYMBOL_>
     typename EmbedReturnType_f<SourceAbstractIndexType_,
                                EmbeddingCodomain_,
                                EMBEDDED_ABSTRACT_INDEX_SYMBOL_,
@@ -284,7 +282,10 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     }
 
     // metafunction for determining the return type of the coembed method.
-    template <typename SourceAbstractIndexType_, typename CoembeddingCodomain_, AbstractIndexSymbol COEMBEDDED_ABSTRACT_INDEX_SYMBOL_, typename EmbeddingId_>
+    template <typename SourceAbstractIndexType_,
+              typename CoembeddingCodomain_,
+              AbstractIndexSymbol COEMBEDDED_ABSTRACT_INDEX_SYMBOL_,
+              typename EmbeddingId_>
     struct CoembedReturnType_f
     {
         typedef ExpressionTemplate_IndexCoembed_t<Derived,
@@ -298,7 +299,10 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     // which is an operation that is adjoint to embedding.  coembed is defined
     // by the property
     //   A(i).embed(i,UpstairsSpace(),j)*B(j) - A(i)*B(j).coembed(j,DownStairsSpace(),i) == 0
-    template <typename EmbeddingId_, typename SourceAbstractIndexType_, typename CoembeddingCodomain_, AbstractIndexSymbol COEMBEDDED_ABSTRACT_INDEX_SYMBOL_>
+    template <typename EmbeddingId_,
+              typename SourceAbstractIndexType_,
+              typename CoembeddingCodomain_,
+              AbstractIndexSymbol COEMBEDDED_ABSTRACT_INDEX_SYMBOL_>
     typename CoembedReturnType_f<SourceAbstractIndexType_,
                                  CoembeddingCodomain_,
                                  COEMBEDDED_ABSTRACT_INDEX_SYMBOL_,
@@ -315,7 +319,9 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
                                             EmbeddingId_>::T(as_derived());
     }
     // convenience method equivalent to coembed_using<NaturalEmbedding>, e.g. for symmetric powers, etc.
-    template <typename SourceAbstractIndexType_, typename CoembeddingCodomain_, AbstractIndexSymbol COEMBEDDED_ABSTRACT_INDEX_SYMBOL_>
+    template <typename SourceAbstractIndexType_,
+              typename CoembeddingCodomain_,
+              AbstractIndexSymbol COEMBEDDED_ABSTRACT_INDEX_SYMBOL_>
     typename CoembedReturnType_f<SourceAbstractIndexType_,
                                  CoembeddingCodomain_,
                                  COEMBEDDED_ABSTRACT_INDEX_SYMBOL_,
@@ -342,41 +348,43 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     {
         return "ExpressionTemplate_i<" + type_string_of<Derived_>() + ','
                                        + type_string_of<Scalar_>() + ','
-                                       + type_string_of<FreeFactorTypeList_>() + ','
-                                       + type_string_of<FreeDimIndexTypeList_>() + ','
-                                       + type_string_of<UsedDimIndexTypeList_>() + '>';
+                                       + type_string_of<FreeFactorTyple_>() + ','
+                                       + type_string_of<FreeDimIndexTyple_>() + ','
+                                       + type_string_of<UsedDimIndexTyple_>() + '>';
     }
 };
 
 template <typename T_> struct IsExpressionTemplate_f { static bool const V = false; };
 template <typename Derived_,
           typename Scalar_,
-          typename FreeFactorTypeList_,
-          typename FreeDimIndexTypeList_,
-          typename UsedDimIndexTypeList_>
+          typename FreeFactorTyple_,
+          typename FreeDimIndexTyple_,
+          typename UsedDimIndexTyple_>
 struct IsExpressionTemplate_f<ExpressionTemplate_i<Derived_,
                                                    Scalar_,
-                                                   FreeFactorTypeList_,
-                                                   FreeDimIndexTypeList_,
-                                                   UsedDimIndexTypeList_> >
+                                                   FreeFactorTyple_,
+                                                   FreeDimIndexTyple_,
+                                                   UsedDimIndexTyple_> >
 {
     static bool const V = true;
 };
+
+MAKE_1_ARY_VALUE_EVALUATOR(IsExpressionTemplate, bool);
 
 // will print any order expression template in a nice-looking justified way.  if the order is greater
 // than 1, this will print newlines, notably including the first character.
 template <typename Derived_,
           typename Scalar_,
-          typename FreeFactorTypeList_,
-          typename FreeDimIndexTypeList_,
-          typename UsedDimIndexTypeList_>
-std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &e)
+          typename FreeFactorTyple_,
+          typename FreeDimIndexTyple_,
+          typename UsedDimIndexTyple_>
+std::ostream &operator << (std::ostream &out, ExpressionTemplate_i<Derived_,Scalar_,FreeFactorTyple_,FreeDimIndexTyple_,UsedDimIndexTyple_> const &e)
 {
-    print_multiindexable(out, e, FreeDimIndexTypeList_());
-    typedef typename AbstractIndicesOfDimIndexTypeList_t<FreeDimIndexTypeList_>::T AbstractIndexTypeList;
+    print_multiindexable(out, e, FreeDimIndexTyple_());
+    typedef typename AbstractIndicesOfDimIndexTyple_f<FreeDimIndexTyple_>::T AbstractIndexTyple;
     // print the abstract index symbols
-    if (AbstractIndexTypeList::LENGTH > 0)
-        out << '(' << symbol_string_of_abstract_index_type_list(AbstractIndexTypeList()) << ')';
+    if (Hippo::Length_f<AbstractIndexTyple>::V > 0)
+        out << '(' << symbol_string_of_abstract_index_typle(AbstractIndexTyple()) << ')';
     return out;
 }
 

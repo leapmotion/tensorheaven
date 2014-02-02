@@ -97,20 +97,7 @@ private:
 };
 /// @endcond
 
-/// @struct IsComponentIndex_p componentindex.hpp "tenh/componentindex.hpp"
-/// @brief Predicate version of IsComponentIndex_f.
-struct IsComponentIndex_p
-{
-    /// @cond false
-    template <typename T>
-    struct Eval_t
-    {
-        static bool const V = IsComponentIndex_f<T>::V;
-    };
-private:
-    IsComponentIndex_p();
-    /// @endcond
-};
+MAKE_1_ARY_VALUE_EVALUATOR(IsComponentIndex, bool);
 
 /// Operator overload for outputting a ComponentIndex_t with an ostream.
 template <Uint32 COMPONENT_COUNT>

@@ -42,16 +42,20 @@ template <> struct TypeStringOf_t<double> { static std::string eval () { return 
 template <> struct TypeStringOf_t<long double> { static std::string eval () { return "long double"; } };
 template <> struct TypeStringOf_t<std::string> { static std::string eval () { return "std::string"; } };
 template <typename T>
-struct TypeStringOf_t<std::complex<T> >
+struct TypeStringOf_t<std::complex<T>>
 {
     static std::string eval () { return "complex<" + TypeStringOf_t<T>::eval() + '>'; }
 };
+// for pointer types
+template <typename T_> struct TypeStringOf_t<T_ *> { static std::string eval () { return TypeStringOf_t<T_>::eval() + " *"; } };
+template <typename T_> struct TypeStringOf_t<T_ const *> { static std::string eval () { return TypeStringOf_t<T_>::eval() + " const *"; } };
 
 template <typename T_, T_ VALUE_>
-struct TypeStringOf_t<Value_t<T_,VALUE_> >
+struct TypeStringOf_t<Value_t<T_,VALUE_>>
 {
     static std::string eval () { return "Value_t<" + TypeStringOf_t<T_>::eval() + ',' + FORMAT(VALUE_) + '>'; }
 };
+
 
 template <> struct TypeStringOf_t<NullValue> { static std::string eval () { return "NullValue"; } };
 /// @endcond

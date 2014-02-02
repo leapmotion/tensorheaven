@@ -15,25 +15,25 @@
 
 namespace Tenh {
 
-template <typename MultiIndexable>
-void print_multiindexable (std::ostream &out, MultiIndexable const &t, EmptyTypeList const &)
+template <typename MultiIndexable_>
+void print_multiindexable (std::ostream &out, MultiIndexable_ const &t, Typle_t<> const &)
 {
-    typedef typename MultiIndexable::Scalar Scalar;
-    typedef typename MultiIndexable::MultiIndex MultiIndex;
-    STATIC_ASSERT_TYPES_ARE_EQUAL(typename MultiIndex::IndexTypeList, EmptyTypeList);
+    typedef typename MultiIndexable_::Scalar Scalar;
+    typedef typename MultiIndexable_::MultiIndex MultiIndex;
+    STATIC_ASSERT_TYPES_ARE_EQUAL(typename MultiIndex::IndexTyple, Typle_t<>);
     out << Scalar(t);
 }
 
 // will print any order tensor in a nice-looking justified way.  if the order is greater
 // than 1, this will print newlines, notably including the first character.
-template <typename MultiIndexable, typename HeadIndexType, typename BodyIndexTypeList>
-void print_multiindexable (std::ostream &out, MultiIndexable const &t, TypeList_t<HeadIndexType,BodyIndexTypeList> const &)
+template <typename MultiIndexable_, typename... Types_>
+void print_multiindexable (std::ostream &out, MultiIndexable_ const &t, Typle_t<Types_...> const &)
 {
-    typedef typename MultiIndexable::MultiIndex MultiIndex;
-    typedef TypeList_t<HeadIndexType,BodyIndexTypeList> AllegedIndexTypeList;
-    STATIC_ASSERT_TYPES_ARE_EQUAL(typename MultiIndex::IndexTypeList, AllegedIndexTypeList);
+    typedef typename MultiIndexable_::MultiIndex MultiIndex;
+    typedef Typle_t<Types_...> AllegedIndexTyple;
+    STATIC_ASSERT_TYPES_ARE_EQUAL(typename MultiIndex::IndexTyple, AllegedIndexTyple);
     static Uint32 const ORDER = MultiIndex::LENGTH;
-    static Uint32 const COMPONENT_COUNT_OF_LAST_INDEX = Element_f<typename MultiIndex::IndexTypeList,ORDER-1>::T::COMPONENT_COUNT;
+    static Uint32 const COMPONENT_COUNT_OF_LAST_INDEX = Hippo::Element_f<typename MultiIndex::IndexTyple,ORDER-1>::T::COMPONENT_COUNT;
 
     // find the maximum component length, as printed in an ostream, so that
     // the actual output can be nicely justified and look awesome.

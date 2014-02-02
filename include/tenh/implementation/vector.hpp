@@ -98,8 +98,8 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
         STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
     }
     // this is the tuple-based constructor
-    template <typename HeadType_, typename BodyTypeList_>
-    ImplementationOf_t (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x)
+    template <typename Typle_>
+    ImplementationOf_t (List_t<Typle_> const &x)
         :
         Parent_Array_i(x.as_member_array())
     {
@@ -136,8 +136,8 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
         STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
     }
     // this is the tuple-based constructor
-    template <typename HeadType_, typename BodyTypeList_>
-    ImplementationOf_t (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x,
+    template <typename Typle_>
+    ImplementationOf_t (List_t<Typle_> const &x,
                         QualifiedComponent *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Array_i(x, pointer_to_allocation, check_pointer)

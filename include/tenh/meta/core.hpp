@@ -16,12 +16,12 @@ namespace Tenh {
 // value V via the scope operator.  some examples are
 //
 // template <Uint64 N_> struct Square_f { static Uint64 const V = N_*N_; };
-// template <typename TypeList_> struct Length_f { static Uint64 const V = ...; };
+// template <typename Typle_> struct Length_f { static Uint64 const V = ...; };
 // template <bool CONDITION_> struct FancyType_f { typedef ... T; };
 //
 // these raw metafunctions would be used as follows.
 //   Square_f<36>::V
-//   Length_f<TypeList_t<...> >::V
+//   Length_f<Typle_t<...> >::V
 //   FancyType_f<true>::T     or     typename FancyType_f<true>::T
 //
 // without knowing the domain/codomain, it's difficult to use this type
@@ -34,7 +34,7 @@ namespace Tenh {
 // template <typename T_>
 // struct DoubleOf_f
 // {
-//     typedef TypeList_t<T_,TypeList_t<T_> > T;
+//     typedef Typle_t<T_,T_> T;
 // };
 //
 // the type can be a Value_t<ReturnType,VALUE> so that numeric-valued functions

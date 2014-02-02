@@ -72,16 +72,15 @@ struct PreallocatedArray_t
 #pragma GCC diagnostic pop
 #endif // __clang_version__
 
-    template <typename HeadType_, typename BodyTypeList_>
-    PreallocatedArray_t (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x,
+    template <typename Typle_>
+    PreallocatedArray_t (List_t<Typle_> const &x,
                          QualifiedComponent *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         m_pointer_to_allocation(pointer_to_allocation)
     {
-        typedef TypeList_t<HeadType_,BodyTypeList_> TypeList;
-        STATIC_ASSERT((TypeListIsUniform_t<TypeList>::V), TYPELIST_MUST_BE_UNIFORM);
-        STATIC_ASSERT_TYPES_ARE_EQUAL(HeadType_,Component_);
-        STATIC_ASSERT(TypeList::LENGTH == COMPONENT_COUNT, LENGTHS_MUST_BE_EQUAL);
+        static_assert(Hippo::Length_f<Typle_>::V == COMPONENT_COUNT, "List_t argument length must match that of array");
+        static_assert(Hippo::TypleIsUniform_f<Typle_>::V, "List_t argument must have uniform Typle_ parameter");
+        static_assert(TypesAreEqual_f<typename Hippo::TypeOfUniformTyple_f<Typle_>::T,Component_>::V, "type of uniform List_t must match Component_");
         if (check_pointer && m_pointer_to_allocation == nullptr)
             throw std::invalid_argument("invalid pointer_to_allocation argument (must be non-null)");
         memcpy(m_pointer_to_allocation, x.as_member_array().pointer_to_allocation(), allocation_size_in_bytes());

@@ -79,89 +79,80 @@ private:
 };
 /// @endcond
 
-/// @brief Predicate version of IsDimIndex_f.
-/// @headerfile dimindex.hpp "tenh/dimindex.hpp"
-struct IsDimIndex_p
-{
-    template <typename T>
-    struct Eval_t
-    {
-        static bool const V = IsDimIndex_f<T>::V;
-    };
-private:
-    IsDimIndex_p();
-};
+MAKE_1_ARY_VALUE_EVALUATOR(IsDimIndex, bool);
 
-/// @brief Takes a TypeList_t of DimIndex_t and returns a TypeList_t of the associated parent ComponentIndex_t.
+/// @brief Takes a Typle_t of DimIndex_t and returns a Typle_t of the associated parent ComponentIndex_t.
 /// @headerfile dimindex.hpp "tenh/dimindex.hpp"
-template <typename DimIndexTypeList>
-struct Parent_ComponentIndex_TypeListOf_t
+template <typename DimIndexTyple_>
+struct Parent_ComponentIndex_TypleOf_f
 {
-    enum { STATIC_ASSERT_IN_ENUM(IsDimIndex_f<typename DimIndexTypeList::HeadType>::V, MUST_BE_DIM_INDEX) };
-    typedef TypeList_t<typename DimIndexTypeList::HeadType::Parent_Index,
-                       typename Parent_ComponentIndex_TypeListOf_t<typename DimIndexTypeList::BodyTypeList>::T> T;
+    enum { STATIC_ASSERT_IN_ENUM(IsDimIndex_f<typename Hippo::Head_f<DimIndexTyple_>::T>::V, MUST_BE_DIM_INDEX) };
+    typedef typename Hippo::HeadBodyTyple_f<typename Hippo::Head_f<DimIndexTyple_>::T::Parent_Index,
+                                            typename Parent_ComponentIndex_TypleOf_f<typename Hippo::BodyTyple_f<DimIndexTyple_>::T>::T>::T T;
 private:
-    Parent_ComponentIndex_TypeListOf_t();
+    Parent_ComponentIndex_TypleOf_f();
 };
 
 /// @cond false
 template <>
-struct Parent_ComponentIndex_TypeListOf_t<EmptyTypeList>
+struct Parent_ComponentIndex_TypleOf_f<Typle_t<>>
 {
-    typedef EmptyTypeList T;
+    typedef Typle_t<> T;
 private:
-    Parent_ComponentIndex_TypeListOf_t();
+    Parent_ComponentIndex_TypleOf_f();
 };
 /// @endcond
 
 
-/// @brief Takes a TypeList_t of ComponentIndex_t and a TypeList_t of AbstractIndex_c and produces a TypeList_t of DimIndex_t.
+/// @brief Takes a Typle_t of ComponentIndex_t and a Typle_t of AbstractIndex_c and produces a Typle_t of DimIndex_t.
 /// @headerfile dimindex.hpp "tenh/dimindex.hpp"
-template <typename FactorTypeList, typename AbstractIndexTypeList>
-struct DimIndexTypeListOf_t
+// TODO: implement this using some sort of compound construction
+template <typename FactorTyple_, typename AbstractIndexTyple_>
+struct DimIndexTypleOf_f
 {
     enum
     {
-        STATIC_ASSERT_IN_ENUM((FactorTypeList::LENGTH == AbstractIndexTypeList::LENGTH), MUST_HAVE_EQUAL_LENGTHS),
-        STATIC_ASSERT_IN_ENUM(HasBasedVectorSpaceStructure_f<typename FactorTypeList::HeadType>::V, MUST_BE_BASED_VECTOR_SPACE)
+        STATIC_ASSERT_IN_ENUM((Hippo::Length_f<FactorTyple_>::V == Hippo::Length_f<AbstractIndexTyple_>::V), MUST_HAVE_EQUAL_LENGTHS),
+        STATIC_ASSERT_IN_ENUM(HasBasedVectorSpaceStructure_f<typename Hippo::Head_f<FactorTyple_>::T>::V, MUST_BE_BASED_VECTOR_SPACE)
     };
-    typedef TypeList_t<DimIndex_t<AbstractIndexTypeList::HeadType::SYMBOL,DimensionOf_f<typename FactorTypeList::HeadType >::V>,
-                       typename DimIndexTypeListOf_t<typename FactorTypeList::BodyTypeList,
-                                                     typename AbstractIndexTypeList::BodyTypeList>::T> T;
+    typedef typename Hippo::HeadBodyTyple_f<DimIndex_t<Hippo::Head_f<AbstractIndexTyple_>::T::SYMBOL,DimensionOf_f<typename Hippo::Head_f<FactorTyple_>::T >::V>,
+                                            typename DimIndexTypleOf_f<typename Hippo::BodyTyple_f<FactorTyple_>::T,
+                                                                       typename Hippo::BodyTyple_f<AbstractIndexTyple_>::T>::T>::T T;
 private:
-    DimIndexTypeListOf_t();
+    DimIndexTypleOf_f();
 };
 
 /// @cond false
 template <>
-struct DimIndexTypeListOf_t<EmptyTypeList,EmptyTypeList>
+struct DimIndexTypleOf_f<Typle_t<>,Typle_t<>>
 {
-    typedef EmptyTypeList T;
+    typedef Typle_t<> T;
 private:
-    DimIndexTypeListOf_t();
+    DimIndexTypleOf_f();
 };
 /// @endcond
 
 
-/// @brief Takes a TypeList_t of DimIndex_t and returns a TypeList_t of AbstractIndex_c.
+/// @brief Takes a Typle_t of DimIndex_t and returns a Typle_t of AbstractIndex_c.
 /// @headerfile dimindex.hpp "tenh/dimindex.hpp"
-template <typename DimIndexTypeList>
-struct AbstractIndicesOfDimIndexTypeList_t
+template <typename DimIndexTyple_>
+struct AbstractIndicesOfDimIndexTyple_f
 {
-    enum { STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<DimIndexTypeList,IsDimIndex_p>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES) };
-    typedef TypeList_t<AbstractIndex_c<DimIndexTypeList::HeadType::SYMBOL>,
-                       typename AbstractIndicesOfDimIndexTypeList_t<typename DimIndexTypeList::BodyTypeList>::T> T;
+    static_assert(IsTyple_f<DimIndexTyple_>::V, "DimIndexTyple_ must be a Typle_t");
+    static_assert(Hippo::EachTypeSatisfies_f<DimIndexTyple_,IsDimIndex_e>::V, "each type must be a DimIndex_t");
+    typedef typename Hippo::HeadBodyTyple_f<AbstractIndex_c<Hippo::Head_f<DimIndexTyple_>::T::SYMBOL>,
+                                            typename AbstractIndicesOfDimIndexTyple_f<typename Hippo::BodyTyple_f<DimIndexTyple_>::T>::T>::T T;
 private:
-    AbstractIndicesOfDimIndexTypeList_t();
+    AbstractIndicesOfDimIndexTyple_f();
 };
 
 /// @cond false
 template <>
-struct AbstractIndicesOfDimIndexTypeList_t<EmptyTypeList>
+struct AbstractIndicesOfDimIndexTyple_f<Typle_t<>>
 {
-    typedef EmptyTypeList T;
+    typedef Typle_t<> T;
 private:
-    AbstractIndicesOfDimIndexTypeList_t();
+    AbstractIndicesOfDimIndexTyple_f();
 };
 /// @endcond
 

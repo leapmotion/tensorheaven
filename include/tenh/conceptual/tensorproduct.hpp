@@ -121,11 +121,11 @@ template <typename Concept_> struct OrderOf_f
 private:
     OrderOf_f();
 };
-template <typename Concept_> struct FactorTypeListOf_f
+template <typename Concept_> struct FactorTypleOf_f
 {
     typedef typename Property_f<Concept_,FactorTyple>::T T;
 private:
-    FactorTypeListOf_f();
+    FactorTypleOf_f();
 };
 template <typename Concept_> struct TensorPowerFactorOf_f
 {

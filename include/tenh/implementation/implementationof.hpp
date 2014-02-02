@@ -185,90 +185,91 @@ private:
 // helper metafunctions
 // ///////////////////////////////////////////////////////////////////////////
 
-template <typename TypeList_>
+// TODO: change these to use OnEach_f
+template <typename Typle_>
 struct ConceptOfEachTypeIn_f
 {
-    typedef TypeList_t<typename TypeList_::HeadType::Concept,
-                       typename ConceptOfEachTypeIn_f<typename TypeList_::BodyTypeList>::T> T;
+    typedef typename Hippo::HeadBodyTyple_f<typename Hippo::Head_f<Typle_>::T::Concept,
+                                            typename ConceptOfEachTypeIn_f<typename Hippo::BodyTyple_f<Typle_>::T>::T>::T T;
 private:
     ConceptOfEachTypeIn_f();
 };
 
 template <>
-struct ConceptOfEachTypeIn_f<EmptyTypeList>
+struct ConceptOfEachTypeIn_f<Typle_t<>>
 {
-    typedef EmptyTypeList T;
+    typedef Typle_t<> T;
 private:
     ConceptOfEachTypeIn_f();
 };
 
-template <typename TypeList_>
+template <typename Typle_>
 struct ScalarOfEachTypeIn_f
 {
-    typedef TypeList_t<typename TypeList_::HeadType::Scalar,
-                       typename ScalarOfEachTypeIn_f<typename TypeList_::BodyTypeList>::T> T;
+    typedef typename Hippo::HeadBodyTyple_f<typename Hippo::Head_f<Typle_>::T::Scalar,
+                                            typename ScalarOfEachTypeIn_f<typename Hippo::BodyTyple_f<Typle_>::T>::T>::T T;
 private:
     ScalarOfEachTypeIn_f();
 };
 
 template <>
-struct ScalarOfEachTypeIn_f<EmptyTypeList>
+struct ScalarOfEachTypeIn_f<Typle_t<>>
 {
-    typedef EmptyTypeList T;
+    typedef Typle_t<> T;
 private:
     ScalarOfEachTypeIn_f();
 };
 
-template <typename TypeList_>
+template <typename Typle_>
 struct EachTypeUsesProceduralArray_f
 {
-    static bool const V = IsUseProceduralArray_f<typename TypeList_::HeadType::UseArrayType>::V &&
-                          EachTypeUsesProceduralArray_f<typename TypeList_::BodyTypeList>::V;
+    static bool const V = IsUseProceduralArray_f<typename Hippo::Head_f<Typle_>::T::UseArrayType>::V &&
+                          EachTypeUsesProceduralArray_f<typename Hippo::BodyTyple_f<Typle_>::T>::V;
 private:
     EachTypeUsesProceduralArray_f();
 };
 
 template <>
-struct EachTypeUsesProceduralArray_f<EmptyTypeList>
+struct EachTypeUsesProceduralArray_f<Typle_t<>>
 {
     static bool const V = true; // vacuously true
 private:
     EachTypeUsesProceduralArray_f();
 };
 
-template <typename TensorProductOfBasedVectorSpacesTypeList_>
+template <typename TensorProductOfBasedVectorSpacesTyple_>
 struct EachTypeIsA2TensorProductOfBasedVectorSpaces_f
 {
-    static bool const V = IsTensorProductOfBasedVectorSpaces_f<typename TensorProductOfBasedVectorSpacesTypeList_::HeadType>::V &&
-                          (FactorTypeListOf_f<typename TensorProductOfBasedVectorSpacesTypeList_::HeadType>::T::LENGTH == 2) &&
-                          EachTypeIsA2TensorProductOfBasedVectorSpaces_f<typename TensorProductOfBasedVectorSpacesTypeList_::BodyTypeList>::V;
+    static bool const V = IsTensorProductOfBasedVectorSpaces_f<typename Hippo::Head_f<TensorProductOfBasedVectorSpacesTyple_>::T>::V &&
+                          (FactorTypleOf_f<typename Hippo::Head_f<TensorProductOfBasedVectorSpacesTyple_>::T>::T::LENGTH == 2) &&
+                          EachTypeIsA2TensorProductOfBasedVectorSpaces_f<typename Hippo::BodyTyple_f<TensorProductOfBasedVectorSpacesTyple_>::T>::V;
 private:
     EachTypeIsA2TensorProductOfBasedVectorSpaces_f();
 };
 
 template <>
-struct EachTypeIsA2TensorProductOfBasedVectorSpaces_f<EmptyTypeList>
+struct EachTypeIsA2TensorProductOfBasedVectorSpaces_f<Typle_t<>>
 {
     static bool const V = true; // vacuously true
 private:
     EachTypeIsA2TensorProductOfBasedVectorSpaces_f();
 };
 
-template <Uint32 N_, typename TypeList_>
+template <Uint32 N_, typename Typle_>
 struct FactorNOfEachTypeIn_f
 {
 private:
-    typedef typename FactorTypeListOf_f<typename TypeList_::HeadType>::T FactorTypeListOfHead;
+    typedef typename FactorTypleOf_f<typename Hippo::Head_f<Typle_>::T>::T FactorTypleOfHead;
     FactorNOfEachTypeIn_f();
 public:
-    typedef TypeList_t<typename Element_f<FactorTypeListOfHead,N_>::T,
-                       typename FactorNOfEachTypeIn_f<N_,typename TypeList_::BodyTypeList>::T> T;
+    typedef typename Hippo::HeadBodyTyple_f<typename Hippo::Element_f<FactorTypleOfHead,N_>::T,
+                                            typename FactorNOfEachTypeIn_f<N_,typename Hippo::BodyTyple_f<Typle_>::T>::T>::T T;
 };
 
 template <Uint32 N_>
-struct FactorNOfEachTypeIn_f<N_,EmptyTypeList>
+struct FactorNOfEachTypeIn_f<N_,Typle_t<>>
 {
-    typedef EmptyTypeList T;
+    typedef Typle_t<> T;
 private:
     FactorNOfEachTypeIn_f();
 };

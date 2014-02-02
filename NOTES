@@ -80,7 +80,9 @@
 - make a "2-tensor out of LinearEmbedding_c" procedural 2-tensor (is this actually useful?)
 - make an abstracted summation function/facility so that different methods for summation can
   be implemented -- e.g. fast-naive, or sorted-for-accuracy, etc.
-  
+- maybe rename XXXXTyple to XXXXs for brevity.  this should easily be distinguished from the
+  XXXXs usage in "typename... XXXXs" because of the dereferencing "XXXXs...".
+
 
 ###implemented features/items:
 - x operator overloads for expression templates

@@ -25,9 +25,9 @@ struct ExpressionTemplate_Eval_t
     :
     public ExpressionTemplate_i<ExpressionTemplate_Eval_t<Operand>,
                                 typename Operand::Scalar,
-                                typename Operand::FreeFactorTypeList,
-                                typename Operand::FreeDimIndexTypeList,
-                                typename Operand::UsedDimIndexTypeList>
+                                typename Operand::FreeFactorTyple,
+                                typename Operand::FreeDimIndexTyple,
+                                typename Operand::UsedDimIndexTyple>
 {
     enum
     {
@@ -36,14 +36,14 @@ struct ExpressionTemplate_Eval_t
 
     typedef ExpressionTemplate_i<ExpressionTemplate_Eval_t<Operand>,
                                  typename Operand::Scalar,
-                                 typename Operand::FreeFactorTypeList,
-                                 typename Operand::FreeDimIndexTypeList,
-                                 typename Operand::UsedDimIndexTypeList> Parent;
+                                 typename Operand::FreeFactorTyple,
+                                 typename Operand::FreeDimIndexTyple,
+                                 typename Operand::UsedDimIndexTyple> Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
-    typedef typename Parent::FreeFactorTypeList FreeFactorTypeList;
-    typedef typename Parent::FreeDimIndexTypeList FreeDimIndexTypeList;
-    typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
+    typedef typename Parent::FreeFactorTyple FreeFactorTyple;
+    typedef typename Parent::FreeDimIndexTyple FreeDimIndexTyple;
+    typedef typename Parent::UsedDimIndexTyple UsedDimIndexTyple;
     typedef typename Parent::MultiIndex MultiIndex;
 
     ExpressionTemplate_Eval_t (Operand const &operand)
@@ -55,7 +55,7 @@ struct ExpressionTemplate_Eval_t
 
 //     operator Scalar () const // TODO: only use this in the no-free-index one
 //     {
-//         STATIC_ASSERT_TYPELIST_IS_EMPTY(FreeIndexTypeList);
+//         static_assert(Hippo::Length_f<FreeIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
 //         return operator[](MultiIndex());
 //     }
 
@@ -80,7 +80,7 @@ struct ExpressionTemplate_Eval_t
         return m_cached_tensor[m];
     }
 
-    typedef TensorProductOfBasedVectorSpaces_c<FreeFactorTypeList> ExpressionTensorType;
+    typedef TensorProductOfBasedVectorSpaces_c<FreeFactorTyple> ExpressionTensorType;
     typedef ImplementationOf_t<ExpressionTensorType,Scalar,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > EvaluatedTensor;
 
     // returns the cached value, caching it if necessary.
@@ -113,7 +113,7 @@ private:
         if (!m_eval_is_cached)
         {
             // this should populate m_cached_tensor via expression templates
-            m_cached_tensor(FreeDimIndexTypeList()).no_alias() = m_operand;
+            m_cached_tensor(FreeDimIndexTyple()).no_alias() = m_operand;
             m_eval_is_cached = true;
         }
     }
@@ -134,14 +134,14 @@ private:
 };
 
 // definitions of the squared_norm and norm methods of ExpressionTemplate_i had to wait until ExpressionTemplate_Eval_t was defined.
-template <typename Derived, typename Scalar, typename FreeFactorTypeList, typename FreeIndexTypeList, typename UsedIndexTypeList>
-typename AssociatedFloatingPointType_t<Scalar>::T ExpressionTemplate_i<Derived,Scalar,FreeFactorTypeList,FreeIndexTypeList,UsedIndexTypeList>::squared_norm () const
+template <typename Derived, typename Scalar, typename FreeFactorTyple, typename FreeIndexTyple, typename UsedIndexTyple>
+typename AssociatedFloatingPointType_t<Scalar>::T ExpressionTemplate_i<Derived,Scalar,FreeFactorTyple,FreeIndexTyple,UsedIndexTyple>::squared_norm () const
 {
     return eval().squared_norm();
 }
 
-template <typename Derived, typename Scalar, typename FreeFactorTypeList, typename FreeIndexTypeList, typename UsedIndexTypeList>
-typename AssociatedFloatingPointType_t<Scalar>::T ExpressionTemplate_i<Derived,Scalar,FreeFactorTypeList,FreeIndexTypeList,UsedIndexTypeList>::norm () const
+template <typename Derived, typename Scalar, typename FreeFactorTyple, typename FreeIndexTyple, typename UsedIndexTyple>
+typename AssociatedFloatingPointType_t<Scalar>::T ExpressionTemplate_i<Derived,Scalar,FreeFactorTyple,FreeIndexTyple,UsedIndexTyple>::norm () const
 {
     return eval().norm();
 }

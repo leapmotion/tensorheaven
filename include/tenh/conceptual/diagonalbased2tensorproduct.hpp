@@ -298,8 +298,7 @@ public:
     };
 
 private:
-    typedef MultiIndex_t<TypeList_t<Factor0ComponentIndex,
-                         TypeList_t<Factor1ComponentIndex> > > Tensor2MultiIndex;
+    typedef MultiIndex_t<Typle_t<Factor0ComponentIndex,Factor1ComponentIndex>> Tensor2MultiIndex;
 public:
     static bool embedded_component_is_procedural_zero (Tensor2ComponentIndex const &i)
     {

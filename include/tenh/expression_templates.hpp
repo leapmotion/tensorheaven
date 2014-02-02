@@ -28,9 +28,9 @@ static bool const DONT_CHECK_FOR_ALIASING = false;
 
 // this is the "const" version of an indexed tensor expression (it has summed indices, so it doesn't make sense to assign to it)
 template <typename Object,
-          typename FactorTypeList, // this is necessary because the factor type depends on if the thing is being indexed as a vector or tensor
-          typename DimIndexTypeList,
-          typename SummedDimIndexTypeList_,
+          typename FactorTyple, // this is necessary because the factor type depends on if the thing is being indexed as a vector or tensor
+          typename DimIndexTyple,
+          typename SummedDimIndexTyple_,
           bool FORCE_CONST_,
           bool CHECK_FOR_ALIASING_,
           typename Derived_ = NullType>
@@ -38,44 +38,44 @@ struct ExpressionTemplate_IndexedObject_t
     :
     public ExpressionTemplate_i<typename DerivedType_f<Derived_,
                                                        ExpressionTemplate_IndexedObject_t<Object,
-                                                                                          FactorTypeList,
-                                                                                          DimIndexTypeList,
-                                                                                          SummedDimIndexTypeList_,
+                                                                                          FactorTyple,
+                                                                                          DimIndexTyple,
+                                                                                          SummedDimIndexTyple_,
                                                                                           FORCE_CONST_,
                                                                                           CHECK_FOR_ALIASING_,
                                                                                           Derived_> >::T,
                                 typename Object::Scalar,
-                                typename FreeFactorTypeList_t<FactorTypeList,DimIndexTypeList>::T,
-                                typename FreeIndexTypeList_t<DimIndexTypeList>::T,
-                                SummedDimIndexTypeList_>
+                                typename FreeFactorTyple_f<FactorTyple,DimIndexTyple>::T,
+                                typename FreeIndexTyple_f<DimIndexTyple>::T,
+                                SummedDimIndexTyple_>
 {
     enum
     {
         // TODO: assert that Object is NOT an expression template (it could be e.g. an IndexBundle_t though)
-        // TODO: assert that FactorTypeList is a TypeList of BasedVectorSpace_c types.
-        STATIC_ASSERT_IN_ENUM__UNIQUE((EachTypeSatisfies_f<DimIndexTypeList,IsDimIndex_p>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, DIMINDEXTYPELIST),
-        STATIC_ASSERT_IN_ENUM__UNIQUE((EachTypeSatisfies_f<SummedDimIndexTypeList_,IsDimIndex_p>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, SUMMEDDIMINDEXTYPELIST)
+        // TODO: assert that FactorTyple is a Typle of BasedVectorSpace_c types.
+        STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::EachTypeSatisfies_f<DimIndexTyple,IsDimIndex_e>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, DIMINDEXTYPELIST),
+        STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::EachTypeSatisfies_f<SummedDimIndexTyple_,IsDimIndex_e>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, SUMMEDDIMINDEXTYPELIST)
     };
 
     typedef ExpressionTemplate_i<typename DerivedType_f<Derived_,
                                                         ExpressionTemplate_IndexedObject_t<Object,
-                                                                                           FactorTypeList,
-                                                                                           DimIndexTypeList,
-                                                                                           SummedDimIndexTypeList_,
+                                                                                           FactorTyple,
+                                                                                           DimIndexTyple,
+                                                                                           SummedDimIndexTyple_,
                                                                                            FORCE_CONST_,
                                                                                            CHECK_FOR_ALIASING_,
                                                                                            Derived_> >::T,
                                  typename Object::Scalar,
-                                 typename FreeFactorTypeList_t<FactorTypeList,DimIndexTypeList>::T,
-                                 typename FreeIndexTypeList_t<DimIndexTypeList>::T,
-                                 SummedDimIndexTypeList_> Parent;
+                                 typename FreeFactorTyple_f<FactorTyple,DimIndexTyple>::T,
+                                 typename FreeIndexTyple_f<DimIndexTyple>::T,
+                                 SummedDimIndexTyple_> Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
-    typedef typename Parent::FreeFactorTypeList FreeFactorTypeList;
-    typedef typename Parent::FreeDimIndexTypeList FreeDimIndexTypeList;
-    typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
+    typedef typename Parent::FreeFactorTyple FreeFactorTyple;
+    typedef typename Parent::FreeDimIndexTyple FreeDimIndexTyple;
+    typedef typename Parent::UsedDimIndexTyple UsedDimIndexTyple;
     typedef typename Parent::MultiIndex MultiIndex;
-    typedef SummedDimIndexTypeList_ SummedDimIndexTypeList;
+    typedef SummedDimIndexTyple_ SummedDimIndexTyple;
 
     // object must be a "terminal" instance (e.g. an ImplementationOf_t type) which will live
     // at least as long as the relevant indexed expression.
@@ -83,14 +83,14 @@ struct ExpressionTemplate_IndexedObject_t
 
     operator Scalar () const
     {
-        STATIC_ASSERT_TYPELIST_IS_EMPTY(FreeDimIndexTypeList);
+        STATIC_ASSERT_TYPELIST_IS_EMPTY(FreeDimIndexTyple);
         return operator[](MultiIndex());
     }
 
     // read-only, because it doesn't make sense to assign to an expression which is a summation.
     Scalar operator [] (MultiIndex const &m) const
     {
-        return UnarySummation_t<Object,DimIndexTypeList,SummedDimIndexTypeList>::eval(m_object, m);
+        return UnarySummation_t<Object,DimIndexTyple,SummedDimIndexTyple>::eval(m_object, m);
     }
 
     bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const
@@ -103,9 +103,9 @@ struct ExpressionTemplate_IndexedObject_t
     static std::string type_as_string ()
     {
         return "ExpressionTemplate_IndexedObject_t<" + type_string_of<Object>() + ','
-                                                     + type_string_of<FactorTypeList>() + ','
-                                                     + type_string_of<DimIndexTypeList>() + ','
-                                                     + type_string_of<SummedDimIndexTypeList_>() + ','
+                                                     + type_string_of<FactorTyple>() + ','
+                                                     + type_string_of<DimIndexTyple>() + ','
+                                                     + type_string_of<SummedDimIndexTyple_>() + ','
                                                      + FORMAT(FORCE_CONST_) + ','
                                                      + FORMAT(CHECK_FOR_ALIASING_) + ','
                                                      + type_string_of<Derived_>() + '>';
@@ -119,16 +119,16 @@ private:
 };
 
 template <typename Object_,
-          typename FactorTypeList_,
-          typename DimIndexTypeList_,
-          typename SummedDimIndexTypeList_,
+          typename FactorTyple_,
+          typename DimIndexTyple_,
+          typename SummedDimIndexTyple_,
           bool FORCE_CONST_,
           bool CHECK_FOR_ALIASING_,
           typename Derived_>
 struct IsExpressionTemplate_f<ExpressionTemplate_IndexedObject_t<Object_,
-                                                                 FactorTypeList_,
-                                                                 DimIndexTypeList_,
-                                                                 SummedDimIndexTypeList_,
+                                                                 FactorTyple_,
+                                                                 DimIndexTyple_,
+                                                                 SummedDimIndexTyple_,
                                                                  FORCE_CONST_,
                                                                  CHECK_FOR_ALIASING_,
                                                                  Derived_> >
@@ -140,28 +140,28 @@ private:
 
 // this is the "non-const" version of an indexed tensor expression (it has no summed indices, so it makes sense to assign to it)
 template <typename Object,
-          typename FactorTypeList,
-          typename DimIndexTypeList,
+          typename FactorTyple,
+          typename DimIndexTyple,
           bool CHECK_FOR_ALIASING_,
           typename Derived_>
-struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING_,Derived_>
+struct ExpressionTemplate_IndexedObject_t<Object,FactorTyple,DimIndexTyple,Typle_t<>,DONT_FORCE_CONST,CHECK_FOR_ALIASING_,Derived_>
     :
-    public ExpressionTemplate_i<ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING_,Derived_>,
+    public ExpressionTemplate_i<ExpressionTemplate_IndexedObject_t<Object,FactorTyple,DimIndexTyple,Typle_t<>,DONT_FORCE_CONST,CHECK_FOR_ALIASING_,Derived_>,
                                 typename Object::Scalar,
-                                typename FreeFactorTypeList_t<FactorTypeList,DimIndexTypeList>::T,
-                                typename FreeIndexTypeList_t<DimIndexTypeList>::T,
-                                EmptyTypeList>
+                                typename FreeFactorTyple_f<FactorTyple,DimIndexTyple>::T,
+                                typename FreeIndexTyple_f<DimIndexTyple>::T,
+                                Typle_t<>>
 {
-    typedef ExpressionTemplate_i<ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList,EmptyTypeList,DONT_FORCE_CONST,CHECK_FOR_ALIASING_,Derived_>,
+    typedef ExpressionTemplate_i<ExpressionTemplate_IndexedObject_t<Object,FactorTyple,DimIndexTyple,Typle_t<>,DONT_FORCE_CONST,CHECK_FOR_ALIASING_,Derived_>,
                                  typename Object::Scalar,
-                                 typename FreeFactorTypeList_t<FactorTypeList,DimIndexTypeList>::T,
-                                 typename FreeIndexTypeList_t<DimIndexTypeList>::T,
-                                 EmptyTypeList> Parent;
+                                 typename FreeFactorTyple_f<FactorTyple,DimIndexTyple>::T,
+                                 typename FreeIndexTyple_f<DimIndexTyple>::T,
+                                 Typle_t<>> Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
-    typedef typename Parent::FreeFactorTypeList FreeFactorTypeList;
-    typedef typename Parent::FreeDimIndexTypeList FreeDimIndexTypeList;
-    typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
+    typedef typename Parent::FreeFactorTyple FreeFactorTyple;
+    typedef typename Parent::FreeDimIndexTyple FreeDimIndexTyple;
+    typedef typename Parent::UsedDimIndexTyple UsedDimIndexTyple;
     typedef typename Parent::MultiIndex MultiIndex;
 
     // object must be a "terminal" instance (e.g. an ImplementationOf_t type) which will live
@@ -173,14 +173,14 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList
     // no memory aliasing in the assignment (where the same memory location is being referenced
     // on both the LHS and RHS of the assignment, therefore causing the non-atomically
     // evaluated result to be implementation-dependent and incorrect).
-    ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList,EmptyTypeList,DONT_FORCE_CONST,DONT_CHECK_FOR_ALIASING,Derived_> no_alias ()
+    ExpressionTemplate_IndexedObject_t<Object,FactorTyple,DimIndexTyple,Typle_t<>,DONT_FORCE_CONST,DONT_CHECK_FOR_ALIASING,Derived_> no_alias ()
     {
-        return ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList,EmptyTypeList,DONT_FORCE_CONST,DONT_CHECK_FOR_ALIASING,Derived_>(m_object);
+        return ExpressionTemplate_IndexedObject_t<Object,FactorTyple,DimIndexTyple,Typle_t<>,DONT_FORCE_CONST,DONT_CHECK_FOR_ALIASING,Derived_>(m_object);
     }
 
     operator Scalar () const
     {
-        STATIC_ASSERT_TYPELIST_IS_EMPTY(FreeDimIndexTypeList);
+        STATIC_ASSERT_TYPELIST_IS_EMPTY(FreeDimIndexTyple);
         return operator[](MultiIndex());
     }
 
@@ -220,9 +220,9 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList
         {
             STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<RightOperand>::V, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
             STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-            STATIC_ASSERT_IN_ENUM((AreEqualAsSets_t<FreeDimIndexTypeList,typename RightOperand::FreeDimIndexTypeList>::V),OPERANDS_HAVE_SAME_FREE_INDICES),
-            STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_t<FreeDimIndexTypeList>::V), LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
-            STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_t<typename RightOperand::FreeDimIndexTypeList>::V), RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES)
+            STATIC_ASSERT_IN_ENUM((Hippo::AreEqualAsSets_f<FreeDimIndexTyple,typename RightOperand::FreeDimIndexTyple>::V),OPERANDS_HAVE_SAME_FREE_INDICES),
+            STATIC_ASSERT_IN_ENUM((!Hippo::ContainsDuplicates_f<FreeDimIndexTyple>::V), LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
+            STATIC_ASSERT_IN_ENUM((!Hippo::ContainsDuplicates_f<typename RightOperand::FreeDimIndexTyple>::V), RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES)
         };
 
         // check for aliasing (where source and destination memory overlap)
@@ -231,7 +231,7 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList
         if (CHECK_FOR_ALIASING_ && right_operand.overlaps_memory_range(ptr, range))
             throw std::invalid_argument("aliased tensor assignment (source and destination memory overlap) -- see eval() and no_alias()");
 
-        typedef MultiIndexMap_t<FreeDimIndexTypeList,typename RightOperand::FreeDimIndexTypeList> RightOperandIndexMap;
+        typedef MultiIndexMap_t<FreeDimIndexTyple,typename RightOperand::FreeDimIndexTyple> RightOperandIndexMap;
         typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
 
         // component-wise assignment via the free index type.
@@ -246,9 +246,9 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList
         {
             STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<RightOperand>::V, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
             STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-            STATIC_ASSERT_IN_ENUM((AreEqualAsSets_t<FreeDimIndexTypeList,typename RightOperand::FreeDimIndexTypeList>::V),OPERANDS_HAVE_SAME_FREE_INDICES),
-            STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_t<FreeDimIndexTypeList>::V), LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
-            STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_t<typename RightOperand::FreeDimIndexTypeList>::V), RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES)
+            STATIC_ASSERT_IN_ENUM((Hippo::AreEqualAsSets_f<FreeDimIndexTyple,typename RightOperand::FreeDimIndexTyple>::V),OPERANDS_HAVE_SAME_FREE_INDICES),
+            STATIC_ASSERT_IN_ENUM((!Hippo::ContainsDuplicates_f<FreeDimIndexTyple>::V), LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
+            STATIC_ASSERT_IN_ENUM((!Hippo::ContainsDuplicates_f<typename RightOperand::FreeDimIndexTyple>::V), RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES)
         };
 
         // check for aliasing (where source and destination memory overlap)
@@ -257,7 +257,7 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList
         if (CHECK_FOR_ALIASING_ && right_operand.overlaps_memory_range(ptr, range))
             throw std::invalid_argument("aliased tensor assignment (source and destination memory overlap) -- see eval() and no_alias()");
 
-        typedef MultiIndexMap_t<FreeDimIndexTypeList,typename RightOperand::FreeDimIndexTypeList> RightOperandIndexMap;
+        typedef MultiIndexMap_t<FreeDimIndexTyple,typename RightOperand::FreeDimIndexTyple> RightOperandIndexMap;
         typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
 
         // component-wise assignment via the free index type.
@@ -272,9 +272,9 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList
         {
             STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<RightOperand>::V, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
             STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-            STATIC_ASSERT_IN_ENUM((AreEqualAsSets_t<FreeDimIndexTypeList,typename RightOperand::FreeDimIndexTypeList>::V),OPERANDS_HAVE_SAME_FREE_INDICES),
-            STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_t<FreeDimIndexTypeList>::V), LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
-            STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_t<typename RightOperand::FreeDimIndexTypeList>::V), RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES)
+            STATIC_ASSERT_IN_ENUM((Hippo::AreEqualAsSets_f<FreeDimIndexTyple,typename RightOperand::FreeDimIndexTyple>::V),OPERANDS_HAVE_SAME_FREE_INDICES),
+            STATIC_ASSERT_IN_ENUM((!Hippo::ContainsDuplicates_f<FreeDimIndexTyple>::V), LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
+            STATIC_ASSERT_IN_ENUM((!Hippo::ContainsDuplicates_f<typename RightOperand::FreeDimIndexTyple>::V), RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES)
         };
 
         // check for aliasing (where source and destination memory overlap)
@@ -283,7 +283,7 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList
         if (CHECK_FOR_ALIASING_ && right_operand.overlaps_memory_range(ptr, range))
             throw std::invalid_argument("aliased tensor assignment (source and destination memory overlap) -- see eval() and no_alias()");
 
-        typedef MultiIndexMap_t<FreeDimIndexTypeList,typename RightOperand::FreeDimIndexTypeList> RightOperandIndexMap;
+        typedef MultiIndexMap_t<FreeDimIndexTyple,typename RightOperand::FreeDimIndexTyple> RightOperandIndexMap;
         typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
 
         // component-wise assignment via the free index type.
@@ -301,9 +301,9 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTypeList,DimIndexTypeList
     static std::string type_as_string ()
     {
         return "ExpressionTemplate_IndexedObject_t<" + type_string_of<Object>() + ','
-                                                     + type_string_of<FactorTypeList>() + ','
-                                                     + type_string_of<DimIndexTypeList>() + ','
-                                                     + type_string_of<EmptyTypeList>() + ','
+                                                     + type_string_of<FactorTyple>() + ','
+                                                     + type_string_of<DimIndexTyple>() + ','
+                                                     + type_string_of<Typle_t<>>() + ','
                                                      + FORMAT(DONT_FORCE_CONST) + ','
                                                      + FORMAT(CHECK_FOR_ALIASING_) + ','
                                                      + type_string_of<Derived_>() + '>';
@@ -324,38 +324,38 @@ struct ExpressionTemplate_Addition_t
     :
     public ExpressionTemplate_i<ExpressionTemplate_Addition_t<LeftOperand,RightOperand,OPERATOR>,
                                 typename LeftOperand::Scalar,
-                                typename LeftOperand::FreeFactorTypeList,
-                                typename LeftOperand::FreeDimIndexTypeList,
-                                EmptyTypeList>
+                                typename LeftOperand::FreeFactorTyple,
+                                typename LeftOperand::FreeDimIndexTyple,
+                                Typle_t<>>
 {
     typedef ExpressionTemplate_i<ExpressionTemplate_Addition_t<LeftOperand,RightOperand,OPERATOR>,
                                  typename LeftOperand::Scalar,
-                                 typename LeftOperand::FreeFactorTypeList,
-                                 typename LeftOperand::FreeDimIndexTypeList,
-                                 EmptyTypeList> Parent;
+                                 typename LeftOperand::FreeFactorTyple,
+                                 typename LeftOperand::FreeDimIndexTyple,
+                                 Typle_t<>> Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
-    typedef typename Parent::FreeFactorTypeList FreeFactorTypeList;
-    typedef typename Parent::FreeDimIndexTypeList FreeDimIndexTypeList;
-    typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
+    typedef typename Parent::FreeFactorTyple FreeFactorTyple;
+    typedef typename Parent::FreeDimIndexTyple FreeDimIndexTyple;
+    typedef typename Parent::UsedDimIndexTyple UsedDimIndexTyple;
     typedef typename Parent::MultiIndex MultiIndex;
 
 private:
 
-    typedef typename Zip_t<TypeList_t<typename LeftOperand::FreeFactorTypeList,
-                           TypeList_t<typename LeftOperand::FreeDimIndexTypeList> > >::T LeftFactorAndIndexTypeList;
-    typedef typename Zip_t<TypeList_t<typename RightOperand::FreeFactorTypeList,
-                           TypeList_t<typename RightOperand::FreeDimIndexTypeList> > >::T RightFactorAndIndexTypeList;
+    typedef typename Hippo::Zip_f<Typle_t<typename LeftOperand::FreeFactorTyple,
+                                          typename LeftOperand::FreeDimIndexTyple>>::T LeftFactorAndIndexTyple;
+    typedef typename Hippo::Zip_f<Typle_t<typename RightOperand::FreeFactorTyple,
+                                          typename RightOperand::FreeDimIndexTyple>>::T RightFactorAndIndexTyple;
 
     enum
     {
         STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<LeftOperand>::V, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<RightOperand>::V, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename LeftOperand::Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM((AreEqualAsSets_t<LeftFactorAndIndexTypeList,RightFactorAndIndexTypeList>::V), OPERANDS_HAVE_SAME_FACTORS),
-        STATIC_ASSERT_IN_ENUM((AreEqualAsSets_t<typename LeftOperand::FreeDimIndexTypeList,typename RightOperand::FreeDimIndexTypeList>::V), OPERANDS_HAVE_SAME_FREE_INDICES),
-        STATIC_ASSERT_IN_ENUM(!ContainsDuplicates_t<typename LeftOperand::FreeDimIndexTypeList>::V, LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
-        STATIC_ASSERT_IN_ENUM(!ContainsDuplicates_t<typename RightOperand::FreeDimIndexTypeList>::V, RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
+        STATIC_ASSERT_IN_ENUM((Hippo::AreEqualAsSets_f<LeftFactorAndIndexTyple,RightFactorAndIndexTyple>::V), OPERANDS_HAVE_SAME_FACTORS),
+        STATIC_ASSERT_IN_ENUM((Hippo::AreEqualAsSets_f<typename LeftOperand::FreeDimIndexTyple,typename RightOperand::FreeDimIndexTyple>::V), OPERANDS_HAVE_SAME_FREE_INDICES),
+        STATIC_ASSERT_IN_ENUM(!Hippo::ContainsDuplicates_f<typename LeftOperand::FreeDimIndexTyple>::V, LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
+        STATIC_ASSERT_IN_ENUM(!Hippo::ContainsDuplicates_f<typename RightOperand::FreeDimIndexTyple>::V, RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
         STATIC_ASSERT_IN_ENUM((OPERATOR == '+' || OPERATOR == '-'), OPERATOR_IS_PLUS_OR_MINUS)
     };
 
@@ -369,7 +369,7 @@ public:
 
     operator Scalar () const
     {
-        STATIC_ASSERT_TYPELIST_IS_EMPTY(FreeDimIndexTypeList);
+        STATIC_ASSERT_TYPELIST_IS_EMPTY(FreeDimIndexTyple);
         if (OPERATOR == '+')
             return m_left_operand.operator Scalar() + m_right_operand.operator Scalar();
         else // OPERATOR == '-'
@@ -379,8 +379,8 @@ public:
     // read-only, because it doesn't make sense to assign to an expression which is a summation.
     Scalar operator [] (MultiIndex const &m) const
     {
-        typedef MultiIndexMap_t<FreeDimIndexTypeList,typename LeftOperand::FreeDimIndexTypeList> LeftOperandIndexMap;
-        typedef MultiIndexMap_t<FreeDimIndexTypeList,typename RightOperand::FreeDimIndexTypeList> RightOperandIndexMap;
+        typedef MultiIndexMap_t<FreeDimIndexTyple,typename LeftOperand::FreeDimIndexTyple> LeftOperandIndexMap;
+        typedef MultiIndexMap_t<FreeDimIndexTyple,typename RightOperand::FreeDimIndexTyple> RightOperandIndexMap;
         typename LeftOperandIndexMap::EvalMapType left_operand_index_map = LeftOperandIndexMap::eval;
         typename RightOperandIndexMap::EvalMapType right_operand_index_map = RightOperandIndexMap::eval;
         if (OPERATOR == '+')
@@ -432,20 +432,20 @@ struct ExpressionTemplate_ScalarMultiplication_t
     :
     public ExpressionTemplate_i<ExpressionTemplate_ScalarMultiplication_t<Operand,Scalar_,OPERATOR>,
                                 typename Operand::Scalar,
-                                typename Operand::FreeFactorTypeList,
-                                typename Operand::FreeDimIndexTypeList,
-                                typename Operand::UsedDimIndexTypeList>
+                                typename Operand::FreeFactorTyple,
+                                typename Operand::FreeDimIndexTyple,
+                                typename Operand::UsedDimIndexTyple>
 {
     typedef ExpressionTemplate_i<ExpressionTemplate_ScalarMultiplication_t<Operand,Scalar_,OPERATOR>,
                                  typename Operand::Scalar,
-                                 typename Operand::FreeFactorTypeList,
-                                 typename Operand::FreeDimIndexTypeList,
-                                 typename Operand::UsedDimIndexTypeList> Parent;
+                                 typename Operand::FreeFactorTyple,
+                                 typename Operand::FreeDimIndexTyple,
+                                 typename Operand::UsedDimIndexTyple> Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
-    typedef typename Parent::FreeFactorTypeList FreeFactorTypeList;
-    typedef typename Parent::FreeDimIndexTypeList FreeDimIndexTypeList;
-    typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
+    typedef typename Parent::FreeFactorTyple FreeFactorTyple;
+    typedef typename Parent::FreeDimIndexTyple FreeDimIndexTyple;
+    typedef typename Parent::UsedDimIndexTyple UsedDimIndexTyple;
     typedef typename Parent::MultiIndex MultiIndex;
 
     enum
@@ -465,7 +465,7 @@ struct ExpressionTemplate_ScalarMultiplication_t
 
     operator Scalar () const
     {
-        STATIC_ASSERT_TYPELIST_IS_EMPTY(FreeDimIndexTypeList);
+        static_assert(Hippo::Length_f<FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
         return operator[](MultiIndex());
     }
 
@@ -518,29 +518,30 @@ private:
 // thing, instead of needing to be multiplied out for each access of the i index.
 // this may be somewhat difficult to do, as it would require searching the
 // expression template AST for such contractions and restructuring the AST.
-// NOTE: if this is ever subclassed, then it will be necessary to change the inheritance to pass in the Derived type
+// NOTE: if this is ever subclassed, then it will be necessary to change the 
+// inheritance to pass in the Derived type
 template <typename LeftOperand, typename RightOperand>
 struct ExpressionTemplate_Multiplication_t
     :
     public ExpressionTemplate_i<ExpressionTemplate_Multiplication_t<LeftOperand,RightOperand>,
                                 typename LeftOperand::Scalar,
-                                typename FreeFactorTypeListOfMultiplication_t<LeftOperand,RightOperand>::T,
-                                typename FreeDimIndexTypeListOfMultiplication_t<LeftOperand,RightOperand>::T,
-                                typename UsedDimIndexTypeListOfMultiplication_t<LeftOperand,RightOperand>::T>
+                                typename FreeFactorTypleOfMultiplication_f<LeftOperand,RightOperand>::T,
+                                typename FreeDimIndexTypleOfMultiplication_f<LeftOperand,RightOperand>::T,
+                                typename UsedDimIndexTypleOfMultiplication_f<LeftOperand,RightOperand>::T>
 {
     typedef ExpressionTemplate_i<ExpressionTemplate_Multiplication_t<LeftOperand,RightOperand>,
                                  typename LeftOperand::Scalar,
-                                 typename FreeFactorTypeListOfMultiplication_t<LeftOperand,RightOperand>::T,
-                                 typename FreeDimIndexTypeListOfMultiplication_t<LeftOperand,RightOperand>::T,
-                                 typename UsedDimIndexTypeListOfMultiplication_t<LeftOperand,RightOperand>::T> Parent;
+                                 typename FreeFactorTypleOfMultiplication_f<LeftOperand,RightOperand>::T,
+                                 typename FreeDimIndexTypleOfMultiplication_f<LeftOperand,RightOperand>::T,
+                                 typename UsedDimIndexTypleOfMultiplication_f<LeftOperand,RightOperand>::T> Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
-    typedef typename Parent::FreeFactorTypeList FreeFactorTypeList;
-    typedef typename Parent::FreeDimIndexTypeList FreeDimIndexTypeList;
-    typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
+    typedef typename Parent::FreeFactorTyple FreeFactorTyple;
+    typedef typename Parent::FreeDimIndexTyple FreeDimIndexTyple;
+    typedef typename Parent::UsedDimIndexTyple UsedDimIndexTyple;
     typedef typename Parent::MultiIndex MultiIndex;
 
-    typedef typename SummedDimIndexTypeListOfMultiplication_t<LeftOperand,RightOperand>::T SummedDimIndexTypeList;
+    typedef typename SummedDimIndexTypleOfMultiplication_f<LeftOperand,RightOperand>::T SummedDimIndexTyple;
 
     // TODO: check that the summed indices from each operand have no indices in common
     // though technically this is unnecessary, because the summed indices are "private"
@@ -551,7 +552,7 @@ struct ExpressionTemplate_Multiplication_t
         STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<LeftOperand>::V, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<RightOperand>::V, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename LeftOperand::Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM((!HasNontrivialIntersectionAsSets_t<FreeDimIndexTypeList,UsedDimIndexTypeList>::V), FREE_INDICES_DONT_COLLIDE_WITH_USED)
+        STATIC_ASSERT_IN_ENUM((!Hippo::HasNontrivialIntersectionAsSets_f<FreeDimIndexTyple,UsedDimIndexTyple>::V), FREE_INDICES_DONT_COLLIDE_WITH_USED)
     };
     // TODO: ensure there are no indices that occur 3+ times (?)
 
@@ -561,16 +562,16 @@ struct ExpressionTemplate_Multiplication_t
         m_right_operand(right_operand)
     { }
 
-    // available ONLY if FreeDimIndexTypeList is EmptyTypeList
+    // available ONLY if FreeDimIndexTyple is Typle_t<>
     operator Scalar () const
     {
-        STATIC_ASSERT_TYPELIST_IS_EMPTY(FreeDimIndexTypeList);
+        static_assert(Hippo::Length_f<FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
         return operator[](MultiIndex());
     }
 
     Scalar operator [] (MultiIndex const &m) const
     {
-        return BinarySummation_t<LeftOperand,RightOperand,FreeDimIndexTypeList,SummedDimIndexTypeList>::eval(m_left_operand, m_right_operand, m);
+        return BinarySummation_t<LeftOperand,RightOperand,FreeDimIndexTyple,SummedDimIndexTyple>::eval(m_left_operand, m_right_operand, m);
     }
 
     bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const
@@ -609,38 +610,38 @@ private:
 
 // TODO: use a metafunction to define the parent class and clean this up
 template <typename Operand,
-          typename BundleAbstractIndexTypeList,
+          typename BundleAbstractIndexTyple,
           typename ResultingFactorType,
           typename ResultingAbstractIndexType,
           bool DONT_CHECK_FACTOR_TYPES_>
 struct ExpressionTemplate_IndexBundle_t
     :
-    public ExpressionTemplate_IndexedObject_t<IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>,
-                                              typename IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>::FactorTypeList,
-                                              typename IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>::DimIndexTypeList,
-                                              typename SummedIndexTypeList_t<typename IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>::DimIndexTypeList>::T,
+    public ExpressionTemplate_IndexedObject_t<IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>,
+                                              typename IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>::FactorTyple,
+                                              typename IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>::DimIndexTyple,
+                                              typename SummedIndexTyple_f<typename IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>::DimIndexTyple>::T,
                                               FORCE_CONST,
                                               CHECK_FOR_ALIASING, // irrelevant value
-                                              ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_> >
+                                              ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>>
 {
-    typedef ExpressionTemplate_IndexedObject_t<IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>,
-                                               typename IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>::FactorTypeList,
-                                               typename IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>::DimIndexTypeList,
-                                               typename SummedIndexTypeList_t<typename IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>::DimIndexTypeList>::T,
+    typedef ExpressionTemplate_IndexedObject_t<IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>,
+                                               typename IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>::FactorTyple,
+                                               typename IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>::DimIndexTyple,
+                                               typename SummedIndexTyple_f<typename IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>::DimIndexTyple>::T,
                                                FORCE_CONST,
                                                CHECK_FOR_ALIASING, // irrelevant value
-                                               ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_> > Parent;
+                                               ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>> Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
-    typedef typename Parent::FreeFactorTypeList FreeFactorTypeList;
-    typedef typename Parent::FreeDimIndexTypeList FreeDimIndexTypeList;
-    typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
+    typedef typename Parent::FreeFactorTyple FreeFactorTyple;
+    typedef typename Parent::FreeDimIndexTyple FreeDimIndexTyple;
+    typedef typename Parent::UsedDimIndexTyple UsedDimIndexTyple;
     typedef typename Parent::MultiIndex MultiIndex;
-    typedef typename Parent::SummedDimIndexTypeList SummedDimIndexTypeList;
+    typedef typename Parent::SummedDimIndexTyple SummedDimIndexTyple;
 
 private:
 
-    typedef IndexBundle_t<Operand,BundleAbstractIndexTypeList,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_> IndexBundle;
+    typedef IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_> IndexBundle;
 
 public:
 
@@ -651,14 +652,14 @@ public:
 
     operator Scalar () const
     {
-        STATIC_ASSERT_TYPELIST_IS_EMPTY(FreeDimIndexTypeList);
+        static_assert(Hippo::Length_f<FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
         return operator[](MultiIndex());
     }
 
     // read-only, because it doesn't make sense to assign to an index-bundled expression (which is possibly also a summation).
     Scalar operator [] (MultiIndex const &m) const
     {
-        return UnarySummation_t<IndexBundle,typename IndexBundle::DimIndexTypeList,SummedDimIndexTypeList>::eval(m_bundler, m);
+        return UnarySummation_t<IndexBundle,typename IndexBundle::DimIndexTyple,SummedDimIndexTyple>::eval(m_bundler, m);
     }
 
     bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const
@@ -671,7 +672,7 @@ public:
     static std::string type_as_string ()
     {
         return "ExpressionTemplate_IndexBundle_t<" + type_string_of<Operand>() + ','
-                                                   + type_string_of<BundleAbstractIndexTypeList>() + ','
+                                                   + type_string_of<BundleAbstractIndexTyple>() + ','
                                                    + type_string_of<ResultingFactorType>() + ','
                                                    + type_string_of<ResultingAbstractIndexType>() + '>';
     }
@@ -684,12 +685,12 @@ private:
 };
 
 template <typename Operand_,
-          typename BundleAbstractIndexTypeList_,
+          typename BundleAbstractIndexTyple_,
           typename ResultingFactorType_,
           typename ResultingAbstractIndexType_,
           bool DONT_CHECK_FACTOR_TYPES_>
 struct IsExpressionTemplate_f<ExpressionTemplate_IndexBundle_t<Operand_,
-                                                               BundleAbstractIndexTypeList_,
+                                                               BundleAbstractIndexTyple_,
                                                                ResultingFactorType_,
                                                                ResultingAbstractIndexType_,
                                                                DONT_CHECK_FACTOR_TYPES_> >
@@ -704,40 +705,40 @@ private:
 // ////////////////////////////////////////////////////////////////////////////
 
 // TODO: use a metafunction to define the parent class and clean this up
-template <typename Operand, typename SourceAbstractIndexType, typename SplitAbstractIndexTypeList>
+template <typename Operand, typename SourceAbstractIndexType, typename SplitAbstractIndexTyple>
 struct ExpressionTemplate_IndexSplit_t
     :
-    public ExpressionTemplate_IndexedObject_t<IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList>,
-                                              typename IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList>::FactorTypeList,
-                                              typename IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList>::DimIndexTypeList,
-                                              typename SummedIndexTypeList_t<typename IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList>::DimIndexTypeList>::T,
+    public ExpressionTemplate_IndexedObject_t<IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTyple>,
+                                              typename IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTyple>::FactorTyple,
+                                              typename IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTyple>::DimIndexTyple,
+                                              typename SummedIndexTyple_f<typename IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTyple>::DimIndexTyple>::T,
                                               FORCE_CONST,
                                               CHECK_FOR_ALIASING, // irrelevant value
-                                              ExpressionTemplate_IndexSplit_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList> >
+                                              ExpressionTemplate_IndexSplit_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTyple>>
 {
     enum
     {
         STATIC_ASSERT_IN_ENUM(IsAbstractIndex_f<SourceAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX),
     };
 
-    typedef ExpressionTemplate_IndexedObject_t<IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList>,
-                                               typename IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList>::FactorTypeList,
-                                               typename IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList>::DimIndexTypeList,
-                                               typename SummedIndexTypeList_t<typename IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList>::DimIndexTypeList>::T,
+    typedef ExpressionTemplate_IndexedObject_t<IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTyple>,
+                                               typename IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTyple>::FactorTyple,
+                                               typename IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTyple>::DimIndexTyple,
+                                               typename SummedIndexTyple_f<typename IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTyple>::DimIndexTyple>::T,
                                                FORCE_CONST,
                                                CHECK_FOR_ALIASING, // irrelevant value
-                                               ExpressionTemplate_IndexSplit_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList> > Parent;
+                                               ExpressionTemplate_IndexSplit_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTyple>> Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
-    typedef typename Parent::FreeFactorTypeList FreeFactorTypeList;
-    typedef typename Parent::FreeDimIndexTypeList FreeDimIndexTypeList;
-    typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
+    typedef typename Parent::FreeFactorTyple FreeFactorTyple;
+    typedef typename Parent::FreeDimIndexTyple FreeDimIndexTyple;
+    typedef typename Parent::UsedDimIndexTyple UsedDimIndexTyple;
     typedef typename Parent::MultiIndex MultiIndex;
-    typedef typename Parent::SummedDimIndexTypeList SummedDimIndexTypeList;
+    typedef typename Parent::SummedDimIndexTyple SummedDimIndexTyple;
 
 private:
 
-    typedef IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTypeList> IndexSplitter;
+    typedef IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTyple> IndexSplitter;
 
 public:
 
@@ -748,14 +749,14 @@ public:
 
     operator Scalar () const
     {
-        STATIC_ASSERT_TYPELIST_IS_EMPTY(FreeDimIndexTypeList);
+        static_assert(Hippo::Length_f<FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
         return operator[](MultiIndex());
     }
 
     // read-only, because it doesn't make sense to assign to an index-bundled expression (which is possibly also a summation).
     Scalar operator [] (MultiIndex const &m) const
     {
-        return UnarySummation_t<IndexSplitter,typename IndexSplitter::DimIndexTypeList,SummedDimIndexTypeList>::eval(m_splitter, m);
+        return UnarySummation_t<IndexSplitter,typename IndexSplitter::DimIndexTyple,SummedDimIndexTyple>::eval(m_splitter, m);
     }
 
     bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const
@@ -769,7 +770,7 @@ public:
     {
         return "ExpressionTemplate_IndexSplit_t<" + type_string_of<Operand>() + ','
                                                   + type_string_of<SourceAbstractIndexType>() + ','
-                                                  + type_string_of<SplitAbstractIndexTypeList>() + '>';
+                                                  + type_string_of<SplitAbstractIndexTyple>() + '>';
     }
 
 private:
@@ -781,10 +782,10 @@ private:
 
 template <typename Operand_,
           typename SourceAbstractIndexType_,
-          typename SplitAbstractIndexTypeList_>
+          typename SplitAbstractIndexTyple_>
 struct IsExpressionTemplate_f<ExpressionTemplate_IndexSplit_t<Operand_,
                                                               SourceAbstractIndexType_,
-                                                              SplitAbstractIndexTypeList_> >
+                                                              SplitAbstractIndexTyple_> >
 {
     static bool const V = true;
 private:
@@ -801,12 +802,12 @@ template <typename Operand, typename SourceAbstractIndexType, typename SplitAbst
 struct ExpressionTemplate_IndexSplitToIndex_t
     :
     public ExpressionTemplate_IndexedObject_t<IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>,
-                                              typename IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>::FactorTypeList,
-                                              typename IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>::DimIndexTypeList,
-                                              typename SummedIndexTypeList_t<typename IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>::DimIndexTypeList>::T,
+                                              typename IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>::FactorTyple,
+                                              typename IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>::DimIndexTyple,
+                                              typename SummedIndexTyple_f<typename IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>::DimIndexTyple>::T,
                                               FORCE_CONST,
                                               CHECK_FOR_ALIASING, // irrelevant value
-                                              ExpressionTemplate_IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType> >
+                                              ExpressionTemplate_IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>>
 {
     enum
     {
@@ -814,19 +815,19 @@ struct ExpressionTemplate_IndexSplitToIndex_t
     };
 
     typedef ExpressionTemplate_IndexedObject_t<IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>,
-                                               typename IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>::FactorTypeList,
-                                               typename IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>::DimIndexTypeList,
-                                               typename SummedIndexTypeList_t<typename IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>::DimIndexTypeList>::T,
+                                               typename IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>::FactorTyple,
+                                               typename IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>::DimIndexTyple,
+                                               typename SummedIndexTyple_f<typename IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>::DimIndexTyple>::T,
                                                FORCE_CONST,
                                                CHECK_FOR_ALIASING, // irrelevant value
                                                ExpressionTemplate_IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType> > Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
-    typedef typename Parent::FreeFactorTypeList FreeFactorTypeList;
-    typedef typename Parent::FreeDimIndexTypeList FreeDimIndexTypeList;
-    typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
+    typedef typename Parent::FreeFactorTyple FreeFactorTyple;
+    typedef typename Parent::FreeDimIndexTyple FreeDimIndexTyple;
+    typedef typename Parent::UsedDimIndexTyple UsedDimIndexTyple;
     typedef typename Parent::MultiIndex MultiIndex;
-    typedef typename Parent::SummedDimIndexTypeList SummedDimIndexTypeList;
+    typedef typename Parent::SummedDimIndexTyple SummedDimIndexTyple;
 
 private:
 
@@ -841,14 +842,14 @@ public:
 
     operator Scalar () const
     {
-        STATIC_ASSERT_TYPELIST_IS_EMPTY(FreeDimIndexTypeList);
+        static_assert(Hippo::Length_f<FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
         return operator[](MultiIndex());
     }
 
     // read-only, because it doesn't make sense to assign to an index-bundled expression (which is possibly also a summation).
     Scalar operator [] (MultiIndex const &m) const
     {
-        return UnarySummation_t<IndexSplitToIndex,typename IndexSplitToIndex::DimIndexTypeList,SummedDimIndexTypeList>::eval(m_splitter, m);
+        return UnarySummation_t<IndexSplitToIndex,typename IndexSplitToIndex::DimIndexTyple,SummedDimIndexTyple>::eval(m_splitter, m);
     }
 
     bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const
@@ -874,10 +875,10 @@ private:
 
 template <typename Operand_,
           typename SourceAbstractIndexType_,
-          typename SplitAbstractIndexTypeList_>
+          typename SplitAbstractIndexTyple_>
 struct IsExpressionTemplate_f<ExpressionTemplate_IndexSplitToIndex_t<Operand_,
                                                                      SourceAbstractIndexType_,
-                                                                     SplitAbstractIndexTypeList_> >
+                                                                     SplitAbstractIndexTyple_> >
 {
     static bool const V = true;
 private:
@@ -897,12 +898,12 @@ template <typename Operand_,
 struct ExpressionTemplate_IndexEmbed_t
     :
     public ExpressionTemplate_IndexedObject_t<IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>,
-                                              typename IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>::FactorTypeList,
-                                              typename IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>::DimIndexTypeList,
-                                              typename SummedIndexTypeList_t<typename IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>::DimIndexTypeList>::T,
+                                              typename IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>::FactorTyple,
+                                              typename IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>::DimIndexTyple,
+                                              typename SummedIndexTyple_f<typename IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>::DimIndexTyple>::T,
                                               FORCE_CONST,
                                               CHECK_FOR_ALIASING, // irrelevant value
-                                              ExpressionTemplate_IndexEmbed_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_> >
+                                              ExpressionTemplate_IndexEmbed_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>>
 {
     enum
     {
@@ -910,19 +911,19 @@ struct ExpressionTemplate_IndexEmbed_t
     };
 
     typedef ExpressionTemplate_IndexedObject_t<IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>,
-                                               typename IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>::FactorTypeList,
-                                               typename IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>::DimIndexTypeList,
-                                               typename SummedIndexTypeList_t<typename IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>::DimIndexTypeList>::T,
+                                               typename IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>::FactorTyple,
+                                               typename IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>::DimIndexTyple,
+                                               typename SummedIndexTyple_f<typename IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>::DimIndexTyple>::T,
                                                FORCE_CONST,
                                                CHECK_FOR_ALIASING, // irrelevant value
-                                               ExpressionTemplate_IndexEmbed_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_> > Parent;
+                                               ExpressionTemplate_IndexEmbed_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>> Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
-    typedef typename Parent::FreeFactorTypeList FreeFactorTypeList;
-    typedef typename Parent::FreeDimIndexTypeList FreeDimIndexTypeList;
-    typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
+    typedef typename Parent::FreeFactorTyple FreeFactorTyple;
+    typedef typename Parent::FreeDimIndexTyple FreeDimIndexTyple;
+    typedef typename Parent::UsedDimIndexTyple UsedDimIndexTyple;
     typedef typename Parent::MultiIndex MultiIndex;
-    typedef typename Parent::SummedDimIndexTypeList SummedDimIndexTypeList;
+    typedef typename Parent::SummedDimIndexTyple SummedDimIndexTyple;
 
 private:
 
@@ -937,14 +938,14 @@ public:
 
     operator Scalar () const
     {
-        STATIC_ASSERT_TYPELIST_IS_EMPTY(FreeDimIndexTypeList);
+        static_assert(Hippo::Length_f<FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
         return operator[](MultiIndex());
     }
 
     // read-only, because it doesn't make sense to assign to an index-bundled expression (which is possibly also a summation).
     Scalar operator [] (MultiIndex const &m) const
     {
-        return UnarySummation_t<IndexEmbedder,typename IndexEmbedder::DimIndexTypeList,SummedDimIndexTypeList>::eval(m_embedder, m);
+        return UnarySummation_t<IndexEmbedder,typename IndexEmbedder::DimIndexTyple,SummedDimIndexTyple>::eval(m_embedder, m);
     }
 
     bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const
@@ -999,12 +1000,12 @@ template <typename Operand_,
 struct ExpressionTemplate_IndexCoembed_t
     :
     public ExpressionTemplate_IndexedObject_t<IndexCoembedder_t<Operand_,SourceAbstractIndexType_,CoembeddingCodomain_,CoembeddedAbstractIndexType_,EmbeddingId_>,
-                                              typename IndexCoembedder_t<Operand_,SourceAbstractIndexType_,CoembeddingCodomain_,CoembeddedAbstractIndexType_,EmbeddingId_>::FactorTypeList,
-                                              typename IndexCoembedder_t<Operand_,SourceAbstractIndexType_,CoembeddingCodomain_,CoembeddedAbstractIndexType_,EmbeddingId_>::DimIndexTypeList,
-                                              typename SummedIndexTypeList_t<typename IndexCoembedder_t<Operand_,SourceAbstractIndexType_,CoembeddingCodomain_,CoembeddedAbstractIndexType_,EmbeddingId_>::DimIndexTypeList>::T,
+                                              typename IndexCoembedder_t<Operand_,SourceAbstractIndexType_,CoembeddingCodomain_,CoembeddedAbstractIndexType_,EmbeddingId_>::FactorTyple,
+                                              typename IndexCoembedder_t<Operand_,SourceAbstractIndexType_,CoembeddingCodomain_,CoembeddedAbstractIndexType_,EmbeddingId_>::DimIndexTyple,
+                                              typename SummedIndexTyple_f<typename IndexCoembedder_t<Operand_,SourceAbstractIndexType_,CoembeddingCodomain_,CoembeddedAbstractIndexType_,EmbeddingId_>::DimIndexTyple>::T,
                                               FORCE_CONST,
                                               CHECK_FOR_ALIASING, // irrelevant value
-                                              ExpressionTemplate_IndexCoembed_t<Operand_,SourceAbstractIndexType_,CoembeddingCodomain_,CoembeddedAbstractIndexType_,EmbeddingId_> >
+                                              ExpressionTemplate_IndexCoembed_t<Operand_,SourceAbstractIndexType_,CoembeddingCodomain_,CoembeddedAbstractIndexType_,EmbeddingId_>>
 {
     enum
     {
@@ -1012,19 +1013,19 @@ struct ExpressionTemplate_IndexCoembed_t
     };
 
     typedef ExpressionTemplate_IndexedObject_t<IndexCoembedder_t<Operand_,SourceAbstractIndexType_,CoembeddingCodomain_,CoembeddedAbstractIndexType_,EmbeddingId_>,
-                                               typename IndexCoembedder_t<Operand_,SourceAbstractIndexType_,CoembeddingCodomain_,CoembeddedAbstractIndexType_,EmbeddingId_>::FactorTypeList,
-                                               typename IndexCoembedder_t<Operand_,SourceAbstractIndexType_,CoembeddingCodomain_,CoembeddedAbstractIndexType_,EmbeddingId_>::DimIndexTypeList,
-                                               typename SummedIndexTypeList_t<typename IndexCoembedder_t<Operand_,SourceAbstractIndexType_,CoembeddingCodomain_,CoembeddedAbstractIndexType_,EmbeddingId_>::DimIndexTypeList>::T,
+                                               typename IndexCoembedder_t<Operand_,SourceAbstractIndexType_,CoembeddingCodomain_,CoembeddedAbstractIndexType_,EmbeddingId_>::FactorTyple,
+                                               typename IndexCoembedder_t<Operand_,SourceAbstractIndexType_,CoembeddingCodomain_,CoembeddedAbstractIndexType_,EmbeddingId_>::DimIndexTyple,
+                                               typename SummedIndexTyple_f<typename IndexCoembedder_t<Operand_,SourceAbstractIndexType_,CoembeddingCodomain_,CoembeddedAbstractIndexType_,EmbeddingId_>::DimIndexTyple>::T,
                                                FORCE_CONST,
                                                CHECK_FOR_ALIASING, // irrelevant value
-                                               ExpressionTemplate_IndexCoembed_t<Operand_,SourceAbstractIndexType_,CoembeddingCodomain_,CoembeddedAbstractIndexType_,EmbeddingId_> > Parent;
+                                               ExpressionTemplate_IndexCoembed_t<Operand_,SourceAbstractIndexType_,CoembeddingCodomain_,CoembeddedAbstractIndexType_,EmbeddingId_>> Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
-    typedef typename Parent::FreeFactorTypeList FreeFactorTypeList;
-    typedef typename Parent::FreeDimIndexTypeList FreeDimIndexTypeList;
-    typedef typename Parent::UsedDimIndexTypeList UsedDimIndexTypeList;
+    typedef typename Parent::FreeFactorTyple FreeFactorTyple;
+    typedef typename Parent::FreeDimIndexTyple FreeDimIndexTyple;
+    typedef typename Parent::UsedDimIndexTyple UsedDimIndexTyple;
     typedef typename Parent::MultiIndex MultiIndex;
-    typedef typename Parent::SummedDimIndexTypeList SummedDimIndexTypeList;
+    typedef typename Parent::SummedDimIndexTyple SummedDimIndexTyple;
 
 private:
 
@@ -1039,14 +1040,14 @@ public:
 
     operator Scalar () const
     {
-        STATIC_ASSERT_TYPELIST_IS_EMPTY(FreeDimIndexTypeList);
+        static_assert(Hippo::Length_f<FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
         return operator[](MultiIndex());
     }
 
     // read-only, because it doesn't make sense to assign to an index-bundled expression (which is possibly also a summation).
     Scalar operator [] (MultiIndex const &m) const
     {
-        return UnarySummation_t<IndexCoembedder,typename IndexCoembedder::DimIndexTypeList,SummedDimIndexTypeList>::eval(m_coembedder, m);
+        return UnarySummation_t<IndexCoembedder,typename IndexCoembedder::DimIndexTyple,SummedDimIndexTyple>::eval(m_coembedder, m);
     }
 
     bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const
@@ -1095,21 +1096,21 @@ private:
 // expression template addition/subtractions
 
 // addition
-template <typename LeftDerived, typename LeftFactorTypeList, typename LeftFreeDimIndexTypeList, typename LeftUsedDimIndexTypeList,
-          typename RightDerived, typename RightFactorTypeList, typename RightFreeDimIndexTypeList, typename RightUsedDimIndexTypeList>
+template <typename LeftDerived, typename LeftFactorTyple, typename LeftFreeDimIndexTyple, typename LeftUsedDimIndexTyple,
+          typename RightDerived, typename RightFactorTyple, typename RightFreeDimIndexTyple, typename RightUsedDimIndexTyple>
 ExpressionTemplate_Addition_t<LeftDerived,RightDerived,'+'>
-    operator + (ExpressionTemplate_i<LeftDerived,typename LeftDerived::Scalar,LeftFactorTypeList,LeftFreeDimIndexTypeList,LeftUsedDimIndexTypeList> const &left_operand,
-                ExpressionTemplate_i<RightDerived,typename RightDerived::Scalar,RightFactorTypeList,RightFreeDimIndexTypeList,RightUsedDimIndexTypeList> const &right_operand)
+    operator + (ExpressionTemplate_i<LeftDerived,typename LeftDerived::Scalar,LeftFactorTyple,LeftFreeDimIndexTyple,LeftUsedDimIndexTyple> const &left_operand,
+                ExpressionTemplate_i<RightDerived,typename RightDerived::Scalar,RightFactorTyple,RightFreeDimIndexTyple,RightUsedDimIndexTyple> const &right_operand)
 {
     return ExpressionTemplate_Addition_t<LeftDerived,RightDerived,'+'>(left_operand.as_derived(), right_operand.as_derived());
 }
 
 // subtraction
-template <typename LeftDerived, typename LeftFactorTypeList, typename LeftFreeDimIndexTypeList, typename LeftUsedDimIndexTypeList,
-          typename RightDerived, typename RightFactorTypeList, typename RightFreeDimIndexTypeList, typename RightUsedDimIndexTypeList>
+template <typename LeftDerived, typename LeftFactorTyple, typename LeftFreeDimIndexTyple, typename LeftUsedDimIndexTyple,
+          typename RightDerived, typename RightFactorTyple, typename RightFreeDimIndexTyple, typename RightUsedDimIndexTyple>
 ExpressionTemplate_Addition_t<LeftDerived,RightDerived,'-'>
-    operator - (ExpressionTemplate_i<LeftDerived,typename LeftDerived::Scalar,LeftFactorTypeList,LeftFreeDimIndexTypeList,LeftUsedDimIndexTypeList> const &left_operand,
-                ExpressionTemplate_i<RightDerived,typename RightDerived::Scalar,RightFactorTypeList,RightFreeDimIndexTypeList,RightUsedDimIndexTypeList> const &right_operand)
+    operator - (ExpressionTemplate_i<LeftDerived,typename LeftDerived::Scalar,LeftFactorTyple,LeftFreeDimIndexTyple,LeftUsedDimIndexTyple> const &left_operand,
+                ExpressionTemplate_i<RightDerived,typename RightDerived::Scalar,RightFactorTyple,RightFreeDimIndexTyple,RightUsedDimIndexTyple> const &right_operand)
 {
     return ExpressionTemplate_Addition_t<LeftDerived,RightDerived,'-'>(left_operand.as_derived(), right_operand.as_derived());
 }
@@ -1117,47 +1118,47 @@ ExpressionTemplate_Addition_t<LeftDerived,RightDerived,'-'>
 // scalar multiplication/division, including unary negation (multiplication by -1)
 
 // scalar multiplication on the right
-template <typename Derived, typename FactorTypeList, typename FreeDimIndexTypeList, typename UsedDimIndexTypeList>
+template <typename Derived, typename FactorTyple, typename FreeDimIndexTyple, typename UsedDimIndexTyple>
 ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
-    operator * (ExpressionTemplate_i<Derived,typename Derived::Scalar,FactorTypeList,FreeDimIndexTypeList,UsedDimIndexTypeList> const &operand,
+    operator * (ExpressionTemplate_i<Derived,typename Derived::Scalar,FactorTyple,FreeDimIndexTyple,UsedDimIndexTyple> const &operand,
                 typename Derived::Scalar const &scalar_operand)
 {
     return ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>(operand.as_derived(), scalar_operand);
 }
 
 // scalar multiplication on the left
-template <typename Derived, typename FactorTypeList, typename FreeDimIndexTypeList, typename UsedDimIndexTypeList>
+template <typename Derived, typename FactorTyple, typename FreeDimIndexTyple, typename UsedDimIndexTyple>
 ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
     operator * (typename Derived::Scalar scalar_operand,
-                ExpressionTemplate_i<Derived,typename Derived::Scalar,FactorTypeList,FreeDimIndexTypeList,UsedDimIndexTypeList> const &operand)
+                ExpressionTemplate_i<Derived,typename Derived::Scalar,FactorTyple,FreeDimIndexTyple,UsedDimIndexTyple> const &operand)
 {
     return ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>(operand.as_derived(), scalar_operand);
 }
 
 // scalar division on the right
-template <typename Derived, typename FactorTypeList, typename FreeDimIndexTypeList, typename UsedDimIndexTypeList, typename ScalarOperand_>
+template <typename Derived, typename FactorTyple, typename FreeDimIndexTyple, typename UsedDimIndexTyple, typename ScalarOperand_>
 ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'/'>
-    operator / (ExpressionTemplate_i<Derived,typename Derived::Scalar,FactorTypeList,FreeDimIndexTypeList,UsedDimIndexTypeList> const &operand,
+    operator / (ExpressionTemplate_i<Derived,typename Derived::Scalar,FactorTyple,FreeDimIndexTyple,UsedDimIndexTyple> const &operand,
                 ScalarOperand_ const &scalar_operand)
 {
     return ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'/'>(operand.as_derived(), scalar_operand);
 }
 
 // unary negation
-template <typename Derived, typename FactorTypeList, typename FreeDimIndexTypeList, typename UsedDimIndexTypeList>
+template <typename Derived, typename FactorTyple, typename FreeDimIndexTyple, typename UsedDimIndexTyple>
 ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>
-    operator - (ExpressionTemplate_i<Derived,typename Derived::Scalar,FactorTypeList,FreeDimIndexTypeList,UsedDimIndexTypeList> const &operand)
+    operator - (ExpressionTemplate_i<Derived,typename Derived::Scalar,FactorTyple,FreeDimIndexTyple,UsedDimIndexTyple> const &operand)
 {
     return ExpressionTemplate_ScalarMultiplication_t<Derived,typename Derived::Scalar,'*'>(operand.as_derived(), -1);
 }
 
 // expression template multiplication -- tensor contraction and product
 
-template <typename LeftDerived, typename LeftFactorTypeList, typename LeftFreeDimIndexTypeList, typename LeftUsedDimIndexTypeList,
-          typename RightDerived, typename RightFactorTypeList, typename RightFreeDimIndexTypeList, typename RightUsedDimIndexTypeList>
+template <typename LeftDerived, typename LeftFactorTyple, typename LeftFreeDimIndexTyple, typename LeftUsedDimIndexTyple,
+          typename RightDerived, typename RightFactorTyple, typename RightFreeDimIndexTyple, typename RightUsedDimIndexTyple>
 ExpressionTemplate_Multiplication_t<LeftDerived,RightDerived>
-    operator * (ExpressionTemplate_i<LeftDerived,typename LeftDerived::Scalar,LeftFactorTypeList,LeftFreeDimIndexTypeList,LeftUsedDimIndexTypeList> const &left_operand,
-                ExpressionTemplate_i<RightDerived,typename RightDerived::Scalar,RightFactorTypeList,RightFreeDimIndexTypeList,RightUsedDimIndexTypeList> const &right_operand)
+    operator * (ExpressionTemplate_i<LeftDerived,typename LeftDerived::Scalar,LeftFactorTyple,LeftFreeDimIndexTyple,LeftUsedDimIndexTyple> const &left_operand,
+                ExpressionTemplate_i<RightDerived,typename RightDerived::Scalar,RightFactorTyple,RightFreeDimIndexTyple,RightUsedDimIndexTyple> const &right_operand)
 {
     return ExpressionTemplate_Multiplication_t<LeftDerived,RightDerived>(left_operand.as_derived(), right_operand.as_derived());
 }

@@ -23,6 +23,7 @@ template <typename Typle_, Uint32 INDEX_> struct ListHelper_t;
 template <typename Typle_>
 struct List_t
 {
+    static_assert(Hippo::Length_f<Typle_>::V >= 2, "this definition should only be used for 2-typles and above");
     typedef Typle_ Typle;
     typedef typename Hippo::Head_f<Typle_>::T HeadType;
     typedef typename Hippo::BodyTyple_f<Typle_>::T BodyTyple;
@@ -333,7 +334,7 @@ struct List_t<Typle_t<HeadType_>>
     List_t (List_t<Typle_t<>> const &) { } // default construction
     List_t (List_t const &list) : m_head(list.m_head) { }
     template <typename OtherHeadType_, typename... OtherBodyTypes_>
-    List_t (List_t<TypeList_t<OtherHeadType_,OtherBodyTypes_...>> const &leading_list)
+    List_t (List_t<Typle_t<OtherHeadType_,OtherBodyTypes_...>> const &leading_list)
         :
         m_head(leading_list.head())
     { }
