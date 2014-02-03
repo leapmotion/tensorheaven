@@ -5,11 +5,21 @@
 #include "tenh/implementation/directsum.hpp"
 #include "tenh/implementation/scalar2tensor.hpp"
 #include "tenh/implementation/tensor.hpp"
+#include "tenh/implementation/tensorproduct.hpp"
 #include "tenh/implementation/vector.hpp"
 #include "tenh/implementation/vee.hpp"
 #include "tenh/implementation/wedge.hpp"
 
 using namespace Tenh;
+
+template <typename Scalar_, Uint32 DIM_>
+Scalar_ counting_vector_generator (ComponentIndex_t<DIM_> const &i)
+{
+    return Scalar_(i.value() + 1);
+}
+
+template <Uint32 DIM_>
+struct CountingVectorGeneratorId { static std::string type_as_string () { return "CountingVectorGenerator<" + FORMAT(DIM_) + '>'; } };
 
 int main (int argc, char **argv)
 {
@@ -380,6 +390,192 @@ int main (int argc, char **argv)
         std::cout << FORMAT_VALUE(w.embed(tensor<3>(b3),p).split(p,i*j*k)) << '\n';
         std::cout << FORMAT_VALUE(w.embed(tensor<3>(b3),p).split(p,i*j*k) + w.embed(tensor<3>(b3),p).split(p,j*i*k)) << '\n';
 
+        std::cout << '\n';
+    }
+
+    {
+        std::cout << "testing TensorProductOfProceduralVectors_f\n";
+        typedef decltype(bvs(generic_real_vs<3>(), o_n_basis(Generic()))) B3;
+        typedef double Scalar;
+        typedef ImplementationOf_t<B3,Scalar> V;
+        typedef V::BasisVector_f<0>::T E0;
+        typedef V::BasisVector_f<1>::T E1;
+        typedef V::BasisVector_f<2>::T E2;
+        std::cout << FORMAT_VALUE(E0()) << '\n';
+        std::cout << FORMAT_VALUE(E1()) << '\n';
+        std::cout << FORMAT_VALUE(E2()) << '\n';
+        std::cout << '\n';
+        {
+            typedef Typle_t<E0> ProceduralVectorImplementationTyple;
+            typedef TensorProductOfProceduralVectors_f<ProceduralVectorImplementationTyple>::T T;
+            std::cout << FORMAT_VALUE(type_string_of<T>()) << '\n';
+            std::cout << FORMAT_VALUE(T()) << '\n';
+            std::cout << '\n';
+        }
+        {
+            typedef Typle_t<E0,E1> ProceduralVectorImplementationTyple;
+            typedef TensorProductOfProceduralVectors_f<ProceduralVectorImplementationTyple>::T T;
+            std::cout << FORMAT_VALUE(type_string_of<T>()) << '\n';
+            std::cout << FORMAT_VALUE(T()) << '\n';
+            std::cout << '\n';
+        }
+        {
+            typedef Typle_t<E1,E1> ProceduralVectorImplementationTyple;
+            typedef TensorProductOfProceduralVectors_f<ProceduralVectorImplementationTyple>::T T;
+            std::cout << FORMAT_VALUE(type_string_of<T>()) << '\n';
+            std::cout << FORMAT_VALUE(T()) << '\n';
+            std::cout << '\n';
+        }
+        {
+            typedef Typle_t<E0,E1,E2> ProceduralVectorImplementationTyple;
+            typedef TensorProductOfProceduralVectors_f<ProceduralVectorImplementationTyple>::T T;
+            std::cout << FORMAT_VALUE(type_string_of<T>()) << '\n';
+            std::cout << FORMAT_VALUE(T()) << '\n';
+            std::cout << '\n';
+        }
+    }
+
+    {
+        std::cout << "testing TensorProductOfProcedural2Tensors_f (for general 2-tensors)\n";
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,int>,OrthonormalBasis_c<int> > BasedX;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,float>,OrthonormalBasis_c<float> > BasedY;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,bool>,OrthonormalBasis_c<bool> > BasedZ;
+        typedef TensorProductOfBasedVectorSpaces_c<Typle_t<BasedX,BasedY>> TensorProductA;
+        typedef TensorProductOfBasedVectorSpaces_c<Typle_t<BasedY,BasedZ>> TensorProductB;
+        typedef float Scalar;
+        typedef ImplementationOf_t<TensorProductA,
+                                   Scalar,
+                                   UseProceduralArray_t<ComponentGenerator_t<Scalar,
+                                                                             DimensionOf_f<TensorProductA>::V,
+                                                                             counting_vector_generator<Scalar,DimensionOf_f<TensorProductA>::V>,
+                                                                             CountingVectorGeneratorId<DimensionOf_f<TensorProductA>::V>>>> ImplementationA;
+        typedef ImplementationOf_t<TensorProductB,
+                                   Scalar,
+                                   UseProceduralArray_t<ComponentGenerator_t<Scalar,
+                                                                             DimensionOf_f<TensorProductB>::V,
+                                                                             counting_vector_generator<Scalar,DimensionOf_f<TensorProductB>::V>,
+                                                                             CountingVectorGeneratorId<DimensionOf_f<TensorProductB>::V>>>> ImplementationB;
+        {
+            std::cout << FORMAT_VALUE(ImplementationA()) << '\n';
+            typedef TensorProductOfProcedural2Tensors_f<Typle_t<ImplementationA> >::T TProdOfImpl;
+            std::cout << FORMAT_VALUE(TProdOfImpl()) << '\n';
+        }
+        {
+            std::cout << FORMAT_VALUE(ImplementationB()) << '\n';
+            typedef TensorProductOfProcedural2Tensors_f<Typle_t<ImplementationA,ImplementationB>>::T TProdOfImpl;
+            std::cout << FORMAT_VALUE(TProdOfImpl()) << '\n';
+            AbstractIndex_c<'P'> P;
+            AbstractIndex_c<'Q'> Q;
+            AbstractIndex_c<'i'> i;
+            AbstractIndex_c<'j'> j;
+            AbstractIndex_c<'k'> k;
+            AbstractIndex_c<'l'> l;
+            std::cout << FORMAT_VALUE(TProdOfImpl()(P*Q).split(P,i*j).split(Q,k*l)) << '\n';
+        }
+        std::cout << '\n';
+    }
+
+    {
+        std::cout << "testing TensorProductOfProcedural2Tensors_f (for diagonal 2-tensors)\n";
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,int>,OrthonormalBasis_c<int> > BasedX;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,float>,OrthonormalBasis_c<float> > BasedY;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,bool>,OrthonormalBasis_c<bool> > BasedZ;
+        typedef Diagonal2TensorProductOfBasedVectorSpaces_c<BasedX,BasedY> TensorProductA;
+        typedef Diagonal2TensorProductOfBasedVectorSpaces_c<BasedY,BasedZ> TensorProductB;
+        typedef float Scalar;
+        typedef ImplementationOf_t<TensorProductA,
+                                   Scalar,
+                                   UseProceduralArray_t<ComponentGenerator_t<Scalar,
+                                                                            DimensionOf_f<TensorProductA>::V,
+                                                                            counting_vector_generator<Scalar,DimensionOf_f<TensorProductA>::V>,
+                                                                            CountingVectorGeneratorId<DimensionOf_f<TensorProductA>::V> > > > ImplementationA;
+        typedef ImplementationOf_t<TensorProductB,
+                                   Scalar,
+                                   UseProceduralArray_t<ComponentGenerator_t<Scalar,
+                                                                            DimensionOf_f<TensorProductB>::V,
+                                                                            counting_vector_generator<Scalar,DimensionOf_f<TensorProductB>::V>,
+                                                                            CountingVectorGeneratorId<DimensionOf_f<TensorProductB>::V> > > > ImplementationB;
+        std::cout << "this is totally broken.\n";
+        {
+            std::cout << FORMAT_VALUE(ImplementationA()) << '\n';
+            typedef TensorProductOfProcedural2Tensors_f<Typle_t<ImplementationA> >::T TProdOfImpl;
+            std::cout << FORMAT_VALUE(TProdOfImpl()) << '\n';
+        }
+        {
+            std::cout << FORMAT_VALUE(ImplementationB()) << '\n';
+            typedef TensorProductOfProcedural2Tensors_f<Typle_t<ImplementationA,ImplementationB>>::T TProdOfImpl;
+            std::cout << FORMAT_VALUE(TProdOfImpl()) << '\n';
+            AbstractIndex_c<'A'> A;
+            AbstractIndex_c<'P'> P;
+            AbstractIndex_c<'Q'> Q;
+            AbstractIndex_c<'i'> i;
+            AbstractIndex_c<'j'> j;
+            AbstractIndex_c<'k'> k;
+            AbstractIndex_c<'l'> l;
+            std::cout << FORMAT_VALUE(TProdOfImpl()(A).split(A,P*Q)) << '\n';
+            std::cout << FORMAT_VALUE(TProdOfImpl()(A).split(A,P*Q).split(P,i*j).split(Q,k*l)) << '\n';
+        }
+        std::cout << '\n';
+    }
+
+    {
+        std::cout << "testing TensorProductOfProcedural2Tensors_f (for scalar 2-tensors)\n";
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,int>,OrthonormalBasis_c<int> > BasedX;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,float>,OrthonormalBasis_c<float> > BasedY;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,bool>,OrthonormalBasis_c<bool> > BasedZ;
+        typedef Scalar2TensorProductOfBasedVectorSpaces_c<BasedX,BasedY> TensorProductA;
+        typedef Scalar2TensorProductOfBasedVectorSpaces_c<BasedY,BasedZ> TensorProductB;
+        typedef float Scalar;
+        typedef ImplementationOf_t<TensorProductA,
+                                   Scalar,
+                                   UseProceduralArray_t<ComponentGenerator_Constant_f<Scalar,1,2>::T> > ImplementationA;
+                                   // UseProceduralArray_t<ComponentGenerator_t<Scalar,
+                                   //                                           DimensionOf_f<TensorProductA>::V,
+                                   //                                           counting_vector_generator<Scalar,DimensionOf_f<TensorProductA>::V>,
+                                   //                                           CountingVectorGeneratorId<DimensionOf_f<TensorProductA>::V> > > > ImplementationA;
+        typedef ImplementationOf_t<TensorProductB,
+                                   Scalar,
+                                   UseProceduralArray_t<ComponentGenerator_Constant_f<Scalar,1,3>::T> > ImplementationB;
+                                   // UseProceduralArray_t<ComponentGenerator_t<Scalar,
+                                   //                                           DimensionOf_f<TensorProductB>::V,
+                                   //                                           counting_vector_generator<Scalar,DimensionOf_f<TensorProductB>::V>,
+                                   //                                           CountingVectorGeneratorId<DimensionOf_f<TensorProductB>::V> > > > ImplementationB;
+        {
+            std::cout << FORMAT_VALUE(ImplementationA()) << '\n';
+            typedef TensorProductOfProcedural2Tensors_f<Typle_t<ImplementationA>>::T TProdOfImpl;
+            TProdOfImpl t;
+            AbstractIndex_c<'i'> i;
+            AbstractIndex_c<'j'> j;
+            std::cout << FORMAT_VALUE(t) << '\n';
+            std::cout << FORMAT_VALUE(t.split(i*j)) << '\n';
+        }
+        {
+            std::cout << FORMAT_VALUE(ImplementationB()) << '\n';
+            typedef TensorProductOfProcedural2Tensors_f<Typle_t<ImplementationB>>::T TProdOfImpl;
+            TProdOfImpl t;
+            AbstractIndex_c<'i'> i;
+            AbstractIndex_c<'j'> j;
+            std::cout << FORMAT_VALUE(t) << '\n';
+            std::cout << FORMAT_VALUE(t.split(i*j)) << '\n';
+        }
+        {
+            std::cout << FORMAT_VALUE(ImplementationB()) << '\n';
+            typedef TensorProductOfProcedural2Tensors_f<Typle_t<ImplementationA,ImplementationB>>::T TProdOfImpl;
+            TProdOfImpl t;
+            AbstractIndex_c<'A'> A;
+            AbstractIndex_c<'P'> P;
+            AbstractIndex_c<'Q'> Q;
+            AbstractIndex_c<'i'> i;
+            AbstractIndex_c<'j'> j;
+            AbstractIndex_c<'k'> k;
+            AbstractIndex_c<'l'> l;
+            std::cout << FORMAT_VALUE(t) << '\n';
+            std::cout << FORMAT_VALUE(t.split(i*j)) << '\n';
+            std::cout << "this seems right.\n";
+            std::cout << FORMAT_VALUE(t(A).split(A,P*Q)) << '\n';
+            std::cout << "this doesn't seem quite right, though it probably requires i*j*k*l to be permuted to i*k*j*l.\n";
+            std::cout << FORMAT_VALUE(t(A).split(A,P*Q).split(P,i*j).split(Q,k*l)) << '\n';
+        }
         std::cout << '\n';
     }
 

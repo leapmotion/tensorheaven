@@ -241,7 +241,7 @@ template <typename TensorProductOfBasedVectorSpacesTyple_>
 struct EachTypeIsA2TensorProductOfBasedVectorSpaces_f
 {
     static bool const V = IsTensorProductOfBasedVectorSpaces_f<typename Hippo::Head_f<TensorProductOfBasedVectorSpacesTyple_>::T>::V &&
-                          (FactorTypleOf_f<typename Hippo::Head_f<TensorProductOfBasedVectorSpacesTyple_>::T>::T::LENGTH == 2) &&
+                          (Hippo::Length_f<typename FactorTypleOf_f<typename Hippo::Head_f<TensorProductOfBasedVectorSpacesTyple_>::T>::T>::V == 2) &&
                           EachTypeIsA2TensorProductOfBasedVectorSpaces_f<typename Hippo::BodyTyple_f<TensorProductOfBasedVectorSpacesTyple_>::T>::V;
 private:
     EachTypeIsA2TensorProductOfBasedVectorSpaces_f();

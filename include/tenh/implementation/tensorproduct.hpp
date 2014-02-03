@@ -22,51 +22,51 @@ namespace Tenh {
 // TensorProductOfProceduralVectors_f
 // ///////////////////////////////////////////////////////////////////////////
 
-template <typename ProceduralVectorImplementationTypeList_> struct TensorProductOfProceduralVectors_f;
+template <typename ProceduralVectorImplementationTyple_> struct TensorProductOfProceduralVectors_f;
 
 // base case (1-tensor product)
 
 namespace ComponentGeneratorEvaluator {
 
-template <typename ProceduralVectorImplementationTypeList_, typename TensorProductOfBasedVectorSpaces_, typename Scalar_>
+template <typename ProceduralVectorImplementationTyple_, typename TensorProductOfBasedVectorSpaces_, typename Scalar_>
 Scalar_ tensor_product_of_single_procedural_vector (ComponentIndex_t<DimensionOf_f<TensorProductOfBasedVectorSpaces_>::V> const &i)
 {
     typedef ComponentIndex_t<DimensionOf_f<TensorProductOfBasedVectorSpaces_>::V> ComponentIndex;
-    typedef typename ConceptOfEachTypeIn_f<ProceduralVectorImplementationTypeList_>::T ConceptTypeList;
-    typedef TensorProductOfBasedVectorSpaces_c<ConceptTypeList> TensorProductOfBasedVectorSpaces;
+    typedef typename ConceptOfEachTypeIn_f<ProceduralVectorImplementationTyple_>::T ConceptTyple;
+    typedef TensorProductOfBasedVectorSpaces_c<ConceptTyple> TensorProductOfBasedVectorSpaces;
     STATIC_ASSERT_TYPES_ARE_EQUAL(TensorProductOfBasedVectorSpaces_, TensorProductOfBasedVectorSpaces);
-    typedef typename ProceduralVectorImplementationTypeList_::HeadType HeadImplementation;
+    typedef typename Hippo::Head_f<ProceduralVectorImplementationTyple_>::T HeadImplementation;
     HeadImplementation head_implementation;
     AbstractIndex_c<'a'> a;
-    return head_implementation(a)[MultiIndex_t<TypeList_t<ComponentIndex> >(i)];
+    return head_implementation(a)[MultiIndex_t<Typle_t<ComponentIndex>>(i)];
 }
 
 } // end of namespace ComponentGeneratorEvaluator
 
 template <typename HeadProceduralVectorImplementationType_>
-struct TensorProductOfProceduralVectors_f<TypeList_t<HeadProceduralVectorImplementationType_> >
+struct TensorProductOfProceduralVectors_f<Typle_t<HeadProceduralVectorImplementationType_> >
 {
 private:
-    typedef TypeList_t<HeadProceduralVectorImplementationType_> ProceduralVectorImplementationTypeList_;
-    typedef typename ConceptOfEachTypeIn_f<ProceduralVectorImplementationTypeList_>::T ConceptTypeList;
-    typedef typename ScalarOfEachTypeIn_f<ProceduralVectorImplementationTypeList_>::T ScalarTypeList;
+    typedef Typle_t<HeadProceduralVectorImplementationType_> ProceduralVectorImplementationTyple_;
+    typedef typename ConceptOfEachTypeIn_f<ProceduralVectorImplementationTyple_>::T ConceptTyple;
+    typedef typename ScalarOfEachTypeIn_f<ProceduralVectorImplementationTyple_>::T ScalarTyple;
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM((ProceduralVectorImplementationTypeList_::LENGTH > 0), LENGTH_MUST_BE_POSITIVE),
-        STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<ConceptTypeList,IsBasedVectorSpace_p>::V), MUST_BE_TYPELIST_OF_BASED_VECTOR_SPACES),
-        STATIC_ASSERT_IN_ENUM(TypeListIsUniform_t<ScalarTypeList>::V, ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM((EachTypeUsesProceduralArray_f<ProceduralVectorImplementationTypeList_>::V), MUST_BE_TYPELIST_OF_PROCEDURAL_IMPLEMENTATIONS)
+        STATIC_ASSERT_IN_ENUM((Hippo::Length_f<ProceduralVectorImplementationTyple_>::V > 0), LENGTH_MUST_BE_POSITIVE),
+        STATIC_ASSERT_IN_ENUM((Hippo::EachTypeSatisfies_f<ConceptTyple,IsBasedVectorSpace_e>::V), MUST_BE_TYPELIST_OF_BASED_VECTOR_SPACES),
+        STATIC_ASSERT_IN_ENUM(Hippo::TypleIsUniform_f<ScalarTyple>::V, ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
+        STATIC_ASSERT_IN_ENUM((EachTypeUsesProceduralArray_f<ProceduralVectorImplementationTyple_>::V), MUST_BE_TYPELIST_OF_PROCEDURAL_IMPLEMENTATIONS)
     };
 
-    typedef TensorProductOfBasedVectorSpaces_c<ConceptTypeList> TensorProductOfBasedVectorSpaces;
-    typedef typename ScalarTypeList::HeadType Scalar;
+    typedef TensorProductOfBasedVectorSpaces_c<ConceptTyple> TensorProductOfBasedVectorSpaces;
+    typedef typename Hippo::Head_f<ScalarTyple>::T Scalar;
     typedef ComponentGenerator_t<Scalar,
                                  DimensionOf_f<TensorProductOfBasedVectorSpaces>::V,
-                                 ComponentGeneratorEvaluator::tensor_product_of_single_procedural_vector<ProceduralVectorImplementationTypeList_,
-                                                                                                        TensorProductOfBasedVectorSpaces,
-                                                                                                        Scalar>,
-                                 TensorProduct_c<ProceduralVectorImplementationTypeList_> > ComponentGenerator;
+                                 ComponentGeneratorEvaluator::tensor_product_of_single_procedural_vector<ProceduralVectorImplementationTyple_,
+                                                                                                         TensorProductOfBasedVectorSpaces,
+                                                                                                         Scalar>,
+                                 TensorProduct_c<ProceduralVectorImplementationTyple_> > ComponentGenerator;
     TensorProductOfProceduralVectors_f();
 public:
     typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces,Scalar,UseProceduralArray_t<ComponentGenerator> > T;
@@ -76,15 +76,15 @@ public:
 
 namespace ComponentGeneratorEvaluator {
 
-template <typename ProceduralVectorImplementationTypeList_, typename TensorProductOfBasedVectorSpaces_, typename Scalar_>
+template <typename ProceduralVectorImplementationTyple_, typename TensorProductOfBasedVectorSpaces_, typename Scalar_>
 Scalar_ tensor_product_of_procedural_vectors (ComponentIndex_t<DimensionOf_f<TensorProductOfBasedVectorSpaces_>::V> const &i)
 {
     typedef ComponentIndex_t<DimensionOf_f<TensorProductOfBasedVectorSpaces_>::V> ComponentIndex;
-    typedef typename ConceptOfEachTypeIn_f<ProceduralVectorImplementationTypeList_>::T ConceptTypeList;
-    typedef TensorProductOfBasedVectorSpaces_c<ConceptTypeList> TensorProductOfBasedVectorSpaces;
+    typedef typename ConceptOfEachTypeIn_f<ProceduralVectorImplementationTyple_>::T ConceptTyple;
+    typedef TensorProductOfBasedVectorSpaces_c<ConceptTyple> TensorProductOfBasedVectorSpaces;
     STATIC_ASSERT_TYPES_ARE_EQUAL(TensorProductOfBasedVectorSpaces_, TensorProductOfBasedVectorSpaces);
-    typedef typename ProceduralVectorImplementationTypeList_::HeadType HeadImplementation;
-    typedef typename TensorProductOfProceduralVectors_f<typename ProceduralVectorImplementationTypeList_::BodyTypeList>::T BodyImplementation;
+    typedef typename Hippo::Head_f<ProceduralVectorImplementationTyple_>::T HeadImplementation;
+    typedef typename TensorProductOfProceduralVectors_f<typename Hippo::BodyTyple_f<ProceduralVectorImplementationTyple_>::T>::T BodyImplementation;
     HeadImplementation head_implementation;
     BodyImplementation body_implementation;
     AbstractIndex_c<'a'> a;
@@ -92,34 +92,34 @@ Scalar_ tensor_product_of_procedural_vectors (ComponentIndex_t<DimensionOf_f<Ten
     AbstractIndex_c<'P'> P;
     return (head_implementation(a)*body_implementation(b))
            .bundle_with_no_type_check(a*b,TensorProductOfBasedVectorSpaces_(),P)
-           [MultiIndex_t<TypeList_t<ComponentIndex> >(i)];
+           [MultiIndex_t<Typle_t<ComponentIndex>>(i)];
 }
 
 } // end of namespace ComponentGeneratorEvaluator
 
-template <typename ProceduralVectorImplementationTypeList_>
+template <typename ProceduralVectorImplementationTyple_>
 struct TensorProductOfProceduralVectors_f
 {
 private:
-    typedef typename ConceptOfEachTypeIn_f<ProceduralVectorImplementationTypeList_>::T ConceptTypeList;
-    typedef typename ScalarOfEachTypeIn_f<ProceduralVectorImplementationTypeList_>::T ScalarTypeList;
+    typedef typename ConceptOfEachTypeIn_f<ProceduralVectorImplementationTyple_>::T ConceptTyple;
+    typedef typename ScalarOfEachTypeIn_f<ProceduralVectorImplementationTyple_>::T ScalarTyple;
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM((ProceduralVectorImplementationTypeList_::LENGTH > 0), LENGTH_MUST_BE_POSITIVE),
-        STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<ConceptTypeList,IsBasedVectorSpace_p>::V), MUST_BE_TYPELIST_OF_BASED_VECTOR_SPACES),
-        STATIC_ASSERT_IN_ENUM(TypeListIsUniform_t<ScalarTypeList>::V, ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM((EachTypeUsesProceduralArray_f<ProceduralVectorImplementationTypeList_>::V), MUST_BE_TYPELIST_OF_PROCEDURAL_IMPLEMENTATIONS)
+        STATIC_ASSERT_IN_ENUM((Hippo::Length_f<ProceduralVectorImplementationTyple_>::V > 0), LENGTH_MUST_BE_POSITIVE),
+        STATIC_ASSERT_IN_ENUM((Hippo::EachTypeSatisfies_f<ConceptTyple,IsBasedVectorSpace_e>::V), MUST_BE_TYPELIST_OF_BASED_VECTOR_SPACES),
+        STATIC_ASSERT_IN_ENUM(Hippo::TypleIsUniform_f<ScalarTyple>::V, ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
+        STATIC_ASSERT_IN_ENUM((EachTypeUsesProceduralArray_f<ProceduralVectorImplementationTyple_>::V), MUST_BE_TYPELIST_OF_PROCEDURAL_IMPLEMENTATIONS)
     };
 
-    typedef TensorProductOfBasedVectorSpaces_c<ConceptTypeList> TensorProductOfBasedVectorSpaces;
-    typedef typename ScalarTypeList::HeadType Scalar;
+    typedef TensorProductOfBasedVectorSpaces_c<ConceptTyple> TensorProductOfBasedVectorSpaces;
+    typedef typename Hippo::Head_f<ScalarTyple>::T Scalar;
     typedef ComponentGenerator_t<Scalar,
                                  DimensionOf_f<TensorProductOfBasedVectorSpaces>::V,
-                                 ComponentGeneratorEvaluator::tensor_product_of_procedural_vectors<ProceduralVectorImplementationTypeList_,
+                                 ComponentGeneratorEvaluator::tensor_product_of_procedural_vectors<ProceduralVectorImplementationTyple_,
                                                                                                   TensorProductOfBasedVectorSpaces,
                                                                                                   Scalar>,
-                                 TensorProduct_c<ProceduralVectorImplementationTypeList_> > ComponentGenerator;
+                                 TensorProduct_c<ProceduralVectorImplementationTyple_> > ComponentGenerator;
     TensorProductOfProceduralVectors_f();
 public:
     typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces,Scalar,UseProceduralArray_t<ComponentGenerator> > T;
@@ -129,7 +129,7 @@ public:
 // "parallel" tensor product of 2-tensors (i.e. tensor product of linear maps)
 // ///////////////////////////////////////////////////////////////////////////
 
-template <typename Procedural2TensorImplementationTypeList_> struct TensorProductOfProcedural2Tensors_f;
+template <typename Procedural2TensorImplementationTyple_> struct TensorProductOfProcedural2Tensors_f;
 
 // if all the procedural 2-tensor implementations are diagonal 2-tensors, then
 // the result can be a diagonal 2-tensor.  if all the implementations are
@@ -140,7 +140,7 @@ template <typename Procedural2TensorImplementationTypeList_> struct TensorProduc
 // tensor product of a symmetric and an antisymmetric can only be (in the
 // current state of the conceptual hierarchy) a non-symmetric tensor.
 
-template <typename Procedural2TensorImplementationTypeList_> struct ConceptualTypeOfTensorProductOfProcedural2Tensors_f;
+template <typename Procedural2TensorImplementationTyple_> struct ConceptualTypeOfTensorProductOfProcedural2Tensors_f;
 
 // template specialization for tensor products of scalar 2-tensors
 template <typename Factor0_,
@@ -148,20 +148,20 @@ template <typename Factor0_,
           typename Scalar_,
           typename UseArrayType_,
           typename Derived_,
-          typename Procedural2TensorImplementationBodyTypeList_>
+          typename... Procedural2TensorImplementationTypes_>
 struct ConceptualTypeOfTensorProductOfProcedural2Tensors_f<
-    TypeList_t<ImplementationOf_t<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_>,
-               Procedural2TensorImplementationBodyTypeList_> >
+    Typle_t<ImplementationOf_t<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_>,
+            Procedural2TensorImplementationTypes_...>>
 {
 private:
-    typedef TypeList_t<ImplementationOf_t<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_>,
-                       Procedural2TensorImplementationBodyTypeList_> Procedural2TensorImplementationTypeList;
-    typedef typename ConceptOfEachTypeIn_f<Procedural2TensorImplementationTypeList>::T ConceptTypeList;
-    enum { STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<ConceptTypeList,IsScalar2TensorProductOfBasedVectorSpaces_p>::V), MUST_BE_TYPELIST_OF_SCALAR_2_TENSORS) };
-    typedef typename FactorNOfEachTypeIn_f<0,ConceptTypeList>::T Factor0TypeList;
-    typedef typename FactorNOfEachTypeIn_f<1,ConceptTypeList>::T Factor1TypeList;
-    typedef TensorProductOfBasedVectorSpaces_c<Factor0TypeList> Factor0TensorProduct;
-    typedef TensorProductOfBasedVectorSpaces_c<Factor1TypeList> Factor1TensorProduct;
+    typedef Typle_t<ImplementationOf_t<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_>,
+            Procedural2TensorImplementationTypes_...> Procedural2TensorImplementationTyple;
+    typedef typename ConceptOfEachTypeIn_f<Procedural2TensorImplementationTyple>::T ConceptTyple;
+    enum { STATIC_ASSERT_IN_ENUM((Hippo::EachTypeSatisfies_f<ConceptTyple,IsScalar2TensorProductOfBasedVectorSpaces_e>::V), MUST_BE_TYPELIST_OF_SCALAR_2_TENSORS) };
+    typedef typename FactorNOfEachTypeIn_f<0,ConceptTyple>::T Factor0Typle;
+    typedef typename FactorNOfEachTypeIn_f<1,ConceptTyple>::T Factor1Typle;
+    typedef TensorProductOfBasedVectorSpaces_c<Factor0Typle> Factor0TensorProduct;
+    typedef TensorProductOfBasedVectorSpaces_c<Factor1Typle> Factor1TensorProduct;
     ConceptualTypeOfTensorProductOfProcedural2Tensors_f();
 public:
     typedef Scalar2TensorProductOfBasedVectorSpaces_c<Factor0TensorProduct,Factor1TensorProduct> T;
@@ -173,20 +173,20 @@ template <typename Factor0_,
           typename Scalar_,
           typename UseArrayType_,
           typename Derived_,
-          typename Procedural2TensorImplementationBodyTypeList_>
+          typename... Procedural2TensorImplementationBodyTypes_>
 struct ConceptualTypeOfTensorProductOfProcedural2Tensors_f<
-    TypeList_t<ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_>,
-               Procedural2TensorImplementationBodyTypeList_> >
+    Typle_t<ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_>,
+            Procedural2TensorImplementationBodyTypes_...>>
 {
 private:
-    typedef TypeList_t<ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_>,
-                       Procedural2TensorImplementationBodyTypeList_> Procedural2TensorImplementationTypeList;
-    typedef typename ConceptOfEachTypeIn_f<Procedural2TensorImplementationTypeList>::T ConceptTypeList;
-    enum { STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<ConceptTypeList,IsDiagonal2TensorProductOfBasedVectorSpaces_p>::V), MUST_BE_TYPELIST_OF_DIAGONAL_2_TENSORS) };
-    typedef typename FactorNOfEachTypeIn_f<0,ConceptTypeList>::T Factor0TypeList;
-    typedef typename FactorNOfEachTypeIn_f<1,ConceptTypeList>::T Factor1TypeList;
-    typedef TensorProductOfBasedVectorSpaces_c<Factor0TypeList> Factor0TensorProduct;
-    typedef TensorProductOfBasedVectorSpaces_c<Factor1TypeList> Factor1TensorProduct;
+    typedef Typle_t<ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_>,
+            Procedural2TensorImplementationBodyTypes_...> Procedural2TensorImplementationTyple;
+    typedef typename ConceptOfEachTypeIn_f<Procedural2TensorImplementationTyple>::T ConceptTyple;
+    enum { STATIC_ASSERT_IN_ENUM((Hippo::EachTypeSatisfies_f<ConceptTyple,IsDiagonal2TensorProductOfBasedVectorSpaces_e>::V), MUST_BE_TYPELIST_OF_DIAGONAL_2_TENSORS) };
+    typedef typename FactorNOfEachTypeIn_f<0,ConceptTyple>::T Factor0Typle;
+    typedef typename FactorNOfEachTypeIn_f<1,ConceptTyple>::T Factor1Typle;
+    typedef TensorProductOfBasedVectorSpaces_c<Factor0Typle> Factor0TensorProduct;
+    typedef TensorProductOfBasedVectorSpaces_c<Factor1Typle> Factor1TensorProduct;
     ConceptualTypeOfTensorProductOfProcedural2Tensors_f();
 public:
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0TensorProduct,Factor1TensorProduct> T;
@@ -198,43 +198,43 @@ template <typename Factor0_,
           typename Scalar_,
           typename UseArrayType_,
           typename Derived_,
-          typename Procedural2TensorImplementationBodyTypeList_>
+          typename... Procedural2TensorImplementationBodyTypes_>
 struct ConceptualTypeOfTensorProductOfProcedural2Tensors_f<
-    TypeList_t<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0_,TypeList_t<Factor1_> > >,Scalar_,UseArrayType_,Derived_>,
-               Procedural2TensorImplementationBodyTypeList_> >
+    Typle_t<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<Typle_t<Factor0_,Factor1_>>,Scalar_,UseArrayType_,Derived_>,
+            Procedural2TensorImplementationBodyTypes_...>>
 {
 private:
-    typedef TypeList_t<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0_,TypeList_t<Factor1_> > >,Scalar_,UseArrayType_,Derived_>,
-                       Procedural2TensorImplementationBodyTypeList_> Procedural2TensorImplementationTypeList;
-    typedef typename ConceptOfEachTypeIn_f<Procedural2TensorImplementationTypeList>::T ConceptTypeList;
+    typedef Typle_t<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<Typle_t<Factor0_,Factor1_>>,Scalar_,UseArrayType_,Derived_>,
+            Procedural2TensorImplementationBodyTypes_...> Procedural2TensorImplementationTyple;
+    typedef typename ConceptOfEachTypeIn_f<Procedural2TensorImplementationTyple>::T ConceptTyple;
     enum
     {
-        STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<ConceptTypeList,IsTensorProductOfBasedVectorSpaces_p>::V), MUST_BE_TYPELIST_OF_DIAGONAL_2_TENSORS),
-        STATIC_ASSERT_IN_ENUM(EachTypeIsA2TensorProductOfBasedVectorSpaces_f<ConceptTypeList>::V, MUST_BE_TYPELIST_OF_2_TENSORS)
+        STATIC_ASSERT_IN_ENUM((Hippo::EachTypeSatisfies_f<ConceptTyple,IsTensorProductOfBasedVectorSpaces_e>::V), MUST_BE_TYPELIST_OF_DIAGONAL_2_TENSORS),
+        STATIC_ASSERT_IN_ENUM(EachTypeIsA2TensorProductOfBasedVectorSpaces_f<ConceptTyple>::V, MUST_BE_TYPELIST_OF_2_TENSORS)
     };
-    typedef typename FactorNOfEachTypeIn_f<0,ConceptTypeList>::T Factor0TypeList;
-    typedef typename FactorNOfEachTypeIn_f<1,ConceptTypeList>::T Factor1TypeList;
-    typedef TensorProductOfBasedVectorSpaces_c<Factor0TypeList> Factor0TensorProduct;
-    typedef TensorProductOfBasedVectorSpaces_c<Factor1TypeList> Factor1TensorProduct;
+    typedef typename FactorNOfEachTypeIn_f<0,ConceptTyple>::T Factor0Typle;
+    typedef typename FactorNOfEachTypeIn_f<1,ConceptTyple>::T Factor1Typle;
+    typedef TensorProductOfBasedVectorSpaces_c<Factor0Typle> Factor0TensorProduct;
+    typedef TensorProductOfBasedVectorSpaces_c<Factor1Typle> Factor1TensorProduct;
     ConceptualTypeOfTensorProductOfProcedural2Tensors_f();
 public:
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0TensorProduct,TypeList_t<Factor1TensorProduct> > > T;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<Factor0TensorProduct,Factor1TensorProduct>> T;
 };
 
 namespace ComponentGeneratorEvaluator {
 
-template <typename Procedural2TensorImplementationTypeList_, typename ConceptualTypeOfTensorProduct_, typename Scalar_>
+template <typename Procedural2TensorImplementationTyple_, typename ConceptualTypeOfTensorProduct_, typename Scalar_>
 Scalar_ tensor_product_of_2_tensors (ComponentIndex_t<DimensionOf_f<ConceptualTypeOfTensorProduct_>::V> const &i)
 {
     typedef ComponentIndex_t<DimensionOf_f<ConceptualTypeOfTensorProduct_>::V> ComponentIndex;
-    typedef typename ConceptualTypeOfTensorProductOfProcedural2Tensors_f<Procedural2TensorImplementationTypeList_>::T ConceptualTypeOfTensorProduct;
+    typedef typename ConceptualTypeOfTensorProductOfProcedural2Tensors_f<Procedural2TensorImplementationTyple_>::T ConceptualTypeOfTensorProduct;
     STATIC_ASSERT_TYPES_ARE_EQUAL(ConceptualTypeOfTensorProduct_, ConceptualTypeOfTensorProduct);
-    typedef typename FactorTypeListOf_f<ConceptualTypeOfTensorProduct_>::T FactorTypeList;
-    STATIC_ASSERT((FactorTypeList::LENGTH == 2), LENGTH_MUST_BE_EXACTLY_2);
-    typedef typename FactorTypeList::HeadType Factor0;
-    typedef typename FactorTypeList::BodyTypeList::HeadType Factor1;
-    typedef typename Procedural2TensorImplementationTypeList_::HeadType HeadImplementation;
-    typedef typename TensorProductOfProcedural2Tensors_f<typename Procedural2TensorImplementationTypeList_::BodyTypeList>::T BodyImplementation;
+    typedef typename FactorTypleOf_f<ConceptualTypeOfTensorProduct_>::T FactorTyple;
+    STATIC_ASSERT((Hippo::Length_f<FactorTyple>::V == 2), LENGTH_MUST_BE_EXACTLY_2);
+    typedef typename Hippo::Element_f<FactorTyple,0>::T Factor0;
+    typedef typename Hippo::Element_f<FactorTyple,1>::T Factor1;
+    typedef typename Hippo::Head_f<Procedural2TensorImplementationTyple_>::T HeadImplementation;
+    typedef typename TensorProductOfProcedural2Tensors_f<typename Hippo::BodyTyple_f<Procedural2TensorImplementationTyple_>::T>::T BodyImplementation;
     HeadImplementation head_implementation;
     BodyImplementation body_implementation;
     AbstractIndex_c<'u'> u;
@@ -248,33 +248,33 @@ Scalar_ tensor_product_of_2_tensors (ComponentIndex_t<DimensionOf_f<ConceptualTy
            .bundle_with_no_type_check(u*k,Factor0(),P)
            .bundle_with_no_type_check(v*l,Factor1(),Q)
            .bundle(P*Q,ConceptualTypeOfTensorProduct_(),r)
-           [MultiIndex_t<TypeList_t<ComponentIndex> >(i)];
+           [MultiIndex_t<Typle_t<ComponentIndex>>(i)];
 }
 
 } // end of namespace ComponentGeneratorEvaluator
 
 // general/recursive case
-template <typename Procedural2TensorImplementationTypeList_>
+template <typename Procedural2TensorImplementationTyple_>
 struct TensorProductOfProcedural2Tensors_f
 {
 private:
-    typedef typename ConceptOfEachTypeIn_f<Procedural2TensorImplementationTypeList_>::T ConceptTypeList;
-    typedef typename ScalarOfEachTypeIn_f<Procedural2TensorImplementationTypeList_>::T ScalarTypeList;
-    typedef typename ConceptualTypeOfTensorProductOfProcedural2Tensors_f<Procedural2TensorImplementationTypeList_>::T ConceptualTypeOfTensorProduct;
+    typedef typename ConceptOfEachTypeIn_f<Procedural2TensorImplementationTyple_>::T ConceptTyple;
+    typedef typename ScalarOfEachTypeIn_f<Procedural2TensorImplementationTyple_>::T ScalarTyple;
+    typedef typename ConceptualTypeOfTensorProductOfProcedural2Tensors_f<Procedural2TensorImplementationTyple_>::T ConceptualTypeOfTensorProduct;
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM(TypeListIsUniform_t<ScalarTypeList>::V, ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM((EachTypeUsesProceduralArray_f<Procedural2TensorImplementationTypeList_>::V), MUST_BE_TYPELIST_OF_PROCEDURAL_IMPLEMENTATIONS)
+        STATIC_ASSERT_IN_ENUM(Hippo::TypleIsUniform_f<ScalarTyple>::V, ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
+        STATIC_ASSERT_IN_ENUM((EachTypeUsesProceduralArray_f<Procedural2TensorImplementationTyple_>::V), MUST_BE_TYPELIST_OF_PROCEDURAL_IMPLEMENTATIONS)
     };
 
-    typedef typename ScalarTypeList::HeadType Scalar;
+    typedef typename Hippo::Head_f<ScalarTyple>::T Scalar;
     typedef ComponentGenerator_t<Scalar,
                                  DimensionOf_f<ConceptualTypeOfTensorProduct>::V,
-                                 ComponentGeneratorEvaluator::tensor_product_of_2_tensors<Procedural2TensorImplementationTypeList_,
+                                 ComponentGeneratorEvaluator::tensor_product_of_2_tensors<Procedural2TensorImplementationTyple_,
                                                                                           ConceptualTypeOfTensorProduct,
                                                                                           Scalar>,
-                                 TensorProduct_c<Procedural2TensorImplementationTypeList_> > ComponentGenerator;
+                                 TensorProduct_c<Procedural2TensorImplementationTyple_>> ComponentGenerator;
 private:
     TensorProductOfProcedural2Tensors_f();
 public:
@@ -283,43 +283,43 @@ public:
 
 namespace ComponentGeneratorEvaluator {
 
-template <typename Procedural2TensorImplementationTypeList_, typename ConceptualTypeOfTensorProduct_, typename Scalar_>
+template <typename Procedural2TensorImplementationTyple_, typename ConceptualTypeOfTensorProduct_, typename Scalar_>
 Scalar_ tensor_product_of_single_2_tensor (ComponentIndex_t<DimensionOf_f<ConceptualTypeOfTensorProduct_>::V> const &i)
 {
     typedef ComponentIndex_t<DimensionOf_f<ConceptualTypeOfTensorProduct_>::V> ComponentIndex;
-    typedef typename ConceptualTypeOfTensorProductOfProcedural2Tensors_f<Procedural2TensorImplementationTypeList_>::T ConceptualTypeOfTensorProduct;
+    typedef typename ConceptualTypeOfTensorProductOfProcedural2Tensors_f<Procedural2TensorImplementationTyple_>::T ConceptualTypeOfTensorProduct;
     STATIC_ASSERT_TYPES_ARE_EQUAL(ConceptualTypeOfTensorProduct_, ConceptualTypeOfTensorProduct);
-    typedef typename Procedural2TensorImplementationTypeList_::HeadType HeadImplementation;
+    typedef typename Hippo::Head_f<Procedural2TensorImplementationTyple_>::T HeadImplementation;
     HeadImplementation head_implementation;
     AbstractIndex_c<'a'> a;
-    return head_implementation(a)[MultiIndex_t<TypeList_t<ComponentIndex> >(i)];
+    return head_implementation(a)[MultiIndex_t<Typle_t<ComponentIndex>>(i)];
 }
 
 } // end of namespace ComponentGeneratorEvaluator
 
 // template specialization for tensor product of a single 2-tensor
 template <typename HeadProcedural2TensorImplementationType_>
-struct TensorProductOfProcedural2Tensors_f<TypeList_t<HeadProcedural2TensorImplementationType_> >
+struct TensorProductOfProcedural2Tensors_f<Typle_t<HeadProcedural2TensorImplementationType_>>
 {
 private:
-    typedef TypeList_t<HeadProcedural2TensorImplementationType_> Procedural2TensorImplementationTypeList;
-    typedef typename ConceptOfEachTypeIn_f<Procedural2TensorImplementationTypeList>::T ConceptTypeList;
-    typedef typename ScalarOfEachTypeIn_f<Procedural2TensorImplementationTypeList>::T ScalarTypeList;
-    typedef typename ConceptualTypeOfTensorProductOfProcedural2Tensors_f<Procedural2TensorImplementationTypeList>::T ConceptualTypeOfTensorProduct;
+    typedef Typle_t<HeadProcedural2TensorImplementationType_> Procedural2TensorImplementationTyple;
+    typedef typename ConceptOfEachTypeIn_f<Procedural2TensorImplementationTyple>::T ConceptTyple;
+    typedef typename ScalarOfEachTypeIn_f<Procedural2TensorImplementationTyple>::T ScalarTyple;
+    typedef typename ConceptualTypeOfTensorProductOfProcedural2Tensors_f<Procedural2TensorImplementationTyple>::T ConceptualTypeOfTensorProduct;
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM(TypeListIsUniform_t<ScalarTypeList>::V, ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM((EachTypeUsesProceduralArray_f<Procedural2TensorImplementationTypeList>::V), MUST_BE_TYPELIST_OF_PROCEDURAL_IMPLEMENTATIONS)
+        STATIC_ASSERT_IN_ENUM(Hippo::TypleIsUniform_f<ScalarTyple>::V, ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
+        STATIC_ASSERT_IN_ENUM((EachTypeUsesProceduralArray_f<Procedural2TensorImplementationTyple>::V), MUST_BE_TYPELIST_OF_PROCEDURAL_IMPLEMENTATIONS)
     };
 
-    typedef typename ScalarTypeList::HeadType Scalar;
+    typedef typename Hippo::Head_f<ScalarTyple>::T Scalar;
     typedef ComponentGenerator_t<Scalar,
                                  DimensionOf_f<ConceptualTypeOfTensorProduct>::V,
-                                 ComponentGeneratorEvaluator::tensor_product_of_single_2_tensor<Procedural2TensorImplementationTypeList,
+                                 ComponentGeneratorEvaluator::tensor_product_of_single_2_tensor<Procedural2TensorImplementationTyple,
                                                                                                 ConceptualTypeOfTensorProduct,
                                                                                                 Scalar>,
-                                 TensorProduct_c<Procedural2TensorImplementationTypeList> > ComponentGenerator;
+                                 TensorProduct_c<Procedural2TensorImplementationTyple>> ComponentGenerator;
 public:
     typedef ImplementationOf_t<ConceptualTypeOfTensorProduct,Scalar,UseProceduralArray_t<ComponentGenerator> > T;
 };

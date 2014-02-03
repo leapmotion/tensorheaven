@@ -371,10 +371,10 @@ private:
     static Uint32 const INDEX = Hippo::IndexOfFirstOccurrence_f<AbstractIndexTyple,typename Hippo::Head_f<ExtractionAbstractIndexTyple>::T>::V;
     ExtractFactorsForAbstractIndices_f();
 public:
-    typedef Hippo::HeadBodyTyple_f<typename Hippo::Element_f<FactorTyple,INDEX>::T,
-                                   typename ExtractFactorsForAbstractIndices_f<AbstractIndexTyple,
-                                                                               FactorTyple,
-                                                                               typename Hippo::BodyTyple_f<ExtractionAbstractIndexTyple>::T>::T> T;
+    typedef typename Hippo::HeadBodyTyple_f<typename Hippo::Element_f<FactorTyple,INDEX>::T,
+                                            typename ExtractFactorsForAbstractIndices_f<AbstractIndexTyple,
+                                                                                        FactorTyple,
+                                                                                        typename Hippo::BodyTyple_f<ExtractionAbstractIndexTyple>::T>::T>::T T;
 };
 
 template <typename AbstractIndexTyple, typename FactorTyple>

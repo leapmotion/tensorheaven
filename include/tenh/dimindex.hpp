@@ -115,11 +115,14 @@ struct DimIndexTypleOf_f
         STATIC_ASSERT_IN_ENUM((Hippo::Length_f<FactorTyple_>::V == Hippo::Length_f<AbstractIndexTyple_>::V), MUST_HAVE_EQUAL_LENGTHS),
         STATIC_ASSERT_IN_ENUM(HasBasedVectorSpaceStructure_f<typename Hippo::Head_f<FactorTyple_>::T>::V, MUST_BE_BASED_VECTOR_SPACE)
     };
-    typedef typename Hippo::HeadBodyTyple_f<DimIndex_t<Hippo::Head_f<AbstractIndexTyple_>::T::SYMBOL,DimensionOf_f<typename Hippo::Head_f<FactorTyple_>::T >::V>,
-                                            typename DimIndexTypleOf_f<typename Hippo::BodyTyple_f<FactorTyple_>::T,
-                                                                       typename Hippo::BodyTyple_f<AbstractIndexTyple_>::T>::T>::T T;
 private:
     DimIndexTypleOf_f();
+    typedef DimIndex_t<Hippo::Head_f<AbstractIndexTyple_>::T::SYMBOL,
+                       DimensionOf_f<typename Hippo::Head_f<FactorTyple_>::T>::V> HeadDimIndex;
+public:
+    typedef typename Hippo::HeadBodyTyple_f<HeadDimIndex,
+                                            typename DimIndexTypleOf_f<typename Hippo::BodyTyple_f<FactorTyple_>::T,
+                                                                       typename Hippo::BodyTyple_f<AbstractIndexTyple_>::T>::T>::T T;
 };
 
 /// @cond false

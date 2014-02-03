@@ -70,6 +70,7 @@ struct MultiIndex_t : List_t<IndexTyple_>
         Parent(leading_multi_index)
     {
         static_assert(IsTyple_f<OtherIndexTyple_>::V, "OtherIndexTyple_ must be a Typle_t");
+        static_assert(Hippo::EachTypeSatisfies_f<OtherIndexTyple_,IsComponentIndex_e>::V, "each type must be a ComponentIndex_t");
     }
 
 private:
@@ -158,21 +159,21 @@ public:
     // List_t<IndexTyple> and has no members.
     // returns the type of the MultiIndex_t having the specified range
     template <Uint32 START_INDEX_, Uint32 END_INDEX_>
-    struct RangeType_t
+    struct RangeType_f
     {
         typedef MultiIndex_t<typename Hippo::TypleRange_f<IndexTyple,START_INDEX_,END_INDEX_>::T> T;
     };
 
     // returns the MultiIndex_t which is the given range of elements
     template <Uint32 START_INDEX_, Uint32 END_INDEX_>
-    typename RangeType_t<START_INDEX_,END_INDEX_>::T const &range () const
+    typename RangeType_f<START_INDEX_,END_INDEX_>::T const &range () const
     {
-        return *static_cast<typename RangeType_t<START_INDEX_,END_INDEX_>::T const *>(&(this->Parent::template range<START_INDEX_,END_INDEX_>()));
+        return *static_cast<typename RangeType_f<START_INDEX_,END_INDEX_>::T const *>(&(this->Parent::template range<START_INDEX_,END_INDEX_>()));
     }
     template <Uint32 START_INDEX_, Uint32 END_INDEX_>
-    typename RangeType_t<START_INDEX_,END_INDEX_>::T &range ()
+    typename RangeType_f<START_INDEX_,END_INDEX_>::T &range ()
     {
-        return *static_cast<typename RangeType_t<START_INDEX_,END_INDEX_>::T *>(&(this->Parent::template range<START_INDEX_,END_INDEX_>()));
+        return *static_cast<typename RangeType_f<START_INDEX_,END_INDEX_>::T *>(&(this->Parent::template range<START_INDEX_,END_INDEX_>()));
     }
 
     // slighty hacky way to use List_t's existing functionality -- NOTE: this only
@@ -180,7 +181,7 @@ public:
     // List_t<IndexTyple> and has no members.
     // returns the type of the leading MultiIndex_t ending at the END_INDEX_th element
     template <Uint32 END_INDEX_>
-    struct LeadingListType_t
+    struct LeadingListType_f
     {
         typedef MultiIndex_t<typename Hippo::LeadingTyple_f<IndexTyple,END_INDEX_>::T> T;
     };
@@ -188,14 +189,14 @@ public:
     // TODO: rename to leading_multi_index
     // returns the leading MultiIndex_t ending at the END_INDEX_th element.
     template <Uint32 END_INDEX_>
-    typename LeadingListType_t<END_INDEX_>::T const &leading_list () const
+    typename LeadingListType_f<END_INDEX_>::T const &leading_list () const
     {
-        return *static_cast<typename LeadingListType_t<END_INDEX_>::T const *>(&(this->Parent::template leading_list<END_INDEX_>()));
+        return *static_cast<typename LeadingListType_f<END_INDEX_>::T const *>(&(this->Parent::template leading_list<END_INDEX_>()));
     }
     template <Uint32 END_INDEX_>
-    typename LeadingListType_t<END_INDEX_>::T &leading_list ()
+    typename LeadingListType_f<END_INDEX_>::T &leading_list ()
     {
-        return *static_cast<typename LeadingListType_t<END_INDEX_>::T *>(&(this->Parent::template leading_list<END_INDEX_>()));
+        return *static_cast<typename LeadingListType_f<END_INDEX_>::T *>(&(this->Parent::template leading_list<END_INDEX_>()));
     }
 
     // TODO: rename to TrailingMultiIndex_t
@@ -205,7 +206,7 @@ public:
     // List_t<IndexTyple> and has no members.
     // returns the type of the trailing List_t starting at the START_INDEX_th element
     template <Uint32 START_INDEX_>
-    struct TrailingListType_t
+    struct TrailingListType_f
     {
         typedef MultiIndex_t<typename Hippo::TrailingTyple_f<IndexTyple,START_INDEX_>::T> T;
     };
@@ -213,14 +214,14 @@ public:
     // TODO: rename to trailing_multi_index
     // returns the trailing MultiIndex_t starting at the START_INDEX_th element
     template <Uint32 START_INDEX_>
-    typename TrailingListType_t<START_INDEX_>::T const &trailing_list () const
+    typename TrailingListType_f<START_INDEX_>::T const &trailing_list () const
     {
-        return *static_cast<typename TrailingListType_t<START_INDEX_>::T const *>(&(this->Parent::template trailing_list<START_INDEX_>()));
+        return *static_cast<typename TrailingListType_f<START_INDEX_>::T const *>(&(this->Parent::template trailing_list<START_INDEX_>()));
     };
     template <Uint32 START_INDEX_>
-    typename TrailingListType_t<START_INDEX_>::T &trailing_list ()
+    typename TrailingListType_f<START_INDEX_>::T &trailing_list ()
     {
-        return *static_cast<typename TrailingListType_t<START_INDEX_>::T *>(&(this->Parent::template trailing_list<START_INDEX_>()));
+        return *static_cast<typename TrailingListType_f<START_INDEX_>::T *>(&(this->Parent::template trailing_list<START_INDEX_>()));
     };
 
     static std::string type_as_string () { return "MultiIndex_t<" + type_string_of<IndexTyple>() + '>'; }
@@ -257,6 +258,7 @@ struct MultiIndex_t<Typle_t<HeadIndexType_>> : public List_t<Typle_t<HeadIndexTy
         Parent(leading_multi_index)
     {
         static_assert(IsTyple_f<OtherIndexTyple_>::V, "OtherIndexTyple_ must be a Typle_t");
+        static_assert(Hippo::EachTypeSatisfies_f<OtherIndexTyple_,IsComponentIndex_e>::V, "each type must be a ComponentIndex_t");
     }
 
     bool operator == (MultiIndex_t const &m) const { return this->head() == m.head(); }
@@ -327,21 +329,21 @@ struct MultiIndex_t<Typle_t<HeadIndexType_>> : public List_t<Typle_t<HeadIndexTy
     // List_t<IndexTyple> and has no members.
     // returns the type of the MultiIndex_t having the specified range
     template <Uint32 START_INDEX_, Uint32 END_INDEX_>
-    struct RangeType_t
+    struct RangeType_f
     {
         typedef MultiIndex_t<typename Hippo::TypleRange_f<IndexTyple,START_INDEX_,END_INDEX_>::T> T;
     };
 
     // returns the MultiIndex_t which is the given range of elements
     template <Uint32 START_INDEX_, Uint32 END_INDEX_>
-    typename RangeType_t<START_INDEX_,END_INDEX_>::T const &range () const
+    typename RangeType_f<START_INDEX_,END_INDEX_>::T const &range () const
     {
-        return *static_cast<typename RangeType_t<START_INDEX_,END_INDEX_>::T const *>(&(this->Parent::template range<START_INDEX_,END_INDEX_>()));
+        return *static_cast<typename RangeType_f<START_INDEX_,END_INDEX_>::T const *>(&(this->Parent::template range<START_INDEX_,END_INDEX_>()));
     }
     template <Uint32 START_INDEX_, Uint32 END_INDEX_>
-    typename RangeType_t<START_INDEX_,END_INDEX_>::T &range ()
+    typename RangeType_f<START_INDEX_,END_INDEX_>::T &range ()
     {
-        return *static_cast<typename RangeType_t<START_INDEX_,END_INDEX_>::T *>(&(this->Parent::template range<START_INDEX_,END_INDEX_>()));
+        return *static_cast<typename RangeType_f<START_INDEX_,END_INDEX_>::T *>(&(this->Parent::template range<START_INDEX_,END_INDEX_>()));
     }
 
     // slighty hacky way to use List_t's existing functionality -- NOTE: this only
@@ -349,7 +351,7 @@ struct MultiIndex_t<Typle_t<HeadIndexType_>> : public List_t<Typle_t<HeadIndexTy
     // List_t<IndexTyple> and has no members.
     // returns the type of the leading MultiIndex_t ending at the END_INDEX_th element
     template <Uint32 END_INDEX_>
-    struct LeadingListType_t
+    struct LeadingListType_f
     {
         typedef MultiIndex_t<typename Hippo::LeadingTyple_f<IndexTyple,END_INDEX_>::T> T;
     };
@@ -357,14 +359,14 @@ struct MultiIndex_t<Typle_t<HeadIndexType_>> : public List_t<Typle_t<HeadIndexTy
     // TODO: rename to leading_multi_index
     // returns the leading MultiIndex_t ending at the END_INDEX_th element.
     template <Uint32 END_INDEX_>
-    typename LeadingListType_t<END_INDEX_>::T const &leading_list () const
+    typename LeadingListType_f<END_INDEX_>::T const &leading_list () const
     {
-        return *static_cast<typename LeadingListType_t<END_INDEX_>::T const *>(&(this->Parent::template leading_list<END_INDEX_>()));
+        return *static_cast<typename LeadingListType_f<END_INDEX_>::T const *>(&(this->Parent::template leading_list<END_INDEX_>()));
     }
     template <Uint32 END_INDEX_>
-    typename LeadingListType_t<END_INDEX_>::T &leading_list ()
+    typename LeadingListType_f<END_INDEX_>::T &leading_list ()
     {
-        return *static_cast<typename LeadingListType_t<END_INDEX_>::T *>(&(this->Parent::template leading_list<END_INDEX_>()));
+        return *static_cast<typename LeadingListType_f<END_INDEX_>::T *>(&(this->Parent::template leading_list<END_INDEX_>()));
     }
 
     // TODO: rename to TrailingMultiIndex_t
@@ -374,7 +376,7 @@ struct MultiIndex_t<Typle_t<HeadIndexType_>> : public List_t<Typle_t<HeadIndexTy
     // List_t<IndexTyple> and has no members.
     // returns the type of the trailing List_t starting at the START_INDEX_th element
     template <Uint32 START_INDEX_>
-    struct TrailingListType_t
+    struct TrailingListType_f
     {
         typedef MultiIndex_t<typename Hippo::TrailingTyple_f<IndexTyple,START_INDEX_>::T> T;
     };
@@ -382,14 +384,14 @@ struct MultiIndex_t<Typle_t<HeadIndexType_>> : public List_t<Typle_t<HeadIndexTy
     // TODO: rename to trailing_multi_index
     // returns the trailing MultiIndex_t starting at the START_INDEX_th element
     template <Uint32 START_INDEX_>
-    typename TrailingListType_t<START_INDEX_>::T const &trailing_list () const
+    typename TrailingListType_f<START_INDEX_>::T const &trailing_list () const
     {
-        return *static_cast<typename TrailingListType_t<START_INDEX_>::T const *>(&(this->Parent::template trailing_list<START_INDEX_>()));
+        return *static_cast<typename TrailingListType_f<START_INDEX_>::T const *>(&(this->Parent::template trailing_list<START_INDEX_>()));
     };
     template <Uint32 START_INDEX_>
-    typename TrailingListType_t<START_INDEX_>::T &trailing_list ()
+    typename TrailingListType_f<START_INDEX_>::T &trailing_list ()
     {
-        return *static_cast<typename TrailingListType_t<START_INDEX_>::T *>(&(this->Parent::template trailing_list<START_INDEX_>()));
+        return *static_cast<typename TrailingListType_f<START_INDEX_>::T *>(&(this->Parent::template trailing_list<START_INDEX_>()));
     };
 
     static std::string type_as_string () { return "MultiIndex_t<" + type_string_of<IndexTyple>() + '>'; }
@@ -457,7 +459,7 @@ inline MultiIndex_t<Typle_t<HeadType_>> operator >>= (HeadType_ const &head, Mul
 
 // tack an element onto the beginning of a list (catch-all case)
 template <typename HeadType_, typename... BodyTypes_>
-inline MultiIndex_t<Typle_t<HeadType_,BodyTypes_...> > operator >>= (HeadType_ const &head, MultiIndex_t<BodyTypes_...> const &body)
+inline MultiIndex_t<Typle_t<HeadType_,BodyTypes_...>> operator >>= (HeadType_ const &head, MultiIndex_t<Typle_t<BodyTypes_...>> const &body)
 {
     return MultiIndex_t<Typle_t<HeadType_,BodyTypes_...>>(head, body);
 }
