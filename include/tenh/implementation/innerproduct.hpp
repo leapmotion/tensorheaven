@@ -52,49 +52,51 @@ public:
 
 // meta-function helper for induced inner products
 
-template <typename FactorTypeList_, typename InnerProductIdTypeList_, typename Scalar_>
-struct InnerProductOfEachInTypeList_f
+template <typename FactorTyple_, typename InnerProductIdTyple_, typename Scalar_>
+struct InnerProductOfEachInTyple_f
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM(FactorTypeList_::LENGTH == InnerProductIdTypeList_::LENGTH, LENGTHS_MUST_BE_EQUAL) };
-    InnerProductOfEachInTypeList_f();
+    enum { STATIC_ASSERT_IN_ENUM(Hippo::Length_f<FactorTyple_>::V == Hippo::Length_f<InnerProductIdTyple_>::V, LENGTHS_MUST_BE_EQUAL) };
+    InnerProductOfEachInTyple_f();
+    typedef typename InnerProduct_f<typename Hippo::Head_f<FactorTyple_>::T,
+                                    typename Hippo::Head_f<InnerProductIdTyple_>::T,
+                                    Scalar_>::T HeadInnerProduct;
+    typedef typename InnerProductOfEachInTyple_f<typename Hippo::BodyTyple_f<FactorTyple_>::T,
+                                                 typename Hippo::BodyTyple_f<InnerProductIdTyple_>::T,
+                                                 Scalar_>::T BodyInnerProductTyple;
 public:
-    typedef TypeList_t<typename InnerProduct_f<typename FactorTypeList_::HeadType,
-                                               typename InnerProductIdTypeList_::HeadType,
-                                               Scalar_>::T,
-                       typename InnerProductOfEachInTypeList_f<typename FactorTypeList_::BodyTypeList,
-                                                               typename InnerProductIdTypeList_::BodyTypeList,
-                                                               Scalar_>::T> T;
+    typedef typename Hippo::HeadBodyTyple_f<HeadInnerProduct,
+                                            BodyInnerProductTyple>::T T;
 };
 
 template <typename Scalar_>
-struct InnerProductOfEachInTypeList_f<EmptyTypeList,EmptyTypeList,Scalar_>
+struct InnerProductOfEachInTyple_f<Typle_t<>,Typle_t<>,Scalar_>
 {
-    typedef EmptyTypeList T;
+    typedef Typle_t<> T;
 private:
-    InnerProductOfEachInTypeList_f();
+    InnerProductOfEachInTyple_f();
 };
 
 // induced inner product on TensorProductOfBasedVectorSpaces_c
-template <typename FactorTypeList_, typename InnerProductIdTypeList_, typename Scalar_>
-struct InnerProduct_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,TensorProduct_c<InnerProductIdTypeList_>,Scalar_>
+template <typename FactorTyple_, typename InnerProductIdTyple_, typename Scalar_>
+struct InnerProduct_f<TensorProductOfBasedVectorSpaces_c<FactorTyple_>,TensorProduct_c<InnerProductIdTyple_>,Scalar_>
 {
 private:
-    typedef typename InnerProductOfEachInTypeList_f<FactorTypeList_,InnerProductIdTypeList_,Scalar_>::T InnerProductTypeList;
+    typedef typename InnerProductOfEachInTyple_f<FactorTyple_,InnerProductIdTyple_,Scalar_>::T InnerProductTyple;
     InnerProduct_f();
 public:
-    typedef typename TensorProductOfProcedural2Tensors_f<InnerProductTypeList>::T T;
+    typedef typename TensorProductOfProcedural2Tensors_f<InnerProductTyple>::T T;
 };
 
 // induced inner product on DirectSumOfBasedVectorSpaces_c
-template <typename FactorTypeList_, typename InnerProductIdTypeList_, typename Scalar_>
-struct InnerProduct_f<DirectSumOfBasedVectorSpaces_c<FactorTypeList_>,DirectSum_c<InnerProductIdTypeList_>,Scalar_>
+template <typename FactorTyple_, typename InnerProductIdTyple_, typename Scalar_>
+struct InnerProduct_f<DirectSumOfBasedVectorSpaces_c<FactorTyple_>,DirectSum_c<InnerProductIdTyple_>,Scalar_>
 {
 private:
-    typedef typename InnerProductOfEachInTypeList_f<FactorTypeList_,InnerProductIdTypeList_,Scalar_>::T InnerProductTypeList;
+    typedef typename InnerProductOfEachInTyple_f<FactorTyple_,InnerProductIdTyple_,Scalar_>::T InnerProductTyple;
     InnerProduct_f();
 public:
-    typedef typename DirectSumOfProcedural2Tensors_f<InnerProductTypeList>::T T;
+    typedef typename DirectSumOfProcedural2Tensors_f<InnerProductTyple>::T T;
 };
 
 } // end of namespace Tenh

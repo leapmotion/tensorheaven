@@ -3,6 +3,7 @@
 #include "tenh/list.hpp"
 #include "tenh/implementation/diagonal2tensor.hpp"
 #include "tenh/implementation/directsum.hpp"
+#include "tenh/implementation/innerproduct.hpp"
 #include "tenh/implementation/scalar2tensor.hpp"
 #include "tenh/implementation/tensor.hpp"
 #include "tenh/implementation/tensorproduct.hpp"
@@ -576,6 +577,24 @@ int main (int argc, char **argv)
             std::cout << "this doesn't seem quite right, though it probably requires i*j*k*l to be permuted to i*k*j*l.\n";
             std::cout << FORMAT_VALUE(t(A).split(A,P*Q).split(P,i*j).split(Q,k*l)) << '\n';
         }
+        std::cout << '\n';
+    }
+
+    {
+        std::cout << "testing InnerProduct_f\n";
+        decltype(bvs(generic_real_vs<3>(), o_n_basis(Generic()))) b;
+        typedef double Scalar;
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        AbstractIndex_c<'p'> p;
+        InnerProduct_f<decltype(b),StandardInnerProduct,Scalar>::T g;
+        std::cout << FORMAT_VALUE(g) << '\n';
+        std::cout << FORMAT_VALUE(g.embed(dual(b*b),p).split(p,i*j)) << '\n';
+        decltype(b*b) t2;
+        InnerProduct_f<decltype(t2),TensorProduct_c<Typle_t<StandardInnerProduct,StandardInnerProduct>>,Scalar>::T g_t2;
+        std::cout << FORMAT_VALUE(g_t2) << '\n';
+        std::cout << FORMAT_VALUE(g_t2.embed(dual(t2*t2),p).split(p,i*j)) << '\n';
+
         std::cout << '\n';
     }
 
