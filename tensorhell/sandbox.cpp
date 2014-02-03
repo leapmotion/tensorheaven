@@ -3,6 +3,7 @@
 #include "tenh/list.hpp"
 #include "tenh/implementation/diagonal2tensor.hpp"
 #include "tenh/implementation/directsum.hpp"
+#include "tenh/implementation/euclideanembedding.hpp"
 #include "tenh/implementation/innerproduct.hpp"
 #include "tenh/implementation/scalar2tensor.hpp"
 #include "tenh/implementation/tensor.hpp"
@@ -594,6 +595,24 @@ int main (int argc, char **argv)
         InnerProduct_f<decltype(t2),TensorProduct_c<Typle_t<StandardInnerProduct,StandardInnerProduct>>,Scalar>::T g_t2;
         std::cout << FORMAT_VALUE(g_t2) << '\n';
         std::cout << FORMAT_VALUE(g_t2.embed(dual(t2*t2),p).split(p,i*j)) << '\n';
+
+        std::cout << '\n';
+    }
+
+    {
+        std::cout << "testing EuclideanEmbedding_f\n";
+        decltype(bvs(generic_real_vs<3>(), o_n_basis(Generic()))) b;
+        typedef double Scalar;
+        // AbstractIndex_c<'i'> i;
+        // AbstractIndex_c<'j'> j;
+        // AbstractIndex_c<'p'> p;
+        EuclideanEmbedding_f<decltype(b),StandardInnerProduct,Scalar>::T e;
+        std::cout << FORMAT_VALUE(e) << '\n';
+        // std::cout << FORMAT_VALUE(e.embed(dual(b*b),p).split(p,i*j)) << '\n';
+        decltype(b*b) t2;
+        EuclideanEmbedding_f<decltype(t2),TensorProduct_c<Typle_t<StandardInnerProduct,StandardInnerProduct>>,Scalar>::T e_t2;
+        std::cout << FORMAT_VALUE(e_t2) << '\n';
+        // std::cout << FORMAT_VALUE(e_t2.embed(dual(t2*t2),p).split(p,i*j)) << '\n';
 
         std::cout << '\n';
     }

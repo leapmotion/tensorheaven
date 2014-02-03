@@ -65,8 +65,7 @@ private:
                                                  typename Hippo::BodyTyple_f<InnerProductIdTyple_>::T,
                                                  Scalar_>::T BodyInnerProductTyple;
 public:
-    typedef typename Hippo::HeadBodyTyple_f<HeadInnerProduct,
-                                            BodyInnerProductTyple>::T T;
+    typedef typename Hippo::HeadBodyTyple_f<HeadInnerProduct,BodyInnerProductTyple>::T T;
 };
 
 template <typename Scalar_>
