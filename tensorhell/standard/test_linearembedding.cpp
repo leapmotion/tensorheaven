@@ -75,7 +75,7 @@ void add_checks (Directory &parent)
 
     typedef Tenh::Scalar2TensorProductOfBasedVectorSpaces_c<BasedVectorSpace_,BasedVectorSpace_> Scalar2;
     typedef Tenh::Diagonal2TensorProductOfBasedVectorSpaces_c<BasedVectorSpace_,BasedVectorSpace_> Diag2;
-    typedef Tenh::DirectSum_c<Tenh::TypeList_t<BasedVectorSpace_> > DirectSum;
+    typedef Tenh::DirectSum_c<Tenh::Typle_t<BasedVectorSpace_>> DirectSum;
     typedef Tenh::ExteriorPowerOfBasedVectorSpace_c<1,BasedVectorSpace_> ExteriorPower1;
     typedef Tenh::ExteriorPowerOfBasedVectorSpace_c<2,BasedVectorSpace_> ExteriorPower2;
     typedef Tenh::ExteriorPowerOfBasedVectorSpace_c<3,BasedVectorSpace_> ExteriorPower3;
@@ -157,7 +157,7 @@ void add_checks_for_two_spaces (Directory &parent)
 {
     typedef Tenh::Scalar2TensorProductOfBasedVectorSpaces_c<BasedVectorSpace0_,BasedVectorSpace1_> Scalar2;
     typedef Tenh::Diagonal2TensorProductOfBasedVectorSpaces_c<BasedVectorSpace0_,BasedVectorSpace1_> Diag2;
-    typedef Tenh::TensorProductOfBasedVectorSpaces_c<Tenh::TypeList_t<BasedVectorSpace0_,Tenh::TypeList_t<BasedVectorSpace1_> > > Tensor2;
+    typedef Tenh::TensorProductOfBasedVectorSpaces_c<Tenh::Typle_t<BasedVectorSpace0_,BasedVectorSpace1_>> Tensor2;
 
     {
         Directory &natural_embedding_dir = parent.GetSubDirectory("natural embedding");

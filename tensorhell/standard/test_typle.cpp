@@ -280,7 +280,6 @@ void test_IndexOfFirstOccurrence (Context const &context)
     static_assert(Tenh::Hippo::IndexOfFirstOccurrence_f<T,float>::V == 1, "error");
     static_assert(Tenh::Hippo::IndexOfFirstOccurrence_f<T,bool>::V == 2, "error");
     static_assert(Tenh::Hippo::IndexOfFirstOccurrence_f<T,char>::V == 4, "error");
-    static_assert(Tenh::Hippo::IndexOfFirstOccurrence_f<T,double>::V == 5, "error");
 
     typedef Tenh::Hippo::IndexOfFirstOccurrence_e<int> IndexOfFirstOccurrenceOfInt_e;
     typedef Tenh::Hippo::IndexOfFirstOccurrence_e<float> IndexOfFirstOccurrenceOfFloat_e;
@@ -291,7 +290,6 @@ void test_IndexOfFirstOccurrence (Context const &context)
     static_assert(IndexOfFirstOccurrenceOfFloat_e::Eval_f<T>::V == 1, "error");
     static_assert(IndexOfFirstOccurrenceOfBool_e::Eval_f<T>::V == 2, "error");
     static_assert(IndexOfFirstOccurrenceOfChar_e::Eval_f<T>::V == 4, "error");
-    static_assert(IndexOfFirstOccurrenceOfDouble_e::Eval_f<T>::V == 5, "error");
 
     // there is currently no runtime test code here, but that could change
 }

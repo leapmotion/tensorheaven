@@ -195,6 +195,16 @@ MAKE_1_ARY_VALUE_EVALUATOR(IsValue, bool);
 /// @headerfile core.hpp "tenh/meta/core.hpp"
 struct NullValue { };
 
+/// @brief Wrapper type to contain a type, useful for "deferring" evaluation of metafunctions, e.g. in If_f.
+/// @headerfile core.hpp "tenh/meta/core.hpp"
+/// @note The type string for this is defined in typestringof.hpp.
+template <typename T_> struct Type_t { typedef T_ T; };
+
+template <typename T_> struct IsType_f { static bool const V = false; };
+template <typename T_> struct IsType_f<Type_t<T_>> { static bool const V = true; };
+
+MAKE_1_ARY_VALUE_EVALUATOR(IsType, bool);
+
 /// @brief Template metafunction to test whether two types are identical.
 /// @headerfile core.hpp "tenh/meta/core.hpp"
 template <typename T0_, typename T1_> struct TypesAreEqual_f { static bool const V = false; operator bool () const { return V; } };

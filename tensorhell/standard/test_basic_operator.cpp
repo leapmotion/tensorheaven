@@ -296,9 +296,9 @@ void composition (Context const &context)
                 Scalar_ expected_result(0);
                 for (typename Vector2::ComponentIndex k; k.is_not_at_end(); ++k)
                     expected_result += Scalar_(M23[typename Operator23::MultiIndex(i, k)] * M12[typename Operator12::MultiIndex(k, j)]);
-                typedef Tenh::TypeList_t<typename Vector3::ComponentIndex,
-                        Tenh::TypeList_t<typename Vector1::ComponentIndex> > ResultIndexTypeList;
-                assert_eq((M23 * M12)[Tenh::MultiIndex_t<ResultIndexTypeList>(i, j)], expected_result);
+                typedef Tenh::Typle_t<typename Vector3::ComponentIndex,
+                                      typename Vector1::ComponentIndex> ResultIndexTyple;
+                assert_eq((M23 * M12)[Tenh::MultiIndex_t<ResultIndexTyple>(i, j)], expected_result);
             }
         }
 
@@ -310,9 +310,9 @@ void composition (Context const &context)
                 for (typename Vector2::ComponentIndex k; k.is_not_at_end(); ++k)
                     expected_result += Scalar_(M23[typename Operator23::MultiIndex(i, k)]
                                                * Scalar_(M12[typename Operator12::MultiIndex(k, j)] + N12[typename Operator12::MultiIndex(k, j)]));
-                typedef Tenh::TypeList_t<typename Vector3::ComponentIndex,
-                        Tenh::TypeList_t<typename Vector1::ComponentIndex> > ResultIndexTypeList;
-                assert_eq((M23 * (M12 + N12))[Tenh::MultiIndex_t<ResultIndexTypeList>(i, j)], expected_result);
+                typedef Tenh::Typle_t<typename Vector3::ComponentIndex,
+                                      typename Vector1::ComponentIndex> ResultIndexTyple;
+                assert_eq((M23 * (M12 + N12))[Tenh::MultiIndex_t<ResultIndexTyple>(i, j)], expected_result);
             }
         }
 
@@ -324,9 +324,9 @@ void composition (Context const &context)
                 for (typename Vector2::ComponentIndex k; k.is_not_at_end(); ++k)
                     expected_result += Scalar_(Scalar_(M23[typename Operator23::MultiIndex(i, k)] + N23[typename Operator23::MultiIndex(i, k)])
                                                * M12[typename Operator12::MultiIndex(k, j)]);
-                typedef Tenh::TypeList_t<typename Vector3::ComponentIndex,
-                        Tenh::TypeList_t<typename Vector1::ComponentIndex> > ResultIndexTypeList;
-                assert_eq(((M23 + N23) * M12)[Tenh::MultiIndex_t<ResultIndexTypeList>(i, j)], expected_result);
+                typedef Tenh::Typle_t<typename Vector3::ComponentIndex,
+                                      typename Vector1::ComponentIndex> ResultIndexTyple;
+                assert_eq(((M23 + N23) * M12)[Tenh::MultiIndex_t<ResultIndexTyple>(i, j)], expected_result);
             }
         }
     }

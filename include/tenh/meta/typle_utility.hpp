@@ -261,17 +261,22 @@ MAKE_2_ARY_VALUE_EVALUATOR(Contains, bool, typename, Element_);
 template <typename Typle_, typename Type_>
 struct IndexOfFirstOccurrence_f
 {
-    /// The return value of the metafunction.
-    static Uint32 const V = TypesAreEqual_f<typename Head_f<Typle_>::T,Type_>::V ?
-                            0 :
-                            1 + IndexOfFirstOccurrence_f<typename BodyTyple_f<Typle_>::T,Type_>::V;
+    static_assert(Contains_f<Typle_,Type_>::V, "this function is ill-defined if Type_ isn't contained in Typle_");
+private:
+    IndexOfFirstOccurrence_f ();
+    static Uint32 const BASE_VALUE = If_f<TypesAreEqual_f<typename Head_f<Typle_>::T,Type_>::V,
+                                          Value_t<Uint32,0>,
+                                          IndexOfFirstOccurrence_f<typename BodyTyple_f<Typle_>::T,Type_>>::T::V;
+    static Uint32 const OFFSET = TypesAreEqual_f<typename Head_f<Typle_>::T,Type_>::V ? 0 : 1;
+public:
+    static Uint32 const V = BASE_VALUE + OFFSET;
 };
 
 /// @cond false
 template <typename Type_>
 struct IndexOfFirstOccurrence_f<Typle_t<>,Type_>
 {
-    // this makes the index of a type that doesn't occur equal to the length of the typle.
+    static_assert(Contains_f<Typle_t<>,Type_>::V, "this function is ill-defined if Type_ isn't contained in Typle_");
     static Uint32 const V = 0;
 };
 /// @endcond

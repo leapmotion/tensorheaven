@@ -56,8 +56,13 @@ struct TypeStringOf_t<Value_t<T_,VALUE_>>
     static std::string eval () { return "Value_t<" + TypeStringOf_t<T_>::eval() + ',' + FORMAT(VALUE_) + '>'; }
 };
 
-
 template <> struct TypeStringOf_t<NullValue> { static std::string eval () { return "NullValue"; } };
+
+template <typename T_>
+struct TypeStringOf_t<Type_t<T_>>
+{
+    static std::string eval () { return "Type_t<" + TypeStringOf_t<T_>::eval() + '>'; }
+};
 /// @endcond
 
 /// @brief Overload for operator<< to stream objects of type TypeStringOf_t

@@ -93,11 +93,12 @@ private:
         ABSTRACT_INDEX_MAP_IS_IDENTITY ?
         0 :
         Hippo::Max_f<typename Hippo::OnEach_f<CodomainAbstractIndexTyple_,SymbolOf_e>::T,AbstractIndexSymbol>::V;
+
     Eval_f();
 public:
     typedef typename If_f<Hippo::Contains_f<DomainAbstractIndexTyple_,AbstractIndex>::V,
-                          typename AbstractIndexMap::template Eval_f<AbstractIndex>::T,
-                          AbstractIndex_c<OFFSET + SYMBOL_> >::T T;
+                          typename AbstractIndexMap::template Eval_f<AbstractIndex>,
+                          Type_t<AbstractIndex_c<OFFSET + SYMBOL_>>>::T::T T;
 };
 
 // ///////////////////////////////////////////////////////////////////////////

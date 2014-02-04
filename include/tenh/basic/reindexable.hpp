@@ -17,7 +17,7 @@
 namespace Tenh {
 
 template <typename ExpressionTemplate_, typename FreeDimIndexTyple_ = typename ExpressionTemplate_::FreeDimIndexTyple>
-struct Reindexable_t : public ExpressionOperand_i<Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_>,Length_f<FreeDimIndexTyple_>::V>
+struct Reindexable_t : public ExpressionOperand_i<Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_>,Hippo::Length_f<FreeDimIndexTyple_>::V>
 {
 private:
     enum
