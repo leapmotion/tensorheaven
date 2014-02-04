@@ -35,7 +35,7 @@ void test_wedge ()
 
     typedef ExteriorPowerOfBasedVectorSpace_c<3,BasedX> Wedge3_BasedX;
     typedef ExteriorPowerOfBasedVectorSpace_c<2,BasedX> Wedge2_BasedX;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedX, TypeList_t<BasedX> > > T2_BasedX;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<BasedX,BasedX>> T2_BasedX;
 
     typedef ImplementationOf_t<Wedge3_BasedX,float> Wedge;
 
@@ -72,7 +72,7 @@ void test_wedge ()
     std::cout << "Round-trip convert from ComponentIndex\n";
     Wedge::ComponentIndex i(9);
     std::cout << FORMAT_VALUE(i) << '\n';
-    Wedge::MultiIndex m = Wedge::bundle_index_map<Wedge::MultiIndex::IndexTypeList, Wedge::ComponentIndex>(i);
+    Wedge::MultiIndex m = Wedge::bundle_index_map<Wedge::MultiIndex::IndexTyple, Wedge::ComponentIndex>(i);
     std::cout << FORMAT_VALUE(m) << '\n';
     Wedge::ComponentIndex j = Wedge::vector_index_of(m);
     std::cout << FORMAT_VALUE(j) << "\n\n";
@@ -82,11 +82,11 @@ void test_wedge ()
     std::cout << FORMAT_VALUE(n) << '\n';
     i = Wedge::vector_index_of(n);
     std::cout << FORMAT_VALUE(i) << '\n';
-    n = Wedge::bundle_index_map<Wedge::MultiIndex::IndexTypeList, Wedge::ComponentIndex>(i);
+    n = Wedge::bundle_index_map<Wedge::MultiIndex::IndexTyple, Wedge::ComponentIndex>(i);
     std::cout << FORMAT_VALUE(n) << '\n';
     i = Wedge::vector_index_of(n);
     std::cout << FORMAT_VALUE(i) << "\n\n";
-    n = Wedge::bundle_index_map<Wedge::MultiIndex::IndexTypeList, Wedge::ComponentIndex>(i);
+    n = Wedge::bundle_index_map<Wedge::MultiIndex::IndexTyple, Wedge::ComponentIndex>(i);
 }
 
 void test_vee ()
@@ -99,7 +99,7 @@ void test_vee ()
 
     typedef SymmetricPowerOfBasedVectorSpace_c<3,BasedX> Sym3_BasedX;
     typedef SymmetricPowerOfBasedVectorSpace_c<2,BasedX> Sym2_BasedX;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedX, TypeList_t<BasedX> > > T2_BasedX;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<BasedX,BasedX>> T2_BasedX;
 
     typedef ImplementationOf_t<Sym3_BasedX,float> Sym;
 
@@ -137,7 +137,7 @@ void test_vee ()
     std::cout << "Round-trip convert from ComponentIndex\n";
     Sym::ComponentIndex i(7, CHECK_RANGE);
     std::cout << FORMAT_VALUE(i) << '\n';
-    Sym::MultiIndex m = Sym::bundle_index_map<Sym::MultiIndex::IndexTypeList, Sym::ComponentIndex>(i);
+    Sym::MultiIndex m = Sym::bundle_index_map<Sym::MultiIndex::IndexTyple, Sym::ComponentIndex>(i);
     std::cout << FORMAT_VALUE(m) << '\n';
     Sym::ComponentIndex j = Sym::vector_index_of(m);
     std::cout << FORMAT_VALUE(j) << "\n\n";
@@ -147,10 +147,10 @@ void test_vee ()
     std::cout << FORMAT_VALUE(n) << '\n';
     i = Sym::vector_index_of(n);
     std::cout << FORMAT_VALUE(i) << '\n';
-    n = Sym::bundle_index_map<Sym::MultiIndex::IndexTypeList, Sym::ComponentIndex>(i);
+    n = Sym::bundle_index_map<Sym::MultiIndex::IndexTyple, Sym::ComponentIndex>(i);
     std::cout << FORMAT_VALUE(n) << '\n';
     i = Sym::vector_index_of(n);
     std::cout << FORMAT_VALUE(i) << "\n\n";
-    n = Sym::bundle_index_map<Sym::MultiIndex::IndexTypeList, Sym::ComponentIndex>(i);
+    n = Sym::bundle_index_map<Sym::MultiIndex::IndexTyple, Sym::ComponentIndex>(i);
 }
 

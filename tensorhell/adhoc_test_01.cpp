@@ -40,8 +40,8 @@ void test_vector_contraction ()
     // std::cout << FORMAT_VALUE(a(i) + v(i)) << '\n';
 
     // testing 1-multiindex indexing of vectors
-    std::cout << FORMAT_VALUE(a(EmptyTypeList()*i)) << '\n';
-    std::cout << FORMAT_VALUE(v(EmptyTypeList()*i)) << '\n';
+    std::cout << FORMAT_VALUE(a(Typle_t<>()*i)) << '\n';
+    std::cout << FORMAT_VALUE(v(Typle_t<>()*i)) << '\n';
 
     std::cout << '\n' << '\n';
 }
@@ -58,7 +58,7 @@ void test_tensor_contraction ()
     typedef Basis_c<Y> BY;
     typedef BasedVectorSpace_c<VSY,BY> BasedY;
 
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedX,TypeList_t<DualOf_f<BasedY>::T> > > TPBVS;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<BasedX,DualOf_f<BasedY>::T>> TPBVS;
     typedef ImplementationOf_t<BasedX,float> U;
     typedef ImplementationOf_t<BasedY,float> V;
     typedef ImplementationOf_t<TPBVS,float> T;
@@ -87,7 +87,7 @@ void test_tensor_contraction ()
     // std::cout << FORMAT_VALUE(u(i)*t(i*j)) << '\n';
 
 
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedX,TypeList_t<DualOf_f<BasedY>::T,TypeList_t<DualOf_f<BasedY>::T> > > > H;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<BasedX,DualOf_f<BasedY>::T,DualOf_f<BasedY>::T>> H;
     typedef ImplementationOf_t<H,float> E;
     E e(fill_with(0));
     for (E::ComponentIndex it; it.is_not_at_end(); ++it)
@@ -104,7 +104,7 @@ void test_tensor_contraction ()
     // this should cause a compile error due to the non-naturality of the pairing
     // std::cout << FORMAT_VALUE(e(i*j*j)) << '\n';
 
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedY,TypeList_t<DualOf_f<BasedY>::T> > > EndomorphismOfY;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<BasedY,DualOf_f<BasedY>::T>> EndomorphismOfY;
     typedef ImplementationOf_t<EndomorphismOfY,float> Endo;
     Endo A(fill_with(0));
     A[Endo::MultiIndex(0,0)] = 3.0f;
@@ -131,13 +131,13 @@ void test_tensor_contraction ()
 
 
     AbstractIndex_c<'P'> P;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<DualOf_f<BasedY>::T,TypeList_t<DualOf_f<BasedY>::T> > > PartOfH;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<DualOf_f<BasedY>::T,DualOf_f<BasedY>::T>> PartOfH;
     typedef ImplementationOf_t<PartOfH,float> G;
     std::cout << FORMAT_VALUE(e(i*j*k).bundle(j*k,PartOfH(),P)) << '\n';
     std::cout << FORMAT_VALUE(f(i*j*k).bundle(j*k,DualOf_f<PartOfH>::T(),P)) << '\n';
     std::cout << FORMAT_VALUE(e(i*j*k).bundle(j*k,PartOfH(),P) * f(i*j*k).bundle(j*k,DualOf_f<PartOfH>::T(),P)) << '\n';
 
-    std::cout << FORMAT_VALUE(e(EmptyTypeList()*i)) << '\n';
+    std::cout << FORMAT_VALUE(e(Typle_t<>()*i)) << '\n';
 
     std::cout << '\n' << '\n';
 }

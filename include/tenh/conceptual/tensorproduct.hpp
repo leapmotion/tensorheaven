@@ -429,7 +429,8 @@ TensorProductOfBasedVectorSpaces_c<typename Hippo::Concat2Typles_f<FactorTyple_,
                                                                    Typle_t<BasedVectorSpace_> >::T>
     operator * (TensorProductOfBasedVectorSpaces_c<FactorTyple_> const &, BasedVectorSpace_ const &)
 {
-    return typename Hippo::Concat2Typles_f<FactorTyple_,Typle_t<BasedVectorSpace_> >::T();
+    return TensorProductOfBasedVectorSpaces_c<typename Hippo::Concat2Typles_f<FactorTyple_,
+                                                                              Typle_t<BasedVectorSpace_> >::T>();
 }
 
 template <typename FactorTyple_, typename BasedVectorSpace_>

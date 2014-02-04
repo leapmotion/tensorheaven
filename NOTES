@@ -82,6 +82,8 @@
   be implemented -- e.g. fast-naive, or sorted-for-accuracy, etc.
 - maybe rename XXXXTyple to XXXXs for brevity.  this should easily be distinguished from the
   XXXXs usage in "typename... XXXXs" because of the dereferencing "XXXXs...".
+- move stuff into "primitive" directory, e.g. preallocatedarray.hpp, memoryarray.hpp, 
+  componentgenerator.hpp, componentindex.hpp, dimindex.hpp, list.hpp, etc.
 
 
 ###implemented features/items:

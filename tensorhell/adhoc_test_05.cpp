@@ -60,33 +60,29 @@ void test_products_of_procedural_stuff ()
         std::cout << FORMAT_VALUE(E2()) << '\n';
         std::cout << '\n';
         {
-            typedef TypeList_t<E0> ProceduralVectorImplementationTypeList;
-            typedef TensorProductOfProceduralVectors_f<ProceduralVectorImplementationTypeList>::T T;
+            typedef Typle_t<E0> ProceduralVectorImplementationTyple;
+            typedef TensorProductOfProceduralVectors_f<ProceduralVectorImplementationTyple>::T T;
             std::cout << FORMAT_VALUE(type_string_of<T>()) << '\n';
             std::cout << FORMAT_VALUE(T()) << '\n';
             std::cout << '\n';
         }
         {
-            typedef TypeList_t<E0,
-                    TypeList_t<E1> > ProceduralVectorImplementationTypeList;
-            typedef TensorProductOfProceduralVectors_f<ProceduralVectorImplementationTypeList>::T T;
+            typedef Typle_t<E0,E1> ProceduralVectorImplementationTyple;
+            typedef TensorProductOfProceduralVectors_f<ProceduralVectorImplementationTyple>::T T;
             std::cout << FORMAT_VALUE(type_string_of<T>()) << '\n';
             std::cout << FORMAT_VALUE(T()) << '\n';
             std::cout << '\n';
         }
         {
-            typedef TypeList_t<E1,
-                    TypeList_t<E1> > ProceduralVectorImplementationTypeList;
-            typedef TensorProductOfProceduralVectors_f<ProceduralVectorImplementationTypeList>::T T;
+            typedef Typle_t<E1,E1> ProceduralVectorImplementationTyple;
+            typedef TensorProductOfProceduralVectors_f<ProceduralVectorImplementationTyple>::T T;
             std::cout << FORMAT_VALUE(type_string_of<T>()) << '\n';
             std::cout << FORMAT_VALUE(T()) << '\n';
             std::cout << '\n';
         }
         {
-            typedef TypeList_t<E0,
-                    TypeList_t<E1,
-                    TypeList_t<E2> > > ProceduralVectorImplementationTypeList;
-            typedef TensorProductOfProceduralVectors_f<ProceduralVectorImplementationTypeList>::T T;
+            typedef Typle_t<E0,E1,E2> ProceduralVectorImplementationTyple;
+            typedef TensorProductOfProceduralVectors_f<ProceduralVectorImplementationTyple>::T T;
             std::cout << FORMAT_VALUE(type_string_of<T>()) << '\n';
             std::cout << FORMAT_VALUE(T()) << '\n';
             std::cout << '\n';
@@ -98,8 +94,8 @@ void test_products_of_procedural_stuff ()
         typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,X>,OrthonormalBasis_c<X> > BasedX;
         typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Y>,OrthonormalBasis_c<Y> > BasedY;
         typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Z>,OrthonormalBasis_c<Z> > BasedZ;
-        typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedX,TypeList_t<BasedY> > > TensorProductA;
-        typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedY,TypeList_t<BasedZ> > > TensorProductB;
+        typedef TensorProductOfBasedVectorSpaces_c<Typle_t<BasedX,BasedY>> TensorProductA;
+        typedef TensorProductOfBasedVectorSpaces_c<Typle_t<BasedY,BasedZ>> TensorProductB;
         typedef float Scalar;
         typedef ImplementationOf_t<TensorProductA,
                                    Scalar,
@@ -115,12 +111,12 @@ void test_products_of_procedural_stuff ()
                                                                             CountingVectorGeneratorId<DimensionOf_f<TensorProductB>::V> > > > ImplementationB;
         {
             std::cout << FORMAT_VALUE(ImplementationA()) << '\n';
-            typedef TensorProductOfProcedural2Tensors_f<TypeList_t<ImplementationA> >::T TProdOfImpl;
+            typedef TensorProductOfProcedural2Tensors_f<Typle_t<ImplementationA>>::T TProdOfImpl;
             std::cout << FORMAT_VALUE(TProdOfImpl()) << '\n';
         }
         {
             std::cout << FORMAT_VALUE(ImplementationB()) << '\n';
-            typedef TensorProductOfProcedural2Tensors_f<TypeList_t<ImplementationA,TypeList_t<ImplementationB> > >::T TProdOfImpl;
+            typedef TensorProductOfProcedural2Tensors_f<Typle_t<ImplementationA,ImplementationB>>::T TProdOfImpl;
             std::cout << FORMAT_VALUE(TProdOfImpl()) << '\n';
             AbstractIndex_c<'P'> P;
             AbstractIndex_c<'Q'> Q;
@@ -155,12 +151,12 @@ void test_products_of_procedural_stuff ()
                                                                             CountingVectorGeneratorId<DimensionOf_f<TensorProductB>::V> > > > ImplementationB;
         {
             std::cout << FORMAT_VALUE(ImplementationA()) << '\n';
-            typedef TensorProductOfProcedural2Tensors_f<TypeList_t<ImplementationA> >::T TProdOfImpl;
+            typedef TensorProductOfProcedural2Tensors_f<Typle_t<ImplementationA>>::T TProdOfImpl;
             std::cout << FORMAT_VALUE(TProdOfImpl()) << '\n';
         }
         {
             std::cout << FORMAT_VALUE(ImplementationB()) << '\n';
-            typedef TensorProductOfProcedural2Tensors_f<TypeList_t<ImplementationA,TypeList_t<ImplementationB> > >::T TProdOfImpl;
+            typedef TensorProductOfProcedural2Tensors_f<Typle_t<ImplementationA,ImplementationB>>::T TProdOfImpl;
             std::cout << FORMAT_VALUE(TProdOfImpl()) << '\n';
             AbstractIndex_c<'A'> A;
             AbstractIndex_c<'P'> P;
@@ -199,7 +195,7 @@ void test_products_of_procedural_stuff ()
                                    //                                           CountingVectorGeneratorId<DimensionOf_f<TensorProductB>::V> > > > ImplementationB;
         {
             std::cout << FORMAT_VALUE(ImplementationA()) << '\n';
-            typedef TensorProductOfProcedural2Tensors_f<TypeList_t<ImplementationA> >::T TProdOfImpl;
+            typedef TensorProductOfProcedural2Tensors_f<Typle_t<ImplementationA> >::T TProdOfImpl;
             TProdOfImpl t;
             AbstractIndex_c<'i'> i;
             AbstractIndex_c<'j'> j;
@@ -208,7 +204,7 @@ void test_products_of_procedural_stuff ()
         }
         {
             std::cout << FORMAT_VALUE(ImplementationB()) << '\n';
-            typedef TensorProductOfProcedural2Tensors_f<TypeList_t<ImplementationB> >::T TProdOfImpl;
+            typedef TensorProductOfProcedural2Tensors_f<Typle_t<ImplementationB> >::T TProdOfImpl;
             TProdOfImpl t;
             AbstractIndex_c<'i'> i;
             AbstractIndex_c<'j'> j;
@@ -217,7 +213,7 @@ void test_products_of_procedural_stuff ()
         }
         {
             std::cout << FORMAT_VALUE(ImplementationB()) << '\n';
-            typedef TensorProductOfProcedural2Tensors_f<TypeList_t<ImplementationA,TypeList_t<ImplementationB> > >::T TProdOfImpl;
+            typedef TensorProductOfProcedural2Tensors_f<Typle_t<ImplementationA,ImplementationB>>::T TProdOfImpl;
             TProdOfImpl t;
             AbstractIndex_c<'A'> A;
             AbstractIndex_c<'P'> P;

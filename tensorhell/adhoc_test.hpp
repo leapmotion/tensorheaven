@@ -63,7 +63,7 @@ ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER,Vector>,Scalar> test
     for (typename Sym::ComponentIndex it; it.is_not_at_end(); ++it)
     {
         //result[it] = Scalar(1);
-        typename Sym::MultiIndex m = Sym::template bundle_index_map<typename Sym::MultiIndex::IndexTypeList, typename Sym::ComponentIndex>(it);
+        typename Sym::MultiIndex m = Sym::template bundle_index_map<typename Sym::MultiIndex::IndexTyple, typename Sym::ComponentIndex>(it);
         for (Uint32 i = 0; i < Sym::MultiIndex::LENGTH; ++i)
         {
             result[it] *= input[typename Vec::ComponentIndex(m.value_of_index(i, DONT_CHECK_RANGE))];
@@ -176,8 +176,8 @@ struct IdentityMatrixGeneratorId { static std::string type_as_string () { return
 template <typename Scalar_, typename BasedVectorSpace_>
 void test_procedural_identity_tensor ()
 {
-    typedef TypeList_t<BasedVectorSpace_,TypeList_t<typename DualOf_f<BasedVectorSpace_>::T> > FactorTypeList;
-    typedef TensorProductOfBasedVectorSpaces_c<FactorTypeList> TensorProduct;
+    typedef Typle_t<BasedVectorSpace_,typename DualOf_f<BasedVectorSpace_>::T> FactorTyple;
+    typedef TensorProductOfBasedVectorSpaces_c<FactorTyple> TensorProduct;
     typedef ComponentGenerator_t<Scalar_,
                                  DimensionOf_f<TensorProduct>::V,
                                  identity_matrix_generator<Scalar_,DimensionOf_f<BasedVectorSpace_>::V>,
@@ -303,13 +303,13 @@ void test_split_index_to_index_order_1 ()
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
     AbstractIndex_c<'k'> k;
-    std::cout << FORMAT_VALUE(s(i).split(i,EmptyTypeList()*k)) << '\n';
+    std::cout << FORMAT_VALUE(s(i).split(i,Typle_t<>()*k)) << '\n';
     std::cout << FORMAT_VALUE(s(i).split(i,j)) << '\n';
-    std::cout << FORMAT_VALUE(s(i).split(i,j).split(j,EmptyTypeList()*k)) << '\n';
+    std::cout << FORMAT_VALUE(s(i).split(i,j).split(j,Typle_t<>()*k)) << '\n';
     std::cout << "the following should be exactly zero\n";
-    std::cout << FORMAT_VALUE(s(i).split(i,EmptyTypeList()*k) - s(i).split(i,j).split(j,EmptyTypeList()*k)) << '\n';
+    std::cout << FORMAT_VALUE(s(i).split(i,Typle_t<>()*k) - s(i).split(i,j).split(j,Typle_t<>()*k)) << '\n';
     std::cout << "the following should be exactly zero\n";
-    std::cout << FORMAT_VALUE(s(i).split(i,j) - s(i).split(i,EmptyTypeList()*k).bundle(EmptyTypeList()*k,TensorProduct(),j)) << '\n';
+    std::cout << FORMAT_VALUE(s(i).split(i,j) - s(i).split(i,Typle_t<>()*k).bundle(Typle_t<>()*k,TensorProduct(),j)) << '\n';
     std::cout << '\n';
 }
 

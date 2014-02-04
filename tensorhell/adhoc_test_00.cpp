@@ -64,8 +64,8 @@ void test_BasedVectorSpace_c ()
 
 void test_TensorProduct_c ()
 {
-    typedef TypeList_t<X,TypeList_t<int,TypeList_t<float> > > TypeList;
-    typedef TensorProduct_c<TypeList> TensorProduct;
+    typedef Typle_t<X,int,float> Typle;
+    typedef TensorProduct_c<Typle> TensorProduct;
     typedef DualOf_f<TensorProduct>::T DualTensorProduct;
     typedef DualOf_f<DualTensorProduct>::T DualDualTensorProduct;
     std::cout << "TensorProduct = "  << type_string_of<TensorProduct>() << '\n'
@@ -83,7 +83,7 @@ void test_TensorProductOfVectorSpaces_c ()
     typedef VectorSpace_c<RealField,3,X> X3;
     typedef VectorSpace_c<RealField,4,Y> Y4;
     typedef VectorSpace_c<RealField,5,Z> Z5;
-    typedef TensorProductOfVectorSpaces_c<TypeList_t<X3,TypeList_t<Y4,TypeList_t<Z5> > > > T;
+    typedef TensorProductOfVectorSpaces_c<Typle_t<X3,Y4,Z5>> T;
     typedef DualOf_f<T>::T DualT;
     typedef DualOf_f<DualT>::T DualDualT;
     std::cout << "TensorProductOfVectorSpaces = "  << type_string_of<T>() << '\n'
@@ -101,7 +101,7 @@ void test_TensorProductOfBases_c ()
     typedef Basis_c<X> BX;
     typedef Basis_c<Y> BY;
     typedef Basis_c<Z> BZ;
-    typedef TensorProductOfBases_c<TypeList_t<BX,TypeList_t<BY,TypeList_t<BZ> > > > T;
+    typedef TensorProductOfBases_c<Typle_t<BX,BY,BZ>> T;
     typedef DualOf_f<T>::T DualT;
     typedef DualOf_f<DualT>::T DualDualT;
     std::cout << "TensorProductOfBases = "  << type_string_of<T>() << '\n'
@@ -129,12 +129,12 @@ void test_BasedTensorProductStuff ()
     assert(HasBasedVectorSpaceStructure_f<BasedY>::V);
     assert(HasBasedVectorSpaceStructure_f<BasedZ>::V);
 
-    typedef TensorProductOfVectorSpaces_c<TypeList_t<X3,TypeList_t<Y4,TypeList_t<Z5> > > > TVS;
+    typedef TensorProductOfVectorSpaces_c<Typle_t<X3,Y4,Z5>> TVS;
     assert(HasVectorSpaceStructure_f<TVS>::V);
     assert(HasTensorProductStructure_f<TVS>::V);
     assert(HasTensorProductOfVectorSpacesStructure_f<TVS>::V);
 
-    typedef TensorProductOfBases_c<TypeList_t<BX,TypeList_t<BY,TypeList_t<BZ> > > > TB;
+    typedef TensorProductOfBases_c<Typle_t<BX,BY,BZ>> TB;
     assert(HasBasisStructure_f<TB>::V);
     assert(HasTensorProductStructure_f<TB>::V);
 
@@ -159,7 +159,7 @@ void test_BasedTensorProductStuff ()
     }
 
     {
-        typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedX,TypeList_t<BasedY,TypeList_t<BasedZ> > > > T;
+        typedef TensorProductOfBasedVectorSpaces_c<Typle_t<BasedX,BasedY,BasedZ>> T;
         assert(HasTensorProductStructure_f<T>::V);
         assert(HasVectorSpaceStructure_f<T>::V);
         assert(HasBasedVectorSpaceStructure_f<T>::V);

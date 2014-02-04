@@ -67,7 +67,7 @@ void test_a_bunch_of_stuff ()
         std::cout << '\n';
     }
 
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedY,TypeList_t<DualOf_f<BasedX>::T> > > YTensorXDual;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<BasedY,DualOf_f<BasedX>::T>> YTensorXDual;
 
     {
         typedef ImplementationOf_t<BasedX,float,UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST> > V;

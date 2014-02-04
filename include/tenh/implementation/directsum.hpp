@@ -303,8 +303,8 @@ struct DirectSumOf2TensorsHelper_t
     typedef typename ConceptualTypeOfDirectSumOfProcedural2Tensors_f<Procedural2TensorImplementationTyple_>::T ConceptualTypeOfDirectSum;
     enum { STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<ConceptualTypeOfDirectSum_,ConceptualTypeOfDirectSum>::V), TYPES_MUST_BE_EQUAL) };
     typedef typename FactorTypleOf_f<ConceptualTypeOfDirectSum_>::T FactorTyple;
-    typedef typename FactorTyple::HeadType Factor0;
-    typedef typename FactorTyple::BodyTyple::HeadType Factor1;
+    typedef typename Hippo::Element_f<FactorTyple,0>::T Factor0;
+    typedef typename Hippo::Element_f<FactorTyple,1>::T Factor1;
     typedef typename ImplementationOf_t<ConceptualTypeOfDirectSum_,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> >::MultiIndex MultiIndex;
     enum { STATIC_ASSERT_IN_ENUM((MultiIndex::LENGTH == 2), LENGTH_MUST_BE_EXACTLY_2) };
     typedef typename Hippo::Head_f<Procedural2TensorImplementationTyple_>::T HeadImplementation;
