@@ -561,6 +561,27 @@
     typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<U,TypeList_t<V> > > U_otimes_V;
     typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<W,TypeList_t<X> > > W_otimes_X;
     typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<U_otimes_V,TypeList_t<W_otimes_X> > > TProd;
+- Use of ordinary functions and decltype to implement metaprograms.  For example,
+    
+    decltype(v * dual(u)) t; // makes t an instance of a 2-tensor conceptual type
+    decltype(concat(int(),float(),bool())) x; // makes x an instance of Typle_t<int,float,bool>
+    decltype(on_each(typle, evaluator)) evaluated_typle; // evaluator is some _e instance
+
+  The advantage of this is that it allows constructions in "standard C++" using instances
+  of pure types (i.e. a type that has no members and no code), without the need for the
+  "typename" or "template" keyword, or "dereferencing" metafunction values via ::T or ::V,
+  and to get back from the instance world to the type world, "decltype" is used.  To get
+  constexpr-like functionality, functions could be defined that use the _f type metafunctions;
+
+    template <typename... Types_>
+    Uint32 length (Typle_t<Types_...> const &) { return Length_f<Typle_t<Types_...>>::V; }
+
+  Another useful function could be (assuming it works)
+
+    template <typename T_>
+    bool types_are_equal (T_ const &, T_ const &) { return true; }
+    template <typename T0_, typename T1_>
+    bool types_are_equal (T0_ const &, T1_ const &) { return false; }
 
 
 ###Notes/Reflections on the development of a really really template-heavy math library
