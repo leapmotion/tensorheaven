@@ -26,10 +26,8 @@ namespace ComponentGeneratorEvaluator {
   Scalar_ hat (ComponentIndex_t<DimensionOf_f<HatMorphism_>::V> const &i)
   {
     typedef typename DualOf_f<BasedVectorSpace_>::T DualOfBasedVectorSpace;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_,
-                                              TypeList_t<DualOfBasedVectorSpace> > > EndomorphismOfBasedVectorSpace;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<EndomorphismOfBasedVectorSpace,
-                                               TypeList_t<DualOfBasedVectorSpace> > > HatMorphism;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<BasedVectorSpace_,DualOfBasedVectorSpace>> EndomorphismOfBasedVectorSpace;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<EndomorphismOfBasedVectorSpace,DualOfBasedVectorSpace>> HatMorphism;
     STATIC_ASSERT_TYPES_ARE_EQUAL(HatMorphism, HatMorphism_);
 
     // with EndomorphismOfBasedVectorSpaces indexed as
@@ -72,10 +70,8 @@ private:
   enum { STATIC_ASSERT_IN_ENUM((DimensionOf_f<BasedVectorSpace_>::V == 3), DIMENSION_MUST_BE_EXACTLY_3) };
 
   typedef typename DualOf_f<BasedVectorSpace_>::T DualOfBasedVectorSpace;
-  typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_,
-                                            TypeList_t<DualOfBasedVectorSpace> > > Endomorphism;
-  typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<Endomorphism,
-                                             TypeList_t<DualOfBasedVectorSpace> > > HatMorphism;
+  typedef TensorProductOfBasedVectorSpaces_c<Typle_t<BasedVectorSpace_,DualOfBasedVectorSpace>> Endomorphism;
+  typedef TensorProductOfBasedVectorSpaces_c<Typle_t<Endomorphism,DualOfBasedVectorSpace>> HatMorphism;
 
   typedef ComponentGenerator_t<Scalar_,
                                DimensionOf_f<HatMorphism>::V,
@@ -89,16 +85,14 @@ public:
 // Lie algebra morphism from (R^3, \times) to (so(3), [.,.]) - as a 2-tensor
 // TODO: figure out if this make sense to have for arbitrary 3-dimensional based vector spaces
 template <typename Derived_, typename Scalar_, typename BasedVectorSpace_, ComponentQualifier COMPONENT_QUALIFIER_>
-ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_,
-                                                                 TypeList_t<typename DualOf_f<BasedVectorSpace_>::T> > >,
+ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<Typle_t<BasedVectorSpace_,typename DualOf_f<BasedVectorSpace_>::T>>,
                                                       Scalar_,
                                                       UseMemberArray_t<COMPONENTS_ARE_NONCONST> >
 hat (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENT_QUALIFIER_> const &x)
 {
   STATIC_ASSERT(DimensionOf_f<BasedVectorSpace_>::V == 3, DIMENSION_MUST_BE_EXACTLY_3);
   // for brevity
-  typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_,
-                                                                TypeList_t<typename DualOf_f<BasedVectorSpace_>::T> > >,
+  typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<Typle_t<BasedVectorSpace_,typename DualOf_f<BasedVectorSpace_>::T>>,
                              Scalar_,
                              UseMemberArray_t<COMPONENTS_ARE_NONCONST> > T;
   typedef typename Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENT_QUALIFIER_>::ComponentIndex c;
@@ -270,8 +264,7 @@ private:
 
 public:
 
-  typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_,
-                                             TypeList_t<typename DualOf_f<BasedVectorSpace_>::T> > > CodomainSpace;
+  typedef TensorProductOfBasedVectorSpaces_c<Typle_t<BasedVectorSpace_,typename DualOf_f<BasedVectorSpace_>::T>> CodomainSpace;
   typedef FunctionObjectType_m<BasedVectorSpace_,CodomainSpace,Scalar_> FunctionObjectType;
 
   typedef typename FunctionObjectType::DualOfBasedVectorSpace DualOfBasedVectorSpace;
@@ -359,8 +352,7 @@ private:
 
 public:
 
-  typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_,
-                                             TypeList_t<typename DualOf_f<BasedVectorSpace_>::T> > > CodomainSpace;
+  typedef TensorProductOfBasedVectorSpaces_c<Typle_t<BasedVectorSpace_,typename DualOf_f<BasedVectorSpace_>::T>> CodomainSpace;
   typedef FunctionObjectType_m<BasedVectorSpace_,CodomainSpace,Scalar_> FunctionObjectType;
 
   typedef typename FunctionObjectType::DualOfBasedVectorSpace DualOfBasedVectorSpace;

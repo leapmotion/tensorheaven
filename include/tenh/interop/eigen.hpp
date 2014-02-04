@@ -42,8 +42,7 @@ template <typename Derived_,
 typename EigenMapOf2Tensor_const_f<Factor0_,Factor1_,Scalar_>::T
     EigenMap_of_2tensor (Tensor_i<Derived_,
                                   Scalar_,
-                                  TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0_,
-                                                                     TypeList_t<Factor1_> > >,
+                                  TensorProductOfBasedVectorSpaces_c<Typle_t<Factor0_,Factor1_>>,
                                   COMPONENTS_ARE_NONCONST_MEMORY> const &t)
 {
     return typename EigenMapOf2Tensor_const_f<Factor0_,Factor1_,Scalar_>::T(t.as_derived().pointer_to_allocation());
@@ -57,8 +56,7 @@ template <typename Derived_,
 typename EigenMapOf2Tensor_nonconst_f<Factor0_,Factor1_,Scalar_>::T
     EigenMap_of_2tensor (Tensor_i<Derived_,
                                   Scalar_,
-                                  TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0_,
-                                                                     TypeList_t<Factor1_> > >,
+                                  TensorProductOfBasedVectorSpaces_c<Typle_t<Factor0_,Factor1_>>,
                                   COMPONENTS_ARE_NONCONST_MEMORY> &t)
 {
     return typename EigenMapOf2Tensor_nonconst_f<Factor0_,Factor1_,Scalar_>::T(t.as_derived().pointer_to_allocation());
@@ -104,8 +102,7 @@ template <typename Derived_,
           typename Factor1_>
 Scalar_ determinant_of_2tensor (Tensor_i<Derived_,
                                          Scalar_,
-                                         TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0_,
-                                                                            TypeList_t<Factor1_> > >,
+                                         TensorProductOfBasedVectorSpaces_c<Typle_t<Factor0_,Factor1_>>,
                                          COMPONENTS_ARE_NONCONST_MEMORY> const &t)
 {
     STATIC_ASSERT(DimensionOf_f<Factor0_>::V == DimensionOf_f<Factor1_>::V, FACTOR_DIMENSIONS_MUST_BE_EQUAL);

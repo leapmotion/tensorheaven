@@ -189,7 +189,8 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
     typedef ImplementationOf_t<typename DualOf_f<BasedVectorSpace_>::T,Scalar_> CoVectorType;
     typedef typename InnerProduct_f<typename DualOf_f<BasedVectorSpace_>::T,InnerProductId_,Scalar_>::T CoVectorInnerProductType;
     typedef typename ObjectiveFunction_::D2 HessianType;
-    typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<typename DualOf_f<BasedVectorSpace_>::T, TypeList_t<typename DualOf_f<BasedVectorSpace_>::T> > >,Scalar_> Hessian2TensorType;
+    typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<Typle_t<typename DualOf_f<BasedVectorSpace_>::T,
+                                                                          typename DualOf_f<BasedVectorSpace_>::T>>,Scalar_> Hessian2TensorType;
     STATIC_ASSERT_TYPES_ARE_EQUAL(VectorType, typename ObjectiveFunction_::V);
     STATIC_ASSERT_TYPES_ARE_EQUAL(Scalar_, typename ObjectiveFunction_::Out);
     static Scalar_ const LINE_SEARCH_GEOMETRIC_STEP_FACTOR = Scalar_(0.5);

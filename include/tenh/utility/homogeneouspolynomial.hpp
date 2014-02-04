@@ -102,7 +102,7 @@ struct HomogeneousPolynomial
 
         for (ResultComponentIndex it; it.is_not_at_end(); ++it)
         {
-            ResultMultiIndex m = ResultSymDual::template bundle_index_map<typename ResultMultiIndex::IndexTypeList, ResultComponentIndex>(it);
+            ResultMultiIndex m = ResultSymDual::template bundle_index_map<typename ResultMultiIndex::IndexTyple, ResultComponentIndex>(it);
             result.m_coefficients[it] *= static_cast<Scalar_>(MultiIndexMultiplicity_t<ResultMultiIndex>::eval(m))
                                          / static_cast<Scalar_>(Factorial_t<OTHER_DEGREE_ + DEGREE_>::V);
         }
@@ -151,7 +151,7 @@ private:
 
         for (typename Sym::ComponentIndex it; it.is_not_at_end(); ++it)
         {
-            typename Sym::MultiIndex m = Sym::template bundle_index_map<typename Sym::MultiIndex::IndexTypeList, typename Sym::ComponentIndex>(it);
+            typename Sym::MultiIndex m = Sym::template bundle_index_map<typename Sym::MultiIndex::IndexTyple, typename Sym::ComponentIndex>(it);
             for (Uint32 i = 0; i < Sym::MultiIndex::LENGTH; ++i)
             {
                 result[it] *= input[typename Vector::ComponentIndex(m.value_of_index(i, DONT_CHECK_RANGE))];

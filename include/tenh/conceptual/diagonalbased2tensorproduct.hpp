@@ -206,7 +206,7 @@ public:
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0,Factor1> T;
 };
 
-// specialization for FactorTypeListOf_f
+// specialization for FactorTypleOf_f
 template <typename Factor0_, typename Factor1_>
 struct BaseProperty_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,FactorTyple>
 {

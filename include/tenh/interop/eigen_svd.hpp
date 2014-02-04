@@ -22,12 +22,12 @@ namespace Tenh {
 template <typename T, typename ResultUseArrayType_ = UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST> > struct RowsOfTwoTensor_f;
 
 template <typename Factor0_, typename Factor1_, typename Scalar_, typename UseArrayType_, typename Derived_, typename ResultUseArrayType_>
-struct RowsOfTwoTensor_f<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0_,TypeList_t<Factor1_> > >,Scalar_, UseArrayType_, Derived_>, ResultUseArrayType_>
+struct RowsOfTwoTensor_f<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<Typle_t<Factor0_,Factor1_>>,Scalar_, UseArrayType_, Derived_>, ResultUseArrayType_>
 {
 private:
     enum { STATIC_ASSERT_IN_ENUM((!IsUseProceduralArray_f<UseArrayType_>::V), MUST_NOT_BE_USE_PROCEDURAL_ARRAY) };
 public:
-    typedef ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<typename UniformTypeListOfLength_t<DimensionOf_f<Factor0_>::V,Factor1_>::T>, Scalar_, ResultUseArrayType_> T;
+    typedef ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<typename Hippo::UniformTypleOfLength_t<DimensionOf_f<Factor0_>::V,Factor1_>::T>, Scalar_, ResultUseArrayType_> T;
     typedef ImplementationOf_t<Factor1_, Scalar_, UseArrayType_> RowType;
 };
 
@@ -35,12 +35,11 @@ template <typename T> struct SVDReturnTypesOf_m;
 
 // We must have t(i*l) == u(i*j) * s(j*k) * v(l*k), i.e. t = u * s * v^T. Also u, and v are square matrices.
 template <typename Factor0_, typename Factor1_>
-struct SVDReturnTypesOf_m<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0_,TypeList_t<Factor1_> > > >
+struct SVDReturnTypesOf_m<TensorProductOfBasedVectorSpaces_c<Typle_t<Factor0_,Factor1_>>>
 {
     struct OfU_f
     {
-        typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0_,
-                                                   TypeList_t<typename DualOf_f<Factor0_>::T > > > T;
+        typedef TensorProductOfBasedVectorSpaces_c<Typle_t<Factor0_,typename DualOf_f<Factor0_>::T>> T;
     };
 
     struct OfS_f
@@ -50,8 +49,7 @@ struct SVDReturnTypesOf_m<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0_
 
     struct OfV_f
     {
-        typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor1_,
-                                                   TypeList_t<typename DualOf_f<Factor1_>::T > > > T;
+        typedef TensorProductOfBasedVectorSpaces_c<Typle_t<Factor1_,typename DualOf_f<Factor1_>::T>> T;
     };
 
     struct SolutionVector_f
@@ -68,7 +66,7 @@ struct SVDReturnTypesOf_m<TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0_
 template <typename T> struct EigenMatrixFor_f;
 
 template <typename Factor0_, typename Factor1_, typename Scalar_, typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
-struct EigenMatrixFor_f<Tensor_i<Derived_, Scalar_, TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0_,TypeList_t<Factor1_> > >, COMPONENT_QUALIFIER_> >
+struct EigenMatrixFor_f<Tensor_i<Derived_, Scalar_, TensorProductOfBasedVectorSpaces_c<Typle_t<Factor0_,Factor1_>>, COMPONENT_QUALIFIER_> >
 {
     typedef Eigen::Matrix<Scalar_,DimensionOf_f<Factor0_>::V,DimensionOf_f<Factor1_>::V,Eigen::RowMajor> T;
 };

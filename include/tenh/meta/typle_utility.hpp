@@ -14,7 +14,6 @@
 
 #include <limits>
 
-#include "tenh/meta/function.hpp"
 #include "tenh/meta/typle.hpp"
 
 namespace Tenh {

@@ -20,10 +20,8 @@ struct FunctionObjectType_m
 {
     typedef typename DualOf_f<ParameterSpace_>::T DualOfBasedVectorSpace;
     typedef SymmetricPowerOfBasedVectorSpace_c<2,DualOfBasedVectorSpace> Sym2Dual;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<CodomainSpace_,
-                                               TypeList_t<DualOfBasedVectorSpace> > > Differential1;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<CodomainSpace_,
-                                               TypeList_t<Sym2Dual> > > Differential2;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<CodomainSpace_,DualOfBasedVectorSpace>> Differential1;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<CodomainSpace_,Sym2Dual>> Differential2;
     typedef ParameterSpace_ Domain;
     typedef CodomainSpace_ CoDomain;
     typedef Scalar_ Scalar;
@@ -444,11 +442,11 @@ public:
 
         // depending on what OuterFunctionType_::Out is (Scalar or vector), the number of indices must be different
         typename If_f<TypesAreEqual_f<typename OuterFunctionType_::Out,Scalar>::V,
-                      TypeList_t<J>,
-                      TypeList_t<I,TypeList_t<J> > >::T outer_index;
+                      Typle_t<J>,
+                      Typle_t<I,J>>::T outer_index;
         typename If_f<TypesAreEqual_f<typename OuterFunctionType_::Out,Scalar>::V,
-                      TypeList_t<K>,
-                      TypeList_t<I,TypeList_t<K> > >::T retval_index;
+                      Typle_t<K>,
+                      Typle_t<I,K>>::T retval_index;
 
         D1 retval(Static<WithoutInitialization>::SINGLETON);
         // chain rule
@@ -476,11 +474,11 @@ public:
 
         // depending on what OuterFunctionType_::Out is (Scalar or vector), the number of indices must be different
         typename If_f<TypesAreEqual_f<typename OuterFunctionType_::Out,Scalar>::V,
-                      TypeList_t<Q>,
-                      TypeList_t<C,TypeList_t<Q> > >::T retval_index;
+                      Typle_t<Q>,
+                      Typle_t<C,Q>>::T retval_index;
         typename If_f<TypesAreEqual_f<typename OuterFunctionType_::Out,Scalar>::V,
-                      TypeList_t<P>,
-                      TypeList_t<C,TypeList_t<P> > >::T outer_index;
+                      Typle_t<P>,
+                      Typle_t<C,P>>::T outer_index;
 
         D2 retval(Static<WithoutInitialization>::SINGLETON);
 
@@ -506,10 +504,10 @@ private:
 template <typename LeftFunctionType_, typename RightFunctionType_>
 struct FunctionDirectSum_t
 {
-  typedef DirectSumOfBasedVectorSpaces_c<TypeList_t<typename LeftFunctionType_::Domain,
-                                         TypeList_t<typename RightFunctionType_::Domain> > > DomainType;
-  typedef DirectSumOfBasedVectorSpaces_c<TypeList_t<typename LeftFunctionType_::CoDomain,
-                                         TypeList_t<typename RightFunctionType_::CoDomain> > > CoDomainType;
+  typedef DirectSumOfBasedVectorSpaces_c<Typle_t<typename LeftFunctionType_::Domain,
+                                                 typename RightFunctionType_::Domain>> DomainType;
+  typedef DirectSumOfBasedVectorSpaces_c<Typle_t<typename LeftFunctionType_::CoDomain,
+                                                 typename RightFunctionType_::CoDomain>> CoDomainType;
   typedef FunctionObjectType_m<DomainType,CoDomainType,typename LeftFunctionType_::Scalar> FunctionObjectType;
 
   typedef typename FunctionObjectType::DualOfBasedVectorSpace DualOfBasedVectorSpace;
@@ -602,15 +600,15 @@ struct FunctionDirectSum_t
   template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
   D2 D2_function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
   {
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<CoDomain,
-                                               TypeList_t<DualOfBasedVectorSpace,
-                                               TypeList_t<DualOfBasedVectorSpace> > > > SplitD2Type;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<typename LeftFunctionType_::CoDomain,
-                                               TypeList_t<typename LeftFunctionType_::DualOfBasedVectorSpace,
-                                               TypeList_t<typename LeftFunctionType_::DualOfBasedVectorSpace> > > > LeftSplitD2Type;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<typename RightFunctionType_::CoDomain,
-                                               TypeList_t<typename RightFunctionType_::DualOfBasedVectorSpace,
-                                               TypeList_t<typename RightFunctionType_::DualOfBasedVectorSpace> > > > RightSplitD2Type;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<CoDomain,
+                                                       DualOfBasedVectorSpace,
+                                                       DualOfBasedVectorSpace>> SplitD2Type;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<typename LeftFunctionType_::CoDomain,
+                                                       typename LeftFunctionType_::DualOfBasedVectorSpace,
+                                                       typename LeftFunctionType_::DualOfBasedVectorSpace>> LeftSplitD2Type;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<typename RightFunctionType_::CoDomain,
+                                                       typename RightFunctionType_::DualOfBasedVectorSpace,
+                                                       typename RightFunctionType_::DualOfBasedVectorSpace>> RightSplitD2Type;
     typedef ImplementationOf_t<SplitD2Type, Scalar> SplitD2;
     typedef ImplementationOf_t<LeftSplitD2Type, Scalar> LeftSplitD2;
     typedef ImplementationOf_t<RightSplitD2Type, Scalar> RightSplitD2;
@@ -676,8 +674,8 @@ private:
 template <typename BasedVectorSpace_,typename Scalar_>
 struct DiagonalFunction_t
 {
-  typedef DirectSumOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_, TypeList_t<BasedVectorSpace_> > > CoDomainType;
-  typedef FunctionObjectType_m<BasedVectorSpace_, CoDomainType, Scalar_> FunctionObjectType;
+  typedef DirectSumOfBasedVectorSpaces_c<Typle_t<BasedVectorSpace_,BasedVectorSpace_>> CoDomainType;
+  typedef FunctionObjectType_m<BasedVectorSpace_,CoDomainType,Scalar_> FunctionObjectType;
 
   typedef typename FunctionObjectType::DualOfBasedVectorSpace DualOfBasedVectorSpace;
   typedef typename FunctionObjectType::Sym2Dual Sym2Dual;

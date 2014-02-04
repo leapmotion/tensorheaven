@@ -20,45 +20,44 @@ namespace Tenh {
 // if FREE_INDEX_COUNT_ == 2, then the indices are 'i','j'
 
 template <Uint32 FREE_INDEX_COUNT_>
-struct UniformAbstractIndexTypeList_f;
+struct UniformAbstractIndexTyple_f;
 
 template <>
-struct UniformAbstractIndexTypeList_f<0>
+struct UniformAbstractIndexTyple_f<0>
 {
-    typedef EmptyTypeList T;
+    typedef Typle_t<> T;
 private:
-    UniformAbstractIndexTypeList_f();
+    UniformAbstractIndexTyple_f();
 };
 
 template <>
-struct UniformAbstractIndexTypeList_f<1>
+struct UniformAbstractIndexTyple_f<1>
 {
-    typedef TypeList_t<AbstractIndex_c<'i'> > T;
+    typedef Typle_t<AbstractIndex_c<'i'>> T;
 private:
-    UniformAbstractIndexTypeList_f();
+    UniformAbstractIndexTyple_f();
 };
 
 template <>
-struct UniformAbstractIndexTypeList_f<2>
+struct UniformAbstractIndexTyple_f<2>
 {
-    typedef TypeList_t<AbstractIndex_c<'i'>,
-            TypeList_t<AbstractIndex_c<'j'> > > T;
+    typedef Typle_t<AbstractIndex_c<'i'>,AbstractIndex_c<'j'>> T;
 private:
-    UniformAbstractIndexTypeList_f();
+    UniformAbstractIndexTyple_f();
 };
 
 template <typename Derived_, Uint32 FREE_INDEX_COUNT_>
 struct UniformlyIndexedExpressionTemplate_f;
 
-template <typename ExpressionTemplate_, typename FreeDimIndexTypeList_, Uint32 FREE_INDEX_COUNT_>
-struct UniformlyIndexedExpressionTemplate_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_>,FREE_INDEX_COUNT_>
+template <typename ExpressionTemplate_, typename FreeDimIndexTyple_, Uint32 FREE_INDEX_COUNT_>
+struct UniformlyIndexedExpressionTemplate_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_>,FREE_INDEX_COUNT_>
 {
 private:
-    static_assert(Length_f<FreeDimIndexTypeList_>::V == FREE_INDEX_COUNT_, "The number of free indices in the Reindexable must match the free index count argument.");
-    typedef Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_> Reindexable;
-    typedef typename AbstractIndicesOfDimIndexTypeList_t<FreeDimIndexTypeList_>::T DomainAbstractIndexTypeList;
-    typedef typename UniformAbstractIndexTypeList_f<FREE_INDEX_COUNT_>::T CodomainAbstractIndexTypeList;
-    typedef Reindex_e<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList> Reindex;
+    enum { STATIC_ASSERT_IN_ENUM(Hippo::Length_f<FreeDimIndexTyple_>::V == FREE_INDEX_COUNT_, LENGTHS_MUST_BE_EQUAL) };
+    typedef Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_> Reindexable;
+    typedef typename AbstractIndicesOfDimIndexTyple_f<FreeDimIndexTyple_>::T DomainAbstractIndexTyple;
+    typedef typename UniformAbstractIndexTyple_f<FREE_INDEX_COUNT_>::T CodomainAbstractIndexTyple;
+    typedef Reindex_e<DomainAbstractIndexTyple,CodomainAbstractIndexTyple> Reindex;
     typedef typename ExpressionTemplate_::Derived DerivedExpressionTemplate;
     UniformlyIndexedExpressionTemplate_f();
 public:
@@ -69,7 +68,7 @@ template <typename Derived_, Uint32 FREE_INDEX_COUNT_>
 typename UniformlyIndexedExpressionTemplate_f<Derived_,FREE_INDEX_COUNT_>::T
     uniformly_indexed (ExpressionOperand_i<Derived_,FREE_INDEX_COUNT_> const &e)
 {
-    typedef typename UniformAbstractIndexTypeList_f<FREE_INDEX_COUNT_>::T Indices;
+    typedef typename UniformAbstractIndexTyple_f<FREE_INDEX_COUNT_>::T Indices;
     return e.as_derived()(Indices());
 }
 
@@ -79,45 +78,44 @@ typename UniformlyIndexedExpressionTemplate_f<Derived_,FREE_INDEX_COUNT_>::T
 // if FREE_INDEX_COUNT_ == 2, then the indices are 'i','j'
 
 template <Uint32 FREE_INDEX_COUNT_>
-struct LhsOfContractionAbstractIndexTypeList_f;
+struct LhsOfContractionAbstractIndexTyple_f;
 
 template <>
-struct LhsOfContractionAbstractIndexTypeList_f<0>
+struct LhsOfContractionAbstractIndexTyple_f<0>
 {
-    typedef EmptyTypeList T;
+    typedef Typle_t<> T;
 private:
-    LhsOfContractionAbstractIndexTypeList_f();
+    LhsOfContractionAbstractIndexTyple_f();
 };
 
 template <>
-struct LhsOfContractionAbstractIndexTypeList_f<1>
+struct LhsOfContractionAbstractIndexTyple_f<1>
 {
-    typedef TypeList_t<AbstractIndex_c<'j'> > T;
+    typedef Typle_t<AbstractIndex_c<'j'>> T;
 private:
-    LhsOfContractionAbstractIndexTypeList_f();
+    LhsOfContractionAbstractIndexTyple_f();
 };
 
 template <>
-struct LhsOfContractionAbstractIndexTypeList_f<2>
+struct LhsOfContractionAbstractIndexTyple_f<2>
 {
-    typedef TypeList_t<AbstractIndex_c<'i'>,
-            TypeList_t<AbstractIndex_c<'j'> > > T;
+    typedef Typle_t<AbstractIndex_c<'i'>,AbstractIndex_c<'j'>> T;
 private:
-    LhsOfContractionAbstractIndexTypeList_f();
+    LhsOfContractionAbstractIndexTyple_f();
 };
 
 template <typename Derived_, Uint32 FREE_INDEX_COUNT_>
 struct LhsIndexedContractionExpressionTemplate_f;
 
-template <typename ExpressionTemplate_, typename FreeDimIndexTypeList_, Uint32 FREE_INDEX_COUNT_>
-struct LhsIndexedContractionExpressionTemplate_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_>,FREE_INDEX_COUNT_>
+template <typename ExpressionTemplate_, typename FreeDimIndexTyple_, Uint32 FREE_INDEX_COUNT_>
+struct LhsIndexedContractionExpressionTemplate_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_>,FREE_INDEX_COUNT_>
 {
 private:
-    static_assert(Length_f<FreeDimIndexTypeList_>::V == FREE_INDEX_COUNT_, "The number of free indices in the Reindexable must match the free index count argument.");
-    typedef Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_> Reindexable;
-    typedef typename AbstractIndicesOfDimIndexTypeList_t<FreeDimIndexTypeList_>::T DomainAbstractIndexTypeList;
-    typedef typename LhsOfContractionAbstractIndexTypeList_f<FREE_INDEX_COUNT_>::T CodomainAbstractIndexTypeList;
-    typedef Reindex_e<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList> Reindex;
+    enum { STATIC_ASSERT_IN_ENUM(Hippo::Length_f<FreeDimIndexTyple_>::V == FREE_INDEX_COUNT_, LENGTHS_MUST_BE_EQUAL) };
+    typedef Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_> Reindexable;
+    typedef typename AbstractIndicesOfDimIndexTyple_f<FreeDimIndexTyple_>::T DomainAbstractIndexTyple;
+    typedef typename LhsOfContractionAbstractIndexTyple_f<FREE_INDEX_COUNT_>::T CodomainAbstractIndexTyple;
+    typedef Reindex_e<DomainAbstractIndexTyple,CodomainAbstractIndexTyple> Reindex;
     typedef typename ExpressionTemplate_::Derived DerivedExpressionTemplate;
     LhsIndexedContractionExpressionTemplate_f();
 public:
@@ -128,7 +126,7 @@ template <typename Derived_, Uint32 FREE_INDEX_COUNT_>
 typename LhsIndexedContractionExpressionTemplate_f<Derived_,FREE_INDEX_COUNT_>::T
     indexed_as_lhs_of_contraction (ExpressionOperand_i<Derived_,FREE_INDEX_COUNT_> const &e)
 {
-    typedef typename LhsOfContractionAbstractIndexTypeList_f<FREE_INDEX_COUNT_>::T LhsIndices;
+    typedef typename LhsOfContractionAbstractIndexTyple_f<FREE_INDEX_COUNT_>::T LhsIndices;
     return e.as_derived()(LhsIndices());
 }
 
@@ -138,45 +136,44 @@ typename LhsIndexedContractionExpressionTemplate_f<Derived_,FREE_INDEX_COUNT_>::
 // if FREE_INDEX_COUNT_ == 2, then the indices are 'j','k'
 
 template <Uint32 FREE_INDEX_COUNT_>
-struct RhsOfContractionAbstractIndexTypeList_f;
+struct RhsOfContractionAbstractIndexTyple_f;
 
 template <>
-struct RhsOfContractionAbstractIndexTypeList_f<0>
+struct RhsOfContractionAbstractIndexTyple_f<0>
 {
-    typedef EmptyTypeList T;
+    typedef Typle_t<> T;
 private:
-    RhsOfContractionAbstractIndexTypeList_f();
+    RhsOfContractionAbstractIndexTyple_f();
 };
 
 template <>
-struct RhsOfContractionAbstractIndexTypeList_f<1>
+struct RhsOfContractionAbstractIndexTyple_f<1>
 {
-    typedef TypeList_t<AbstractIndex_c<'j'> > T;
+    typedef Typle_t<AbstractIndex_c<'j'>> T;
 private:
-    RhsOfContractionAbstractIndexTypeList_f();
+    RhsOfContractionAbstractIndexTyple_f();
 };
 
 template <>
-struct RhsOfContractionAbstractIndexTypeList_f<2>
+struct RhsOfContractionAbstractIndexTyple_f<2>
 {
-    typedef TypeList_t<AbstractIndex_c<'j'>,
-            TypeList_t<AbstractIndex_c<'k'> > > T;
+    typedef Typle_t<AbstractIndex_c<'j'>,AbstractIndex_c<'k'>> T;
 private:
-    RhsOfContractionAbstractIndexTypeList_f();
+    RhsOfContractionAbstractIndexTyple_f();
 };
 
 template <typename Derived_, Uint32 FREE_INDEX_COUNT_>
 struct RhsIndexedContractionExpressionTemplate_f;
 
-template <typename ExpressionTemplate_, typename FreeDimIndexTypeList_, Uint32 FREE_INDEX_COUNT_>
-struct RhsIndexedContractionExpressionTemplate_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_>,FREE_INDEX_COUNT_>
+template <typename ExpressionTemplate_, typename FreeDimIndexTyple_, Uint32 FREE_INDEX_COUNT_>
+struct RhsIndexedContractionExpressionTemplate_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_>,FREE_INDEX_COUNT_>
 {
 private:
-    static_assert(Length_f<FreeDimIndexTypeList_>::V == FREE_INDEX_COUNT_, "The number of free indices in the Reindexable must match the free index count argument.");
-    typedef Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_> Reindexable;
-    typedef typename AbstractIndicesOfDimIndexTypeList_t<FreeDimIndexTypeList_>::T DomainAbstractIndexTypeList;
-    typedef typename RhsOfContractionAbstractIndexTypeList_f<FREE_INDEX_COUNT_>::T CodomainAbstractIndexTypeList;
-    typedef Reindex_e<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList> Reindex;
+    enum { STATIC_ASSERT_IN_ENUM(Hippo::Length_f<FreeDimIndexTyple_>::V == FREE_INDEX_COUNT_, LENGTHS_MUST_BE_EQUAL) };
+    typedef Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_> Reindexable;
+    typedef typename AbstractIndicesOfDimIndexTyple_f<FreeDimIndexTyple_>::T DomainAbstractIndexTyple;
+    typedef typename RhsOfContractionAbstractIndexTyple_f<FREE_INDEX_COUNT_>::T CodomainAbstractIndexTyple;
+    typedef Reindex_e<DomainAbstractIndexTyple,CodomainAbstractIndexTyple> Reindex;
     typedef typename ExpressionTemplate_::Derived DerivedExpressionTemplate;
     RhsIndexedContractionExpressionTemplate_f();
 public:
@@ -187,7 +184,7 @@ template <typename Derived_, Uint32 FREE_INDEX_COUNT_>
 typename RhsIndexedContractionExpressionTemplate_f<Derived_,FREE_INDEX_COUNT_>::T
     indexed_as_rhs_of_contraction (ExpressionOperand_i<Derived_,FREE_INDEX_COUNT_> const &e)
 {
-    typedef typename RhsOfContractionAbstractIndexTypeList_f<FREE_INDEX_COUNT_>::T RhsIndices;
+    typedef typename RhsOfContractionAbstractIndexTyple_f<FREE_INDEX_COUNT_>::T RhsIndices;
     return e.as_derived()(RhsIndices());
 }
 

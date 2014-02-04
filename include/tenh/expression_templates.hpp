@@ -83,7 +83,7 @@ struct ExpressionTemplate_IndexedObject_t
 
     operator Scalar () const
     {
-        STATIC_ASSERT_TYPELIST_IS_EMPTY(FreeDimIndexTyple);
+        static_assert(Hippo::Length_f<FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
         return operator[](MultiIndex());
     }
 
@@ -180,7 +180,7 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTyple,DimIndexTyple,Typle
 
     operator Scalar () const
     {
-        STATIC_ASSERT_TYPELIST_IS_EMPTY(FreeDimIndexTyple);
+        static_assert(Hippo::Length_f<FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
         return operator[](MultiIndex());
     }
 
@@ -369,7 +369,7 @@ public:
 
     operator Scalar () const
     {
-        STATIC_ASSERT_TYPELIST_IS_EMPTY(FreeDimIndexTyple);
+        static_assert(Hippo::Length_f<FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
         if (OPERATOR == '+')
             return m_left_operand.operator Scalar() + m_right_operand.operator Scalar();
         else // OPERATOR == '-'

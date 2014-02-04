@@ -25,20 +25,17 @@ template <typename Domain_, typename Codomain_, typename Scalar_ = float, typena
 struct Operator
     :
     public ExpressionOperand_i<Operator<Domain_,Codomain_,Scalar_,UseArrayType_>,2>,
-    public ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Codomain_,
-                                                                 TypeList_t<typename DualOf_f<Domain_>::T> > >,
+    public ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<Typle_t<Codomain_,typename DualOf_f<Domain_>::T>>,
                               Scalar_,
                               UseArrayType_,
                               Operator<Domain_,Codomain_,Scalar_,UseArrayType_> >
 {
 private:
-    typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<Codomain_,
-                                                                  TypeList_t<typename DualOf_f<Domain_>::T> > >,
+    typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<Typle_t<Codomain_,typename DualOf_f<Domain_>::T>>,
                                Scalar_,
                                UseArrayType_,
                                Operator<Domain_,Codomain_,Scalar_,UseArrayType_> > Parent_Implementation;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<Codomain_,
-                                               TypeList_t<typename DualOf_f<Domain_>::T> > > TensorProduct;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<Codomain_,typename DualOf_f<Domain_>::T>> TensorProduct;
 public:
     typedef Scalar_ Scalar;
     typedef typename Parent_Implementation::ComponentIndex ComponentIndex;
@@ -62,8 +59,8 @@ public:
         static_assert(IsUseMemberArray_f<UseArrayType_>::V, "Fill with constructor on Operator requires UseMemberArray.");
     }
     // this is the tuple-based constructor
-    template <typename HeadType_, typename BodyTypeList_>
-    Operator (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x)
+    template <typename... Types_>
+    Operator (List_t<Typle_t<Types_...>> const &x)
         :
         Parent_Implementation(x.as_member_array())
     {
@@ -87,8 +84,8 @@ public:
         static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "Pointer to data constructor on Operator requires UsePreallocatedArray.");
     }
     // this is the tuple-based constructor
-    template <typename HeadType_, typename BodyTypeList_>
-    Operator (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x,
+    template <typename... Types_>
+    Operator (List_t<Typle_t<Types_...>> const &x,
               Scalar_ *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Implementation(x, pointer_to_allocation, check_pointer)
@@ -105,12 +102,12 @@ public:
                       "Constructing an Operator without arguments requires the dimension be 0, or the data to be procedurally generated.");
     }
 
-    template <typename ExpressionTemplate_, typename FreeDimIndexTypeList_>
-    void operator = (Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_> const &rhs)
+    template <typename ExpressionTemplate_, typename FreeDimIndexTyple_>
+    void operator = (Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_> const &rhs)
     {
-        static_assert(IsExpressionTemplate_f<ExpressionTemplate_>::V, "The Reindexable on the right hand side of Operator's operator= must be an ExpressionTemplate");
-        static_assert(TypesAreEqual_f<typename ExpressionTemplate_::FreeDimIndexTypeList,FreeDimIndexTypeList_>::V, "The FreeDimIndexTypeLists on either side of operator= must match.");
-        static_assert(Length_f<FreeDimIndexTypeList_>::V == 2, "An expression template must have exactly two free indices to assign it to an Operator.");
+        STATIC_ASSERT(IsExpressionTemplate_f<ExpressionTemplate_>::V, MUST_BE_EXPRESSION_TEMPLATE);
+        STATIC_ASSERT_TYPES_ARE_EQUAL(typename ExpressionTemplate_::FreeDimIndexTyple,FreeDimIndexTyple_);
+        STATIC_ASSERT(Hippo::Length_f<FreeDimIndexTyple_>::V == 2, LENGTH_MUST_BE_EXACTLY_2);
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
         (*this)(i*j) = rhs(i*j);
@@ -142,10 +139,10 @@ struct UniformlyIndexedExpressionTemplate_f<Operator<Domain_,Codomain_,Scalar_,U
 {
 private:
     typedef Operator<Domain_,Codomain_,Scalar_,UseArrayType_> Op;
-    typedef typename UniformAbstractIndexTypeList_f<2>::T AbstractIndexTypeList;
+    typedef typename UniformAbstractIndexTyple_f<2>::T AbstractIndexTyple;
     UniformlyIndexedExpressionTemplate_f();
 public:
-    typedef typename Op::template IndexedExpressionConstType_f<AbstractIndexTypeList>::T T;
+    typedef typename Op::template IndexedExpressionConstType_f<AbstractIndexTyple>::T T;
 };
 
 // template specialization for how to lhs-index an Operator for contraction
@@ -154,10 +151,10 @@ struct LhsIndexedContractionExpressionTemplate_f<Operator<Domain_,Codomain_,Scal
 {
 private:
     typedef Operator<Domain_,Codomain_,Scalar_,UseArrayType_> Op;
-    typedef typename LhsOfContractionAbstractIndexTypeList_f<2>::T AbstractIndexTypeList;
+    typedef typename LhsOfContractionAbstractIndexTyple_f<2>::T AbstractIndexTyple;
     LhsIndexedContractionExpressionTemplate_f();
 public:
-    typedef typename Op::template IndexedExpressionConstType_f<AbstractIndexTypeList>::T T;
+    typedef typename Op::template IndexedExpressionConstType_f<AbstractIndexTyple>::T T;
 };
 
 // template specialization for how to rhs-index an Operator for contraction
@@ -166,10 +163,10 @@ struct RhsIndexedContractionExpressionTemplate_f<Operator<Domain_,Codomain_,Scal
 {
 private:
     typedef Operator<Domain_,Codomain_,Scalar_,UseArrayType_> Op;
-    typedef typename RhsOfContractionAbstractIndexTypeList_f<2>::T AbstractIndexTypeList;
+    typedef typename RhsOfContractionAbstractIndexTyple_f<2>::T AbstractIndexTyple;
     RhsIndexedContractionExpressionTemplate_f();
 public:
-    typedef typename Op::template IndexedExpressionConstType_f<AbstractIndexTypeList>::T T;
+    typedef typename Op::template IndexedExpressionConstType_f<AbstractIndexTyple>::T T;
 };
 
 
@@ -195,11 +192,11 @@ template <typename BasedVectorSpace_,
           typename Scalar_,
           typename UseArrayType_,
           typename Derived_,
-          typename FreeFactorTypeList_,
-          typename FreeDimIndexTypeList_,
-          typename UsedDimIndexTypeList_>
+          typename FreeFactorTyple_,
+          typename FreeDimIndexTyple_,
+          typename UsedDimIndexTyple_>
 XYZ operator % (Operator<Domain_,Codomain_,Scalar_,UseArrayType_> const &lhs,
-                ExpressionTemplate_OuterProduct_t<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &rhs)
+                ExpressionTemplate_OuterProduct_t<Derived_,Scalar_,FreeFactorTyple_,FreeDimIndexTyple_,UsedDimIndexTyple_> const &rhs)
 {
     // TODO: return a new outer product expression template
 }
@@ -210,10 +207,10 @@ template <typename BasedVectorSpace_,
           typename Scalar_,
           typename UseArrayType_,
           typename Derived_,
-          typename FreeFactorTypeList_,
-          typename FreeDimIndexTypeList_,
-          typename UsedDimIndexTypeList_>
-XYZ operator % (ExpressionTemplate_OuterProduct_t<Derived_,Scalar_,FreeFactorTypeList_,FreeDimIndexTypeList_,UsedDimIndexTypeList_> const &lhs,
+          typename FreeFactorTyple_,
+          typename FreeDimIndexTyple_,
+          typename UsedDimIndexTyple_>
+XYZ operator % (ExpressionTemplate_OuterProduct_t<Derived_,Scalar_,FreeFactorTyple_,FreeDimIndexTyple_,UsedDimIndexTyple_> const &lhs,
                 Operator<Domain_,Codomain_,Scalar_,UseArrayType_> const &rhs)
 {
     // TODO: return a new outer product expression template
@@ -223,15 +220,15 @@ XYZ operator % (ExpressionTemplate_OuterProduct_t<Derived_,Scalar_,FreeFactorTyp
 // this is the outer product
 template <typename Scalar_,
           typename Lhs_Derived_,
-          typename Lhs_FreeFactorTypeList_,
-          typename Lhs_FreeDimIndexTypeList_,
-          typename Lhs_UsedDimIndexTypeList_,
+          typename Lhs_FreeFactorTyple_,
+          typename Lhs_FreeDimIndexTyple_,
+          typename Lhs_UsedDimIndexTyple_,
           typename Rhs_Derived_,
-          typename Rhs_FreeFactorTypeList_,
-          typename Rhs_FreeDimIndexTypeList_,
-          typename Rhs_UsedDimIndexTypeList_>
-XYZ operator % (ExpressionTemplate_OuterProduct_t<Lhs_Derived_,Scalar_,Lhs_FreeFactorTypeList_,Lhs_FreeDimIndexTypeList_,Lhs_UsedDimIndexTypeList_> const &lhs,
-                ExpressionTemplate_OuterProduct_t<Rhs_Derived_,Scalar_,Rhs_FreeFactorTypeList_,Rhs_FreeDimIndexTypeList_,Rhs_UsedDimIndexTypeList_> const &rhs)
+          typename Rhs_FreeFactorTyple_,
+          typename Rhs_FreeDimIndexTyple_,
+          typename Rhs_UsedDimIndexTyple_>
+XYZ operator % (ExpressionTemplate_OuterProduct_t<Lhs_Derived_,Scalar_,Lhs_FreeFactorTyple_,Lhs_FreeDimIndexTyple_,Lhs_UsedDimIndexTyple_> const &lhs,
+                ExpressionTemplate_OuterProduct_t<Rhs_Derived_,Scalar_,Rhs_FreeFactorTyple_,Rhs_FreeDimIndexTyple_,Rhs_UsedDimIndexTyple_> const &rhs)
 {
     // TODO: return a new outer product expression template
 }

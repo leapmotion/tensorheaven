@@ -21,7 +21,7 @@ struct ConceptExample_c
 private:
     typedef ParentConcept_c<Parameter_> As_ParentConcept;
 public:
-    typedef Typle_t<As_ParentConcept> ParentTypeList;
+    typedef Typle_t<As_ParentConcept> ParentTyple;
 
     // ...
 };

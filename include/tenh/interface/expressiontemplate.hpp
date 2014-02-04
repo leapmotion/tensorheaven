@@ -11,7 +11,6 @@
 #include "tenh/conceptual/abstractindex.hpp"
 #include "tenh/conceptual/linearembedding.hpp"
 #include "tenh/dimindex.hpp"
-#include "tenh/meta/typelist.hpp"
 #include "tenh/multiindex.hpp"
 #include "tenh/print_multiindexable.hpp"
 

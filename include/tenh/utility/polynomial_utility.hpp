@@ -171,7 +171,7 @@ std::ostream &operator << (std::ostream &out, HomogeneousPolynomial<DEG,BasedVec
     for (ComponentIndex it; it.is_not_at_end(); ++it)
     {
 
-        MultiIndex m = PolyType::Sym::template bundle_index_map<typename MultiIndex::IndexTypeList, ComponentIndex>(it);
+        MultiIndex m = PolyType::Sym::template bundle_index_map<typename MultiIndex::IndexTyple,ComponentIndex>(it);
         Scalar coeff = poly.coefficients()[it] * Scalar(Factorial_t<DEG>::V / (MultiIndexMultiplicity_t<MultiIndex>::eval(m)));
         if (coeff == Scalar(1))
         {

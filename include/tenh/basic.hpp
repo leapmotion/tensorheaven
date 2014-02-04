@@ -50,8 +50,8 @@ public:
         static_assert(IsUseMemberArray_f<UseArrayType_>::V, "Vec must be UseMemberArray in order to call the fill with constructor.");
     }
     // this is the tuple-based constructor
-    template <typename HeadType_, typename BodyTypeList_>
-    Vec (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x)
+    template <typename... Types_>
+    Vec (List_t<Typle_t<Types_...>> const &x)
         :
         Parent_Vector(x.as_member_array())
     {
@@ -75,8 +75,8 @@ public:
         static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "Vec must be UsePreallocatedArray in order to call the pointer to allocation constructor.");
     }
     // this is the tuple-based constructor
-    template <typename HeadType_, typename BodyTypeList_>
-    Vec (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x,
+    template <typename... Types_>
+    Vec (List_t<Typle_t<Types_...>> const &x,
          Scalar_ *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Vector(x, pointer_to_allocation, check_pointer)
@@ -170,8 +170,8 @@ public:
         static_assert(IsUseMemberArray_f<UseArrayType_>::V, "Op must be UseMemberArray in order to call the fill with constructor.");
     }
     // this is the tuple-based constructor
-    template <typename HeadType_, typename BodyTypeList_>
-    Op (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x)
+    template <typename... Types_>
+    Op (List_t<Typle_t<Types_...>> const &x)
         :
         Parent_Operator(x.as_member_array())
     {
@@ -194,8 +194,8 @@ public:
         static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "Op must be UsePreallocatedArray in order to call the pointer to allocation constructor.");
     }
     // this is the tuple-based constructor
-    template <typename HeadType_, typename BodyTypeList_>
-    Op (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x,
+    template <typename... Types_>
+    Op (List_t<Typle_t<Types_...>> const &x,
         Scalar_ *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Operator(x, pointer_to_allocation, check_pointer)
