@@ -1,11 +1,13 @@
 #include <iostream>
 
 #include "tenh/list.hpp"
+#include "tenh/implementation/alt.hpp"
 #include "tenh/implementation/diagonal2tensor.hpp"
 #include "tenh/implementation/directsum.hpp"
 #include "tenh/implementation/euclideanembedding.hpp"
 #include "tenh/implementation/innerproduct.hpp"
 #include "tenh/implementation/scalar2tensor.hpp"
+#include "tenh/implementation/sym.hpp"
 #include "tenh/implementation/tensor.hpp"
 #include "tenh/implementation/tensorproduct.hpp"
 #include "tenh/implementation/vector.hpp"
@@ -613,6 +615,26 @@ int main (int argc, char **argv)
         EuclideanEmbedding_f<decltype(t2),TensorProduct_c<Typle_t<StandardInnerProduct,StandardInnerProduct>>,Scalar>::T e_t2;
         std::cout << FORMAT_VALUE(e_t2) << '\n';
         // std::cout << FORMAT_VALUE(e_t2.embed(dual(t2*t2),p).split(p,i*j)) << '\n';
+
+        std::cout << '\n';
+    }
+
+    {
+        std::cout << "testing Alt_f\n";
+        decltype(bvs(generic_real_vs<4>(), generic_basis())) b;
+        typedef double Scalar;
+        Alt_f<3,decltype(b),Scalar>::T alt;
+        std::cout << FORMAT_VALUE(alt) << '\n';
+
+        std::cout << '\n';
+    }
+
+    {
+        std::cout << "testing Sym_f\n";
+        decltype(bvs(generic_real_vs<4>(), generic_basis())) b;
+        typedef double Scalar;
+        Sym_f<3,decltype(b),Scalar>::T sym;
+        std::cout << FORMAT_VALUE(sym) << '\n';
 
         std::cout << '\n';
     }

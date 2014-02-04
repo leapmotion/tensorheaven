@@ -16,6 +16,8 @@ namespace Tenh {
 
 namespace ComponentGeneratorEvaluator {
 
+// NOTE: with embed/coembed, this may be no longer useful.
+
 // this would be better defined as a private static method in Sym_f below, but g++
 // complains about that being invalid in a const expression (whereas clang++ is fine with it)
 template <Uint32 ORDER_, typename Factor_, Uint32 COMPONENT_COUNT_, typename Scalar_>
@@ -24,9 +26,8 @@ Scalar_ sym (ComponentIndex_t<COMPONENT_COUNT_> const &i)
     typedef ComponentIndex_t<COMPONENT_COUNT_> ComponentIndex;
     typedef SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> SymmetricPower;
     typedef typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T TensorPower;
-    typedef TypeList_t<SymmetricPower,
-            TypeList_t<typename DualOf_f<TensorPower>::T> > FactorTypeList;
-    typedef TensorProductOfBasedVectorSpaces_c<FactorTypeList> Projection;
+    typedef Typle_t<SymmetricPower,typename DualOf_f<TensorPower>::T> FactorTyple;
+    typedef TensorProductOfBasedVectorSpaces_c<FactorTyple> Projection;
     STATIC_ASSERT(DimensionOf_f<Projection>::V == COMPONENT_COUNT_, DIMENSIONS_MUST_MATCH);
 
     // for using bundle_index_map -- the use of UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST> is somewhat arbitrary,
@@ -36,15 +37,15 @@ Scalar_ sym (ComponentIndex_t<COMPONENT_COUNT_> const &i)
     typedef ImplementationOf_t<TensorPower,Scalar_,UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST> > Factor1BootstrappingImplementation;
 
     typedef typename BootstrappingImplementation::MultiIndex MultiIndex;
-    typedef typename MultiIndex::IndexTypeList IndexTypeList;
-    STATIC_ASSERT(IndexTypeList::LENGTH == 2, LENGTH_MUST_BE_EXACTLY_2);
-    MultiIndex m(BootstrappingImplementation::template bundle_index_map<IndexTypeList,ComponentIndex>(i));
+    typedef typename MultiIndex::IndexTyple IndexTyple;
+    STATIC_ASSERT(Hippo::Length_f<IndexTyple>::V == 2, LENGTH_MUST_BE_EXACTLY_2);
+    MultiIndex m(BootstrappingImplementation::template bundle_index_map<IndexTyple,ComponentIndex>(i));
 
-    typedef typename Factor1BootstrappingImplementation::MultiIndex::IndexTypeList Factor1IndexTypeList;
-    STATIC_ASSERT(Factor1IndexTypeList::LENGTH == ORDER_, LENGTHS_MUST_BE_EQUAL);
-    typedef MultiIndex_t<Factor1IndexTypeList> TensorPowerMultiIndex;
+    typedef typename Factor1BootstrappingImplementation::MultiIndex::IndexTyple Factor1IndexTyple;
+    STATIC_ASSERT(Hippo::Length_f<Factor1IndexTyple>::V == ORDER_, LENGTHS_MUST_BE_EQUAL);
+    typedef MultiIndex_t<Factor1IndexTyple> TensorPowerMultiIndex;
     typedef typename Factor1BootstrappingImplementation::ComponentIndex TensorPowerComponentIndex;
-    TensorPowerMultiIndex m1(Factor1BootstrappingImplementation::template bundle_index_map<Factor1IndexTypeList,TensorPowerComponentIndex>(m.template el<1>()));
+    TensorPowerMultiIndex m1(Factor1BootstrappingImplementation::template bundle_index_map<Factor1IndexTyple,TensorPowerComponentIndex>(m.template el<1>()));
 
     // vector_index_of sorts the multiindex and returns the vector index -- if this
     // matches the symmetric vector index, then return 1; otherwise 0.
@@ -66,9 +67,8 @@ struct Sym_f
 private:
     typedef SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> SymmetricPower;
     typedef typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T TensorPower;
-    typedef TypeList_t<SymmetricPower,
-            TypeList_t<typename DualOf_f<TensorPower>::T> > FactorTypeList;
-    typedef TensorProductOfBasedVectorSpaces_c<FactorTypeList> Projection;
+    typedef Typle_t<SymmetricPower,typename DualOf_f<TensorPower>::T> FactorTyple;
+    typedef TensorProductOfBasedVectorSpaces_c<FactorTyple> Projection;
     typedef ComponentGenerator_t<Scalar_,
                                  DimensionOf_f<Projection>::V,
                                  ComponentGeneratorEvaluator::sym<ORDER_,Factor_,DimensionOf_f<Projection>::V,Scalar_>,
