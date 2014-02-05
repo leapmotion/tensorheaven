@@ -26,17 +26,17 @@ struct AbstractIndexMap_e
 private:
     enum
     {
-        STATIC_ASSERT_IN_ENUM(Hippo::Length_f<DomainAbstractIndexTyple_>::V == Hippo::Length_f<CodomainAbstractIndexTyple_>::V,
+        STATIC_ASSERT_IN_ENUM(Length_f<DomainAbstractIndexTyple_>::V == Length_f<CodomainAbstractIndexTyple_>::V,
                               LENGTHS_MUST_BE_EQUAL),
-        STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::Length_f<DomainAbstractIndexTyple_>::V > 0), LENGTH_MUST_BE_POSITIVE, DOMAIN_LENGTH),
-        STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::Length_f<CodomainAbstractIndexTyple_>::V > 0), LENGTH_MUST_BE_POSITIVE, CODOMAIN_LENGTH),
-        STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::And_f<typename Hippo::OnEach_f<DomainAbstractIndexTyple_,IsAbstractIndex_e>::T>::V),
+        STATIC_ASSERT_IN_ENUM__UNIQUE((Length_f<DomainAbstractIndexTyple_>::V > 0), LENGTH_MUST_BE_POSITIVE, DOMAIN_LENGTH),
+        STATIC_ASSERT_IN_ENUM__UNIQUE((Length_f<CodomainAbstractIndexTyple_>::V > 0), LENGTH_MUST_BE_POSITIVE, CODOMAIN_LENGTH),
+        STATIC_ASSERT_IN_ENUM__UNIQUE((And_f<typename OnEach_f<DomainAbstractIndexTyple_,IsAbstractIndex_e>::T>::V),
                                       MUST_BE_TYPLE_OF_ABSTRACT_INDEX_TYPES,
                                       DOMAIN),
-        STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::And_f<typename Hippo::OnEach_f<CodomainAbstractIndexTyple_,IsAbstractIndex_e>::T>::V),
+        STATIC_ASSERT_IN_ENUM__UNIQUE((And_f<typename OnEach_f<CodomainAbstractIndexTyple_,IsAbstractIndex_e>::T>::V),
                                       MUST_BE_TYPLE_OF_ABSTRACT_INDEX_TYPES,
                                       CODOMAIN),
-        STATIC_ASSERT_IN_ENUM(!Hippo::ContainsDuplicates_f<DomainAbstractIndexTyple_>::V, DOMAIN_INDICES_MUST_NOT_CONTAIN_DUPLICATES)
+        STATIC_ASSERT_IN_ENUM(!ContainsDuplicates_f<DomainAbstractIndexTyple_>::V, DOMAIN_INDICES_MUST_NOT_CONTAIN_DUPLICATES)
     };
     AbstractIndexMap_e();
 public:
@@ -45,7 +45,7 @@ public:
     {
         // don't actually check that AbstractIndex_ is in DomainAbstractIndexTyple_, since
         // the If_f below instantiates this type even if the type isn't "used" by the If_f.
-        typedef typename Hippo::Element_f<CodomainAbstractIndexTyple_,Hippo::IndexOfFirstOccurrence_f<DomainAbstractIndexTyple_,AbstractIndex_>::V>::T T;
+        typedef typename Element_f<CodomainAbstractIndexTyple_,IndexOfFirstOccurrence_f<DomainAbstractIndexTyple_,AbstractIndex_>::V>::T T;
     private:
         Eval_f();
     };
@@ -92,10 +92,10 @@ private:
     static AbstractIndexSymbol const OFFSET =
         ABSTRACT_INDEX_MAP_IS_IDENTITY ?
         0 :
-        Hippo::Max_f<typename Hippo::OnEach_f<CodomainAbstractIndexTyple_,SymbolOf_e>::T,AbstractIndexSymbol>::V;
+        Max_f<typename OnEach_f<CodomainAbstractIndexTyple_,SymbolOf_e>::T,AbstractIndexSymbol>::V;
     Eval_f();
 public:
-    typedef typename If_f<Hippo::Contains_f<DomainAbstractIndexTyple_,AbstractIndex>::V,
+    typedef typename If_f<Contains_f<DomainAbstractIndexTyple_,AbstractIndex>::V,
                           typename AbstractIndexMap::template Eval_f<AbstractIndex>,
                           Type_t<AbstractIndex_c<OFFSET+SYMBOL_>>>::T::T T;
 };
@@ -131,7 +131,7 @@ private:
     typedef Typle_t<Types_...> Typle;
     Eval_f();
 public:
-    typedef typename Hippo::OnEach_f<Typle,Reindex>::T T;
+    typedef typename OnEach_f<Typle,Reindex>::T T;
 };
 
 // NOTE: the default implementation of Reindex_e<...>::Eval_f<T> is correct for Typle_t<>

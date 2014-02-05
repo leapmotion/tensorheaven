@@ -32,7 +32,7 @@ template <typename Typle>
 void test_length (Context const &context)
 {
     typedef Tenh::List_t<Typle> List;
-    assert_eq(List::length(), Tenh::Hippo::Length_f<Typle>::V);
+    assert_eq(List::length(), Tenh::Length_f<Typle>::V);
 }
 
 template <typename Typle>
@@ -55,7 +55,7 @@ template <typename Typle, Uint32 INDEX>
 void test_leading_list (Context const &context)
 {
     typedef Tenh::List_t<Typle> List;
-    typedef typename Tenh::Hippo::LeadingTyple_f<Typle,INDEX>::T LeadingTyple;
+    typedef typename Tenh::LeadingTyple_f<Typle,INDEX>::T LeadingTyple;
     typedef Tenh::List_t<LeadingTyple> LeadingList;
 
     assert((Tenh::TypesAreEqual_f<typename List::template LeadingListType_f<INDEX>::T,LeadingList>()));
@@ -71,7 +71,7 @@ template <typename Typle, Uint32 INDEX>
 void test_trailing_list (Context const &context)
 {
     typedef Tenh::List_t<Typle> List;
-    typedef typename Tenh::Hippo::TrailingTyple_f<Typle,INDEX>::T TrailingTyple;
+    typedef typename Tenh::TrailingTyple_f<Typle,INDEX>::T TrailingTyple;
     typedef Tenh::List_t<TrailingTyple> TrailingList;
 
     assert((Tenh::TypesAreEqual_f<typename List::template TrailingListType_f<INDEX>::T,TrailingList>()));

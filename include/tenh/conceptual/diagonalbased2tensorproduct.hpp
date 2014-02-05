@@ -197,10 +197,10 @@ private:
 template <typename FactorTyple_>
 struct Diagonal2TensorProductOfBasedVectorSpaces_f
 {
-    static_assert(Hippo::Length_f<FactorTyple_>::V == 2, "there must be exactly 2 factors");
+    static_assert(Length_f<FactorTyple_>::V == 2, "there must be exactly 2 factors");
 private:
-    typedef typename Hippo::Element_f<FactorTyple_,0>::T Factor0;
-    typedef typename Hippo::Element_f<FactorTyple_,1>::T Factor1;
+    typedef typename Element_f<FactorTyple_,0>::T Factor0;
+    typedef typename Element_f<FactorTyple_,1>::T Factor1;
     Diagonal2TensorProductOfBasedVectorSpaces_f();
 public:
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0,Factor1> T;

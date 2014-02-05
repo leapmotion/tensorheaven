@@ -50,8 +50,6 @@ struct CommaSeparatedStringOfVariadicTemplate_t<Head_,Body_...>
 /// @tparam Ts_... the comma-separated, ordered list of types.
 template <typename... Ts_> struct Typle_t;
 
-namespace Hippo { // temp until TypeList_t is gone
-
 /// @struct Head_f typle.hpp "tenh/meta/typle.hpp"
 /// @brief Returns the first type in the argument Typle_t if nonempty; otherwise is undefined.
 template <typename T_> struct Head_f;
@@ -67,8 +65,6 @@ MAKE_1_ARY_TYPE_EVALUATOR(Head);
 MAKE_1_ARY_TYPE_EVALUATOR(BodyTyple);
 MAKE_1_ARY_VALUE_EVALUATOR(Length, Uint32);
 
-} // end of namespace Hippo
-
 /// @cond false
 template <>
 struct Typle_t<>
@@ -82,7 +78,7 @@ struct Typle_t<Head_,Body_...>
     typedef Head_ Head;
     typedef Typle_t<Body_...> BodyTyple;
 
-    static Uint32 length () { return Hippo::Length_f<Typle_t>::V; }
+    static Uint32 length () { return Length_f<Typle_t>::V; }
 };
 
 template <typename... Ts_>
@@ -100,8 +96,6 @@ template <typename... Ts_> struct IsTyple_f<Typle_t<Ts_...>> { static bool const
 /// @endcond
 
 MAKE_1_ARY_VALUE_EVALUATOR(IsTyple, bool);
-
-namespace Hippo { // temp until TypeList_t is gone
 
 /// @cond false
 template <typename Head_, typename... Body_>
@@ -151,15 +145,13 @@ struct ConcatTyples_f<HeadTyple_,BodyTyples_...>
 };
 /// @endcond
 
-} // end of namespace Hippo
-
 // for concatenating typles
 
 template <typename... LhsTypes_, typename... RhsTypes_>
-typename Hippo::Concat2Typles_f<Typle_t<LhsTypes_...>,Typle_t<RhsTypes_...>>::T
+typename Concat2Typles_f<Typle_t<LhsTypes_...>,Typle_t<RhsTypes_...>>::T
     operator | (Typle_t<LhsTypes_...> const &, Typle_t<RhsTypes_...> const &)
 {
-    return typename Hippo::Concat2Typles_f<Typle_t<LhsTypes_...>,Typle_t<RhsTypes_...>>::T();
+    return typename Concat2Typles_f<Typle_t<LhsTypes_...>,Typle_t<RhsTypes_...>>::T();
 }
 
 template <typename Lhs_, typename... RhsTypes_>
@@ -169,10 +161,10 @@ Typle_t<Lhs_,RhsTypes_...> operator | (Lhs_ const &, Typle_t<RhsTypes_...> const
 }
 
 template <typename Rhs_, typename... LhsTypes_>
-typename Hippo::Concat2Typles_f<Typle_t<LhsTypes_...>,Typle_t<Rhs_>>::T
+typename Concat2Typles_f<Typle_t<LhsTypes_...>,Typle_t<Rhs_>>::T
     operator | (Typle_t<LhsTypes_...> const &, Rhs_ const &)
 {
-    return typename Hippo::Concat2Typles_f<Typle_t<LhsTypes_...>,Typle_t<Rhs_>>::T();
+    return typename Concat2Typles_f<Typle_t<LhsTypes_...>,Typle_t<Rhs_>>::T();
 }
 
 // NOTE: this stuff should move into a newly-created (or changed) tuple.hpp

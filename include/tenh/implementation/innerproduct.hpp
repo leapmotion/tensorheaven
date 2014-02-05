@@ -56,16 +56,16 @@ template <typename FactorTyple_, typename InnerProductIdTyple_, typename Scalar_
 struct InnerProductOfEachInTyple_f
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM(Hippo::Length_f<FactorTyple_>::V == Hippo::Length_f<InnerProductIdTyple_>::V, LENGTHS_MUST_BE_EQUAL) };
+    enum { STATIC_ASSERT_IN_ENUM(Length_f<FactorTyple_>::V == Length_f<InnerProductIdTyple_>::V, LENGTHS_MUST_BE_EQUAL) };
     InnerProductOfEachInTyple_f();
-    typedef typename InnerProduct_f<typename Hippo::Head_f<FactorTyple_>::T,
-                                    typename Hippo::Head_f<InnerProductIdTyple_>::T,
+    typedef typename InnerProduct_f<typename Head_f<FactorTyple_>::T,
+                                    typename Head_f<InnerProductIdTyple_>::T,
                                     Scalar_>::T HeadInnerProduct;
-    typedef typename InnerProductOfEachInTyple_f<typename Hippo::BodyTyple_f<FactorTyple_>::T,
-                                                 typename Hippo::BodyTyple_f<InnerProductIdTyple_>::T,
+    typedef typename InnerProductOfEachInTyple_f<typename BodyTyple_f<FactorTyple_>::T,
+                                                 typename BodyTyple_f<InnerProductIdTyple_>::T,
                                                  Scalar_>::T BodyInnerProductTyple;
 public:
-    typedef typename Hippo::HeadBodyTyple_f<HeadInnerProduct,BodyInnerProductTyple>::T T;
+    typedef typename HeadBodyTyple_f<HeadInnerProduct,BodyInnerProductTyple>::T T;
 };
 
 template <typename Scalar_>

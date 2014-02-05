@@ -47,10 +47,10 @@ typename UniformTuple_f<UniformType_,0>::T uniform_tuple ()
 
 // each parameter must have a coercion to UniformType_
 template <typename UniformType_, typename Head_, typename... BodyTypes_>
-typename UniformTuple_f<UniformType_,Hippo::Length_f<Typle_t<Head_,BodyTypes_...>>::V>::T
+typename UniformTuple_f<UniformType_,Length_f<Typle_t<Head_,BodyTypes_...>>::V>::T
     uniform_tuple (Head_ const &head, BodyTypes_... body)
 {
-    return typename UniformTuple_f<UniformType_,Hippo::Length_f<Typle_t<Head_,BodyTypes_...>>::V>::T(head, body...);
+    return typename UniformTuple_f<UniformType_,Length_f<Typle_t<Head_,BodyTypes_...>>::V>::T(head, body...);
 }
 
 } // end of namespace Tenh

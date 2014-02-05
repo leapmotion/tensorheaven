@@ -35,7 +35,7 @@ Scalar_ tensor_product_of_single_procedural_vector (ComponentIndex_t<DimensionOf
     typedef typename ConceptOfEachTypeIn_f<ProceduralVectorImplementationTyple_>::T ConceptTyple;
     typedef TensorProductOfBasedVectorSpaces_c<ConceptTyple> TensorProductOfBasedVectorSpaces;
     STATIC_ASSERT_TYPES_ARE_EQUAL(TensorProductOfBasedVectorSpaces_, TensorProductOfBasedVectorSpaces);
-    typedef typename Hippo::Head_f<ProceduralVectorImplementationTyple_>::T HeadImplementation;
+    typedef typename Head_f<ProceduralVectorImplementationTyple_>::T HeadImplementation;
     HeadImplementation head_implementation;
     AbstractIndex_c<'a'> a;
     return head_implementation(a)[MultiIndex_t<Typle_t<ComponentIndex>>(i)];
@@ -53,14 +53,14 @@ private:
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM((Hippo::Length_f<ProceduralVectorImplementationTyple_>::V > 0), LENGTH_MUST_BE_POSITIVE),
-        STATIC_ASSERT_IN_ENUM((Hippo::EachTypeSatisfies_f<ConceptTyple,IsBasedVectorSpace_e>::V), MUST_BE_TYPLE_OF_BASED_VECTOR_SPACES),
-        STATIC_ASSERT_IN_ENUM(Hippo::TypleIsUniform_f<ScalarTyple>::V, ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
+        STATIC_ASSERT_IN_ENUM((Length_f<ProceduralVectorImplementationTyple_>::V > 0), LENGTH_MUST_BE_POSITIVE),
+        STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<ConceptTyple,IsBasedVectorSpace_e>::V), MUST_BE_TYPLE_OF_BASED_VECTOR_SPACES),
+        STATIC_ASSERT_IN_ENUM(TypleIsUniform_f<ScalarTyple>::V, ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
         STATIC_ASSERT_IN_ENUM((EachTypeUsesProceduralArray_f<ProceduralVectorImplementationTyple_>::V), MUST_BE_TYPLE_OF_PROCEDURAL_IMPLEMENTATIONS)
     };
 
     typedef TensorProductOfBasedVectorSpaces_c<ConceptTyple> TensorProductOfBasedVectorSpaces;
-    typedef typename Hippo::Head_f<ScalarTyple>::T Scalar;
+    typedef typename Head_f<ScalarTyple>::T Scalar;
     typedef ComponentGenerator_t<Scalar,
                                  DimensionOf_f<TensorProductOfBasedVectorSpaces>::V,
                                  ComponentGeneratorEvaluator::tensor_product_of_single_procedural_vector<ProceduralVectorImplementationTyple_,
@@ -83,8 +83,8 @@ Scalar_ tensor_product_of_procedural_vectors (ComponentIndex_t<DimensionOf_f<Ten
     typedef typename ConceptOfEachTypeIn_f<ProceduralVectorImplementationTyple_>::T ConceptTyple;
     typedef TensorProductOfBasedVectorSpaces_c<ConceptTyple> TensorProductOfBasedVectorSpaces;
     STATIC_ASSERT_TYPES_ARE_EQUAL(TensorProductOfBasedVectorSpaces_, TensorProductOfBasedVectorSpaces);
-    typedef typename Hippo::Head_f<ProceduralVectorImplementationTyple_>::T HeadImplementation;
-    typedef typename TensorProductOfProceduralVectors_f<typename Hippo::BodyTyple_f<ProceduralVectorImplementationTyple_>::T>::T BodyImplementation;
+    typedef typename Head_f<ProceduralVectorImplementationTyple_>::T HeadImplementation;
+    typedef typename TensorProductOfProceduralVectors_f<typename BodyTyple_f<ProceduralVectorImplementationTyple_>::T>::T BodyImplementation;
     HeadImplementation head_implementation;
     BodyImplementation body_implementation;
     AbstractIndex_c<'a'> a;
@@ -106,14 +106,14 @@ private:
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM((Hippo::Length_f<ProceduralVectorImplementationTyple_>::V > 0), LENGTH_MUST_BE_POSITIVE),
-        STATIC_ASSERT_IN_ENUM((Hippo::EachTypeSatisfies_f<ConceptTyple,IsBasedVectorSpace_e>::V), MUST_BE_TYPLE_OF_BASED_VECTOR_SPACES),
-        STATIC_ASSERT_IN_ENUM(Hippo::TypleIsUniform_f<ScalarTyple>::V, ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
+        STATIC_ASSERT_IN_ENUM((Length_f<ProceduralVectorImplementationTyple_>::V > 0), LENGTH_MUST_BE_POSITIVE),
+        STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<ConceptTyple,IsBasedVectorSpace_e>::V), MUST_BE_TYPLE_OF_BASED_VECTOR_SPACES),
+        STATIC_ASSERT_IN_ENUM(TypleIsUniform_f<ScalarTyple>::V, ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
         STATIC_ASSERT_IN_ENUM((EachTypeUsesProceduralArray_f<ProceduralVectorImplementationTyple_>::V), MUST_BE_TYPLE_OF_PROCEDURAL_IMPLEMENTATIONS)
     };
 
     typedef TensorProductOfBasedVectorSpaces_c<ConceptTyple> TensorProductOfBasedVectorSpaces;
-    typedef typename Hippo::Head_f<ScalarTyple>::T Scalar;
+    typedef typename Head_f<ScalarTyple>::T Scalar;
     typedef ComponentGenerator_t<Scalar,
                                  DimensionOf_f<TensorProductOfBasedVectorSpaces>::V,
                                  ComponentGeneratorEvaluator::tensor_product_of_procedural_vectors<ProceduralVectorImplementationTyple_,
@@ -157,7 +157,7 @@ private:
     typedef Typle_t<ImplementationOf_t<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_>,
             Procedural2TensorImplementationTypes_...> Procedural2TensorImplementationTyple;
     typedef typename ConceptOfEachTypeIn_f<Procedural2TensorImplementationTyple>::T ConceptTyple;
-    enum { STATIC_ASSERT_IN_ENUM((Hippo::EachTypeSatisfies_f<ConceptTyple,IsScalar2TensorProductOfBasedVectorSpaces_e>::V), MUST_BE_TYPLE_OF_SCALAR_2_TENSORS) };
+    enum { STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<ConceptTyple,IsScalar2TensorProductOfBasedVectorSpaces_e>::V), MUST_BE_TYPLE_OF_SCALAR_2_TENSORS) };
     typedef typename FactorNOfEachTypeIn_f<0,ConceptTyple>::T Factor0Typle;
     typedef typename FactorNOfEachTypeIn_f<1,ConceptTyple>::T Factor1Typle;
     typedef TensorProductOfBasedVectorSpaces_c<Factor0Typle> Factor0TensorProduct;
@@ -182,7 +182,7 @@ private:
     typedef Typle_t<ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_>,
             Procedural2TensorImplementationBodyTypes_...> Procedural2TensorImplementationTyple;
     typedef typename ConceptOfEachTypeIn_f<Procedural2TensorImplementationTyple>::T ConceptTyple;
-    enum { STATIC_ASSERT_IN_ENUM((Hippo::EachTypeSatisfies_f<ConceptTyple,IsDiagonal2TensorProductOfBasedVectorSpaces_e>::V), MUST_BE_TYPLE_OF_DIAGONAL_2_TENSORS) };
+    enum { STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<ConceptTyple,IsDiagonal2TensorProductOfBasedVectorSpaces_e>::V), MUST_BE_TYPLE_OF_DIAGONAL_2_TENSORS) };
     typedef typename FactorNOfEachTypeIn_f<0,ConceptTyple>::T Factor0Typle;
     typedef typename FactorNOfEachTypeIn_f<1,ConceptTyple>::T Factor1Typle;
     typedef TensorProductOfBasedVectorSpaces_c<Factor0Typle> Factor0TensorProduct;
@@ -209,7 +209,7 @@ private:
     typedef typename ConceptOfEachTypeIn_f<Procedural2TensorImplementationTyple>::T ConceptTyple;
     enum
     {
-        STATIC_ASSERT_IN_ENUM((Hippo::EachTypeSatisfies_f<ConceptTyple,IsTensorProductOfBasedVectorSpaces_e>::V), MUST_BE_TYPLE_OF_DIAGONAL_2_TENSORS),
+        STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<ConceptTyple,IsTensorProductOfBasedVectorSpaces_e>::V), MUST_BE_TYPLE_OF_DIAGONAL_2_TENSORS),
         STATIC_ASSERT_IN_ENUM(EachTypeIsA2TensorProductOfBasedVectorSpaces_f<ConceptTyple>::V, MUST_BE_TYPLE_OF_2_TENSORS)
     };
     typedef typename FactorNOfEachTypeIn_f<0,ConceptTyple>::T Factor0Typle;
@@ -230,11 +230,11 @@ Scalar_ tensor_product_of_2_tensors (ComponentIndex_t<DimensionOf_f<ConceptualTy
     typedef typename ConceptualTypeOfTensorProductOfProcedural2Tensors_f<Procedural2TensorImplementationTyple_>::T ConceptualTypeOfTensorProduct;
     STATIC_ASSERT_TYPES_ARE_EQUAL(ConceptualTypeOfTensorProduct_, ConceptualTypeOfTensorProduct);
     typedef typename FactorTypleOf_f<ConceptualTypeOfTensorProduct_>::T FactorTyple;
-    STATIC_ASSERT((Hippo::Length_f<FactorTyple>::V == 2), LENGTH_MUST_BE_EXACTLY_2);
-    typedef typename Hippo::Element_f<FactorTyple,0>::T Factor0;
-    typedef typename Hippo::Element_f<FactorTyple,1>::T Factor1;
-    typedef typename Hippo::Head_f<Procedural2TensorImplementationTyple_>::T HeadImplementation;
-    typedef typename TensorProductOfProcedural2Tensors_f<typename Hippo::BodyTyple_f<Procedural2TensorImplementationTyple_>::T>::T BodyImplementation;
+    STATIC_ASSERT((Length_f<FactorTyple>::V == 2), LENGTH_MUST_BE_EXACTLY_2);
+    typedef typename Element_f<FactorTyple,0>::T Factor0;
+    typedef typename Element_f<FactorTyple,1>::T Factor1;
+    typedef typename Head_f<Procedural2TensorImplementationTyple_>::T HeadImplementation;
+    typedef typename TensorProductOfProcedural2Tensors_f<typename BodyTyple_f<Procedural2TensorImplementationTyple_>::T>::T BodyImplementation;
     HeadImplementation head_implementation;
     BodyImplementation body_implementation;
     AbstractIndex_c<'u'> u;
@@ -264,11 +264,11 @@ private:
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM(Hippo::TypleIsUniform_f<ScalarTyple>::V, ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
+        STATIC_ASSERT_IN_ENUM(TypleIsUniform_f<ScalarTyple>::V, ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
         STATIC_ASSERT_IN_ENUM((EachTypeUsesProceduralArray_f<Procedural2TensorImplementationTyple_>::V), MUST_BE_TYPLE_OF_PROCEDURAL_IMPLEMENTATIONS)
     };
 
-    typedef typename Hippo::Head_f<ScalarTyple>::T Scalar;
+    typedef typename Head_f<ScalarTyple>::T Scalar;
     typedef ComponentGenerator_t<Scalar,
                                  DimensionOf_f<ConceptualTypeOfTensorProduct>::V,
                                  ComponentGeneratorEvaluator::tensor_product_of_2_tensors<Procedural2TensorImplementationTyple_,
@@ -289,7 +289,7 @@ Scalar_ tensor_product_of_single_2_tensor (ComponentIndex_t<DimensionOf_f<Concep
     typedef ComponentIndex_t<DimensionOf_f<ConceptualTypeOfTensorProduct_>::V> ComponentIndex;
     typedef typename ConceptualTypeOfTensorProductOfProcedural2Tensors_f<Procedural2TensorImplementationTyple_>::T ConceptualTypeOfTensorProduct;
     STATIC_ASSERT_TYPES_ARE_EQUAL(ConceptualTypeOfTensorProduct_, ConceptualTypeOfTensorProduct);
-    typedef typename Hippo::Head_f<Procedural2TensorImplementationTyple_>::T HeadImplementation;
+    typedef typename Head_f<Procedural2TensorImplementationTyple_>::T HeadImplementation;
     HeadImplementation head_implementation;
     AbstractIndex_c<'a'> a;
     return head_implementation(a)[MultiIndex_t<Typle_t<ComponentIndex>>(i)];
@@ -309,11 +309,11 @@ private:
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM(Hippo::TypleIsUniform_f<ScalarTyple>::V, ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
+        STATIC_ASSERT_IN_ENUM(TypleIsUniform_f<ScalarTyple>::V, ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
         STATIC_ASSERT_IN_ENUM((EachTypeUsesProceduralArray_f<Procedural2TensorImplementationTyple>::V), MUST_BE_TYPLE_OF_PROCEDURAL_IMPLEMENTATIONS)
     };
 
-    typedef typename Hippo::Head_f<ScalarTyple>::T Scalar;
+    typedef typename Head_f<ScalarTyple>::T Scalar;
     typedef ComponentGenerator_t<Scalar,
                                  DimensionOf_f<ConceptualTypeOfTensorProduct>::V,
                                  ComponentGeneratorEvaluator::tensor_product_of_single_2_tensor<Procedural2TensorImplementationTyple,

@@ -87,16 +87,16 @@ struct AncestorsOf_f
 private:
     AncestorsOf_f();
 public:
-    typedef typename Hippo::HeadBodyTyple_f<Concept_,
-                                            typename AncestorsOf_Recursive_f<typename ParentTypleOfConcept_f<Concept_>::T>::T>::T T;
+    typedef typename HeadBodyTyple_f<Concept_,
+                                     typename AncestorsOf_Recursive_f<typename ParentTypleOfConcept_f<Concept_>::T>::T>::T T;
 };
 
 template <typename ParentTyple_>
 struct AncestorsOf_Recursive_f
 {
     // depth-first traversal of the ancestor tree
-    typedef typename Hippo::Concat2Typles_f<typename AncestorsOf_f<typename Hippo::Head_f<ParentTyple_>::T>::T,
-                                            typename AncestorsOf_Recursive_f<typename Hippo::BodyTyple_f<ParentTyple_>::T>::T>::T T;
+    typedef typename Concat2Typles_f<typename AncestorsOf_f<typename Head_f<ParentTyple_>::T>::T,
+                                     typename AncestorsOf_Recursive_f<typename BodyTyple_f<ParentTyple_>::T>::T>::T T;
 private:
     AncestorsOf_Recursive_f();
 };
@@ -122,7 +122,7 @@ private:
 template <typename Concept_, typename Predicate_e_>
 struct AncestorsSatisfyingPredicate_f
 {
-    typedef typename Hippo::ElementsOfTypleSatisfying_f<typename AncestorsOf_f<Concept_>::T,Predicate_e_>::T T;
+    typedef typename ElementsOfTypleSatisfying_f<typename AncestorsOf_f<Concept_>::T,Predicate_e_>::T T;
 private:
     AncestorsSatisfyingPredicate_f();
 };
@@ -136,13 +136,13 @@ struct ConceptualStructuresOf_f
 private:
     ConceptualStructuresOf_f();
 public:
-    typedef typename Hippo::UniqueTypesIn_f<typename AncestorsSatisfyingPredicate_f<Concept_,ConceptualStructurePredicate_e_>::T>::T T;
+    typedef typename UniqueTypesIn_f<typename AncestorsSatisfyingPredicate_f<Concept_,ConceptualStructurePredicate_e_>::T>::T T;
 };
 
 template <typename Concept_, typename ConceptualStructurePredicate_e_>
 struct HasConceptualStructure_f
 {
-    static bool const V = Hippo::Length_f<typename ConceptualStructuresOf_f<Concept_,ConceptualStructurePredicate_e_>::T>::V > 0;
+    static bool const V = Length_f<typename ConceptualStructuresOf_f<Concept_,ConceptualStructurePredicate_e_>::T>::V > 0;
 private:
     HasConceptualStructure_f();
 };
@@ -150,7 +150,7 @@ private:
 template <typename Concept_, typename ConceptualStructurePredicate_e_>
 struct HasUniqueConceptualStructure_f
 {
-    static bool const V = Hippo::Length_f<typename ConceptualStructuresOf_f<Concept_,ConceptualStructurePredicate_e_>::T>::V == 1;
+    static bool const V = Length_f<typename ConceptualStructuresOf_f<Concept_,ConceptualStructurePredicate_e_>::T>::V == 1;
 private:
     HasUniqueConceptualStructure_f();
 };
@@ -162,7 +162,7 @@ struct UniqueConceptualStructureOf_f
 private:
     UniqueConceptualStructureOf_f();
 public:
-    typedef typename Hippo::Head_f<typename ConceptualStructuresOf_f<Concept_,ConceptualStructurePredicate_e_>::T>::T T;
+    typedef typename Head_f<typename ConceptualStructuresOf_f<Concept_,ConceptualStructurePredicate_e_>::T>::T T;
 };
 
 // easy way to provide Concept-specific structure metafunctions
@@ -216,8 +216,8 @@ private:
 template <typename Typle_, typename PropertyId_>
 struct BasePropertyOfEachInTyple_f
 {
-    typedef typename Hippo::HeadBodyTyple_f<typename BaseProperty_f<typename Hippo::Head_f<Typle_>::T,PropertyId_>::T,
-                                            typename BasePropertyOfEachInTyple_f<typename Hippo::BodyTyple_f<Typle_>::T,PropertyId_>::T>::T T;
+    typedef typename HeadBodyTyple_f<typename BaseProperty_f<typename Head_f<Typle_>::T,PropertyId_>::T,
+                                     typename BasePropertyOfEachInTyple_f<typename BodyTyple_f<Typle_>::T,PropertyId_>::T>::T T;
 private:
     BasePropertyOfEachInTyple_f();
 };
@@ -236,10 +236,10 @@ struct MultiProperty_f
 {
 private:
     typedef typename BasePropertyOfEachInTyple_f<typename AncestorsOf_f<Concept_>::T,PropertyId_>::T PropertyOfEach;
-    typedef typename Hippo::UniqueTypesIn_f<PropertyOfEach>::T UniquePropertyTyple;
+    typedef typename UniqueTypesIn_f<PropertyOfEach>::T UniquePropertyTyple;
     MultiProperty_f();
 public:
-    typedef typename Hippo::SetSubtraction_f<UniquePropertyTyple,Typle_t<NullValue> >::T T;
+    typedef typename SetSubtraction_f<UniquePropertyTyple,Typle_t<NullValue> >::T T;
 };
 
 // if MultiProperty_f has exactly one element, returns that.
@@ -248,10 +248,10 @@ struct Property_f
 {
 private:
     typedef typename MultiProperty_f<Concept_,PropertyId_>::T MultiProperty;
-    static_assert(Hippo::Length_f<MultiProperty>::V == 1, "property is not well-defined");
+    static_assert(Length_f<MultiProperty>::V == 1, "property is not well-defined");
     Property_f();
 public:
-    typedef typename Hippo::Head_f<MultiProperty>::T T;
+    typedef typename Head_f<MultiProperty>::T T;
 };
 
 // if Property_f is a Value_t, returns the value.
@@ -269,8 +269,8 @@ public:
 template <typename Typle_, typename PropertyId_>
 struct PropertyOfEachInTyple_f
 {
-    typedef typename Hippo::HeadBodyTyple_f<typename Property_f<typename Hippo::Head_f<Typle_>::T,PropertyId_>::T,
-                                            typename PropertyOfEachInTyple_f<typename Hippo::BodyTyple_f<Typle_>::T,PropertyId_>::T>::T T;
+    typedef typename HeadBodyTyple_f<typename Property_f<typename Head_f<Typle_>::T,PropertyId_>::T,
+                                     typename PropertyOfEachInTyple_f<typename BodyTyple_f<Typle_>::T,PropertyId_>::T>::T T;
 private:
     PropertyOfEachInTyple_f();
 };

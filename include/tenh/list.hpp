@@ -23,12 +23,12 @@ template <typename Typle_, Uint32 INDEX_> struct ListHelper_t;
 template <typename Typle_>
 struct List_t
 {
-    static_assert(Hippo::Length_f<Typle_>::V >= 2, "this definition should only be used for 2-typles and above");
+    static_assert(Length_f<Typle_>::V >= 2, "this definition should only be used for 2-typles and above");
     typedef Typle_ Typle;
-    typedef typename Hippo::Head_f<Typle_>::T HeadType;
-    typedef typename Hippo::BodyTyple_f<Typle_>::T BodyTyple;
+    typedef typename Head_f<Typle_>::T HeadType;
+    typedef typename BodyTyple_f<Typle_>::T BodyTyple;
     typedef List_t<BodyTyple> BodyList;
-    static Uint32 const LENGTH = Hippo::Length_f<Typle_>::V;
+    static Uint32 const LENGTH = Length_f<Typle_>::V;
 
     List_t () { }
     List_t (HeadType const &head, BodyList const &body) : m_head(head), m_body(body) { }
@@ -60,12 +60,12 @@ struct List_t
 
     MemberArray_t<HeadType,LENGTH> const &as_member_array () const
     {
-        static_assert(Hippo::TypleIsUniform_f<Typle_>::V, "Typle_ template argument must be a uniform Typle_t");
+        static_assert(TypleIsUniform_f<Typle_>::V, "Typle_ template argument must be a uniform Typle_t");
         return *reinterpret_cast<MemberArray_t<HeadType,LENGTH> const *>(this);
     }
     MemberArray_t<HeadType,LENGTH> &as_member_array ()
     {
-        static_assert(Hippo::TypleIsUniform_f<Typle_>::V, "Typle_ template argument must be a uniform Typle_t");
+        static_assert(TypleIsUniform_f<Typle_>::V, "Typle_ template argument must be a uniform Typle_t");
         return *reinterpret_cast<MemberArray_t<HeadType,LENGTH> *>(this);
     }
 
@@ -74,7 +74,7 @@ struct List_t
     struct Type_f
     {
         static_assert(INDEX_ < LENGTH, "attempted element access past the end of the List_t");
-        typedef typename Hippo::Element_f<Typle_,INDEX_>::T T;
+        typedef typename Element_f<Typle_,INDEX_>::T T;
     };
 
     // returns the INDEXth element of this List_t
@@ -96,7 +96,7 @@ struct List_t
     struct RangeType_f
     {
         static_assert(END_INDEX_ <= LENGTH, "attempted element access past the end of the List_t");
-        typedef List_t<typename Hippo::TypleRange_f<Typle_,START_INDEX_,END_INDEX_>::T> T;
+        typedef List_t<typename TypleRange_f<Typle_,START_INDEX_,END_INDEX_>::T> T;
     };
 
     // returns the List_t which is the given range of elements
@@ -121,7 +121,7 @@ struct List_t
     struct LeadingListType_f
     {
         static_assert(END_INDEX_ <= LENGTH, "attempted element access past the end of the List_t");
-        typedef List_t<typename Hippo::LeadingTyple_f<Typle_,END_INDEX_>::T> T;
+        typedef List_t<typename LeadingTyple_f<Typle_,END_INDEX_>::T> T;
     };
 
     // returns the leading List_t ending at the INDEXth element.
@@ -145,7 +145,7 @@ struct List_t
     struct TrailingListType_f
     {
         static_assert(START_INDEX_ <= LENGTH, "attempted element access past the end of the List_t");
-        typedef List_t<typename Hippo::TrailingTyple_f<Typle_,START_INDEX_>::T> T;
+        typedef List_t<typename TrailingTyple_f<Typle_,START_INDEX_>::T> T;
     };
 
     // returns the trailing List_t starting at the INDEXth element
@@ -213,7 +213,7 @@ struct List_t<Typle_t<>>
     struct Type_f
     {
         static_assert(INDEX_ < LENGTH, "attempted element access past the end of the List_t");
-        typedef typename Hippo::Element_f<Typle,INDEX_>::T T;
+        typedef typename Element_f<Typle,INDEX_>::T T;
     };
 
     template <Uint32 INDEX_>
@@ -234,7 +234,7 @@ struct List_t<Typle_t<>>
     struct RangeType_f
     {
         static_assert(END_INDEX_ <= LENGTH, "attempted element access past the end of the List_t");
-        typedef List_t<typename Hippo::TypleRange_f<Typle,START_INDEX_,END_INDEX_>::T> T;
+        typedef List_t<typename TypleRange_f<Typle,START_INDEX_,END_INDEX_>::T> T;
     };
 
     // returns the List_t which is the given range of elements
@@ -259,7 +259,7 @@ struct List_t<Typle_t<>>
     struct LeadingListType_f
     {
         static_assert(END_INDEX_ <= LENGTH, "attempted element access past the end of the List_t");
-        typedef List_t<typename Hippo::LeadingTyple_f<Typle,END_INDEX_>::T> T;
+        typedef List_t<typename LeadingTyple_f<Typle,END_INDEX_>::T> T;
     };
 
     // returns the leading List_t ending at the END_INDEX_th element.
@@ -358,7 +358,7 @@ struct List_t<Typle_t<HeadType_>>
     template <Uint32 INDEX_>
     struct Type_f
     {
-        typedef typename Hippo::Element_f<Typle,INDEX_>::T T;
+        typedef typename Element_f<Typle,INDEX_>::T T;
     };
 
     template <Uint32 INDEX_>
@@ -379,7 +379,7 @@ struct List_t<Typle_t<HeadType_>>
     struct RangeType_f
     {
         static_assert(END_INDEX_ <= LENGTH, "attempted element access past the end of the List_t");
-        typedef List_t<typename Hippo::TypleRange_f<Typle,START_INDEX_,END_INDEX_>::T> T;
+        typedef List_t<typename TypleRange_f<Typle,START_INDEX_,END_INDEX_>::T> T;
     };
 
     // returns the List_t which is the given range of elements
@@ -404,7 +404,7 @@ struct List_t<Typle_t<HeadType_>>
     struct LeadingListType_f
     {
         static_assert(END_INDEX_ <= LENGTH, "attempted element access past the end of the List_t");
-        typedef List_t<typename Hippo::LeadingTyple_f<Typle,END_INDEX_>::T> T;
+        typedef List_t<typename LeadingTyple_f<Typle,END_INDEX_>::T> T;
     };
 
     // returns the leading List_t ending at the END_INDEX_th element.
@@ -428,7 +428,7 @@ struct List_t<Typle_t<HeadType_>>
     struct TrailingListType_f
     {
         static_assert(START_INDEX_ <= LENGTH, "attempted element access past the end of the List_t");
-        typedef List_t<typename Hippo::TrailingTyple_f<Typle,START_INDEX_>::T> T;
+        typedef List_t<typename TrailingTyple_f<Typle,START_INDEX_>::T> T;
     };
 
     // returns the trailing List_t starting at the START_INDEX_th element
@@ -478,25 +478,25 @@ std::ostream &operator << (std::ostream &out, List_t<Typle_> const &l)
 template <typename Typle_, Uint32 INDEX_>
 struct ListElement_t
 {
-    static_assert(INDEX_ < Hippo::Length_f<Typle_>::V, "attempted element access past the end of the List_t");
+    static_assert(INDEX_ < Length_f<Typle_>::V, "attempted element access past the end of the List_t");
     typedef List_t<Typle_> List;
-    typedef typename Hippo::Element_f<Typle_,INDEX_>::T ValueType;
+    typedef typename Element_f<Typle_,INDEX_>::T ValueType;
     static ValueType const &el (List const &list)
     {
-        return ListElement_t<typename Hippo::BodyTyple_f<Typle_>::T,INDEX_-1>::el(list.body());
+        return ListElement_t<typename BodyTyple_f<Typle_>::T,INDEX_-1>::el(list.body());
     }
     static ValueType &el (List &list)
     {
-        return ListElement_t<typename Hippo::BodyTyple_f<Typle_>::T,INDEX_-1>::el(list.body());
+        return ListElement_t<typename BodyTyple_f<Typle_>::T,INDEX_-1>::el(list.body());
     }
 };
 
 template <typename Typle_>
 struct ListElement_t<Typle_,0>
 {
-    static_assert(0 < Hippo::Length_f<Typle_>::V, "attempted element access past the end of the List_t");
+    static_assert(0 < Length_f<Typle_>::V, "attempted element access past the end of the List_t");
     typedef List_t<Typle_> List;
-    typedef typename Hippo::Element_f<Typle_,0>::T ValueType;
+    typedef typename Element_f<Typle_,0>::T ValueType;
     static ValueType const &el (List const &list) { return list.head(); }
     static ValueType &el (List &list) { return list.head(); }
 };
@@ -507,15 +507,15 @@ struct ListHelper_t
 {
     static_assert(INDEX_ > 0, "attempted element access past the end of the List_t");
     typedef List_t<Typle_> List;
-    typedef List_t<typename Hippo::LeadingTyple_f<Typle_,INDEX_>::T> LeadingListType;
-    typedef List_t<typename Hippo::TrailingTyple_f<Typle_,INDEX_>::T> TrailingListType;
+    typedef List_t<typename LeadingTyple_f<Typle_,INDEX_>::T> LeadingListType;
+    typedef List_t<typename TrailingTyple_f<Typle_,INDEX_>::T> TrailingListType;
     static TrailingListType const &trailing_list (List const &list)
     {
-        return ListHelper_t<typename Hippo::BodyTyple_f<Typle_>::T,INDEX_-1>::trailing_list(list.body());
+        return ListHelper_t<typename BodyTyple_f<Typle_>::T,INDEX_-1>::trailing_list(list.body());
     }
     static TrailingListType &trailing_list (List &list)
     {
-        return ListHelper_t<typename Hippo::BodyTyple_f<Typle_>::T,INDEX_-1>::trailing_list(list.body());
+        return ListHelper_t<typename BodyTyple_f<Typle_>::T,INDEX_-1>::trailing_list(list.body());
     }
 };
 
@@ -535,7 +535,7 @@ struct ListHelper_t<Typle_,0>
 template <typename Type_, Uint32 LENGTH_>
 struct UniformListOfLength_f
 {
-    typedef List_t<typename Hippo::UniformTypleOfLength_f<LENGTH_,Type_>::T> T;
+    typedef List_t<typename UniformTypleOfLength_f<LENGTH_,Type_>::T> T;
 private:
     UniformListOfLength_f();
 };
@@ -549,10 +549,10 @@ inline List_t<Typle_t<HeadType_> > operator >>= (HeadType_ const &head, List_t<T
 }
 
 // tack an element onto the beginning of a list (catch-all case)
-template <typename HeadType_, typename... BodyTypes_>
-inline List_t<Typle_t<HeadType_,BodyTypes_...>> operator >>= (HeadType_ const &head, List_t<Typle_t<BodyTypes_...>> const &body)
+template <typename HeadType_, typename BodyTyple_>
+inline List_t<typename HeadBodyTyple_f<HeadType_,BodyTyple_>::T> operator >>= (HeadType_ const &head, List_t<BodyTyple_> const &body)
 {
-    return List_t<Typle_t<HeadType_,BodyTypes_...>>(head, body);
+    return List_t<typename HeadBodyTyple_f<HeadType_,BodyTyple_>::T>(head, body);
 }
 
 
@@ -582,10 +582,10 @@ List_t<Typle_> operator | (EmptyList const &, List_t<Typle_> const &rhs)
 // tuple(1, 2, 3) | tuple(4, 5, 6) | tuple(7, 8, 9)
 // to get the 9-tuple (1, 2, 3, 4, 5, 6, 7, 8, 9) without having to make a 9-tuple function explicitly.
 template <typename Lhs_Typle_, typename Rhs_Typle_>
-List_t<typename Hippo::Concat2Typles_f<Lhs_Typle_,Rhs_Typle_>::T>
+List_t<typename Concat2Typles_f<Lhs_Typle_,Rhs_Typle_>::T>
     operator | (List_t<Lhs_Typle_> const &lhs, List_t<Rhs_Typle_> const &rhs)
 {
-    return List_t<typename Hippo::Concat2Typles_f<Lhs_Typle_,Rhs_Typle_>::T>(lhs.head(), lhs.body() | rhs);
+    return List_t<typename Concat2Typles_f<Lhs_Typle_,Rhs_Typle_>::T>(lhs.head(), lhs.body() | rhs);
 }
 
 } // end of namespace Tenh

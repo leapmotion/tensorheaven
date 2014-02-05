@@ -21,9 +21,9 @@ template <typename SummandTyple_, Uint32 N>
 struct OffsetForComponent_f
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM((Hippo::Length_f<SummandTyple_>::V > N), ATTEMPTED_ACCESS_PAST_LIST_END) };
+    enum { STATIC_ASSERT_IN_ENUM((Length_f<SummandTyple_>::V > N), ATTEMPTED_ACCESS_PAST_LIST_END) };
 public:
-    static const Uint32 V = DimensionOf_f<typename Hippo::Head_f<SummandTyple_>::T>::V + OffsetForComponent_f<typename Hippo::BodyTyple_f<SummandTyple_>::T, N-1>::V;
+    static const Uint32 V = DimensionOf_f<typename Head_f<SummandTyple_>::T>::V + OffsetForComponent_f<typename BodyTyple_f<SummandTyple_>::T, N-1>::V;
 };
 
 template <typename SummandTyple_>
@@ -41,9 +41,9 @@ inline Uint32 component_for_offset (Typle_t<> const &, Uint32 offset)
 template <typename SummandTyple_>
 Uint32 component_for_offset (SummandTyple_ const &, Uint32 offset)
 {
-    STATIC_ASSERT((Hippo::Length_f<SummandTyple_>::V > 0), LENGTH_MUST_BE_POSITIVE);
-    typedef typename Hippo::Head_f<SummandTyple_>::T HeadSummand;
-    typedef typename Hippo::BodyTyple_f<SummandTyple_>::T BodySummand;
+    STATIC_ASSERT((Length_f<SummandTyple_>::V > 0), LENGTH_MUST_BE_POSITIVE);
+    typedef typename Head_f<SummandTyple_>::T HeadSummand;
+    typedef typename BodyTyple_f<SummandTyple_>::T BodySummand;
     if (offset < DimensionOf_f<HeadSummand>::V)
         return 0;
     else
@@ -197,11 +197,11 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,
     struct ElementType_f
     {
     private:
-        enum { STATIC_ASSERT_IN_ENUM((Hippo::Length_f<SummandTyple_>::V > N_), ATTEMPTED_ACCESS_PAST_LIST_END) };
+        enum { STATIC_ASSERT_IN_ENUM((Length_f<SummandTyple_>::V > N_), ATTEMPTED_ACCESS_PAST_LIST_END) };
         static bool const ELEMENT_COMPONENTS_ARE_CONST = FORCE_CONST_ ||
                                                          ComponentQualifierOfArrayType_f<UseArrayType_>::V == COMPONENTS_ARE_CONST_MEMORY;
     public:
-        typedef ImplementationOf_t<typename Hippo::Element_f<SummandTyple_,N_>::T,
+        typedef ImplementationOf_t<typename Element_f<SummandTyple_,N_>::T,
                                    Scalar_,
                                    typename If_f<IsUseProceduralArray_f<UseArrayType_>::V,
                                                  UseArrayType_,
@@ -211,27 +211,27 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,
     template <Uint32 N_>
     typename ElementType_f<N_,false>::T el ()
     {
-        STATIC_ASSERT((Hippo::Length_f<SummandTyple_>::V > N_), ATTEMPTED_ACCESS_PAST_LIST_END);
+        STATIC_ASSERT((Length_f<SummandTyple_>::V > N_), ATTEMPTED_ACCESS_PAST_LIST_END);
         return typename ElementType_f<N_,false>::T(pointer_to_allocation() + OffsetForComponent_f<SummandTyple_,N_>::V);
     }
 
     template <Uint32 N_>
     typename ElementType_f<N_,true>::T el () const
     {
-        STATIC_ASSERT((Hippo::Length_f<SummandTyple_>::V > N_), ATTEMPTED_ACCESS_PAST_LIST_END);
+        STATIC_ASSERT((Length_f<SummandTyple_>::V > N_), ATTEMPTED_ACCESS_PAST_LIST_END);
         return typename ElementType_f<N_,true>::T(pointer_to_allocation() + OffsetForComponent_f<SummandTyple_,N_>::V);
     }
 
     typename ElementType_f<0,false>::T el (Uint32 n)
     {
-        STATIC_ASSERT(Hippo::TypleIsUniform_f<SummandTyple_>::V, TYPLE_MUST_BE_UNIFORM);
-        return typename ElementType_f<0,false>::T(pointer_to_allocation() + DimensionOf_f<typename Hippo::Head_f<SummandTyple_>::T>::V * n);
+        STATIC_ASSERT(TypleIsUniform_f<SummandTyple_>::V, TYPLE_MUST_BE_UNIFORM);
+        return typename ElementType_f<0,false>::T(pointer_to_allocation() + DimensionOf_f<typename Head_f<SummandTyple_>::T>::V * n);
     }
 
     typename ElementType_f<0,true>::T el (Uint32 n) const
     {
-        STATIC_ASSERT(Hippo::TypleIsUniform_f<SummandTyple_>::V, TYPLE_MUST_BE_UNIFORM);
-        return typename ElementType_f<0,true>::T(pointer_to_allocation() + DimensionOf_f<typename Hippo::Head_f<SummandTyple_>::T>::V * n);
+        STATIC_ASSERT(TypleIsUniform_f<SummandTyple_>::V, TYPLE_MUST_BE_UNIFORM);
+        return typename ElementType_f<0,true>::T(pointer_to_allocation() + DimensionOf_f<typename Head_f<SummandTyple_>::T>::V * n);
     }
 
     // These versions of el<...> are intended to allow use like el<n>(i) rather than the more clunky el<n>()(i) to get an indexed expression.
@@ -276,11 +276,11 @@ private:
     typedef typename ConceptOfEachTypeIn_f<Procedural2TensorImplementationTyple_>::T ConceptTyple;
     enum
     {
-        STATIC_ASSERT_IN_ENUM((Hippo::EachTypeSatisfies_f<ConceptTyple,IsTensorProductOfBasedVectorSpaces_e>::V
+        STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<ConceptTyple,IsTensorProductOfBasedVectorSpaces_e>::V
                                ||
-                               Hippo::EachTypeSatisfies_f<ConceptTyple,IsDiagonal2TensorProductOfBasedVectorSpaces_e>::V
+                               EachTypeSatisfies_f<ConceptTyple,IsDiagonal2TensorProductOfBasedVectorSpaces_e>::V
                                ||
-                               Hippo::EachTypeSatisfies_f<ConceptTyple,IsScalar2TensorProductOfBasedVectorSpaces_e>::V),
+                               EachTypeSatisfies_f<ConceptTyple,IsScalar2TensorProductOfBasedVectorSpaces_e>::V),
                               MUST_BE_TYPLE_OF_SCALAR_OR_DIAGONAL_OR_2_TENSORS)
     };
     typedef typename FactorNOfEachTypeIn_f<0,ConceptTyple>::T SummandTyple0;
@@ -303,14 +303,14 @@ struct DirectSumOf2TensorsHelper_t
     typedef typename ConceptualTypeOfDirectSumOfProcedural2Tensors_f<Procedural2TensorImplementationTyple_>::T ConceptualTypeOfDirectSum;
     enum { STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<ConceptualTypeOfDirectSum_,ConceptualTypeOfDirectSum>::V), TYPES_MUST_BE_EQUAL) };
     typedef typename FactorTypleOf_f<ConceptualTypeOfDirectSum_>::T FactorTyple;
-    typedef typename Hippo::Element_f<FactorTyple,0>::T Factor0;
-    typedef typename Hippo::Element_f<FactorTyple,1>::T Factor1;
+    typedef typename Element_f<FactorTyple,0>::T Factor0;
+    typedef typename Element_f<FactorTyple,1>::T Factor1;
     typedef typename ImplementationOf_t<ConceptualTypeOfDirectSum_,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> >::MultiIndex MultiIndex;
     enum { STATIC_ASSERT_IN_ENUM((MultiIndex::LENGTH == 2), LENGTH_MUST_BE_EXACTLY_2) };
-    typedef typename Hippo::Head_f<Procedural2TensorImplementationTyple_>::T HeadImplementation;
+    typedef typename Head_f<Procedural2TensorImplementationTyple_>::T HeadImplementation;
     typedef typename FactorTypleOf_f<typename HeadImplementation::Concept>::T HeadFactorTyple;
-    typedef typename Hippo::Element_f<HeadFactorTyple,0>::T HeadFactor0;
-    typedef typename Hippo::Element_f<HeadFactorTyple,1>::T HeadFactor1;
+    typedef typename Element_f<HeadFactorTyple,0>::T HeadFactor0;
+    typedef typename Element_f<HeadFactorTyple,1>::T HeadFactor1;
 
     static Scalar_ evaluate (ComponentIndex_t<DimensionOf_f<ConceptualTypeOfDirectSum_>::V> const &i)
     {
@@ -336,7 +336,7 @@ struct DirectSumOf2TensorsHelper_t
         }
         else // body block
         {
-            typedef typename Hippo::BodyTyple_f<Procedural2TensorImplementationTyple_>::T Procedural2TensorImplementationBodyTyple;
+            typedef typename BodyTyple_f<Procedural2TensorImplementationTyple_>::T Procedural2TensorImplementationBodyTyple;
             typedef typename ConceptualTypeOfDirectSumOfProcedural2Tensors_f<Procedural2TensorImplementationBodyTyple>::T ConceptualTypeOfDirectSumBody;
             typedef DirectSumOf2TensorsHelper_t<Procedural2TensorImplementationBodyTyple,
                                                 ConceptualTypeOfDirectSumBody,
@@ -392,11 +392,11 @@ private:
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM(Hippo::TypleIsUniform_f<ScalarTyple>::V, ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
+        STATIC_ASSERT_IN_ENUM(TypleIsUniform_f<ScalarTyple>::V, ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
         STATIC_ASSERT_IN_ENUM((EachTypeUsesProceduralArray_f<Procedural2TensorImplementationTyple_>::V), MUST_BE_TYPLE_OF_PROCEDURAL_IMPLEMENTATIONS)
     };
 
-    typedef typename Hippo::Head_f<ScalarTyple>::T Scalar;
+    typedef typename Head_f<ScalarTyple>::T Scalar;
     typedef ComponentGenerator_t<Scalar,
                                  DimensionOf_f<ConceptualTypeOfDirectSum>::V,
                                  ComponentGeneratorEvaluator::direct_sum_of_2tensors<Procedural2TensorImplementationTyple_,

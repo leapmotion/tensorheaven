@@ -118,13 +118,13 @@ private:
 template <typename Typle_>
 struct AllTypesHaveBasisStructures_f // TEMP
 {
-    static bool const V = Hippo::And_f<typename Hippo::OnEach_f<Typle_,HasBasisStructure_e>::T>::V;
+    static bool const V = And_f<typename OnEach_f<Typle_,HasBasisStructure_e>::T>::V;
 };
 
 template <typename Typle_>
 struct AllTypesHaveUniqueBasisStructures_f
 {
-    static bool const V = Hippo::And_f<typename Hippo::OnEach_f<Typle_,HasUniqueBasisStructure_e>::T>::V;
+    static bool const V = And_f<typename OnEach_f<Typle_,HasUniqueBasisStructure_e>::T>::V;
 };
 
 MAKE_1_ARY_VALUE_EVALUATOR(AllTypesHaveUniqueBasisStructures, bool);
@@ -134,8 +134,8 @@ MAKE_1_ARY_VALUE_EVALUATOR(AllTypesHaveUniqueBasisStructures, bool);
 template <typename SummandTyple_>
 struct AllFactorsAreBases_f
 {
-    static bool const V = HasBasisStructure_f<typename Hippo::Head_f<SummandTyple_>::T>::V &&
-                          AllFactorsAreBases_f<typename Hippo::BodyTyple_f<SummandTyple_>::T>::V;
+    static bool const V = HasBasisStructure_f<typename Head_f<SummandTyple_>::T>::V &&
+                          AllFactorsAreBases_f<typename BodyTyple_f<SummandTyple_>::T>::V;
 private:
     AllFactorsAreBases_f();
 };
@@ -152,8 +152,8 @@ private:
 template <typename Typle_>
 struct IdsOfTyple_f
 {
-    typedef typename Hippo::HeadBodyTyple_f<typename Hippo::Head_f<Typle_>::T::Id,
-                                            typename IdsOfTyple_f<typename Hippo::BodyTyple_f<Typle_>::T>::T>::T T;
+    typedef typename HeadBodyTyple_f<typename Head_f<Typle_>::T::Id,
+                                     typename IdsOfTyple_f<typename BodyTyple_f<Typle_>::T>::T>::T T;
 private:
     IdsOfTyple_f();
 };

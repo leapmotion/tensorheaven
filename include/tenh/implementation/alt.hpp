@@ -39,11 +39,11 @@ Scalar_ alt (ComponentIndex_t<COMPONENT_COUNT_> const &i)
 
     typedef typename BootstrappingImplementation::MultiIndex MultiIndex;
     typedef typename MultiIndex::IndexTyple IndexTyple;
-    STATIC_ASSERT(Hippo::Length_f<IndexTyple>::V == 2, LENGTH_MUST_BE_EXACTLY_2);
+    STATIC_ASSERT(Length_f<IndexTyple>::V == 2, LENGTH_MUST_BE_EXACTLY_2);
     MultiIndex m(BootstrappingImplementation::template bundle_index_map<IndexTyple,ComponentIndex>(i));
 
     typedef typename Factor1BootstrappingImplementation::MultiIndex::IndexTyple Factor1IndexTyple;
-    STATIC_ASSERT(Hippo::Length_f<Factor1IndexTyple>::V == ORDER_, LENGTHS_MUST_BE_EQUAL);
+    STATIC_ASSERT(Length_f<Factor1IndexTyple>::V == ORDER_, LENGTHS_MUST_BE_EQUAL);
     typedef MultiIndex_t<Factor1IndexTyple> TensorPowerMultiIndex;
     typedef typename Factor1BootstrappingImplementation::ComponentIndex TensorPowerComponentIndex;
     TensorPowerMultiIndex m1(Factor1BootstrappingImplementation::template bundle_index_map<Factor1IndexTyple,TensorPowerComponentIndex>(m.template el<1>()));

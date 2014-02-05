@@ -7,7 +7,7 @@
 void test_multiindex_sort ()
 {
     typedef ComponentIndex_t<5> C;
-    typedef Hippo::UniformTypleOfLength_f<3,C>::T IndexTyple;
+    typedef UniformTypleOfLength_f<3,C>::T IndexTyple;
     typedef MultiIndex_t<IndexTyple> MultiIndex;
 
     MultiIndex m; // default constructor uses default constructor of each component
@@ -25,7 +25,7 @@ void test_multiindex_sort ()
 void test_multiindex_sort_2 ()
 {
     typedef ComponentIndex_t<5> C;
-    typedef Hippo::UniformTypleOfLength_f<1,C>::T IndexTyple;
+    typedef UniformTypleOfLength_f<1,C>::T IndexTyple;
     typedef MultiIndex_t<IndexTyple> MultiIndex;
 
     MultiIndex m; // default constructor uses default constructor of each component

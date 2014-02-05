@@ -33,7 +33,7 @@ struct TensorProduct_c
     typedef Typle_t<> ParentTyple;
 
     typedef FactorTyple_ FactorTyple;
-    static Uint32 const ORDER = Hippo::Length_f<FactorTyple>::V;
+    static Uint32 const ORDER = Length_f<FactorTyple>::V;
 
     static std::string type_as_string ()
     {
@@ -86,7 +86,7 @@ struct TensorPowerFactor; // could this be a forward declaration? Looks like yes
 template <typename FactorTyple_>
 struct BaseProperty_f<TensorProduct_c<FactorTyple_>,Order>
 {
-    typedef Value_t<Uint32,Hippo::Length_f<FactorTyple_>::V> T;
+    typedef Value_t<Uint32,Length_f<FactorTyple_>::V> T;
 private:
     BaseProperty_f();
 };
@@ -104,12 +104,12 @@ template <typename FactorTyple_>
 struct BaseProperty_f<TensorProduct_c<FactorTyple_>,TensorPowerFactor>
 {
 private:
-    static bool const THERE_IS_A_UNIQUE_FACTOR = Hippo::Length_f<FactorTyple_>::V >= 1 &&
-                                                 Hippo::TypleIsUniform_f<FactorTyple_>::V;
+    static bool const THERE_IS_A_UNIQUE_FACTOR = Length_f<FactorTyple_>::V >= 1 &&
+                                                 TypleIsUniform_f<FactorTyple_>::V;
     BaseProperty_f();
 public:
     typedef typename If_f<THERE_IS_A_UNIQUE_FACTOR,
-                          typename Hippo::Head_f<FactorTyple_>::T,
+                          typename Head_f<FactorTyple_>::T,
                           NullValue>::T T;
 };
 
@@ -147,7 +147,7 @@ struct TensorProductOfVectorSpaces_c
     static_assert(AllTypesHaveSameScalarField_f<FactorTyple_>::V, "all factor vector spaces must have the same scalar field");
 private:
     typedef TensorProduct_c<FactorTyple_> As_TensorProduct;
-    typedef VectorSpace_c<typename ScalarFieldOf_f<typename Hippo::Head_f<FactorTyple_>::T>::T,
+    typedef VectorSpace_c<typename ScalarFieldOf_f<typename Head_f<FactorTyple_>::T>::T,
                           ProductOfDimensions_f<FactorTyple_>::V,
                           TensorProduct_c<typename IdsOfTyple_f<FactorTyple_>::T> > As_VectorSpace;
     typedef EmbeddableInTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_c> As_EmbeddableInTensorProductOfVectorSpaces;
@@ -382,7 +382,7 @@ private:
 template <Uint32 ORDER_, typename Factor_>
 struct TensorPower_f
 {
-    typedef TensorProduct_c<typename Hippo::UniformTypleOfLength_f<ORDER_,Factor_>::T> T;
+    typedef TensorProduct_c<typename UniformTypleOfLength_f<ORDER_,Factor_>::T> T;
 private:
     TensorPower_f();
 };
@@ -392,7 +392,7 @@ struct TensorPowerOfVectorSpace_f
 {
     static_assert(HasVectorSpaceStructure_f<Factor_>::V, "Factor_ must be a vector space");
     static_assert(IS_VECTOR_SPACE_UNIQUELY(Factor_), "Factor_ must have a unique vector space structure");
-    typedef TensorProductOfVectorSpaces_c<typename Hippo::UniformTypleOfLength_f<ORDER_,Factor_>::T> T;
+    typedef TensorProductOfVectorSpaces_c<typename UniformTypleOfLength_f<ORDER_,Factor_>::T> T;
 private:
     TensorPowerOfVectorSpace_f();
 };
@@ -402,7 +402,7 @@ struct TensorPowerOfBasedVectorSpace_f
 {
     static_assert(HasBasedVectorSpaceStructure_f<Factor_>::V, "Factor_ must be a based vector space");
     static_assert(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), "Factor_ must have a unique based vector space structure");
-    typedef TensorProductOfBasedVectorSpaces_c<typename Hippo::UniformTypleOfLength_f<ORDER_,Factor_>::T> T;
+    typedef TensorProductOfBasedVectorSpaces_c<typename UniformTypleOfLength_f<ORDER_,Factor_>::T> T;
 private:
     TensorPowerOfBasedVectorSpace_f();
 };
@@ -425,19 +425,19 @@ typename std::enable_if<(IS_BASED_VECTOR_SPACE_UNIQUELY(LhsBasedVectorSpace_) &&
 }
 
 template <typename FactorTyple_, typename BasedVectorSpace_>
-TensorProductOfBasedVectorSpaces_c<typename Hippo::Concat2Typles_f<FactorTyple_,
+TensorProductOfBasedVectorSpaces_c<typename Concat2Typles_f<FactorTyple_,
                                                                    Typle_t<BasedVectorSpace_> >::T>
     operator * (TensorProductOfBasedVectorSpaces_c<FactorTyple_> const &, BasedVectorSpace_ const &)
 {
-    return TensorProductOfBasedVectorSpaces_c<typename Hippo::Concat2Typles_f<FactorTyple_,
+    return TensorProductOfBasedVectorSpaces_c<typename Concat2Typles_f<FactorTyple_,
                                                                               Typle_t<BasedVectorSpace_> >::T>();
 }
 
 template <typename FactorTyple_, typename BasedVectorSpace_>
-TensorProductOfBasedVectorSpaces_c<typename Hippo::HeadBodyTyple_f<BasedVectorSpace_,FactorTyple_>::T>
+TensorProductOfBasedVectorSpaces_c<typename HeadBodyTyple_f<BasedVectorSpace_,FactorTyple_>::T>
     operator * (BasedVectorSpace_ const &, TensorProductOfBasedVectorSpaces_c<FactorTyple_> const &)
 {
-    return TensorProductOfBasedVectorSpaces_c<typename Hippo::HeadBodyTyple_f<BasedVectorSpace_,FactorTyple_>::T>();
+    return TensorProductOfBasedVectorSpaces_c<typename HeadBodyTyple_f<BasedVectorSpace_,FactorTyple_>::T>();
 }
 
 template <typename LhsFactorTyple_, typename RhsFactorTyple_>

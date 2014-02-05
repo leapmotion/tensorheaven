@@ -217,7 +217,7 @@ private:
 template <typename Typle_>
 struct AllTypesHaveUniqueVectorSpaceStructures_f
 {
-    static bool const V = Hippo::And_f<typename Hippo::OnEach_f<Typle_,HasUniqueVectorSpaceStructure_e>::T>::V;
+    static bool const V = And_f<typename OnEach_f<Typle_,HasUniqueVectorSpaceStructure_e>::T>::V;
 private:
     AllTypesHaveUniqueVectorSpaceStructures_f ();
 };
@@ -225,7 +225,7 @@ private:
 template <typename Typle_>
 struct AllTypesHaveUniqueBasedVectorSpaceStructures_f
 {
-    static bool const V = Hippo::And_f<typename Hippo::OnEach_f<Typle_,HasUniqueBasedVectorSpaceStructure_e>::T>::V;
+    static bool const V = And_f<typename OnEach_f<Typle_,HasUniqueBasedVectorSpaceStructure_e>::T>::V;
 private:
     AllTypesHaveUniqueBasedVectorSpaceStructures_f ();
 };
@@ -233,7 +233,7 @@ private:
 template <typename Typle_>
 struct AllTypesHaveSameScalarField_f
 {
-    static bool const V = Hippo::TypleIsUniform_f<typename Hippo::OnEach_f<Typle_,ScalarFieldOf_e>::T>::V;
+    static bool const V = TypleIsUniform_f<typename OnEach_f<Typle_,ScalarFieldOf_e>::T>::V;
 private:
     AllTypesHaveSameScalarField_f ();
 };
@@ -241,7 +241,7 @@ private:
 template <typename Typle_>
 struct SumOfDimensions_f
 {
-    static Uint32 const V = Hippo::Sum_f<typename Hippo::OnEach_f<Typle_,DimensionOf_e>::T,Uint32>::V;
+    static Uint32 const V = Sum_f<typename OnEach_f<Typle_,DimensionOf_e>::T,Uint32>::V;
 private:
     SumOfDimensions_f ();
 };
@@ -249,7 +249,7 @@ private:
 template <typename Typle_>
 struct ProductOfDimensions_f
 {
-    static Uint32 const V = Hippo::Product_f<typename Hippo::OnEach_f<Typle_,DimensionOf_e>::T,Uint32>::V;
+    static Uint32 const V = Product_f<typename OnEach_f<Typle_,DimensionOf_e>::T,Uint32>::V;
 private:
     ProductOfDimensions_f ();
 };

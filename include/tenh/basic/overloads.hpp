@@ -53,7 +53,7 @@ template <typename ExpressionTemplate_, typename FreeDimIndexTyple_, Uint32 FREE
 struct UniformlyIndexedExpressionTemplate_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_>,FREE_INDEX_COUNT_>
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM(Hippo::Length_f<FreeDimIndexTyple_>::V == FREE_INDEX_COUNT_, LENGTHS_MUST_BE_EQUAL) };
+    enum { STATIC_ASSERT_IN_ENUM(Length_f<FreeDimIndexTyple_>::V == FREE_INDEX_COUNT_, LENGTHS_MUST_BE_EQUAL) };
     typedef Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_> Reindexable;
     typedef typename AbstractIndicesOfDimIndexTyple_f<FreeDimIndexTyple_>::T DomainAbstractIndexTyple;
     typedef typename UniformAbstractIndexTyple_f<FREE_INDEX_COUNT_>::T CodomainAbstractIndexTyple;
@@ -111,7 +111,7 @@ template <typename ExpressionTemplate_, typename FreeDimIndexTyple_, Uint32 FREE
 struct LhsIndexedContractionExpressionTemplate_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_>,FREE_INDEX_COUNT_>
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM(Hippo::Length_f<FreeDimIndexTyple_>::V == FREE_INDEX_COUNT_, LENGTHS_MUST_BE_EQUAL) };
+    enum { STATIC_ASSERT_IN_ENUM(Length_f<FreeDimIndexTyple_>::V == FREE_INDEX_COUNT_, LENGTHS_MUST_BE_EQUAL) };
     typedef Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_> Reindexable;
     typedef typename AbstractIndicesOfDimIndexTyple_f<FreeDimIndexTyple_>::T DomainAbstractIndexTyple;
     typedef typename LhsOfContractionAbstractIndexTyple_f<FREE_INDEX_COUNT_>::T CodomainAbstractIndexTyple;
@@ -169,7 +169,7 @@ template <typename ExpressionTemplate_, typename FreeDimIndexTyple_, Uint32 FREE
 struct RhsIndexedContractionExpressionTemplate_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_>,FREE_INDEX_COUNT_>
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM(Hippo::Length_f<FreeDimIndexTyple_>::V == FREE_INDEX_COUNT_, LENGTHS_MUST_BE_EQUAL) };
+    enum { STATIC_ASSERT_IN_ENUM(Length_f<FreeDimIndexTyple_>::V == FREE_INDEX_COUNT_, LENGTHS_MUST_BE_EQUAL) };
     typedef Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_> Reindexable;
     typedef typename AbstractIndicesOfDimIndexTyple_f<FreeDimIndexTyple_>::T DomainAbstractIndexTyple;
     typedef typename RhsOfContractionAbstractIndexTyple_f<FREE_INDEX_COUNT_>::T CodomainAbstractIndexTyple;

@@ -22,8 +22,8 @@ namespace Tenh {
 template <typename FactorTyple_>
 struct FactorComponentIndexTyple_f
 {
-    typedef typename Hippo::HeadBodyTyple_f<ComponentIndex_t<DimensionOf_f<typename Hippo::Head_f<FactorTyple_>::T>::V>,
-                                            typename FactorComponentIndexTyple_f<typename Hippo::BodyTyple_f<FactorTyple_>::T>::T>::T T;
+    typedef typename HeadBodyTyple_f<ComponentIndex_t<DimensionOf_f<typename Head_f<FactorTyple_>::T>::V>,
+                                     typename FactorComponentIndexTyple_f<typename BodyTyple_f<FactorTyple_>::T>::T>::T T;
 };
 
 template <typename HeadType_>
@@ -47,10 +47,10 @@ template <typename ParameterTyple_, typename AbstractIndexTyple_>
 struct IndexedParameterListReturnType_f
 {
 private:
-    typedef typename Hippo::Head_f<ParameterTyple_>::T HeadParameter;
-    typedef typename Hippo::BodyTyple_f<ParameterTyple_>::T BodyParameterTyple;
-    typedef typename Hippo::Head_f<AbstractIndexTyple_>::T HeadAbstractIndex;
-    typedef typename Hippo::BodyTyple_f<AbstractIndexTyple_>::T BodyAbstractIndexTyple;
+    typedef typename Head_f<ParameterTyple_>::T HeadParameter;
+    typedef typename BodyTyple_f<ParameterTyple_>::T BodyParameterTyple;
+    typedef typename Head_f<AbstractIndexTyple_>::T HeadAbstractIndex;
+    typedef typename BodyTyple_f<AbstractIndexTyple_>::T BodyAbstractIndexTyple;
     static AbstractIndexSymbol const HEAD_SYMBOL = SymbolOf_f<HeadAbstractIndex>::V;
     typedef typename HeadParameter::template IndexedExpressionConstType_f<HEAD_SYMBOL>::T LeftOperand;
     typedef typename IndexedParameterListReturnType_f<BodyParameterTyple,BodyAbstractIndexTyple>::T RightOperand;
@@ -71,8 +71,8 @@ template <typename ParameterTyple_, typename AbstractIndexTyple_>
 typename IndexedParameterListReturnType_f<ParameterTyple_,AbstractIndexTyple_>::T
     indexed_parameter_list (List_t<ParameterTyple_> const &p, AbstractIndexTyple_ const &)
 {
-    typedef typename Hippo::Head_f<AbstractIndexTyple_>::T HeadAbstractIndex;
-    typedef typename Hippo::BodyTyple_f<AbstractIndexTyple_>::T BodyAbstractIndexTyple;
+    typedef typename Head_f<AbstractIndexTyple_>::T HeadAbstractIndex;
+    typedef typename BodyTyple_f<AbstractIndexTyple_>::T BodyAbstractIndexTyple;
     return p.head()(HeadAbstractIndex())*indexed_parameter_list(p.body(), BodyAbstractIndexTyple());
 }
 
@@ -146,7 +146,7 @@ struct EmbeddableAsTensor_i
     {
         typedef Typle_t<AbstractIndexTypes_...> AbstractIndexTyple;
         // make sure that the index typle actually contains AbstractIndex_c types
-        STATIC_ASSERT((Hippo::EachTypeSatisfies_f<AbstractIndexTyple, IsAbstractIndex_e>::V), MUST_BE_TYPLE_OF_ABSTRACT_INDEX_TYPES);
+        STATIC_ASSERT((EachTypeSatisfies_f<AbstractIndexTyple, IsAbstractIndex_e>::V), MUST_BE_TYPLE_OF_ABSTRACT_INDEX_TYPES);
         AbstractIndex_c<666> dummy_index;
         return Parent_Vector_i::operator()(dummy_index).split(dummy_index, abstract_multiindex);
     }
@@ -187,8 +187,8 @@ struct EmbeddableAsTensor_i
     template <typename ParameterTyple_>
     Scalar_ operator () (List_t<ParameterTyple_> const &l) const
     {
-        STATIC_ASSERT(Hippo::Length_f<ParameterTyple_>::V == ORDER, ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
-        typedef typename AbstractIndexRangeTyple_f<Hippo::Length_f<ParameterTyple_>::V,667>::T AbstractIndexTyple;
+        STATIC_ASSERT(Length_f<ParameterTyple_>::V == ORDER, ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
+        typedef typename AbstractIndexRangeTyple_f<Length_f<ParameterTyple_>::V,667>::T AbstractIndexTyple;
         TensorProductOfBasedVectorSpaces upstairs;
         EmbeddableInTensorProductOfBasedVectorSpaces_ downstairs;
         AbstractIndex_c<'p'> p;

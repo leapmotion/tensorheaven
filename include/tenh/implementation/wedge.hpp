@@ -210,8 +210,8 @@ struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scal
 {
     static MultiIndex_t<BundleIndexTyple> compute (BundledIndex const &b)
     {
-        typedef typename Hippo::Head_f<BundleIndexTyple>::T BundleIndexHead;
-        typedef typename Hippo::BodyTyple_f<BundleIndexTyple>::T BundleIndexBodyTyple;
+        typedef typename Head_f<BundleIndexTyple>::T BundleIndexHead;
+        typedef typename BodyTyple_f<BundleIndexTyple>::T BundleIndexBodyTyple;
         return MultiIndex_t<BundleIndexTyple>(BundleIndexHead(index_of_greatest_simplicial_number_leq(b.value(),ORD), CHECK_RANGE), BundleIndexComputer_t<BundleIndexBodyTyple, BundledIndex, ORD-1>::compute(BundledIndex(b.value() - binomial_coefficient(index_of_greatest_simplicial_number_leq(b.value(),ORD), ORD), CHECK_RANGE)));
     }
 };

@@ -31,7 +31,7 @@ struct DirectSum_c
     typedef Typle_t<> ParentTyple;
 
     typedef SummandTyple_ SummandTyple;
-    static Uint32 const SUMMAND_COUNT = Hippo::Length_f<SummandTyple>::V;
+    static Uint32 const SUMMAND_COUNT = Length_f<SummandTyple>::V;
 
     static std::string type_as_string ()
     {
@@ -84,7 +84,7 @@ struct UniformDirectSumSummand;
 template <typename SummandTyple_>
 struct BaseProperty_f<DirectSum_c<SummandTyple_>,SummandCount>
 {
-    typedef Value_t<Uint32,Hippo::Length_f<SummandTyple_>::V> T;
+    typedef Value_t<Uint32,Length_f<SummandTyple_>::V> T;
 private:
     BaseProperty_f();
 };
@@ -101,12 +101,12 @@ template <typename SummandTyple_>
 struct BaseProperty_f<DirectSum_c<SummandTyple_>,UniformDirectSumSummand>
 {
 private:
-    static bool const THERE_IS_A_UNIQUE_SUMMAND = Hippo::Length_f<SummandTyple_>::V >= 1 &&
-                                                  Hippo::TypleIsUniform_f<SummandTyple_>::V;
+    static bool const THERE_IS_A_UNIQUE_SUMMAND = Length_f<SummandTyple_>::V >= 1 &&
+                                                  TypleIsUniform_f<SummandTyple_>::V;
     BaseProperty_f();
 public:
     typedef typename If_f<THERE_IS_A_UNIQUE_SUMMAND,
-                          typename Hippo::Head_f<SummandTyple_>::T,
+                          typename Head_f<SummandTyple_>::T,
                           NullValue>::T T;
 };
 
@@ -147,7 +147,7 @@ struct DirectSumOfVectorSpaces_c
     static_assert(AllTypesHaveSameScalarField_f<SummandTyple_>::V, "all summands must have the same scalar field");
 private:
     typedef DirectSum_c<SummandTyple_> As_DirectSum;
-    typedef VectorSpace_c<typename ScalarFieldOf_f<typename Hippo::Head_f<SummandTyple_>::T>::T,
+    typedef VectorSpace_c<typename ScalarFieldOf_f<typename Head_f<SummandTyple_>::T>::T,
                           SumOfDimensions_f<SummandTyple_>::V,
                           DirectSum_c<typename IdsOfTyple_f<SummandTyple_>::T>> As_VectorSpace;
 public:
@@ -390,19 +390,19 @@ typename std::enable_if<(IS_BASED_VECTOR_SPACE_UNIQUELY(LhsBasedVectorSpace_) &&
 }
 
 template <typename SummandTyple_, typename BasedVectorSpace_>
-DirectSumOfBasedVectorSpaces_c<typename Hippo::Concat2Typles_f<SummandTyple_,
+DirectSumOfBasedVectorSpaces_c<typename Concat2Typles_f<SummandTyple_,
                                                                Typle_t<BasedVectorSpace_>>::T>
     operator + (DirectSumOfBasedVectorSpaces_c<SummandTyple_> const &, BasedVectorSpace_ const &)
 {
-    return DirectSumOfBasedVectorSpaces_c<typename Hippo::Concat2Typles_f<SummandTyple_,
+    return DirectSumOfBasedVectorSpaces_c<typename Concat2Typles_f<SummandTyple_,
                                                                           Typle_t<BasedVectorSpace_>>::T>();
 }
 
 template <typename SummandTyple_, typename BasedVectorSpace_>
-DirectSumOfBasedVectorSpaces_c<typename Hippo::HeadBodyTyple_f<BasedVectorSpace_,SummandTyple_>::T>
+DirectSumOfBasedVectorSpaces_c<typename HeadBodyTyple_f<BasedVectorSpace_,SummandTyple_>::T>
     operator + (BasedVectorSpace_ const &, DirectSumOfBasedVectorSpaces_c<SummandTyple_> const &)
 {
-    return DirectSumOfBasedVectorSpaces_c<typename Hippo::HeadBodyTyple_f<BasedVectorSpace_,SummandTyple_>::T>();
+    return DirectSumOfBasedVectorSpaces_c<typename HeadBodyTyple_f<BasedVectorSpace_,SummandTyple_>::T>();
 }
 
 template <typename LhsSummandTyple_, typename RhsSummandTyple_>
@@ -422,7 +422,7 @@ DirectSumOfBasedVectorSpaces_c<Typle_t<DirectSumOfBasedVectorSpaces_c<LhsSummand
 template <Uint32 ORDER_, typename Summand_>
 struct UniformDirectSum_f
 {
-    typedef DirectSum_c<typename Hippo::UniformTypleOfLength_f<ORDER_,Summand_>::T> T;
+    typedef DirectSum_c<typename UniformTypleOfLength_f<ORDER_,Summand_>::T> T;
 private:
     UniformDirectSum_f ();
 };
@@ -431,7 +431,7 @@ template <Uint32 ORDER_, typename Summand_>
 struct UniformDirectSumOfVectorSpace_f
 {
     static_assert(IS_VECTOR_SPACE_UNIQUELY(Summand_), "Summand_ must have a unique vector space structure");
-    typedef DirectSumOfVectorSpaces_c<typename Hippo::UniformTypleOfLength_f<ORDER_,Summand_>::T> T;
+    typedef DirectSumOfVectorSpaces_c<typename UniformTypleOfLength_f<ORDER_,Summand_>::T> T;
 private:
     UniformDirectSumOfVectorSpace_f ();
 };
@@ -440,7 +440,7 @@ template <Uint32 ORDER_, typename Summand_>
 struct UniformDirectSumOfBasis_f
 {
     static_assert(IS_BASIS_UNIQUELY(Summand_), "Summand_ must have a unique basis structure");
-    typedef DirectSumOfBases_c<typename Hippo::UniformTypleOfLength_f<ORDER_,Summand_>::T> T;
+    typedef DirectSumOfBases_c<typename UniformTypleOfLength_f<ORDER_,Summand_>::T> T;
 private:
     UniformDirectSumOfBasis_f ();
 };
@@ -449,7 +449,7 @@ template <Uint32 ORDER_, typename Summand_>
 struct UniformDirectSumOfBasedVectorSpace_f
 {
     static_assert(IS_BASED_VECTOR_SPACE_UNIQUELY(Summand_), "Summand_ must have a unique based vector space structure");
-    typedef DirectSumOfBasedVectorSpaces_c<typename Hippo::UniformTypleOfLength_f<ORDER_,Summand_>::T> T;
+    typedef DirectSumOfBasedVectorSpaces_c<typename UniformTypleOfLength_f<ORDER_,Summand_>::T> T;
 private:
     UniformDirectSumOfBasedVectorSpace_f ();
 };

@@ -98,7 +98,7 @@ public:
     {
         STATIC_ASSERT(IsExpressionTemplate_f<ExpressionTemplate_>::V, MUST_BE_EXPRESSION_TEMPLATE);
         STATIC_ASSERT_TYPES_ARE_EQUAL(typename ExpressionTemplate_::FreeDimIndexTyple,FreeDimIndexTyple_);
-        STATIC_ASSERT(Hippo::Length_f<FreeDimIndexTyple_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
+        STATIC_ASSERT(Length_f<FreeDimIndexTyple_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
         AbstractIndex_c<'i'> i;
         (*this)(i) = rhs(i);
     }
@@ -127,7 +127,7 @@ struct UniformlyIndexedExpressionTemplate_f<Vector<BasedVectorSpace_,Scalar_,Use
 private:
     typedef Vector<BasedVectorSpace_,Scalar_,UseArrayType_> Vec;
     typedef typename UniformAbstractIndexTyple_f<1>::T AbstractIndexTyple;
-    static AbstractIndexSymbol const SYMBOL = SymbolOf_f<typename Hippo::Head_f<AbstractIndexTyple>::T>::V;
+    static AbstractIndexSymbol const SYMBOL = SymbolOf_f<typename Head_f<AbstractIndexTyple>::T>::V;
     UniformlyIndexedExpressionTemplate_f();
 public:
     typedef typename Vec::template IndexedExpressionConstType_f<SYMBOL>::T T;
@@ -140,7 +140,7 @@ struct LhsIndexedContractionExpressionTemplate_f<Vector<BasedVectorSpace_,Scalar
 private:
     typedef Vector<BasedVectorSpace_,Scalar_,UseArrayType_> Vec;
     typedef typename LhsOfContractionAbstractIndexTyple_f<1>::T AbstractIndexTyple;
-    static AbstractIndexSymbol const SYMBOL = SymbolOf_f<typename Hippo::Head_f<AbstractIndexTyple>::T>::V;
+    static AbstractIndexSymbol const SYMBOL = SymbolOf_f<typename Head_f<AbstractIndexTyple>::T>::V;
     LhsIndexedContractionExpressionTemplate_f();
 public:
     typedef typename Vec::template IndexedExpressionConstType_f<SYMBOL>::T T;
@@ -153,7 +153,7 @@ struct RhsIndexedContractionExpressionTemplate_f<Vector<BasedVectorSpace_,Scalar
 private:
     typedef Vector<BasedVectorSpace_,Scalar_,UseArrayType_> Vec;
     typedef typename RhsOfContractionAbstractIndexTyple_f<1>::T AbstractIndexTyple;
-    static AbstractIndexSymbol const SYMBOL = SymbolOf_f<typename Hippo::Head_f<AbstractIndexTyple>::T>::V;
+    static AbstractIndexSymbol const SYMBOL = SymbolOf_f<typename Head_f<AbstractIndexTyple>::T>::V;
     RhsIndexedContractionExpressionTemplate_f();
 public:
     typedef typename Vec::template IndexedExpressionConstType_f<SYMBOL>::T T;

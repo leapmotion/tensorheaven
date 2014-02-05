@@ -17,13 +17,13 @@
 namespace Tenh {
 
 template <typename ExpressionTemplate_, typename FreeDimIndexTyple_ = typename ExpressionTemplate_::FreeDimIndexTyple>
-struct Reindexable_t : public ExpressionOperand_i<Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_>,Hippo::Length_f<FreeDimIndexTyple_>::V>
+struct Reindexable_t : public ExpressionOperand_i<Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_>,Length_f<FreeDimIndexTyple_>::V>
 {
 private:
     enum
     {
         STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<ExpressionTemplate_>::V, MUST_BE_EXPRESSION_TEMPLATE),
-        STATIC_ASSERT_IN_ENUM((Hippo::EachTypeSatisfies_f<FreeDimIndexTyple_,IsDimIndex_e>::V), MUST_BE_TYPLE_OF_DIM_INDEX_TYPES),
+        STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<FreeDimIndexTyple_,IsDimIndex_e>::V), MUST_BE_TYPLE_OF_DIM_INDEX_TYPES),
         STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename ExpressionTemplate_::FreeDimIndexTyple,FreeDimIndexTyple_>::V), TYPES_MUST_BE_EQUAL)
     };
 
@@ -41,7 +41,7 @@ private:
 
     operator Scalar () const
     {
-        static_assert(Hippo::Length_f<typename ExpressionTemplate_::FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
+        static_assert(Length_f<typename ExpressionTemplate_::FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
         return Scalar(m_derived_expression_template);
     }
     Scalar operator [] (MultiIndex const &m) const { return m_derived_expression_template[m]; }
@@ -49,7 +49,7 @@ private:
     // for when there are no free indices
     DerivedExpressionTemplate const &operator () (Typle_t<> const &) const
     {
-        static_assert(Hippo::Length_f<typename ExpressionTemplate_::FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
+        static_assert(Length_f<typename ExpressionTemplate_::FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
         return m_derived_expression_template;
     }
 
@@ -60,7 +60,7 @@ private:
         operator () (AbstractIndex_c<SYMBOL_> const &) const
     {
         typedef typename ExpressionTemplate_::FreeDimIndexTyple FreeDimIndexTyple;
-        STATIC_ASSERT(Hippo::Length_f<FreeDimIndexTyple>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
+        STATIC_ASSERT(Length_f<FreeDimIndexTyple>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
         typedef typename AbstractIndicesOfDimIndexTyple_f<FreeDimIndexTyple>::T DomainAbstractIndexTyple;
         typedef Typle_t<AbstractIndex_c<SYMBOL_>> CodomainAbstractIndexTyple;
         return reindexed<DomainAbstractIndexTyple,CodomainAbstractIndexTyple>(m_derived_expression_template);
@@ -74,7 +74,7 @@ private:
     {
         typedef typename ExpressionTemplate_::FreeDimIndexTyple FreeDimIndexTyple;
         typedef Typle_t<AbstractIndexTypes_...> AbstractIndexTyple;
-        STATIC_ASSERT(Hippo::Length_f<FreeDimIndexTyple>::V == Hippo::Length_f<AbstractIndexTyple>::V, LENGTHS_MUST_BE_EQUAL);
+        STATIC_ASSERT(Length_f<FreeDimIndexTyple>::V == Length_f<AbstractIndexTyple>::V, LENGTHS_MUST_BE_EQUAL);
         typedef typename AbstractIndicesOfDimIndexTyple_f<FreeDimIndexTyple>::T DomainAbstractIndexTyple;
         typedef Typle_t<AbstractIndexTypes_...> CodomainAbstractIndexTyple;
         return reindexed<DomainAbstractIndexTyple,CodomainAbstractIndexTyple>(m_derived_expression_template);

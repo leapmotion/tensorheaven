@@ -309,8 +309,8 @@ int main (int argc, char **argv)
     // typedef Typle_t<Square_f,Square_f> FunctionTyple;
     // cout << FORMAT_VALUE(Tenh::type_string_of<Composition_f<FunctionTyple,Tenh::Value_t<Uint,0> >::T>()) << '\n';
 
-    typedef Tenh::Hippo::CompositionOf_e<Cube_e,PlusOne_e> AddOneThenCube_e;
-    typedef Tenh::Hippo::CompositionOf_e<PlusOne_e,Cube_e,PlusOne_e> AddOneThenCubeThenAddOne_e;
+    typedef Tenh::CompositionOf_e<Cube_e,PlusOne_e> AddOneThenCube_e;
+    typedef Tenh::CompositionOf_e<PlusOne_e,Cube_e,PlusOne_e> AddOneThenCubeThenAddOne_e;
 
     cout << FORMAT_VALUE((AddOneThenCube_e::Eval_f<Value_t<Uint,0> >::T::V)) << '\n';
     cout << FORMAT_VALUE((AddOneThenCube_e::Eval_f<Value_t<Uint,1> >::T::V)) << '\n';

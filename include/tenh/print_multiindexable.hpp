@@ -33,7 +33,7 @@ void print_multiindexable (std::ostream &out, MultiIndexable_ const &t, Typle_t<
     typedef Typle_t<Types_...> AllegedIndexTyple;
     STATIC_ASSERT_TYPES_ARE_EQUAL(typename MultiIndex::IndexTyple, AllegedIndexTyple);
     static Uint32 const ORDER = MultiIndex::LENGTH;
-    static Uint32 const COMPONENT_COUNT_OF_LAST_INDEX = Hippo::Element_f<typename MultiIndex::IndexTyple,ORDER-1>::T::COMPONENT_COUNT;
+    static Uint32 const COMPONENT_COUNT_OF_LAST_INDEX = Element_f<typename MultiIndex::IndexTyple,ORDER-1>::T::COMPONENT_COUNT;
 
     // find the maximum component length, as printed in an ostream, so that
     // the actual output can be nicely justified and look awesome.

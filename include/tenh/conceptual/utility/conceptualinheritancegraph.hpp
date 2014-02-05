@@ -214,8 +214,8 @@ void add_parent_concept_typle_to_graph_recursive (
     Graph &g)
 {
     typedef Typle_t<Types_...> ParentConceptTyple;
-    typedef typename Hippo::Head_f<ParentConceptTyple>::T ParentConceptHead;
-    typedef typename Hippo::BodyTyple_f<ParentConceptTyple>::T ParentConceptBodyTyple;
+    typedef typename Head_f<ParentConceptTyple>::T ParentConceptHead;
+    typedef typename BodyTyple_f<ParentConceptTyple>::T ParentConceptBodyTyple;
     // add the parent nodes and edges connecting concept to them
     Graph::Node concept_node(FORMAT((Pretty<TypeStringOf_t<Concept_>,SHORTIFY_DEPTH_>())),
                              FORMAT((Pretty<TypeStringOf_t<Concept_>,0>())));

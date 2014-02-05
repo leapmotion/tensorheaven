@@ -49,7 +49,7 @@ private:
 template <typename Head_, typename... BodyTypes_>
 struct DualOf_f<Typle_t<Head_,BodyTypes_...>>
 {
-    typedef typename Hippo::HeadBodyTyple_f<typename DualOf_f<Head_>::T,typename DualOf_f<Typle_t<BodyTypes_...>>::T>::T T;
+    typedef typename HeadBodyTyple_f<typename DualOf_f<Head_>::T,typename DualOf_f<Typle_t<BodyTypes_...>>::T>::T T;
 private:
     DualOf_f();
 };

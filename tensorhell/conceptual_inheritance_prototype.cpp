@@ -33,21 +33,21 @@ private:
 
     typedef Typle_t<DomainElement,CodomainElement> DomainCodomainElementPair;
 public:
-    typedef typename Hippo::HeadBodyTyple_f<DomainCodomainElementPair,
+    typedef typename HeadBodyTyple_f<DomainCodomainElementPair,
                                             typename RestOfMap::DomainCodomainElementPairTyple>::T DomainCodomainElementPairTyple;
 private:
-    typedef typename Hippo::Unzip_f<DomainCodomainElementPairTyple>::T UnzippedDomainCodomainElementPairTyple;
+    typedef typename Unzip_f<DomainCodomainElementPairTyple>::T UnzippedDomainCodomainElementPairTyple;
 public:
-    typedef typename Hippo::Element_f<UnzippedDomainCodomainElementPairTyple,0>::T DomainElementTyple;
-    typedef typename Hippo::Element_f<UnzippedDomainCodomainElementPairTyple,1>::T CodomainElementTyple;
+    typedef typename Element_f<UnzippedDomainCodomainElementPairTyple,0>::T DomainElementTyple;
+    typedef typename Element_f<UnzippedDomainCodomainElementPairTyple,1>::T CodomainElementTyple;
     // make sure that DomainElementTyple contains no duplicates (necessary for the map to be well-defined)
-    enum { __ = Assert<(Hippo::Length_f<typename Hippo::ElementsHavingMultiplicity_f<DomainElementTyple,1>::T>::V == Hippo::Length_f<DomainElementTyple>::V)>::V };
+    enum { __ = Assert<(Length_f<typename ElementsHavingMultiplicity_f<DomainElementTyple,1>::T>::V == Length_f<DomainElementTyple>::V)>::V };
 
     static std::string type_as_string () { return "Map_t( " + domain_codomain_element_pairs_as_string() + " )"; }
     static std::string domain_codomain_element_pairs_as_string ()
     {
         std::string retval('(' + type_string_of<DomainElement>() + " |-> " + type_string_of<CodomainElement>() + ')');
-        if (Hippo::Length_f<typename RestOfMap::DomainCodomainElementPairTyple>::V > 0)
+        if (Length_f<typename RestOfMap::DomainCodomainElementPairTyple>::V > 0)
             retval += ", " + RestOfMap::domain_codomain_element_pairs_as_string();
         return retval;
     }
@@ -76,10 +76,10 @@ template <typename Map, typename InputDomainElement>
 struct EvalMap_t
 {
 private:
-    enum { _ = Assert<IsMap_t<Map>::V>::V && Assert<(Hippo::Length_f<typename Map::DomainElementTyple>::V > 0)>::V };
-    static Uint32 const INDEX_OF_INPUT_DOMAIN_ELEMENT = Hippo::IndexOfFirstOccurrence_f<typename Map::DomainElementTyple,InputDomainElement>::V;
+    enum { _ = Assert<IsMap_t<Map>::V>::V && Assert<(Length_f<typename Map::DomainElementTyple>::V > 0)>::V };
+    static Uint32 const INDEX_OF_INPUT_DOMAIN_ELEMENT = IndexOfFirstOccurrence_f<typename Map::DomainElementTyple,InputDomainElement>::V;
 public:
-    typedef typename Hippo::Element_f<typename Map::CodomainElementTyple,INDEX_OF_INPUT_DOMAIN_ELEMENT>::T T;
+    typedef typename Element_f<typename Map::CodomainElementTyple,INDEX_OF_INPUT_DOMAIN_ELEMENT>::T T;
 };
 
 
@@ -88,11 +88,11 @@ public:
 template <typename DomainElementTyple, typename CodomainElementTyple, typename RestOfMap = EmptyMap>
 struct MapConstructor_f
 {
-    enum { _ = Assert<(Hippo::Length_f<DomainElementTyple>::V == Hippo::Length_f<CodomainElementTyple>::V)>::V };
-    typedef Map_t<typename Hippo::Head_f<DomainElementTyple>::T,
-                  typename Hippo::Head_f<CodomainElementTyple>::T,
-                  typename MapConstructor_f<typename Hippo::BodyTyple_f<DomainElementTyple>::T,
-                                            typename Hippo::BodyTyple_f<CodomainElementTyple>::T,
+    enum { _ = Assert<(Length_f<DomainElementTyple>::V == Length_f<CodomainElementTyple>::V)>::V };
+    typedef Map_t<typename Head_f<DomainElementTyple>::T,
+                  typename Head_f<CodomainElementTyple>::T,
+                  typename MapConstructor_f<typename BodyTyple_f<DomainElementTyple>::T,
+                                            typename BodyTyple_f<CodomainElementTyple>::T,
                                             RestOfMap>::T> T;
 };
 
@@ -107,7 +107,7 @@ struct MapConstructor_f<Typle_t<>,Typle_t<>,RestOfMap>
 template <typename Map, typename CandidateDomainElement>
 struct MapDomainContains_t
 {
-    static bool const V = Hippo::Contains_f<typename Map::DomainElementTyple,CandidateDomainElement>::V;
+    static bool const V = Contains_f<typename Map::DomainElementTyple,CandidateDomainElement>::V;
 };
 
 
@@ -115,8 +115,8 @@ struct MapDomainContains_t
 template <typename Map, typename Typle>
 struct EvalMapOnTyple_f
 {
-    typedef typename Hippo::HeadBodyTyple_f<typename EvalMap_t<Map,typename Hippo::Head_f<Typle>::T>::T,
-                                            typename EvalMapOnTyple_f<Map,typename Hippo::BodyTyple_f<Typle>::T>::T>::T T;
+    typedef typename HeadBodyTyple_f<typename EvalMap_t<Map,typename Head_f<Typle>::T>::T,
+                                     typename EvalMapOnTyple_f<Map,typename BodyTyple_f<Typle>::T>::T>::T T;
 };
 
 template <typename Map>
@@ -133,16 +133,16 @@ struct MapUnion_f
 {
 private:
     enum { _ = Assert<IsTyple_f<MapTyple>::V>::V };
-    typedef typename Hippo::Head_f<MapTyple>::T HeadMapType;
+    typedef typename Head_f<MapTyple>::T HeadMapType;
     typedef typename MapUnion_f<typename MapTyple::BodyTyple>::T MapUnionOfBodyTyple;
-    typedef typename Hippo::IntersectionAsSets_f<typename HeadMapType::DomainElementTyple,
-                                                 typename MapUnionOfBodyTyple::DomainElementTyple>::T DomainIntersectionTyple;
+    typedef typename IntersectionAsSets_f<typename HeadMapType::DomainElementTyple,
+                                          typename MapUnionOfBodyTyple::DomainElementTyple>::T DomainIntersectionTyple;
     typedef typename EvalMapOnTyple_f<HeadMapType,DomainIntersectionTyple>::T HeadMapEvaluation;
     typedef typename EvalMapOnTyple_f<MapUnionOfBodyTyple,DomainIntersectionTyple>::T MapUnionOfBodyTypleEvaluation;
     // ensure that the maps act identically on the domains' intersection.
     enum { __ = Assert<(TypesAreEqual_f<HeadMapEvaluation,MapUnionOfBodyTypleEvaluation>::V)>::V };
 
-    typedef typename Hippo::SetSubtraction_f<typename HeadMapType::DomainElementTyple,DomainIntersectionTyple>::T HeadMapTypeOnlyDomain;
+    typedef typename SetSubtraction_f<typename HeadMapType::DomainElementTyple,DomainIntersectionTyple>::T HeadMapTypeOnlyDomain;
     typedef typename EvalMapOnTyple_f<HeadMapType,HeadMapTypeOnlyDomain>::T HeadMapTypeOnlyDomainEvaluation;
 public:
     typedef typename MapConstructor_f<HeadMapTypeOnlyDomain,HeadMapTypeOnlyDomainEvaluation,MapUnionOfBodyTyple>::T T;
@@ -201,15 +201,15 @@ template <typename Concept>
 struct AncestorsOf_f
 {
     enum { _ = Assert<IsConcept_f<Concept>::V>::V };
-    typedef typename Hippo::HeadBodyTyple_f<Concept,typename AncestorsOf_Recursive_f<typename Concept::ParentTyple>::T>::T T;
+    typedef typename HeadBodyTyple_f<Concept,typename AncestorsOf_Recursive_f<typename Concept::ParentTyple>::T>::T T;
 };
 
 template <typename ParentTyple>
 struct AncestorsOf_Recursive_f
 {
     // depth-first traversal of the ancestor tree
-    typedef typename Hippo::Concat2Typles_f<typename AncestorsOf_f<typename Hippo::Head_f<ParentTyple>::T>::T,
-                                            typename AncestorsOf_Recursive_f<typename Hippo::BodyTyple_f<ParentTyple>::T>::T>::T T;
+    typedef typename Concat2Typles_f<typename AncestorsOf_f<typename Head_f<ParentTyple>::T>::T,
+                                     typename AncestorsOf_Recursive_f<typename BodyTyple_f<ParentTyple>::T>::T>::T T;
 };
 
 template <typename HeadType>
@@ -229,7 +229,7 @@ struct AncestorsOf_Recursive_f<Typle_t<>>
 template <typename Concept, typename Predicate>
 struct AncestorsSatisfyingPredicate_f
 {
-    typedef typename Hippo::ElementsOfTypleSatisfying_f<typename AncestorsOf_f<Concept>::T,Predicate>::T T;
+    typedef typename ElementsOfTypleSatisfying_f<typename AncestorsOf_f<Concept>::T,Predicate>::T T;
 };
 
 
@@ -241,17 +241,17 @@ template <typename Concept>
 struct StructureDisambiguationMapsOf_f
 {
     enum { _ = Assert<IsConcept_f<Concept>::V>::V };
-    typedef typename Hippo::HeadBodyTyple_f<typename Concept::StructureDisambiguationMap,
-                                            typename StructureDisambiguationMapsOf_Recursive_f<typename Concept::ParentTyple>::T>::T T;
+    typedef typename HeadBodyTyple_f<typename Concept::StructureDisambiguationMap,
+                                     typename StructureDisambiguationMapsOf_Recursive_f<typename Concept::ParentTyple>::T>::T T;
 };
 
 template <typename ParentTyple>
 struct StructureDisambiguationMapsOf_Recursive_f
 {
     // depth-first traversal of the ancestor tree
-    enum { _ = Assert<IsConcept_f<typename Hippo::Head_f<ParentTyple>::T>::V>::V };
-    typedef typename Hippo::Concat2Typles_f<typename StructureDisambiguationMapsOf_f<typename Hippo::Head_f<ParentTyple>::T>::T,
-                                            typename StructureDisambiguationMapsOf_Recursive_f<typename Hippo::BodyTyple_f<ParentTyple>::T>::T>::T T;
+    enum { _ = Assert<IsConcept_f<typename Head_f<ParentTyple>::T>::V>::V };
+    typedef typename Concat2Typles_f<typename StructureDisambiguationMapsOf_f<typename Head_f<ParentTyple>::T>::T,
+                                     typename StructureDisambiguationMapsOf_Recursive_f<typename BodyTyple_f<ParentTyple>::T>::T>::T T;
 };
 
 template <typename HeadType>
@@ -283,26 +283,26 @@ template <typename Concept, typename ConceptualStructurePredicate>
 struct ConceptualStructuresOf_f
 {
     enum { _ = Assert<IsConcept_f<Concept>::V>::V }; // TODO: check that ConceptualStructurePredicate actually is one
-    typedef typename Hippo::UniqueTypesIn_f<typename AncestorsSatisfyingPredicate_f<Concept,ConceptualStructurePredicate>::T>::T T;
+    typedef typename UniqueTypesIn_f<typename AncestorsSatisfyingPredicate_f<Concept,ConceptualStructurePredicate>::T>::T T;
 };
 
 template <typename Concept, typename ConceptualStructurePredicate>
 struct HasConceptualStructure_f
 {
-    static bool const V = Hippo::Length_f<typename ConceptualStructuresOf_f<Concept,ConceptualStructurePredicate>::T>::V > 0;
+    static bool const V = Length_f<typename ConceptualStructuresOf_f<Concept,ConceptualStructurePredicate>::T>::V > 0;
 };
 
 template <typename Concept, typename ConceptualStructurePredicate>
 struct HasUniqueConceptualStructure_f
 {
-    static bool const V = Hippo::Length_f<typename ConceptualStructuresOf_f<Concept,ConceptualStructurePredicate>::T>::V == 1;
+    static bool const V = Length_f<typename ConceptualStructuresOf_f<Concept,ConceptualStructurePredicate>::T>::V == 1;
 };
 
 template <typename Concept, typename ConceptualStructurePredicate>
 struct UniqueConceptualStructureOf_f
 {
     enum { _ = Assert<HasUniqueConceptualStructure_f<Concept,ConceptualStructurePredicate>::V>::V };
-    typedef typename Hippo::Head_f<typename ConceptualStructuresOf_f<Concept,ConceptualStructurePredicate>::T>::T T;
+    typedef typename Head_f<typename ConceptualStructuresOf_f<Concept,ConceptualStructurePredicate>::T>::T T;
 };
 
 // easy way to provide Concept-specific structure metafunctions

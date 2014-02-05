@@ -55,7 +55,7 @@ struct ExpressionTemplate_Eval_t
 
 //     operator Scalar () const // TODO: only use this in the no-free-index one
 //     {
-//         static_assert(Hippo::Length_f<FreeIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
+//         static_assert(Length_f<FreeIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
 //         return operator[](MultiIndex());
 //     }
 

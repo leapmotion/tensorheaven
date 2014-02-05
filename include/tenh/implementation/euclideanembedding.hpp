@@ -86,16 +86,16 @@ template <typename FactorTyple_, typename InnerProductIdTyple_, typename Scalar_
 struct EuclideanEmbeddingOfEachInTyple_f
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM(Hippo::Length_f<FactorTyple_>::V == Hippo::Length_f<InnerProductIdTyple_>::V, LENGTHS_MUST_BE_EQUAL) };
+    enum { STATIC_ASSERT_IN_ENUM(Length_f<FactorTyple_>::V == Length_f<InnerProductIdTyple_>::V, LENGTHS_MUST_BE_EQUAL) };
     EuclideanEmbeddingOfEachInTyple_f();
-    typedef typename EuclideanEmbedding_f<typename Hippo::Head_f<FactorTyple_>::T,
-                                          typename Hippo::Head_f<InnerProductIdTyple_>::T,
+    typedef typename EuclideanEmbedding_f<typename Head_f<FactorTyple_>::T,
+                                          typename Head_f<InnerProductIdTyple_>::T,
                                           Scalar_>::T HeadEuclideanEmbedding;
-    typedef typename EuclideanEmbeddingOfEachInTyple_f<typename Hippo::BodyTyple_f<FactorTyple_>::T,
-                                                       typename Hippo::BodyTyple_f<InnerProductIdTyple_>::T,
+    typedef typename EuclideanEmbeddingOfEachInTyple_f<typename BodyTyple_f<FactorTyple_>::T,
+                                                       typename BodyTyple_f<InnerProductIdTyple_>::T,
                                                        Scalar_>::T BodyEuclideanEmbeddingTyple;
 public:
-    typedef typename Hippo::HeadBodyTyple_f<HeadEuclideanEmbedding,BodyEuclideanEmbeddingTyple>::T T;
+    typedef typename HeadBodyTyple_f<HeadEuclideanEmbedding,BodyEuclideanEmbeddingTyple>::T T;
 };
 
 template <typename Scalar_>

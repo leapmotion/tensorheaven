@@ -129,8 +129,8 @@ struct Tensor_i
         operator () (Typle_t<AbstractIndexTypes_...> const &) const
     {
         typedef Typle_t<AbstractIndexTypes_...> AbstractIndexTyple;
-        STATIC_ASSERT((Hippo::EachTypeSatisfies_f<AbstractIndexTyple,IsAbstractIndex_e>::V), EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
-        STATIC_ASSERT((Hippo::Length_f<AbstractIndexTyple>::V == ORDER), ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
+        STATIC_ASSERT((EachTypeSatisfies_f<AbstractIndexTyple,IsAbstractIndex_e>::V), EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
+        STATIC_ASSERT((Length_f<AbstractIndexTyple>::V == ORDER), ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
         return typename IndexedExpressionConstType_f<AbstractIndexTyple>::T(as_derived());
     }
     template <typename... AbstractIndexTypes_>
@@ -138,8 +138,8 @@ struct Tensor_i
         operator () (Typle_t<AbstractIndexTypes_...> const &)
     {
         typedef Typle_t<AbstractIndexTypes_...> AbstractIndexTyple;
-        STATIC_ASSERT((Hippo::EachTypeSatisfies_f<AbstractIndexTyple,IsAbstractIndex_e>::V), EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
-        STATIC_ASSERT((Hippo::Length_f<AbstractIndexTyple>::V == ORDER), ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
+        STATIC_ASSERT((EachTypeSatisfies_f<AbstractIndexTyple,IsAbstractIndex_e>::V), EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
+        STATIC_ASSERT((Length_f<AbstractIndexTyple>::V == ORDER), ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
         return typename IndexedExpressionNonConstType_f<AbstractIndexTyple>::T(as_derived());
     }
 

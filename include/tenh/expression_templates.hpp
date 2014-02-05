@@ -53,8 +53,8 @@ struct ExpressionTemplate_IndexedObject_t
     {
         // TODO: assert that Object is NOT an expression template (it could be e.g. an IndexBundle_t though)
         // TODO: assert that FactorTyple is a Typle of BasedVectorSpace_c types.
-        STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::EachTypeSatisfies_f<DimIndexTyple,IsDimIndex_e>::V), MUST_BE_TYPLE_OF_DIM_INDEX_TYPES, DIMINDEXTYPLE),
-        STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::EachTypeSatisfies_f<SummedDimIndexTyple_,IsDimIndex_e>::V), MUST_BE_TYPLE_OF_DIM_INDEX_TYPES, SUMMEDDIMINDEXTYPLE)
+        STATIC_ASSERT_IN_ENUM__UNIQUE((EachTypeSatisfies_f<DimIndexTyple,IsDimIndex_e>::V), MUST_BE_TYPLE_OF_DIM_INDEX_TYPES, DIMINDEXTYPLE),
+        STATIC_ASSERT_IN_ENUM__UNIQUE((EachTypeSatisfies_f<SummedDimIndexTyple_,IsDimIndex_e>::V), MUST_BE_TYPLE_OF_DIM_INDEX_TYPES, SUMMEDDIMINDEXTYPLE)
     };
 
     typedef ExpressionTemplate_i<typename DerivedType_f<Derived_,
@@ -83,7 +83,7 @@ struct ExpressionTemplate_IndexedObject_t
 
     operator Scalar () const
     {
-        static_assert(Hippo::Length_f<FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
+        static_assert(Length_f<FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
         return operator[](MultiIndex());
     }
 
@@ -180,7 +180,7 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTyple,DimIndexTyple,Typle
 
     operator Scalar () const
     {
-        static_assert(Hippo::Length_f<FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
+        static_assert(Length_f<FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
         return operator[](MultiIndex());
     }
 
@@ -220,9 +220,9 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTyple,DimIndexTyple,Typle
         {
             STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<RightOperand>::V, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
             STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-            STATIC_ASSERT_IN_ENUM((Hippo::AreEqualAsSets_f<FreeDimIndexTyple,typename RightOperand::FreeDimIndexTyple>::V),OPERANDS_HAVE_SAME_FREE_INDICES),
-            STATIC_ASSERT_IN_ENUM((!Hippo::ContainsDuplicates_f<FreeDimIndexTyple>::V), LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
-            STATIC_ASSERT_IN_ENUM((!Hippo::ContainsDuplicates_f<typename RightOperand::FreeDimIndexTyple>::V), RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES)
+            STATIC_ASSERT_IN_ENUM((AreEqualAsSets_f<FreeDimIndexTyple,typename RightOperand::FreeDimIndexTyple>::V),OPERANDS_HAVE_SAME_FREE_INDICES),
+            STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_f<FreeDimIndexTyple>::V), LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
+            STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_f<typename RightOperand::FreeDimIndexTyple>::V), RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES)
         };
 
         // check for aliasing (where source and destination memory overlap)
@@ -246,9 +246,9 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTyple,DimIndexTyple,Typle
         {
             STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<RightOperand>::V, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
             STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-            STATIC_ASSERT_IN_ENUM((Hippo::AreEqualAsSets_f<FreeDimIndexTyple,typename RightOperand::FreeDimIndexTyple>::V),OPERANDS_HAVE_SAME_FREE_INDICES),
-            STATIC_ASSERT_IN_ENUM((!Hippo::ContainsDuplicates_f<FreeDimIndexTyple>::V), LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
-            STATIC_ASSERT_IN_ENUM((!Hippo::ContainsDuplicates_f<typename RightOperand::FreeDimIndexTyple>::V), RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES)
+            STATIC_ASSERT_IN_ENUM((AreEqualAsSets_f<FreeDimIndexTyple,typename RightOperand::FreeDimIndexTyple>::V),OPERANDS_HAVE_SAME_FREE_INDICES),
+            STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_f<FreeDimIndexTyple>::V), LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
+            STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_f<typename RightOperand::FreeDimIndexTyple>::V), RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES)
         };
 
         // check for aliasing (where source and destination memory overlap)
@@ -272,9 +272,9 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTyple,DimIndexTyple,Typle
         {
             STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<RightOperand>::V, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
             STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-            STATIC_ASSERT_IN_ENUM((Hippo::AreEqualAsSets_f<FreeDimIndexTyple,typename RightOperand::FreeDimIndexTyple>::V),OPERANDS_HAVE_SAME_FREE_INDICES),
-            STATIC_ASSERT_IN_ENUM((!Hippo::ContainsDuplicates_f<FreeDimIndexTyple>::V), LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
-            STATIC_ASSERT_IN_ENUM((!Hippo::ContainsDuplicates_f<typename RightOperand::FreeDimIndexTyple>::V), RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES)
+            STATIC_ASSERT_IN_ENUM((AreEqualAsSets_f<FreeDimIndexTyple,typename RightOperand::FreeDimIndexTyple>::V),OPERANDS_HAVE_SAME_FREE_INDICES),
+            STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_f<FreeDimIndexTyple>::V), LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
+            STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_f<typename RightOperand::FreeDimIndexTyple>::V), RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES)
         };
 
         // check for aliasing (where source and destination memory overlap)
@@ -342,20 +342,20 @@ struct ExpressionTemplate_Addition_t
 
 private:
 
-    typedef typename Hippo::Zip_f<Typle_t<typename LeftOperand::FreeFactorTyple,
-                                          typename LeftOperand::FreeDimIndexTyple>>::T LeftFactorAndIndexTyple;
-    typedef typename Hippo::Zip_f<Typle_t<typename RightOperand::FreeFactorTyple,
-                                          typename RightOperand::FreeDimIndexTyple>>::T RightFactorAndIndexTyple;
+    typedef typename Zip_f<Typle_t<typename LeftOperand::FreeFactorTyple,
+                                   typename LeftOperand::FreeDimIndexTyple>>::T LeftFactorAndIndexTyple;
+    typedef typename Zip_f<Typle_t<typename RightOperand::FreeFactorTyple,
+                                   typename RightOperand::FreeDimIndexTyple>>::T RightFactorAndIndexTyple;
 
     enum
     {
         STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<LeftOperand>::V, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<RightOperand>::V, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename LeftOperand::Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM((Hippo::AreEqualAsSets_f<LeftFactorAndIndexTyple,RightFactorAndIndexTyple>::V), OPERANDS_HAVE_SAME_FACTORS),
-        STATIC_ASSERT_IN_ENUM((Hippo::AreEqualAsSets_f<typename LeftOperand::FreeDimIndexTyple,typename RightOperand::FreeDimIndexTyple>::V), OPERANDS_HAVE_SAME_FREE_INDICES),
-        STATIC_ASSERT_IN_ENUM(!Hippo::ContainsDuplicates_f<typename LeftOperand::FreeDimIndexTyple>::V, LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
-        STATIC_ASSERT_IN_ENUM(!Hippo::ContainsDuplicates_f<typename RightOperand::FreeDimIndexTyple>::V, RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
+        STATIC_ASSERT_IN_ENUM((AreEqualAsSets_f<LeftFactorAndIndexTyple,RightFactorAndIndexTyple>::V), OPERANDS_HAVE_SAME_FACTORS),
+        STATIC_ASSERT_IN_ENUM((AreEqualAsSets_f<typename LeftOperand::FreeDimIndexTyple,typename RightOperand::FreeDimIndexTyple>::V), OPERANDS_HAVE_SAME_FREE_INDICES),
+        STATIC_ASSERT_IN_ENUM(!ContainsDuplicates_f<typename LeftOperand::FreeDimIndexTyple>::V, LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
+        STATIC_ASSERT_IN_ENUM(!ContainsDuplicates_f<typename RightOperand::FreeDimIndexTyple>::V, RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
         STATIC_ASSERT_IN_ENUM((OPERATOR == '+' || OPERATOR == '-'), OPERATOR_IS_PLUS_OR_MINUS)
     };
 
@@ -369,7 +369,7 @@ public:
 
     operator Scalar () const
     {
-        static_assert(Hippo::Length_f<FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
+        static_assert(Length_f<FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
         if (OPERATOR == '+')
             return m_left_operand.operator Scalar() + m_right_operand.operator Scalar();
         else // OPERATOR == '-'
@@ -465,7 +465,7 @@ struct ExpressionTemplate_ScalarMultiplication_t
 
     operator Scalar () const
     {
-        static_assert(Hippo::Length_f<FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
+        static_assert(Length_f<FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
         return operator[](MultiIndex());
     }
 
@@ -552,7 +552,7 @@ struct ExpressionTemplate_Multiplication_t
         STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<LeftOperand>::V, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<RightOperand>::V, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename LeftOperand::Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM((!Hippo::HasNontrivialIntersectionAsSets_f<FreeDimIndexTyple,UsedDimIndexTyple>::V), FREE_INDICES_DONT_COLLIDE_WITH_USED)
+        STATIC_ASSERT_IN_ENUM((!HasNontrivialIntersectionAsSets_f<FreeDimIndexTyple,UsedDimIndexTyple>::V), FREE_INDICES_DONT_COLLIDE_WITH_USED)
     };
     // TODO: ensure there are no indices that occur 3+ times (?)
 
@@ -565,7 +565,7 @@ struct ExpressionTemplate_Multiplication_t
     // available ONLY if FreeDimIndexTyple is Typle_t<>
     operator Scalar () const
     {
-        static_assert(Hippo::Length_f<FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
+        static_assert(Length_f<FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
         return operator[](MultiIndex());
     }
 
@@ -652,7 +652,7 @@ public:
 
     operator Scalar () const
     {
-        static_assert(Hippo::Length_f<FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
+        static_assert(Length_f<FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
         return operator[](MultiIndex());
     }
 
@@ -749,7 +749,7 @@ public:
 
     operator Scalar () const
     {
-        static_assert(Hippo::Length_f<FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
+        static_assert(Length_f<FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
         return operator[](MultiIndex());
     }
 
@@ -842,7 +842,7 @@ public:
 
     operator Scalar () const
     {
-        static_assert(Hippo::Length_f<FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
+        static_assert(Length_f<FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
         return operator[](MultiIndex());
     }
 
@@ -938,7 +938,7 @@ public:
 
     operator Scalar () const
     {
-        static_assert(Hippo::Length_f<FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
+        static_assert(Length_f<FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
         return operator[](MultiIndex());
     }
 
@@ -1040,7 +1040,7 @@ public:
 
     operator Scalar () const
     {
-        static_assert(Hippo::Length_f<FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
+        static_assert(Length_f<FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
         return operator[](MultiIndex());
     }
 

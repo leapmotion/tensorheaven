@@ -172,10 +172,10 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,F
     static MultiIndex_t<BundleIndexTyple> bundle_index_map (BundledIndex const &b)
     {
         STATIC_ASSERT(IsDimIndex_f<BundledIndex>::V, MUST_BE_DIM_INDEX);
-        STATIC_ASSERT(Hippo::Length_f<BundleIndexTyple>::V == 2, LENGTH_MUST_BE_EXACTLY_2);
+        STATIC_ASSERT(Length_f<BundleIndexTyple>::V == 2, LENGTH_MUST_BE_EXACTLY_2);
         typedef MultiIndex_t<BundleIndexTyple> MultiIndex;
-        typedef typename Hippo::Element_f<BundleIndexTyple,0>::T Index0;
-        typedef typename Hippo::Element_f<BundleIndexTyple,1>::T Index1;
+        typedef typename Element_f<BundleIndexTyple,0>::T Index0;
+        typedef typename Element_f<BundleIndexTyple,1>::T Index1;
         STATIC_ASSERT(IsDimIndex_f<Index0>::V, MUST_BE_DIM_INDEX);
         STATIC_ASSERT(IsDimIndex_f<Index1>::V, MUST_BE_DIM_INDEX);
         STATIC_ASSERT(Index0::COMPONENT_COUNT == DimensionOf_f<Factor0_>::V, DIMENSIONS_MUST_MATCH);

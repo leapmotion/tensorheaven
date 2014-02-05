@@ -86,9 +86,9 @@ MAKE_1_ARY_VALUE_EVALUATOR(IsDimIndex, bool);
 template <typename DimIndexTyple_>
 struct Parent_ComponentIndex_TypleOf_f
 {
-    enum { STATIC_ASSERT_IN_ENUM(IsDimIndex_f<typename Hippo::Head_f<DimIndexTyple_>::T>::V, MUST_BE_DIM_INDEX) };
-    typedef typename Hippo::HeadBodyTyple_f<typename Hippo::Head_f<DimIndexTyple_>::T::Parent_Index,
-                                            typename Parent_ComponentIndex_TypleOf_f<typename Hippo::BodyTyple_f<DimIndexTyple_>::T>::T>::T T;
+    enum { STATIC_ASSERT_IN_ENUM(IsDimIndex_f<typename Head_f<DimIndexTyple_>::T>::V, MUST_BE_DIM_INDEX) };
+    typedef typename HeadBodyTyple_f<typename Head_f<DimIndexTyple_>::T::Parent_Index,
+                                     typename Parent_ComponentIndex_TypleOf_f<typename BodyTyple_f<DimIndexTyple_>::T>::T>::T T;
 private:
     Parent_ComponentIndex_TypleOf_f();
 };
@@ -112,17 +112,17 @@ struct DimIndexTypleOf_f
 {
     enum
     {
-        STATIC_ASSERT_IN_ENUM((Hippo::Length_f<FactorTyple_>::V == Hippo::Length_f<AbstractIndexTyple_>::V), MUST_HAVE_EQUAL_LENGTHS),
-        STATIC_ASSERT_IN_ENUM(HasBasedVectorSpaceStructure_f<typename Hippo::Head_f<FactorTyple_>::T>::V, MUST_BE_BASED_VECTOR_SPACE)
+        STATIC_ASSERT_IN_ENUM((Length_f<FactorTyple_>::V == Length_f<AbstractIndexTyple_>::V), MUST_HAVE_EQUAL_LENGTHS),
+        STATIC_ASSERT_IN_ENUM(HasBasedVectorSpaceStructure_f<typename Head_f<FactorTyple_>::T>::V, MUST_BE_BASED_VECTOR_SPACE)
     };
 private:
     DimIndexTypleOf_f();
-    typedef DimIndex_t<Hippo::Head_f<AbstractIndexTyple_>::T::SYMBOL,
-                       DimensionOf_f<typename Hippo::Head_f<FactorTyple_>::T>::V> HeadDimIndex;
+    typedef DimIndex_t<Head_f<AbstractIndexTyple_>::T::SYMBOL,
+                       DimensionOf_f<typename Head_f<FactorTyple_>::T>::V> HeadDimIndex;
 public:
-    typedef typename Hippo::HeadBodyTyple_f<HeadDimIndex,
-                                            typename DimIndexTypleOf_f<typename Hippo::BodyTyple_f<FactorTyple_>::T,
-                                                                       typename Hippo::BodyTyple_f<AbstractIndexTyple_>::T>::T>::T T;
+    typedef typename HeadBodyTyple_f<HeadDimIndex,
+                                     typename DimIndexTypleOf_f<typename BodyTyple_f<FactorTyple_>::T,
+                                                                typename BodyTyple_f<AbstractIndexTyple_>::T>::T>::T T;
 };
 
 /// @cond false
@@ -142,9 +142,9 @@ template <typename DimIndexTyple_>
 struct AbstractIndicesOfDimIndexTyple_f
 {
     static_assert(IsTyple_f<DimIndexTyple_>::V, "DimIndexTyple_ must be a Typle_t");
-    static_assert(Hippo::EachTypeSatisfies_f<DimIndexTyple_,IsDimIndex_e>::V, "each type must be a DimIndex_t");
-    typedef typename Hippo::HeadBodyTyple_f<AbstractIndex_c<Hippo::Head_f<DimIndexTyple_>::T::SYMBOL>,
-                                            typename AbstractIndicesOfDimIndexTyple_f<typename Hippo::BodyTyple_f<DimIndexTyple_>::T>::T>::T T;
+    static_assert(EachTypeSatisfies_f<DimIndexTyple_,IsDimIndex_e>::V, "each type must be a DimIndex_t");
+    typedef typename HeadBodyTyple_f<AbstractIndex_c<Head_f<DimIndexTyple_>::T::SYMBOL>,
+                                     typename AbstractIndicesOfDimIndexTyple_f<typename BodyTyple_f<DimIndexTyple_>::T>::T>::T T;
 private:
     AbstractIndicesOfDimIndexTyple_f();
 };

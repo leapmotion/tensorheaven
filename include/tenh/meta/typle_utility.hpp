@@ -22,8 +22,6 @@ namespace Tenh {
 // higher-order metafunctions
 // ///////////////////////////////////////////////////////////////////////////
 
-namespace Hippo { // temp namespace until TypeList_t is gone
-
 // composition of metafunctions -- each type must be an evaluator.
 
 // forward declaration -- this should go in function.hpp
@@ -757,8 +755,6 @@ public:
     typedef Head_ T;
 };
 /// @endcond
-
-} // end of namespace Hippo
 
 } // end of namespace Tenh
 

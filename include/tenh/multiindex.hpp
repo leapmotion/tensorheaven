@@ -22,13 +22,13 @@ template <typename IndexTyple_>
 struct MultiIndex_t : List_t<IndexTyple_>
 {
     static_assert(IsTyple_f<IndexTyple_>::V, "IndexTyple_ must be a Typle_t");
-    static_assert(Hippo::EachTypeSatisfies_f<IndexTyple_,IsComponentIndex_e>::V, "each type must be a ComponentIndex_t");
+    static_assert(EachTypeSatisfies_f<IndexTyple_,IsComponentIndex_e>::V, "each type must be a ComponentIndex_t");
 
     typedef List_t<IndexTyple_> Parent;
     using Parent::LENGTH;
     typedef IndexTyple_ IndexTyple;
-    typedef typename Hippo::Head_f<IndexTyple_>::T HeadIndexType;
-    typedef typename Hippo::BodyTyple_f<IndexTyple_>::T BodyIndexTyple;
+    typedef typename Head_f<IndexTyple_>::T HeadIndexType;
+    typedef typename BodyTyple_f<IndexTyple_>::T BodyIndexTyple;
     typedef MultiIndex_t<BodyIndexTyple> BodyMultiIndex;
     static Uint32 const COMPONENT_COUNT = HeadIndexType::COMPONENT_COUNT * BodyMultiIndex::COMPONENT_COUNT;
 
@@ -70,7 +70,7 @@ struct MultiIndex_t : List_t<IndexTyple_>
         Parent(leading_multi_index)
     {
         static_assert(IsTyple_f<OtherIndexTyple_>::V, "OtherIndexTyple_ must be a Typle_t");
-        static_assert(Hippo::EachTypeSatisfies_f<OtherIndexTyple_,IsComponentIndex_e>::V, "each type must be a ComponentIndex_t");
+        static_assert(EachTypeSatisfies_f<OtherIndexTyple_,IsComponentIndex_e>::V, "each type must be a ComponentIndex_t");
     }
 
 private:
@@ -117,7 +117,7 @@ public:
     // run-time access to the ith index.
     HeadIndexType const &index (Uint32 i, bool check_range = CHECK_RANGE) const
     {
-        static_assert(Hippo::TypleIsUniform_f<IndexTyple_>::V, "IndexTyple_ must be uniform to use this method");
+        static_assert(TypleIsUniform_f<IndexTyple_>::V, "IndexTyple_ must be uniform to use this method");
         assert(this->is_layed_out_contiguously_in_memory());
         if (check_range && i >= LENGTH)
             throw std::out_of_range("index argument was out of range");
@@ -126,7 +126,7 @@ public:
     }
     HeadIndexType &index (Uint32 i, bool check_range = CHECK_RANGE)
     {
-        static_assert(Hippo::TypleIsUniform_f<IndexTyple_>::V, "IndexTyple_ must be uniform to use this method");
+        static_assert(TypleIsUniform_f<IndexTyple_>::V, "IndexTyple_ must be uniform to use this method");
         assert(this->is_layed_out_contiguously_in_memory());
         if (check_range && i >= LENGTH)
             throw std::out_of_range("index argument was out of range");
@@ -161,7 +161,7 @@ public:
     template <Uint32 START_INDEX_, Uint32 END_INDEX_>
     struct RangeType_f
     {
-        typedef MultiIndex_t<typename Hippo::TypleRange_f<IndexTyple,START_INDEX_,END_INDEX_>::T> T;
+        typedef MultiIndex_t<typename TypleRange_f<IndexTyple,START_INDEX_,END_INDEX_>::T> T;
     };
 
     // returns the MultiIndex_t which is the given range of elements
@@ -183,7 +183,7 @@ public:
     template <Uint32 END_INDEX_>
     struct LeadingListType_f
     {
-        typedef MultiIndex_t<typename Hippo::LeadingTyple_f<IndexTyple,END_INDEX_>::T> T;
+        typedef MultiIndex_t<typename LeadingTyple_f<IndexTyple,END_INDEX_>::T> T;
     };
 
     // TODO: rename to leading_multi_index
@@ -208,7 +208,7 @@ public:
     template <Uint32 START_INDEX_>
     struct TrailingListType_f
     {
-        typedef MultiIndex_t<typename Hippo::TrailingTyple_f<IndexTyple,START_INDEX_>::T> T;
+        typedef MultiIndex_t<typename TrailingTyple_f<IndexTyple,START_INDEX_>::T> T;
     };
 
     // TODO: rename to trailing_multi_index
@@ -258,7 +258,7 @@ struct MultiIndex_t<Typle_t<HeadIndexType_>> : public List_t<Typle_t<HeadIndexTy
         Parent(leading_multi_index)
     {
         static_assert(IsTyple_f<OtherIndexTyple_>::V, "OtherIndexTyple_ must be a Typle_t");
-        static_assert(Hippo::EachTypeSatisfies_f<OtherIndexTyple_,IsComponentIndex_e>::V, "each type must be a ComponentIndex_t");
+        static_assert(EachTypeSatisfies_f<OtherIndexTyple_,IsComponentIndex_e>::V, "each type must be a ComponentIndex_t");
     }
 
     bool operator == (MultiIndex_t const &m) const { return this->head() == m.head(); }
@@ -282,7 +282,7 @@ struct MultiIndex_t<Typle_t<HeadIndexType_>> : public List_t<Typle_t<HeadIndexTy
     // run-time access to the ith index.
     HeadIndexType const &index (Uint32 i, bool check_range = CHECK_RANGE) const
     {
-        static_assert(Hippo::TypleIsUniform_f<IndexTyple>::V, "IndexTyple_ must be uniform to use this method");
+        static_assert(TypleIsUniform_f<IndexTyple>::V, "IndexTyple_ must be uniform to use this method");
         assert(this->is_layed_out_contiguously_in_memory());
         if (check_range && i >= LENGTH)
             throw std::out_of_range("index argument was out of range");
@@ -291,7 +291,7 @@ struct MultiIndex_t<Typle_t<HeadIndexType_>> : public List_t<Typle_t<HeadIndexTy
     }
     HeadIndexType &index (Uint32 i, bool check_range = CHECK_RANGE)
     {
-        static_assert(Hippo::TypleIsUniform_f<IndexTyple>::V, "IndexTyple_ must be uniform to use this method");
+        static_assert(TypleIsUniform_f<IndexTyple>::V, "IndexTyple_ must be uniform to use this method");
         assert(this->is_layed_out_contiguously_in_memory());
         if (check_range && i >= LENGTH)
             throw std::out_of_range("index argument was out of range");
@@ -331,7 +331,7 @@ struct MultiIndex_t<Typle_t<HeadIndexType_>> : public List_t<Typle_t<HeadIndexTy
     template <Uint32 START_INDEX_, Uint32 END_INDEX_>
     struct RangeType_f
     {
-        typedef MultiIndex_t<typename Hippo::TypleRange_f<IndexTyple,START_INDEX_,END_INDEX_>::T> T;
+        typedef MultiIndex_t<typename TypleRange_f<IndexTyple,START_INDEX_,END_INDEX_>::T> T;
     };
 
     // returns the MultiIndex_t which is the given range of elements
@@ -353,7 +353,7 @@ struct MultiIndex_t<Typle_t<HeadIndexType_>> : public List_t<Typle_t<HeadIndexTy
     template <Uint32 END_INDEX_>
     struct LeadingListType_f
     {
-        typedef MultiIndex_t<typename Hippo::LeadingTyple_f<IndexTyple,END_INDEX_>::T> T;
+        typedef MultiIndex_t<typename LeadingTyple_f<IndexTyple,END_INDEX_>::T> T;
     };
 
     // TODO: rename to leading_multi_index
@@ -378,7 +378,7 @@ struct MultiIndex_t<Typle_t<HeadIndexType_>> : public List_t<Typle_t<HeadIndexTy
     template <Uint32 START_INDEX_>
     struct TrailingListType_f
     {
-        typedef MultiIndex_t<typename Hippo::TrailingTyple_f<IndexTyple,START_INDEX_>::T> T;
+        typedef MultiIndex_t<typename TrailingTyple_f<IndexTyple,START_INDEX_>::T> T;
     };
 
     // TODO: rename to trailing_multi_index
@@ -490,10 +490,10 @@ MultiIndex_t<Typle_> operator | (MultiIndex_t<Typle_t<>> const &, MultiIndex_t<T
 // to get the 9-tuple (1, 2, 3, 4, 5, 6, 7, 8, 9) without having to make a 9-tuple function explicitly.
 template <typename Lhs_Typle_,
           typename Rhs_Typle_>
-MultiIndex_t<typename Hippo::Concat2Typles_f<Lhs_Typle_,Rhs_Typle_>::T>
+MultiIndex_t<typename Concat2Typles_f<Lhs_Typle_,Rhs_Typle_>::T>
     operator | (MultiIndex_t<Lhs_Typle_> const &lhs, MultiIndex_t<Rhs_Typle_> const &rhs)
 {
-    return MultiIndex_t<typename Hippo::Concat2Typles_f<Lhs_Typle_,Rhs_Typle_>::T>(lhs.head(), lhs.body() | rhs);
+    return MultiIndex_t<typename Concat2Typles_f<Lhs_Typle_,Rhs_Typle_>::T>(lhs.head(), lhs.body() | rhs);
 }
 
 
@@ -504,7 +504,7 @@ MultiIndex_t<typename Hippo::Concat2Typles_f<Lhs_Typle_,Rhs_Typle_>::T>
 template <typename Compare_, typename IndexTyple_>
 void sort (MultiIndex_t<IndexTyple_> &m)
 {
-    static_assert(Hippo::TypleIsUniform_f<IndexTyple_>::V, "IndexTyple_ must be uniform in order to sort");
+    static_assert(TypleIsUniform_f<IndexTyple_>::V, "IndexTyple_ must be uniform in order to sort");
     // run-time check that the memory is actually layed out contiguously, which is necessary for the reinterpret_cast to work.
     assert(m.is_layed_out_contiguously_in_memory());
     Uint32 *starting_pointer = reinterpret_cast<Uint32*>(&m.head());
@@ -529,15 +529,15 @@ MultiIndex_t<IndexTyple_> sorted (MultiIndex_t<IndexTyple_> const &m)
 template <typename DomainIndexTyple_, typename CodomainIndexTyple_>
 struct MultiIndexMap_t
 {
-    static_assert(!Hippo::ContainsDuplicates_f<DomainIndexTyple_>::V, "DomainIndexTyple_ must not contain duplicates");
+    static_assert(!ContainsDuplicates_f<DomainIndexTyple_>::V, "DomainIndexTyple_ must not contain duplicates");
 
     typedef MultiIndex_t<DomainIndexTyple_> DomainIndex;
     typedef MultiIndex_t<CodomainIndexTyple_> CodomainIndex;
     typedef CodomainIndex (*EvalMapType) (DomainIndex const &);
     static CodomainIndex eval (DomainIndex const &i)
     {
-        return CodomainIndex(i.template el<Hippo::IndexOfFirstOccurrence_f<DomainIndexTyple_,typename Hippo::Head_f<CodomainIndexTyple_>::T>::V>(),
-                             MultiIndexMap_t<DomainIndexTyple_,typename Hippo::BodyTyple_f<CodomainIndexTyple_>::T>::eval(i));
+        return CodomainIndex(i.template el<IndexOfFirstOccurrence_f<DomainIndexTyple_,typename Head_f<CodomainIndexTyple_>::T>::V>(),
+                             MultiIndexMap_t<DomainIndexTyple_,typename BodyTyple_f<CodomainIndexTyple_>::T>::eval(i));
     }
 private:
     MultiIndexMap_t();
@@ -546,7 +546,7 @@ private:
 template <typename DomainIndexTyple_, typename CodomainIndexType_>
 struct MultiIndexMap_t<DomainIndexTyple_,Typle_t<CodomainIndexType_> >
 {
-    static_assert(!Hippo::ContainsDuplicates_f<DomainIndexTyple_>::V, "DomainIndexTyple_ must not contain duplicates");
+    static_assert(!ContainsDuplicates_f<DomainIndexTyple_>::V, "DomainIndexTyple_ must not contain duplicates");
 
     typedef Typle_t<CodomainIndexType_> CodomainIndexTyple_;
     typedef MultiIndex_t<DomainIndexTyple_> DomainIndex;
@@ -554,7 +554,7 @@ struct MultiIndexMap_t<DomainIndexTyple_,Typle_t<CodomainIndexType_> >
     typedef CodomainIndex (*EvalMapType) (DomainIndex const &);
     static CodomainIndex eval (DomainIndex const &i)
     {
-        return CodomainIndex(i.template el<Hippo::IndexOfFirstOccurrence_f<DomainIndexTyple_,typename Hippo::Head_f<CodomainIndexTyple_>::T>::V>());
+        return CodomainIndex(i.template el<IndexOfFirstOccurrence_f<DomainIndexTyple_,typename Head_f<CodomainIndexTyple_>::T>::V>());
     }
 private:
     MultiIndexMap_t();
@@ -564,7 +564,7 @@ template <typename MultiIndex_>
 struct MultiIndexMultiplicity_t
 {
     static_assert(IsMultiIndex_f<MultiIndex_>::V, "MultiIndex_ must be a MultiIndex_t");
-    static_assert(Hippo::TypleIsUniform_f<typename MultiIndex_::IndexTyple>::V, "MultiIndex_ must have uniform component types");
+    static_assert(TypleIsUniform_f<typename MultiIndex_::IndexTyple>::V, "MultiIndex_ must have uniform component types");
     static Uint32 eval (MultiIndex_ const &m, Uint32 count = 1)
     {
         return count * ((m.head() == m.body().head()) ? 
@@ -587,7 +587,7 @@ private:
 template <typename IndexTyple_>
 Uint32 trailing_zero_count (MultiIndex_t<IndexTyple_> const &m)
 {
-    if (Hippo::Length_f<IndexTyple_>::V == 0)
+    if (Length_f<IndexTyple_>::V == 0)
         return 0;
 
     for (Uint32 i = 0; i < m.length(); ++i)

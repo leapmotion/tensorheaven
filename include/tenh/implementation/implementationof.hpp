@@ -189,8 +189,8 @@ private:
 template <typename Typle_>
 struct ConceptOfEachTypeIn_f
 {
-    typedef typename Hippo::HeadBodyTyple_f<typename Hippo::Head_f<Typle_>::T::Concept,
-                                            typename ConceptOfEachTypeIn_f<typename Hippo::BodyTyple_f<Typle_>::T>::T>::T T;
+    typedef typename HeadBodyTyple_f<typename Head_f<Typle_>::T::Concept,
+                                     typename ConceptOfEachTypeIn_f<typename BodyTyple_f<Typle_>::T>::T>::T T;
 private:
     ConceptOfEachTypeIn_f();
 };
@@ -206,8 +206,8 @@ private:
 template <typename Typle_>
 struct ScalarOfEachTypeIn_f
 {
-    typedef typename Hippo::HeadBodyTyple_f<typename Hippo::Head_f<Typle_>::T::Scalar,
-                                            typename ScalarOfEachTypeIn_f<typename Hippo::BodyTyple_f<Typle_>::T>::T>::T T;
+    typedef typename HeadBodyTyple_f<typename Head_f<Typle_>::T::Scalar,
+                                     typename ScalarOfEachTypeIn_f<typename BodyTyple_f<Typle_>::T>::T>::T T;
 private:
     ScalarOfEachTypeIn_f();
 };
@@ -223,8 +223,8 @@ private:
 template <typename Typle_>
 struct EachTypeUsesProceduralArray_f
 {
-    static bool const V = IsUseProceduralArray_f<typename Hippo::Head_f<Typle_>::T::UseArrayType>::V &&
-                          EachTypeUsesProceduralArray_f<typename Hippo::BodyTyple_f<Typle_>::T>::V;
+    static bool const V = IsUseProceduralArray_f<typename Head_f<Typle_>::T::UseArrayType>::V &&
+                          EachTypeUsesProceduralArray_f<typename BodyTyple_f<Typle_>::T>::V;
 private:
     EachTypeUsesProceduralArray_f();
 };
@@ -240,9 +240,9 @@ private:
 template <typename TensorProductOfBasedVectorSpacesTyple_>
 struct EachTypeIsA2TensorProductOfBasedVectorSpaces_f
 {
-    static bool const V = IsTensorProductOfBasedVectorSpaces_f<typename Hippo::Head_f<TensorProductOfBasedVectorSpacesTyple_>::T>::V &&
-                          (Hippo::Length_f<typename FactorTypleOf_f<typename Hippo::Head_f<TensorProductOfBasedVectorSpacesTyple_>::T>::T>::V == 2) &&
-                          EachTypeIsA2TensorProductOfBasedVectorSpaces_f<typename Hippo::BodyTyple_f<TensorProductOfBasedVectorSpacesTyple_>::T>::V;
+    static bool const V = IsTensorProductOfBasedVectorSpaces_f<typename Head_f<TensorProductOfBasedVectorSpacesTyple_>::T>::V &&
+                          (Length_f<typename FactorTypleOf_f<typename Head_f<TensorProductOfBasedVectorSpacesTyple_>::T>::T>::V == 2) &&
+                          EachTypeIsA2TensorProductOfBasedVectorSpaces_f<typename BodyTyple_f<TensorProductOfBasedVectorSpacesTyple_>::T>::V;
 private:
     EachTypeIsA2TensorProductOfBasedVectorSpaces_f();
 };
@@ -259,11 +259,11 @@ template <Uint32 N_, typename Typle_>
 struct FactorNOfEachTypeIn_f
 {
 private:
-    typedef typename FactorTypleOf_f<typename Hippo::Head_f<Typle_>::T>::T FactorTypleOfHead;
+    typedef typename FactorTypleOf_f<typename Head_f<Typle_>::T>::T FactorTypleOfHead;
     FactorNOfEachTypeIn_f();
 public:
-    typedef typename Hippo::HeadBodyTyple_f<typename Hippo::Element_f<FactorTypleOfHead,N_>::T,
-                                            typename FactorNOfEachTypeIn_f<N_,typename Hippo::BodyTyple_f<Typle_>::T>::T>::T T;
+    typedef typename HeadBodyTyple_f<typename Element_f<FactorTypleOfHead,N_>::T,
+                                     typename FactorNOfEachTypeIn_f<N_,typename BodyTyple_f<Typle_>::T>::T>::T T;
 };
 
 template <Uint32 N_>
