@@ -105,7 +105,7 @@ add_executable(conceptual_inheritance_prototype conceptual_inheritance_prototype
 # add_executable(list list.cpp)
 add_executable(prettyprint prettyprint.cpp)
 add_executable(sandbox sandbox.cpp)
-add_executable(typelist typelist.cpp)
+# add_executable(typelist typelist.cpp)
 add_executable(taylor_polynomial taylor_polynomial.cpp)
 
 set_source_files_properties(c++11_usage_prototype.cpp PROPERTIES COMPILE_FLAGS -std=c++11)
@@ -152,7 +152,6 @@ set(test_SRCS
     standard/test_list.cpp
     standard/test_split_and_bundle.cpp
     standard/test_tuple.cpp
-    standard/test_typelist.cpp
     standard/test_typle.cpp)
 add_executable(test standard/test.cpp ${test_SRCS})
 include_directories(${tensorheaven_test_SOURCE_DIR}/../include ${tensorheaven_test_SOURCE_DIR}/lvd ${tensorheaven_test_SOURCE_DIR}/standard)

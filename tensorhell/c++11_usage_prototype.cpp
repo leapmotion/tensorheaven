@@ -203,7 +203,7 @@ void prototyping_for_right_angle_brackets ()
 {
     std::cout << "prototyping_for_right_angle_brackets();\n";
 
-    typedef TypeList_t<int,TypeList_t<int>> L;
+    typedef Typle_t<Typle_t<int>,Typle_t<float>> L;
     std::cout << FORMAT_VALUE(type_string_of<L>()) << '\n';
     std::cout << '\n';
 }
@@ -248,7 +248,7 @@ void prototyping_for_strongly_typed_enums ()
 // ///////////////////////////////////////////////////////////////////////////
 // variadic templates
 // ///////////////////////////////////////////////////////////////////////////
-
+/*
 template <typename... Body_>
 struct TypeStringOfVariadicTemplate_t;
 
@@ -381,7 +381,7 @@ void prototyping_for_variadic_templates ()
 
     std::cout << '\n';
 }
-
+*/
 // ///////////////////////////////////////////////////////////////////////////
 // initializer lists -- NOT SUPPORTED BY CLANG 3.0
 // ///////////////////////////////////////////////////////////////////////////
@@ -670,7 +670,7 @@ int main (int argc, char **argv)
     prototyping_for_nullptr();
     prototyping_for_right_angle_brackets();
     prototyping_for_strongly_typed_enums();
-    prototyping_for_variadic_templates();
+    // prototyping_for_variadic_templates();
 //     prototyping_for_initializer_lists(); // not supported by clang 3.0
     prototyping_for_range_based_for_loops();
     prototyping_for_rvalue_references();

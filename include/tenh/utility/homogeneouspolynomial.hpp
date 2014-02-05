@@ -16,7 +16,6 @@
 #include "tenh/implementation/sym.hpp"
 #include "tenh/implementation/vector.hpp"
 #include "tenh/implementation/vee.hpp"
-#include "tenh/meta/typelist_utility.hpp"
 #include "tenh/multiindex.hpp"
 #include "tenh/preallocatedarray.hpp"
 

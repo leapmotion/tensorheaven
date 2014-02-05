@@ -27,8 +27,8 @@ struct RowsOfTwoTensor_f<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<T
 private:
     enum { STATIC_ASSERT_IN_ENUM((!IsUseProceduralArray_f<UseArrayType_>::V), MUST_NOT_BE_USE_PROCEDURAL_ARRAY) };
 public:
-    typedef ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<typename Hippo::UniformTypleOfLength_t<DimensionOf_f<Factor0_>::V,Factor1_>::T>, Scalar_, ResultUseArrayType_> T;
-    typedef ImplementationOf_t<Factor1_, Scalar_, UseArrayType_> RowType;
+    typedef ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<typename Hippo::UniformTypleOfLength_f<DimensionOf_f<Factor0_>::V,Factor1_>::T>,Scalar_,ResultUseArrayType_> T;
+    typedef ImplementationOf_t<Factor1_,Scalar_,UseArrayType_> RowType;
 };
 
 template <typename T> struct SVDReturnTypesOf_m;

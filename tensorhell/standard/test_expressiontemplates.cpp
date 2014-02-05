@@ -12,7 +12,6 @@
 #include "tenh/expression_templates.hpp"
 #include "tenh/expression_templates_utility.hpp"
 #include "tenh/expressiontemplate_eval.hpp"
-#include "tenh/meta/typelist.hpp"
 #include "tenh/multiindex.hpp"
 #include "tenh/tensor2.hpp"
 #include "tenh/tensor2antisymmetric.hpp"

@@ -20,7 +20,7 @@
 #include "test_list.hpp"
 #include "test_split_and_bundle.hpp"
 #include "test_tuple.hpp"
-#include "test_typelist.hpp"
+// #include "test_typelist.hpp"
 #include "test_typle.hpp"
 // #include "test_tensor2.hpp"
 // #include "test_tensor2diagonal.hpp"
@@ -68,7 +68,7 @@ int main (int argc, char **argv, char **envp)
     Test::List::AddTests(root);
     Test::SplitAndBundle::AddTests(root);
     Test::Tuple::AddTests(root);
-    Test::TypeList::AddTests(root);
+    // Test::TypeList::AddTests(root);
     Test::Typle::AddTests(root);
 //     Test::Tensor2::AddTests(root);
 //     Test::Tensor2Diagonal::AddTests(root);

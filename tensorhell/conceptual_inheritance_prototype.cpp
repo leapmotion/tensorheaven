@@ -83,8 +83,8 @@ public:
 };
 
 
-// construct a Map_t from an ordered domain element type list and a
-// corresponding ordered codomain element type list.
+// construct a Map_t from an ordered domain element typle and a
+// corresponding ordered codomain element typle.
 template <typename DomainElementTyple, typename CodomainElementTyple, typename RestOfMap = EmptyMap>
 struct MapConstructor_f
 {

@@ -3,15 +3,14 @@
 
 #include "tenh/core.hpp"
 #include "tenh/meta/function.hpp"
-#include "tenh/meta/typelist.hpp"
 #include "tenh/meta/typestringof.hpp"
+#include "tenh/meta/typle.hpp"
+#include "tenh/meta/typle_utility.hpp"
 
 using namespace std;
 using namespace Tenh;
 
 typedef unsigned long long int Uint;
-
-template <typename T_> struct Type_t { typedef T_ T; };
 
 /*
 // assuming Function_f_<K_>::V is increasing w.r.t. K_, this returns the
@@ -308,15 +307,11 @@ int main (int argc, char **argv)
             cout << "lookup(" << i << ") = " << lookup[i] << '\n';
     }
 
-    // typedef TypeList_t<Square_f,
-    //         TypeList_t<Square_f> > FunctionTypeList;
-    // cout << FORMAT_VALUE(Tenh::type_string_of<Composition_f<FunctionTypeList,Tenh::Value_t<Uint,0> >::T>()) << '\n';
+    // typedef Typle_t<Square_f,Square_f> FunctionTyple;
+    // cout << FORMAT_VALUE(Tenh::type_string_of<Composition_f<FunctionTyple,Tenh::Value_t<Uint,0> >::T>()) << '\n';
 
-    typedef CompositionOf_e<TypeList_t<Cube_e,
-                            TypeList_t<PlusOne_e> > > AddOneThenCube_e;
-    typedef CompositionOf_e<TypeList_t<PlusOne_e,
-                            TypeList_t<Cube_e,
-                            TypeList_t<PlusOne_e> > > > AddOneThenCubeThenAddOne_e;
+    typedef Tenh::Hippo::CompositionOf_e<Cube_e,PlusOne_e> AddOneThenCube_e;
+    typedef Tenh::Hippo::CompositionOf_e<PlusOne_e,Cube_e,PlusOne_e> AddOneThenCubeThenAddOne_e;
 
     cout << FORMAT_VALUE((AddOneThenCube_e::Eval_f<Value_t<Uint,0> >::T::V)) << '\n';
     cout << FORMAT_VALUE((AddOneThenCube_e::Eval_f<Value_t<Uint,1> >::T::V)) << '\n';

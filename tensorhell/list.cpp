@@ -2,21 +2,20 @@
 #include <string>
 
 #include "tenh/list.hpp"
-#include "tenh/meta/typelist_utility.hpp"
 #include "tenh/meta/typetuple.hpp"
 
 using namespace Tenh;
 
 int main (int argc, char **argv)
 {
-    typedef TypeTuple_f<int,char>::T X;
-    typedef TypeTuple_f<int,char,float>::T Y;
-    typedef TypeTuple_f<List_t<X>,List_t<Y> >::T Z;
+    typedef Typle_t<int,char> X;
+    typedef Typle_t<int,char,float> Y;
+    typedef Typle_t<List_t<X>,List_t<Y>> Z;
 
     std::cout << HasNontrivialIntersectionAsSets_t<X,Y>::V << '\n';
     std::cout << HasNontrivialIntersectionAsSets_t<Z,Y>::V << '\n';
-    std::cout << HasNontrivialIntersectionAsSets_t<EmptyTypeList,Y>::V << '\n';
-    std::cout << HasNontrivialIntersectionAsSets_t<EmptyTypeList,EmptyTypeList>::V << '\n';
+    std::cout << HasNontrivialIntersectionAsSets_t<Typle_t<>,Y>::V << '\n';
+    std::cout << HasNontrivialIntersectionAsSets_t<Typle_t<>,Typle_t<>>::V << '\n';
 
     typedef List_t<X> LX;
     typedef List_t<Y> LY;
@@ -34,9 +33,9 @@ int main (int argc, char **argv)
     std::cout << z << '\n';
 
     {
-        typedef TypeTuple_f<int,char,bool,float>::T A;
-        typedef TypeTuple_f<int,char>::T B;
-        typedef TypeTuple_f<bool,float>::T C;
+        typedef Typle_t<int,char,bool,float> A;
+        typedef Typle_t<int,char> B;
+        typedef Typle_t<bool,float> C;
 
         typedef List_t<A> ListA;
         typedef List_t<B> ListB;
@@ -60,11 +59,11 @@ int main (int argc, char **argv)
     std::cout << FORMAT_VALUE(sizeof(EmptyList)) << '\n';
 
     {
-        typedef TypeList_t<int,TypeList_t<int> > T1;
+        typedef Typle_t<int,int> T1;
         typedef List_t<T1> L1;
-        typedef TypeList_t<float,TypeList_t<double> > T2;
+        typedef Typle_t<float,double> T2;
         typedef List_t<T2> L2;
-        L2 l2(3.4f, List_t<TypeList_t<double> >(100.1));
+        L2 l2(3.4f, List_t<Typle_t<double>>(100.1));
         L1 l1(l2);
         std::cout << FORMAT_VALUE(l2) << '\n';
         std::cout << FORMAT_VALUE(l1) << '\n';

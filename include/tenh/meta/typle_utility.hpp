@@ -47,7 +47,7 @@ public:
 
 // composition of no maps produces the identity
 template <>
-struct CompositionOf_e<Typle_t<>>
+struct CompositionOf_e<>
 {
     template <typename T_>
     struct Eval_f

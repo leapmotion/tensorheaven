@@ -11,7 +11,6 @@
 #include <iostream>
 
 #include "tenh/interop/eigen_ldlt.hpp"
-#include "tenh/meta/typelist.hpp"
 #include "tenh/expressiontemplate_eval.hpp"
 #include "tenh/multiindex.hpp"
 #include "tenh/tensor2.hpp"

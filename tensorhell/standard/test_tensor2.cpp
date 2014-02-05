@@ -8,7 +8,6 @@
 #include <utility> // for std::pair
 #include <complex>
 
-#include "tenh/meta/typelist.hpp"
 #include "tenh/multiindex.hpp"
 #include "tenh/tensor2.hpp"
 #include "tenh/vector.hpp"
