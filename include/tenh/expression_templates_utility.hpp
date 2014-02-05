@@ -281,7 +281,7 @@ private:
         STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<LeftOperand>::V, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<RightOperand>::V, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename LeftOperand::Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM((Hippo::EachTypeSatisfies_f<FreeDimIndexTyple,IsDimIndex_e>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES)
+        STATIC_ASSERT_IN_ENUM((Hippo::EachTypeSatisfies_f<FreeDimIndexTyple,IsDimIndex_e>::V), MUST_BE_TYPLE_OF_DIM_INDEX_TYPES)
         // no summation, so no need to check naturality of pairings
     };
 public:
@@ -336,7 +336,7 @@ private:
     typedef typename SummedDimIndexTypleOfMultiplication_f<LeftOperand,RightOperand>::T SummedDimIndexTyple;
     UsedDimIndexTypleOfMultiplication_f();
 public:
-    // typelist of used indices which are prohibited from using higher up in the AST
+    // typle of used indices which are prohibited from using higher up in the AST
     typedef typename Hippo::UniqueTypesIn_f<
         typename Hippo::ConcatTyples_f<
             typename LeftOperand::UsedDimIndexTyple,
@@ -530,7 +530,7 @@ struct IndexSplitter_t
     };
 
     typedef typename Operand::Scalar Scalar;
-    // we must replace SourceAbstractIndexType with MultiIndex_t<SplitAbstractIndexTyple> in the index type list
+    // we must replace SourceAbstractIndexType with MultiIndex_t<SplitAbstractIndexTyple> in the index typle
     static Uint32 const SOURCE_INDEX_TYPE_INDEX = Hippo::IndexOfFirstOccurrence_f<OperandFreeAbstractIndexTyple,SourceAbstractIndexType>::V;
     typedef typename Hippo::Element_f<typename Operand::FreeFactorTyple,SOURCE_INDEX_TYPE_INDEX>::T SourceFactor;
 
@@ -538,7 +538,7 @@ struct IndexSplitter_t
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM__UNIQUE((OrderOf_f<EmbeddingTensorProduct>::V == Hippo::Length_f<SplitAbstractIndexTyple>::V), MUST_HAVE_EQUAL_LENGTHS, FREEFACTORTYPELIST)
+        STATIC_ASSERT_IN_ENUM__UNIQUE((OrderOf_f<EmbeddingTensorProduct>::V == Hippo::Length_f<SplitAbstractIndexTyple>::V), MUST_HAVE_EQUAL_LENGTHS, FREEFACTORTYPLE)
     };
 
     typedef typename Hippo::Concat2Typles_f<
@@ -561,7 +561,7 @@ struct IndexSplitter_t
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::Length_f<FactorTyple>::V == Hippo::Length_f<DimIndexTyple>::V), MUST_HAVE_EQUAL_LENGTHS, FACTORTYPELIST)
+        STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::Length_f<FactorTyple>::V == Hippo::Length_f<DimIndexTyple>::V), MUST_HAVE_EQUAL_LENGTHS, FACTORTYPLE)
     };
 
     IndexSplitter_t (Operand const &operand) : m_operand(operand) { }
@@ -618,7 +618,7 @@ struct IndexSplitToIndex_t
     };
 
     typedef typename Operand::Scalar Scalar;
-    // we must replace SourceAbstractIndexType with SplitAbstractIndexType in the index type list
+    // we must replace SourceAbstractIndexType with SplitAbstractIndexType in the index typle
     static Uint32 const SOURCE_INDEX_TYPE_INDEX = Hippo::IndexOfFirstOccurrence_f<OperandFreeAbstractIndexTyple,SourceAbstractIndexType>::V;
     typedef typename Hippo::Element_f<typename Operand::FreeFactorTyple,SOURCE_INDEX_TYPE_INDEX>::T SourceFactor;
 
@@ -637,7 +637,7 @@ struct IndexSplitToIndex_t
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::Length_f<FactorTyple>::V == Hippo::Length_f<DimIndexTyple>::V), MUST_HAVE_EQUAL_LENGTHS, FACTORTYPELIST)
+        STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::Length_f<FactorTyple>::V == Hippo::Length_f<DimIndexTyple>::V), MUST_HAVE_EQUAL_LENGTHS, FACTORTYPLE)
     };
 
     IndexSplitToIndex_t (Operand const &operand) : m_operand(operand) { }
@@ -697,7 +697,7 @@ struct IndexEmbedder_t
     };
 
     typedef typename Operand_::Scalar Scalar;
-    // we must replace SourceAbstractIndexType_ with EmbeddedAbstractIndexType_ in the index type list
+    // we must replace SourceAbstractIndexType_ with EmbeddedAbstractIndexType_ in the index typle
     static Uint32 const SOURCE_INDEX_TYPE_INDEX = Hippo::IndexOfFirstOccurrence_f<OperandFreeAbstractIndexTyple,SourceAbstractIndexType_>::V;
     typedef typename Hippo::Element_f<typename Operand_::FreeFactorTyple,SOURCE_INDEX_TYPE_INDEX>::T EmbeddingDomain;
 
@@ -715,7 +715,7 @@ struct IndexEmbedder_t
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::Length_f<FactorTyple>::V == Hippo::Length_f<DimIndexTyple>::V), MUST_HAVE_EQUAL_LENGTHS, FACTORTYPELIST)
+        STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::Length_f<FactorTyple>::V == Hippo::Length_f<DimIndexTyple>::V), MUST_HAVE_EQUAL_LENGTHS, FACTORTYPLE)
     };
 
     IndexEmbedder_t (Operand_ const &operand) : m_operand(operand) { }
@@ -773,7 +773,7 @@ struct IndexCoembedder_t
     };
 
     typedef typename Operand_::Scalar Scalar;
-    // we must replace SourceAbstractIndexType_ with CoembeddedAbstractIndexType_ in the index type list
+    // we must replace SourceAbstractIndexType_ with CoembeddedAbstractIndexType_ in the index typle
     static Uint32 const SOURCE_INDEX_TYPE_INDEX = Hippo::IndexOfFirstOccurrence_f<OperandFreeAbstractIndexTyple,SourceAbstractIndexType_>::V;
     typedef typename Hippo::Element_f<typename Operand_::FreeFactorTyple,SOURCE_INDEX_TYPE_INDEX>::T CoembeddingDomain;
 
@@ -791,7 +791,7 @@ struct IndexCoembedder_t
 
     enum
     {
-        STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::Length_f<FactorTyple>::V == Hippo::Length_f<DimIndexTyple>::V), MUST_HAVE_EQUAL_LENGTHS, FACTORTYPELIST)
+        STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::Length_f<FactorTyple>::V == Hippo::Length_f<DimIndexTyple>::V), MUST_HAVE_EQUAL_LENGTHS, FACTORTYPLE)
     };
 
     IndexCoembedder_t (Operand_ const &operand) : m_operand(operand) { }

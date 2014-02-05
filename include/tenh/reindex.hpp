@@ -31,10 +31,10 @@ private:
         STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::Length_f<DomainAbstractIndexTyple_>::V > 0), LENGTH_MUST_BE_POSITIVE, DOMAIN_LENGTH),
         STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::Length_f<CodomainAbstractIndexTyple_>::V > 0), LENGTH_MUST_BE_POSITIVE, CODOMAIN_LENGTH),
         STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::And_f<typename Hippo::OnEach_f<DomainAbstractIndexTyple_,IsAbstractIndex_e>::T>::V),
-                                      MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES,
+                                      MUST_BE_TYPLE_OF_ABSTRACT_INDEX_TYPES,
                                       DOMAIN),
         STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::And_f<typename Hippo::OnEach_f<CodomainAbstractIndexTyple_,IsAbstractIndex_e>::T>::V),
-                                      MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES,
+                                      MUST_BE_TYPLE_OF_ABSTRACT_INDEX_TYPES,
                                       CODOMAIN),
         STATIC_ASSERT_IN_ENUM(!Hippo::ContainsDuplicates_f<DomainAbstractIndexTyple_>::V, DOMAIN_INDICES_MUST_NOT_CONTAIN_DUPLICATES)
     };
@@ -93,12 +93,11 @@ private:
         ABSTRACT_INDEX_MAP_IS_IDENTITY ?
         0 :
         Hippo::Max_f<typename Hippo::OnEach_f<CodomainAbstractIndexTyple_,SymbolOf_e>::T,AbstractIndexSymbol>::V;
-
     Eval_f();
 public:
     typedef typename If_f<Hippo::Contains_f<DomainAbstractIndexTyple_,AbstractIndex>::V,
                           typename AbstractIndexMap::template Eval_f<AbstractIndex>,
-                          Type_t<AbstractIndex_c<OFFSET + SYMBOL_>>>::T::T T;
+                          Type_t<AbstractIndex_c<OFFSET+SYMBOL_>>>::T::T T;
 };
 
 // ///////////////////////////////////////////////////////////////////////////

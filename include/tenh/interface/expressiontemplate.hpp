@@ -66,8 +66,8 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     enum
     {
         STATIC_ASSERT_IN_ENUM((!TypesAreEqual_f<Derived_,NullType>::V), DERIVED_MUST_NOT_BE_NULL_TYPE),
-        STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::EachTypeSatisfies_f<FreeDimIndexTyple_,IsDimIndex_e>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, FREEDIMINDEXTYPELIST),
-        STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::EachTypeSatisfies_f<UsedDimIndexTyple_,IsDimIndex_e>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, USEDDIMINDEXTYPELIST)
+        STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::EachTypeSatisfies_f<FreeDimIndexTyple_,IsDimIndex_e>::V), MUST_BE_TYPLE_OF_DIM_INDEX_TYPES, FREEDIMINDEXTYPLE),
+        STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::EachTypeSatisfies_f<UsedDimIndexTyple_,IsDimIndex_e>::V), MUST_BE_TYPLE_OF_DIM_INDEX_TYPES, USEDDIMINDEXTYPLE)
     };
 
     typedef Derived_ Derived;
@@ -129,8 +129,8 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
         typedef Typle_t<AbstractIndexTypes_...> AbstractIndexTyple;
         // make sure that ResultingAbstractIndexType actually is one
         STATIC_ASSERT(IsAbstractIndex_f<ResultingAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX);
-        // make sure that the index type list actually contains AbstractIndex_c types
-        STATIC_ASSERT((Hippo::EachTypeSatisfies_f<AbstractIndexTyple,IsAbstractIndex_e>::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
+        // make sure that the index typle actually contains AbstractIndex_c types
+        STATIC_ASSERT((Hippo::EachTypeSatisfies_f<AbstractIndexTyple,IsAbstractIndex_e>::V), MUST_BE_TYPLE_OF_ABSTRACT_INDEX_TYPES);
         // make sure that ResultingFactorType is the correct conceptual type
         // TODO: there is probably a stronger type check (a type which is embeddable into a tensor space)
         STATIC_ASSERT(HasBasedVectorSpaceStructure_f<ResultingFactorType>::V, MUST_BE_BASED_VECTOR_SPACE);
@@ -160,8 +160,8 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
         typedef Typle_t<AbstractIndexTypes_...> AbstractIndexTyple;
         // make sure that ResultingAbstractIndexType actually is one
         STATIC_ASSERT(IsAbstractIndex_f<ResultingAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX);
-        // make sure that the index type list actually contains AbstractIndex_c types
-        STATIC_ASSERT((Hippo::EachTypeSatisfies_f<AbstractIndexTyple,IsAbstractIndex_e>::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
+        // make sure that the index typle actually contains AbstractIndex_c types
+        STATIC_ASSERT((Hippo::EachTypeSatisfies_f<AbstractIndexTyple,IsAbstractIndex_e>::V), MUST_BE_TYPLE_OF_ABSTRACT_INDEX_TYPES);
         // make sure that ResultingFactorType is the correct conceptual type
         // TODO: there is probably a stronger type check (a type which is embeddable into a tensor space)
         STATIC_ASSERT(HasBasedVectorSpaceStructure_f<ResultingFactorType>::V, MUST_BE_BASED_VECTOR_SPACE);
@@ -197,8 +197,8 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
         typedef Typle_t<AbstractIndexTypes_...> AbstractIndexTyple;
         // make sure that SourceAbstractIndexType actually is one
         STATIC_ASSERT(IsAbstractIndex_f<SourceAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX);
-        // make sure that the index type list actually contains AbstractIndex_c types
-        STATIC_ASSERT((Hippo::EachTypeSatisfies_f<AbstractIndexTyple,IsAbstractIndex_e>::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
+        // make sure that the index typle actually contains AbstractIndex_c types
+        STATIC_ASSERT((Hippo::EachTypeSatisfies_f<AbstractIndexTyple,IsAbstractIndex_e>::V), MUST_BE_TYPLE_OF_ABSTRACT_INDEX_TYPES);
         return typename SplitReturnType_f<SourceAbstractIndexType,
                                           AbstractIndexTypes_...>::T(as_derived());
     }

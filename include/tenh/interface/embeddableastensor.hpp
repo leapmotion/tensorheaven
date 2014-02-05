@@ -145,8 +145,8 @@ struct EmbeddableAsTensor_i
         split (Typle_t<AbstractIndexTypes_...> const &abstract_multiindex) const
     {
         typedef Typle_t<AbstractIndexTypes_...> AbstractIndexTyple;
-        // make sure that the index type list actually contains AbstractIndex_c types
-        STATIC_ASSERT((Hippo::EachTypeSatisfies_f<AbstractIndexTyple, IsAbstractIndex_e>::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
+        // make sure that the index typle actually contains AbstractIndex_c types
+        STATIC_ASSERT((Hippo::EachTypeSatisfies_f<AbstractIndexTyple, IsAbstractIndex_e>::V), MUST_BE_TYPLE_OF_ABSTRACT_INDEX_TYPES);
         AbstractIndex_c<666> dummy_index;
         return Parent_Vector_i::operator()(dummy_index).split(dummy_index, abstract_multiindex);
     }

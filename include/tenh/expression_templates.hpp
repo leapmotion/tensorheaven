@@ -53,8 +53,8 @@ struct ExpressionTemplate_IndexedObject_t
     {
         // TODO: assert that Object is NOT an expression template (it could be e.g. an IndexBundle_t though)
         // TODO: assert that FactorTyple is a Typle of BasedVectorSpace_c types.
-        STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::EachTypeSatisfies_f<DimIndexTyple,IsDimIndex_e>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, DIMINDEXTYPELIST),
-        STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::EachTypeSatisfies_f<SummedDimIndexTyple_,IsDimIndex_e>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES, SUMMEDDIMINDEXTYPELIST)
+        STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::EachTypeSatisfies_f<DimIndexTyple,IsDimIndex_e>::V), MUST_BE_TYPLE_OF_DIM_INDEX_TYPES, DIMINDEXTYPLE),
+        STATIC_ASSERT_IN_ENUM__UNIQUE((Hippo::EachTypeSatisfies_f<SummedDimIndexTyple_,IsDimIndex_e>::V), MUST_BE_TYPLE_OF_DIM_INDEX_TYPES, SUMMEDDIMINDEXTYPLE)
     };
 
     typedef ExpressionTemplate_i<typename DerivedType_f<Derived_,

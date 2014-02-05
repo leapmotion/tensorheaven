@@ -2,7 +2,6 @@
 #include <iostream>
 
 #include "tenh/core.hpp"
-#include "tenh/meta/function.hpp"
 #include "tenh/meta/typestringof.hpp"
 #include "tenh/meta/typle.hpp"
 #include "tenh/meta/typle_utility.hpp"

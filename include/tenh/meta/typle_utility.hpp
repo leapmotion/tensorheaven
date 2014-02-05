@@ -24,7 +24,7 @@ namespace Tenh {
 
 namespace Hippo { // temp namespace until TypeList_t is gone
 
-// composition of metafunctions -- each type in the typelist must be an evaluator.
+// composition of metafunctions -- each type must be an evaluator.
 
 // forward declaration -- this should go in function.hpp
 template <typename... Evaluators_> struct CompositionOf_e;

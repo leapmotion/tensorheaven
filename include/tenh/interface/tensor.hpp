@@ -93,12 +93,12 @@ struct Tensor_i
     using Parent_EmbeddableAsTensor_i::operator();
 
     // Because the return type for "operator () (...) const" is an abomination, use this helper.
-    // This metafunction also serves to allow a 1-multiindex (i.e. a typelist of abstract indices
+    // This metafunction also serves to allow a 1-multiindex (i.e. a typle of abstract indices
     // having 1 element) to create vector-indexed expressions.
     template <typename AbstractIndexTyple_>
     struct IndexedExpressionConstType_f;
     // Because the return type for "operator () (...) const" is an abomination, use this helper.
-    // This metafunction also serves to allow a 1-multiindex (i.e. a typelist of abstract indices
+    // This metafunction also serves to allow a 1-multiindex (i.e. a typle of abstract indices
     // having 1 element) to create vector-indexed expressions.
     template <typename AbstractIndexTyple_>
     struct IndexedExpressionNonConstType_f;

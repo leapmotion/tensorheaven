@@ -224,13 +224,13 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,
 
     typename ElementType_f<0,false>::T el (Uint32 n)
     {
-        STATIC_ASSERT(Hippo::TypleIsUniform_f<SummandTyple_>::V, TYPELIST_MUST_BE_UNIFORM);
+        STATIC_ASSERT(Hippo::TypleIsUniform_f<SummandTyple_>::V, TYPLE_MUST_BE_UNIFORM);
         return typename ElementType_f<0,false>::T(pointer_to_allocation() + DimensionOf_f<typename Hippo::Head_f<SummandTyple_>::T>::V * n);
     }
 
     typename ElementType_f<0,true>::T el (Uint32 n) const
     {
-        STATIC_ASSERT(Hippo::TypleIsUniform_f<SummandTyple_>::V, TYPELIST_MUST_BE_UNIFORM);
+        STATIC_ASSERT(Hippo::TypleIsUniform_f<SummandTyple_>::V, TYPLE_MUST_BE_UNIFORM);
         return typename ElementType_f<0,true>::T(pointer_to_allocation() + DimensionOf_f<typename Hippo::Head_f<SummandTyple_>::T>::V * n);
     }
 
@@ -281,7 +281,7 @@ private:
                                Hippo::EachTypeSatisfies_f<ConceptTyple,IsDiagonal2TensorProductOfBasedVectorSpaces_e>::V
                                ||
                                Hippo::EachTypeSatisfies_f<ConceptTyple,IsScalar2TensorProductOfBasedVectorSpaces_e>::V),
-                              MUST_BE_TYPELIST_OF_SCALAR_OR_DIAGONAL_OR_2_TENSORS)
+                              MUST_BE_TYPLE_OF_SCALAR_OR_DIAGONAL_OR_2_TENSORS)
     };
     typedef typename FactorNOfEachTypeIn_f<0,ConceptTyple>::T SummandTyple0;
     typedef typename FactorNOfEachTypeIn_f<1,ConceptTyple>::T SummandTyple1;
@@ -393,7 +393,7 @@ private:
     enum
     {
         STATIC_ASSERT_IN_ENUM(Hippo::TypleIsUniform_f<ScalarTyple>::V, ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM((EachTypeUsesProceduralArray_f<Procedural2TensorImplementationTyple_>::V), MUST_BE_TYPELIST_OF_PROCEDURAL_IMPLEMENTATIONS)
+        STATIC_ASSERT_IN_ENUM((EachTypeUsesProceduralArray_f<Procedural2TensorImplementationTyple_>::V), MUST_BE_TYPLE_OF_PROCEDURAL_IMPLEMENTATIONS)
     };
 
     typedef typename Hippo::Head_f<ScalarTyple>::T Scalar;

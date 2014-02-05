@@ -105,7 +105,6 @@ add_executable(conceptual_inheritance_prototype conceptual_inheritance_prototype
 # add_executable(list list.cpp)
 add_executable(prettyprint prettyprint.cpp)
 add_executable(sandbox sandbox.cpp)
-# add_executable(typelist typelist.cpp)
 add_executable(taylor_polynomial taylor_polynomial.cpp)
 
 set_source_files_properties(c++11_usage_prototype.cpp PROPERTIES COMPILE_FLAGS -std=c++11)
