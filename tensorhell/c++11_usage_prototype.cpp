@@ -656,6 +656,132 @@ void prototyping_for_better_use_of_complex ()
 }
 
 // ///////////////////////////////////////////////////////////////////////////
+// decltype awesomeness
+// ///////////////////////////////////////////////////////////////////////////
+
+/// @struct Head_f typle.hpp "tenh/meta/typle.hpp"
+/// @brief Returns the first type in the argument Typle_t if nonempty; otherwise is undefined.
+template <typename T_> struct Head;
+/// @struct BodyTyple_f typle.hpp "tenh/meta/typle.hpp"
+/// @brief Returns the Typle_t containing the "rest" of the types in the argument Typle_t if
+/// nonempty; otherwise is undefined.
+template <typename T_> struct Body;
+/// @struct Length_f typle.hpp "tenh/meta/typle.hpp"
+/// @brief Returns the length of the argument Typle_t.
+template <typename T_> struct Len;
+
+// MAKE_1_ARY_TYPE_EVALUATOR(Head);
+// MAKE_1_ARY_TYPE_EVALUATOR(Body);
+// MAKE_1_ARY_VALUE_EVALUATOR(Len, Uint32);
+
+/// @cond false
+template <typename Head_, typename... Body_>
+struct Head<Typle_t<Head_,Body_...>> { typedef Head_ T; };
+
+template <typename Head_, typename... Body_>
+struct Body<Typle_t<Head_,Body_...>> { typedef Typle_t<Body_...> T; };
+
+template <>
+struct Len<Typle_t<>> { static Uint32 const V = 0; };
+
+template <typename Head_, typename... Body_>
+struct Len<Typle_t<Head_,Body_...>> { static Uint32 const V = 1 + Length_f<Typle_t<Body_...>>::V; };
+/// @endcond
+
+#define MAKE_1_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(function, Metafunction) \
+template <typename T0_> \
+typename Metafunction<T0_>::T function (T0_ const &) \
+{ \
+    return typename Metafunction<T0_>::T(); \
+}
+
+#define MAKE_2_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(function, Metafunction) \
+template <typename T0_, typename T1_> \
+typename Metafunction<T0_,T1_>::T function (T0_ const &, T1_ const &) \
+{ \
+    return typename Metafunction<T0_,T1_>::T(); \
+}
+
+#define MAKE_VARIADIC_TYPE_FUNCTION_FOR_METAFUNCTION(function, Metafunction) \
+template <typename... Types_> \
+typename Metafunction<Types_...>::T function (Types_...) \
+{ \
+    return typename Metafunction<Types_...>::T(); \
+}
+
+#define MAKE_1_ARY_VALUE_FUNCTION_FOR_METAFUNCTION(function, Metafunction) \
+template <typename T0_> \
+decltype(Metafunction<T0_>::V) function (T0_ const &) \
+{ \
+    return Metafunction<T0_>::V; \
+}
+
+#define MAKE_2_ARY_VALUE_FUNCTION_FOR_METAFUNCTION(function, Metafunction) \
+template <typename T0_, typename T1_> \
+decltype(Metafunction<T0_,T1_>::V) function (T0_ const &, T1_ const &) \
+{ \
+    return Metafunction<T0_,T1_>::V; \
+}
+
+MAKE_1_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(head, Head);
+MAKE_1_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(body, Body);
+MAKE_1_ARY_VALUE_FUNCTION_FOR_METAFUNCTION(len, Len);
+
+template <typename T0_, typename T1_> struct Concat2;
+template <typename Head_, typename BodyTyple_> struct HeadBody;
+template <typename... Ts_> struct Concat;
+
+/// @cond false
+template <typename... LhsTypes_, typename... RhsTypes_>
+struct Concat2<Typle_t<LhsTypes_...>,Typle_t<RhsTypes_...>>
+{
+    typedef Typle_t<LhsTypes_...,RhsTypes_...> T;
+};
+
+template <typename Head_, typename... BodyTypes_>
+struct HeadBody<Head_,Typle_t<BodyTypes_...>>
+{
+    typedef Typle_t<Head_,BodyTypes_...> T;
+};
+
+template <> struct Concat<> { typedef Typle_t<> T; };
+
+template <typename HeadTyple_, typename... BodyTyples_>
+struct Concat<HeadTyple_,BodyTyples_...>
+{
+    static_assert(IsTyple_f<HeadTyple_>::V, "each argument must be a Typ");
+    typedef typename Concat2<HeadTyple_,typename Concat<BodyTyples_...>::T>::T T;
+};
+/// @endcond
+
+MAKE_2_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(concat2, Concat2);
+MAKE_2_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(head_body, HeadBody);
+MAKE_VARIADIC_TYPE_FUNCTION_FOR_METAFUNCTION(concat, Concat);
+
+void prototyping_for_awesomeness ()
+{
+    std::cout << "prototyping_for_awesomeness();\n";
+    Typle_t<int,float,bool> x;
+    std::cout << FORMAT_VALUE(type_string_of(x)) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(head(x))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(body(x))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(len(x))) << '\n';
+    std::cout << FORMAT_VALUE(len(x)) << '\n';
+    std::cout << '\n';
+
+    Typle_t<char,double> y;
+    std::cout << FORMAT_VALUE(type_string_of(y)) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(concat2(x,y))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(concat(x,y))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(head_body(int(),y))) << '\n';
+    std::cout << '\n';
+
+    Typle_t<Uint16,Sint16> z;
+    std::cout << FORMAT_VALUE(type_string_of(concat(x,y,z))) << '\n';
+    std::cout << '\n';
+}
+
+// ///////////////////////////////////////////////////////////////////////////
 // main function
 // ///////////////////////////////////////////////////////////////////////////
 
@@ -677,6 +803,7 @@ int main (int argc, char **argv)
     prototyping_for_enable_if();
     prototyping_for_random_number_generation();
     prototyping_for_better_use_of_complex();
+    prototyping_for_awesomeness();
 
     return 0;
 }
