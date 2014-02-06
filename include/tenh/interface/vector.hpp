@@ -173,7 +173,7 @@ struct Vector_i
     // evaluates as
     //   X(i)*v(i).
     template <typename Typle_>
-    Scalar_ operator () (List_t<Typle_> const &p) const
+    Scalar_ operator () (Tuple_t<Typle_> const &p) const
     {
         STATIC_ASSERT(Length_f<Typle_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
         AbstractIndex_c<'i'> i;

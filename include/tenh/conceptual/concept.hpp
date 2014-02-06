@@ -230,7 +230,7 @@ private:
     BasePropertyOfEachInTyple_f();
 };
 
-// gives a list of the unique values of the given property, taken from all ancestors.
+// gives a typle of the unique values of the given property, taken from all ancestors.
 template <typename Concept_, typename PropertyId_>
 struct MultiProperty_f
 {

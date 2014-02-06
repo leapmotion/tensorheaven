@@ -51,7 +51,7 @@ public:
     }
     // this is the tuple-based constructor
     template <typename... Types_>
-    Vector (List_t<Typle_t<Types_...>> const &x)
+    Vector (Tuple_t<Typle_t<Types_...>> const &x)
         :
         Parent_Implementation(x.as_member_array())
     {
@@ -76,7 +76,7 @@ public:
     }
     // this is the tuple-based constructor
     template <typename... Types_>
-    Vector (List_t<Typle_t<Types_...>> const &x,
+    Vector (Tuple_t<Typle_t<Types_...>> const &x,
             Scalar_ *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Implementation(x, pointer_to_allocation, check_pointer)
@@ -171,7 +171,7 @@ template <typename Lhs_BasedVectorSpace_,
 XYZ operator % (Vector<Lhs_BasedVectorSpace_,Scalar_,Lhs_UseArrayType_> const &lhs,
                 Vector<Rhs_BasedVectorSpace_,Scalar_,Rhs_UseArrayType_> const &rhs)
 {
-    // TODO: write an expression template for outer product -- essentially taking a list of Vector_i types
+    // TODO: write an expression template for outer product -- essentially taking a tuple of Vector_i types
     // and bundling each of their indices into a single index.
 }
 

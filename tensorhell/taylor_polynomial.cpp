@@ -1204,9 +1204,9 @@ int main (int argc, char **argv)
 //         std::cerr << FORMAT_VALUE((cayley_transform(i*j)*inner_product.split(i*k)*cayley_transform(k*l)).eval().tensor_value()) << "\n\n";
 //         std::cerr << FORMAT_VALUE(cayley_transform(i*j)*inner_product.split(i*k)*cayley_transform(k*l) - inner_product_inverse.split(j*l)) << "\n\n";
 //         std::cerr << FORMAT_VALUE((cayley_transform(i*j)*inner_product.split(i*k)*cayley_transform(k*l) - inner_product_inverse.split(j*l)).eval().tensor_value()) << "\n\n";
-        typedef Typle_t<StandardInnerProduct,StandardInnerProduct> InnerProductFactorList;
+        typedef Typle_t<StandardInnerProduct,StandardInnerProduct> InnerProductFactorTyple;
         std::cerr << "this value should be about equal to 0: "
-                  << FORMAT_VALUE(squared_norm<TensorProduct_c<InnerProductFactorList> >((cayley_transform(i*j)*inner_product.split(i*k)*cayley_transform(k*l) - inner_product.split(j*l)).eval().value())) << "\n\n";
+                  << FORMAT_VALUE(squared_norm<TensorProduct_c<InnerProductFactorTyple> >((cayley_transform(i*j)*inner_product.split(i*k)*cayley_transform(k*l) - inner_product.split(j*l)).eval().value())) << "\n\n";
     }
 
 //     std::cerr << "QuadraticFunction_t\n";

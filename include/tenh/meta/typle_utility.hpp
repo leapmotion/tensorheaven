@@ -630,7 +630,7 @@ struct EachTypleHasEqualLength_f<Typle_t<>>
 MAKE_1_ARY_VALUE_EVALUATOR(EachTypleHasEqualLength, bool);
 
 /// @struct Zip_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
-/// @brief "Zips" a list of Typle_t into a Typle_t of tuples.
+/// @brief "Zips" a typle of Typle_t into a Typle_t of tuples.
 /// The heads of all the Typle_t are put into the head element, etc.
 /// e.g. (('a','b','c'),(1,2,3)) turns into (('a',1),('b',2),('c',3)).
 /// @details Essentially this is the matrix transpose of the matrix

@@ -102,7 +102,6 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} ${TEMP_COMPILER_RELEASE_FLAG_LIS
 add_executable(c++11_usage_prototype c++11_usage_prototype.cpp)
 add_executable(compile_time_generated_lookup_table compile_time_generated_lookup_table.cpp)
 add_executable(conceptual_inheritance_prototype conceptual_inheritance_prototype.cpp)
-# add_executable(list list.cpp)
 add_executable(prettyprint prettyprint.cpp)
 add_executable(sandbox sandbox.cpp)
 add_executable(taylor_polynomial taylor_polynomial.cpp)

@@ -39,7 +39,7 @@
     * `Blah_m<...>` for meta-programmingy things like type lists, related metafunctions, or are
       "terminal" metaprogram types that aren't metafunctions (i.e. they are metaprogram values)
     * `Blah_f<...>` for meta-functions which "return" a type T or a value V
-- rename `List_t::body()` to `List_t::body_list()`, since the body list type is `BodyList`
+- maybe rename `Tuple_t::body()` to `Tuple_t::body_tuple()`, since the body type is `BodyTuple`
 - maybe change array (and array-like) indexing schemes to use signed integers, where negative
   values index from the end of the array (although this would come at a runtime cost).  this
   should probably not include vector/tensor indexing.  could do this with some type similar to

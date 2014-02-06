@@ -198,7 +198,7 @@ public:
         static typename TensorIndexMap::EvalMapType const tensor_index_map = TensorIndexMap::eval;
         // t = (f,s), which is a concatenation of the free access indices and the summed access indices.
         // s is a reference to the second part, which is what is iterated over in the summation.
-        for (SummedMultiIndex &s = t.template trailing_list<Length_f<FreeDimIndexTyple>::V>(); s.is_not_at_end(); ++s)
+        for (SummedMultiIndex &s = t.template trailing_tuple<Length_f<FreeDimIndexTyple>::V>(); s.is_not_at_end(); ++s)
             // TODO: when the dual-vector-space/conceptual refactor is done, this summation_component_factor
             // should go away, since this is a non-natural pairing, and it causes C++ plumbing issues
             // (getting the C++ scalar type from the index, where the index will only be aware of the
@@ -263,7 +263,7 @@ public:
         static typename RightOperandIndexMap::EvalMapType const right_operand_index_map = RightOperandIndexMap::eval;
         // t = (f,s), which is a concatenation of the free access indices and the summed access indices.
         // s is a reference to the second part, which is what is iterated over in the summation.
-        for (SummedMultiIndex &s = t.template trailing_list<Length_f<FreeDimIndexTyple>::V>(); s.is_not_at_end(); ++s)
+        for (SummedMultiIndex &s = t.template trailing_tuple<Length_f<FreeDimIndexTyple>::V>(); s.is_not_at_end(); ++s)
             retval += left_operand[left_operand_index_map(t)] *
                       right_operand[right_operand_index_map(t)];// *
                       //summation_component_factor(s);
@@ -306,7 +306,7 @@ struct FreeDimIndexTypleOfMultiplication_f
 {
 private:
     // the free indices are the single-occurrence indices of the concatenated
-    // list of free indices from the left and right operands
+    // typle of free indices from the left and right operands
     typedef typename Concat2Typles_f<typename LeftOperand::FreeDimIndexTyple,
                                      typename RightOperand::FreeDimIndexTyple>::T CombinedFreeDimIndexTyple;
     FreeDimIndexTypleOfMultiplication_f();
@@ -319,13 +319,13 @@ struct SummedDimIndexTypleOfMultiplication_f
 {
 private:
     // the free indices are the single-occurrence indices of the concatenated
-    // list of free indices from the left and right operands
+    // typle of free indices from the left and right operands
     typedef typename Concat2Typles_f<typename LeftOperand::FreeDimIndexTyple,
                                      typename RightOperand::FreeDimIndexTyple>::T CombinedFreeDimIndexTyple;
     SummedDimIndexTypleOfMultiplication_f();
 public:
     // the summed indices (at this level) are the double-occurrences indices
-    // of the concatenated list of free indices from the left and right operands
+    // of the concatenated typle of free indices from the left and right operands
     typedef typename ElementsHavingMultiplicity_f<CombinedFreeDimIndexTyple,2>::T T;
 };
 
@@ -451,7 +451,7 @@ private:
 
 public:
 
-    // zip the stuff so that the transformations can act on both the DimIndex_t and factor lists
+    // zip the stuff so that the transformations can act on both the DimIndex_t and factor typles
     typedef typename Zip_f<Typle_t<OperandFreeDimIndexTyple,
                                    typename Operand::FreeFactorTyple>>::T OperandFreeDimIndexAndFactorTyple;
     typedef Typle_t<ResultingDimIndexType,ResultingFactorType> ResultingDimIndexAndFactorType;
@@ -496,7 +496,7 @@ public:
         static typename OperandIndexMap::EvalMapType const operand_index_map = OperandIndexMap::eval;
         static typename BundleIndexMap::T const bundle_index_map = BundleIndexMap::V;
         // | is concatenation of MultiIndex_t instances
-        return m_operand[operand_index_map(m.template leading_list<MultiIndex::LENGTH-1>()
+        return m_operand[operand_index_map(m.template leading_tuple<MultiIndex::LENGTH-1>()
                                            |
                                            bundle_index_map(m.template el<MultiIndex::LENGTH-1>()))];
     }
@@ -582,9 +582,9 @@ struct IndexSplitter_t
 
         SourceFactorComponentIndex i(ImplementationOfSourceFactor::vector_index_of(s));
         // this replaces the SplitAbstractIndexTyple portion with SourceAbstractIndexType
-        typename Operand::MultiIndex c_rebundled(m.template leading_list<SOURCE_INDEX_TYPE_INDEX>()
+        typename Operand::MultiIndex c_rebundled(m.template leading_tuple<SOURCE_INDEX_TYPE_INDEX>()
                                                  |
-                                                 (i >>= m.template trailing_list<SOURCE_INDEX_TYPE_INDEX+Length_f<SplitAbstractIndexTyple>::V>()));
+                                                 (i >>= m.template trailing_tuple<SOURCE_INDEX_TYPE_INDEX+Length_f<SplitAbstractIndexTyple>::V>()));
         return ImplementationOfSourceFactor::scalar_factor_for_component(s) * m_operand[c_rebundled];
     }
 
@@ -657,9 +657,9 @@ struct IndexSplitToIndex_t
 
         SourceFactorComponentIndex i(ImplementationOfSourceFactor::vector_index_of(s));
         // this replaces the SplitAbstractIndexType_ portion with SourceAbstractIndexType
-        typename Operand::MultiIndex c_rebundled(m.template leading_list<SOURCE_INDEX_TYPE_INDEX>()
+        typename Operand::MultiIndex c_rebundled(m.template leading_tuple<SOURCE_INDEX_TYPE_INDEX>()
                                                  |
-                                                 (i >>= m.template trailing_list<SOURCE_INDEX_TYPE_INDEX+1>()));
+                                                 (i >>= m.template trailing_tuple<SOURCE_INDEX_TYPE_INDEX+1>()));
         return ImplementationOfSourceFactor::scalar_factor_for_component(s) * m_operand[c_rebundled];
     }
 
@@ -733,9 +733,9 @@ struct IndexEmbedder_t
 
         EmbeddingDomainComponentIndex i(LinearEmbedding::source_component_index_for_embedded_component(j));
         // this replaces the EmbeddedAbstractIndexType_ portion with SourceAbstractIndexType_
-        typename Operand_::MultiIndex c_rebundled(m.template leading_list<SOURCE_INDEX_TYPE_INDEX>()
+        typename Operand_::MultiIndex c_rebundled(m.template leading_tuple<SOURCE_INDEX_TYPE_INDEX>()
                                                  |
-                                                 (i >>= m.template trailing_list<SOURCE_INDEX_TYPE_INDEX+1>()));
+                                                 (i >>= m.template trailing_tuple<SOURCE_INDEX_TYPE_INDEX+1>()));
         return LinearEmbedding::scalar_factor_for_embedded_component(j) * m_operand[c_rebundled];
     }
 
@@ -811,9 +811,9 @@ struct IndexCoembedder_t
         {
             STATIC_ASSERT_TYPES_ARE_EQUAL(typename CoembedIndexIterator::ComponentIndexReturnType, CoembeddingDomainComponentIndex);
             // this replaces the CoembeddedAbstractIndexType_ portion with SourceAbstractIndexType_
-            typename Operand_::MultiIndex c_rebundled(m.template leading_list<SOURCE_INDEX_TYPE_INDEX>()
+            typename Operand_::MultiIndex c_rebundled(m.template leading_tuple<SOURCE_INDEX_TYPE_INDEX>()
                                                       |
-                                                      (it.component_index() >>= m.template trailing_list<SOURCE_INDEX_TYPE_INDEX+1>()));
+                                                      (it.component_index() >>= m.template trailing_tuple<SOURCE_INDEX_TYPE_INDEX+1>()));
             retval += it.scale_factor() * m_operand[c_rebundled];
         }
         return retval;

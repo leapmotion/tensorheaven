@@ -51,7 +51,7 @@ public:
     }
     // this is the tuple-based constructor
     template <typename... Types_>
-    Vec (List_t<Typle_t<Types_...>> const &x)
+    Vec (Tuple_t<Typle_t<Types_...>> const &x)
         :
         Parent_Vector(x.as_member_array())
     {
@@ -76,7 +76,7 @@ public:
     }
     // this is the tuple-based constructor
     template <typename... Types_>
-    Vec (List_t<Typle_t<Types_...>> const &x,
+    Vec (Tuple_t<Typle_t<Types_...>> const &x,
          Scalar_ *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Vector(x, pointer_to_allocation, check_pointer)
@@ -171,7 +171,7 @@ public:
     }
     // this is the tuple-based constructor
     template <typename... Types_>
-    Op (List_t<Typle_t<Types_...>> const &x)
+    Op (Tuple_t<Typle_t<Types_...>> const &x)
         :
         Parent_Operator(x.as_member_array())
     {
@@ -195,7 +195,7 @@ public:
     }
     // this is the tuple-based constructor
     template <typename... Types_>
-    Op (List_t<Typle_t<Types_...>> const &x,
+    Op (Tuple_t<Typle_t<Types_...>> const &x,
         Scalar_ *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Operator(x, pointer_to_allocation, check_pointer)

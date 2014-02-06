@@ -44,7 +44,7 @@ struct FactorComponentIndexTyple_f<Typle_t<>>
 // ///////////////////////////////////////////////////////////////////////////
 
 template <typename ParameterTyple_, typename AbstractIndexTyple_>
-struct IndexedParameterListReturnType_f
+struct IndexedParameterTupleReturnType_f
 {
 private:
     typedef typename Head_f<ParameterTyple_>::T HeadParameter;
@@ -53,13 +53,13 @@ private:
     typedef typename BodyTyple_f<AbstractIndexTyple_>::T BodyAbstractIndexTyple;
     static AbstractIndexSymbol const HEAD_SYMBOL = SymbolOf_f<HeadAbstractIndex>::V;
     typedef typename HeadParameter::template IndexedExpressionConstType_f<HEAD_SYMBOL>::T LeftOperand;
-    typedef typename IndexedParameterListReturnType_f<BodyParameterTyple,BodyAbstractIndexTyple>::T RightOperand;
+    typedef typename IndexedParameterTupleReturnType_f<BodyParameterTyple,BodyAbstractIndexTyple>::T RightOperand;
 public:
     typedef ExpressionTemplate_Multiplication_t<LeftOperand,RightOperand> T;
 };
 
 template <typename HeadParameter, typename HeadAbstractIndex>
-struct IndexedParameterListReturnType_f<Typle_t<HeadParameter>,Typle_t<HeadAbstractIndex>>
+struct IndexedParameterTupleReturnType_f<Typle_t<HeadParameter>,Typle_t<HeadAbstractIndex>>
 {
 private:
     static AbstractIndexSymbol const HEAD_SYMBOL = SymbolOf_f<HeadAbstractIndex>::V;
@@ -68,17 +68,17 @@ public:
 };
 
 template <typename ParameterTyple_, typename AbstractIndexTyple_>
-typename IndexedParameterListReturnType_f<ParameterTyple_,AbstractIndexTyple_>::T
-    indexed_parameter_list (List_t<ParameterTyple_> const &p, AbstractIndexTyple_ const &)
+typename IndexedParameterTupleReturnType_f<ParameterTyple_,AbstractIndexTyple_>::T
+    indexed_parameter_tuple (Tuple_t<ParameterTyple_> const &p, AbstractIndexTyple_ const &)
 {
     typedef typename Head_f<AbstractIndexTyple_>::T HeadAbstractIndex;
     typedef typename BodyTyple_f<AbstractIndexTyple_>::T BodyAbstractIndexTyple;
-    return p.head()(HeadAbstractIndex())*indexed_parameter_list(p.body(), BodyAbstractIndexTyple());
+    return p.head()(HeadAbstractIndex())*indexed_parameter_tuple(p.body(), BodyAbstractIndexTyple());
 }
 
 template <typename HeadParameter, typename HeadAbstractIndex>
-typename IndexedParameterListReturnType_f<Typle_t<HeadParameter>,Typle_t<HeadAbstractIndex>>::T
-    indexed_parameter_list (List_t<Typle_t<HeadParameter>> const &p, Typle_t<HeadAbstractIndex> const &)
+typename IndexedParameterTupleReturnType_f<Typle_t<HeadParameter>,Typle_t<HeadAbstractIndex>>::T
+    indexed_parameter_tuple (Tuple_t<Typle_t<HeadParameter>> const &p, Typle_t<HeadAbstractIndex> const &)
 {
     return p.head()(HeadAbstractIndex());
 }
@@ -185,7 +185,7 @@ struct EmbeddableAsTensor_i
     //   X.split(i_1*...*i_k)*v_1(i_1)*...*v_k(i_k)
     // though is implemented using coembed, which should be close to optimally efficient.
     template <typename ParameterTyple_>
-    Scalar_ operator () (List_t<ParameterTyple_> const &l) const
+    Scalar_ operator () (Tuple_t<ParameterTyple_> const &l) const
     {
         STATIC_ASSERT(Length_f<ParameterTyple_>::V == ORDER, ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
         typedef typename AbstractIndexRangeTyple_f<Length_f<ParameterTyple_>::V,667>::T AbstractIndexTyple;
@@ -194,7 +194,7 @@ struct EmbeddableAsTensor_i
         AbstractIndex_c<'p'> p;
         AbstractIndex_c<'q'> q;
         AbstractIndexTyple a;
-        return operator()(p) * indexed_parameter_list(l,a).bundle(a,dual(upstairs),q).coembed(q,dual(downstairs),p);
+        return operator()(p) * indexed_parameter_tuple(l,a).bundle(a,dual(upstairs),q).coembed(q,dual(downstairs),p);
     }
 
     static bool component_is_procedural_zero (MultiIndex const &m) { return as_derived().component_is_procedural_zero(m); }

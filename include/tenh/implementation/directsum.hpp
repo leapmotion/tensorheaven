@@ -133,7 +133,7 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,
     }
     // this is the tuple-based constructor
     template <typename... Types_>
-    ImplementationOf_t (List_t<Typle_t<Types_...>> const &x)
+    ImplementationOf_t (Tuple_t<Typle_t<Types_...>> const &x)
         :
         Parent_Array_i(x.as_member_array())
     {
@@ -171,7 +171,7 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,
     }
     // this is the tuple-based constructor
     template <typename... Types_>
-    ImplementationOf_t (List_t<Typle_t<Types_...>> const &x,
+    ImplementationOf_t (Tuple_t<Typle_t<Types_...>> const &x,
                         QualifiedComponent *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Array_i(x, pointer_to_allocation, check_pointer)

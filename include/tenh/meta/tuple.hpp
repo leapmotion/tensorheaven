@@ -17,7 +17,7 @@ namespace Tenh {
 template <typename... Types_>
 struct Tuple_f
 {
-    typedef List_t<Typle_t<Types_...>> T;
+    typedef Tuple_t<Typle_t<Types_...>> T;
 };
 
 inline Tuple_f<>::T tuple ()
@@ -35,7 +35,7 @@ inline typename Tuple_f<Head_,BodyTypes_...>::T tuple (Head_ const &head, BodyTy
 template <typename T_, Uint32 LENGTH_>
 struct UniformTuple_f
 {
-    typedef typename UniformListOfLength_f<T_,LENGTH_>::T T;
+    typedef typename UniformTupleOfLength_f<T_,LENGTH_>::T T;
 };
 
 // identical to tuple()

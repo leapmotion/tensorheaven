@@ -10,7 +10,7 @@
 
 #include "tenh/conceptual/abstractindex.hpp"
 #include "tenh/dimindex.hpp"
-#include "tenh/list.hpp"
+#include "tenh/meta/tuple.hpp"
 
 namespace Tenh {
 
@@ -282,52 +282,52 @@ typename Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
 
 /*
 // ///////////////////////////////////////////////////////////////////////////
-// overload to reindex List_t types -- applies reindexed to each element
+// overload to reindex Tuple_t types -- applies reindexed to each element
 // ///////////////////////////////////////////////////////////////////////////
 
 // unfortunately you have to make a const and a non-const version of each
 
-// this is defined so that the operations of list construction and reindexing commute.
+// this is defined so that the operations of tuple construction and reindexing commute.
 template <typename DomainAbstractIndexTyple_,
           typename CodomainAbstractIndexTyple_,
           typename Typle_>
 typename Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
-         ::template Eval_f<List_t<Typle_> >::T
-    reindexed (List_t<Typle_> const &list)
+         ::template Eval_f<Tuple_t<Typle_> >::T
+    reindexed (Tuple_t<Typle_> const &tuple)
 {
-    return reindexed<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>(list.head()) |
-           reindexed<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>(list.body());
+    return reindexed<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>(tuple.head()) |
+           reindexed<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>(tuple.body());
 }
 
 template <typename DomainAbstractIndexTyple_,
           typename CodomainAbstractIndexTyple_,
           typename Typle_>
 typename Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
-         ::template Eval_f<List_t<Typle_> >::T
-    reindexed (List_t<Typle_> &list)
+         ::template Eval_f<Tuple_t<Typle_> >::T
+    reindexed (Tuple_t<Typle_> &tuple)
 {
-    return reindexed<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>(list.head()) |
-           reindexed<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>(list.body());
+    return reindexed<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>(tuple.head()) |
+           reindexed<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>(tuple.body());
 }
 
 template <typename DomainAbstractIndexTyple_,
           typename CodomainAbstractIndexTyple_>
 typename Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
-         ::template Eval_f<EmptyList>::T
-    reindexed (EmptyList const &list)
+         ::template Eval_f<EmptyTuple>::T
+    reindexed (EmptyTuple const &tuple)
 {
     return typename Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
-                    ::template Eval_f<EmptyList>::T();
+                    ::template Eval_f<EmptyTuple>::T();
 }
 
 template <typename DomainAbstractIndexTyple_,
           typename CodomainAbstractIndexTyple_>
 typename Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
-         ::template Eval_f<EmptyList>::T
-    reindexed (EmptyList &list)
+         ::template Eval_f<EmptyTuple>::T
+    reindexed (EmptyTuple &tuple)
 {
     return typename Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
-                    ::template Eval_f<EmptyList>::T();
+                    ::template Eval_f<EmptyTuple>::T();
 }
 
 */

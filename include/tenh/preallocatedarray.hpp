@@ -73,14 +73,14 @@ struct PreallocatedArray_t
 #endif // __clang_version__
 
     template <typename Typle_>
-    PreallocatedArray_t (List_t<Typle_> const &x,
+    PreallocatedArray_t (Tuple_t<Typle_> const &x,
                          QualifiedComponent *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         m_pointer_to_allocation(pointer_to_allocation)
     {
-        static_assert(Length_f<Typle_>::V == COMPONENT_COUNT, "List_t argument length must match that of array");
-        static_assert(TypleIsUniform_f<Typle_>::V, "List_t argument must have uniform Typle_ parameter");
-        static_assert(TypesAreEqual_f<typename TypeOfUniformTyple_f<Typle_>::T,Component_>::V, "type of uniform List_t must match Component_");
+        static_assert(Length_f<Typle_>::V == COMPONENT_COUNT, "Tuple_t argument length must match that of array");
+        static_assert(TypleIsUniform_f<Typle_>::V, "Tuple_t argument must have uniform Typle_ parameter");
+        static_assert(TypesAreEqual_f<typename TypeOfUniformTyple_f<Typle_>::T,Component_>::V, "type of uniform Tuple_t must match Component_");
         if (check_pointer && m_pointer_to_allocation == nullptr)
             throw std::invalid_argument("invalid pointer_to_allocation argument (must be non-null)");
         memcpy(m_pointer_to_allocation, x.as_member_array().pointer_to_allocation(), allocation_size_in_bytes());

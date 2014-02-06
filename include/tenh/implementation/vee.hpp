@@ -107,7 +107,7 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
     }
     // this is the tuple-based constructor
     template <typename Typle_>
-    ImplementationOf_t (List_t<Typle_> const &x)
+    ImplementationOf_t (Tuple_t<Typle_> const &x)
         :
         Parent_Array_i(x.as_member_array())
     {
@@ -145,7 +145,7 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
     }
     // this is the tuple-based constructor
     template <typename Typle_>
-    ImplementationOf_t (List_t<Typle_> const &x,
+    ImplementationOf_t (Tuple_t<Typle_> const &x,
                         QualifiedComponent *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
         :
         Parent_Array_i(x, pointer_to_allocation, check_pointer)

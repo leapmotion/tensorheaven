@@ -1,6 +1,5 @@
 #include <iostream>
 
-#include "tenh/list.hpp"
 #include "tenh/implementation/alt.hpp"
 #include "tenh/implementation/diagonal2tensor.hpp"
 #include "tenh/implementation/directsum.hpp"
@@ -13,6 +12,7 @@
 #include "tenh/implementation/vector.hpp"
 #include "tenh/implementation/vee.hpp"
 #include "tenh/implementation/wedge.hpp"
+#include "tenh/meta/tuple.hpp"
 
 using namespace Tenh;
 
@@ -27,133 +27,133 @@ struct CountingVectorGeneratorId { static std::string type_as_string () { return
 
 int main (int argc, char **argv)
 {
-    List_t<Typle_t<>> empty_list;
-    List_t<Typle_t<int>> int_list(1);
-    List_t<Typle_t<int,float>> int_float_list(1, 3.0f);
-    List_t<Typle_t<int,float,Uint32>> int_float_Uint32_list(1, 3.0f, 456);
+    Tuple_t<Typle_t<>> empty_tuple;
+    Tuple_t<Typle_t<int>> int_tuple(1);
+    Tuple_t<Typle_t<int,float>> int_float_tuple(1, 3.0f);
+    Tuple_t<Typle_t<int,float,Uint32>> int_float_Uint32_tuple(1, 3.0f, 456);
 
-    assert(empty_list.length() == 0);
-    assert(int_list.length() == 1);
-    assert(int_float_list.length() == 2);
-    assert(int_float_Uint32_list.length() == 3);
+    assert(empty_tuple.length() == 0);
+    assert(int_tuple.length() == 1);
+    assert(int_float_tuple.length() == 2);
+    assert(int_float_Uint32_tuple.length() == 3);
 
-    std::cout << FORMAT_VALUE(empty_list) << '\n';
-    std::cout << FORMAT_VALUE(int_list) << '\n';
-    std::cout << FORMAT_VALUE(int_float_list) << '\n';
-    std::cout << FORMAT_VALUE(int_float_Uint32_list) << '\n';
+    std::cout << FORMAT_VALUE(empty_tuple) << '\n';
+    std::cout << FORMAT_VALUE(int_tuple) << '\n';
+    std::cout << FORMAT_VALUE(int_float_tuple) << '\n';
+    std::cout << FORMAT_VALUE(int_float_Uint32_tuple) << '\n';
 
-    std::cout << FORMAT_VALUE(empty_list | empty_list) << '\n';
-    std::cout << FORMAT_VALUE(int_list | empty_list) << '\n';
-    std::cout << FORMAT_VALUE(empty_list | int_list) << '\n';
-    std::cout << FORMAT_VALUE(int_list | int_list) << '\n';
-    std::cout << FORMAT_VALUE(int_list | int_float_list) << '\n';
-    std::cout << FORMAT_VALUE(int_float_Uint32_list | int_float_list) << '\n';
-
-    std::cout << '\n';
-
-    std::cout << FORMAT_VALUE(empty_list.body()) << '\n';
-    std::cout << FORMAT_VALUE(int_list.head()) << '\n';
-    std::cout << FORMAT_VALUE(int_list.body()) << '\n';
-    std::cout << FORMAT_VALUE(int_float_list.head()) << '\n';
-    std::cout << FORMAT_VALUE(int_float_list.body()) << '\n';
-    std::cout << FORMAT_VALUE(int_float_Uint32_list.head()) << '\n';
-    std::cout << FORMAT_VALUE(int_float_Uint32_list.body()) << '\n';
+    std::cout << FORMAT_VALUE(empty_tuple | empty_tuple) << '\n';
+    std::cout << FORMAT_VALUE(int_tuple | empty_tuple) << '\n';
+    std::cout << FORMAT_VALUE(empty_tuple | int_tuple) << '\n';
+    std::cout << FORMAT_VALUE(int_tuple | int_tuple) << '\n';
+    std::cout << FORMAT_VALUE(int_tuple | int_float_tuple) << '\n';
+    std::cout << FORMAT_VALUE(int_float_Uint32_tuple | int_float_tuple) << '\n';
 
     std::cout << '\n';
 
-    // std::cout << FORMAT_VALUE(empty_list.el<0>()) << '\n';
-
-    std::cout << FORMAT_VALUE(int_list.el<0>()) << '\n';
-    // std::cout << FORMAT_VALUE(int_list.el<1>()) << '\n';
-
-    std::cout << FORMAT_VALUE(int_float_list.el<0>()) << '\n';
-    std::cout << FORMAT_VALUE(int_float_list.el<1>()) << '\n';
-    // std::cout << FORMAT_VALUE(int_float_list.el<2>()) << '\n';
-
-    std::cout << FORMAT_VALUE(int_float_Uint32_list.el<0>()) << '\n';
-    std::cout << FORMAT_VALUE(int_float_Uint32_list.el<1>()) << '\n';
-    std::cout << FORMAT_VALUE(int_float_Uint32_list.el<2>()) << '\n';
-    // std::cout << FORMAT_VALUE(int_float_Uint32_list.el<3>()) << '\n';
+    std::cout << FORMAT_VALUE(empty_tuple.body()) << '\n';
+    std::cout << FORMAT_VALUE(int_tuple.head()) << '\n';
+    std::cout << FORMAT_VALUE(int_tuple.body()) << '\n';
+    std::cout << FORMAT_VALUE(int_float_tuple.head()) << '\n';
+    std::cout << FORMAT_VALUE(int_float_tuple.body()) << '\n';
+    std::cout << FORMAT_VALUE(int_float_Uint32_tuple.head()) << '\n';
+    std::cout << FORMAT_VALUE(int_float_Uint32_tuple.body()) << '\n';
 
     std::cout << '\n';
 
-    std::cout << FORMAT_VALUE(empty_list.leading_list<0>()) << '\n';
-    // std::cout << FORMAT_VALUE(empty_list.leading_list<1>()) << '\n';
+    // std::cout << FORMAT_VALUE(empty_tuple.el<0>()) << '\n';
 
-    std::cout << FORMAT_VALUE(int_list.leading_list<0>()) << '\n';
-    std::cout << FORMAT_VALUE(int_list.leading_list<1>()) << '\n';
-    // std::cout << FORMAT_VALUE(int_list.leading_list<2>()) << '\n';
+    std::cout << FORMAT_VALUE(int_tuple.el<0>()) << '\n';
+    // std::cout << FORMAT_VALUE(int_tuple.el<1>()) << '\n';
 
-    std::cout << FORMAT_VALUE(int_float_list.leading_list<0>()) << '\n';
-    std::cout << FORMAT_VALUE(int_float_list.leading_list<1>()) << '\n';
-    std::cout << FORMAT_VALUE(int_float_list.leading_list<2>()) << '\n';
-    // std::cout << FORMAT_VALUE(int_float_list.leading_list<3>()) << '\n';
+    std::cout << FORMAT_VALUE(int_float_tuple.el<0>()) << '\n';
+    std::cout << FORMAT_VALUE(int_float_tuple.el<1>()) << '\n';
+    // std::cout << FORMAT_VALUE(int_float_tuple.el<2>()) << '\n';
 
-    std::cout << FORMAT_VALUE(int_float_Uint32_list.leading_list<0>()) << '\n';
-    std::cout << FORMAT_VALUE(int_float_Uint32_list.leading_list<1>()) << '\n';
-    std::cout << FORMAT_VALUE(int_float_Uint32_list.leading_list<2>()) << '\n';
-    std::cout << FORMAT_VALUE(int_float_Uint32_list.leading_list<3>()) << '\n';
-    // std::cout << FORMAT_VALUE(int_float_Uint32_list.leading_list<4>()) << '\n';
+    std::cout << FORMAT_VALUE(int_float_Uint32_tuple.el<0>()) << '\n';
+    std::cout << FORMAT_VALUE(int_float_Uint32_tuple.el<1>()) << '\n';
+    std::cout << FORMAT_VALUE(int_float_Uint32_tuple.el<2>()) << '\n';
+    // std::cout << FORMAT_VALUE(int_float_Uint32_tuple.el<3>()) << '\n';
 
     std::cout << '\n';
 
-    std::cout << FORMAT_VALUE(empty_list.trailing_list<0>()) << '\n';
-    // std::cout << FORMAT_VALUE(empty_list.trailing_list<1>()) << '\n';
+    std::cout << FORMAT_VALUE(empty_tuple.leading_tuple<0>()) << '\n';
+    // std::cout << FORMAT_VALUE(empty_tuple.leading_tuple<1>()) << '\n';
 
-    std::cout << FORMAT_VALUE(int_list.trailing_list<0>()) << '\n';
-    std::cout << FORMAT_VALUE(int_list.trailing_list<1>()) << '\n';
-    // std::cout << FORMAT_VALUE(int_list.trailing_list<2>()) << '\n';
+    std::cout << FORMAT_VALUE(int_tuple.leading_tuple<0>()) << '\n';
+    std::cout << FORMAT_VALUE(int_tuple.leading_tuple<1>()) << '\n';
+    // std::cout << FORMAT_VALUE(int_tuple.leading_tuple<2>()) << '\n';
 
-    std::cout << FORMAT_VALUE(int_float_list.trailing_list<0>()) << '\n';
-    std::cout << FORMAT_VALUE(int_float_list.trailing_list<1>()) << '\n';
-    std::cout << FORMAT_VALUE(int_float_list.trailing_list<2>()) << '\n';
-    // std::cout << FORMAT_VALUE(int_float_list.trailing_list<3>()) << '\n';
+    std::cout << FORMAT_VALUE(int_float_tuple.leading_tuple<0>()) << '\n';
+    std::cout << FORMAT_VALUE(int_float_tuple.leading_tuple<1>()) << '\n';
+    std::cout << FORMAT_VALUE(int_float_tuple.leading_tuple<2>()) << '\n';
+    // std::cout << FORMAT_VALUE(int_float_tuple.leading_tuple<3>()) << '\n';
 
-    std::cout << FORMAT_VALUE(int_float_Uint32_list.trailing_list<0>()) << '\n';
-    std::cout << FORMAT_VALUE(int_float_Uint32_list.trailing_list<1>()) << '\n';
-    std::cout << FORMAT_VALUE(int_float_Uint32_list.trailing_list<2>()) << '\n';
-    std::cout << FORMAT_VALUE(int_float_Uint32_list.trailing_list<3>()) << '\n';
-    // std::cout << FORMAT_VALUE(int_float_Uint32_list.trailing_list<4>()) << '\n';
+    std::cout << FORMAT_VALUE(int_float_Uint32_tuple.leading_tuple<0>()) << '\n';
+    std::cout << FORMAT_VALUE(int_float_Uint32_tuple.leading_tuple<1>()) << '\n';
+    std::cout << FORMAT_VALUE(int_float_Uint32_tuple.leading_tuple<2>()) << '\n';
+    std::cout << FORMAT_VALUE(int_float_Uint32_tuple.leading_tuple<3>()) << '\n';
+    // std::cout << FORMAT_VALUE(int_float_Uint32_tuple.leading_tuple<4>()) << '\n';
 
     std::cout << '\n';
 
-    std::cout << FORMAT_VALUE((empty_list.range<0,0>())) << '\n';
-    // std::cout << FORMAT_VALUE((empty_list.range<0,1>())) << '\n';
-    // std::cout << FORMAT_VALUE((empty_list.range<1,1>())) << '\n';
+    std::cout << FORMAT_VALUE(empty_tuple.trailing_tuple<0>()) << '\n';
+    // std::cout << FORMAT_VALUE(empty_tuple.trailing_tuple<1>()) << '\n';
 
-    std::cout << FORMAT_VALUE((int_list.range<0,0>())) << '\n';
-    std::cout << FORMAT_VALUE((int_list.range<0,1>())) << '\n';
-    // std::cout << FORMAT_VALUE((int_list.range<0,2>())) << '\n';
-    std::cout << FORMAT_VALUE((int_list.range<1,1>())) << '\n';
-    // std::cout << FORMAT_VALUE((int_list.range<1,2>())) << '\n';
-    // std::cout << FORMAT_VALUE((int_list.range<2,2>())) << '\n';
+    std::cout << FORMAT_VALUE(int_tuple.trailing_tuple<0>()) << '\n';
+    std::cout << FORMAT_VALUE(int_tuple.trailing_tuple<1>()) << '\n';
+    // std::cout << FORMAT_VALUE(int_tuple.trailing_tuple<2>()) << '\n';
 
-    std::cout << FORMAT_VALUE((int_float_list.range<0,0>())) << '\n';
-    std::cout << FORMAT_VALUE((int_float_list.range<0,1>())) << '\n';
-    std::cout << FORMAT_VALUE((int_float_list.range<0,2>())) << '\n';
-    // std::cout << FORMAT_VALUE((int_float_list.range<0,3>())) << '\n';
-    std::cout << FORMAT_VALUE((int_float_list.range<1,1>())) << '\n';
-    std::cout << FORMAT_VALUE((int_float_list.range<1,2>())) << '\n';
-    // std::cout << FORMAT_VALUE((int_float_list.range<1,3>())) << '\n';
-    std::cout << FORMAT_VALUE((int_float_list.range<2,2>())) << '\n';
-    // std::cout << FORMAT_VALUE((int_float_list.range<2,3>())) << '\n';
-    // std::cout << FORMAT_VALUE((int_float_list.range<3,3>())) << '\n';
+    std::cout << FORMAT_VALUE(int_float_tuple.trailing_tuple<0>()) << '\n';
+    std::cout << FORMAT_VALUE(int_float_tuple.trailing_tuple<1>()) << '\n';
+    std::cout << FORMAT_VALUE(int_float_tuple.trailing_tuple<2>()) << '\n';
+    // std::cout << FORMAT_VALUE(int_float_tuple.trailing_tuple<3>()) << '\n';
 
-    std::cout << FORMAT_VALUE((int_float_Uint32_list.range<0,0>())) << '\n';
-    std::cout << FORMAT_VALUE((int_float_Uint32_list.range<0,1>())) << '\n';
-    std::cout << FORMAT_VALUE((int_float_Uint32_list.range<0,2>())) << '\n';
-    std::cout << FORMAT_VALUE((int_float_Uint32_list.range<0,3>())) << '\n';
-    // std::cout << FORMAT_VALUE((int_float_Uint32_list.range<0,4>())) << '\n';
-    std::cout << FORMAT_VALUE((int_float_Uint32_list.range<1,1>())) << '\n';
-    std::cout << FORMAT_VALUE((int_float_Uint32_list.range<1,2>())) << '\n';
-    std::cout << FORMAT_VALUE((int_float_Uint32_list.range<1,3>())) << '\n';
-    // std::cout << FORMAT_VALUE((int_float_Uint32_list.range<1,4>())) << '\n';
-    std::cout << FORMAT_VALUE((int_float_Uint32_list.range<2,2>())) << '\n';
-    std::cout << FORMAT_VALUE((int_float_Uint32_list.range<2,3>())) << '\n';
-    // std::cout << FORMAT_VALUE((int_float_Uint32_list.range<2,4>())) << '\n';
-    std::cout << FORMAT_VALUE((int_float_Uint32_list.range<3,3>())) << '\n';
-    // std::cout << FORMAT_VALUE((int_float_Uint32_list.range<3,4>())) << '\n';
-    // std::cout << FORMAT_VALUE((int_float_Uint32_list.range<4,4>())) << '\n';
+    std::cout << FORMAT_VALUE(int_float_Uint32_tuple.trailing_tuple<0>()) << '\n';
+    std::cout << FORMAT_VALUE(int_float_Uint32_tuple.trailing_tuple<1>()) << '\n';
+    std::cout << FORMAT_VALUE(int_float_Uint32_tuple.trailing_tuple<2>()) << '\n';
+    std::cout << FORMAT_VALUE(int_float_Uint32_tuple.trailing_tuple<3>()) << '\n';
+    // std::cout << FORMAT_VALUE(int_float_Uint32_tuple.trailing_tuple<4>()) << '\n';
+
+    std::cout << '\n';
+
+    std::cout << FORMAT_VALUE((empty_tuple.range<0,0>())) << '\n';
+    // std::cout << FORMAT_VALUE((empty_tuple.range<0,1>())) << '\n';
+    // std::cout << FORMAT_VALUE((empty_tuple.range<1,1>())) << '\n';
+
+    std::cout << FORMAT_VALUE((int_tuple.range<0,0>())) << '\n';
+    std::cout << FORMAT_VALUE((int_tuple.range<0,1>())) << '\n';
+    // std::cout << FORMAT_VALUE((int_tuple.range<0,2>())) << '\n';
+    std::cout << FORMAT_VALUE((int_tuple.range<1,1>())) << '\n';
+    // std::cout << FORMAT_VALUE((int_tuple.range<1,2>())) << '\n';
+    // std::cout << FORMAT_VALUE((int_tuple.range<2,2>())) << '\n';
+
+    std::cout << FORMAT_VALUE((int_float_tuple.range<0,0>())) << '\n';
+    std::cout << FORMAT_VALUE((int_float_tuple.range<0,1>())) << '\n';
+    std::cout << FORMAT_VALUE((int_float_tuple.range<0,2>())) << '\n';
+    // std::cout << FORMAT_VALUE((int_float_tuple.range<0,3>())) << '\n';
+    std::cout << FORMAT_VALUE((int_float_tuple.range<1,1>())) << '\n';
+    std::cout << FORMAT_VALUE((int_float_tuple.range<1,2>())) << '\n';
+    // std::cout << FORMAT_VALUE((int_float_tuple.range<1,3>())) << '\n';
+    std::cout << FORMAT_VALUE((int_float_tuple.range<2,2>())) << '\n';
+    // std::cout << FORMAT_VALUE((int_float_tuple.range<2,3>())) << '\n';
+    // std::cout << FORMAT_VALUE((int_float_tuple.range<3,3>())) << '\n';
+
+    std::cout << FORMAT_VALUE((int_float_Uint32_tuple.range<0,0>())) << '\n';
+    std::cout << FORMAT_VALUE((int_float_Uint32_tuple.range<0,1>())) << '\n';
+    std::cout << FORMAT_VALUE((int_float_Uint32_tuple.range<0,2>())) << '\n';
+    std::cout << FORMAT_VALUE((int_float_Uint32_tuple.range<0,3>())) << '\n';
+    // std::cout << FORMAT_VALUE((int_float_Uint32_tuple.range<0,4>())) << '\n';
+    std::cout << FORMAT_VALUE((int_float_Uint32_tuple.range<1,1>())) << '\n';
+    std::cout << FORMAT_VALUE((int_float_Uint32_tuple.range<1,2>())) << '\n';
+    std::cout << FORMAT_VALUE((int_float_Uint32_tuple.range<1,3>())) << '\n';
+    // std::cout << FORMAT_VALUE((int_float_Uint32_tuple.range<1,4>())) << '\n';
+    std::cout << FORMAT_VALUE((int_float_Uint32_tuple.range<2,2>())) << '\n';
+    std::cout << FORMAT_VALUE((int_float_Uint32_tuple.range<2,3>())) << '\n';
+    // std::cout << FORMAT_VALUE((int_float_Uint32_tuple.range<2,4>())) << '\n';
+    std::cout << FORMAT_VALUE((int_float_Uint32_tuple.range<3,3>())) << '\n';
+    // std::cout << FORMAT_VALUE((int_float_Uint32_tuple.range<3,4>())) << '\n';
+    // std::cout << FORMAT_VALUE((int_float_Uint32_tuple.range<4,4>())) << '\n';
 
     std::cout << '\n';
 
@@ -254,13 +254,13 @@ int main (int argc, char **argv)
     }
 
     {
-        std::cout << "testing list conversions\n";
+        std::cout << "testing tuple conversions\n";
         typedef DimIndex_t<'i',3> Di3;
         typedef DimIndex_t<'j',4> Dj4;
         typedef ComponentIndex_t<3> C3;
         typedef ComponentIndex_t<4> C4;
-        typedef List_t<Typle_t<Di3,Dj4>> Li3j4;
-        typedef List_t<Typle_t<C3,C4>> L34;
+        typedef Tuple_t<Typle_t<Di3,Dj4>> Li3j4;
+        typedef Tuple_t<Typle_t<C3,C4>> L34;
         Li3j4 li3j4(Di3(1),Dj4(2));
 
         std::cout << FORMAT_VALUE(type_string_of(li3j4)) << '\n';
