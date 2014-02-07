@@ -279,12 +279,12 @@ ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_> ext (Factor_ const &)
 // specialization for 1st exterior power -- both the 1st exterior and 1st
 // tensor power of a vector space are naturally isomorphic to the vector space
 // itself, so the embedding is effectively the identity.
-template <typename Factor_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
+template <typename Factor_, typename Scalar_, WithExceptions WITH_EXCEPTIONS_>
 struct LinearEmbedding_c<ExteriorPowerOfBasedVectorSpace_c<1,Factor_>,
                          typename TensorPowerOfBasedVectorSpace_f<1,Factor_>::T,
                          Scalar_,
                          NaturalEmbedding,
-                         ENABLE_EXCEPTIONS_>
+                         WITH_EXCEPTIONS_>
 {
 private:
     typedef ExteriorPowerOfBasedVectorSpace_c<1,Factor_> Ext;
@@ -312,12 +312,12 @@ public:
     static ExtComponentIndex source_component_index_for_embedded_component (TPowComponentIndex const &i) { return i; }
 };
 
-template <Uint32 ORDER_, typename Factor_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
+template <Uint32 ORDER_, typename Factor_, typename Scalar_, WithExceptions WITH_EXCEPTIONS_>
 struct LinearEmbedding_c<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,
                          typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T,
                          Scalar_,
                          NaturalEmbedding,
-                         ENABLE_EXCEPTIONS_>
+                         WITH_EXCEPTIONS_>
 {
 private:
     typedef ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_> Ext;
@@ -336,13 +336,13 @@ public:
         sort<std::greater<Uint32> >(m);
         // if there is any index that occurs at least twice, then this is procedural zero.
         for (Uint32 j = 0; j < ORDER_-1; ++j)
-            if (m.index(j, DONT_CHECK_RANGE) == m.index(j+1, DONT_CHECK_RANGE))
+            if (m.index(j, CheckRange::FALSE) == m.index(j+1, CheckRange::FALSE))
                 return true;
         return false;
     }
     static Scalar_ scalar_factor_for_embedded_component (TPowComponentIndex const &i)
     {
-        if (ENABLE_EXCEPTIONS_ && embedded_component_is_procedural_zero(i))
+        if (bool(WITH_EXCEPTIONS_) && embedded_component_is_procedural_zero(i))
             throw std::domain_error(FORMAT(i.value()) + " is not in the domain of scalar_factor_for_embedded_component");
 
         TPowMultiIndex m(i); // this does the row-major conversion
@@ -357,14 +357,14 @@ public:
                                   typename TensorPowerOfBasedVectorSpace_f<NEXT_ORDER_DOWN,Factor_>::T,
                                   Scalar_,
                                   NaturalEmbedding,
-                                  ENABLE_EXCEPTIONS_> BodyLinearEmbedding;
+                                  WITH_EXCEPTIONS_> BodyLinearEmbedding;
         // NOTE: this is really inefficient because it converts to and then from a ComponentIndex.
         // it could be better implemented using a private scalar_factor_for_embedded_component(MultiIndex)
         return sign * BodyLinearEmbedding::scalar_factor_for_embedded_component(m.body().as_component_index());
     }
     static ExtComponentIndex source_component_index_for_embedded_component (TPowComponentIndex const &i)
     {
-        if (ENABLE_EXCEPTIONS_ && embedded_component_is_procedural_zero(i))
+        if (bool(WITH_EXCEPTIONS_) && embedded_component_is_procedural_zero(i))
             throw std::domain_error(FORMAT(i.value()) + " is not in the domain of scalar_factor_for_embedded_component");
 
         TPowMultiIndex m(i); // this does the row-major conversion
@@ -377,7 +377,7 @@ public:
                                   typename TensorPowerOfBasedVectorSpace_f<NEXT_ORDER_DOWN,Factor_>::T,
                                   Scalar_,
                                   NaturalEmbedding,
-                                  ENABLE_EXCEPTIONS_> BodyLinearEmbedding;
+                                  WITH_EXCEPTIONS_> BodyLinearEmbedding;
         // NOTE: this is really inefficient because it converts to and then from a ComponentIndex.
         // it could be better implemented using a private scalar_factor_for_embedded_component(MultiIndex)
         return ExtComponentIndex(  binomial_coefficient(m.head().value(), ORDER_)
@@ -385,12 +385,12 @@ public:
     }
 };
 
-template <Uint32 ORDER_, typename Factor_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
+template <Uint32 ORDER_, typename Factor_, typename Scalar_, WithExceptions WITH_EXCEPTIONS_>
 struct CoembedIndexIterator_f<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,
                               typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T,
                               Scalar_,
                               NaturalEmbedding,
-                              ENABLE_EXCEPTIONS_>
+                              WITH_EXCEPTIONS_>
 {
     typedef LookupTableCoembedIndexIterator_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,
                                               typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T,

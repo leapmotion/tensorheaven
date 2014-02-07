@@ -1040,31 +1040,31 @@ struct WaveyFunction_t
     Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace,COMPONENT_QUALIFIER_> const &x) const
     {
         typedef Vector_i<Derived_,Scalar_,BasedVectorSpace,COMPONENT_QUALIFIER_> P;
-        Scalar_ const &u = x[typename P::ComponentIndex(0, DONT_CHECK_RANGE)];
-        Scalar_ const &v = x[typename P::ComponentIndex(1, DONT_CHECK_RANGE)];
+        Scalar_ const &u = x[typename P::ComponentIndex(0, CheckRange::FALSE)];
+        Scalar_ const &v = x[typename P::ComponentIndex(1, CheckRange::FALSE)];
         return sin(u)*sin(v);
     }
     template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
     D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace,COMPONENT_QUALIFIER_> const &x) const
     {
         typedef Vector_i<Derived_,Scalar_,BasedVectorSpace,COMPONENT_QUALIFIER_> P;
-        Scalar_ const &u = x[typename P::ComponentIndex(0, DONT_CHECK_RANGE)];
-        Scalar_ const &v = x[typename P::ComponentIndex(1, DONT_CHECK_RANGE)];
+        Scalar_ const &u = x[typename P::ComponentIndex(0, CheckRange::FALSE)];
+        Scalar_ const &v = x[typename P::ComponentIndex(1, CheckRange::FALSE)];
         D1 retval(Static<WithoutInitialization>::SINGLETON);
-        retval[typename D1::ComponentIndex(0, DONT_CHECK_RANGE)] = cos(u)*sin(v);
-        retval[typename D1::ComponentIndex(1, DONT_CHECK_RANGE)] = sin(u)*cos(v);
+        retval[typename D1::ComponentIndex(0, CheckRange::FALSE)] = cos(u)*sin(v);
+        retval[typename D1::ComponentIndex(1, CheckRange::FALSE)] = sin(u)*cos(v);
         return retval;
     }
     template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
     D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace,COMPONENT_QUALIFIER_> const &x) const
     {
         typedef Vector_i<Derived_,Scalar_,BasedVectorSpace,COMPONENT_QUALIFIER_> P;
-        Scalar_ const &u = x[typename P::ComponentIndex(0, DONT_CHECK_RANGE)];
-        Scalar_ const &v = x[typename P::ComponentIndex(1, DONT_CHECK_RANGE)];
+        Scalar_ const &u = x[typename P::ComponentIndex(0, CheckRange::FALSE)];
+        Scalar_ const &v = x[typename P::ComponentIndex(1, CheckRange::FALSE)];
         D2 retval(Static<WithoutInitialization>::SINGLETON);
-        retval[typename D2::ComponentIndex(0, DONT_CHECK_RANGE)] = -sin(u)*sin(v);
-        retval[typename D2::ComponentIndex(1, DONT_CHECK_RANGE)] = cos(u)*cos(v);
-        retval[typename D2::ComponentIndex(2, DONT_CHECK_RANGE)] = -sin(u)*sin(v);
+        retval[typename D2::ComponentIndex(0, CheckRange::FALSE)] = -sin(u)*sin(v);
+        retval[typename D2::ComponentIndex(1, CheckRange::FALSE)] = cos(u)*cos(v);
+        retval[typename D2::ComponentIndex(2, CheckRange::FALSE)] = -sin(u)*sin(v);
         return retval;
     }
 };

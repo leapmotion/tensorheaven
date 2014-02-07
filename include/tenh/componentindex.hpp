@@ -39,7 +39,7 @@ struct ComponentIndex_t
     ///  exception throw) for safety. If DONT_RANGE_CHECK is explicitly provided (an
     ///  intentional and ugly bit of code), the range check can be avoided for efficiency
     ///  when you know for a fact that your value is within the correct range.
-    explicit ComponentIndex_t (Uint32 i, bool check_range = CHECK_RANGE) { set_to(i, check_range); }
+    explicit ComponentIndex_t (Uint32 i, CheckRange check_range = CheckRange::TRUE) { set_to(i, check_range); }
 
     /// Copy constructor, no range-checking necessary.
     ComponentIndex_t (ComponentIndex_t const &i) : m(i.m) { }
@@ -53,16 +53,16 @@ struct ComponentIndex_t
     Uint32 value () const { return m; }
     void operator ++ () { ++m; }
     void reset () { m = 0; }
-    void set_to (Uint32 i, bool check_range = CHECK_RANGE)
+    void set_to (Uint32 i, CheckRange check_range = CheckRange::TRUE)
     {
         m = i;
-        if (check_range && m >= COMPONENT_COUNT)
+        if (bool(check_range) && m >= COMPONENT_COUNT)
             throw std::out_of_range("Raw-integer argument to ComponentIndex_t<...> constructor was out of range.");
     }
-    void increment_by (Uint32 inc, bool check_range = CHECK_RANGE)
+    void increment_by (Uint32 inc, CheckRange check_range = CheckRange::TRUE)
     {
         m += inc;
-        if (check_range && m >= COMPONENT_COUNT)
+        if (bool(check_range) && m >= COMPONENT_COUNT)
             throw std::out_of_range("Raw-integer argument to ComponentIndex_t<...> constructor was out of range.");
     }
     void set_to_end () { m = COMPONENT_COUNT_; }

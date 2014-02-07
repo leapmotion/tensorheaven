@@ -77,13 +77,22 @@
 - change metafunction predicates to use _e suffix, to regularize them with the ones produced
   by MAKE_X_ARY_VALUE_EVALUATOR.  maybe just make all predicates be generated using those
   macros from "primitive" metafunctions.
-- make a "2-tensor out of LinearEmbedding_c" procedural 2-tensor (is this actually useful?)
+- make a "2-tensor out of LinearEmbedding_c" procedural 2-tensor (is this actually useful?
+  yes, for printing/debugging)
+- make a "LinearEmbedding_c out of 2-tensor" LinearEmbedding_c, which could be useful for
+  more-easily constructing LinearEmbedding_c instances, since they (can) use lookup tables
+  anyway.
 - make an abstracted summation function/facility so that different methods for summation can
   be implemented -- e.g. fast-naive, or sorted-for-accuracy, etc.
 - maybe rename XXXXTyple to XXXXs for brevity.  this should easily be distinguished from the
-  XXXXs usage in "typename... XXXXs" because of the dereferencing "XXXXs...".
+  XXXXs usage in "typename... XXXXs" because of the dereferencing "XXXXs...", though this
+  makes grepping for stuff harder.
 - move stuff into "primitive" directory, e.g. preallocatedarray.hpp, memoryarray.hpp, 
   componentgenerator.hpp, componentindex.hpp, dimindex.hpp, list.hpp, etc.
+- make abstract multiindices use TensorProduct_c (or TensorProductOfAbstractIndices_c) instead
+  of Typle_t.  Similarly, when direct sum indices are implemented, use DirectSum_c.
+- make tensor-product-able things implement a "HasDefinedTensorProduct_f" metafunction which
+  returns true, so that operator * can be used with an std::enable_if.  Same with direct sum.
 
 
 ###implemented features/items:

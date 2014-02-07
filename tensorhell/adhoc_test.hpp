@@ -66,7 +66,7 @@ ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER,Vector>,Scalar> test
         typename Sym::MultiIndex m = Sym::template bundle_index_map<typename Sym::MultiIndex::IndexTyple, typename Sym::ComponentIndex>(it);
         for (Uint32 i = 0; i < Sym::MultiIndex::LENGTH; ++i)
         {
-            result[it] *= input[typename Vec::ComponentIndex(m.value_of_index(i, DONT_CHECK_RANGE))];
+            result[it] *= input[typename Vec::ComponentIndex(m.value_of_index(i, CheckRange::FALSE))];
         }
     }
     return result;

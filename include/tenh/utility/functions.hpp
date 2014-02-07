@@ -504,293 +504,291 @@ private:
 template <typename LeftFunctionType_, typename RightFunctionType_>
 struct FunctionDirectSum_t
 {
-  typedef DirectSumOfBasedVectorSpaces_c<Typle_t<typename LeftFunctionType_::Domain,
-                                                 typename RightFunctionType_::Domain>> DomainType;
-  typedef DirectSumOfBasedVectorSpaces_c<Typle_t<typename LeftFunctionType_::CoDomain,
-                                                 typename RightFunctionType_::CoDomain>> CoDomainType;
-  typedef FunctionObjectType_m<DomainType,CoDomainType,typename LeftFunctionType_::Scalar> FunctionObjectType;
+    typedef DirectSumOfBasedVectorSpaces_c<Typle_t<typename LeftFunctionType_::Domain,
+                                                   typename RightFunctionType_::Domain>> DomainType;
+    typedef DirectSumOfBasedVectorSpaces_c<Typle_t<typename LeftFunctionType_::CoDomain,
+                                                   typename RightFunctionType_::CoDomain>> CoDomainType;
+    typedef FunctionObjectType_m<DomainType,CoDomainType,typename LeftFunctionType_::Scalar> FunctionObjectType;
 
-  typedef typename FunctionObjectType::DualOfBasedVectorSpace DualOfBasedVectorSpace;
-  typedef typename FunctionObjectType::Sym2Dual Sym2Dual;
-  typedef typename FunctionObjectType::Differential1 Differential1;
-  typedef typename FunctionObjectType::Differential2 Differential2;
-  typedef typename FunctionObjectType::Domain Domain;
-  typedef typename FunctionObjectType::CoDomain CoDomain;
-  typedef typename FunctionObjectType::Scalar Scalar;
-  typedef typename FunctionObjectType::V V;
-  typedef typename FunctionObjectType::DualOfV DualOfV;
-  typedef typename FunctionObjectType::Sym2_DualOfV Sym2_DualOfV;
-  typedef typename FunctionObjectType::In In;
-  typedef typename FunctionObjectType::Out Out;
-  typedef typename FunctionObjectType::D1 D1;
-  typedef typename FunctionObjectType::D2 D2;
+    typedef typename FunctionObjectType::DualOfBasedVectorSpace DualOfBasedVectorSpace;
+    typedef typename FunctionObjectType::Sym2Dual Sym2Dual;
+    typedef typename FunctionObjectType::Differential1 Differential1;
+    typedef typename FunctionObjectType::Differential2 Differential2;
+    typedef typename FunctionObjectType::Domain Domain;
+    typedef typename FunctionObjectType::CoDomain CoDomain;
+    typedef typename FunctionObjectType::Scalar Scalar;
+    typedef typename FunctionObjectType::V V;
+    typedef typename FunctionObjectType::DualOfV DualOfV;
+    typedef typename FunctionObjectType::Sym2_DualOfV Sym2_DualOfV;
+    typedef typename FunctionObjectType::In In;
+    typedef typename FunctionObjectType::Out Out;
+    typedef typename FunctionObjectType::D1 D1;
+    typedef typename FunctionObjectType::D2 D2;
 
-  typedef ImplementationOf_t<typename LeftFunctionType_::Domain, Scalar> Left;
-  typedef typename LeftFunctionType_::D1 Left_D1;
-  typedef typename LeftFunctionType_::D2 Left_D2;
-  typedef ImplementationOf_t<typename RightFunctionType_::Domain, Scalar> Right;
-  typedef typename RightFunctionType_::D1 Right_D1;
-  typedef typename RightFunctionType_::D2 Right_D2;
+    typedef ImplementationOf_t<typename LeftFunctionType_::Domain, Scalar> Left;
+    typedef typename LeftFunctionType_::D1 Left_D1;
+    typedef typename LeftFunctionType_::D2 Left_D2;
+    typedef ImplementationOf_t<typename RightFunctionType_::Domain, Scalar> Right;
+    typedef typename RightFunctionType_::D1 Right_D1;
+    typedef typename RightFunctionType_::D2 Right_D2;
 
-  FunctionDirectSum_t(LeftFunctionType_ const & left, RightFunctionType_ const & right)
-  :
-  m_left(left),
-  m_right(right)
-  { }
+    FunctionDirectSum_t(LeftFunctionType_ const & left, RightFunctionType_ const & right)
+        :
+        m_left(left),
+        m_right(right)
+    { }
 
-  template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
-  Out function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
-  {
-    AbstractIndex_c<'i'> i;
-    Out retval(Static<WithoutInitialization>::SINGLETON);
-    Left left(Static<WithoutInitialization>::SINGLETON);
-    Right right(Static<WithoutInitialization>::SINGLETON);
-
-    left(i) = x.as_derived().template el<0>()(i);
-    right(i) = x.as_derived().template el<1>()(i);
-
-    retval.template el<0>()(i) = m_left.function(left)(i);
-    retval.template el<1>()(i) = m_right.function(right)(i);
-
-    return retval;
-  }
-
-  template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
-  D1 D_function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
-  {
-    AbstractIndex_c<'a'> a;
-    D1 retval(Static<WithoutInitialization>::SINGLETON);
-    Left left(Static<WithoutInitialization>::SINGLETON);
-    Left_D1 left_d1(Static<WithoutInitialization>::SINGLETON);
-    Right right(Static<WithoutInitialization>::SINGLETON);
-    Right_D1 right_d1(Static<WithoutInitialization>::SINGLETON);
-
-    left(a) = x.as_derived().template el<0>()(a);
-    right(a) = x.as_derived().template el<1>()(a);
-
-    left_d1(a) = m_left.D_function(left)(a);
-    right_d1(a) = m_right.D_function(right)(a);
-
-    //retval((i+j)*(k+l)) = right_d1(i*k) + left_d1(j*l);
-
-    for (int i = 0; i < DimensionOf_f<CoDomain>::V; ++i)
+    template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
+    Out function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
     {
-      for (int j = 0; j < DimensionOf_f<DualOfBasedVectorSpace>::V; ++j)
-      {
-        if (i < DimensionOf_f<typename LeftFunctionType_::CoDomain>::V && j < DimensionOf_f<typename LeftFunctionType_::DualOfBasedVectorSpace>::V)
-        {
-          retval[typename D1::MultiIndex(i,j,CHECK_RANGE)] = left_d1[typename Left_D1::MultiIndex(i,j,CHECK_RANGE)];
-        }
-        else if (i >= DimensionOf_f<typename LeftFunctionType_::CoDomain>::V && j >= DimensionOf_f<typename LeftFunctionType_::DualOfBasedVectorSpace>::V)
-        {
-          retval[typename D1::MultiIndex(i,j,CHECK_RANGE)] =
-          right_d1[typename Right_D1::MultiIndex(i - DimensionOf_f<typename LeftFunctionType_::CoDomain>::V,
-                                                 j - DimensionOf_f<typename LeftFunctionType_::DualOfBasedVectorSpace>::V,
-                                                 CHECK_RANGE)];
-        }
-        else
-        {
-          retval[typename D1::MultiIndex(i,j,CHECK_RANGE)] = Scalar(0);
-        }
-      }
+        AbstractIndex_c<'i'> i;
+        Out retval(Static<WithoutInitialization>::SINGLETON);
+        Left left(Static<WithoutInitialization>::SINGLETON);
+        Right right(Static<WithoutInitialization>::SINGLETON);
+
+        left(i) = x.as_derived().template el<0>()(i);
+        right(i) = x.as_derived().template el<1>()(i);
+
+        retval.template el<0>()(i) = m_left.function(left)(i);
+        retval.template el<1>()(i) = m_right.function(right)(i);
+
+        return retval;
     }
-    return retval;
-  }
 
-  template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
-  D2 D2_function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
-  {
-    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<CoDomain,
-                                                       DualOfBasedVectorSpace,
-                                                       DualOfBasedVectorSpace>> SplitD2Type;
-    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<typename LeftFunctionType_::CoDomain,
-                                                       typename LeftFunctionType_::DualOfBasedVectorSpace,
-                                                       typename LeftFunctionType_::DualOfBasedVectorSpace>> LeftSplitD2Type;
-    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<typename RightFunctionType_::CoDomain,
-                                                       typename RightFunctionType_::DualOfBasedVectorSpace,
-                                                       typename RightFunctionType_::DualOfBasedVectorSpace>> RightSplitD2Type;
-    typedef ImplementationOf_t<SplitD2Type, Scalar> SplitD2;
-    typedef ImplementationOf_t<LeftSplitD2Type, Scalar> LeftSplitD2;
-    typedef ImplementationOf_t<RightSplitD2Type, Scalar> RightSplitD2;
-
-    AbstractIndex_c<'a'> a;
-    AbstractIndex_c<'b'> b;
-    AbstractIndex_c<'c'> c;
-    AbstractIndex_c<'d'> d;
-
-    D2 retval(Static<WithoutInitialization>::SINGLETON);
-    SplitD2 tmp(Static<WithoutInitialization>::SINGLETON);
-    Left left(Static<WithoutInitialization>::SINGLETON);
-    Left_D2 left_d2(Static<WithoutInitialization>::SINGLETON);
-    LeftSplitD2 left_split_d2(Static<WithoutInitialization>::SINGLETON);
-    Right right(Static<WithoutInitialization>::SINGLETON);
-    Right_D2 right_d2(Static<WithoutInitialization>::SINGLETON);
-    RightSplitD2 right_split_d2(Static<WithoutInitialization>::SINGLETON);
-
-    left(a) = x.as_derived().template el<0>()(a);
-    right(a) = x.as_derived().template el<1>()(a);
-
-    left_d2(a) = m_left.D2_function(left)(a);
-    right_d2(a) = m_right.D2_function(right)(a);
-
-    left_split_d2(a*b*c) = left_d2(a*d).split(d,b*c);
-    right_split_d2(a*b*c) = right_d2(a*d).split(d,b*c);
-
-    for (int i = 0; i < DimensionOf_f<CoDomain>::V; ++i)
+    template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
+    D1 D_function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
     {
-      for (int j = 0; j < DimensionOf_f<DualOfBasedVectorSpace>::V; ++j)
-      {
-        for (int k = 0; k < DimensionOf_f<DualOfBasedVectorSpace>::V; ++k)
+        AbstractIndex_c<'a'> a;
+        D1 retval(Static<WithoutInitialization>::SINGLETON);
+        Left left(Static<WithoutInitialization>::SINGLETON);
+        Left_D1 left_d1(Static<WithoutInitialization>::SINGLETON);
+        Right right(Static<WithoutInitialization>::SINGLETON);
+        Right_D1 right_d1(Static<WithoutInitialization>::SINGLETON);
+
+        left(a) = x.as_derived().template el<0>()(a);
+        right(a) = x.as_derived().template el<1>()(a);
+
+        left_d1(a) = m_left.D_function(left)(a);
+        right_d1(a) = m_right.D_function(right)(a);
+
+        //retval((i+j)*(k+l)) = right_d1(i*k) + left_d1(j*l);
+
+        for (int i = 0; i < DimensionOf_f<CoDomain>::V; ++i)
         {
-          if (i < DimensionOf_f<typename LeftFunctionType_::CoDomain>::V && j < DimensionOf_f<typename LeftFunctionType_::DualOfBasedVectorSpace>::V && k < DimensionOf_f<typename LeftFunctionType_::DualOfBasedVectorSpace>::V)
-          {
-            tmp[typename SplitD2::MultiIndex(i,j,k,CHECK_RANGE)] = left_split_d2[typename LeftSplitD2::MultiIndex(i,j,k,CHECK_RANGE)];
-          }
-          else if (i >= DimensionOf_f<typename LeftFunctionType_::CoDomain>::V && j >= DimensionOf_f<typename LeftFunctionType_::DualOfBasedVectorSpace>::V && k >= DimensionOf_f<typename LeftFunctionType_::DualOfBasedVectorSpace>::V)
-          {
-            tmp[typename SplitD2::MultiIndex(i,j,k,CHECK_RANGE)]
-            = right_split_d2[typename RightSplitD2::MultiIndex(i - DimensionOf_f<typename LeftFunctionType_::CoDomain>::V,
-                                                               j - DimensionOf_f<typename LeftFunctionType_::DualOfBasedVectorSpace>::V,
-                                                               k - DimensionOf_f<typename LeftFunctionType_::DualOfBasedVectorSpace>::V,
-                                                               CHECK_RANGE)];
-          }
-          else
-          {
-            tmp[typename SplitD2::MultiIndex(i,j,k,CHECK_RANGE)] = Scalar(0);
-          }
+            for (int j = 0; j < DimensionOf_f<DualOfBasedVectorSpace>::V; ++j)
+            {
+                if (i < DimensionOf_f<typename LeftFunctionType_::CoDomain>::V && j < DimensionOf_f<typename LeftFunctionType_::DualOfBasedVectorSpace>::V)
+                {
+                    retval[typename D1::MultiIndex(i,j,CheckRange::FALSE)] = left_d1[typename Left_D1::MultiIndex(i,j,CheckRange::FALSE)];
+                }
+                else if (i >= DimensionOf_f<typename LeftFunctionType_::CoDomain>::V && j >= DimensionOf_f<typename LeftFunctionType_::DualOfBasedVectorSpace>::V)
+                {
+                    retval[typename D1::MultiIndex(i,j,CheckRange::FALSE)] =
+                    right_d1[typename Right_D1::MultiIndex(i - DimensionOf_f<typename LeftFunctionType_::CoDomain>::V,
+                                                           j - DimensionOf_f<typename LeftFunctionType_::DualOfBasedVectorSpace>::V,
+                                                           CheckRange::FALSE)];
+                }
+                else
+                {
+                    retval[typename D1::MultiIndex(i,j,CheckRange::FALSE)] = Scalar(0);
+                }
+            }
         }
-      }
+        return retval;
     }
-    retval(a*b) = tmp(a*c*d).bundle(c*d,Sym2Dual(),b);
-    return retval;
-  }
+
+    template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
+    D2 D2_function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
+    {
+        typedef TensorProductOfBasedVectorSpaces_c<Typle_t<CoDomain,
+                                                   DualOfBasedVectorSpace,
+                                                   DualOfBasedVectorSpace>> SplitD2Type;
+        typedef TensorProductOfBasedVectorSpaces_c<Typle_t<typename LeftFunctionType_::CoDomain,
+                                                   typename LeftFunctionType_::DualOfBasedVectorSpace,
+                                                   typename LeftFunctionType_::DualOfBasedVectorSpace>> LeftSplitD2Type;
+        typedef TensorProductOfBasedVectorSpaces_c<Typle_t<typename RightFunctionType_::CoDomain,
+                                                   typename RightFunctionType_::DualOfBasedVectorSpace,
+                                                   typename RightFunctionType_::DualOfBasedVectorSpace>> RightSplitD2Type;
+        typedef ImplementationOf_t<SplitD2Type, Scalar> SplitD2;
+        typedef ImplementationOf_t<LeftSplitD2Type, Scalar> LeftSplitD2;
+        typedef ImplementationOf_t<RightSplitD2Type, Scalar> RightSplitD2;
+
+        AbstractIndex_c<'a'> a;
+        AbstractIndex_c<'b'> b;
+        AbstractIndex_c<'c'> c;
+        AbstractIndex_c<'d'> d;
+
+        D2 retval(Static<WithoutInitialization>::SINGLETON);
+        SplitD2 tmp(Static<WithoutInitialization>::SINGLETON);
+        Left left(Static<WithoutInitialization>::SINGLETON);
+        Left_D2 left_d2(Static<WithoutInitialization>::SINGLETON);
+        LeftSplitD2 left_split_d2(Static<WithoutInitialization>::SINGLETON);
+        Right right(Static<WithoutInitialization>::SINGLETON);
+        Right_D2 right_d2(Static<WithoutInitialization>::SINGLETON);
+        RightSplitD2 right_split_d2(Static<WithoutInitialization>::SINGLETON);
+
+        left(a) = x.as_derived().template el<0>()(a);
+        right(a) = x.as_derived().template el<1>()(a);
+
+        left_d2(a) = m_left.D2_function(left)(a);
+        right_d2(a) = m_right.D2_function(right)(a);
+
+        left_split_d2(a*b*c) = left_d2(a*d).split(d,b*c);
+        right_split_d2(a*b*c) = right_d2(a*d).split(d,b*c);
+
+        for (int i = 0; i < DimensionOf_f<CoDomain>::V; ++i)
+        {
+            for (int j = 0; j < DimensionOf_f<DualOfBasedVectorSpace>::V; ++j)
+            {
+                for (int k = 0; k < DimensionOf_f<DualOfBasedVectorSpace>::V; ++k)
+                {
+                    if (i < DimensionOf_f<typename LeftFunctionType_::CoDomain>::V && j < DimensionOf_f<typename LeftFunctionType_::DualOfBasedVectorSpace>::V && k < DimensionOf_f<typename LeftFunctionType_::DualOfBasedVectorSpace>::V)
+                    {
+                        tmp[typename SplitD2::MultiIndex(i,j,k,CheckRange::FALSE)] = left_split_d2[typename LeftSplitD2::MultiIndex(i,j,k,CheckRange::FALSE)];
+                    }
+                    else if (i >= DimensionOf_f<typename LeftFunctionType_::CoDomain>::V && j >= DimensionOf_f<typename LeftFunctionType_::DualOfBasedVectorSpace>::V && k >= DimensionOf_f<typename LeftFunctionType_::DualOfBasedVectorSpace>::V)
+                    {
+                        tmp[typename SplitD2::MultiIndex(i,j,k,CheckRange::FALSE)]
+                            = right_split_d2[typename RightSplitD2::MultiIndex(i - DimensionOf_f<typename LeftFunctionType_::CoDomain>::V,
+                                                                               j - DimensionOf_f<typename LeftFunctionType_::DualOfBasedVectorSpace>::V,
+                                                                               k - DimensionOf_f<typename LeftFunctionType_::DualOfBasedVectorSpace>::V,
+                                                                               CheckRange::FALSE)];
+                    }
+                    else
+                    {
+                        tmp[typename SplitD2::MultiIndex(i,j,k,CheckRange::FALSE)] = Scalar(0);
+                    }
+                }
+            }
+        }
+        retval(a*b) = tmp(a*c*d).bundle(c*d,Sym2Dual(),b);
+        return retval;
+    }
 
 private:
-  LeftFunctionType_ const &m_left;
-  RightFunctionType_ const &m_right;
+
+    LeftFunctionType_ const &m_left;
+    RightFunctionType_ const &m_right;
 };
 
 
 template <typename BasedVectorSpace_,typename Scalar_>
 struct DiagonalFunction_t
 {
-  typedef DirectSumOfBasedVectorSpaces_c<Typle_t<BasedVectorSpace_,BasedVectorSpace_>> CoDomainType;
-  typedef FunctionObjectType_m<BasedVectorSpace_,CoDomainType,Scalar_> FunctionObjectType;
+    typedef DirectSumOfBasedVectorSpaces_c<Typle_t<BasedVectorSpace_,BasedVectorSpace_>> CoDomainType;
+    typedef FunctionObjectType_m<BasedVectorSpace_,CoDomainType,Scalar_> FunctionObjectType;
 
-  typedef typename FunctionObjectType::DualOfBasedVectorSpace DualOfBasedVectorSpace;
-  typedef typename FunctionObjectType::Sym2Dual Sym2Dual;
-  typedef typename FunctionObjectType::Differential1 Differential1;
-  typedef typename FunctionObjectType::Differential2 Differential2;
-  typedef typename FunctionObjectType::Domain Domain;
-  typedef typename FunctionObjectType::CoDomain CoDomain;
-  typedef typename FunctionObjectType::Scalar Scalar;
-  typedef typename FunctionObjectType::V V;
-  typedef typename FunctionObjectType::DualOfV DualOfV;
-  typedef typename FunctionObjectType::Sym2_DualOfV Sym2_DualOfV;
-  typedef typename FunctionObjectType::In In;
-  typedef typename FunctionObjectType::Out Out;
-  typedef typename FunctionObjectType::D1 D1;
-  typedef typename FunctionObjectType::D2 D2;
+    typedef typename FunctionObjectType::DualOfBasedVectorSpace DualOfBasedVectorSpace;
+    typedef typename FunctionObjectType::Sym2Dual Sym2Dual;
+    typedef typename FunctionObjectType::Differential1 Differential1;
+    typedef typename FunctionObjectType::Differential2 Differential2;
+    typedef typename FunctionObjectType::Domain Domain;
+    typedef typename FunctionObjectType::CoDomain CoDomain;
+    typedef typename FunctionObjectType::Scalar Scalar;
+    typedef typename FunctionObjectType::V V;
+    typedef typename FunctionObjectType::DualOfV DualOfV;
+    typedef typename FunctionObjectType::Sym2_DualOfV Sym2_DualOfV;
+    typedef typename FunctionObjectType::In In;
+    typedef typename FunctionObjectType::Out Out;
+    typedef typename FunctionObjectType::D1 D1;
+    typedef typename FunctionObjectType::D2 D2;
 
-  template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
-  Out function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
-  {
-    AbstractIndex_c<'i'> i;
-    Out retval(Static<WithoutInitialization>::SINGLETON);
-
-    retval.template el<0>()(i) = x(i);
-    retval.template el<1>()(i) = x(i);
-
-    return retval;
-  }
-
-  template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
-  D1 D_function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
-  {
-    D1 retval(Static<WithoutInitialization>::SINGLETON);
-
-    for (int i = 0; i < DimensionOf_f<CoDomain>::V; ++i)
+    template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
+    Out function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
     {
-      for (int j = 0; j < DimensionOf_f<DualOfBasedVectorSpace>::V; ++j)
-      {
-        if (i == j || i - DimensionOf_f<DualOfBasedVectorSpace>::V == j)
-        {
-          retval[typename D1::MultiIndex(i,j,CHECK_RANGE)] = Scalar(1);
-        }
-        else
-        {
-          retval[typename D1::MultiIndex(i,j,CHECK_RANGE)] = Scalar(0);
-        }
-      }
-    }
-    return retval;
-  }
+        AbstractIndex_c<'i'> i;
+        Out retval(Static<WithoutInitialization>::SINGLETON);
 
-  template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
-  D2 D2_function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
-  {
-    return D2(fill_with(0));
-  }
+        retval.template el<0>()(i) = x(i);
+        retval.template el<1>()(i) = x(i);
+
+        return retval;
+    }
+
+    template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
+    D1 D_function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
+    {
+        D1 retval(Static<WithoutInitialization>::SINGLETON);
+        for (int i = 0; i < DimensionOf_f<CoDomain>::V; ++i)
+        {
+            for (int j = 0; j < DimensionOf_f<DualOfBasedVectorSpace>::V; ++j)
+            {
+                if (i == j || i - DimensionOf_f<DualOfBasedVectorSpace>::V == j)
+                {
+                    retval[typename D1::MultiIndex(i,j,CheckRange::FALSE)] = Scalar(1);
+                }
+                else
+                {
+                    retval[typename D1::MultiIndex(i,j,CheckRange::FALSE)] = Scalar(0);
+                }
+            }
+        }
+        return retval;
+    }
+
+    template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
+    D2 D2_function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
+    {
+        return D2(fill_with(0));
+    }
 };
 
 
 template <typename BasedVectorSpace_, typename Scalar_>
 struct IdentityFunction_t
 {
-  typedef FunctionObjectType_m<BasedVectorSpace_, BasedVectorSpace_, Scalar_> FunctionObjectType;
+    typedef FunctionObjectType_m<BasedVectorSpace_,BasedVectorSpace_,Scalar_> FunctionObjectType;
 
-  typedef typename FunctionObjectType::DualOfBasedVectorSpace DualOfBasedVectorSpace;
-  typedef typename FunctionObjectType::Sym2Dual Sym2Dual;
-  typedef typename FunctionObjectType::Differential1 Differential1;
-  typedef typename FunctionObjectType::Differential2 Differential2;
-  typedef typename FunctionObjectType::Domain Domain;
-  typedef typename FunctionObjectType::CoDomain CoDomain;
-  typedef typename FunctionObjectType::Scalar Scalar;
-  typedef typename FunctionObjectType::V V;
-  typedef typename FunctionObjectType::DualOfV DualOfV;
-  typedef typename FunctionObjectType::Sym2_DualOfV Sym2_DualOfV;
-  typedef typename FunctionObjectType::In In;
-  typedef typename FunctionObjectType::Out Out;
-  typedef typename FunctionObjectType::D1 D1;
-  typedef typename FunctionObjectType::D2 D2;
+    typedef typename FunctionObjectType::DualOfBasedVectorSpace DualOfBasedVectorSpace;
+    typedef typename FunctionObjectType::Sym2Dual Sym2Dual;
+    typedef typename FunctionObjectType::Differential1 Differential1;
+    typedef typename FunctionObjectType::Differential2 Differential2;
+    typedef typename FunctionObjectType::Domain Domain;
+    typedef typename FunctionObjectType::CoDomain CoDomain;
+    typedef typename FunctionObjectType::Scalar Scalar;
+    typedef typename FunctionObjectType::V V;
+    typedef typename FunctionObjectType::DualOfV DualOfV;
+    typedef typename FunctionObjectType::Sym2_DualOfV Sym2_DualOfV;
+    typedef typename FunctionObjectType::In In;
+    typedef typename FunctionObjectType::Out Out;
+    typedef typename FunctionObjectType::D1 D1;
+    typedef typename FunctionObjectType::D2 D2;
 
-  IdentityFunction_t ()
-  :
-  m_D1(Static<WithoutInitialization>::SINGLETON)
-  {
-    AbstractIndex_c<'i'> i;
-    AbstractIndex_c<'j'> j;
-    AbstractIndex_c<'k'> k;
+    IdentityFunction_t ()
+        :
+        m_D1(Static<WithoutInitialization>::SINGLETON)
+    {
+        AbstractIndex_c<'i'> i;
+        AbstractIndex_c<'j'> j;
+        AbstractIndex_c<'k'> k;
 
-    typename Identity_f<BasedVectorSpace_, Scalar_>::T identity;
+        typename Identity_f<BasedVectorSpace_, Scalar_>::T identity;
 
-    m_D1(i*j) = identity(k).split(k,i*j);
-  }
+        m_D1(i*j) = identity(k).split(k,i*j);
+    }
 
+    template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
+    Out function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
+    {
+        return x.as_derived();
+    }
 
-  template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
-  Out function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
-  {
-    return x.as_derived();
-  }
+    template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
+    D1 D_function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
+    {
+        return m_D1;
+    }
 
-  template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
-  D1 D_function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
-  {
-    return m_D1;
-  }
-
-  template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
-  D2 D2_function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
-  {
-    return D2(FillWith_t<Scalar_>(0));
-  }
+    template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
+    D2 D2_function (Vector_i<Derived_,Scalar,Domain,COMPONENT_QUALIFIER_> const &x) const
+    {
+        return D2(FillWith_t<Scalar_>(0));
+    }
 
 private:
 
-  D1 m_D1;
+    D1 m_D1;
 };
-
 
 } // end of namespace Tenh
 

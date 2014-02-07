@@ -72,7 +72,7 @@ struct Tensor_i
         // compile-time type checking -- the compiler should optimize it out anyway.
         MultiIndex x(m);
         // m.value() is what does the multi-index-to-vector-index computation
-        return Parent_EmbeddableAsTensor_i::operator[](ComponentIndex(m.value(), DONT_CHECK_RANGE));
+        return Parent_EmbeddableAsTensor_i::operator[](ComponentIndex(m.value(), CheckRange::FALSE));
     }
     // multi-index component access which is a frontend for the vector-index component access
     template <typename OtherIndexTyple_>
@@ -87,7 +87,7 @@ struct Tensor_i
         // compile-time type checking -- the compiler should optimize it out anyway.
         MultiIndex x(m);
         // m.value() is what does the multi-index-to-vector-index computation
-        return Parent_EmbeddableAsTensor_i::operator[](ComponentIndex(m.value(), DONT_CHECK_RANGE));
+        return Parent_EmbeddableAsTensor_i::operator[](ComponentIndex(m.value(), CheckRange::FALSE));
     }
 
     using Parent_EmbeddableAsTensor_i::operator();
@@ -145,7 +145,7 @@ struct Tensor_i
 
     static bool component_is_procedural_zero (MultiIndex const &) { return false; }
     static Scalar scalar_factor_for_component (MultiIndex const &) { return Scalar(1); }
-    static ComponentIndex vector_index_of (MultiIndex const &m) { return ComponentIndex(m.value(), DONT_CHECK_RANGE); }
+    static ComponentIndex vector_index_of (MultiIndex const &m) { return ComponentIndex(m.value(), CheckRange::FALSE); }
 
     static std::string type_as_string ()
     {

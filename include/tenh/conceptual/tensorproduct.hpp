@@ -461,18 +461,18 @@ typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T tensor (Factor_ cons
 // ///////////////////////////////////////////////////////////////////////////
 
 // just use the identity embedding
-template <typename FactorTyple_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
+template <typename FactorTyple_, typename Scalar_, WithExceptions WITH_EXCEPTIONS_>
 struct LinearEmbedding_f<TensorProductOfBasedVectorSpaces_c<FactorTyple_>,
                          TensorProductOfBasedVectorSpaces_c<FactorTyple_>,
                          Scalar_,
                          NaturalEmbedding,
-                         ENABLE_EXCEPTIONS_>
+                         WITH_EXCEPTIONS_>
 {
 private:
     typedef TensorProductOfBasedVectorSpaces_c<FactorTyple_> TensorProduct;
     LinearEmbedding_f ();
 public:
-    typedef LinearEmbedding_c<TensorProduct,TensorProduct,Scalar_,IdentityEmbedding,ENABLE_EXCEPTIONS_> T;
+    typedef LinearEmbedding_c<TensorProduct,TensorProduct,Scalar_,IdentityEmbedding,WITH_EXCEPTIONS_> T;
 };
 
 } // end of namespace Tenh

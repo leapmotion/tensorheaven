@@ -78,12 +78,16 @@ namespace Tenh {
 // id for when there is a canonical embedding of one space into another -- this will be the default
 struct NaturalEmbedding { static std::string type_as_string () { return "NaturalEmbedding"; } };
 
-static bool const ENABLE_EXCEPTIONS = true;
-static bool const DISABLE_EXCEPTIONS = false;
+enum class WithExceptions : bool { ENABLED = true, DISABLED = false };
+
+inline std::ostream &operator << (std::ostream &out, WithExceptions with_exceptions)
+{
+    return out << "WithExceptions::" << (bool(with_exceptions) ? "ENABLED" : "DISABLED");
+}
 
 // Domain_ and Codomain_ each need to be based vector spaces.  EmbeddingId_ allows
 // specification of particular embeddings (e.g. NaturalEmbedding, IdentityEmbedding).
-// If ENABLE_EXCEPTIONS_ is true, then the functions are required to throw on invalid
+// If WITH_EXCEPTIONS_ is true, then the functions are required to throw on invalid
 // input -- in particular, scalar_factor_for_embedded_component(i) and
 // source_component_index_for_embedded_component(i) should throw iff
 // embedded_component_is_procedural_zero(i) returns true.  this mode is used
@@ -92,7 +96,7 @@ template <typename Domain_,
           typename Codomain_,
           typename Scalar_,
           typename EmbeddingId_,
-          bool ENABLE_EXCEPTIONS_>
+          WithExceptions WITH_EXCEPTIONS_>
 struct LinearEmbedding_c;
 
 // this metafunction exists so that some measure of indirection can be used in specifying
@@ -104,20 +108,20 @@ template <typename Domain_,
           typename Codomain_,
           typename Scalar_,
           typename EmbeddingId_,
-          bool ENABLE_EXCEPTIONS_>
+          WithExceptions WITH_EXCEPTIONS_>
 struct LinearEmbedding_f
 {
-    typedef LinearEmbedding_c<Domain_,Codomain_,Scalar_,EmbeddingId_,ENABLE_EXCEPTIONS_> T;
+    typedef LinearEmbedding_c<Domain_,Codomain_,Scalar_,EmbeddingId_,WITH_EXCEPTIONS_> T;
 };
 
 template <typename Domain_,
           typename Codomain_,
           typename Scalar_,
           typename EmbeddingId_,
-          bool ENABLE_EXCEPTIONS_>
+          WithExceptions WITH_EXCEPTIONS_>
 struct CoembedIndexIterator_f
 {
-    typedef typename LinearEmbedding_f<Domain_,Codomain_,Scalar_,EmbeddingId_,ENABLE_EXCEPTIONS_>::T::CoembedIndexIterator T;
+    typedef typename LinearEmbedding_f<Domain_,Codomain_,Scalar_,EmbeddingId_,WITH_EXCEPTIONS_>::T::CoembedIndexIterator T;
 };
 
 // because there will be so many template specializations of LinearEmbedding_c, all
@@ -126,8 +130,8 @@ template <typename Domain_,
           typename Codomain_,
           typename Scalar_,
           typename EmbeddingId_,
-          bool ENABLE_EXCEPTIONS_>
-struct TypeStringOf_t<LinearEmbedding_c<Domain_,Codomain_,Scalar_,EmbeddingId_,ENABLE_EXCEPTIONS_> >
+          WithExceptions WITH_EXCEPTIONS_>
+struct TypeStringOf_t<LinearEmbedding_c<Domain_,Codomain_,Scalar_,EmbeddingId_,WITH_EXCEPTIONS_> >
 {
     static std::string eval ()
     {
@@ -135,7 +139,7 @@ struct TypeStringOf_t<LinearEmbedding_c<Domain_,Codomain_,Scalar_,EmbeddingId_,E
                                     + type_string_of<Codomain_>() + ','
                                     + type_string_of<Scalar_>() + ','
                                     + type_string_of<EmbeddingId_>() + ','
-                                    + FORMAT(ENABLE_EXCEPTIONS_) + '>';
+                                    + FORMAT(WITH_EXCEPTIONS_) + '>';
     }
 };
 
@@ -155,7 +159,7 @@ struct CoembedLookupTable_t
     CoembedLookupTable_t ()
     {
         // compute the table
-        typedef typename LinearEmbedding_f<Domain_,Codomain_,Scalar_,EmbeddingId_,DISABLE_EXCEPTIONS>::T LinearEmbedding;
+        typedef typename LinearEmbedding_f<Domain_,Codomain_,Scalar_,EmbeddingId_,WithExceptions::DISABLED>::T LinearEmbedding;
         for (CodomainComponentIndex i; i.is_not_at_end(); ++i)
         {
             if (!LinearEmbedding::embedded_component_is_procedural_zero(i))

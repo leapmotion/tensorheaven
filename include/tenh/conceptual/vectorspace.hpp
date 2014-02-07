@@ -317,8 +317,8 @@ BasedVectorSpace_c<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,OrthonormalBasis_c
 struct IdentityEmbedding { static std::string type_as_string () { return "IdentityEmbedding"; } };
 
 // canonical identity embedding
-template <typename OnBasedVectorSpace_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
-struct LinearEmbedding_c<OnBasedVectorSpace_,OnBasedVectorSpace_,Scalar_,IdentityEmbedding,ENABLE_EXCEPTIONS_>
+template <typename OnBasedVectorSpace_, typename Scalar_, WithExceptions WITH_EXCEPTIONS_>
+struct LinearEmbedding_c<OnBasedVectorSpace_,OnBasedVectorSpace_,Scalar_,IdentityEmbedding,WITH_EXCEPTIONS_>
 {
 private:
     enum { static_assert_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(OnBasedVectorSpace_), MUST_BE_BASED_VECTOR_SPACE) };

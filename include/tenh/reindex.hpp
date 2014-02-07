@@ -201,7 +201,7 @@ typename Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
     reindexed (DimIndex_t<SYMBOL_,DIM_> const &i)
 {
     return typename Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
-                    ::template Eval_f<DimIndex_t<SYMBOL_,DIM_> >::T(i.value(), DONT_CHECK_RANGE);
+                    ::template Eval_f<DimIndex_t<SYMBOL_,DIM_> >::T(i.value(), CheckRange::FALSE);
 }
 
 template <typename DomainAbstractIndexTyple_,
@@ -213,7 +213,7 @@ typename Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
     reindexed (DimIndex_t<SYMBOL_,DIM_> &i)
 {
     return typename Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
-                    ::template Eval_f<DimIndex_t<SYMBOL_,DIM_> >::T(i.value(), DONT_CHECK_RANGE);
+                    ::template Eval_f<DimIndex_t<SYMBOL_,DIM_> >::T(i.value(), CheckRange::FALSE);
 }
 
 // ///////////////////////////////////////////////////////////////////////////

@@ -115,9 +115,9 @@ void test_tensor_contraction ()
 
 
     DualOf_f<E>::T f(fill_with(3));
-    f[DualOf_f<E>::T::MultiIndex(0,0,0,CHECK_RANGE)] = 1.0f;
-    f[DualOf_f<E>::T::MultiIndex(1,0,1,CHECK_RANGE)] = 2.0f;
-    f[DualOf_f<E>::T::MultiIndex(2,1,1,CHECK_RANGE)] = 4.0f;
+    f[DualOf_f<E>::T::MultiIndex(0,0,0,CheckRange::TRUE)] = 1.0f;
+    f[DualOf_f<E>::T::MultiIndex(1,0,1,CheckRange::TRUE)] = 2.0f;
+    f[DualOf_f<E>::T::MultiIndex(2,1,1,CheckRange::TRUE)] = 4.0f;
     std::cout << FORMAT_VALUE(f) << '\n';
     std::cout << FORMAT_VALUE(f(i*j*k)*e(i*j*k)) << '\n';
     std::cout << FORMAT_VALUE(f(i*j*k)*e(i*k*j)) << '\n';

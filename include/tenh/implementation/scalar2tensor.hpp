@@ -181,8 +181,8 @@ struct ImplementationOf_t<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Fac
         // STATIC_ASSERT(Index1::COMPONENT_COUNT == DimensionOf_f<Factor0_>::V, DIMENSIONS_MUST_MATCH);
         // STATIC_ASSERT(Index2::COMPONENT_COUNT == DimensionOf_f<Factor1_>::V, DIMENSIONS_MUST_MATCH);
         // Uint32 b_value = b.value();
-        // return MultiIndex(b_value, b_value, DONT_CHECK_RANGE);
-        return MultiIndex(0, 0, DONT_CHECK_RANGE);
+        // return MultiIndex(b_value, b_value, CheckRange::FALSE);
+        return MultiIndex(0, 0, CheckRange::FALSE);
     }
 
     using Parent_Array_i::as_derived;
@@ -201,7 +201,7 @@ struct ImplementationOf_t<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Fac
 
     static bool component_is_procedural_zero (MultiIndex const &m) { return m.template el<0>().value() != m.template el<1>().value(); }
     static Scalar scalar_factor_for_component (MultiIndex const &) { return Scalar(1); }
-    static ComponentIndex vector_index_of (MultiIndex const &m) { return ComponentIndex(0, DONT_CHECK_RANGE); }
+    static ComponentIndex vector_index_of (MultiIndex const &m) { return ComponentIndex(0, CheckRange::FALSE); }
 };
 
 template <typename Factor0_, typename Factor1_, typename Scalar_, typename UseArrayType_, typename Derived_>

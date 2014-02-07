@@ -44,5 +44,5 @@ int main (int argc, char **argv)
     V w(Static<WithoutInitialization>::SINGLETON);
     euclideanly_embed(v, w);
     cout << FORMAT_VALUE(w) << '\n';
-    return int(v[V::Index(argc % V::Index::COMPONENT_COUNT, DONT_CHECK_RANGE)]);
+    return int(v[V::Index(argc % V::Index::COMPONENT_COUNT, CheckRange::FALSE)]);
 }

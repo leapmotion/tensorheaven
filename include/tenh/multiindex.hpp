@@ -35,19 +35,19 @@ struct MultiIndex_t : Tuple_t<IndexTyple_>
     MultiIndex_t () { } // default constructor initializes to "first" component
     MultiIndex_t (HeadIndexType const &head, BodyMultiIndex const &body) : Parent(head, body) { }
     // tuple-like initializers for raw Uint32
-    MultiIndex_t (Uint32 i0, Uint32 i1, bool check_range = CHECK_RANGE)
+    MultiIndex_t (Uint32 i0, Uint32 i1, CheckRange check_range = CheckRange::TRUE)
         :
         Parent(HeadIndexType(i0, check_range), BodyMultiIndex(i1, check_range))
     {
         STATIC_ASSERT((Parent::LENGTH == 2), LENGTH_DOES_NOT_MATCH_ARGUMENT_COUNT);
     }
-    MultiIndex_t (Uint32 i0, Uint32 i1, Uint32 i2, bool check_range = CHECK_RANGE)
+    MultiIndex_t (Uint32 i0, Uint32 i1, Uint32 i2, CheckRange check_range = CheckRange::TRUE)
         :
         Parent(HeadIndexType(i0, check_range), BodyMultiIndex(i1, i2, check_range))
     {
         STATIC_ASSERT((Parent::LENGTH == 3), LENGTH_DOES_NOT_MATCH_ARGUMENT_COUNT);
     }
-    MultiIndex_t (Uint32 i0, Uint32 i1, Uint32 i2, Uint32 i3, bool check_range = CHECK_RANGE)
+    MultiIndex_t (Uint32 i0, Uint32 i1, Uint32 i2, Uint32 i3, CheckRange check_range = CheckRange::TRUE)
         :
         Parent(HeadIndexType(i0, check_range), BodyMultiIndex(i1, i2, i3, check_range))
     {
@@ -93,7 +93,7 @@ public:
     bool is_at_end () const { return this->head().is_at_end(); } // because the head is the last one incremented
     bool is_not_at_end () const { return this->head().is_not_at_end(); } // because the head is the last one incremented
     Uint32 value () const { return BodyMultiIndex::COMPONENT_COUNT*this->head().value() + this->body().value(); }
-    ComponentIndex_t<COMPONENT_COUNT> as_component_index () const { return ComponentIndex_t<COMPONENT_COUNT>(value(), DONT_CHECK_RANGE); }
+    ComponentIndex_t<COMPONENT_COUNT> as_component_index () const { return ComponentIndex_t<COMPONENT_COUNT>(value(), CheckRange::FALSE); }
     // TODO: think about adding a redundant single index that just increments and can be returned directly in value()
     void operator ++ ()
     {
@@ -115,38 +115,38 @@ public:
 
     // if IndexTyple is uniform (meaning all its types are the same), then this provides
     // run-time access to the ith index.
-    HeadIndexType const &index (Uint32 i, bool check_range = CHECK_RANGE) const
+    HeadIndexType const &index (Uint32 i, CheckRange check_range = CheckRange::TRUE) const
     {
         static_assert(TypleIsUniform_f<IndexTyple_>::V, "IndexTyple_ must be uniform to use this method");
         assert(this->is_layed_out_contiguously_in_memory());
-        if (check_range && i >= LENGTH)
+        if (bool(check_range) && i >= LENGTH)
             throw std::out_of_range("index argument was out of range");
         HeadIndexType const *multi_index_as_array = &this->head();
         return multi_index_as_array[i];
     }
-    HeadIndexType &index (Uint32 i, bool check_range = CHECK_RANGE)
+    HeadIndexType &index (Uint32 i, CheckRange check_range = CheckRange::TRUE)
     {
         static_assert(TypleIsUniform_f<IndexTyple_>::V, "IndexTyple_ must be uniform to use this method");
         assert(this->is_layed_out_contiguously_in_memory());
-        if (check_range && i >= LENGTH)
+        if (bool(check_range) && i >= LENGTH)
             throw std::out_of_range("index argument was out of range");
         HeadIndexType *multi_index_as_array = &this->head();
         return multi_index_as_array[i];
     }
     // if IndexTyple is non-uniform (meaning not all its types are the same), then this provides
     // run-time access to the ith index in a weakly-typed way (via the Uint32-typed value())
-    Uint32 value_of_index (Uint32 i, bool check_range = CHECK_RANGE) const
+    Uint32 value_of_index (Uint32 i, CheckRange check_range = CheckRange::TRUE) const
     {
         assert(this->is_layed_out_contiguously_in_memory());
-        if (check_range && i >= LENGTH)
+        if (bool(check_range) && i >= LENGTH)
             throw std::out_of_range("index argument was out of range");
         Uint32 const *multi_index_as_array = reinterpret_cast<Uint32 const *>(&this->head());
         return multi_index_as_array[i];
     }
-    Uint32 value_of_index (Uint32 i, bool check_range = CHECK_RANGE)
+    Uint32 value_of_index (Uint32 i, CheckRange check_range = CheckRange::TRUE)
     {
         assert(this->is_layed_out_contiguously_in_memory());
-        if (check_range && i >= LENGTH)
+        if (bool(check_range) && i >= LENGTH)
             throw std::out_of_range("index argument was out of range");
         Uint32 const *multi_index_as_array = reinterpret_cast<Uint32 const *>(&this->head());
         return multi_index_as_array[i];
@@ -243,7 +243,7 @@ struct MultiIndex_t<Typle_t<HeadIndexType_>> : public Tuple_t<Typle_t<HeadIndexT
 
     MultiIndex_t () { } // default constructor initializes to "first" component
     // explicit because it has a range-check (in the HeadIndexType constructor)
-    explicit MultiIndex_t (Uint32 i, bool check_range = CHECK_RANGE) : Parent(HeadIndexType(i, check_range)) { }
+    explicit MultiIndex_t (Uint32 i, CheckRange check_range = CheckRange::TRUE) : Parent(HeadIndexType(i, check_range)) { }
     explicit MultiIndex_t (HeadIndexType const &head) : Parent(head) { }
 
     MultiIndex_t (MultiIndex_t<Typle_t<>> const &) { } // default construction
@@ -268,7 +268,7 @@ struct MultiIndex_t<Typle_t<HeadIndexType_>> : public Tuple_t<Typle_t<HeadIndexT
     bool is_at_end () const { return this->head().is_at_end(); }
     bool is_not_at_end () const { return this->head().is_not_at_end(); }
     Uint32 value () const { return this->head().value(); }
-    ComponentIndex_t<COMPONENT_COUNT> as_component_index () const { return ComponentIndex_t<COMPONENT_COUNT>(value(), DONT_CHECK_RANGE); }
+    ComponentIndex_t<COMPONENT_COUNT> as_component_index () const { return ComponentIndex_t<COMPONENT_COUNT>(value(), CheckRange::FALSE); }
     void operator ++ () { ++(this->head()); }
     void reset () { this->head().reset(); }
 
@@ -280,38 +280,38 @@ struct MultiIndex_t<Typle_t<HeadIndexType_>> : public Tuple_t<Typle_t<HeadIndexT
 
     // if IndexTyple is uniform (meaning all its types are the same), then this provides
     // run-time access to the ith index.
-    HeadIndexType const &index (Uint32 i, bool check_range = CHECK_RANGE) const
+    HeadIndexType const &index (Uint32 i, CheckRange check_range = CheckRange::TRUE) const
     {
         static_assert(TypleIsUniform_f<IndexTyple>::V, "IndexTyple_ must be uniform to use this method");
         assert(this->is_layed_out_contiguously_in_memory());
-        if (check_range && i >= LENGTH)
+        if (bool(check_range) && i >= LENGTH)
             throw std::out_of_range("index argument was out of range");
         HeadIndexType const *multi_index_as_array = &this->head();
         return multi_index_as_array[i];
     }
-    HeadIndexType &index (Uint32 i, bool check_range = CHECK_RANGE)
+    HeadIndexType &index (Uint32 i, CheckRange check_range = CheckRange::TRUE)
     {
         static_assert(TypleIsUniform_f<IndexTyple>::V, "IndexTyple_ must be uniform to use this method");
         assert(this->is_layed_out_contiguously_in_memory());
-        if (check_range && i >= LENGTH)
+        if (bool(check_range) && i >= LENGTH)
             throw std::out_of_range("index argument was out of range");
         HeadIndexType *multi_index_as_array = &this->head();
         return multi_index_as_array[i];
     }
     // if IndexTyple is non-uniform (meaning not all its types are the same), then this provides
     // run-time access to the ith index in a weakly-typed way (via the Uint32-typed value())
-    Uint32 value_of_index (Uint32 i, bool check_range = CHECK_RANGE) const
+    Uint32 value_of_index (Uint32 i, CheckRange check_range = CheckRange::TRUE) const
     {
         assert(this->is_layed_out_contiguously_in_memory());
-        if (check_range && i >= LENGTH)
+        if (bool(check_range) && i >= LENGTH)
             throw std::out_of_range("index argument was out of range");
         Uint32 const *multi_index_as_array = reinterpret_cast<Uint32 const *>(&this->head());
         return multi_index_as_array[i];
     }
-    Uint32 value_of_index (Uint32 i, bool check_range = CHECK_RANGE)
+    Uint32 value_of_index (Uint32 i, CheckRange check_range = CheckRange::TRUE)
     {
         assert(this->is_layed_out_contiguously_in_memory());
-        if (check_range && i >= LENGTH)
+        if (bool(check_range) && i >= LENGTH)
             throw std::out_of_range("index argument was out of range");
         Uint32 const *multi_index_as_array = reinterpret_cast<Uint32 const *>(&this->head());
         return multi_index_as_array[i];
@@ -416,7 +416,7 @@ struct MultiIndex_t<Typle_t<>> : public Tuple_t<Typle_t<>>
     bool is_at_end () const { return true; }
     bool is_not_at_end () const { return false; }
     Uint32 value () const { return 0; } // vacuous value
-    ComponentIndex_t<COMPONENT_COUNT> as_component_index () const { return ComponentIndex_t<COMPONENT_COUNT>(value(), DONT_CHECK_RANGE); }
+    ComponentIndex_t<COMPONENT_COUNT> as_component_index () const { return ComponentIndex_t<COMPONENT_COUNT>(value(), CheckRange::FALSE); }
     void operator ++ () { } // no-op
     void reset () { } // no-op
 

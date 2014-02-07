@@ -59,13 +59,13 @@ struct Vector_i
     operator ComponentAccessConstReturnType () const
     {
         STATIC_ASSERT((DIM == 1), ONLY_ONE_DIMENSIONAL_VECTORS_CAN_BE_CONVERTED_TO_SCALARS);
-        return as_derived().Derived::operator[](ComponentIndex(0, DONT_CHECK_RANGE));
+        return as_derived().Derived::operator[](ComponentIndex(0, CheckRange::FALSE));
     }
     // this could be implemented as "operator Scalar & ()" but it would be bad to make implicit casts that can be used to change the value of this.
     ComponentAccessNonConstReturnType as_scalar ()
     {
         STATIC_ASSERT((DIM == 1), ONLY_ONE_DIMENSIONAL_VECTORS_CAN_BE_CONVERTED_TO_SCALARS);
-        return as_derived().Derived::operator[](ComponentIndex(0, DONT_CHECK_RANGE));
+        return as_derived().Derived::operator[](ComponentIndex(0, CheckRange::FALSE));
     }
 
     // accessor as Derived type

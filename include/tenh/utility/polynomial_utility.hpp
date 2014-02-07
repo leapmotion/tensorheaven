@@ -21,18 +21,18 @@ struct VariableStringComputer
     {
         typedef typename HomogeneousPolynomial<DEG,BasedVectorSpace_,Scalar>::Sym::MultiIndex MultiIndex;
         MultiIndex m = sorted<std::less<Uint32> >(n);
-        Uint32 last = m.value_of_index(0, DONT_CHECK_RANGE);
+        Uint32 last = m.value_of_index(0, CheckRange::FALSE);
         Uint32 count = 1;
         std::string result = "x" + FORMAT(last);
         for (Uint32 i = 1; i < MultiIndex::LENGTH; ++i)
         {
-            if (m.value_of_index(i, DONT_CHECK_RANGE) == last)
+            if (m.value_of_index(i, CheckRange::FALSE) == last)
             {
                 ++count;
             }
             else
             {
-                last = m.value_of_index(i, DONT_CHECK_RANGE);
+                last = m.value_of_index(i, CheckRange::FALSE);
                 if (count != 1)
                 {
                     result += "^" + FORMAT(count);
@@ -84,19 +84,19 @@ struct VariableStringComputer<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,
         typedef typename HomogeneousPolynomial<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,2,VectorSpaceId_>,Basis_>,Scalar>::Sym::MultiIndex MultiIndex;
         MultiIndex m = sorted<std::less<Uint32> >(n);
         char vars[3] = "xy";
-        Uint32 last = m.value_of_index(0, DONT_CHECK_RANGE);
+        Uint32 last = m.value_of_index(0, CheckRange::FALSE);
         Uint32 count = 1;
         std::string result;
         result.push_back(vars[last]);
         for (Uint32 i = 1; i < MultiIndex::LENGTH; ++i)
         {
-            if (m.value_of_index(i, DONT_CHECK_RANGE) == last)
+            if (m.value_of_index(i, CheckRange::FALSE) == last)
             {
                 ++count;
             }
             else
             {
-                last = m.value_of_index(i, DONT_CHECK_RANGE);
+                last = m.value_of_index(i, CheckRange::FALSE);
                 if (count != 1)
                 {
                     result += "^" + FORMAT(count);
@@ -125,19 +125,19 @@ struct VariableStringComputer<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,
         typedef typename HomogeneousPolynomial<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,3,VectorSpaceId_>,Basis_>,Scalar>::Sym::MultiIndex MultiIndex;
         MultiIndex m = sorted<std::less<Uint32> >(n);
         char vars[4] = "xyz";
-        Uint32 last = m.value_of_index(0, DONT_CHECK_RANGE);
+        Uint32 last = m.value_of_index(0, CheckRange::FALSE);
         Uint32 count = 1;
         std::string result;
         result.push_back(vars[last]);
         for (Uint32 i = 1; i < MultiIndex::LENGTH; ++i)
         {
-            if (m.value_of_index(i, DONT_CHECK_RANGE) == last)
+            if (m.value_of_index(i, CheckRange::FALSE) == last)
             {
                 ++count;
             }
             else
             {
-                last = m.value_of_index(i, DONT_CHECK_RANGE);
+                last = m.value_of_index(i, CheckRange::FALSE);
                 if (count != 1)
                 {
                     result += "^" + FORMAT(count);

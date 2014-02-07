@@ -103,11 +103,11 @@ std::set<Element_,Compare_,Allocator_> set_union (std::set<Element_,Compare_,All
 // this can be used to verify that the functions associated with coembed are
 // consistent with those of embed, for a particular linear embedding.
 template <typename Domain_, typename Codomain_, typename Scalar_, typename EmbeddingId_>
-bool linear_embedding_is_consistent (LinearEmbedding_c<Domain_,Codomain_,Scalar_,EmbeddingId_,ENABLE_EXCEPTIONS> const &,
+bool linear_embedding_is_consistent (LinearEmbedding_c<Domain_,Codomain_,Scalar_,EmbeddingId_,WithExceptions::ENABLED> const &,
                                      std::string *error_string = nullptr)
 {
-    typedef LinearEmbedding_c<Domain_,Codomain_,Scalar_,EmbeddingId_,ENABLE_EXCEPTIONS> LinearEmbedding;
-    typedef typename CoembedIndexIterator_f<Domain_,Codomain_,Scalar_,EmbeddingId_,ENABLE_EXCEPTIONS>::T CoembedIndexIterator;
+    typedef LinearEmbedding_c<Domain_,Codomain_,Scalar_,EmbeddingId_,WithExceptions::ENABLED> LinearEmbedding;
+    typedef typename CoembedIndexIterator_f<Domain_,Codomain_,Scalar_,EmbeddingId_,WithExceptions::ENABLED>::T CoembedIndexIterator;
     typedef ComponentIndex_t<DimensionOf_f<Domain_>::V> DomainComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<Codomain_>::V> CodomainComponentIndex;
 

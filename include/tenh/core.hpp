@@ -54,15 +54,15 @@ std::string type_string_of ();
 template <typename T_>
 struct FillWith_t
 {
-	explicit FillWith_t (T_ const &t) : m(t) { }
+    explicit FillWith_t (T_ const &t) : m(t) { }
 
-	T_ const &value () const { return m; }
+    T_ const &value () const { return m; }
 
-	static std::string type_as_string () { return "FillWith_t<" + type_string_of<T_>() + '>'; }
+    static std::string type_as_string () { return "FillWith_t<" + type_string_of<T_>() + '>'; }
 
 private:
 
-	T_ m;
+    T_ m;
 };
 
 /// @brief A convenience function for specifying "fill with" parameters for constructors.
@@ -74,7 +74,7 @@ private:
 template <typename T_>
 FillWith_t<T_> fill_with (T_ const &t)
 {
-	return FillWith_t<T_>(t);
+    return FillWith_t<T_>(t);
 }
 
 /// @brief A type for use as a generic identifier, e.g. in a Basis_c.
@@ -117,13 +117,17 @@ T cube (T const &t)
 }
 
 /// @brief These are used in constructors for determining if a range check should be done.
-///  The default check parameter value should be CHECK_RANGE, which is more expensive,
-///  but if you know what you're doing, you can pass in DONT_CHECK_RANGE to avoid the
+///  The default check parameter value should be CheckRange::TRUE, which is more expensive,
+///  but if you know what you're doing, you can pass in CheckRange::FALSE to avoid the
 ///  range check and gain efficiency (e.g. if you know for a fact that the value is
 ///  within the correct range).  This is a compromise between completely correct program
 ///  behavior and program efficiency.
-static bool const CHECK_RANGE = true;
-static bool const DONT_CHECK_RANGE = false;
+enum class CheckRange : bool { TRUE = true, FALSE = false };
+
+inline std::ostream &operator << (std::ostream &out, CheckRange check_range)
+{
+    return out << "CheckRange::" << (bool(check_range) ? "TRUE" : "FALSE");
+}
 
 /// @brief These are used in constructors for determining if a pointer check should be done.
 ///  The default check parameter value should be CHECK_POINTER, which is more expensive,

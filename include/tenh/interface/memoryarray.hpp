@@ -48,11 +48,11 @@ struct MemoryArray_i
     void copy_from (Array_i<OtherDerived_,Component_,OTHER_COMPONENT_COUNT_,OTHER_COMPONENT_QUALIFIER_> const &a,
                     Uint32 start_offset = 0,
                     Uint32 components_to_copy = OTHER_COMPONENT_COUNT_,
-                    bool check_range = CHECK_RANGE)
+                    CheckRange check_range = CheckRange::TRUE)
     {
-        if (check_range && start_offset >= COMPONENT_COUNT_)
+        if (bool(check_range) && start_offset >= COMPONENT_COUNT_)
             throw std::out_of_range("start_offset is outside of range");
-        if (check_range && start_offset + components_to_copy > COMPONENT_COUNT_)
+        if (bool(check_range) && start_offset + components_to_copy > COMPONENT_COUNT_)
             throw std::out_of_range("range to copy exceeds this array size");
 
         typedef Array_i<OtherDerived_,Component_,OTHER_COMPONENT_COUNT_,OTHER_COMPONENT_QUALIFIER_> OtherArray;
@@ -61,15 +61,15 @@ struct MemoryArray_i
             OTHER_COMPONENT_QUALIFIER_ == COMPONENTS_ARE_NONCONST_MEMORY)
         {
             // memmove is used so that the memory segments may overlap
-            memmove(reinterpret_cast<void *>(&(*this)[ComponentIndex(start_offset, DONT_CHECK_RANGE)]),
-                    reinterpret_cast<void const *>(&a[typename OtherArray::ComponentIndex(0, DONT_CHECK_RANGE)]),
+            memmove(reinterpret_cast<void *>(&(*this)[ComponentIndex(start_offset, CheckRange::FALSE)]),
+                    reinterpret_cast<void const *>(&a[typename OtherArray::ComponentIndex(0, CheckRange::FALSE)]),
                     sizeof(Component_)*components_to_copy);
         }
         // otherwise OTHER_COMPONENT_QUALIFIER_ is COMPONENTS_ARE_PROCEDURAL, and there is no memory
         // to copy, so iterate through and use individual element access.
         else
         {
-            ComponentIndex this_i(start_offset, DONT_CHECK_RANGE);
+            ComponentIndex this_i(start_offset, CheckRange::FALSE);
             for (typename OtherArray::ComponentIndex other_i; this_i.value() < components_to_copy; ++this_i, ++other_i)
                 (*this)[this_i] = a[other_i];
         }

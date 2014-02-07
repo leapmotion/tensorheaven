@@ -23,15 +23,19 @@ namespace Tenh {
 
 typedef Uint32 AbstractIndexSymbol;
 
-static bool const USE_QUOTES_FOR_ALPHABETIC = true;
-static bool const DONT_USE_QUOTES_FOR_ALPHABETIC = false;
+enum class UseQuotesForAlphabetic : bool { TRUE = true, FALSE = false };
 
-inline std::string abstract_index_symbol_as_string (AbstractIndexSymbol symbol, bool use_quotes_for_alphabetic = USE_QUOTES_FOR_ALPHABETIC)
+inline std::ostream &operator << (std::ostream &out, UseQuotesForAlphabetic use_quotes_for_alphabetic)
+{
+    return out << "UseQuotesForAlphabetic::" << (bool(use_quotes_for_alphabetic) ? "TRUE" : "FALSE");
+}
+
+inline std::string abstract_index_symbol_as_string (AbstractIndexSymbol symbol, UseQuotesForAlphabetic use_quotes_for_alphabetic = UseQuotesForAlphabetic::TRUE)
 {
     assert(symbol > 0 && "invalid AbstractIndexSymbol");
     // for alphabetical chars, use the ascii representation.
     if ((symbol >= 'a' && symbol <= 'z') || (symbol >= 'A' && symbol <= 'Z'))
-        return use_quotes_for_alphabetic ? ('\'' + std::string(1, char(symbol)) + '\'') : std::string(1, char(symbol));
+        return bool(use_quotes_for_alphabetic) ? ('\'' + std::string(1, char(symbol)) + '\'') : std::string(1, char(symbol));
     // otherwise use i_###, where ### is the symbol value
     else
         return "i_" + FORMAT(Uint32(symbol));
@@ -170,7 +174,7 @@ template <AbstractIndexSymbol HEAD_SYMBOL_, typename... Types_>
 std::string symbol_string_of_abstract_index_typle (Typle_t<AbstractIndex_c<HEAD_SYMBOL_>,Types_...> const &)
 {
     typedef Typle_t<Types_...> BodyTyple;
-    return abstract_index_symbol_as_string(HEAD_SYMBOL_, DONT_USE_QUOTES_FOR_ALPHABETIC)
+    return abstract_index_symbol_as_string(HEAD_SYMBOL_, UseQuotesForAlphabetic::FALSE)
            +
            ((Length_f<BodyTyple>::V > 0) ?
             '*' + symbol_string_of_abstract_index_typle(BodyTyple()) :

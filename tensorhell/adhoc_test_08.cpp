@@ -37,7 +37,7 @@ void test_poly_in_1_dim ()
     typedef MultivariatePolynomial<2,BasedVectorSpace> PolyType;
     PolyType::SymDual w(fill_with(0));
     MultivariatePolynomial<1,BasedVectorSpace>::SymDual x(fill_with(1));
-    w[PolyType::SymDual::ComponentIndex(0, CHECK_RANGE)] = 1; // x^2
+    w[PolyType::SymDual::ComponentIndex(0, CheckRange::TRUE)] = 1; // x^2
     std::cout << FORMAT_VALUE(w) << '\n';
     PolyType roly(w,MultivariatePolynomial<1,BasedVectorSpace>(x,3));
     PolyType poly(fill_with(0));

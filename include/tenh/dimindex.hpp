@@ -37,7 +37,7 @@ struct DimIndex_t
     using Parent_AbstractIndex_c::SYMBOL;
 
     DimIndex_t () : Parent_ComponentIndex_t(), Parent_AbstractIndex_c() { }
-    explicit DimIndex_t (Uint32 i, bool check_range = CHECK_RANGE) : Parent_ComponentIndex_t(i, check_range) { }
+    explicit DimIndex_t (Uint32 i, CheckRange check_range = CheckRange::TRUE) : Parent_ComponentIndex_t(i, check_range) { }
     DimIndex_t (ComponentIndex_t<DIM> const &i) : Parent_ComponentIndex_t(i), Parent_AbstractIndex_c() { }
 
     /// For use with TypeStringOf_t.

@@ -33,7 +33,7 @@ namespace LinearEmbedding {
 template <typename Domain_, typename Codomain_, typename Scalar_, typename EmbeddingId_>
 void check_linear_embedding (Context const &context)
 {
-    typedef Tenh::LinearEmbedding_c<Domain_,Codomain_,Scalar_,EmbeddingId_,Tenh::ENABLE_EXCEPTIONS> LinearEmbedding;
+    typedef Tenh::LinearEmbedding_c<Domain_,Codomain_,Scalar_,EmbeddingId_,Tenh::WithExceptions::ENABLED> LinearEmbedding;
     std::string error_string;
     bool is_consistent = linear_embedding_is_consistent(LinearEmbedding(), &error_string);
     if (!is_consistent)

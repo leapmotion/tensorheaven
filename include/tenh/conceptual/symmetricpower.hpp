@@ -291,12 +291,12 @@ SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> sym (Factor_ const &)
 // specialization for 1st symmetric power -- both the 1st symmetric and 1st
 // tensor power of a vector space are naturally isomorphic to the vector space
 // itself, so the embedding is effectively the identity.
-template <typename Factor_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
+template <typename Factor_, typename Scalar_, WithExceptions WITH_EXCEPTIONS_>
 struct LinearEmbedding_c<SymmetricPowerOfBasedVectorSpace_c<1,Factor_>,
                          typename TensorPowerOfBasedVectorSpace_f<1,Factor_>::T,
                          Scalar_,
                          NaturalEmbedding,
-                         ENABLE_EXCEPTIONS_>
+                         WITH_EXCEPTIONS_>
 {
 private:
     typedef SymmetricPowerOfBasedVectorSpace_c<1,Factor_> Sym;
@@ -325,12 +325,12 @@ public:
     static SymComponentIndex source_component_index_for_embedded_component (TPowComponentIndex const &i) { return i; }
 };
 
-template <Uint32 ORDER_, typename Factor_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
+template <Uint32 ORDER_, typename Factor_, typename Scalar_, WithExceptions WITH_EXCEPTIONS_>
 struct LinearEmbedding_c<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,
                          typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T,
                          Scalar_,
                          NaturalEmbedding,
-                         ENABLE_EXCEPTIONS_>
+                         WITH_EXCEPTIONS_>
 {
 private:
     typedef SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> Sym;
@@ -356,7 +356,7 @@ public:
                                   typename TensorPowerOfBasedVectorSpace_f<NEXT_ORDER_DOWN,Factor_>::T,
                                   Scalar_,
                                   NaturalEmbedding,
-                                  ENABLE_EXCEPTIONS_> BodyLinearEmbedding;
+                                  WITH_EXCEPTIONS_> BodyLinearEmbedding;
         // NOTE: this is really inefficient because it converts to and then from a ComponentIndex.
         // it could be better implemented using a private scalar_factor_for_embedded_component(MultiIndex)
         return SymComponentIndex(  binomial_coefficient(m.head().value()+ORDER_-1, ORDER_)
@@ -364,12 +364,12 @@ public:
     }
 };
 
-template <Uint32 ORDER_, typename Factor_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
+template <Uint32 ORDER_, typename Factor_, typename Scalar_, WithExceptions WITH_EXCEPTIONS_>
 struct CoembedIndexIterator_f<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,
                               typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T,
                               Scalar_,
                               NaturalEmbedding,
-                              ENABLE_EXCEPTIONS_>
+                              WITH_EXCEPTIONS_>
 {
     typedef LookupTableCoembedIndexIterator_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,
                                               typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T,

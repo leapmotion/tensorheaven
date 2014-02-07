@@ -329,7 +329,7 @@ struct DirectSumOf2TensorsHelper_t
             AbstractIndex_c<'k'> k;
             HeadImplementation h;
             typedef typename HeadImplementation::MultiIndex M;
-            M head_m(m.template el<0>().value(), m.template el<1>().value(), DONT_CHECK_RANGE);
+            M head_m(m.template el<0>().value(), m.template el<1>().value(), CheckRange::FALSE);
             // this split is unnecessary if HeadProcedural2TensorImplementation_ is a tensor product,
             // but this makes the same code work for diagonal 2 tensors as well, so for now that's fine.
             return h.split(j*k)[head_m];
@@ -344,7 +344,7 @@ struct DirectSumOf2TensorsHelper_t
             typedef typename DirectSumOf2TensorsHelper::MultiIndex BodyMultiIndex;
             BodyMultiIndex body_m(m.template el<0>().value() - DimensionOf_f<HeadFactor0>::V,
                                   m.template el<1>().value() - DimensionOf_f<HeadFactor1>::V,
-                                  DONT_CHECK_RANGE);
+                                  CheckRange::FALSE);
             return DirectSumOf2TensorsHelper::evaluate(body_m.as_component_index());
         }
     }

@@ -268,12 +268,12 @@ Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>
 // linear embedding of diagonal 2-tensor into corresponding tensor product
 // ///////////////////////////////////////////////////////////////////////////
 
-template <typename Factor0_, typename Factor1_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
+template <typename Factor0_, typename Factor1_, typename Scalar_, WithExceptions WITH_EXCEPTIONS_>
 struct LinearEmbedding_c<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,
                          TensorProductOfBasedVectorSpaces_c<Typle_t<Factor0_,Factor1_>>,
                          Scalar_,
                          NaturalEmbedding,
-                         ENABLE_EXCEPTIONS_>
+                         WITH_EXCEPTIONS_>
 {
 private:
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_> Diag2;
@@ -287,7 +287,7 @@ public:
 
     struct CoembedIndexIterator
     {
-        CoembedIndexIterator (Diag2ComponentIndex const &i) : m(i.value() * (DimensionOf_f<Factor1_>::V+1), DONT_CHECK_RANGE) { }
+        CoembedIndexIterator (Diag2ComponentIndex const &i) : m(i.value() * (DimensionOf_f<Factor1_>::V+1), CheckRange::FALSE) { }
         void operator ++ () { m.set_to_end(); } // there is only one Tensor2ComponentIndex per Diag2ComponentIndex
         bool is_not_at_end () const { return m.is_not_at_end(); }
         Scalar_ scale_factor () const { return Scalar_(1); }
@@ -308,14 +308,14 @@ public:
     }
     static Scalar_ scalar_factor_for_embedded_component (Tensor2ComponentIndex const &i)
     {
-        if (ENABLE_EXCEPTIONS_ && embedded_component_is_procedural_zero(i))
+        if (bool(WITH_EXCEPTIONS_) && embedded_component_is_procedural_zero(i))
             throw std::domain_error(FORMAT(i.value()) + " is not in the domain of scalar_factor_for_embedded_component");
 
         return Scalar_(1);
     }
     static Diag2ComponentIndex source_component_index_for_embedded_component (Tensor2ComponentIndex const &i)
     {
-        if (ENABLE_EXCEPTIONS_ && embedded_component_is_procedural_zero(i))
+        if (bool(WITH_EXCEPTIONS_) && embedded_component_is_procedural_zero(i))
             throw std::domain_error(FORMAT(i.value()) + " is not in the domain of scalar_factor_for_embedded_component");
 
         Tensor2MultiIndex m(i); // does the row-major indexing conversion
@@ -328,12 +328,12 @@ public:
 // corresponding 2nd symmetric power
 // ///////////////////////////////////////////////////////////////////////////
 
-template <typename Factor_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
+template <typename Factor_, typename Scalar_, WithExceptions WITH_EXCEPTIONS_>
 struct LinearEmbedding_c<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor_,Factor_>,
                          SymmetricPowerOfBasedVectorSpace_c<2,Factor_>,
                          Scalar_,
                          NaturalEmbedding,
-                         ENABLE_EXCEPTIONS_>
+                         WITH_EXCEPTIONS_>
 {
 private:
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<Factor_,Factor_> Diag2;
@@ -345,7 +345,7 @@ public:
 
     struct CoembedIndexIterator
     {
-        CoembedIndexIterator (Diag2ComponentIndex const &i) : m(i.value() + (i.value()*(i.value()+1))/2, DONT_CHECK_RANGE) { }
+        CoembedIndexIterator (Diag2ComponentIndex const &i) : m(i.value() + (i.value()*(i.value()+1))/2, CheckRange::FALSE) { }
         void operator ++ () { m.set_to_end(); } // there is only one Sym2ComponentIndex per Diag2ComponentIndex
         bool is_not_at_end () const { return m.is_not_at_end(); }
         Scalar_ scale_factor () const { return Scalar_(1); }
@@ -360,27 +360,27 @@ public:
         // Sym2 uses the lower-triangular indexing (which doesn't depend on the dimension of Factor_)
         Uint32 t = index_of_greatest_simplicial_number_leq(i.value(), 2);
         // std::cout << FORMAT_VALUE(i.value()) << ", " << FORMAT_VALUE(t) << '\n';
-        FactorComponentIndex row(t-1, DONT_CHECK_RANGE);
-        FactorComponentIndex col(i.value() - t*(t-1)/2, DONT_CHECK_RANGE);
+        FactorComponentIndex row(t-1, CheckRange::FALSE);
+        FactorComponentIndex col(i.value() - t*(t-1)/2, CheckRange::FALSE);
         // off-diagonals are procedural zeros
         return row.value() != col.value();
     }
     static Scalar_ scalar_factor_for_embedded_component (Sym2ComponentIndex const &i)
     {
-        if (ENABLE_EXCEPTIONS_ && embedded_component_is_procedural_zero(i))
+        if (bool(WITH_EXCEPTIONS_) && embedded_component_is_procedural_zero(i))
             throw std::domain_error(FORMAT(i.value()) + " is not in the domain of scalar_factor_for_embedded_component");
 
         return Scalar_(1);
     }
     static Diag2ComponentIndex source_component_index_for_embedded_component (Sym2ComponentIndex const &i)
     {
-        if (ENABLE_EXCEPTIONS_ && embedded_component_is_procedural_zero(i))
+        if (bool(WITH_EXCEPTIONS_) && embedded_component_is_procedural_zero(i))
             throw std::domain_error(FORMAT(i.value()) + " is not in the domain of scalar_factor_for_embedded_component");
 
         // Sym2 uses the lower-triangular indexing (which doesn't depend on the dimension of Factor_)
         Uint32 t = index_of_greatest_simplicial_number_leq(i.value(), 2);
-        FactorComponentIndex row(t-1, DONT_CHECK_RANGE);
-        FactorComponentIndex col(i.value() - t*(t-1)/2, DONT_CHECK_RANGE);
+        FactorComponentIndex row(t-1, CheckRange::FALSE);
+        FactorComponentIndex col(i.value() - t*(t-1)/2, CheckRange::FALSE);
         // FactorComponentIndex and Diag2ComponentIndex are the same C++ type by dimensionality
         return row;
     }

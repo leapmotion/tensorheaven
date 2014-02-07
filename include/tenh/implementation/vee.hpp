@@ -188,7 +188,7 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
     static ComponentIndex vector_index_of (MultiIndex const &m)
     {
         MultiIndex n = sorted<std::greater<Uint32> >(m);
-        return ComponentIndex(VectorIndexComputer_t<MultiIndex>::compute(n), CHECK_RANGE);
+        return ComponentIndex(VectorIndexComputer_t<MultiIndex>::compute(n), CheckRange::FALSE);
     }
 
 private:
@@ -212,7 +212,7 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
     {
         typedef typename Head_f<BundleIndexTyple>::T BundleIndexHead;
         typedef typename BodyTyple_f<BundleIndexTyple>::T BundleIndexBodyTyple;
-        return MultiIndex_t<BundleIndexTyple>(BundleIndexHead(index_of_greatest_simplicial_number_leq(b.value(),ORD) - ORD + 1, CHECK_RANGE), BundleIndexComputer_t<BundleIndexBodyTyple,BundledIndex,ORD-1>::compute(BundledIndex(b.value() - binomial_coefficient(index_of_greatest_simplicial_number_leq(b.value(),ORD), ORD), CHECK_RANGE)));
+        return MultiIndex_t<BundleIndexTyple>(BundleIndexHead(index_of_greatest_simplicial_number_leq(b.value(),ORD) - ORD + 1, CheckRange::FALSE), BundleIndexComputer_t<BundleIndexBodyTyple,BundledIndex,ORD-1>::compute(BundledIndex(b.value() - binomial_coefficient(index_of_greatest_simplicial_number_leq(b.value(),ORD), ORD), CheckRange::FALSE)));
     }
 };
 
@@ -222,7 +222,7 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
 {
     static MultiIndex_t<Typle_t<FactorType> > compute (BundledIndex const &b)
     {
-        return MultiIndex_t<Typle_t<FactorType> >(FactorType(index_of_greatest_simplicial_number_leq(b.value(),ORD) - ORD + 1, CHECK_RANGE));
+        return MultiIndex_t<Typle_t<FactorType> >(FactorType(index_of_greatest_simplicial_number_leq(b.value(),ORD) - ORD + 1, CheckRange::FALSE));
     }
 };
 

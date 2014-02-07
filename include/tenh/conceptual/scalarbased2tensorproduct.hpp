@@ -268,12 +268,12 @@ Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>
 // linear embedding of scalar 2-tensor into corresponding tensor product
 // ///////////////////////////////////////////////////////////////////////////
 
-template <typename Factor0_, typename Factor1_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
+template <typename Factor0_, typename Factor1_, typename Scalar_, WithExceptions WITH_EXCEPTIONS_>
 struct LinearEmbedding_c<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,
                          TensorProductOfBasedVectorSpaces_c<Typle_t<Factor0_,Factor1_>>,
                          Scalar_,
                          NaturalEmbedding,
-                         ENABLE_EXCEPTIONS_>
+                         WITH_EXCEPTIONS_>
 {
 private:
     typedef Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_> Scalar2;
@@ -291,7 +291,7 @@ public:
     struct CoembedIndexIterator
     {
         CoembedIndexIterator (Scalar2ComponentIndex const &) : m() { }
-        void operator ++ () { m.increment_by(DimensionOf_f<Factor1_>::V+1, DONT_CHECK_RANGE); }
+        void operator ++ () { m.increment_by(DimensionOf_f<Factor1_>::V+1, CheckRange::FALSE); }
         bool is_not_at_end () const { return m.value() < (DimensionOf_f<Factor1_>::V+1)*DIM; }
         Scalar_ scale_factor () const { return Scalar_(1); }
         typedef Tensor2ComponentIndex ComponentIndexReturnType;
@@ -311,18 +311,18 @@ public:
     }
     static Scalar_ scalar_factor_for_embedded_component (Tensor2ComponentIndex const &i)
     {
-        if (ENABLE_EXCEPTIONS_ && embedded_component_is_procedural_zero(i))
+        if (bool(WITH_EXCEPTIONS_) && embedded_component_is_procedural_zero(i))
             throw std::domain_error(FORMAT(i.value()) + " is not in the domain of scalar_factor_for_embedded_component");
 
         return Scalar_(1);
     }
     static Scalar2ComponentIndex source_component_index_for_embedded_component (Tensor2ComponentIndex const &i)
     {
-        if (ENABLE_EXCEPTIONS_ && embedded_component_is_procedural_zero(i))
+        if (bool(WITH_EXCEPTIONS_) && embedded_component_is_procedural_zero(i))
             throw std::domain_error(FORMAT(i.value()) + " is not in the domain of scalar_factor_for_embedded_component");
 
         // there is only one component for a scalar 2-tensor -- zero.
-        return Scalar2ComponentIndex(0, DONT_CHECK_RANGE);
+        return Scalar2ComponentIndex(0, CheckRange::FALSE);
     }
 };
 
@@ -331,12 +331,12 @@ public:
 // corresponding 2nd symmetric power
 // ///////////////////////////////////////////////////////////////////////////
 
-template <typename Factor_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
+template <typename Factor_, typename Scalar_, WithExceptions WITH_EXCEPTIONS_>
 struct LinearEmbedding_c<Scalar2TensorProductOfBasedVectorSpaces_c<Factor_,Factor_>,
                          SymmetricPowerOfBasedVectorSpace_c<2,Factor_>,
                          Scalar_,
                          NaturalEmbedding,
-                         ENABLE_EXCEPTIONS_>
+                         WITH_EXCEPTIONS_>
 {
 private:
     typedef Scalar2TensorProductOfBasedVectorSpaces_c<Factor_,Factor_> Scalar2;
@@ -350,7 +350,7 @@ public:
     struct CoembedIndexIterator
     {
         CoembedIndexIterator (Scalar2ComponentIndex const &) : m(), m_increment(2) { }
-        void operator ++ () { m.increment_by(m_increment, DONT_CHECK_RANGE); ++m_increment; } // increment triangularly
+        void operator ++ () { m.increment_by(m_increment, CheckRange::FALSE); ++m_increment; } // increment triangularly
         bool is_not_at_end () const { return m.is_not_at_end(); }
         Scalar_ scale_factor () const { return Scalar_(1); }
         typedef Sym2ComponentIndex ComponentIndexReturnType;
@@ -365,24 +365,24 @@ public:
         // Sym2 uses the lower-triangular indexing (which doesn't depend on the dimension of Factor_)
         Uint32 t = index_of_greatest_simplicial_number_leq(i.value(), 2);
         // std::cout << FORMAT_VALUE(i.value()) << ", " << FORMAT_VALUE(t) << '\n';
-        FactorComponentIndex row(t-1, DONT_CHECK_RANGE);
-        FactorComponentIndex col(i.value() - t*(t-1)/2, DONT_CHECK_RANGE);
+        FactorComponentIndex row(t-1, CheckRange::FALSE);
+        FactorComponentIndex col(i.value() - t*(t-1)/2, CheckRange::FALSE);
         // off-diagonals are procedural zeros
         return row.value() != col.value();
     }
     static Scalar_ scalar_factor_for_embedded_component (Sym2ComponentIndex const &i)
     {
-        if (ENABLE_EXCEPTIONS_ && embedded_component_is_procedural_zero(i))
+        if (bool(WITH_EXCEPTIONS_) && embedded_component_is_procedural_zero(i))
             throw std::domain_error(FORMAT(i.value()) + " is not in the domain of scalar_factor_for_embedded_component");
 
         return Scalar_(1);
     }
     static Scalar2ComponentIndex source_component_index_for_embedded_component (Sym2ComponentIndex const &i)
     {
-        if (ENABLE_EXCEPTIONS_ && embedded_component_is_procedural_zero(i))
+        if (bool(WITH_EXCEPTIONS_) && embedded_component_is_procedural_zero(i))
             throw std::domain_error(FORMAT(i.value()) + " is not in the domain of scalar_factor_for_embedded_component");
 
-        return Scalar2ComponentIndex(0, DONT_CHECK_RANGE);
+        return Scalar2ComponentIndex(0, CheckRange::FALSE);
     }
 };
 
@@ -390,12 +390,12 @@ public:
 // linear embedding of scalar 2-tensor into corresponding diagonal 2-tensor
 // ///////////////////////////////////////////////////////////////////////////
 
-template <typename Factor0_, typename Factor1_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
+template <typename Factor0_, typename Factor1_, typename Scalar_, WithExceptions WITH_EXCEPTIONS_>
 struct LinearEmbedding_c<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,
                          Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,
                          Scalar_,
                          NaturalEmbedding,
-                         ENABLE_EXCEPTIONS_>
+                         WITH_EXCEPTIONS_>
 {
 private:
     typedef Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_> Scalar2;
@@ -428,7 +428,7 @@ public:
     static Scalar2ComponentIndex source_component_index_for_embedded_component (Diag2ComponentIndex const &i)
     {
         // there is only one component for a scalar 2-tensor -- zero.
-        return Scalar2ComponentIndex(0, DONT_CHECK_RANGE);
+        return Scalar2ComponentIndex(0, CheckRange::FALSE);
     }
 };
 
