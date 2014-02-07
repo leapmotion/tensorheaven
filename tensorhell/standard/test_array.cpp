@@ -8,7 +8,7 @@
 #include <complex>
 
 #include "tenh/memberarray.hpp"
-#include "tenh/meta/tuple.hpp"
+#include "tenh/tuple.hpp"
 
 // this is included last because it redefines the `assert` macro,
 // which would be bad for the above includes.

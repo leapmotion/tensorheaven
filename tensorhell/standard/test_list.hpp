@@ -17,11 +17,11 @@ struct Directory;
 } // end of namespace Lvd
 
 namespace Test {
-namespace List {
+namespace Tuple {
 
 void AddTests (Lvd::TestSystem::Directory &parent);
 
-} // end of namespace List
+} // end of namespace Tuple
 } // end of namespace Test
 
 #endif // !defined(TEST_LIST_HPP_)

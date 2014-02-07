@@ -10,7 +10,7 @@
 
 #include "tenh/conceptual/abstractindex.hpp"
 #include "tenh/dimindex.hpp"
-#include "tenh/meta/tuple.hpp"
+#include "tenh/tuple.hpp"
 
 namespace Tenh {
 

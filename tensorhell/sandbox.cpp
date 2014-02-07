@@ -12,7 +12,7 @@
 #include "tenh/implementation/vector.hpp"
 #include "tenh/implementation/vee.hpp"
 #include "tenh/implementation/wedge.hpp"
-#include "tenh/meta/tuple.hpp"
+#include "tenh/tuple.hpp"
 
 using namespace Tenh;
 

@@ -1,10 +1,10 @@
 // ///////////////////////////////////////////////////////////////////////////
-// tenh/list.hpp by Victor Dods, created 2013/02/16
+// tenh/tuple.hpp by Victor Dods, created 2013/02/16
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#ifndef TENH_LIST_HPP_
-#define TENH_LIST_HPP_
+#ifndef TENH_TUPLE_HPP_
+#define TENH_TUPLE_HPP_
 
 #include <ostream>
 #include <string>
@@ -588,6 +588,23 @@ Tuple_t<typename Concat2Typles_f<Lhs_Typle_,Rhs_Typle_>::T>
     return Tuple_t<typename Concat2Typles_f<Lhs_Typle_,Rhs_Typle_>::T>(lhs.head(), lhs.body() | rhs);
 }
 
+// functions for creating tuples in a syntactically-nice way, where the
+// tuple types are inferred.
+
+template <typename... Types_>
+Tuple_t<Typle_t<Types_...>> tuple (Types_... parameters)
+{
+    return Tuple_t<Typle_t<Types_...>>(parameters...);
+}
+
+// each parameter must have a coercion to UniformType_
+template <typename UniformType_, typename... Types_>
+typename UniformTupleOfLength_f<UniformType_,Length_f<Typle_t<Types_...>>::V>::T
+    uniform_tuple (Types_... parameters)
+{
+    return typename UniformTupleOfLength_f<UniformType_,Length_f<Typle_t<Types_...>>::V>::T(parameters...);
+}
+
 } // end of namespace Tenh
 
-#endif // TENH_LIST_HPP_
+#endif // TENH_TUPLE_HPP_

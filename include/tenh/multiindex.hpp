@@ -13,7 +13,7 @@
 #include <algorithm>
 
 #include "tenh/componentindex.hpp"
-#include "tenh/meta/tuple.hpp"
+#include "tenh/tuple.hpp"
 
 namespace Tenh {
 

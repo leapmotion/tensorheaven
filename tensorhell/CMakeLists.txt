@@ -149,7 +149,6 @@ set(test_SRCS
     standard/test_linearembedding.cpp
     standard/test_list.cpp
     standard/test_split_and_bundle.cpp
-    standard/test_tuple.cpp
     standard/test_typle.cpp)
 add_executable(test standard/test.cpp ${test_SRCS})
 include_directories(${tensorheaven_test_SOURCE_DIR}/../include ${tensorheaven_test_SOURCE_DIR}/lvd ${tensorheaven_test_SOURCE_DIR}/standard)

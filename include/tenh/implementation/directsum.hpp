@@ -13,7 +13,7 @@
 #include "tenh/conceptual/scalarbased2tensorproduct.hpp"
 #include "tenh/implementation/implementationof.hpp"
 #include "tenh/interface/vector.hpp"
-#include "tenh/meta/tuple.hpp"
+#include "tenh/tuple.hpp"
 
 namespace Tenh {
 
