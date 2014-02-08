@@ -178,8 +178,8 @@ struct Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENT_QUA
                 FactorTyple,
                 typename DimIndexTypleOf_f<FactorTyple,AbstractIndexTyple_>::T,
                 typename SummedIndexTyple_f<typename DimIndexTypleOf_f<FactorTyple,AbstractIndexTyple_>::T>::T,
-                FORCE_CONST,
-                CHECK_FOR_ALIASING> T;
+                ForceConst::TRUE,
+                CheckForAliasing::TRUE> T;
 };
 
 // the special definition (for 1-multiindices) indexes this Tensor_i as a Vector_i
@@ -202,8 +202,8 @@ struct Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENT_QUA
                 FactorTyple,
                 typename DimIndexTypleOf_f<FactorTyple,AbstractIndexTyple_>::T,
                 typename SummedIndexTyple_f<typename DimIndexTypleOf_f<FactorTyple,AbstractIndexTyple_>::T>::T,
-                DONT_FORCE_CONST,
-                CHECK_FOR_ALIASING> T;
+                ForceConst::FALSE,
+                CheckForAliasing::TRUE> T;
 };
 
 // the special definition (for 1-multiindices) indexes this Tensor_i as a Vector_i

@@ -121,7 +121,7 @@ struct MultivariatePolynomial
     {
         assert(reinterpret_cast<Uint8 const *>(&m_body) + sizeof(m_body) == reinterpret_cast<Uint8 const *>(&m_term) &&
                "for this to work, the members must be layed out contiguously in memory");
-        return ConstCoefficientArray(reinterpret_cast<Scalar_ const *>(&m_body), DONT_CHECK_POINTER);
+        return ConstCoefficientArray(reinterpret_cast<Scalar_ const *>(&m_body), CheckPointer::FALSE);
     }
     // NOTE: the PreallocatedArray_t returned from this is valid only as long as
     // this object is alive -- this is effectively a shallow copy.
@@ -129,7 +129,7 @@ struct MultivariatePolynomial
     {
         assert(reinterpret_cast<Uint8 const *>(&m_body) + sizeof(m_body) == reinterpret_cast<Uint8 const *>(&m_term) &&
                "for this to work, the members must be layed out contiguously in memory");
-        return CoefficientArray(reinterpret_cast<Scalar_ *>(&m_body), DONT_CHECK_POINTER);
+        return CoefficientArray(reinterpret_cast<Scalar_ *>(&m_body), CheckPointer::FALSE);
     }
 
     bool is_exactly_zero() const
@@ -222,13 +222,13 @@ struct MultivariatePolynomial<0,BasedVectorSpace_,Scalar_>
     // this object is alive -- this is effectively a shallow copy.
     ConstCoefficientArray as_array () const
     {
-        return ConstCoefficientArray(reinterpret_cast<Scalar_ const *>(&m_term), DONT_CHECK_POINTER);
+        return ConstCoefficientArray(reinterpret_cast<Scalar_ const *>(&m_term), CheckPointer::FALSE);
     }
     // NOTE: the PreallocatedArray_t returned from this is valid only as long as
     // this object is alive -- this is effectively a shallow copy.
     CoefficientArray as_array ()
     {
-        return CoefficientArray(reinterpret_cast<Scalar_ *>(&m_term), DONT_CHECK_POINTER);
+        return CoefficientArray(reinterpret_cast<Scalar_ *>(&m_term), CheckPointer::FALSE);
     }
 
     bool is_exactly_zero() const

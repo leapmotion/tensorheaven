@@ -42,11 +42,11 @@ struct PreallocatedArray_t
     typedef typename Parent_MemoryArray_i::QualifiedComponent QualifiedComponent;
 
     explicit PreallocatedArray_t (WithoutInitialization const &) : m_pointer_to_allocation(nullptr) { }
-    explicit PreallocatedArray_t (QualifiedComponent *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+    explicit PreallocatedArray_t (QualifiedComponent *pointer_to_allocation, CheckPointer check_pointer = CheckPointer::TRUE)
         :
         m_pointer_to_allocation(pointer_to_allocation)
     {
-        if (check_pointer && m_pointer_to_allocation == nullptr)
+        if (bool(check_pointer) && m_pointer_to_allocation == nullptr)
             throw std::invalid_argument("invalid pointer_to_allocation argument (must be non-null)");
     }
 
@@ -58,11 +58,11 @@ struct PreallocatedArray_t
 
     template <typename T_>
     PreallocatedArray_t (FillWith_t<T_> const &fill_with,
-                         QualifiedComponent *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+                         QualifiedComponent *pointer_to_allocation, CheckPointer check_pointer = CheckPointer::TRUE)
         :
         m_pointer_to_allocation(pointer_to_allocation)
     {
-        if (check_pointer && m_pointer_to_allocation == nullptr)
+        if (bool(check_pointer) && m_pointer_to_allocation == nullptr)
             throw std::invalid_argument("invalid pointer_to_allocation argument (must be non-null)");
         for (Uint32 i = 0; i < COMPONENT_COUNT; ++i)
             m_pointer_to_allocation[i] = Component_(fill_with.value());
@@ -74,14 +74,14 @@ struct PreallocatedArray_t
 
     template <typename Typle_>
     PreallocatedArray_t (Tuple_t<Typle_> const &x,
-                         QualifiedComponent *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+                         QualifiedComponent *pointer_to_allocation, CheckPointer check_pointer = CheckPointer::TRUE)
         :
         m_pointer_to_allocation(pointer_to_allocation)
     {
         static_assert(Length_f<Typle_>::V == COMPONENT_COUNT, "Tuple_t argument length must match that of array");
         static_assert(TypleIsUniform_f<Typle_>::V, "Tuple_t argument must have uniform Typle_ parameter");
         static_assert(TypesAreEqual_f<typename TypeOfUniformTyple_f<Typle_>::T,Component_>::V, "type of uniform Tuple_t must match Component_");
-        if (check_pointer && m_pointer_to_allocation == nullptr)
+        if (bool(check_pointer) && m_pointer_to_allocation == nullptr)
             throw std::invalid_argument("invalid pointer_to_allocation argument (must be non-null)");
         memcpy(m_pointer_to_allocation, x.as_member_array().pointer_to_allocation(), allocation_size_in_bytes());
     }

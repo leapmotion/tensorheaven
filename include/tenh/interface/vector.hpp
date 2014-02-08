@@ -104,8 +104,8 @@ struct Vector_i
                                                    Typle_t<BasedVectorSpace>,
                                                    Typle_t<DimIndex_t<SYMBOL_,DIM>>,
                                                    Typle_t<>,
-                                                   FORCE_CONST,
-                                                   CHECK_FOR_ALIASING> T;
+                                                   ForceConst::TRUE,
+                                                   CheckForAliasing::TRUE> T;
     };
     // because the return type for "operator () (...)" is an abomination, use this helper.
     template <AbstractIndexSymbol SYMBOL_>
@@ -115,8 +115,8 @@ struct Vector_i
                                                    Typle_t<BasedVectorSpace>,
                                                    Typle_t<DimIndex_t<SYMBOL_,DIM>>,
                                                    Typle_t<>,
-                                                   DONT_FORCE_CONST,
-                                                   CHECK_FOR_ALIASING> T;
+                                                   ForceConst::FALSE,
+                                                   CheckForAliasing::TRUE> T;
     };
 
     // the argument is technically unnecessary, as its value is not used.  however,

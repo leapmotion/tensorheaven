@@ -142,7 +142,7 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,
 
     // only use these if UsePreallocatedArray_t<...> is specified
 
-    explicit ImplementationOf_t (QualifiedComponent *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+    explicit ImplementationOf_t (QualifiedComponent *pointer_to_allocation, CheckPointer check_pointer = CheckPointer::TRUE)
         :
         Parent_Array_i(pointer_to_allocation, check_pointer)
     {
@@ -152,7 +152,7 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,
     // this was chosen to be explicit to avoid unnecessary copies.
     template <typename OtherDerived_, ComponentQualifier OTHER_COMPONENT_QUALIFIER_>
     ImplementationOf_t (Vector_i<OtherDerived_,Scalar_,Concept,OTHER_COMPONENT_QUALIFIER_> const &x,
-                        QualifiedComponent *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+                        QualifiedComponent *pointer_to_allocation, CheckPointer check_pointer = CheckPointer::TRUE)
         :
         Parent_Array_i(pointer_to_allocation, check_pointer)
     {
@@ -163,7 +163,7 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,
     }
     template <typename T_>
     ImplementationOf_t (FillWith_t<T_> const &fill_with,
-                        QualifiedComponent *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+                        QualifiedComponent *pointer_to_allocation, CheckPointer check_pointer = CheckPointer::TRUE)
         :
         Parent_Array_i(fill_with, pointer_to_allocation, check_pointer)
     {
@@ -172,7 +172,7 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,
     // this is the tuple-based constructor
     template <typename... Types_>
     ImplementationOf_t (Tuple_t<Typle_t<Types_...>> const &x,
-                        QualifiedComponent *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+                        QualifiedComponent *pointer_to_allocation, CheckPointer check_pointer = CheckPointer::TRUE)
         :
         Parent_Array_i(x, pointer_to_allocation, check_pointer)
     {
@@ -193,12 +193,12 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,
     using Parent_Array_i::pointer_to_allocation;
     using Parent_Array_i::overlaps_memory_range;
 
-    template <Uint32 N_, bool FORCE_CONST_>
+    template <Uint32 N_, ForceConst FORCE_CONST_>
     struct ElementType_f
     {
     private:
         enum { STATIC_ASSERT_IN_ENUM((Length_f<SummandTyple_>::V > N_), ATTEMPTED_ACCESS_PAST_LIST_END) };
-        static bool const ELEMENT_COMPONENTS_ARE_CONST = FORCE_CONST_ ||
+        static bool const ELEMENT_COMPONENTS_ARE_CONST = bool(FORCE_CONST_) ||
                                                          ComponentQualifierOfArrayType_f<UseArrayType_>::V == COMPONENTS_ARE_CONST_MEMORY;
     public:
         typedef ImplementationOf_t<typename Element_f<SummandTyple_,N_>::T,
@@ -209,29 +209,29 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,
     };
 
     template <Uint32 N_>
-    typename ElementType_f<N_,false>::T el ()
+    typename ElementType_f<N_,ForceConst::FALSE>::T el ()
     {
         STATIC_ASSERT((Length_f<SummandTyple_>::V > N_), ATTEMPTED_ACCESS_PAST_LIST_END);
-        return typename ElementType_f<N_,false>::T(pointer_to_allocation() + OffsetForComponent_f<SummandTyple_,N_>::V);
+        return typename ElementType_f<N_,ForceConst::FALSE>::T(pointer_to_allocation() + OffsetForComponent_f<SummandTyple_,N_>::V);
     }
 
     template <Uint32 N_>
-    typename ElementType_f<N_,true>::T el () const
+    typename ElementType_f<N_,ForceConst::TRUE>::T el () const
     {
         STATIC_ASSERT((Length_f<SummandTyple_>::V > N_), ATTEMPTED_ACCESS_PAST_LIST_END);
-        return typename ElementType_f<N_,true>::T(pointer_to_allocation() + OffsetForComponent_f<SummandTyple_,N_>::V);
+        return typename ElementType_f<N_,ForceConst::TRUE>::T(pointer_to_allocation() + OffsetForComponent_f<SummandTyple_,N_>::V);
     }
 
-    typename ElementType_f<0,false>::T el (Uint32 n)
+    typename ElementType_f<0,ForceConst::FALSE>::T el (Uint32 n)
     {
         STATIC_ASSERT(TypleIsUniform_f<SummandTyple_>::V, TYPLE_MUST_BE_UNIFORM);
-        return typename ElementType_f<0,false>::T(pointer_to_allocation() + DimensionOf_f<typename Head_f<SummandTyple_>::T>::V * n);
+        return typename ElementType_f<0,ForceConst::FALSE>::T(pointer_to_allocation() + DimensionOf_f<typename Head_f<SummandTyple_>::T>::V * n);
     }
 
-    typename ElementType_f<0,true>::T el (Uint32 n) const
+    typename ElementType_f<0,ForceConst::TRUE>::T el (Uint32 n) const
     {
         STATIC_ASSERT(TypleIsUniform_f<SummandTyple_>::V, TYPLE_MUST_BE_UNIFORM);
-        return typename ElementType_f<0,true>::T(pointer_to_allocation() + DimensionOf_f<typename Head_f<SummandTyple_>::T>::V * n);
+        return typename ElementType_f<0,ForceConst::TRUE>::T(pointer_to_allocation() + DimensionOf_f<typename Head_f<SummandTyple_>::T>::V * n);
     }
 
     // These versions of el<...> are intended to allow use like el<n>(i) rather than the more clunky el<n>()(i) to get an indexed expression.

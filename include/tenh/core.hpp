@@ -130,14 +130,18 @@ inline std::ostream &operator << (std::ostream &out, CheckRange check_range)
 }
 
 /// @brief These are used in constructors for determining if a pointer check should be done.
-///  The default check parameter value should be CHECK_POINTER, which is more expensive,
-///  but if you know what you're doing, you can pass in DONT_CHECK_POINTER to avoid the
+///  The default check parameter value should be CheckPointer::TRUE, which is more expensive,
+///  but if you know what you're doing, you can pass in CheckPointer::FALSE to avoid the
 ///  pointer check and gain efficiency (e.g. if you know for a fact that the pointer is
 ///  non-null).  This is a compromise between completely correct program behavior and
 ///  program efficiency.
 /// @todo TODO: should these be moved to preallocatedarray.hpp? (if they're only used there)
-static bool const CHECK_POINTER = true;
-static bool const DONT_CHECK_POINTER = false;
+enum class CheckPointer : bool { TRUE = true, FALSE = false };
+
+inline std::ostream &operator << (std::ostream &out, CheckPointer check_pointer)
+{
+    return out << "CheckPointer::" << (bool(check_pointer) ? "TRUE" : "FALSE");
+}
 
 /// @brief Used in the curiously recurring template pattern, where the derived type is passed
 ///  to parent classes as a template parameter, so that the baseclass can access the

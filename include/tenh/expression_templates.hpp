@@ -20,19 +20,27 @@ namespace Tenh {
 // expression-template-generation (making ETs from vectors/tensors)
 // ////////////////////////////////////////////////////////////////////////////
 
-static bool const FORCE_CONST = true;
-static bool const DONT_FORCE_CONST = false;
+enum class ForceConst : bool { TRUE = true, FALSE = false };
 
-static bool const CHECK_FOR_ALIASING = true;
-static bool const DONT_CHECK_FOR_ALIASING = false;
+inline std::ostream &operator << (std::ostream &out, ForceConst force_const)
+{
+    return out << "ForceConst::" << (bool(force_const) ? "TRUE" : "FALSE");
+}
+
+enum class CheckForAliasing : bool { TRUE = true, FALSE = false };
+
+inline std::ostream &operator << (std::ostream &out, CheckForAliasing check_for_aliasing)
+{
+    return out << "CheckForAliasing::" << (bool(check_for_aliasing) ? "TRUE" : "FALSE");
+}
 
 // this is the "const" version of an indexed tensor expression (it has summed indices, so it doesn't make sense to assign to it)
 template <typename Object,
           typename FactorTyple, // this is necessary because the factor type depends on if the thing is being indexed as a vector or tensor
           typename DimIndexTyple,
           typename SummedDimIndexTyple_,
-          bool FORCE_CONST_,
-          bool CHECK_FOR_ALIASING_,
+          ForceConst FORCE_CONST_,
+          CheckForAliasing CHECK_FOR_ALIASING_,
           typename Derived_ = NullType>
 struct ExpressionTemplate_IndexedObject_t
     :
@@ -122,8 +130,8 @@ template <typename Object_,
           typename FactorTyple_,
           typename DimIndexTyple_,
           typename SummedDimIndexTyple_,
-          bool FORCE_CONST_,
-          bool CHECK_FOR_ALIASING_,
+          ForceConst FORCE_CONST_,
+          CheckForAliasing CHECK_FOR_ALIASING_,
           typename Derived_>
 struct IsExpressionTemplate_f<ExpressionTemplate_IndexedObject_t<Object_,
                                                                  FactorTyple_,
@@ -142,17 +150,17 @@ private:
 template <typename Object,
           typename FactorTyple,
           typename DimIndexTyple,
-          bool CHECK_FOR_ALIASING_,
+          CheckForAliasing CHECK_FOR_ALIASING_,
           typename Derived_>
-struct ExpressionTemplate_IndexedObject_t<Object,FactorTyple,DimIndexTyple,Typle_t<>,DONT_FORCE_CONST,CHECK_FOR_ALIASING_,Derived_>
+struct ExpressionTemplate_IndexedObject_t<Object,FactorTyple,DimIndexTyple,Typle_t<>,ForceConst::FALSE,CHECK_FOR_ALIASING_,Derived_>
     :
-    public ExpressionTemplate_i<ExpressionTemplate_IndexedObject_t<Object,FactorTyple,DimIndexTyple,Typle_t<>,DONT_FORCE_CONST,CHECK_FOR_ALIASING_,Derived_>,
+    public ExpressionTemplate_i<ExpressionTemplate_IndexedObject_t<Object,FactorTyple,DimIndexTyple,Typle_t<>,ForceConst::FALSE,CHECK_FOR_ALIASING_,Derived_>,
                                 typename Object::Scalar,
                                 typename FreeFactorTyple_f<FactorTyple,DimIndexTyple>::T,
                                 typename FreeIndexTyple_f<DimIndexTyple>::T,
                                 Typle_t<>>
 {
-    typedef ExpressionTemplate_i<ExpressionTemplate_IndexedObject_t<Object,FactorTyple,DimIndexTyple,Typle_t<>,DONT_FORCE_CONST,CHECK_FOR_ALIASING_,Derived_>,
+    typedef ExpressionTemplate_i<ExpressionTemplate_IndexedObject_t<Object,FactorTyple,DimIndexTyple,Typle_t<>,ForceConst::FALSE,CHECK_FOR_ALIASING_,Derived_>,
                                  typename Object::Scalar,
                                  typename FreeFactorTyple_f<FactorTyple,DimIndexTyple>::T,
                                  typename FreeIndexTyple_f<DimIndexTyple>::T,
@@ -173,9 +181,9 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTyple,DimIndexTyple,Typle
     // no memory aliasing in the assignment (where the same memory location is being referenced
     // on both the LHS and RHS of the assignment, therefore causing the non-atomically
     // evaluated result to be implementation-dependent and incorrect).
-    ExpressionTemplate_IndexedObject_t<Object,FactorTyple,DimIndexTyple,Typle_t<>,DONT_FORCE_CONST,DONT_CHECK_FOR_ALIASING,Derived_> no_alias ()
+    ExpressionTemplate_IndexedObject_t<Object,FactorTyple,DimIndexTyple,Typle_t<>,ForceConst::FALSE,CheckForAliasing::FALSE,Derived_> no_alias ()
     {
-        return ExpressionTemplate_IndexedObject_t<Object,FactorTyple,DimIndexTyple,Typle_t<>,DONT_FORCE_CONST,DONT_CHECK_FOR_ALIASING,Derived_>(m_object);
+        return ExpressionTemplate_IndexedObject_t<Object,FactorTyple,DimIndexTyple,Typle_t<>,ForceConst::FALSE,CheckForAliasing::FALSE,Derived_>(m_object);
     }
 
     operator Scalar () const
@@ -228,7 +236,7 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTyple,DimIndexTyple,Typle
         // check for aliasing (where source and destination memory overlap)
         Uint8 const *ptr = reinterpret_cast<Uint8 const *>(m_object.pointer_to_allocation());
         Uint32 range = m_object.allocation_size_in_bytes();
-        if (CHECK_FOR_ALIASING_ && right_operand.overlaps_memory_range(ptr, range))
+        if (bool(CHECK_FOR_ALIASING_) && right_operand.overlaps_memory_range(ptr, range))
             throw std::invalid_argument("aliased tensor assignment (source and destination memory overlap) -- see eval() and no_alias()");
 
         typedef MultiIndexMap_t<FreeDimIndexTyple,typename RightOperand::FreeDimIndexTyple> RightOperandIndexMap;
@@ -254,7 +262,7 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTyple,DimIndexTyple,Typle
         // check for aliasing (where source and destination memory overlap)
         Uint8 const *ptr = reinterpret_cast<Uint8 const *>(m_object.pointer_to_allocation());
         Uint32 range = m_object.allocation_size_in_bytes();
-        if (CHECK_FOR_ALIASING_ && right_operand.overlaps_memory_range(ptr, range))
+        if (bool(CHECK_FOR_ALIASING_) && right_operand.overlaps_memory_range(ptr, range))
             throw std::invalid_argument("aliased tensor assignment (source and destination memory overlap) -- see eval() and no_alias()");
 
         typedef MultiIndexMap_t<FreeDimIndexTyple,typename RightOperand::FreeDimIndexTyple> RightOperandIndexMap;
@@ -280,7 +288,7 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTyple,DimIndexTyple,Typle
         // check for aliasing (where source and destination memory overlap)
         Uint8 const *ptr = reinterpret_cast<Uint8 const *>(m_object.pointer_to_allocation());
         Uint32 range = m_object.allocation_size_in_bytes();
-        if (CHECK_FOR_ALIASING_ && right_operand.overlaps_memory_range(ptr, range))
+        if (bool(CHECK_FOR_ALIASING_) && right_operand.overlaps_memory_range(ptr, range))
             throw std::invalid_argument("aliased tensor assignment (source and destination memory overlap) -- see eval() and no_alias()");
 
         typedef MultiIndexMap_t<FreeDimIndexTyple,typename RightOperand::FreeDimIndexTyple> RightOperandIndexMap;
@@ -304,7 +312,7 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTyple,DimIndexTyple,Typle
                                                      + type_string_of<FactorTyple>() + ','
                                                      + type_string_of<DimIndexTyple>() + ','
                                                      + type_string_of<Typle_t<>>() + ','
-                                                     + FORMAT(DONT_FORCE_CONST) + ','
+                                                     + FORMAT(ForceConst::FALSE) + ','
                                                      + FORMAT(CHECK_FOR_ALIASING_) + ','
                                                      + type_string_of<Derived_>() + '>';
     }
@@ -620,16 +628,16 @@ struct ExpressionTemplate_IndexBundle_t
                                               typename IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>::FactorTyple,
                                               typename IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>::DimIndexTyple,
                                               typename SummedIndexTyple_f<typename IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>::DimIndexTyple>::T,
-                                              FORCE_CONST,
-                                              CHECK_FOR_ALIASING, // irrelevant value
+                                              ForceConst::TRUE,
+                                              CheckForAliasing::TRUE, // irrelevant value
                                               ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>>
 {
     typedef ExpressionTemplate_IndexedObject_t<IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>,
                                                typename IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>::FactorTyple,
                                                typename IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>::DimIndexTyple,
                                                typename SummedIndexTyple_f<typename IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>::DimIndexTyple>::T,
-                                               FORCE_CONST,
-                                               CHECK_FOR_ALIASING, // irrelevant value
+                                               ForceConst::TRUE,
+                                               CheckForAliasing::TRUE, // irrelevant value
                                                ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>> Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
@@ -712,8 +720,8 @@ struct ExpressionTemplate_IndexSplit_t
                                               typename IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTyple>::FactorTyple,
                                               typename IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTyple>::DimIndexTyple,
                                               typename SummedIndexTyple_f<typename IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTyple>::DimIndexTyple>::T,
-                                              FORCE_CONST,
-                                              CHECK_FOR_ALIASING, // irrelevant value
+                                              ForceConst::TRUE,
+                                              CheckForAliasing::TRUE, // irrelevant value
                                               ExpressionTemplate_IndexSplit_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTyple>>
 {
     enum
@@ -725,8 +733,8 @@ struct ExpressionTemplate_IndexSplit_t
                                                typename IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTyple>::FactorTyple,
                                                typename IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTyple>::DimIndexTyple,
                                                typename SummedIndexTyple_f<typename IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTyple>::DimIndexTyple>::T,
-                                               FORCE_CONST,
-                                               CHECK_FOR_ALIASING, // irrelevant value
+                                               ForceConst::TRUE,
+                                               CheckForAliasing::TRUE, // irrelevant value
                                                ExpressionTemplate_IndexSplit_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTyple>> Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
@@ -805,8 +813,8 @@ struct ExpressionTemplate_IndexSplitToIndex_t
                                               typename IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>::FactorTyple,
                                               typename IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>::DimIndexTyple,
                                               typename SummedIndexTyple_f<typename IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>::DimIndexTyple>::T,
-                                              FORCE_CONST,
-                                              CHECK_FOR_ALIASING, // irrelevant value
+                                              ForceConst::TRUE,
+                                              CheckForAliasing::TRUE, // irrelevant value
                                               ExpressionTemplate_IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>>
 {
     enum
@@ -818,8 +826,8 @@ struct ExpressionTemplate_IndexSplitToIndex_t
                                                typename IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>::FactorTyple,
                                                typename IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>::DimIndexTyple,
                                                typename SummedIndexTyple_f<typename IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>::DimIndexTyple>::T,
-                                               FORCE_CONST,
-                                               CHECK_FOR_ALIASING, // irrelevant value
+                                               ForceConst::TRUE,
+                                               CheckForAliasing::TRUE, // irrelevant value
                                                ExpressionTemplate_IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType> > Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
@@ -901,8 +909,8 @@ struct ExpressionTemplate_IndexEmbed_t
                                               typename IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>::FactorTyple,
                                               typename IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>::DimIndexTyple,
                                               typename SummedIndexTyple_f<typename IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>::DimIndexTyple>::T,
-                                              FORCE_CONST,
-                                              CHECK_FOR_ALIASING, // irrelevant value
+                                              ForceConst::TRUE,
+                                              CheckForAliasing::TRUE, // irrelevant value
                                               ExpressionTemplate_IndexEmbed_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>>
 {
     enum
@@ -914,8 +922,8 @@ struct ExpressionTemplate_IndexEmbed_t
                                                typename IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>::FactorTyple,
                                                typename IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>::DimIndexTyple,
                                                typename SummedIndexTyple_f<typename IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>::DimIndexTyple>::T,
-                                               FORCE_CONST,
-                                               CHECK_FOR_ALIASING, // irrelevant value
+                                               ForceConst::TRUE,
+                                               CheckForAliasing::TRUE, // irrelevant value
                                                ExpressionTemplate_IndexEmbed_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>> Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
@@ -1003,8 +1011,8 @@ struct ExpressionTemplate_IndexCoembed_t
                                               typename IndexCoembedder_t<Operand_,SourceAbstractIndexType_,CoembeddingCodomain_,CoembeddedAbstractIndexType_,EmbeddingId_>::FactorTyple,
                                               typename IndexCoembedder_t<Operand_,SourceAbstractIndexType_,CoembeddingCodomain_,CoembeddedAbstractIndexType_,EmbeddingId_>::DimIndexTyple,
                                               typename SummedIndexTyple_f<typename IndexCoembedder_t<Operand_,SourceAbstractIndexType_,CoembeddingCodomain_,CoembeddedAbstractIndexType_,EmbeddingId_>::DimIndexTyple>::T,
-                                              FORCE_CONST,
-                                              CHECK_FOR_ALIASING, // irrelevant value
+                                              ForceConst::TRUE,
+                                              CheckForAliasing::TRUE, // irrelevant value
                                               ExpressionTemplate_IndexCoembed_t<Operand_,SourceAbstractIndexType_,CoembeddingCodomain_,CoembeddedAbstractIndexType_,EmbeddingId_>>
 {
     enum
@@ -1016,8 +1024,8 @@ struct ExpressionTemplate_IndexCoembed_t
                                                typename IndexCoembedder_t<Operand_,SourceAbstractIndexType_,CoembeddingCodomain_,CoembeddedAbstractIndexType_,EmbeddingId_>::FactorTyple,
                                                typename IndexCoembedder_t<Operand_,SourceAbstractIndexType_,CoembeddingCodomain_,CoembeddedAbstractIndexType_,EmbeddingId_>::DimIndexTyple,
                                                typename SummedIndexTyple_f<typename IndexCoembedder_t<Operand_,SourceAbstractIndexType_,CoembeddingCodomain_,CoembeddedAbstractIndexType_,EmbeddingId_>::DimIndexTyple>::T,
-                                               FORCE_CONST,
-                                               CHECK_FOR_ALIASING, // irrelevant value
+                                               ForceConst::TRUE,
+                                               CheckForAliasing::TRUE, // irrelevant value
                                                ExpressionTemplate_IndexCoembed_t<Operand_,SourceAbstractIndexType_,CoembeddingCodomain_,CoembeddedAbstractIndexType_,EmbeddingId_>> Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;

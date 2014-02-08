@@ -60,7 +60,7 @@ public:
 
     // only use these if UsePreallocatedArray_t<...> is specified
 
-    explicit Vec (Scalar_ *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+    explicit Vec (Scalar_ *pointer_to_allocation, CheckPointer check_pointer = CheckPointer::TRUE)
         :
         Parent_Vector(pointer_to_allocation, check_pointer)
     {
@@ -68,7 +68,7 @@ public:
     }
     template <typename T_>
     Vec (FillWith_t<T_> const &fill_with,
-         Scalar_ *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+         Scalar_ *pointer_to_allocation, CheckPointer check_pointer = CheckPointer::TRUE)
         :
         Parent_Vector(fill_with, pointer_to_allocation, check_pointer)
     {
@@ -77,7 +77,7 @@ public:
     // this is the tuple-based constructor
     template <typename... Types_>
     Vec (Tuple_t<Typle_t<Types_...>> const &x,
-         Scalar_ *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+         Scalar_ *pointer_to_allocation, CheckPointer check_pointer = CheckPointer::TRUE)
         :
         Parent_Vector(x, pointer_to_allocation, check_pointer)
     {
@@ -180,14 +180,14 @@ public:
 
     // only use these if UsePreallocatedArray_t<...> is specified
 
-    explicit Op (Scalar_ *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+    explicit Op (Scalar_ *pointer_to_allocation, CheckPointer check_pointer = CheckPointer::TRUE)
         :
         Parent_Operator(pointer_to_allocation, check_pointer)
     {
         static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "Op must be UsePreallocatedArray in order to call the pointer to allocation constructor.");
     }
     Op (Scalar_ const &fill_with,
-        Scalar_ *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+        Scalar_ *pointer_to_allocation, CheckPointer check_pointer = CheckPointer::TRUE)
         :
         Parent_Operator(fill_with, pointer_to_allocation, check_pointer)
     {
@@ -196,7 +196,7 @@ public:
     // this is the tuple-based constructor
     template <typename... Types_>
     Op (Tuple_t<Typle_t<Types_...>> const &x,
-        Scalar_ *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+        Scalar_ *pointer_to_allocation, CheckPointer check_pointer = CheckPointer::TRUE)
         :
         Parent_Operator(x, pointer_to_allocation, check_pointer)
     {

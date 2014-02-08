@@ -226,9 +226,16 @@ void print_array_type (ArrayType a)
     }
 }
 
+// enum class SomeFlag : bool { TRUE = true, FALSE = false };
+// this totally doesn't work.
+// operator bool (SomeFlag f) { return bool(f); }
+
 void prototyping_for_strongly_typed_enums ()
 {
     std::cout << "prototyping_for_strongly_typed_enums();\n";
+
+    // SomeFlag f(SomeFlag::TRUE);
+    // std::cout << "f is SomeFlag::" << (f ? "TRUE" : "FALSE") << '\n';
 
     // uncommenting this should cause an error to the tune of "no known conversion from 'int' to 'ArrayType'"
 //     print_array_type(0);

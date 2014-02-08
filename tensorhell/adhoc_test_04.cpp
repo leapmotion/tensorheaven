@@ -47,7 +47,7 @@ void test_a_bunch_of_stuff ()
         typedef ImplementationOf_t<BasedX,float,UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST> > V;
         float components[3] = {8.0f, 10.0f, 11.0f};
         std::cout << FORMAT_VALUE(components[0]) << ", " << FORMAT_VALUE(components[1]) << ", " << FORMAT_VALUE(components[2]) << '\n';
-        V v(&components[0], CHECK_POINTER); // v must live no longer than components[]
+        V v(&components[0], CheckPointer::TRUE); // v must live no longer than components[]
         std::cout << FORMAT_VALUE(&components[0]) << ", " << FORMAT_VALUE(v.pointer_to_allocation()) << '\n';
         std::cout << FORMAT_VALUE(&v[V::MultiIndex(0)]) << '\n';
         std::cout << FORMAT_VALUE(v[V::MultiIndex(0)]) << '\n';
@@ -73,7 +73,7 @@ void test_a_bunch_of_stuff ()
         typedef ImplementationOf_t<BasedX,float,UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST> > V;
         typedef ImplementationOf_t<YTensorXDual,float,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > T;
         float components[3] = {8.0f, 10.0f, 11.0f};
-        V v(&components[0], CHECK_POINTER); // v must live no longer than components[]
+        V v(&components[0], CheckPointer::TRUE); // v must live no longer than components[]
         T t(fill_with(2));
         t[T::MultiIndex(0,1)] = -1.0f;
         t[T::MultiIndex(1,2)] = 3.0f;
@@ -122,7 +122,7 @@ void test_a_bunch_of_stuff ()
         typedef ImplementationOf_t<BasedX,float,UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST> > V;
         typedef ImplementationOf_t<Diag_YTensorXDual,float,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > T;
         float components[3] = {8.0f, 10.0f, 11.0f};
-        V v(&components[0], CHECK_POINTER); // v must live no longer than components[]
+        V v(&components[0], CheckPointer::TRUE); // v must live no longer than components[]
         T t(tuple(2.0f, -3.0f));
         std::cout << FORMAT_VALUE(t) << '\n';
         std::cout << FORMAT_VALUE(v) << '\n';

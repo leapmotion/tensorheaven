@@ -131,13 +131,13 @@ struct HomogeneousPolynomial
     // this object is alive -- this is effectively a shallow copy.
     ConstCoefficientArray as_array () const
     {
-        return ConstCoefficientArray(reinterpret_cast<Scalar_ const *>(&m_coefficients), DONT_CHECK_POINTER);
+        return ConstCoefficientArray(reinterpret_cast<Scalar_ const *>(&m_coefficients), CheckPointer::FALSE);
     }
     // NOTE: the PreallocatedArray_t returned from this is valid only as long as
     // this object is alive -- this is effectively a shallow copy.
     CoefficientArray as_array ()
     {
-        return CoefficientArray(reinterpret_cast<Scalar_ *>(&m_coefficients), DONT_CHECK_POINTER);
+        return CoefficientArray(reinterpret_cast<Scalar_ *>(&m_coefficients), CheckPointer::FALSE);
     }
 
 private:

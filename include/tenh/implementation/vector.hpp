@@ -108,7 +108,7 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
 
     // only use these if UsePreallocatedArray_t<...> is specified
 
-    explicit ImplementationOf_t (QualifiedComponent *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+    explicit ImplementationOf_t (QualifiedComponent *pointer_to_allocation, CheckPointer check_pointer = CheckPointer::TRUE)
         :
         Parent_Array_i(pointer_to_allocation, check_pointer)
     {
@@ -118,7 +118,7 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
     // this was chosen to be explicit to avoid unnecessary copies.
     template <typename OtherDerived_, ComponentQualifier OTHER_COMPONENT_QUALIFIER_>
     ImplementationOf_t (Vector_i<OtherDerived_,Scalar_,Concept,OTHER_COMPONENT_QUALIFIER_> const &x,
-                        QualifiedComponent *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+                        QualifiedComponent *pointer_to_allocation, CheckPointer check_pointer = CheckPointer::TRUE)
         :
         Parent_Array_i(pointer_to_allocation, check_pointer)
     {
@@ -129,7 +129,7 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
     }
     template <typename T_>
     ImplementationOf_t (FillWith_t<T_> const &fill_with,
-                        QualifiedComponent *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+                        QualifiedComponent *pointer_to_allocation, CheckPointer check_pointer = CheckPointer::TRUE)
         :
         Parent_Array_i(fill_with, pointer_to_allocation, check_pointer)
     {
@@ -138,7 +138,7 @@ struct ImplementationOf_t<BasedVectorSpace_c<VectorSpace_,Basis_>,Scalar_,UseArr
     // this is the tuple-based constructor
     template <typename Typle_>
     ImplementationOf_t (Tuple_t<Typle_> const &x,
-                        QualifiedComponent *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+                        QualifiedComponent *pointer_to_allocation, CheckPointer check_pointer = CheckPointer::TRUE)
         :
         Parent_Array_i(x, pointer_to_allocation, check_pointer)
     {

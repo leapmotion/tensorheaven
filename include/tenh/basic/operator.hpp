@@ -69,7 +69,7 @@ public:
 
     // only use these if UsePreallocatedArray_t<...> is specified
 
-    explicit Operator (Scalar_ *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+    explicit Operator (Scalar_ *pointer_to_allocation, CheckPointer check_pointer = CheckPointer::TRUE)
         :
         Parent_Implementation(pointer_to_allocation, check_pointer)
     {
@@ -77,7 +77,7 @@ public:
     }
     template <typename T_>
     Operator (FillWith_t<T_> const &fill_with,
-              Scalar_ *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+              Scalar_ *pointer_to_allocation, CheckPointer check_pointer = CheckPointer::TRUE)
         :
         Parent_Implementation(fill_with, pointer_to_allocation, check_pointer)
     {
@@ -86,7 +86,7 @@ public:
     // this is the tuple-based constructor
     template <typename... Types_>
     Operator (Tuple_t<Typle_t<Types_...>> const &x,
-              Scalar_ *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+              Scalar_ *pointer_to_allocation, CheckPointer check_pointer = CheckPointer::TRUE)
         :
         Parent_Implementation(x, pointer_to_allocation, check_pointer)
     {
