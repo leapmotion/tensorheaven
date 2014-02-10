@@ -22,14 +22,14 @@ namespace Tenh {
 
 // TEMP: until the indexed expressions are flexible enough to safely do
 // head/body recursion (e.g. in tensor product of procedural 2-tensors)
-enum class DontCheckFactorTypes : bool { TRUE = true, FALSE = false };
+enum class CheckFactorTypes : bool { TRUE = true, FALSE = false };
 
-inline std::ostream &operator << (std::ostream &out, DontCheckFactorTypes dont_check_factor_types)
+inline std::ostream &operator << (std::ostream &out, CheckFactorTypes check_factor_types)
 {
-    return out << "DontCheckFactorTypes::" << (bool(dont_check_factor_types) ? "TRUE" : "FALSE");
+    return out << "CheckFactorTypes::" << (bool(check_factor_types) ? "TRUE" : "FALSE");
 }
 
-template <typename Operand, typename BundleAbstractIndexTyple, typename ResultingFactorType, typename ResultingAbstractIndexType, DontCheckFactorTypes DONT_CHECK_FACTOR_TYPES_>
+template <typename Operand, typename BundleAbstractIndexTyple, typename ResultingFactorType, typename ResultingAbstractIndexType, CheckFactorTypes CHECK_FACTOR_TYPES_>
 struct ExpressionTemplate_IndexBundle_t;
 
 template <typename Operand, typename SourceIndexType, typename SplitIndexTyple>
@@ -108,7 +108,7 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     // NOTE: you must include tenh/expressiontemplate_eval.hpp for the definition of this method
     typename AssociatedFloatingPointType_t<Scalar>::T norm () const; // definition is in expressiontemplate_eval.hpp
 
-    template <DontCheckFactorTypes DONT_CHECK_FACTOR_TYPES_,
+    template <CheckFactorTypes CHECK_FACTOR_TYPES_,
               typename ResultingFactorType,
               typename ResultingAbstractIndexType,
               typename... AbstractIndexTypes_>
@@ -118,7 +118,7 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
                                                  Typle_t<AbstractIndexTypes_...>,
                                                  ResultingFactorType,
                                                  ResultingAbstractIndexType,
-                                                 DONT_CHECK_FACTOR_TYPES_> T;
+                                                 CHECK_FACTOR_TYPES_> T;
     };
 
     // method for "bundling" separate abstract indices into a single abstract index
@@ -127,7 +127,7 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     template <typename ResultingFactorType,
               typename ResultingAbstractIndexType,
               typename... AbstractIndexTypes_>
-    typename BundleReturnType_f<DontCheckFactorTypes::FALSE,
+    typename BundleReturnType_f<CheckFactorTypes::TRUE,
                                 ResultingFactorType,
                                 ResultingAbstractIndexType,
                                 AbstractIndexTypes_...>::T
@@ -143,7 +143,7 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
         // make sure that ResultingFactorType is the correct conceptual type
         // TODO: there is probably a stronger type check (a type which is embeddable into a tensor space)
         STATIC_ASSERT(HasBasedVectorSpaceStructure_f<ResultingFactorType>::V, MUST_BE_BASED_VECTOR_SPACE);
-        return typename BundleReturnType_f<DontCheckFactorTypes::FALSE,
+        return typename BundleReturnType_f<CheckFactorTypes::TRUE,
                                            ResultingFactorType,
                                            ResultingAbstractIndexType,
                                            AbstractIndexTypes_...>::T(as_derived());
@@ -158,7 +158,7 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     template <typename ResultingFactorType,
               typename ResultingAbstractIndexType,
               typename... AbstractIndexTypes_>
-    typename BundleReturnType_f<DontCheckFactorTypes::TRUE,
+    typename BundleReturnType_f<CheckFactorTypes::FALSE,
                                 ResultingFactorType,
                                 ResultingAbstractIndexType,
                                 AbstractIndexTypes_...>::T
@@ -174,7 +174,7 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
         // make sure that ResultingFactorType is the correct conceptual type
         // TODO: there is probably a stronger type check (a type which is embeddable into a tensor space)
         STATIC_ASSERT(HasBasedVectorSpaceStructure_f<ResultingFactorType>::V, MUST_BE_BASED_VECTOR_SPACE);
-        return typename BundleReturnType_f<DontCheckFactorTypes::TRUE,
+        return typename BundleReturnType_f<CheckFactorTypes::FALSE,
                                            ResultingFactorType,
                                            ResultingAbstractIndexType,
                                            AbstractIndexTypes_...>::T(as_derived());

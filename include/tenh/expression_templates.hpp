@@ -621,24 +621,24 @@ template <typename Operand,
           typename BundleAbstractIndexTyple,
           typename ResultingFactorType,
           typename ResultingAbstractIndexType,
-          DontCheckFactorTypes DONT_CHECK_FACTOR_TYPES_>
+          CheckFactorTypes CHECK_FACTOR_TYPES_>
 struct ExpressionTemplate_IndexBundle_t
     :
-    public ExpressionTemplate_IndexedObject_t<IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>,
-                                              typename IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>::FactorTyple,
-                                              typename IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>::DimIndexTyple,
-                                              typename SummedIndexTyple_f<typename IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>::DimIndexTyple>::T,
+    public ExpressionTemplate_IndexedObject_t<IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,CHECK_FACTOR_TYPES_>,
+                                              typename IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,CHECK_FACTOR_TYPES_>::FactorTyple,
+                                              typename IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,CHECK_FACTOR_TYPES_>::DimIndexTyple,
+                                              typename SummedIndexTyple_f<typename IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,CHECK_FACTOR_TYPES_>::DimIndexTyple>::T,
                                               ForceConst::TRUE,
                                               CheckForAliasing::TRUE, // irrelevant value
-                                              ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>>
+                                              ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,CHECK_FACTOR_TYPES_>>
 {
-    typedef ExpressionTemplate_IndexedObject_t<IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>,
-                                               typename IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>::FactorTyple,
-                                               typename IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>::DimIndexTyple,
-                                               typename SummedIndexTyple_f<typename IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>::DimIndexTyple>::T,
+    typedef ExpressionTemplate_IndexedObject_t<IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,CHECK_FACTOR_TYPES_>,
+                                               typename IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,CHECK_FACTOR_TYPES_>::FactorTyple,
+                                               typename IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,CHECK_FACTOR_TYPES_>::DimIndexTyple,
+                                               typename SummedIndexTyple_f<typename IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,CHECK_FACTOR_TYPES_>::DimIndexTyple>::T,
                                                ForceConst::TRUE,
                                                CheckForAliasing::TRUE, // irrelevant value
-                                               ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>> Parent;
+                                               ExpressionTemplate_IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,CHECK_FACTOR_TYPES_>> Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
     typedef typename Parent::FreeFactorTyple FreeFactorTyple;
@@ -649,7 +649,7 @@ struct ExpressionTemplate_IndexBundle_t
 
 private:
 
-    typedef IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_> IndexBundle;
+    typedef IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,CHECK_FACTOR_TYPES_> IndexBundle;
 
 public:
 
@@ -696,12 +696,12 @@ template <typename Operand_,
           typename BundleAbstractIndexTyple_,
           typename ResultingFactorType_,
           typename ResultingAbstractIndexType_,
-          DontCheckFactorTypes DONT_CHECK_FACTOR_TYPES_>
+          CheckFactorTypes CHECK_FACTOR_TYPES_>
 struct IsExpressionTemplate_f<ExpressionTemplate_IndexBundle_t<Operand_,
                                                                BundleAbstractIndexTyple_,
                                                                ResultingFactorType_,
                                                                ResultingAbstractIndexType_,
-                                                               DONT_CHECK_FACTOR_TYPES_> >
+                                                               CHECK_FACTOR_TYPES_> >
 {
     static bool const V = true;
 private:

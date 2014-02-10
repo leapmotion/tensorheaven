@@ -401,7 +401,7 @@ typename BundleIndexMap_t<Scalar,BundleDimIndexTyple,ResultingFactorType,Resulti
     ImplementationOf_t<ResultingFactorType,Scalar,UseMemberArray_t<ComponentsAreConst::FALSE> >::template bundle_index_map<BundleDimIndexTyple,ResultingDimIndexType>;
 
 // not an expression template, but just something that handles the bundled indices
-template <typename Operand, typename BundleAbstractIndexTyple, typename ResultingFactorType, typename ResultingAbstractIndexType, DontCheckFactorTypes DONT_CHECK_FACTOR_TYPES_>
+template <typename Operand, typename BundleAbstractIndexTyple, typename ResultingFactorType, typename ResultingAbstractIndexType, CheckFactorTypes CHECK_FACTOR_TYPES_>
 struct IndexBundle_t
 {
     typedef typename AbstractIndicesOfDimIndexTyple_f<typename Operand::FreeDimIndexTyple>::T OperandFreeAbstractIndexTyple;
@@ -439,7 +439,7 @@ private:
     typedef typename FactorTypleOf_f<typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(ResultingFactorType)::TensorProductOfBasedVectorSpaces>::T ResultingFactorTypeFactorTyple;
     enum
     {
-        STATIC_ASSERT_IN_ENUM(bool(DONT_CHECK_FACTOR_TYPES_) ||
+        STATIC_ASSERT_IN_ENUM(!bool(CHECK_FACTOR_TYPES_) ||
                               (TypesAreEqual_f<BundleFactorTyple,ResultingFactorTypeFactorTyple>::V),
                               BUNDLE_FACTORS_MUST_MATCH)
     };

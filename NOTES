@@ -93,7 +93,6 @@
   of Typle_t.  Similarly, when direct sum indices are implemented, use DirectSum_c.
 - make tensor-product-able things implement a "HasDefinedTensorProduct_f" metafunction which
   returns true, so that operator * can be used with an std::enable_if.  Same with direct sum.
-- rename DontCheckFactorTypes to CheckFactorTypes and reverse the logic
 
 
 ###implemented features/items:
