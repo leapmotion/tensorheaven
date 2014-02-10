@@ -413,7 +413,7 @@ void add_particular_tests_for_scalar_and_use_array_type (Directory &parent)
 template <typename Scalar_>
 void add_particular_tests_for_scalar (Directory &parent)
 {
-    add_particular_tests_for_scalar_and_use_array_type<Scalar_,Tenh::UseMemberArray_t<Tenh::COMPONENTS_ARE_NONCONST> >(parent);
+    add_particular_tests_for_scalar_and_use_array_type<Scalar_,Tenh::UseMemberArray_t<Tenh::ComponentsAreConst::FALSE> >(parent);
 }
 
 void AddTests (Directory &parent)

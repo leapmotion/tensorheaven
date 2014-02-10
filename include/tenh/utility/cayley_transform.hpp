@@ -87,14 +87,14 @@ public:
 template <typename Derived_, typename Scalar_, typename BasedVectorSpace_, ComponentQualifier COMPONENT_QUALIFIER_>
 ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<Typle_t<BasedVectorSpace_,typename DualOf_f<BasedVectorSpace_>::T>>,
                                                       Scalar_,
-                                                      UseMemberArray_t<COMPONENTS_ARE_NONCONST> >
+                                                      UseMemberArray_t<ComponentsAreConst::FALSE> >
 hat (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENT_QUALIFIER_> const &x)
 {
   STATIC_ASSERT(DimensionOf_f<BasedVectorSpace_>::V == 3, DIMENSION_MUST_BE_EXACTLY_3);
   // for brevity
   typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<Typle_t<BasedVectorSpace_,typename DualOf_f<BasedVectorSpace_>::T>>,
                              Scalar_,
-                             UseMemberArray_t<COMPONENTS_ARE_NONCONST> > T;
+                             UseMemberArray_t<ComponentsAreConst::FALSE> > T;
   typedef typename Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENT_QUALIFIER_>::ComponentIndex c;
   typedef typename T::ComponentIndex C;
   T retval(Static<WithoutInitialization>::SINGLETON);

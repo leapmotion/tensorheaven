@@ -115,12 +115,12 @@ struct FunctionObjectType_m
     typedef TensorProductOfBasedVectorSpaces_c<Typle_t<CodomainSpace_,DualOfBasedVectorSpace>> Differential1;
     typedef TensorProductOfBasedVectorSpaces_c<Typle_t<CodomainSpace_,Sym2Dual>> Differential2;
 
-    typedef ImplementationOf_t<ParameterSpace_,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > V;
-    typedef ImplementationOf_t<DualOfBasedVectorSpace,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > DualOfV;
-    typedef ImplementationOf_t<Sym2Dual,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > Sym2_DualOfV;
-    typedef ImplementationOf_t<CodomainSpace_,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > Out;
-    typedef ImplementationOf_t<Differential1,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > D1;
-    typedef ImplementationOf_t<Differential2,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > D2;
+    typedef ImplementationOf_t<ParameterSpace_,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE> > V;
+    typedef ImplementationOf_t<DualOfBasedVectorSpace,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE> > DualOfV;
+    typedef ImplementationOf_t<Sym2Dual,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE> > Sym2_DualOfV;
+    typedef ImplementationOf_t<CodomainSpace_,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE> > Out;
+    typedef ImplementationOf_t<Differential1,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE> > D1;
+    typedef ImplementationOf_t<Differential2,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE> > D2;
 };
 
 // template specialization for when CodomainSpace_ is Scalar_
@@ -133,9 +133,9 @@ struct FunctionObjectType_m<ParameterSpace_,Scalar_,Scalar_>
     typedef DualOfBasedVectorSpace Differential1;
     typedef Sym2Dual Differential2;
 
-    typedef ImplementationOf_t<ParameterSpace_,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > V;
-    typedef ImplementationOf_t<DualOfBasedVectorSpace,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > DualOfV;
-    typedef ImplementationOf_t<Sym2Dual,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > Sym2_DualOfV;
+    typedef ImplementationOf_t<ParameterSpace_,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE> > V;
+    typedef ImplementationOf_t<DualOfBasedVectorSpace,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE> > DualOfV;
+    typedef ImplementationOf_t<Sym2Dual,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE> > Sym2_DualOfV;
     typedef Scalar_ Out;
     typedef DualOfV D1;
     typedef Sym2_DualOfV D2;
@@ -529,14 +529,14 @@ public:
 template <typename Derived_, typename Scalar_, typename BasedVectorSpace_, ComponentQualifier COMPONENT_QUALIFIER_>
 ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<Typle_t<BasedVectorSpace_,typename DualOf_f<BasedVectorSpace_>::T>>,
                    Scalar_,
-                   UseMemberArray_t<COMPONENTS_ARE_NONCONST> >
+                   UseMemberArray_t<ComponentsAreConst::FALSE> >
     hat (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENT_QUALIFIER_> const &x)
 {
     STATIC_ASSERT(DimensionOf_f<BasedVectorSpace_>::V == 3, DIMENSION_MUST_BE_EXACTLY_3);
     // for brevity
     typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<Typle_t<BasedVectorSpace_,typename DualOf_f<BasedVectorSpace_>::T>>,
                                Scalar_,
-                               UseMemberArray_t<COMPONENTS_ARE_NONCONST> > T;
+                               UseMemberArray_t<ComponentsAreConst::FALSE> > T;
     typedef typename Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENT_QUALIFIER_>::ComponentIndex c;
     typedef typename T::ComponentIndex C;
     T retval(Static<WithoutInitialization>::SINGLETON);

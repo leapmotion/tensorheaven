@@ -23,9 +23,9 @@ namespace Tenh {
 
 // these are for the UseArrayType parameter in ImplementationOf_t
 
-template <bool COMPONENTS_ARE_CONST_>
+template <ComponentsAreConst COMPONENTS_ARE_CONST_>
 struct UseMemberArray_t { static std::string type_as_string () { return "UseMemberArray_t<" + FORMAT(COMPONENTS_ARE_CONST_) + '>'; } };
-template <bool COMPONENTS_ARE_CONST_> struct DualOf_f<UseMemberArray_t<COMPONENTS_ARE_CONST_> >
+template <ComponentsAreConst COMPONENTS_ARE_CONST_> struct DualOf_f<UseMemberArray_t<COMPONENTS_ARE_CONST_> >
 {
     typedef UseMemberArray_t<COMPONENTS_ARE_CONST_> T;
 private:
@@ -38,16 +38,16 @@ template <typename T> struct IsUseMemberArray_f
 private:
     IsUseMemberArray_f();
 };
-template <bool COMPONENTS_ARE_CONST_> struct IsUseMemberArray_f<UseMemberArray_t<COMPONENTS_ARE_CONST_> >
+template <ComponentsAreConst COMPONENTS_ARE_CONST_> struct IsUseMemberArray_f<UseMemberArray_t<COMPONENTS_ARE_CONST_> >
 {
     static bool const V = true;
 private:
     IsUseMemberArray_f();
 };
 
-template <bool COMPONENTS_ARE_CONST_>
+template <ComponentsAreConst COMPONENTS_ARE_CONST_>
 struct UsePreallocatedArray_t { static std::string type_as_string () { return "UsePreallocatedArray_t<" + FORMAT(COMPONENTS_ARE_CONST_) + '>'; } };
-template <bool COMPONENTS_ARE_CONST_> struct DualOf_f<UsePreallocatedArray_t<COMPONENTS_ARE_CONST_> >
+template <ComponentsAreConst COMPONENTS_ARE_CONST_> struct DualOf_f<UsePreallocatedArray_t<COMPONENTS_ARE_CONST_> >
 {
     typedef UsePreallocatedArray_t<COMPONENTS_ARE_CONST_> T;
 private:
@@ -60,7 +60,7 @@ template <typename T> struct IsUsePreallocatedArray_f
 private:
     IsUsePreallocatedArray_f();
 };
-template <bool COMPONENTS_ARE_CONST_> struct IsUsePreallocatedArray_f<UsePreallocatedArray_t<COMPONENTS_ARE_CONST_> >
+template <ComponentsAreConst COMPONENTS_ARE_CONST_> struct IsUsePreallocatedArray_f<UsePreallocatedArray_t<COMPONENTS_ARE_CONST_> >
 {
     static bool const V = true;
 private:
@@ -97,7 +97,7 @@ private:
 // have a "typedef Concept_ Concept" and a "typedef UseArrayType_ UseArrayType".
 template <typename Concept_,
           typename Scalar_,
-          typename UseArrayType_ = UseMemberArray_t<COMPONENTS_ARE_NONCONST>,
+          typename UseArrayType_ = UseMemberArray_t<ComponentsAreConst::FALSE>,
           typename Derived_ = NullType>
 struct ImplementationOf_t;
 
@@ -126,16 +126,16 @@ struct TypeStringOf_t<ImplementationOf_t<Concept_,Scalar_,UseArrayType_,Derived_
 
 template <typename T_> struct ComponentQualifierOfArrayType_f;
 
-template <bool COMPONENTS_ARE_CONST_>
+template <ComponentsAreConst COMPONENTS_ARE_CONST_>
 struct ComponentQualifierOfArrayType_f<UseMemberArray_t<COMPONENTS_ARE_CONST_> >
 {
-    static ComponentQualifier const V = COMPONENTS_ARE_CONST_ ? COMPONENTS_ARE_CONST_MEMORY : COMPONENTS_ARE_NONCONST_MEMORY;
+    static ComponentQualifier const V = bool(COMPONENTS_ARE_CONST_) ? COMPONENTS_ARE_CONST_MEMORY : COMPONENTS_ARE_NONCONST_MEMORY;
 };
 
-template <bool COMPONENTS_ARE_CONST_>
+template <ComponentsAreConst COMPONENTS_ARE_CONST_>
 struct ComponentQualifierOfArrayType_f<UsePreallocatedArray_t<COMPONENTS_ARE_CONST_> >
 {
-    static ComponentQualifier const V = COMPONENTS_ARE_CONST_ ? COMPONENTS_ARE_CONST_MEMORY : COMPONENTS_ARE_NONCONST_MEMORY;
+    static ComponentQualifier const V = bool(COMPONENTS_ARE_CONST_) ? COMPONENTS_ARE_CONST_MEMORY : COMPONENTS_ARE_NONCONST_MEMORY;
 };
 
 template <typename ComponentGenerator_>
@@ -152,12 +152,12 @@ struct ComponentQualifierOfArrayType_f<UseProceduralArray_t<ComponentGenerator_>
 // (one of MemberArray_t, PreallocatedArray_t, ProceduralArray_t)
 template <typename Component_,
           Uint32 COMPONENT_COUNT_,
-          typename UseArrayType_,// = UseMemberArray_t<COMPONENTS_ARE_NONCONST>,
+          typename UseArrayType_,// = UseMemberArray_t<ComponentsAreConst::FALSE>,
           typename Derived_ = NullType>
 struct ArrayStorage_f;
 
 // template specialization for use of MemberArray_t
-template <typename Component_, Uint32 COMPONENT_COUNT_, bool COMPONENTS_ARE_CONST_, typename Derived_>
+template <typename Component_, Uint32 COMPONENT_COUNT_, ComponentsAreConst COMPONENTS_ARE_CONST_, typename Derived_>
 struct ArrayStorage_f<Component_,COMPONENT_COUNT_,UseMemberArray_t<COMPONENTS_ARE_CONST_>,Derived_>
 {
     typedef MemberArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> T;
@@ -165,7 +165,7 @@ private:
     ArrayStorage_f();
 };
 
-template <typename Component_, Uint32 COMPONENT_COUNT_, bool COMPONENTS_ARE_CONST_, typename Derived_>
+template <typename Component_, Uint32 COMPONENT_COUNT_, ComponentsAreConst COMPONENTS_ARE_CONST_, typename Derived_>
 struct ArrayStorage_f<Component_,COMPONENT_COUNT_,UsePreallocatedArray_t<COMPONENTS_ARE_CONST_>,Derived_>
 {
     typedef PreallocatedArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> T;

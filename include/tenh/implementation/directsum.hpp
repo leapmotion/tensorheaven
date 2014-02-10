@@ -198,8 +198,8 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,
     {
     private:
         enum { STATIC_ASSERT_IN_ENUM((Length_f<SummandTyple_>::V > N_), ATTEMPTED_ACCESS_PAST_LIST_END) };
-        static bool const ELEMENT_COMPONENTS_ARE_CONST = bool(FORCE_CONST_) ||
-                                                         ComponentQualifierOfArrayType_f<UseArrayType_>::V == COMPONENTS_ARE_CONST_MEMORY;
+        static ComponentsAreConst const ELEMENT_COMPONENTS_ARE_CONST = 
+            ComponentsAreConst(bool(FORCE_CONST_) || ComponentQualifierOfArrayType_f<UseArrayType_>::V == COMPONENTS_ARE_CONST_MEMORY);
     public:
         typedef ImplementationOf_t<typename Element_f<SummandTyple_,N_>::T,
                                    Scalar_,
@@ -305,7 +305,7 @@ struct DirectSumOf2TensorsHelper_t
     typedef typename FactorTypleOf_f<ConceptualTypeOfDirectSum_>::T FactorTyple;
     typedef typename Element_f<FactorTyple,0>::T Factor0;
     typedef typename Element_f<FactorTyple,1>::T Factor1;
-    typedef typename ImplementationOf_t<ConceptualTypeOfDirectSum_,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> >::MultiIndex MultiIndex;
+    typedef typename ImplementationOf_t<ConceptualTypeOfDirectSum_,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE> >::MultiIndex MultiIndex;
     enum { STATIC_ASSERT_IN_ENUM((MultiIndex::LENGTH == 2), LENGTH_MUST_BE_EXACTLY_2) };
     typedef typename Head_f<Procedural2TensorImplementationTyple_>::T HeadImplementation;
     typedef typename FactorTypleOf_f<typename HeadImplementation::Concept>::T HeadFactorTyple;

@@ -20,7 +20,16 @@ namespace Tenh {
 // compile-time interface for expression templates
 // ////////////////////////////////////////////////////////////////////////////
 
-template <typename Operand, typename BundleAbstractIndexTyple, typename ResultingFactorType, typename ResultingAbstractIndexType, bool DONT_CHECK_FACTOR_TYPES_>
+// TEMP: until the indexed expressions are flexible enough to safely do
+// head/body recursion (e.g. in tensor product of procedural 2-tensors)
+enum class DontCheckFactorTypes : bool { TRUE = true, FALSE = false };
+
+inline std::ostream &operator << (std::ostream &out, DontCheckFactorTypes dont_check_factor_types)
+{
+    return out << "DontCheckFactorTypes::" << (bool(dont_check_factor_types) ? "TRUE" : "FALSE");
+}
+
+template <typename Operand, typename BundleAbstractIndexTyple, typename ResultingFactorType, typename ResultingAbstractIndexType, DontCheckFactorTypes DONT_CHECK_FACTOR_TYPES_>
 struct ExpressionTemplate_IndexBundle_t;
 
 template <typename Operand, typename SourceIndexType, typename SplitIndexTyple>
@@ -99,7 +108,7 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     // NOTE: you must include tenh/expressiontemplate_eval.hpp for the definition of this method
     typename AssociatedFloatingPointType_t<Scalar>::T norm () const; // definition is in expressiontemplate_eval.hpp
 
-    template <bool DONT_CHECK_FACTOR_TYPES_,
+    template <DontCheckFactorTypes DONT_CHECK_FACTOR_TYPES_,
               typename ResultingFactorType,
               typename ResultingAbstractIndexType,
               typename... AbstractIndexTypes_>
@@ -118,7 +127,7 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     template <typename ResultingFactorType,
               typename ResultingAbstractIndexType,
               typename... AbstractIndexTypes_>
-    typename BundleReturnType_f<false, // CHECK_FACTOR_TYPES
+    typename BundleReturnType_f<DontCheckFactorTypes::FALSE,
                                 ResultingFactorType,
                                 ResultingAbstractIndexType,
                                 AbstractIndexTypes_...>::T
@@ -134,7 +143,7 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
         // make sure that ResultingFactorType is the correct conceptual type
         // TODO: there is probably a stronger type check (a type which is embeddable into a tensor space)
         STATIC_ASSERT(HasBasedVectorSpaceStructure_f<ResultingFactorType>::V, MUST_BE_BASED_VECTOR_SPACE);
-        return typename BundleReturnType_f<false, // CHECK_FACTOR_TYPES
+        return typename BundleReturnType_f<DontCheckFactorTypes::FALSE,
                                            ResultingFactorType,
                                            ResultingAbstractIndexType,
                                            AbstractIndexTypes_...>::T(as_derived());
@@ -149,7 +158,7 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     template <typename ResultingFactorType,
               typename ResultingAbstractIndexType,
               typename... AbstractIndexTypes_>
-    typename BundleReturnType_f<true, // DONT_CHECK_FACTOR_TYPES
+    typename BundleReturnType_f<DontCheckFactorTypes::TRUE,
                                 ResultingFactorType,
                                 ResultingAbstractIndexType,
                                 AbstractIndexTypes_...>::T
@@ -165,14 +174,13 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
         // make sure that ResultingFactorType is the correct conceptual type
         // TODO: there is probably a stronger type check (a type which is embeddable into a tensor space)
         STATIC_ASSERT(HasBasedVectorSpaceStructure_f<ResultingFactorType>::V, MUST_BE_BASED_VECTOR_SPACE);
-        return typename BundleReturnType_f<true, // DONT_CHECK_FACTOR_TYPES
+        return typename BundleReturnType_f<DontCheckFactorTypes::TRUE,
                                            ResultingFactorType,
                                            ResultingAbstractIndexType,
                                            AbstractIndexTypes_...>::T(as_derived());
     }
 
-    template <typename SourceAbstractIndexType,
-              typename... AbstractIndexTypes_>
+    template <typename SourceAbstractIndexType,typename... AbstractIndexTypes_>
     struct SplitReturnType_f
     {
         typedef ExpressionTemplate_IndexSplit_t<Derived,
@@ -189,8 +197,7 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     // tensor product, and forgets the symmetries of the indexed factor.
     template <typename SourceAbstractIndexType,
               typename... AbstractIndexTypes_>
-    typename SplitReturnType_f<SourceAbstractIndexType,
-                               AbstractIndexTypes_...>::T
+    typename SplitReturnType_f<SourceAbstractIndexType,AbstractIndexTypes_...>::T
         split (SourceAbstractIndexType const &,
                Typle_t<AbstractIndexTypes_...> const &) const
     {

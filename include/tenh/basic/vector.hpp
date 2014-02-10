@@ -21,7 +21,7 @@
 
 namespace Tenh {
 
-template <typename BasedVectorSpace_, typename Scalar_ = float, typename UseArrayType_ = UseMemberArray_t<COMPONENTS_ARE_NONCONST> >
+template <typename BasedVectorSpace_, typename Scalar_ = float, typename UseArrayType_ = UseMemberArray_t<ComponentsAreConst::FALSE> >
 struct Vector
     :
     public ExpressionOperand_i<Vector<BasedVectorSpace_,Scalar_,UseArrayType_>,1>,

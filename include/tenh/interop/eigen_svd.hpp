@@ -19,7 +19,7 @@
 
 namespace Tenh {
 
-template <typename T, typename ResultUseArrayType_ = UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST> > struct RowsOfTwoTensor_f;
+template <typename T, typename ResultUseArrayType_ = UsePreallocatedArray_t<ComponentsAreConst::FALSE> > struct RowsOfTwoTensor_f;
 
 template <typename Factor0_, typename Factor1_, typename Scalar_, typename UseArrayType_, typename Derived_, typename ResultUseArrayType_>
 struct RowsOfTwoTensor_f<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<Typle_t<Factor0_,Factor1_>>,Scalar_, UseArrayType_, Derived_>, ResultUseArrayType_>

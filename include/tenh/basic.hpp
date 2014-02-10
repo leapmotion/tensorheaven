@@ -23,7 +23,7 @@ template <Uint32 DIMENSION_,
           typename Scalar_ = float,
           typename Basis_ = OrthonormalBasis_c<Generic>,
           typename VectorSpaceId_ = Generic,
-          typename UseArrayType_ = UseMemberArray_t<COMPONENTS_ARE_NONCONST>,
+          typename UseArrayType_ = UseMemberArray_t<ComponentsAreConst::FALSE>,
           typename ScalarField_ = RealField>
 struct Vec : public Vector<BasedVectorSpace_c<VectorSpace_c<ScalarField_,DIMENSION_,VectorSpaceId_>,Basis_>,Scalar_,UseArrayType_>
 {
@@ -134,7 +134,7 @@ template <Uint32 CODOMAIN_DIMENSION_,
           typename DomainBasis_ = OrthonormalBasis_c<Generic>,
           typename CodomainId_ = Generic,
           typename DomainId_ = Generic,
-          typename UseArrayType_ = UseMemberArray_t<COMPONENTS_ARE_NONCONST>,
+          typename UseArrayType_ = UseMemberArray_t<ComponentsAreConst::FALSE>,
           typename ScalarField_ = RealField>
 struct Op
     :

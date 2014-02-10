@@ -621,7 +621,7 @@ template <typename Operand,
           typename BundleAbstractIndexTyple,
           typename ResultingFactorType,
           typename ResultingAbstractIndexType,
-          bool DONT_CHECK_FACTOR_TYPES_>
+          DontCheckFactorTypes DONT_CHECK_FACTOR_TYPES_>
 struct ExpressionTemplate_IndexBundle_t
     :
     public ExpressionTemplate_IndexedObject_t<IndexBundle_t<Operand,BundleAbstractIndexTyple,ResultingFactorType,ResultingAbstractIndexType,DONT_CHECK_FACTOR_TYPES_>,
@@ -696,7 +696,7 @@ template <typename Operand_,
           typename BundleAbstractIndexTyple_,
           typename ResultingFactorType_,
           typename ResultingAbstractIndexType_,
-          bool DONT_CHECK_FACTOR_TYPES_>
+          DontCheckFactorTypes DONT_CHECK_FACTOR_TYPES_>
 struct IsExpressionTemplate_f<ExpressionTemplate_IndexBundle_t<Operand_,
                                                                BundleAbstractIndexTyple_,
                                                                ResultingFactorType_,

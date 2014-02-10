@@ -32,19 +32,19 @@ void test_a_bunch_of_stuff ()
 
     {
         std::cout << "member array\n";
-        typedef ImplementationOf_t<BasedX,float,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > V;
+        typedef ImplementationOf_t<BasedX,float,UseMemberArray_t<ComponentsAreConst::FALSE> > V;
         V v(tuple(1.0f, 2.0f, 4.0f));
         std::cout << FORMAT_VALUE(v) << '\n';
         std::cout << '\n';
 
-        // the following should cause a compile error regarding UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST>
+        // the following should cause a compile error regarding UsePreallocatedArray_t<ComponentsAreConst::FALSE>
         //float components[3] = {8.0f, 10.0f, 11.0f};
         //V w(&components[0]);
     }
 
     {
         std::cout << "preallocated array\n";
-        typedef ImplementationOf_t<BasedX,float,UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST> > V;
+        typedef ImplementationOf_t<BasedX,float,UsePreallocatedArray_t<ComponentsAreConst::FALSE> > V;
         float components[3] = {8.0f, 10.0f, 11.0f};
         std::cout << FORMAT_VALUE(components[0]) << ", " << FORMAT_VALUE(components[1]) << ", " << FORMAT_VALUE(components[2]) << '\n';
         V v(&components[0], CheckPointer::TRUE); // v must live no longer than components[]
@@ -58,10 +58,10 @@ void test_a_bunch_of_stuff ()
         for (V::ComponentIndex j; j.is_not_at_end(); ++j)
             std::cout << FORMAT_VALUE(v[j]) << '\n';
 
-        // the following should cause a compile error regarding UseMemberArray_t<COMPONENTS_ARE_NONCONST>
+        // the following should cause a compile error regarding UseMemberArray_t<ComponentsAreConst::FALSE>
         //V w(1.0f, 2.0f, 4.0f);
 
-        typedef ImplementationOf_t<BasedY,float,UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST> > W;
+        typedef ImplementationOf_t<BasedY,float,UsePreallocatedArray_t<ComponentsAreConst::FALSE> > W;
         W w(&components[1]); // last 2 components, i.e. a linear subspace
         std::cout << FORMAT_VALUE(w) << '\n';
         std::cout << '\n';
@@ -70,8 +70,8 @@ void test_a_bunch_of_stuff ()
     typedef TensorProductOfBasedVectorSpaces_c<Typle_t<BasedY,DualOf_f<BasedX>::T>> YTensorXDual;
 
     {
-        typedef ImplementationOf_t<BasedX,float,UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST> > V;
-        typedef ImplementationOf_t<YTensorXDual,float,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > T;
+        typedef ImplementationOf_t<BasedX,float,UsePreallocatedArray_t<ComponentsAreConst::FALSE> > V;
+        typedef ImplementationOf_t<YTensorXDual,float,UseMemberArray_t<ComponentsAreConst::FALSE> > T;
         float components[3] = {8.0f, 10.0f, 11.0f};
         V v(&components[0], CheckPointer::TRUE); // v must live no longer than components[]
         T t(fill_with(2));
@@ -104,8 +104,8 @@ void test_a_bunch_of_stuff ()
     }
 
     {
-        typedef ImplementationOf_t<YTensorXDual,float,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > T;
-        typedef ImplementationOf_t<YTensorXDual,float,UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST> > U;
+        typedef ImplementationOf_t<YTensorXDual,float,UseMemberArray_t<ComponentsAreConst::FALSE> > T;
+        typedef ImplementationOf_t<YTensorXDual,float,UsePreallocatedArray_t<ComponentsAreConst::FALSE> > U;
         T t(fill_with(2));
         t[T::MultiIndex(0,1)] = -1.0f;
         t[T::MultiIndex(1,2)] = 3.0f;
@@ -119,8 +119,8 @@ void test_a_bunch_of_stuff ()
 
     {
         std::cout << "testing Diagonal2TensorProductOfBasedVectorSpaces_c\n";
-        typedef ImplementationOf_t<BasedX,float,UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST> > V;
-        typedef ImplementationOf_t<Diag_YTensorXDual,float,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > T;
+        typedef ImplementationOf_t<BasedX,float,UsePreallocatedArray_t<ComponentsAreConst::FALSE> > V;
+        typedef ImplementationOf_t<Diag_YTensorXDual,float,UseMemberArray_t<ComponentsAreConst::FALSE> > T;
         float components[3] = {8.0f, 10.0f, 11.0f};
         V v(&components[0], CheckPointer::TRUE); // v must live no longer than components[]
         T t(tuple(2.0f, -3.0f));
@@ -139,9 +139,9 @@ void test_a_bunch_of_stuff ()
 
     {
         std::cout << "testing SymmetricPowerOfBasedVectorSpace_c\n";
-        typedef ImplementationOf_t<BasedX,float,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > V;
-        typedef ImplementationOf_t<Sym,float,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > S;
-        typedef ImplementationOf_t<Sym,float,UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST> > S_;
+        typedef ImplementationOf_t<BasedX,float,UseMemberArray_t<ComponentsAreConst::FALSE> > V;
+        typedef ImplementationOf_t<Sym,float,UseMemberArray_t<ComponentsAreConst::FALSE> > S;
+        typedef ImplementationOf_t<Sym,float,UsePreallocatedArray_t<ComponentsAreConst::FALSE> > S_;
         S s(Static<WithoutInitialization>::SINGLETON);
         V v(tuple(3.0f, 4.0f, 7.0f));
         AbstractIndex_c<'i'> i;
@@ -163,9 +163,9 @@ void test_a_bunch_of_stuff ()
 
     {
         std::cout << "testing ExteriorPowerOfBasedVectorSpace_c\n";
-        typedef ImplementationOf_t<BasedZ,float,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > V;
-        typedef ImplementationOf_t<Alt,float,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > A;
-        typedef ImplementationOf_t<Alt,float,UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST> > A_;
+        typedef ImplementationOf_t<BasedZ,float,UseMemberArray_t<ComponentsAreConst::FALSE> > V;
+        typedef ImplementationOf_t<Alt,float,UseMemberArray_t<ComponentsAreConst::FALSE> > A;
+        typedef ImplementationOf_t<Alt,float,UsePreallocatedArray_t<ComponentsAreConst::FALSE> > A_;
         A a(Static<WithoutInitialization>::SINGLETON);
         V u(tuple(3.0f, 4.0f, 7.0f, 0.0f));
         V v(tuple(1.0f, -2.0f, 4.0f, -1.0f));

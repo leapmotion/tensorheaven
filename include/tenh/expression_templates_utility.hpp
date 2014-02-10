@@ -395,18 +395,13 @@ private:
     BundleIndexMap_t();
 };
 
-// TODO: the use of UseMemberArray_t<COMPONENTS_ARE_NONCONST> is somewhat arbitrary -- should this be addressed somehow?
+// TODO: the use of UseMemberArray_t<ComponentsAreConst::FALSE> is somewhat arbitrary -- should this be addressed somehow?
 template <typename Scalar, typename BundleDimIndexTyple, typename ResultingFactorType, typename ResultingDimIndexType>
 typename BundleIndexMap_t<Scalar,BundleDimIndexTyple,ResultingFactorType,ResultingDimIndexType>::T const BundleIndexMap_t<Scalar,BundleDimIndexTyple,ResultingFactorType,ResultingDimIndexType>::V =
-    ImplementationOf_t<ResultingFactorType,Scalar,UseMemberArray_t<COMPONENTS_ARE_NONCONST> >::template bundle_index_map<BundleDimIndexTyple,ResultingDimIndexType>;
-
-// TEMP: until the indexed expressions are flexible enough to safely do
-// head/body recursion (e.g. in tensor product of procedural 2-tensors)
-static bool const DONT_CHECK_FACTOR_TYPES = true;
-static bool const CHECK_FACTOR_TYPES = false;
+    ImplementationOf_t<ResultingFactorType,Scalar,UseMemberArray_t<ComponentsAreConst::FALSE> >::template bundle_index_map<BundleDimIndexTyple,ResultingDimIndexType>;
 
 // not an expression template, but just something that handles the bundled indices
-template <typename Operand, typename BundleAbstractIndexTyple, typename ResultingFactorType, typename ResultingAbstractIndexType, bool DONT_CHECK_FACTOR_TYPES_>
+template <typename Operand, typename BundleAbstractIndexTyple, typename ResultingFactorType, typename ResultingAbstractIndexType, DontCheckFactorTypes DONT_CHECK_FACTOR_TYPES_>
 struct IndexBundle_t
 {
     typedef typename AbstractIndicesOfDimIndexTyple_f<typename Operand::FreeDimIndexTyple>::T OperandFreeAbstractIndexTyple;
@@ -444,7 +439,7 @@ private:
     typedef typename FactorTypleOf_f<typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(ResultingFactorType)::TensorProductOfBasedVectorSpaces>::T ResultingFactorTypeFactorTyple;
     enum
     {
-        STATIC_ASSERT_IN_ENUM(DONT_CHECK_FACTOR_TYPES_ ||
+        STATIC_ASSERT_IN_ENUM(bool(DONT_CHECK_FACTOR_TYPES_) ||
                               (TypesAreEqual_f<BundleFactorTyple,ResultingFactorTypeFactorTyple>::V),
                               BUNDLE_FACTORS_MUST_MATCH)
     };
@@ -472,8 +467,6 @@ public:
     // unzip the stuff
     typedef typename Unzip_f<DimIndexAndFactorTyple>::T DimIndexAndFactorTyple_Unzipped;
     typedef typename Unzip_f<UnpackedDimIndexAndFactorTyple>::T UnpackedDimIndexAndFactorTyple_Unzipped;
-    // typedef typename DimIndexAndFactorTyple_Unzipped::BodyTyple::HeadType FactorTyple;
-    // typedef typename DimIndexAndFactorTyple_Unzipped::HeadType DimIndexTyple;
     typedef typename Element_f<DimIndexAndFactorTyple_Unzipped,0>::T DimIndexTyple;
     typedef typename Element_f<DimIndexAndFactorTyple_Unzipped,1>::T FactorTyple;
     typedef typename Head_f<UnpackedDimIndexAndFactorTyple_Unzipped>::T UnpackedDimIndexTyple;
@@ -572,9 +565,9 @@ struct IndexSplitter_t
                                            SplitAbstractIndexTyple>::T SourceFactorDimIndexTyple;
         typedef ComponentIndex_t<DimensionOf_f<SourceFactor>::V> SourceFactorComponentIndex;
         typedef MultiIndex_t<SourceFactorDimIndexTyple> SourceFactorMultiIndex;
-        // TODO: the use of UseMemberArray_t<COMPONENTS_ARE_NONCONST> here is arbitrary because it's just used to access a
+        // TODO: the use of UseMemberArray_t<ComponentsAreConst::FALSE> here is arbitrary because it's just used to access a
         // static method.  figure out if this is a problem
-        typedef ImplementationOf_t<SourceFactor,Scalar,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > ImplementationOfSourceFactor;
+        typedef ImplementationOf_t<SourceFactor,Scalar,UseMemberArray_t<ComponentsAreConst::FALSE> > ImplementationOfSourceFactor;
 
         SourceFactorMultiIndex s(m.template range<SOURCE_INDEX_TYPE_INDEX,SOURCE_INDEX_TYPE_INDEX+Length_f<SplitAbstractIndexTyple>::V>());
         if (ImplementationOfSourceFactor::component_is_procedural_zero(s))
@@ -645,9 +638,9 @@ struct IndexSplitToIndex_t
     Scalar operator [] (MultiIndex const &m) const
     {
         typedef ComponentIndex_t<DimensionOf_f<SourceFactor>::V> SourceFactorComponentIndex;
-        // TODO: the use of UseMemberArray_t<COMPONENTS_ARE_NONCONST> here is arbitrary because it's just used to access a
+        // TODO: the use of UseMemberArray_t<ComponentsAreConst::FALSE> here is arbitrary because it's just used to access a
         // static method.  figure out if this is a problem
-        typedef ImplementationOf_t<SourceFactor,Scalar,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > ImplementationOfSourceFactor;
+        typedef ImplementationOf_t<SourceFactor,Scalar,UseMemberArray_t<ComponentsAreConst::FALSE> > ImplementationOfSourceFactor;
         typedef typename ImplementationOfSourceFactor::MultiIndex SourceFactorMultiIndex;
 
         // this does the vector-index to multi-index conversion

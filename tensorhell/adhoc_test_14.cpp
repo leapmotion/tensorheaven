@@ -180,8 +180,8 @@ void test_linear_solve_using_least_squares ()
 template <typename Concept_, typename Scalar_>
 void test_particular_implementation_of_vector_construction_via_vector_i ()
 {
-    typedef ImplementationOf_t<Concept_,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > U;
-    typedef ImplementationOf_t<Concept_,Scalar_,UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST> > V;
+    typedef ImplementationOf_t<Concept_,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE> > U;
+    typedef ImplementationOf_t<Concept_,Scalar_,UsePreallocatedArray_t<ComponentsAreConst::FALSE> > V;
     static Uint32 const DIM = U::DIM;
 
     U u(Static<WithoutInitialization>::SINGLETON);
@@ -202,7 +202,7 @@ void test_particular_implementation_of_vector_construction_via_vector_i ()
     typename V::Parent_Vector_i const &v_as_vector_i = v;
     std::cout << FORMAT_VALUE(v_as_vector_i) << '\n';
     {
-        std::cout << "testing UseMemberArray_t<COMPONENTS_ARE_NONCONST> construction from Vector_i types\n";
+        std::cout << "testing UseMemberArray_t<ComponentsAreConst::FALSE> construction from Vector_i types\n";
         U constructed_from_vector_i_0(u_as_vector_i);
         std::cout << FORMAT_VALUE(constructed_from_vector_i_0) << '\n';
         U constructed_from_vector_i_1(v_as_vector_i);
@@ -211,7 +211,7 @@ void test_particular_implementation_of_vector_construction_via_vector_i ()
         std::cout << FORMAT_VALUE(constructed_from_vector_i_2) << '\n';
     }
     {
-        std::cout << "testing UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST> construction from Vector_i types\n";
+        std::cout << "testing UsePreallocatedArray_t<ComponentsAreConst::FALSE> construction from Vector_i types\n";
         Scalar_ other_array[3];
         V constructed_from_vector_i_0(u_as_vector_i, &other_array[0]);
         std::cout << FORMAT_VALUE(constructed_from_vector_i_0) << '\n';
@@ -245,8 +245,8 @@ void test_const_component_arrays ()
 {
     {
         std::cout << "testing const-component MemberArray_t\n";
-        typedef MemberArray_t<Uint32,8,COMPONENTS_ARE_NONCONST> MemberArrayNonConst;
-        typedef MemberArray_t<Uint32,8,COMPONENTS_ARE_CONST> MemberArrayConst;
+        typedef MemberArray_t<Uint32,8,ComponentsAreConst::FALSE> MemberArrayNonConst;
+        typedef MemberArray_t<Uint32,8,ComponentsAreConst::TRUE> MemberArrayConst;
 
         MemberArrayNonConst nonconst_array(Static<WithoutInitialization>::SINGLETON);
         for (MemberArrayNonConst::ComponentIndex i; i.is_not_at_end(); ++i)
@@ -266,7 +266,7 @@ void test_const_component_arrays ()
 
     {
         std::cout << "testing const-component PreallocatedArray_t\n";
-        typedef PreallocatedArray_t<Uint32,8,COMPONENTS_ARE_CONST> PreallocatedArrayConst;
+        typedef PreallocatedArray_t<Uint32,8,ComponentsAreConst::TRUE> PreallocatedArrayConst;
 
         Uint32 const data[8] = {2, 4, 8, 16, 32, 64, 128, 256};
 

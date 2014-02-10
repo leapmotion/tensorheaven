@@ -14,22 +14,26 @@
 
 namespace Tenh {
 
-static bool const COMPONENTS_ARE_CONST = true;
-static bool const COMPONENTS_ARE_NONCONST = false;
+enum class ComponentsAreConst : bool { TRUE = true, FALSE = false };
+
+inline std::ostream &operator << (std::ostream &out, ComponentsAreConst components_are_const)
+{
+    return out << "ComponentsAreConst::" << (bool(components_are_const) ? "TRUE" : "FALSE");
+}
 
 // compile-time interface for fixed-length array of a given component type,
 // layed out contiguously in memory.
-template <typename Derived_, typename Component_, Uint32 COMPONENT_COUNT_, bool COMPONENTS_ARE_CONST_ = COMPONENTS_ARE_NONCONST>
+template <typename Derived_, typename Component_, Uint32 COMPONENT_COUNT_, ComponentsAreConst COMPONENTS_ARE_CONST_ = ComponentsAreConst::FALSE>
 struct MemoryArray_i
     :
-    public Array_i<Derived_,Component_,COMPONENT_COUNT_,(COMPONENTS_ARE_CONST_ ? COMPONENTS_ARE_CONST_MEMORY : COMPONENTS_ARE_NONCONST_MEMORY)>
+    public Array_i<Derived_,Component_,COMPONENT_COUNT_,(bool(COMPONENTS_ARE_CONST_) ? COMPONENTS_ARE_CONST_MEMORY : COMPONENTS_ARE_NONCONST_MEMORY)>
 {
     enum
     {
         STATIC_ASSERT_IN_ENUM((!TypesAreEqual_f<Derived_,NullType>::V), DERIVED_MUST_NOT_BE_NULL_TYPE)
     };
 
-    typedef Array_i<Derived_,Component_,COMPONENT_COUNT_,(COMPONENTS_ARE_CONST_ ? COMPONENTS_ARE_CONST_MEMORY : COMPONENTS_ARE_NONCONST_MEMORY)> Parent_Array_i;
+    typedef Array_i<Derived_,Component_,COMPONENT_COUNT_,(bool(COMPONENTS_ARE_CONST_) ? COMPONENTS_ARE_CONST_MEMORY : COMPONENTS_ARE_NONCONST_MEMORY)> Parent_Array_i;
 
     typedef typename Parent_Array_i::Derived Derived;
     typedef typename Parent_Array_i::Component Component;
@@ -40,7 +44,7 @@ struct MemoryArray_i
     typedef typename Parent_Array_i::ComponentAccessNonConstReturnType ComponentAccessNonConstReturnType;
     typedef typename Parent_Array_i::QualifiedComponent QualifiedComponent;
 
-    static bool const COMPONENTS_ARE_CONST = COMPONENTS_ARE_CONST_;
+    static ComponentsAreConst const COMPONENTS_ARE_CONST = COMPONENTS_ARE_CONST_;
 
     // start_offset is the index in this array at which copied components will start.
     // components_to_copy is the number of components of the other array to copy into this one.
@@ -93,9 +97,9 @@ struct MemoryArray_i
 };
 
 template <typename T> struct IsMemoryArray_i { static bool const V = false; };
-template <typename Derived_, typename Component_, Uint32 COMPONENT_COUNT_, bool COMPONENTS_ARE_CONST_> struct IsMemoryArray_i<MemoryArray_i<Derived_,Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_> > { static bool const V = true; };
+template <typename Derived_, typename Component_, Uint32 COMPONENT_COUNT_, ComponentsAreConst COMPONENTS_ARE_CONST_> struct IsMemoryArray_i<MemoryArray_i<Derived_,Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_> > { static bool const V = true; };
 
-template <typename Derived_, typename Component_, Uint32 COMPONENT_COUNT_, bool COMPONENTS_ARE_CONST_> struct IsArray_i<MemoryArray_i<Derived_,Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_> > { static bool const V = true; };
+template <typename Derived_, typename Component_, Uint32 COMPONENT_COUNT_, ComponentsAreConst COMPONENTS_ARE_CONST_> struct IsArray_i<MemoryArray_i<Derived_,Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_> > { static bool const V = true; };
 
 } // end of namespace Tenh
 
