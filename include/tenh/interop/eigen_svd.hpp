@@ -82,9 +82,9 @@ struct EigenVectorFor_f<Vector_i<Derived_, Scalar_, Type_, COMPONENT_QUALIFIER_>
 
 template <typename DerivedT_, typename DerivedU_, typename DerivedS_, typename DerivedV_, typename Scalar_, typename Concept_, ComponentQualifier COMPONENT_QUALIFIER_>
 void SVD_of_2tensor (Tensor_i<DerivedT_, Scalar_, Concept_, COMPONENT_QUALIFIER_> const &t,
-                     Tensor_i<DerivedU_, Scalar_, typename SVDReturnTypesOf_m<Concept_>::OfU_f::T, COMPONENTS_ARE_NONCONST_MEMORY> &u,
-                     Tensor_i<DerivedS_, Scalar_, typename SVDReturnTypesOf_m<Concept_>::OfS_f::T, COMPONENTS_ARE_NONCONST_MEMORY> &s,
-                     Tensor_i<DerivedV_, Scalar_, typename SVDReturnTypesOf_m<Concept_>::OfV_f::T, COMPONENTS_ARE_NONCONST_MEMORY> &v)
+                     Tensor_i<DerivedU_, Scalar_, typename SVDReturnTypesOf_m<Concept_>::OfU_f::T, ComponentQualifier::NONCONST_MEMORY> &u,
+                     Tensor_i<DerivedS_, Scalar_, typename SVDReturnTypesOf_m<Concept_>::OfS_f::T, ComponentQualifier::NONCONST_MEMORY> &s,
+                     Tensor_i<DerivedV_, Scalar_, typename SVDReturnTypesOf_m<Concept_>::OfV_f::T, ComponentQualifier::NONCONST_MEMORY> &v)
 {
     typedef typename EigenMatrixFor_f<Tensor_i<DerivedT_, Scalar_, Concept_, COMPONENT_QUALIFIER_> >::T EigenMatrix;
     Eigen::JacobiSVD<EigenMatrix> svd(EigenMap_of_2tensor(t).jacobiSvd(Eigen::ComputeFullU|Eigen::ComputeFullV));
@@ -96,8 +96,8 @@ void SVD_of_2tensor (Tensor_i<DerivedT_, Scalar_, Concept_, COMPONENT_QUALIFIER_
 // SVD with u matrix but no v matrix; the singular values are in s.
 template <typename DerivedT_, typename DerivedU_, typename DerivedS_, typename Scalar_, typename Concept_, ComponentQualifier COMPONENT_QUALIFIER_>
 void SVD_of_2tensor (Tensor_i<DerivedT_, Scalar_, Concept_, COMPONENT_QUALIFIER_> const &t,
-                     Tensor_i<DerivedU_, Scalar_, typename SVDReturnTypesOf_m<Concept_>::OfU_f::T, COMPONENTS_ARE_NONCONST_MEMORY> &u,
-                     Tensor_i<DerivedS_, Scalar_, typename SVDReturnTypesOf_m<Concept_>::OfS_f::T, COMPONENTS_ARE_NONCONST_MEMORY> &s)
+                     Tensor_i<DerivedU_, Scalar_, typename SVDReturnTypesOf_m<Concept_>::OfU_f::T, ComponentQualifier::NONCONST_MEMORY> &u,
+                     Tensor_i<DerivedS_, Scalar_, typename SVDReturnTypesOf_m<Concept_>::OfS_f::T, ComponentQualifier::NONCONST_MEMORY> &s)
 {
     typedef typename EigenMatrixFor_f<Tensor_i<DerivedT_, Scalar_, Concept_, COMPONENT_QUALIFIER_> >::T EigenMatrix;
     Eigen::JacobiSVD<EigenMatrix> svd(EigenMap_of_2tensor(t).jacobiSvd(Eigen::ComputeFullU));
@@ -108,8 +108,8 @@ void SVD_of_2tensor (Tensor_i<DerivedT_, Scalar_, Concept_, COMPONENT_QUALIFIER_
 // SVD with v matrix but no u matrix; the singular values are in s.
 template <typename DerivedT_, typename DerivedS_, typename DerivedV_, typename Scalar_, typename Concept_, ComponentQualifier COMPONENT_QUALIFIER_>
 void SVD_of_2tensor (Tensor_i<DerivedT_, Scalar_, Concept_, COMPONENT_QUALIFIER_> const &t,
-                     Tensor_i<DerivedS_, Scalar_, typename SVDReturnTypesOf_m<Concept_>::OfS_f::T, COMPONENTS_ARE_NONCONST_MEMORY> &s,
-                     Tensor_i<DerivedV_, Scalar_, typename SVDReturnTypesOf_m<Concept_>::OfV_f::T, COMPONENTS_ARE_NONCONST_MEMORY> &v)
+                     Tensor_i<DerivedS_, Scalar_, typename SVDReturnTypesOf_m<Concept_>::OfS_f::T, ComponentQualifier::NONCONST_MEMORY> &s,
+                     Tensor_i<DerivedV_, Scalar_, typename SVDReturnTypesOf_m<Concept_>::OfV_f::T, ComponentQualifier::NONCONST_MEMORY> &v)
 {
     typedef typename EigenMatrixFor_f<Tensor_i<DerivedT_, Scalar_, Concept_, COMPONENT_QUALIFIER_> >::T EigenMatrix;
     Eigen::JacobiSVD<EigenMatrix> svd(EigenMap_of_2tensor(t).jacobiSvd(Eigen::ComputeFullV));
@@ -120,7 +120,7 @@ void SVD_of_2tensor (Tensor_i<DerivedT_, Scalar_, Concept_, COMPONENT_QUALIFIER_
 // SVD with no u or v matrix; the singular values are in s.
 template <typename DerivedT_, typename DerivedU_, typename DerivedS_, typename DerivedV_, typename Scalar_, typename Concept_, ComponentQualifier COMPONENT_QUALIFIER_>
 void SVD_of_2tensor (Tensor_i<DerivedT_, Scalar_, Concept_, COMPONENT_QUALIFIER_> const &t,
-                     Tensor_i<DerivedS_, Scalar_, typename SVDReturnTypesOf_m<Concept_>::OfS_f::T, COMPONENTS_ARE_NONCONST_MEMORY> &s)
+                     Tensor_i<DerivedS_, Scalar_, typename SVDReturnTypesOf_m<Concept_>::OfS_f::T, ComponentQualifier::NONCONST_MEMORY> &s)
 {
     typedef typename EigenMatrixFor_f<Tensor_i<DerivedT_, Scalar_, Concept_, COMPONENT_QUALIFIER_> >::T EigenMatrix;
     Eigen::JacobiSVD<EigenMatrix> svd(EigenMap_of_2tensor(t).jacobiSvd());
@@ -129,7 +129,7 @@ void SVD_of_2tensor (Tensor_i<DerivedT_, Scalar_, Concept_, COMPONENT_QUALIFIER_
 
 template <typename DerivedT_, typename DerivedX_, typename DerivedB_, typename Scalar_, typename Concept_, ComponentQualifier COMPONENT_QUALIFIER0_, ComponentQualifier COMPONENT_QUALIFIER1_>
 void SVD_solve (Tensor_i<DerivedT_, Scalar_, Concept_, COMPONENT_QUALIFIER0_> const &t,
-                Vector_i<DerivedX_, Scalar_, typename SVDReturnTypesOf_m<Concept_>::SolutionVector_f::T, COMPONENTS_ARE_NONCONST_MEMORY> &x,
+                Vector_i<DerivedX_, Scalar_, typename SVDReturnTypesOf_m<Concept_>::SolutionVector_f::T, ComponentQualifier::NONCONST_MEMORY> &x,
                 Vector_i<DerivedB_, Scalar_, typename SVDReturnTypesOf_m<Concept_>::ConstantTerm_f::T, COMPONENT_QUALIFIER1_> const &b)
 {
     typedef typename EigenMatrixFor_f<Tensor_i<DerivedT_, Scalar_, Concept_, COMPONENT_QUALIFIER0_> >::T EigenMatrix;

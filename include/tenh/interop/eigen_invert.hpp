@@ -29,7 +29,7 @@ bool invert_2tensor (Tensor_i<Derived0_,
                      Tensor_i<Derived1_,
                               Scalar_,
                               TensorProductOfBasedVectorSpaces_c<Typle_t<typename DualOf_f<Factor1_>::T,typename DualOf_f<Factor0_>::T>>,
-                              COMPONENTS_ARE_NONCONST_MEMORY> &t_inverse)
+                              ComponentQualifier::NONCONST_MEMORY> &t_inverse)
 {
     STATIC_ASSERT(DimensionOf_f<Factor0_>::V == DimensionOf_f<Factor1_>::V, FACTOR_DIMENSIONS_MUST_BE_EQUAL);
     // create Eigen Maps for each of the parameters -- this way no copying is necessary;
@@ -64,7 +64,7 @@ bool invert_2tensor (EmbeddableAsTensor_i<Derived0_,
                      EmbeddableAsTensor_i<Derived1_,
                                           Scalar_,
                                           SymmetricPowerOfBasedVectorSpace_c<2,typename DualOf_f<Factor_>::T>,
-                                          COMPONENTS_ARE_NONCONST_MEMORY> &s_inverse)
+                                          ComponentQualifier::NONCONST_MEMORY> &s_inverse)
 {
     // create Eigen Maps for each of the parameters -- this way no copying is necessary;
     // the t tensor's components are read directly by Eigen, and t_inverse's components

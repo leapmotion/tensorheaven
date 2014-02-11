@@ -26,14 +26,14 @@ inline std::ostream &operator << (std::ostream &out, ComponentsAreConst componen
 template <typename Derived_, typename Component_, Uint32 COMPONENT_COUNT_, ComponentsAreConst COMPONENTS_ARE_CONST_ = ComponentsAreConst::FALSE>
 struct MemoryArray_i
     :
-    public Array_i<Derived_,Component_,COMPONENT_COUNT_,(bool(COMPONENTS_ARE_CONST_) ? COMPONENTS_ARE_CONST_MEMORY : COMPONENTS_ARE_NONCONST_MEMORY)>
+    public Array_i<Derived_,Component_,COMPONENT_COUNT_,(bool(COMPONENTS_ARE_CONST_) ? ComponentQualifier::CONST_MEMORY : ComponentQualifier::NONCONST_MEMORY)>
 {
     enum
     {
         STATIC_ASSERT_IN_ENUM((!TypesAreEqual_f<Derived_,NullType>::V), DERIVED_MUST_NOT_BE_NULL_TYPE)
     };
 
-    typedef Array_i<Derived_,Component_,COMPONENT_COUNT_,(bool(COMPONENTS_ARE_CONST_) ? COMPONENTS_ARE_CONST_MEMORY : COMPONENTS_ARE_NONCONST_MEMORY)> Parent_Array_i;
+    typedef Array_i<Derived_,Component_,COMPONENT_COUNT_,(bool(COMPONENTS_ARE_CONST_) ? ComponentQualifier::CONST_MEMORY : ComponentQualifier::NONCONST_MEMORY)> Parent_Array_i;
 
     typedef typename Parent_Array_i::Derived Derived;
     typedef typename Parent_Array_i::Component Component;
@@ -61,15 +61,15 @@ struct MemoryArray_i
 
         typedef Array_i<OtherDerived_,Component_,OTHER_COMPONENT_COUNT_,OTHER_COMPONENT_QUALIFIER_> OtherArray;
         // these cases have actual memory that can be copied.  NOTE: this assumes that Component_ is a POD type
-        if (OTHER_COMPONENT_QUALIFIER_ == COMPONENTS_ARE_CONST_MEMORY ||
-            OTHER_COMPONENT_QUALIFIER_ == COMPONENTS_ARE_NONCONST_MEMORY)
+        if (OTHER_COMPONENT_QUALIFIER_ == ComponentQualifier::CONST_MEMORY ||
+            OTHER_COMPONENT_QUALIFIER_ == ComponentQualifier::NONCONST_MEMORY)
         {
             // memmove is used so that the memory segments may overlap
             memmove(reinterpret_cast<void *>(&(*this)[ComponentIndex(start_offset, CheckRange::FALSE)]),
                     reinterpret_cast<void const *>(&a[typename OtherArray::ComponentIndex(0, CheckRange::FALSE)]),
                     sizeof(Component_)*components_to_copy);
         }
-        // otherwise OTHER_COMPONENT_QUALIFIER_ is COMPONENTS_ARE_PROCEDURAL, and there is no memory
+        // otherwise OTHER_COMPONENT_QUALIFIER_ is ComponentQualifier::PROCEDURAL, and there is no memory
         // to copy, so iterate through and use individual element access.
         else
         {

@@ -199,7 +199,7 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,
     private:
         enum { STATIC_ASSERT_IN_ENUM((Length_f<SummandTyple_>::V > N_), ATTEMPTED_ACCESS_PAST_LIST_END) };
         static ComponentsAreConst const ELEMENT_COMPONENTS_ARE_CONST = 
-            ComponentsAreConst(bool(FORCE_CONST_) || ComponentQualifierOfArrayType_f<UseArrayType_>::V == COMPONENTS_ARE_CONST_MEMORY);
+            ComponentsAreConst(bool(FORCE_CONST_) || ComponentQualifierOfArrayType_f<UseArrayType_>::V == ComponentQualifier::CONST_MEMORY);
     public:
         typedef ImplementationOf_t<typename Element_f<SummandTyple_,N_>::T,
                                    Scalar_,

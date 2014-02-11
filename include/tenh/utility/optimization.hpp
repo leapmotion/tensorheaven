@@ -85,7 +85,7 @@ template <typename ObjectiveFunction_,
           typename BasedVectorSpace_,
           ComponentQualifier COMPONENT_QUALIFIER_>
 bool geometric_step (ObjectiveFunction_ const &f,
-                     Vector_i<Derived1_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_NONCONST_MEMORY> &position,
+                     Vector_i<Derived1_,Scalar_,BasedVectorSpace_,ComponentQualifier::NONCONST_MEMORY> &position,
                      Vector_i<Derived2_,Scalar_,BasedVectorSpace_,COMPONENT_QUALIFIER_> const &step,
                      Scalar_ scale_factor,
                      Uint32 max_iteration_count)
@@ -125,7 +125,7 @@ template <typename ObjectiveFunction_,
           typename BasedVectorSpace_,
           ComponentQualifier COMPONENT_QUALIFIER_>
 bool uniform_step (ObjectiveFunction_ const &f,
-                   Vector_i<Derived1_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_NONCONST_MEMORY> &position,
+                   Vector_i<Derived1_,Scalar_,BasedVectorSpace_,ComponentQualifier::NONCONST_MEMORY> &position,
                    Vector_i<Derived2_,Scalar_,BasedVectorSpace_,COMPONENT_QUALIFIER_> const &step,
                    Uint32 substep_count = 1)
 {
@@ -420,7 +420,7 @@ void randomize (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENT_QUALIFIER_
                 Scalar_ const &inner_radius,
                 Scalar_ const &outer_radius)
 {
-    STATIC_ASSERT(COMPONENT_QUALIFIER_ != COMPONENTS_ARE_PROCEDURAL, MUST_NOT_BE_COMPONENTS_ARE_PROCEDURAL);
+    STATIC_ASSERT(COMPONENT_QUALIFIER_ != ComponentQualifier::PROCEDURAL, MUST_NOT_BE_COMPONENTS_ARE_PROCEDURAL);
     Scalar_ squared_inner_radius = sqr(inner_radius);
     Scalar_ squared_outer_radius = sqr(outer_radius);
     Scalar_ sqn;

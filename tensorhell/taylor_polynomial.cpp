@@ -82,7 +82,7 @@ void randomize (long double &x)
 }
 
 // open annulus of given inner and outer radii in the vector space -- false
-// is the parameter value for COMPONENTS_ARE_PROCEDURAL
+// is the parameter value for ComponentQualifier::PROCEDURAL
 template <typename InnerProductId_, typename Derived_, typename Scalar_, typename BasedVectorSpace_>
 void randomize (Vector_i<Derived_,Scalar_,BasedVectorSpace_,false> &x,
                 Scalar_ const &inner_radius,

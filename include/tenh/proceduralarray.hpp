@@ -31,14 +31,14 @@ struct ProceduralArray_t
     public Array_i<typename DerivedType_f<Derived_,ProceduralArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_> >::T,
                    Component_,
                    COMPONENT_COUNT_,
-                   COMPONENTS_ARE_PROCEDURAL>
+                   ComponentQualifier::PROCEDURAL>
 {
     enum { STATIC_ASSERT_IN_ENUM(IsComponentGenerator_t<ComponentGenerator_>::V, MUST_BE_COMPONENT_GENERATOR) };
 
     typedef Array_i<typename DerivedType_f<Derived_,ProceduralArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_> >::T,
                     Component_,
                     COMPONENT_COUNT_,
-                    COMPONENTS_ARE_PROCEDURAL> Parent_Array_i;
+                    ComponentQualifier::PROCEDURAL> Parent_Array_i;
 
     typedef typename Parent_Array_i::Component Component;
     using Parent_Array_i::COMPONENT_COUNT;

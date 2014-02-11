@@ -129,19 +129,19 @@ template <typename T_> struct ComponentQualifierOfArrayType_f;
 template <ComponentsAreConst COMPONENTS_ARE_CONST_>
 struct ComponentQualifierOfArrayType_f<UseMemberArray_t<COMPONENTS_ARE_CONST_> >
 {
-    static ComponentQualifier const V = bool(COMPONENTS_ARE_CONST_) ? COMPONENTS_ARE_CONST_MEMORY : COMPONENTS_ARE_NONCONST_MEMORY;
+    static ComponentQualifier const V = bool(COMPONENTS_ARE_CONST_) ? ComponentQualifier::CONST_MEMORY : ComponentQualifier::NONCONST_MEMORY;
 };
 
 template <ComponentsAreConst COMPONENTS_ARE_CONST_>
 struct ComponentQualifierOfArrayType_f<UsePreallocatedArray_t<COMPONENTS_ARE_CONST_> >
 {
-    static ComponentQualifier const V = bool(COMPONENTS_ARE_CONST_) ? COMPONENTS_ARE_CONST_MEMORY : COMPONENTS_ARE_NONCONST_MEMORY;
+    static ComponentQualifier const V = bool(COMPONENTS_ARE_CONST_) ? ComponentQualifier::CONST_MEMORY : ComponentQualifier::NONCONST_MEMORY;
 };
 
 template <typename ComponentGenerator_>
 struct ComponentQualifierOfArrayType_f<UseProceduralArray_t<ComponentGenerator_> >
 {
-    static ComponentQualifier const V = COMPONENTS_ARE_PROCEDURAL;
+    static ComponentQualifier const V = ComponentQualifier::PROCEDURAL;
 };
 
 // ///////////////////////////////////////////////////////////////////////////

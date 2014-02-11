@@ -43,7 +43,7 @@ typename EigenMapOf2Tensor_const_f<Factor0_,Factor1_,Scalar_>::T
     EigenMap_of_2tensor (Tensor_i<Derived_,
                                   Scalar_,
                                   TensorProductOfBasedVectorSpaces_c<Typle_t<Factor0_,Factor1_>>,
-                                  COMPONENTS_ARE_NONCONST_MEMORY> const &t)
+                                  ComponentQualifier::NONCONST_MEMORY> const &t)
 {
     return typename EigenMapOf2Tensor_const_f<Factor0_,Factor1_,Scalar_>::T(t.as_derived().pointer_to_allocation());
 }
@@ -57,7 +57,7 @@ typename EigenMapOf2Tensor_nonconst_f<Factor0_,Factor1_,Scalar_>::T
     EigenMap_of_2tensor (Tensor_i<Derived_,
                                   Scalar_,
                                   TensorProductOfBasedVectorSpaces_c<Typle_t<Factor0_,Factor1_>>,
-                                  COMPONENTS_ARE_NONCONST_MEMORY> &t)
+                                  ComponentQualifier::NONCONST_MEMORY> &t)
 {
     return typename EigenMapOf2Tensor_nonconst_f<Factor0_,Factor1_,Scalar_>::T(t.as_derived().pointer_to_allocation());
 }
@@ -83,7 +83,7 @@ struct EigenMapOfVector_nonconst_f
 // const version
 template <typename Derived_, typename Scalar_, typename BasedVectorSpace_>
 typename EigenMapOfVector_const_f<BasedVectorSpace_,Scalar_>::T
-    EigenMap_of_vector (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_NONCONST_MEMORY> const &v)
+    EigenMap_of_vector (Vector_i<Derived_,Scalar_,BasedVectorSpace_,ComponentQualifier::NONCONST_MEMORY> const &v)
 {
     return typename EigenMapOfVector_const_f<BasedVectorSpace_,Scalar_>::T(v.as_derived().pointer_to_allocation());
 }
@@ -91,7 +91,7 @@ typename EigenMapOfVector_const_f<BasedVectorSpace_,Scalar_>::T
 // non-const version
 template <typename Derived_, typename Scalar_, typename BasedVectorSpace_>
 typename EigenMapOfVector_nonconst_f<BasedVectorSpace_,Scalar_>::T
-    EigenMap_of_vector (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_NONCONST_MEMORY> &v)
+    EigenMap_of_vector (Vector_i<Derived_,Scalar_,BasedVectorSpace_,ComponentQualifier::NONCONST_MEMORY> &v)
 {
     return typename EigenMapOfVector_nonconst_f<BasedVectorSpace_,Scalar_>::T(v.as_derived().pointer_to_allocation());
 }
@@ -103,7 +103,7 @@ template <typename Derived_,
 Scalar_ determinant_of_2tensor (Tensor_i<Derived_,
                                          Scalar_,
                                          TensorProductOfBasedVectorSpaces_c<Typle_t<Factor0_,Factor1_>>,
-                                         COMPONENTS_ARE_NONCONST_MEMORY> const &t)
+                                         ComponentQualifier::NONCONST_MEMORY> const &t)
 {
     STATIC_ASSERT(DimensionOf_f<Factor0_>::V == DimensionOf_f<Factor1_>::V, FACTOR_DIMENSIONS_MUST_BE_EQUAL);
     // create Eigen Maps for the parameter -- this way no copying is necessary;

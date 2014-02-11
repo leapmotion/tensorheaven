@@ -539,13 +539,13 @@
         using Vector = Matrix<N, 1>;
 
   The type Vector<3> is equivalent to Matrix<3, 1>.
-- All the TypeList_t stuff (which is deeply interwoven into Tensor Heaven) could be refactored
+x All the TypeList_t stuff (which is deeply interwoven into Tensor Heaven) could be refactored
   to use variadic templates, though it would probably be good to do a bunch of experiments and
   gain experience using them before settling on a design/best practice.
 - Tons of the metaprogramming uses static const variables -- these can be changed to use constexpr,
   though it looks like lack of MSVC support will hold this one back for a long time.
 - Static asserts with error strings will be awesome (no more making enums for the error messages).
-- Use nullptr
+x Use nullptr
 - Change private constructors to use the new " = delete" notation added in C++11.
 - Move semantics for move constructors for various memory-containing structures (e.g. vectors)
 - Once "decltype" becomes available, it would be possible to do things like
@@ -554,8 +554,7 @@
     B b;
     // this would be typename DualOf_f<B>::T
     typedef decltype(dual(b)) DualOfB;
-    // this would be TensorProductOfBasedVectorSpaces_c<TypeList_t<B,
-    //                                                  TypeList_t<typename DualOf_f<B>::T> > >
+    // this would be TensorProductOfBasedVectorSpaces_c<Typle_t<B,typename DualOf_f<B>::T> >
     typedef decltype(b * dual(b)) EndomorphismOfB;
     // this would be SymmetricPowerOfBasedVectorSpace_c<3,DualOfB>
     typedef decltype(sym<3>(dual(b))) Sym3_DualOfB;
@@ -569,9 +568,9 @@
 
   Contrast this with the current way:
 
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<U,TypeList_t<V> > > U_otimes_V;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<W,TypeList_t<X> > > W_otimes_X;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<U_otimes_V,TypeList_t<W_otimes_X> > > TProd;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<U,V> > U_otimes_V;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<W,X> > W_otimes_X;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<U_otimes_V,W_otimes_X> > TProd;
 - Use of ordinary functions and decltype to implement metaprograms.  For example,
     
     decltype(v * dual(u)) t; // makes t an instance of a 2-tensor conceptual type
