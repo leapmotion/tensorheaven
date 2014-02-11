@@ -139,8 +139,8 @@ template <typename VectorSpace_, typename Basis_>
 struct BasedVectorSpace_c
 {
 private:
-        static_assert(IS_VECTOR_SPACE_UNIQUELY(VectorSpace_), MUST_BE_VECTOR_SPACE);
-        static_assert(IS_BASIS_UNIQUELY(Basis_), MUST_BE_BASIS);
+    static_assert(IS_VECTOR_SPACE_UNIQUELY(VectorSpace_), "VectorSpace_ must have unique vector space structure");
+    static_assert(IS_BASIS_UNIQUELY(Basis_), "Basis_ must have unique basis structure");
 
     typedef VectorSpace_ As_VectorSpace;
 public:
@@ -320,9 +320,8 @@ struct IdentityEmbedding { static std::string type_as_string () { return "Identi
 template <typename OnBasedVectorSpace_, typename Scalar_, WithExceptions WITH_EXCEPTIONS_>
 struct LinearEmbedding_c<OnBasedVectorSpace_,OnBasedVectorSpace_,Scalar_,IdentityEmbedding,WITH_EXCEPTIONS_>
 {
-private:
-    enum { static_assert_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(OnBasedVectorSpace_), MUST_BE_BASED_VECTOR_SPACE) };
-public:
+    static_assert(IS_BASED_VECTOR_SPACE_UNIQUELY(OnBasedVectorSpace_), "OnBasedVectorSpace_ must have unique based vector space structure");
+
     typedef ComponentIndex_t<DimensionOf_f<OnBasedVectorSpace_>::V> ComponentIndex;
 
     struct CoembedIndexIterator

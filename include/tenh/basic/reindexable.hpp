@@ -19,17 +19,9 @@ namespace Tenh {
 template <typename ExpressionTemplate_, typename FreeDimIndexTyple_ = typename ExpressionTemplate_::FreeDimIndexTyple>
 struct Reindexable_t : public ExpressionOperand_i<Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_>,Length_f<FreeDimIndexTyple_>::V>
 {
-private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<ExpressionTemplate_>::V, MUST_BE_EXPRESSION_TEMPLATE),
-        STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<FreeDimIndexTyple_,IsDimIndex_e>::V), MUST_BE_TYPLE_OF_DIM_INDEX_TYPES),
-        STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename ExpressionTemplate_::FreeDimIndexTyple,FreeDimIndexTyple_>::V), TYPES_MUST_BE_EQUAL)
-    };
-
     static_assert(IsExpressionTemplate_f<ExpressionTemplate_>::V, "The type argument to Reindexable must be an ExpressionTemplate.");
-    static_assert((EachTypeSatisfies_f<FreeDimIndexTypeList_,IsDimIndex_p>::V), "The FreeDimIndexTypeList in Reindexable must only contain DimIndexes.");
-    static_assert((TypesAreEqual_f<typename ExpressionTemplate_::FreeDimIndexTypeList,FreeDimIndexTypeList_>::V), "The FreeDimIndexTypeList in Reindexable must be the FreeDimIndexTypeList of the ExpressionTemplate.");
+    static_assert((EachTypeSatisfies_f<FreeDimIndexTyple_,IsDimIndex_e>::V), "Each type in FreeDimIndexTyple_ must be a DimIndex_t.");
+    static_assert((TypesAreEqual_f<typename ExpressionTemplate_::FreeDimIndexTyple,FreeDimIndexTyple_>::V), "FreeDimIndexTyple_ in Reindexable must be the FreeDimIndexTyple of the ExpressionTemplate.");
 
     typedef typename ExpressionTemplate_::Derived DerivedExpressionTemplate;
     typedef typename ExpressionTemplate_::MultiIndex MultiIndex;
