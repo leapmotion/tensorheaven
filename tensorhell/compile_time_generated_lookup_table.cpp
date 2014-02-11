@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "tenh/core.hpp"
+#include "tenh/meta/core.hpp"
 #include "tenh/meta/typestringof.hpp"
 #include "tenh/meta/typle.hpp"
 #include "tenh/meta/typle_utility.hpp"
@@ -82,7 +83,7 @@ template <Uint N_> struct Factorial_f { static Uint const V = N_ * Factorial_f<N
 template <> struct Factorial_f<0> { static Uint const V = 1; };
 
 // other test metafunction
-template <typename N_> struct Square_f { typedef Tenh::Value_t<Uint,N_::V*N_::V> T; };
+template <typename N_> struct Square_f { typedef Value_t<Uint,N_::V*N_::V> T; };
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -90,18 +91,18 @@ template <typename T_> struct Cube_f;
 template <Uint VALUE_> struct Cube_f<Value_t<Uint,VALUE_> >
 {
     static Uint const V = VALUE_*VALUE_*VALUE_;
-    // typedef Value_t<Uint,V> T;
+    typedef Value_t<Uint,V> T;
 };
 
 template <typename T_> struct PlusOne_f;
 template <Uint VALUE_> struct PlusOne_f<Value_t<Uint,VALUE_> >
 {
     static Uint const V = VALUE_+1;
-    // typedef Value_t<Uint,V> T;
+    typedef Value_t<Uint,V> T;
 };
 
-MAKE_1_ARY_VALUE_EVALUATOR(Cube, Uint);
-MAKE_1_ARY_VALUE_EVALUATOR(PlusOne, Uint);
+MAKE_1_ARY_VALUE_EVALUATOR(Cube);
+MAKE_1_ARY_VALUE_EVALUATOR(PlusOne);
 
 ///////////////////////////////////////////////////////////////////////////////
 

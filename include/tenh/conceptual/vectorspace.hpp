@@ -126,7 +126,7 @@ private:
     ScalarFieldOf_f();
 };
 
-MAKE_1_ARY_VALUE_EVALUATOR(DimensionOf, Uint32);
+MAKE_1_ARY_VALUE_EVALUATOR(DimensionOf);
 MAKE_1_ARY_TYPE_EVALUATOR(IdOf);
 MAKE_1_ARY_TYPE_EVALUATOR(ScalarFieldOf);
 

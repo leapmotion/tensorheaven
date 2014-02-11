@@ -375,7 +375,7 @@ struct IsExpressionTemplate_f<ExpressionTemplate_i<Derived_,
     static bool const V = true;
 };
 
-MAKE_1_ARY_VALUE_EVALUATOR(IsExpressionTemplate, bool);
+MAKE_1_ARY_VALUE_EVALUATOR(IsExpressionTemplate);
 
 // will print any order expression template in a nice-looking justified way.  if the order is greater
 // than 1, this will print newlines, notably including the first character.

@@ -444,7 +444,7 @@ private:
     IsMultiIndex_f();
 };
 
-MAKE_1_ARY_VALUE_EVALUATOR(IsMultiIndex, bool);
+MAKE_1_ARY_VALUE_EVALUATOR(IsMultiIndex);
 
 
 

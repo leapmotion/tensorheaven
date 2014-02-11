@@ -46,6 +46,8 @@ struct TypeStringOf_t<std::complex<T>>
 {
     static std::string eval () { return "complex<" + TypeStringOf_t<T>::eval() + '>'; }
 };
+// for const types
+template <typename T_> struct TypeStringOf_t<T_ const> { static std::string eval () { return TypeStringOf_t<T_>::eval() + " const"; } };
 // for pointer types
 template <typename T_> struct TypeStringOf_t<T_ *> { static std::string eval () { return TypeStringOf_t<T_>::eval() + " *"; } };
 template <typename T_> struct TypeStringOf_t<T_ const *> { static std::string eval () { return TypeStringOf_t<T_>::eval() + " const *"; } };

@@ -79,7 +79,7 @@ private:
 };
 /// @endcond
 
-MAKE_1_ARY_VALUE_EVALUATOR(IsDimIndex, bool);
+MAKE_1_ARY_VALUE_EVALUATOR(IsDimIndex);
 
 /// @brief Takes a Typle_t of DimIndex_t and returns a Typle_t of the associated parent ComponentIndex_t.
 /// @headerfile dimindex.hpp "tenh/dimindex.hpp"

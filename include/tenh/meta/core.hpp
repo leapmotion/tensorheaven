@@ -9,6 +9,8 @@
 #ifndef TENH_META_CORE_HPP_
 #define TENH_META_CORE_HPP_
 
+#include <type_traits>
+
 namespace Tenh {
 
 // a "raw" metafunction has a domain and codomain one of which is not a
@@ -113,60 +115,63 @@ struct MetaFunctionName##_e \
 // if there is a "primitive" metafunction, say
 // template <typename Arg_> struct FunctionName_f { static ReturnType const V =  ...; };
 // whose T type is of type Value_t<...> (e.g. Value_t<Uint32,123>), then
-// MAKE_1_ARY_VALUE_EVALUATOR(FunctionName, ReturnType) will define an evaluator
+// MAKE_1_ARY_VALUE_EVALUATOR(FunctionName) will define an evaluator
 // called FunctionName_e for it.  In this case, Eval_f also has a static
-// const V value whose type is ReturnType.
+// const V value whose type is inferred from the metafunction.
 
-#define MAKE_1_ARY_VALUE_EVALUATOR(MetaFunctionName, MetaFunctionValueType) \
+#define MAKE_1_ARY_VALUE_EVALUATOR(MetaFunctionName) \
 struct MetaFunctionName##_e \
 { \
     template <typename T_> \
     struct Eval_f \
     { \
-        static MetaFunctionValueType const V = MetaFunctionName##_f<T_>::V; \
-        typedef Tenh::Value_t<MetaFunctionValueType,V> T; \
+        typedef typename std::remove_const<decltype(MetaFunctionName##_f<T_>::V)>::type ReturnType; \
+        static ReturnType const V = MetaFunctionName##_f<T_>::V; \
+        typedef Tenh::Value_t<ReturnType,V> T; \
     }; \
 }
 
 // if there is a "primitive" metafunction, say
 // template <typename Arg1_, Type2 Name2> struct FunctionName_f { static ReturnType const V =  ...; };
 // whose T type is of type Value_t<...> (e.g. Value_t<Uint32,123>), then
-// MAKE_2_ARY_VALUE_EVALUATOR(FunctionName, ReturnType, Type2, Name2) will define an
+// MAKE_2_ARY_VALUE_EVALUATOR(FunctionName, Type2, Name2) will define an
 // evaluator called FunctionName_e<Type2 Name2> for it; its Eval_f only takes
 // Arg1_ as a parameter -- the second parameter is specialized via the
 // parameterization of FunctionName_e.  In this case, Eval_f also has a static
-// const V value whose type is ReturnType.
+// const V value whose type is inferred from the metafunction
 
-#define MAKE_2_ARY_VALUE_EVALUATOR(MetaFunctionName, MetaFunctionValueType, Type2, Name2) \
+#define MAKE_2_ARY_VALUE_EVALUATOR(MetaFunctionName, Type2, Name2) \
 template <Type2 Name2> \
 struct MetaFunctionName##_e \
 { \
     template <typename T_> \
     struct Eval_f \
     { \
-        static MetaFunctionValueType const V = MetaFunctionName##_f<T_,Name2>::V; \
-        typedef Tenh::Value_t<MetaFunctionValueType,V> T; \
+        typedef typename std::remove_const<decltype(MetaFunctionName##_f<T_,Name2>::V)>::type ReturnType; \
+        static ReturnType const V = MetaFunctionName##_f<T_,Name2>::V; \
+        typedef Tenh::Value_t<ReturnType,V> T; \
     }; \
 }
 
 // if there is a "global" metafunction, say
 // template <typename Arg1_, Type2 Name2, Type3 Name3> struct FunctionName_f { static ReturnType const V =  ...; };
 // whose T type is of type Value_t<...> (e.g. Value_t<Uint32,123>), then
-// MAKE_2_ARY_TYPE_EVALUATOR(FunctionName, ReturnType, Type2, Name2, Type3, Name3) will define an
+// MAKE_2_ARY_TYPE_EVALUATOR(FunctionName, Type2, Name2, Type3, Name3) will define an
 // evaluator called FunctionName_e<Type2 Name2, Type3 Name3> for it; its Eval_f only takes
 // Arg1_ as a parameter -- the second and third parameters are specialized via the
 // parameterization of FunctionName_e.  In this case, Eval_f also has a static
-// const V value whose type is ReturnType.
+// const V value whose type is inferred from the metafunction
 
-#define MAKE_3_ARY_VALUE_EVALUATOR(MetaFunctionName, MetaFunctionValueType, Type2, Name2, Type3, Name3) \
+#define MAKE_3_ARY_VALUE_EVALUATOR(MetaFunctionName, Type2, Name2, Type3, Name3) \
 template <Type2 Name2, Type3 Name3> \
 struct MetaFunctionName##_e \
 { \
     template <typename T_> \
     struct Eval_f \
     { \
-        static MetaFunctionValueType const V = MetaFunctionName##_f<T_,Name2,Name3>::V; \
-        typedef Tenh::Value_t<MetaFunctionValueType,V> T; \
+        typedef typename std::remove_const<decltype(MetaFunctionName##_f<T_,Name2,Name3>::V)>::type ReturnType; \
+        static ReturnType const V = MetaFunctionName##_f<T_,Name2,Name3>::V; \
+        typedef Tenh::Value_t<ReturnType,V> T; \
     }; \
 }
 
@@ -189,7 +194,7 @@ template <typename T_, T_ VALUE_> struct Value_t { typedef T_ T; static T_ const
 template <typename T_> struct IsValue_f { static bool const V = false; };
 template <typename T_, T_ VALUE_> struct IsValue_f<Value_t<T_,VALUE_>> { static bool const V = true; };
 
-MAKE_1_ARY_VALUE_EVALUATOR(IsValue, bool);
+MAKE_1_ARY_VALUE_EVALUATOR(IsValue);
 
 /// @brief Sentinel "value" type.
 /// @headerfile core.hpp "tenh/meta/core.hpp"
@@ -203,7 +208,7 @@ template <typename T_> struct Type_t { typedef T_ T; };
 template <typename T_> struct IsType_f { static bool const V = false; };
 template <typename T_> struct IsType_f<Type_t<T_>> { static bool const V = true; };
 
-MAKE_1_ARY_VALUE_EVALUATOR(IsType, bool);
+MAKE_1_ARY_VALUE_EVALUATOR(IsType);
 
 /// @brief Template metafunction to test whether two types are identical.
 /// @headerfile core.hpp "tenh/meta/core.hpp"
@@ -212,7 +217,7 @@ template <typename T0_, typename T1_> struct TypesAreEqual_f { static bool const
 template <typename T_> struct TypesAreEqual_f<T_,T_> { static bool const V = true; operator bool () const { return V; } };
 /// @endcond
 
-MAKE_2_ARY_VALUE_EVALUATOR(TypesAreEqual, bool, typename, T1_);
+MAKE_2_ARY_VALUE_EVALUATOR(TypesAreEqual, typename, T1_);
 
 /// @brief Compile-time conditional. Contains one of two types depending upon the boolean passed in.
 /// @headerfile core.hpp "tenh/meta/core.hpp"

@@ -127,7 +127,7 @@ struct AllTypesHaveUniqueBasisStructures_f
     static bool const V = And_f<typename OnEach_f<Typle_,HasUniqueBasisStructure_e>::T>::V;
 };
 
-MAKE_1_ARY_VALUE_EVALUATOR(AllTypesHaveUniqueBasisStructures, bool);
+MAKE_1_ARY_VALUE_EVALUATOR(AllTypesHaveUniqueBasisStructures);
 
 /*
 // TODO: change usage of this into EachTypeSatisfiesPredicate_f (or whatever)

@@ -131,7 +131,7 @@ private:
     UniformDirectSumSummandOf_f();
 };
 
-MAKE_1_ARY_VALUE_EVALUATOR(SummandCountOf, Uint32);
+MAKE_1_ARY_VALUE_EVALUATOR(SummandCountOf);
 MAKE_1_ARY_TYPE_EVALUATOR(SummandTypleOf);
 MAKE_1_ARY_TYPE_EVALUATOR(UniformDirectSumSummandOf);
 

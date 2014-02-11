@@ -109,7 +109,7 @@ struct And_f<Typle_t<>>
     static bool const V = true; // vacuously true
 };
 
-MAKE_1_ARY_VALUE_EVALUATOR(And, bool);
+MAKE_1_ARY_VALUE_EVALUATOR(And);
 
 template <typename Typle_>
 struct Or_f
@@ -125,7 +125,7 @@ struct Or_f<Typle_t<>>
     static bool const V = false; // base case ("at least one must be true")
 };
 
-MAKE_1_ARY_VALUE_EVALUATOR(Or, bool);
+MAKE_1_ARY_VALUE_EVALUATOR(Or);
 
 // ///////////////////////////////////////////////////////////////////////////
 // convenience metafunction -- the composition of And_f and OnEach_f
@@ -142,7 +142,7 @@ struct EachTypeSatisfies_f
     static bool const V = And_f<typename OnEach_f<Typle_,Predicate_e_>::T>::V;
 };
 
-MAKE_2_ARY_VALUE_EVALUATOR(EachTypeSatisfies, bool, typename, Predicate_e_);
+MAKE_2_ARY_VALUE_EVALUATOR(EachTypeSatisfies, typename, Predicate_e_);
 
 // ///////////////////////////////////////////////////////////////////////////
 // math
@@ -161,7 +161,7 @@ struct Sum_f<Typle_t<>,OperandType_>
     static OperandType_ const V = 0;
 };
 
-MAKE_2_ARY_VALUE_EVALUATOR(Sum, OperandType_, typename, OperandType_);
+MAKE_2_ARY_VALUE_EVALUATOR(Sum, typename, OperandType_);
 
 template <typename Typle_, typename OperandType_>
 struct Product_f
@@ -176,7 +176,7 @@ struct Product_f<Typle_t<>,OperandType_>
     static OperandType_ const V = 1;
 };
 
-MAKE_2_ARY_VALUE_EVALUATOR(Product, OperandType_, typename, OperandType_);
+MAKE_2_ARY_VALUE_EVALUATOR(Product, typename, OperandType_);
 
 template <typename Typle_, typename OperandType_>
 struct Min_f
@@ -195,7 +195,7 @@ struct Min_f<Typle_t<>,OperandType_>
     static OperandType_ const V = NumericBound_t<OperandType_>::MAX;
 };
 
-MAKE_2_ARY_VALUE_EVALUATOR(Min, OperandType_, typename, OperandType_);
+MAKE_2_ARY_VALUE_EVALUATOR(Min, typename, OperandType_);
 
 template <typename Typle_, typename OperandType_>
 struct Max_f
@@ -214,7 +214,7 @@ struct Max_f<Typle_t<>,OperandType_>
     static OperandType_ const V = NumericBound_t<OperandType_>::MIN;
 };
 
-MAKE_2_ARY_VALUE_EVALUATOR(Max, OperandType_, typename, OperandType_);
+MAKE_2_ARY_VALUE_EVALUATOR(Max, typename, OperandType_);
 
 /// @struct Element_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Returns the INDEX_th element of the given Typle_.
@@ -249,7 +249,7 @@ struct Contains_f
     static bool const V = Or_f<typename OnEach_f<Typle_,TypesAreEqual_e<Element_>>::T>::V;
 };
 
-MAKE_2_ARY_VALUE_EVALUATOR(Contains, bool, typename, Element_);
+MAKE_2_ARY_VALUE_EVALUATOR(Contains, typename, Element_);
 
 /// @struct IndexOfFirstOccurrence_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Returns the index of the first occurrence of Type_ in Typle_, or
@@ -279,7 +279,7 @@ struct IndexOfFirstOccurrence_f<Typle_t<>,Type_>
 };
 /// @endcond
 
-MAKE_2_ARY_VALUE_EVALUATOR(IndexOfFirstOccurrence, Uint32, typename, Type_);
+MAKE_2_ARY_VALUE_EVALUATOR(IndexOfFirstOccurrence, typename, Type_);
 
 /// @struct TrailingTyple_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Returns the Typle_t which is the range [START_INDEX_, Typle_::LENGTH) (right
@@ -403,7 +403,7 @@ struct OccurrenceCount_f<Typle_t<>,Type_>
 };
 /// @endcond
 
-MAKE_2_ARY_VALUE_EVALUATOR(OccurrenceCount, Uint32, typename, Type_);
+MAKE_2_ARY_VALUE_EVALUATOR(OccurrenceCount, typename, Type_);
 
 namespace NonPublic {
 
@@ -486,7 +486,7 @@ struct ContainsDuplicates_f
     static bool const V = Length_f<typename UniqueTypesIn_f<Typle_>::T>::V < Length_f<Typle_>::V;
 };
 
-MAKE_1_ARY_VALUE_EVALUATOR(ContainsDuplicates, bool);
+MAKE_1_ARY_VALUE_EVALUATOR(ContainsDuplicates);
 
 /// @struct IsASubsetOf_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Determines if all of the types in the first Typle_t are contained in the second,
@@ -514,7 +514,7 @@ struct IsASubsetOf_f<Typle_t<>,TypleB_>
 };
 /// @endcond
 
-MAKE_2_ARY_VALUE_EVALUATOR(IsASubsetOf, bool, typename, TypleB_);
+MAKE_2_ARY_VALUE_EVALUATOR(IsASubsetOf, typename, TypleB_);
 
 /// @struct AreEqualAsSets_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Determines if the typles contain the same types (set equality, ignoring repeated elements).
@@ -525,7 +525,7 @@ struct AreEqualAsSets_f
     static bool const V = IsASubsetOf_f<TypleA_,TypleB_>::V && IsASubsetOf_f<TypleB_,TypleA_>::V;
 };
 
-MAKE_2_ARY_VALUE_EVALUATOR(AreEqualAsSets, bool, typename, TypleB_);
+MAKE_2_ARY_VALUE_EVALUATOR(AreEqualAsSets, typename, TypleB_);
 
 /// @struct HasNontrivialIntersectionAsSets_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Checks to sett if there is even a single type that is common to both Typle_t.
@@ -545,7 +545,7 @@ struct HasNontrivialIntersectionAsSets_f<Typle_t<>,TypleB_>
 };
 /// @endcond
 
-MAKE_2_ARY_VALUE_EVALUATOR(HasNontrivialIntersectionAsSets, bool, typename, TypleB_);
+MAKE_2_ARY_VALUE_EVALUATOR(HasNontrivialIntersectionAsSets, typename, TypleB_);
 
 /// @struct IntersectionAsSets_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Generates a Typle_t containing all of the types common to both Typle_t supplied.
@@ -627,7 +627,7 @@ struct EachTypleHasEqualLength_f<Typle_t<>>
 };
 /// @endcond
 
-MAKE_1_ARY_VALUE_EVALUATOR(EachTypleHasEqualLength, bool);
+MAKE_1_ARY_VALUE_EVALUATOR(EachTypleHasEqualLength);
 
 /// @struct Zip_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief "Zips" a typle of Typle_t into a Typle_t of tuples.
@@ -735,7 +735,7 @@ struct TypleIsUniform_f<Typle_t<>>
 };
 /// @endcond
 
-MAKE_1_ARY_VALUE_EVALUATOR(TypleIsUniform, bool);
+MAKE_1_ARY_VALUE_EVALUATOR(TypleIsUniform);
 
 /// @struct TypeOfUniformTyple_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Returns the unique type of a uniform typle, assuming it is uniform.  This is

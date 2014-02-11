@@ -167,7 +167,7 @@ public:
 
 // easy way to provide Concept-specific structure metafunctions
 #define DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(ConceptName) \
-MAKE_1_ARY_VALUE_EVALUATOR(Is##ConceptName, bool); \
+MAKE_1_ARY_VALUE_EVALUATOR(Is##ConceptName); \
 template <typename Concept_> struct ConceptName##StructuresOf_f \
 { \
     typedef typename ConceptualStructuresOf_f<Concept_,Is##ConceptName##_e>::T T; \
@@ -193,8 +193,8 @@ private: \
     Unique##ConceptName##StructureOf_f(); \
 }; \
 MAKE_1_ARY_TYPE_EVALUATOR(ConceptName##StructuresOf); \
-MAKE_1_ARY_VALUE_EVALUATOR(Has##ConceptName##Structure, bool); \
-MAKE_1_ARY_VALUE_EVALUATOR(HasUnique##ConceptName##Structure, bool); \
+MAKE_1_ARY_VALUE_EVALUATOR(Has##ConceptName##Structure); \
+MAKE_1_ARY_VALUE_EVALUATOR(HasUnique##ConceptName##Structure); \
 MAKE_1_ARY_TYPE_EVALUATOR(Unique##ConceptName##StructureOf)
 
 // ///////////////////////////////////////////////////////////////////////////

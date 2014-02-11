@@ -86,7 +86,7 @@ struct BaseProperty_f<AbstractIndex_c<SYMBOL_>,Symbol>
 
 template <typename Concept_> struct SymbolOf_f { static AbstractIndexSymbol const V = PropertyValue_f<Concept_,Symbol>::V; };
 
-MAKE_1_ARY_VALUE_EVALUATOR(SymbolOf, AbstractIndexSymbol);
+MAKE_1_ARY_VALUE_EVALUATOR(SymbolOf);
 
 // ///////////////////////////////////////////////////////////////////////////
 // operator overloads for creating abstract multiindices

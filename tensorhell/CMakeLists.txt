@@ -107,6 +107,7 @@ add_executable(sandbox sandbox.cpp)
 add_executable(taylor_polynomial taylor_polynomial.cpp)
 
 set_source_files_properties(c++11_usage_prototype.cpp PROPERTIES COMPILE_FLAGS -std=c++11)
+set_source_files_properties(compile_time_generated_lookup_table.cpp PROPERTIES COMPILE_FLAGS -std=c++11)
 set_source_files_properties(sandbox.cpp PROPERTIES COMPILE_FLAGS -std=c++11)
 
 set(adhoc_test_SRCS

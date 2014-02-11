@@ -38,7 +38,7 @@ template <> struct IsFloatingPointType_f<float> { static bool const V = true; };
 template <> struct IsFloatingPointType_f<double> { static bool const V = true; };
 template <> struct IsFloatingPointType_f<long double> { static bool const V = true; };
 
-MAKE_1_ARY_VALUE_EVALUATOR(IsFloatingPointType, bool);
+MAKE_1_ARY_VALUE_EVALUATOR(IsFloatingPointType);
 
 void test_OnEach (Context const &context)
 {

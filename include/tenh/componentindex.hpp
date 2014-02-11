@@ -97,7 +97,7 @@ private:
 };
 /// @endcond
 
-MAKE_1_ARY_VALUE_EVALUATOR(IsComponentIndex, bool);
+MAKE_1_ARY_VALUE_EVALUATOR(IsComponentIndex);
 
 /// Operator overload for outputting a ComponentIndex_t with an ostream.
 template <Uint32 COMPONENT_COUNT>

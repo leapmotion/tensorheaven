@@ -307,7 +307,7 @@ struct UniqueConceptualStructureOf_f
 
 // easy way to provide Concept-specific structure metafunctions
 #define DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(ConceptName) \
-MAKE_1_ARY_VALUE_EVALUATOR(Is##ConceptName, bool); \
+MAKE_1_ARY_VALUE_EVALUATOR(Is##ConceptName); \
 template <typename Concept> struct ConceptName##StructuresOf_f { typedef typename ConceptualStructuresOf_f<Concept,Is##ConceptName##_e>::T T; }; \
 template <typename Concept> struct Has##ConceptName##Structure_f { static bool const V = HasConceptualStructure_f<Concept,Is##ConceptName##_e>::V; }; \
 template <typename Concept> struct HasUnique##ConceptName##Structure_f { static bool const V = HasUniqueConceptualStructure_f<Concept,Is##ConceptName##_e>::V; }; \
