@@ -40,6 +40,137 @@ template <> struct IsFloatingPointType_f<long double> { static bool const V = tr
 
 MAKE_1_ARY_VALUE_EVALUATOR(IsFloatingPointType);
 
+void test_HeadBodyTyple (Context const &context)
+{
+    static_assert(Tenh::TypesAreEqual_f<Tenh::HeadBodyTyple_f<int,Tenh::Typle_t<>>::T,
+                                        Tenh::Typle_t<int>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::HeadBodyTyple_f<int,Tenh::Typle_t<float>>::T,
+                                        Tenh::Typle_t<int,float>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::HeadBodyTyple_f<int,Tenh::Typle_t<float,char>>::T,
+                                        Tenh::Typle_t<int,float,char>>::V, "error");
+
+    static_assert(Tenh::TypesAreEqual_f<Tenh::HeadBodyTyple_e<Tenh::Typle_t<>>::Eval_f<int>::T,
+                                        Tenh::Typle_t<int>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::HeadBodyTyple_e<Tenh::Typle_t<float>>::Eval_f<int>::T,
+                                        Tenh::Typle_t<int,float>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::HeadBodyTyple_e<Tenh::Typle_t<float,char>>::Eval_f<int>::T,
+                                        Tenh::Typle_t<int,float,char>>::V, "error");
+}
+
+void test_Concat2Typles (Context const &context)
+{
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Concat2Typles_f<Tenh::Typle_t<>,Tenh::Typle_t<>>::T,
+                                        Tenh::Typle_t<>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Concat2Typles_f<Tenh::Typle_t<int>,Tenh::Typle_t<>>::T,
+                                        Tenh::Typle_t<int>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Concat2Typles_f<Tenh::Typle_t<int,char>,Tenh::Typle_t<>>::T,
+                                        Tenh::Typle_t<int,char>>::V, "error");
+
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Concat2Typles_f<Tenh::Typle_t<>,Tenh::Typle_t<float>>::T,
+                                        Tenh::Typle_t<float>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Concat2Typles_f<Tenh::Typle_t<int>,Tenh::Typle_t<float>>::T,
+                                        Tenh::Typle_t<int,float>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Concat2Typles_f<Tenh::Typle_t<int,char>,Tenh::Typle_t<float>>::T,
+                                        Tenh::Typle_t<int,char,float>>::V, "error");
+
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Concat2Typles_f<Tenh::Typle_t<>,Tenh::Typle_t<float,bool>>::T,
+                                        Tenh::Typle_t<float,bool>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Concat2Typles_f<Tenh::Typle_t<int>,Tenh::Typle_t<float,bool>>::T,
+                                        Tenh::Typle_t<int,float,bool>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Concat2Typles_f<Tenh::Typle_t<int,char>,Tenh::Typle_t<float,bool>>::T,
+                                        Tenh::Typle_t<int,char,float,bool>>::V, "error");
+
+
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Concat2Typles_e<Tenh::Typle_t<>>::Eval_f<Tenh::Typle_t<>>::T,
+                                        Tenh::Typle_t<>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Concat2Typles_e<Tenh::Typle_t<>>::Eval_f<Tenh::Typle_t<int>>::T,
+                                        Tenh::Typle_t<int>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Concat2Typles_e<Tenh::Typle_t<>>::Eval_f<Tenh::Typle_t<int,char>>::T,
+                                        Tenh::Typle_t<int,char>>::V, "error");
+
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Concat2Typles_e<Tenh::Typle_t<float>>::Eval_f<Tenh::Typle_t<>>::T,
+                                        Tenh::Typle_t<float>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Concat2Typles_e<Tenh::Typle_t<float>>::Eval_f<Tenh::Typle_t<int>>::T,
+                                        Tenh::Typle_t<int,float>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Concat2Typles_e<Tenh::Typle_t<float>>::Eval_f<Tenh::Typle_t<int,char>>::T,
+                                        Tenh::Typle_t<int,char,float>>::V, "error");
+
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Concat2Typles_e<Tenh::Typle_t<float,bool>>::Eval_f<Tenh::Typle_t<>>::T,
+                                        Tenh::Typle_t<float,bool>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Concat2Typles_e<Tenh::Typle_t<float,bool>>::Eval_f<Tenh::Typle_t<int>>::T,
+                                        Tenh::Typle_t<int,float,bool>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Concat2Typles_e<Tenh::Typle_t<float,bool>>::Eval_f<Tenh::Typle_t<int,char>>::T,
+                                        Tenh::Typle_t<int,char,float,bool>>::V, "error");
+}
+
+void test_ConcatTyples (Context const &context)
+{
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ConcatTyples_f<Tenh::Typle_t<>,Tenh::Typle_t<>,Tenh::Typle_t<>>::T,
+                                        Tenh::Typle_t<>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ConcatTyples_f<Tenh::Typle_t<int>,Tenh::Typle_t<>,Tenh::Typle_t<>>::T,
+                                        Tenh::Typle_t<int>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ConcatTyples_f<Tenh::Typle_t<int,char>,Tenh::Typle_t<>,Tenh::Typle_t<>>::T,
+                                        Tenh::Typle_t<int,char>>::V, "error");
+
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ConcatTyples_f<Tenh::Typle_t<>,Tenh::Typle_t<float>,Tenh::Typle_t<>>::T,
+                                        Tenh::Typle_t<float>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ConcatTyples_f<Tenh::Typle_t<int>,Tenh::Typle_t<float>,Tenh::Typle_t<>>::T,
+                                        Tenh::Typle_t<int,float>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ConcatTyples_f<Tenh::Typle_t<int,char>,Tenh::Typle_t<float>,Tenh::Typle_t<>>::T,
+                                        Tenh::Typle_t<int,char,float>>::V, "error");
+
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ConcatTyples_f<Tenh::Typle_t<>,Tenh::Typle_t<float,bool>,Tenh::Typle_t<>>::T,
+                                        Tenh::Typle_t<float,bool>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ConcatTyples_f<Tenh::Typle_t<int>,Tenh::Typle_t<float,bool>,Tenh::Typle_t<>>::T,
+                                        Tenh::Typle_t<int,float,bool>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ConcatTyples_f<Tenh::Typle_t<int,char>,Tenh::Typle_t<float,bool>,Tenh::Typle_t<>>::T,
+                                        Tenh::Typle_t<int,char,float,bool>>::V, "error");
+
+
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ConcatTyples_f<Tenh::Typle_t<>,Tenh::Typle_t<>,Tenh::Typle_t<double>>::T,
+                                        Tenh::Typle_t<double>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ConcatTyples_f<Tenh::Typle_t<int>,Tenh::Typle_t<>,Tenh::Typle_t<double>>::T,
+                                        Tenh::Typle_t<int,double>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ConcatTyples_f<Tenh::Typle_t<int,char>,Tenh::Typle_t<>,Tenh::Typle_t<double>>::T,
+                                        Tenh::Typle_t<int,char,double>>::V, "error");
+
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ConcatTyples_f<Tenh::Typle_t<>,Tenh::Typle_t<float>,Tenh::Typle_t<double>>::T,
+                                        Tenh::Typle_t<float,double>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ConcatTyples_f<Tenh::Typle_t<int>,Tenh::Typle_t<float>,Tenh::Typle_t<double>>::T,
+                                        Tenh::Typle_t<int,float,double>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ConcatTyples_f<Tenh::Typle_t<int,char>,Tenh::Typle_t<float>,Tenh::Typle_t<double>>::T,
+                                        Tenh::Typle_t<int,char,float,double>>::V, "error");
+
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ConcatTyples_f<Tenh::Typle_t<>,Tenh::Typle_t<float,bool>,Tenh::Typle_t<double>>::T,
+                                        Tenh::Typle_t<float,bool,double>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ConcatTyples_f<Tenh::Typle_t<int>,Tenh::Typle_t<float,bool>,Tenh::Typle_t<double>>::T,
+                                        Tenh::Typle_t<int,float,bool,double>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ConcatTyples_f<Tenh::Typle_t<int,char>,Tenh::Typle_t<float,bool>,Tenh::Typle_t<double>>::T,
+                                        Tenh::Typle_t<int,char,float,bool,double>>::V, "error");
+
+
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ConcatTyples_f<Tenh::Typle_t<>,Tenh::Typle_t<>,Tenh::Typle_t<double,Uint32>>::T,
+                                        Tenh::Typle_t<double,Uint32>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ConcatTyples_f<Tenh::Typle_t<int>,Tenh::Typle_t<>,Tenh::Typle_t<double,Uint32>>::T,
+                                        Tenh::Typle_t<int,double,Uint32>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ConcatTyples_f<Tenh::Typle_t<int,char>,Tenh::Typle_t<>,Tenh::Typle_t<double,Uint32>>::T,
+                                        Tenh::Typle_t<int,char,double,Uint32>>::V, "error");
+
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ConcatTyples_f<Tenh::Typle_t<>,Tenh::Typle_t<float>,Tenh::Typle_t<double,Uint32>>::T,
+                                        Tenh::Typle_t<float,double,Uint32>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ConcatTyples_f<Tenh::Typle_t<int>,Tenh::Typle_t<float>,Tenh::Typle_t<double,Uint32>>::T,
+                                        Tenh::Typle_t<int,float,double,Uint32>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ConcatTyples_f<Tenh::Typle_t<int,char>,Tenh::Typle_t<float>,Tenh::Typle_t<double,Uint32>>::T,
+                                        Tenh::Typle_t<int,char,float,double,Uint32>>::V, "error");
+
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ConcatTyples_f<Tenh::Typle_t<>,Tenh::Typle_t<float,bool>,Tenh::Typle_t<double,Uint32>>::T,
+                                        Tenh::Typle_t<float,bool,double,Uint32>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ConcatTyples_f<Tenh::Typle_t<int>,Tenh::Typle_t<float,bool>,Tenh::Typle_t<double,Uint32>>::T,
+                                        Tenh::Typle_t<int,float,bool,double,Uint32>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ConcatTyples_f<Tenh::Typle_t<int,char>,Tenh::Typle_t<float,bool>,Tenh::Typle_t<double,Uint32>>::T,
+                                        Tenh::Typle_t<int,char,float,bool,double,Uint32>>::V, "error");    
+}
+
 void test_OnEach (Context const &context)
 {
     typedef Tenh::Value_t<bool,true> True;
@@ -869,6 +1000,9 @@ void AddTests (Directory &parent)
     add_particular_tests_for_typle<Tenh::Typle_t<Sint32>,1>(dir);
     add_particular_tests_for_typle<Tenh::Typle_t<Sint32,Sint8>,2>(dir);
     add_particular_tests_for_typle<Tenh::Typle_t<Sint32,Sint8,double>,3>(dir);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, test_HeadBodyTyple, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, test_Concat2Typles, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, test_ConcatTyples, RESULT_NO_ERROR);
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_OnEach, RESULT_NO_ERROR);
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_NegationOfPredicate, RESULT_NO_ERROR);
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_And, RESULT_NO_ERROR);

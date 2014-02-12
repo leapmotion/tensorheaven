@@ -111,28 +111,31 @@ template <typename Head_, typename... Body_>
 struct Length_f<Typle_t<Head_,Body_...>> { static Uint32 const V = 1 + Length_f<Typle_t<Body_...>>::V; };
 /// @endcond
 
-/// @struct Concat2Typles_f typle.hpp "tenh/meta/typle.hpp"
-/// @brief Returns a Typle_t whose contents are the concatenation of the types
-/// in the argument Typle_t types.
-template <typename T0_, typename T1_> struct Concat2Typles_f;
 /// @struct HeadBodyTyple_f typle.hpp "tenh/meta/typle.hpp"
 /// @brief Constructs a Typle_t recursively, instead of variadically; via a head type and a body Typle_t.
 template <typename Head_, typename BodyTyple_> struct HeadBodyTyple_f;
+/// @struct Concat2Typles_f typle.hpp "tenh/meta/typle.hpp"
+/// @brief Returns a Typle_t whose contents are the concatenation of the types
+/// in the argument Typle_t types.
+template <typename Typle0_, typename Typle1_> struct Concat2Typles_f;
 /// @struct ConcatTyples_f typle.hpp "tenh/meta/typle.hpp"
 /// @brief Returns the concatenation of the argument typles.
 template <typename... Ts_> struct ConcatTyples_f;
 
-/// @cond false
-template <typename... LhsTypes_, typename... RhsTypes_>
-struct Concat2Typles_f<Typle_t<LhsTypes_...>,Typle_t<RhsTypes_...>>
-{
-    typedef Typle_t<LhsTypes_...,RhsTypes_...> T;
-};
+MAKE_2_ARY_TYPE_EVALUATOR(HeadBodyTyple, typename, BodyTyple_);
+MAKE_2_ARY_TYPE_EVALUATOR(Concat2Typles, typename, Typle1_);
 
+/// @cond false
 template <typename Head_, typename... BodyTypes_>
 struct HeadBodyTyple_f<Head_,Typle_t<BodyTypes_...>>
 {
     typedef Typle_t<Head_,BodyTypes_...> T;
+};
+
+template <typename... LhsTypes_, typename... RhsTypes_>
+struct Concat2Typles_f<Typle_t<LhsTypes_...>,Typle_t<RhsTypes_...>>
+{
+    typedef Typle_t<LhsTypes_...,RhsTypes_...> T;
 };
 
 template <> struct ConcatTyples_f<> { typedef Typle_t<> T; };
@@ -166,66 +169,6 @@ typename Concat2Typles_f<Typle_t<LhsTypes_...>,Typle_t<Rhs_>>::T
 {
     return typename Concat2Typles_f<Typle_t<LhsTypes_...>,Typle_t<Rhs_>>::T();
 }
-
-// NOTE: this stuff should move into a newly-created (or changed) tuple.hpp
-/*
-template <typename Typle_> struct Tuple_t;
-
-template <>
-struct Tuple_t<Typle_t<>>
-{
-    Tuple_t () { }
-
-    void print_guts (std::ostream &out) const { }
-};
-
-template <typename Head_>
-struct Tuple_t<Typle_t<Head_>>
-{
-    Tuple_t (Head_ const &h) : m_head(h) { }
-
-    void print_guts (std::ostream &out) const { out << m_head; }
-
-
-
-private:
-
-    Head_ m_head;
-};
-
-template <typename Head_, typename... Body_>
-struct Tuple_t<Typle_t<Head_,Body_...>>
-{
-    typedef Tuple_t<Typle_t<Body_...>> BodyTuple;
-
-    Tuple_t (Head_ const &h, BodyTuple const &b) : m_head(h), m_body_tuple(b) { }
-    Tuple_t (Head_ const &h, Body_... body) : m_head(h), m_body_tuple(body...) { }
-
-    void print_guts (std::ostream &out) const
-    {
-        out << m_head << ", ";
-        m_body_tuple.print_guts(out);
-    }
-
-    Head_ m_head;
-    BodyTuple m_body_tuple;
-};
-
-template <typename... Ts_>
-Tuple_t<Typle_t<Ts_...>> tuple (Ts_... ts)
-{
-    return Tuple_t<Typle_t<Ts_...>>(ts...);
-}
-
-template <typename Typle_>
-std::ostream &operator << (std::ostream &out, Tuple_t<Typle_> const &t)
-{
-//     out << "Tuple_t<" << type_string_of<Typle_>() << ">(";
-    out << '(';
-    t.print_guts(out);
-    return out << ')';
-}
-*/
 
 } // end of namespace Tenh
 
