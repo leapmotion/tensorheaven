@@ -65,6 +65,9 @@ MAKE_1_ARY_TYPE_EVALUATOR(Head);
 MAKE_1_ARY_TYPE_EVALUATOR(BodyTyple);
 MAKE_1_ARY_VALUE_EVALUATOR(Length);
 
+MAKE_1_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(head, Head);
+MAKE_1_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(body_typle, BodyTyple);
+
 /// @cond false
 template <>
 struct Typle_t<>
@@ -97,6 +100,13 @@ template <typename... Ts_> struct IsTyple_f<Typle_t<Ts_...>> { static bool const
 
 MAKE_1_ARY_VALUE_EVALUATOR(IsTyple);
 
+// for making a typle instance, e.g. typle(int(), float(), typle(char()))
+template <typename... Types_>
+Typle_t<Types_...> typle (Types_...)
+{
+    return Typle_t<Types_...>();
+}
+
 /// @cond false
 template <typename Head_, typename... Body_>
 struct Head_f<Typle_t<Head_,Body_...>> { typedef Head_ T; };
@@ -124,6 +134,9 @@ template <typename... Ts_> struct ConcatTyples_f;
 
 MAKE_2_ARY_TYPE_EVALUATOR(HeadBodyTyple, typename, BodyTyple_);
 MAKE_2_ARY_TYPE_EVALUATOR(Concat2Typles, typename, Typle1_);
+
+MAKE_2_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(hb_typle, HeadBodyTyple);
+MAKE_VARIADIC_TYPE_FUNCTION_FOR_METAFUNCTION(concat, ConcatTyples);
 
 /// @cond false
 template <typename Head_, typename... BodyTypes_>

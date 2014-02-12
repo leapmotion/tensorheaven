@@ -40,6 +40,58 @@ template <> struct IsFloatingPointType_f<long double> { static bool const V = tr
 
 MAKE_1_ARY_VALUE_EVALUATOR(IsFloatingPointType);
 
+void test_typle (Context const &context)
+{
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::typle()),
+                                        Tenh::Typle_t<>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::typle(int())),
+                                        Tenh::Typle_t<int>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::typle(int(), char())),
+                                        Tenh::Typle_t<int,char>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::typle(int(), char(), double())),
+                                        Tenh::Typle_t<int,char,double>>::V, "error");
+
+    // there is currently no runtime test code here, but that could change
+}
+
+void test_Head (Context const &context)
+{
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Head_f<Tenh::Typle_t<int>>::T,
+                                        int>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Head_f<Tenh::Typle_t<int,float>>::T,
+                                        int>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::Head_f<Tenh::Typle_t<int,float,char>>::T,
+                                        int>::V, "error");
+
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::head(Tenh::Typle_t<int>())),
+                                        int>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::head(Tenh::Typle_t<int,float>())),
+                                        int>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::head(Tenh::Typle_t<int,float,char>())),
+                                        int>::V, "error");
+
+    // there is currently no runtime test code here, but that could change
+}
+
+void test_BodyTyple (Context const &context)
+{
+    static_assert(Tenh::TypesAreEqual_f<Tenh::BodyTyple_f<Tenh::Typle_t<int>>::T,
+                                        Tenh::Typle_t<>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::BodyTyple_f<Tenh::Typle_t<int,float>>::T,
+                                        Tenh::Typle_t<float>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::BodyTyple_f<Tenh::Typle_t<int,float,char>>::T,
+                                        Tenh::Typle_t<float,char>>::V, "error");
+
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::body_typle(Tenh::Typle_t<int>())),
+                                        Tenh::Typle_t<>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::body_typle(Tenh::Typle_t<int,float>())),
+                                        Tenh::Typle_t<float>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::body_typle(Tenh::Typle_t<int,float,char>())),
+                                        Tenh::Typle_t<float,char>>::V, "error");
+
+    // there is currently no runtime test code here, but that could change
+}
+
 void test_HeadBodyTyple (Context const &context)
 {
     static_assert(Tenh::TypesAreEqual_f<Tenh::HeadBodyTyple_f<int,Tenh::Typle_t<>>::T,
@@ -55,6 +107,15 @@ void test_HeadBodyTyple (Context const &context)
                                         Tenh::Typle_t<int,float>>::V, "error");
     static_assert(Tenh::TypesAreEqual_f<Tenh::HeadBodyTyple_e<Tenh::Typle_t<float,char>>::Eval_f<int>::T,
                                         Tenh::Typle_t<int,float,char>>::V, "error");
+
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::hb_typle(int(),Tenh::Typle_t<>())),
+                                        Tenh::Typle_t<int>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::hb_typle(int(),Tenh::Typle_t<float>())),
+                                        Tenh::Typle_t<int,float>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::hb_typle(int(),Tenh::Typle_t<float,char>())),
+                                        Tenh::Typle_t<int,float,char>>::V, "error");
+
+    // there is currently no runtime test code here, but that could change
 }
 
 void test_Concat2Typles (Context const &context)
@@ -101,6 +162,8 @@ void test_Concat2Typles (Context const &context)
                                         Tenh::Typle_t<int,float,bool>>::V, "error");
     static_assert(Tenh::TypesAreEqual_f<Tenh::Concat2Typles_e<Tenh::Typle_t<float,bool>>::Eval_f<Tenh::Typle_t<int,char>>::T,
                                         Tenh::Typle_t<int,char,float,bool>>::V, "error");
+
+    // there is currently no runtime test code here, but that could change
 }
 
 void test_ConcatTyples (Context const &context)
@@ -169,6 +232,26 @@ void test_ConcatTyples (Context const &context)
                                         Tenh::Typle_t<int,float,bool,double,Uint32>>::V, "error");
     static_assert(Tenh::TypesAreEqual_f<Tenh::ConcatTyples_f<Tenh::Typle_t<int,char>,Tenh::Typle_t<float,bool>,Tenh::Typle_t<double,Uint32>>::T,
                                         Tenh::Typle_t<int,char,float,bool,double,Uint32>>::V, "error");    
+
+
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::concat(Tenh::typle(), Tenh::typle(), Tenh::typle())),
+                                        Tenh::Typle_t<>>::V, "error");
+
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::concat(Tenh::typle(int()), Tenh::typle(), Tenh::typle())),
+                                        Tenh::Typle_t<int>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::concat(Tenh::typle(), Tenh::typle(int()), Tenh::typle())),
+                                        Tenh::Typle_t<int>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::concat(Tenh::typle(), Tenh::typle(), Tenh::typle(int()))),
+                                        Tenh::Typle_t<int>>::V, "error");
+
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::concat(Tenh::typle(int()), Tenh::typle(char()), Tenh::typle())),
+                                        Tenh::Typle_t<int,char>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::concat(Tenh::typle(char()), Tenh::typle(int()), Tenh::typle())),
+                                        Tenh::Typle_t<char,int>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::concat(Tenh::typle(char()), Tenh::typle(), Tenh::typle(int()))),
+                                        Tenh::Typle_t<char,int>>::V, "error");
+
+    // there is currently no runtime test code here, but that could change
 }
 
 void test_OnEach (Context const &context)
@@ -1000,6 +1083,9 @@ void AddTests (Directory &parent)
     add_particular_tests_for_typle<Tenh::Typle_t<Sint32>,1>(dir);
     add_particular_tests_for_typle<Tenh::Typle_t<Sint32,Sint8>,2>(dir);
     add_particular_tests_for_typle<Tenh::Typle_t<Sint32,Sint8,double>,3>(dir);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, test_typle, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, test_Head, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, test_BodyTyple, RESULT_NO_ERROR);
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_HeadBodyTyple, RESULT_NO_ERROR);
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_Concat2Typles, RESULT_NO_ERROR);
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_ConcatTyples, RESULT_NO_ERROR);

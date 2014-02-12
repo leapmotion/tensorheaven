@@ -175,6 +175,38 @@ struct MetaFunctionName##_e \
     }; \
 }
 
+// the following are for making ordinary C++ functions that can be used in
+// combination with the "decltype" keyword of C++11 to do template metaprogramming
+// with drastically improved syntax.
+
+#define MAKE_1_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(function_name, MetafunctionName) \
+template <typename T0_> \
+typename MetafunctionName##_f<T0_>::T function_name (T0_ const &) \
+{ \
+    return typename MetafunctionName##_f<T0_>::T(); \
+}
+
+#define MAKE_2_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(function_name, MetafunctionName) \
+template <typename T0_, typename T1_> \
+typename MetafunctionName##_f<T0_,T1_>::T function_name (T0_ const &, T1_ const &) \
+{ \
+    return typename MetafunctionName##_f<T0_,T1_>::T(); \
+}
+
+#define MAKE_3_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(function_name, MetafunctionName) \
+template <typename T0_, typename T1_, typename T2_> \
+typename MetafunctionName##_f<T0_,T1_,T2_>::T function_name (T0_ const &, T1_ const &, T2_ const &) \
+{ \
+    return typename MetafunctionName##_f<T0_,T1_,T2_>::T(); \
+}
+
+#define MAKE_VARIADIC_TYPE_FUNCTION_FOR_METAFUNCTION(function_name, MetafunctionName) \
+template <typename... Types_> \
+typename MetafunctionName##_f<Types_...>::T function_name (Types_...) \
+{ \
+    return typename MetafunctionName##_f<Types_...>::T(); \
+}
+
 // ///////////////////////////////////////////////////////////////////////////
 // general template metaprogramming stuff
 // ///////////////////////////////////////////////////////////////////////////
