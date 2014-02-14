@@ -518,7 +518,7 @@ struct IndexSplitter_t
     {
         STATIC_ASSERT_IN_ENUM(IsAbstractIndex_f<SourceAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX),
         STATIC_ASSERT_IN_ENUM((Contains_f<OperandFreeAbstractIndexTyple,SourceAbstractIndexType>::V), SOURCE_INDEX_MUST_BE_FREE),
-        STATIC_ASSERT_IN_ENUM((!HasNontrivialIntersectionAsSets_f<Typle_t<SourceAbstractIndexType>,SplitAbstractIndexTyple>::V), SOURCE_AND_SPLIT_MUST_BE_DISTINCT),
+        STATIC_ASSERT_IN_ENUM((!HasNontrivialSetIntersection_f<Typle_t<SourceAbstractIndexType>,SplitAbstractIndexTyple>::V), SOURCE_AND_SPLIT_MUST_BE_DISTINCT),
         STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<Operand>::V, OPERAND_IS_EXPRESSION_TEMPLATE)
     };
 

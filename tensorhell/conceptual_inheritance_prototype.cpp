@@ -135,8 +135,8 @@ private:
     enum { _ = Assert<IsTyple_f<MapTyple>::V>::V };
     typedef typename Head_f<MapTyple>::T HeadMapType;
     typedef typename MapUnion_f<typename MapTyple::BodyTyple>::T MapUnionOfBodyTyple;
-    typedef typename IntersectionAsSets_f<typename HeadMapType::DomainElementTyple,
-                                          typename MapUnionOfBodyTyple::DomainElementTyple>::T DomainIntersectionTyple;
+    typedef typename SetIntersection_f<typename HeadMapType::DomainElementTyple,
+                                       typename MapUnionOfBodyTyple::DomainElementTyple>::T DomainIntersectionTyple;
     typedef typename EvalMapOnTyple_f<HeadMapType,DomainIntersectionTyple>::T HeadMapEvaluation;
     typedef typename EvalMapOnTyple_f<MapUnionOfBodyTyple,DomainIntersectionTyple>::T MapUnionOfBodyTypleEvaluation;
     // ensure that the maps act identically on the domains' intersection.

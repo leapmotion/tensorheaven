@@ -27,7 +27,7 @@ struct SymmetricPower_c
 
     static Uint32 const ORDER = ORDER_;
     typedef Factor_ Factor;
-    typedef typename UniformTypleOfLength_f<ORDER_,Factor_>::T FactorTyple;
+    typedef typename UniformTyple_f<ORDER_,Factor_>::T FactorTyple;
 
     static std::string type_as_string ()
     {
@@ -220,7 +220,7 @@ struct SymmetricPowerOfBasedVectorSpace_c
 private:
     typedef BasedSymmetricPowerOfVectorSpace_c<SymmetricPowerOfVectorSpace_c<ORDER_,Factor_>,
                                                SymmetricPowerOfBasis_c<ORDER_,typename BasisOf_f<Factor_>::T>> As_BasedSymmetricPowerOfVectorSpace;
-    typedef typename UniformTypleOfLength_f<ORDER_,Factor_>::T FactorTyple;
+    typedef typename UniformTyple_f<ORDER_,Factor_>::T FactorTyple;
     typedef EmbeddableInTensorProductOfBasedVectorSpaces_c<typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T,
                                                            typename TensorPowerOfVectorSpace_f<ORDER_,Factor_>::T> As_EmbeddableInTensorProductOfBasedVectorSpaces;
 public:
@@ -302,7 +302,7 @@ private:
     typedef SymmetricPowerOfBasedVectorSpace_c<1,Factor_> Sym;
     typedef typename TensorPowerOfBasedVectorSpace_f<1,Factor_>::T TPow;
     typedef ComponentIndex_t<DimensionOf_f<Factor_>::V> FactorComponentIndex;
-    typedef MultiIndex_t<typename UniformTypleOfLength_f<1,FactorComponentIndex>::T> TPowMultiIndex;
+    typedef MultiIndex_t<typename UniformTyple_f<1,FactorComponentIndex>::T> TPowMultiIndex;
 public:
     typedef ComponentIndex_t<DimensionOf_f<Sym>::V> SymComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<TPow>::V> TPowComponentIndex;
@@ -336,7 +336,7 @@ private:
     typedef SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_> Sym;
     typedef typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T TPow;
     typedef ComponentIndex_t<DimensionOf_f<Factor_>::V> FactorComponentIndex;
-    typedef MultiIndex_t<typename UniformTypleOfLength_f<ORDER_,FactorComponentIndex>::T> TPowMultiIndex;
+    typedef MultiIndex_t<typename UniformTyple_f<ORDER_,FactorComponentIndex>::T> TPowMultiIndex;
 public:
     typedef ComponentIndex_t<DimensionOf_f<Sym>::V> SymComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<TPow>::V> TPowComponentIndex;

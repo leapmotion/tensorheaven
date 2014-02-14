@@ -422,7 +422,7 @@ DirectSumOfBasedVectorSpaces_c<Typle_t<DirectSumOfBasedVectorSpaces_c<LhsSummand
 template <Uint32 ORDER_, typename Summand_>
 struct UniformDirectSum_f
 {
-    typedef DirectSum_c<typename UniformTypleOfLength_f<ORDER_,Summand_>::T> T;
+    typedef DirectSum_c<typename UniformTyple_f<ORDER_,Summand_>::T> T;
 private:
     UniformDirectSum_f ();
 };
@@ -431,7 +431,7 @@ template <Uint32 ORDER_, typename Summand_>
 struct UniformDirectSumOfVectorSpace_f
 {
     static_assert(IS_VECTOR_SPACE_UNIQUELY(Summand_), "Summand_ must have a unique vector space structure");
-    typedef DirectSumOfVectorSpaces_c<typename UniformTypleOfLength_f<ORDER_,Summand_>::T> T;
+    typedef DirectSumOfVectorSpaces_c<typename UniformTyple_f<ORDER_,Summand_>::T> T;
 private:
     UniformDirectSumOfVectorSpace_f ();
 };
@@ -440,7 +440,7 @@ template <Uint32 ORDER_, typename Summand_>
 struct UniformDirectSumOfBasis_f
 {
     static_assert(IS_BASIS_UNIQUELY(Summand_), "Summand_ must have a unique basis structure");
-    typedef DirectSumOfBases_c<typename UniformTypleOfLength_f<ORDER_,Summand_>::T> T;
+    typedef DirectSumOfBases_c<typename UniformTyple_f<ORDER_,Summand_>::T> T;
 private:
     UniformDirectSumOfBasis_f ();
 };
@@ -449,7 +449,7 @@ template <Uint32 ORDER_, typename Summand_>
 struct UniformDirectSumOfBasedVectorSpace_f
 {
     static_assert(IS_BASED_VECTOR_SPACE_UNIQUELY(Summand_), "Summand_ must have a unique based vector space structure");
-    typedef DirectSumOfBasedVectorSpaces_c<typename UniformTypleOfLength_f<ORDER_,Summand_>::T> T;
+    typedef DirectSumOfBasedVectorSpaces_c<typename UniformTyple_f<ORDER_,Summand_>::T> T;
 private:
     UniformDirectSumOfBasedVectorSpace_f ();
 };

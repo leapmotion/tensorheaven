@@ -27,7 +27,7 @@ struct ExteriorPower_c
 
     static Uint32 const ORDER = ORDER_;
     typedef Factor_ Factor;
-    typedef typename UniformTypleOfLength_f<ORDER_,Factor_>::T FactorTyple;
+    typedef typename UniformTyple_f<ORDER_,Factor_>::T FactorTyple;
 
     static std::string type_as_string ()
     {
@@ -205,7 +205,7 @@ struct ExteriorPowerOfBasedVectorSpace_c
 {
     static_assert(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), "Factor_ must have unique based vector space structure");
 private:
-    typedef typename UniformTypleOfLength_f<ORDER_,Factor_>::T FactorTyple;
+    typedef typename UniformTyple_f<ORDER_,Factor_>::T FactorTyple;
 
     typedef BasedExteriorPowerOfVectorSpace_c<ExteriorPowerOfVectorSpace_c<ORDER_,Factor_>,
                                               ExteriorPowerOfBasis_c<ORDER_,typename BasisOf_f<Factor_>::T> > As_BasedExteriorPowerOfVectorSpace;
@@ -290,7 +290,7 @@ private:
     typedef ExteriorPowerOfBasedVectorSpace_c<1,Factor_> Ext;
     typedef typename TensorPowerOfBasedVectorSpace_f<1,Factor_>::T TPow;
     typedef ComponentIndex_t<DimensionOf_f<Factor_>::V> FactorComponentIndex;
-    typedef MultiIndex_t<typename UniformTypleOfLength_f<1,FactorComponentIndex>::T> TPowMultiIndex;
+    typedef MultiIndex_t<typename UniformTyple_f<1,FactorComponentIndex>::T> TPowMultiIndex;
 public:
     typedef ComponentIndex_t<DimensionOf_f<Ext>::V> ExtComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<TPow>::V> TPowComponentIndex;
@@ -323,7 +323,7 @@ private:
     typedef ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_> Ext;
     typedef typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T TPow;
     typedef ComponentIndex_t<DimensionOf_f<Factor_>::V> FactorComponentIndex;
-    typedef MultiIndex_t<typename UniformTypleOfLength_f<ORDER_,FactorComponentIndex>::T> TPowMultiIndex;
+    typedef MultiIndex_t<typename UniformTyple_f<ORDER_,FactorComponentIndex>::T> TPowMultiIndex;
 public:
     typedef ComponentIndex_t<DimensionOf_f<Ext>::V> ExtComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<TPow>::V> TPowComponentIndex;

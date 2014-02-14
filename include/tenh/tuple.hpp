@@ -533,11 +533,11 @@ struct TupleHelper_t<Typle_,0>
 
 
 template <typename Type_, Uint32 LENGTH_>
-struct UniformTupleOfLength_f
+struct UniformTuple_f
 {
-    typedef Tuple_t<typename UniformTypleOfLength_f<LENGTH_,Type_>::T> T;
+    typedef Tuple_t<typename UniformTyple_f<LENGTH_,Type_>::T> T;
 private:
-    UniformTupleOfLength_f();
+    UniformTuple_f();
 };
 
 
@@ -599,10 +599,10 @@ Tuple_t<Typle_t<Types_...>> tuple (Types_... parameters)
 
 // each parameter must have a coercion to UniformType_
 template <typename UniformType_, typename... Types_>
-typename UniformTupleOfLength_f<UniformType_,Length_f<Typle_t<Types_...>>::V>::T
+typename UniformTuple_f<UniformType_,Length_f<Typle_t<Types_...>>::V>::T
     uniform_tuple (Types_... parameters)
 {
-    return typename UniformTupleOfLength_f<UniformType_,Length_f<Typle_t<Types_...>>::V>::T(parameters...);
+    return typename UniformTuple_f<UniformType_,Length_f<Typle_t<Types_...>>::V>::T(parameters...);
 }
 
 } // end of namespace Tenh

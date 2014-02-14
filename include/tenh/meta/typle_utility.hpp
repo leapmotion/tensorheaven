@@ -554,34 +554,34 @@ struct AreEqualAsSets_f
 
 MAKE_2_ARY_VALUE_EVALUATOR(AreEqualAsSets, typename, TypleB_);
 
-/// @struct HasNontrivialIntersectionAsSets_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
+/// @struct HasNontrivialSetIntersection_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Checks to sett if there is even a single type that is common to both Typle_t.
 /// @tparam TypleA_,TypleB_ the Typle_t to search for a common element between.
 template <typename TypleA_, typename TypleB_>
-struct HasNontrivialIntersectionAsSets_f
+struct HasNontrivialSetIntersection_f
 {
     static bool const V = Contains_f<TypleB_,typename Head_f<TypleA_>::T>::V ||
-                          HasNontrivialIntersectionAsSets_f<typename BodyTyple_f<TypleA_>::T,TypleB_>::V;
+                          HasNontrivialSetIntersection_f<typename BodyTyple_f<TypleA_>::T,TypleB_>::V;
 };
 
 /// @cond false
 template <typename TypleB_>
-struct HasNontrivialIntersectionAsSets_f<Typle_t<>,TypleB_>
+struct HasNontrivialSetIntersection_f<Typle_t<>,TypleB_>
 {
     static bool const V = false;
 };
 /// @endcond
 
-MAKE_2_ARY_VALUE_EVALUATOR(HasNontrivialIntersectionAsSets, typename, TypleB_);
+MAKE_2_ARY_VALUE_EVALUATOR(HasNontrivialSetIntersection, typename, TypleB_);
 
-/// @struct IntersectionAsSets_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
+/// @struct SetIntersection_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Generates a Typle_t containing all of the types common to both Typle_t supplied.
 /// @tparam TypleA_,TypleB_ the Typle_t to search for common elements.
 template <typename TypleA_, typename TypleB_>
-struct IntersectionAsSets_f
+struct SetIntersection_f
 {
 private:
-    typedef typename IntersectionAsSets_f<typename BodyTyple_f<TypleA_>::T,TypleB_>::T RecursionTyple;
+    typedef typename SetIntersection_f<typename BodyTyple_f<TypleA_>::T,TypleB_>::T RecursionTyple;
 public:
     typedef typename If_f<Contains_f<TypleB_,typename Head_f<TypleA_>::T>::V,
                           typename HeadBodyTyple_f<typename Head_f<TypleA_>::T,RecursionTyple>::T,
@@ -590,14 +590,14 @@ public:
 
 /// @cond false
 template <typename TypleB_>
-struct IntersectionAsSets_f<Typle_t<>,TypleB_>
+struct SetIntersection_f<Typle_t<>,TypleB_>
 {
     typedef Typle_t<> T;
 };
 /// @endcond
 
-MAKE_2_ARY_TYPE_EVALUATOR(IntersectionAsSets, typename, TypleB_);
-MAKE_2_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(intersection_as_sets, IntersectionAsSets);
+MAKE_2_ARY_TYPE_EVALUATOR(SetIntersection, typename, TypleB_);
+MAKE_2_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(intersection_as_sets, SetIntersection);
 
 // renders the subtraction of TypleB_ from TypleA_, as sets
 /// @struct SetSubtraction_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
@@ -710,36 +710,36 @@ struct Unzip_f
 MAKE_1_ARY_TYPE_EVALUATOR(Unzip);
 MAKE_1_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(unzip, Unzip);
 
-/// @struct UniformTypleOfLength_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
+/// @struct UniformTyple_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Generates a Typle_t with a specified length, containing only one type.
 /// @tparam LENGTH_ the length to have.
 /// @tparam Type_ the type to contain.
 template <Uint32 LENGTH_, typename Type_>
-struct UniformTypleOfLength_f
+struct UniformTyple_f
 {
-    typedef typename HeadBodyTyple_f<Type_,typename UniformTypleOfLength_f<LENGTH_-1,Type_>::T>::T T;
+    typedef typename HeadBodyTyple_f<Type_,typename UniformTyple_f<LENGTH_-1,Type_>::T>::T T;
 private:
-    UniformTypleOfLength_f ();
+    UniformTyple_f ();
 };
 
 /// @cond false
 template <typename Type_>
-struct UniformTypleOfLength_f<0,Type_>
+struct UniformTyple_f<0,Type_>
 {
     typedef Typle_t<> T;
 private:
-    UniformTypleOfLength_f ();
+    UniformTyple_f ();
 };
 /// @endcond
 
-// NOTE: technically can't make an evaluator for UniformTypleOfLength_f, because its first
+// NOTE: technically can't make an evaluator for UniformTyple_f, because its first
 // parameter is not a type, but a Uint32.  to add this capability would require changing
 // how evaluators are declared somewhat.
 
 template <Uint32 LENGTH_, typename Type_>
-typename UniformTypleOfLength_f<LENGTH_,Type_>::T uniform_typle (Type_ const &)
+typename UniformTyple_f<LENGTH_,Type_>::T uniform_typle (Type_ const &)
 {
-    return typename UniformTypleOfLength_f<LENGTH_,Type_>::T();
+    return typename UniformTyple_f<LENGTH_,Type_>::T();
 }
 
 /// @struct TypleIsUniform_f typle_utility.hpp "tenh/meta/typle_utility.hpp"

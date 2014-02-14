@@ -284,15 +284,15 @@ void test_8_tuple (Context const &context)
 
 void test_uniform_tuples (Context const &context)
 {
-    Tenh::UniformTupleOfLength_f<int,0>::T t0(Tenh::uniform_tuple<int>());
-    Tenh::UniformTupleOfLength_f<int,1>::T t1(Tenh::uniform_tuple<int>(0));
-    Tenh::UniformTupleOfLength_f<int,2>::T t2(Tenh::uniform_tuple<int>(0, 1));
-    Tenh::UniformTupleOfLength_f<int,3>::T t3(Tenh::uniform_tuple<int>(0, 1, 2));
-    Tenh::UniformTupleOfLength_f<int,4>::T t4(Tenh::uniform_tuple<int>(0, 1, 2, 3));
-    Tenh::UniformTupleOfLength_f<int,5>::T t5(Tenh::uniform_tuple<int>(0, 1, 2, 3, 4));
-    Tenh::UniformTupleOfLength_f<int,6>::T t6(Tenh::uniform_tuple<int>(0, 1, 2, 3, 4, 5));
-    Tenh::UniformTupleOfLength_f<int,7>::T t7(Tenh::uniform_tuple<int>(0, 1, 2, 3, 4, 5, 6));
-    Tenh::UniformTupleOfLength_f<int,8>::T t8(Tenh::uniform_tuple<int>(0, 1, 2, 3, 4, 5, 6, 7));
+    Tenh::UniformTuple_f<int,0>::T t0(Tenh::uniform_tuple<int>());
+    Tenh::UniformTuple_f<int,1>::T t1(Tenh::uniform_tuple<int>(0));
+    Tenh::UniformTuple_f<int,2>::T t2(Tenh::uniform_tuple<int>(0, 1));
+    Tenh::UniformTuple_f<int,3>::T t3(Tenh::uniform_tuple<int>(0, 1, 2));
+    Tenh::UniformTuple_f<int,4>::T t4(Tenh::uniform_tuple<int>(0, 1, 2, 3));
+    Tenh::UniformTuple_f<int,5>::T t5(Tenh::uniform_tuple<int>(0, 1, 2, 3, 4));
+    Tenh::UniformTuple_f<int,6>::T t6(Tenh::uniform_tuple<int>(0, 1, 2, 3, 4, 5));
+    Tenh::UniformTuple_f<int,7>::T t7(Tenh::uniform_tuple<int>(0, 1, 2, 3, 4, 5, 6));
+    Tenh::UniformTuple_f<int,8>::T t8(Tenh::uniform_tuple<int>(0, 1, 2, 3, 4, 5, 6, 7));
 
     assert_eq(t0.length(), 0);
 

@@ -91,14 +91,14 @@ template <typename T_> struct Cube_f;
 template <Uint VALUE_> struct Cube_f<Value_t<Uint,VALUE_> >
 {
     static Uint const V = VALUE_*VALUE_*VALUE_;
-    typedef Value_t<Uint,V> T;
+    // typedef Value_t<Uint,V> T;
 };
 
 template <typename T_> struct PlusOne_f;
 template <Uint VALUE_> struct PlusOne_f<Value_t<Uint,VALUE_> >
 {
     static Uint const V = VALUE_+1;
-    typedef Value_t<Uint,V> T;
+    // typedef Value_t<Uint,V> T;
 };
 
 MAKE_1_ARY_VALUE_EVALUATOR(Cube);

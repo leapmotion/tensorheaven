@@ -870,45 +870,45 @@ void test_AreEqualAsSets (Context const &context)
     // there is currently no runtime test code here, but that could change
 }
 
-void test_HasNontrivialIntersectionAsSets (Context const &context)
+void test_HasNontrivialSetIntersection (Context const &context)
 {
-    static_assert(!Tenh::HasNontrivialIntersectionAsSets_f<Tenh::Typle_t<>,Tenh::Typle_t<>>::V, "error");
-    static_assert(Tenh::HasNontrivialIntersectionAsSets_f<Tenh::Typle_t<int>,Tenh::Typle_t<int>>::V, "error");
-    static_assert(!Tenh::HasNontrivialIntersectionAsSets_f<Tenh::Typle_t<float>,Tenh::Typle_t<int>>::V, "error");
-    static_assert(Tenh::HasNontrivialIntersectionAsSets_f<Tenh::Typle_t<float,int>,Tenh::Typle_t<int,float>>::V, "error");
-    static_assert(Tenh::HasNontrivialIntersectionAsSets_f<Tenh::Typle_t<float,int,char>,Tenh::Typle_t<int,double>>::V, "error");
+    static_assert(!Tenh::HasNontrivialSetIntersection_f<Tenh::Typle_t<>,Tenh::Typle_t<>>::V, "error");
+    static_assert(Tenh::HasNontrivialSetIntersection_f<Tenh::Typle_t<int>,Tenh::Typle_t<int>>::V, "error");
+    static_assert(!Tenh::HasNontrivialSetIntersection_f<Tenh::Typle_t<float>,Tenh::Typle_t<int>>::V, "error");
+    static_assert(Tenh::HasNontrivialSetIntersection_f<Tenh::Typle_t<float,int>,Tenh::Typle_t<int,float>>::V, "error");
+    static_assert(Tenh::HasNontrivialSetIntersection_f<Tenh::Typle_t<float,int,char>,Tenh::Typle_t<int,double>>::V, "error");
 
-    static_assert(!Tenh::HasNontrivialIntersectionAsSets_e<Tenh::Typle_t<>>::Eval_f<Tenh::Typle_t<>>::V, "error");
-    static_assert(Tenh::HasNontrivialIntersectionAsSets_e<Tenh::Typle_t<int>>::Eval_f<Tenh::Typle_t<int>>::V, "error");
-    static_assert(!Tenh::HasNontrivialIntersectionAsSets_e<Tenh::Typle_t<int>>::Eval_f<Tenh::Typle_t<float>>::V, "error");
-    static_assert(Tenh::HasNontrivialIntersectionAsSets_e<Tenh::Typle_t<int,float>>::Eval_f<Tenh::Typle_t<float,int>>::V, "error");
-    static_assert(Tenh::HasNontrivialIntersectionAsSets_e<Tenh::Typle_t<int,double>>::Eval_f<Tenh::Typle_t<float,int,char>>::V, "error");
+    static_assert(!Tenh::HasNontrivialSetIntersection_e<Tenh::Typle_t<>>::Eval_f<Tenh::Typle_t<>>::V, "error");
+    static_assert(Tenh::HasNontrivialSetIntersection_e<Tenh::Typle_t<int>>::Eval_f<Tenh::Typle_t<int>>::V, "error");
+    static_assert(!Tenh::HasNontrivialSetIntersection_e<Tenh::Typle_t<int>>::Eval_f<Tenh::Typle_t<float>>::V, "error");
+    static_assert(Tenh::HasNontrivialSetIntersection_e<Tenh::Typle_t<int,float>>::Eval_f<Tenh::Typle_t<float,int>>::V, "error");
+    static_assert(Tenh::HasNontrivialSetIntersection_e<Tenh::Typle_t<int,double>>::Eval_f<Tenh::Typle_t<float,int,char>>::V, "error");
 
     // there is currently no runtime test code here, but that could change
 }
 
-void test_IntersectionAsSets (Context const &context)
+void test_SetIntersection (Context const &context)
 {
-    static_assert(Tenh::TypesAreEqual_f<Tenh::IntersectionAsSets_f<Tenh::Typle_t<>,Tenh::Typle_t<>>::T,
+    static_assert(Tenh::TypesAreEqual_f<Tenh::SetIntersection_f<Tenh::Typle_t<>,Tenh::Typle_t<>>::T,
                                         Tenh::Typle_t<>>::V, "error");
-    static_assert(Tenh::TypesAreEqual_f<Tenh::IntersectionAsSets_f<Tenh::Typle_t<int>,Tenh::Typle_t<int>>::T,
+    static_assert(Tenh::TypesAreEqual_f<Tenh::SetIntersection_f<Tenh::Typle_t<int>,Tenh::Typle_t<int>>::T,
                                         Tenh::Typle_t<int>>::V, "error");
-    static_assert(Tenh::TypesAreEqual_f<Tenh::IntersectionAsSets_f<Tenh::Typle_t<float>,Tenh::Typle_t<int>>::T,
+    static_assert(Tenh::TypesAreEqual_f<Tenh::SetIntersection_f<Tenh::Typle_t<float>,Tenh::Typle_t<int>>::T,
                                         Tenh::Typle_t<>>::V, "error");
-    static_assert(Tenh::TypesAreEqual_f<Tenh::IntersectionAsSets_f<Tenh::Typle_t<float,int>,Tenh::Typle_t<int,float>>::T,
+    static_assert(Tenh::TypesAreEqual_f<Tenh::SetIntersection_f<Tenh::Typle_t<float,int>,Tenh::Typle_t<int,float>>::T,
                                         Tenh::Typle_t<float,int>>::V, "error");
-    static_assert(Tenh::TypesAreEqual_f<Tenh::IntersectionAsSets_f<Tenh::Typle_t<float,int,char>,Tenh::Typle_t<int,double>>::T,
+    static_assert(Tenh::TypesAreEqual_f<Tenh::SetIntersection_f<Tenh::Typle_t<float,int,char>,Tenh::Typle_t<int,double>>::T,
                                         Tenh::Typle_t<int>>::V, "error");
 
-    static_assert(Tenh::TypesAreEqual_f<Tenh::IntersectionAsSets_e<Tenh::Typle_t<>>::Eval_f<Tenh::Typle_t<>>::T,
+    static_assert(Tenh::TypesAreEqual_f<Tenh::SetIntersection_e<Tenh::Typle_t<>>::Eval_f<Tenh::Typle_t<>>::T,
                                         Tenh::Typle_t<>>::V, "error");
-    static_assert(Tenh::TypesAreEqual_f<Tenh::IntersectionAsSets_e<Tenh::Typle_t<int>>::Eval_f<Tenh::Typle_t<int>>::T,
+    static_assert(Tenh::TypesAreEqual_f<Tenh::SetIntersection_e<Tenh::Typle_t<int>>::Eval_f<Tenh::Typle_t<int>>::T,
                                         Tenh::Typle_t<int>>::V, "error");
-    static_assert(Tenh::TypesAreEqual_f<Tenh::IntersectionAsSets_e<Tenh::Typle_t<int>>::Eval_f<Tenh::Typle_t<float>>::T,
+    static_assert(Tenh::TypesAreEqual_f<Tenh::SetIntersection_e<Tenh::Typle_t<int>>::Eval_f<Tenh::Typle_t<float>>::T,
                                         Tenh::Typle_t<>>::V, "error");
-    static_assert(Tenh::TypesAreEqual_f<Tenh::IntersectionAsSets_e<Tenh::Typle_t<int,float>>::Eval_f<Tenh::Typle_t<float,int>>::T,
+    static_assert(Tenh::TypesAreEqual_f<Tenh::SetIntersection_e<Tenh::Typle_t<int,float>>::Eval_f<Tenh::Typle_t<float,int>>::T,
                                         Tenh::Typle_t<float,int>>::V, "error");
-    static_assert(Tenh::TypesAreEqual_f<Tenh::IntersectionAsSets_e<Tenh::Typle_t<int,double>>::Eval_f<Tenh::Typle_t<float,int,char>>::T,
+    static_assert(Tenh::TypesAreEqual_f<Tenh::SetIntersection_e<Tenh::Typle_t<int,double>>::Eval_f<Tenh::Typle_t<float,int,char>>::T,
                                         Tenh::Typle_t<int>>::V, "error");
 
     static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::intersection_as_sets(Tenh::Typle_t<>(),Tenh::Typle_t<>())),
@@ -1181,12 +1181,12 @@ void test_Unzip (Context const &context)
     // there is currently no runtime test code here, but that could change
 }
 
-void test_UniformTypleOfLength (Context const &context)
+void test_UniformTyple (Context const &context)
 {
-    static_assert(Tenh::TypesAreEqual_f<Tenh::UniformTypleOfLength_f<0,int>::T,Tenh::Typle_t<>>::V, "error");
-    static_assert(Tenh::TypesAreEqual_f<Tenh::UniformTypleOfLength_f<1,int>::T,Tenh::Typle_t<int>>::V, "error");
-    static_assert(Tenh::TypesAreEqual_f<Tenh::UniformTypleOfLength_f<2,int>::T,Tenh::Typle_t<int,int>>::V, "error");
-    static_assert(Tenh::TypesAreEqual_f<Tenh::UniformTypleOfLength_f<3,int>::T,Tenh::Typle_t<int,int,int>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::UniformTyple_f<0,int>::T,Tenh::Typle_t<>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::UniformTyple_f<1,int>::T,Tenh::Typle_t<int>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::UniformTyple_f<2,int>::T,Tenh::Typle_t<int,int>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<Tenh::UniformTyple_f<3,int>::T,Tenh::Typle_t<int,int,int>>::V, "error");
 
     static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::uniform_typle<0>(int())),Tenh::Typle_t<>>::V, "error");
     static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::uniform_typle<1>(int())),Tenh::Typle_t<int>>::V, "error");
@@ -1268,13 +1268,13 @@ void AddTests (Directory &parent)
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_ContainsDuplicates, RESULT_NO_ERROR);
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_IsASubsetOf, RESULT_NO_ERROR);
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_AreEqualAsSets, RESULT_NO_ERROR);
-    LVD_ADD_TEST_CASE_FUNCTION(dir, test_HasNontrivialIntersectionAsSets, RESULT_NO_ERROR);
-    LVD_ADD_TEST_CASE_FUNCTION(dir, test_IntersectionAsSets, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, test_HasNontrivialSetIntersection, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, test_SetIntersection, RESULT_NO_ERROR);
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_SetSubtraction, RESULT_NO_ERROR);
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_EachTypleHasEqualLength, RESULT_NO_ERROR);
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_Zip, RESULT_NO_ERROR);
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_Unzip, RESULT_NO_ERROR);
-    LVD_ADD_TEST_CASE_FUNCTION(dir, test_UniformTypleOfLength, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, test_UniformTyple, RESULT_NO_ERROR);
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_TypleIsUniform, RESULT_NO_ERROR);
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_TypeOfUniformTyple, RESULT_NO_ERROR);
 

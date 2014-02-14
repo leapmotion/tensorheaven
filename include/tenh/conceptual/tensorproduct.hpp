@@ -382,7 +382,7 @@ private:
 template <Uint32 ORDER_, typename Factor_>
 struct TensorPower_f
 {
-    typedef TensorProduct_c<typename UniformTypleOfLength_f<ORDER_,Factor_>::T> T;
+    typedef TensorProduct_c<typename UniformTyple_f<ORDER_,Factor_>::T> T;
 private:
     TensorPower_f();
 };
@@ -392,7 +392,7 @@ struct TensorPowerOfVectorSpace_f
 {
     static_assert(HasVectorSpaceStructure_f<Factor_>::V, "Factor_ must be a vector space");
     static_assert(IS_VECTOR_SPACE_UNIQUELY(Factor_), "Factor_ must have a unique vector space structure");
-    typedef TensorProductOfVectorSpaces_c<typename UniformTypleOfLength_f<ORDER_,Factor_>::T> T;
+    typedef TensorProductOfVectorSpaces_c<typename UniformTyple_f<ORDER_,Factor_>::T> T;
 private:
     TensorPowerOfVectorSpace_f();
 };
@@ -402,7 +402,7 @@ struct TensorPowerOfBasedVectorSpace_f
 {
     static_assert(HasBasedVectorSpaceStructure_f<Factor_>::V, "Factor_ must be a based vector space");
     static_assert(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), "Factor_ must have a unique based vector space structure");
-    typedef TensorProductOfBasedVectorSpaces_c<typename UniformTypleOfLength_f<ORDER_,Factor_>::T> T;
+    typedef TensorProductOfBasedVectorSpaces_c<typename UniformTyple_f<ORDER_,Factor_>::T> T;
 private:
     TensorPowerOfBasedVectorSpace_f();
 };

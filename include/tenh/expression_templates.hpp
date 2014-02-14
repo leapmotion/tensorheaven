@@ -560,7 +560,7 @@ struct ExpressionTemplate_Multiplication_t
         STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<LeftOperand>::V, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<RightOperand>::V, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
         STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename LeftOperand::Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM((!HasNontrivialIntersectionAsSets_f<FreeDimIndexTyple,UsedDimIndexTyple>::V), FREE_INDICES_DONT_COLLIDE_WITH_USED)
+        STATIC_ASSERT_IN_ENUM((!HasNontrivialSetIntersection_f<FreeDimIndexTyple,UsedDimIndexTyple>::V), FREE_INDICES_DONT_COLLIDE_WITH_USED)
     };
     // TODO: ensure there are no indices that occur 3+ times (?)
 
