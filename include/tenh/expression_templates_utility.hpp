@@ -85,7 +85,7 @@ struct FreeFactorTyple_f
 private:
     typedef typename Zip_f<Typle_t<FactorTyple_,IndexTyple_>>::T FactorAndIndexPairTyple;
     typedef typename FreeIndexTyple_f<IndexTyple_>::T FreeIndexTyple;
-    typedef typename ElementsOfTypleSatisfying_f<FactorAndIndexPairTyple,IndexIsFree_e<FreeIndexTyple>>::T FreeFactorAndIndexPairTyple;
+    typedef typename ElementsSatisfying_f<FactorAndIndexPairTyple,IndexIsFree_e<FreeIndexTyple>>::T FreeFactorAndIndexPairTyple;
     typedef typename Unzip_f<FreeFactorAndIndexPairTyple>::T Unzipped;
     enum { STATIC_ASSERT_IN_ENUM((Length_f<Unzipped>::V == 0 || Length_f<Unzipped>::V == 2), LENGTH_MUST_BE_EXACTLY_0_OR_2) };
     FreeFactorTyple_f();

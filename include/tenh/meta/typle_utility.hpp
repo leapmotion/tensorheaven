@@ -75,6 +75,7 @@ struct OnEach_f<Typle_t<>,FunctionEvaluator_>
 };
 
 MAKE_2_ARY_TYPE_EVALUATOR(OnEach, typename, FunctionEvaluator_);
+MAKE_2_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(on_each, OnEach);
 
 // ///////////////////////////////////////////////////////////////////////////
 // logic
@@ -242,6 +243,12 @@ struct Element_f<Typle_t<Head_,BodyTypes_...>,0>
 
 // TODO: figure out how to Doxygen-comment this, if at all.
 MAKE_2_ARY_TYPE_EVALUATOR(Element, Uint32, INDEX_);
+// TODO: figure out how to Doxygen-comment this, if at all.
+template <Uint32 INDEX_, typename Typle_>
+typename Element_f<Typle_,INDEX_>::T element (Typle_ const &)
+{
+    return typename Element_f<Typle_,INDEX_>::T();
+}
 
 template <typename Typle_, typename Element_>
 struct Contains_f
@@ -308,6 +315,12 @@ struct TrailingTyple_f<Typle_t<>,START_INDEX_>
 
 MAKE_2_ARY_TYPE_EVALUATOR(TrailingTyple, Uint32, START_INDEX_);
 
+template <Uint32 START_INDEX_, typename Typle_>
+typename TrailingTyple_f<Typle_,START_INDEX_>::T trailing_typle (Typle_ const &)
+{
+    return typename TrailingTyple_f<Typle_,START_INDEX_>::T();
+}
+
 /// @struct LeadingTyple_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Returns the Typle_t which is the range [0, END_INDEX_) (right
 /// endpoint not included) of Typle_.
@@ -336,6 +349,12 @@ struct LeadingTyple_f<Typle_t<>,END_INDEX_>
 
 MAKE_2_ARY_TYPE_EVALUATOR(LeadingTyple, Uint32, END_INDEX_);
 
+template <Uint32 END_INDEX_, typename Typle_>
+typename LeadingTyple_f<Typle_,END_INDEX_>::T leading_typle (Typle_ const &)
+{
+    return typename LeadingTyple_f<Typle_,END_INDEX_>::T();
+}
+
 /// @struct TypleRange_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Returns the Typle_t which is the range [START_INDEX_, END_INDEX_) (right
 /// endpoint not included) of Typle_.
@@ -353,6 +372,12 @@ public:
 };
 
 MAKE_3_ARY_TYPE_EVALUATOR(TypleRange, Uint32, START_INDEX_, Uint32, END_INDEX_);
+
+template <Uint32 START_INDEX_, Uint32 END_INDEX_, typename Typle_>
+typename TypleRange_f<Typle_,START_INDEX_,END_INDEX_>::T typle_range (Typle_ const &)
+{
+    return typename TypleRange_f<Typle_,START_INDEX_,END_INDEX_>::T();
+}
 
 /// @struct UniqueTypesIn_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Generates a Typle_t containing the types of Typle_, but without repetitions.
@@ -382,6 +407,7 @@ struct UniqueTypesIn_f<Typle_t<>,UsedTyple_>
 /// @endcond
 
 MAKE_1_ARY_TYPE_EVALUATOR(UniqueTypesIn);
+MAKE_1_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(unique_types_in, UniqueTypesIn);
 
 /// @struct OccurrenceCount_t typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Counts how often a type occurres in a Typle_t.
@@ -451,16 +477,22 @@ public:
 
 MAKE_2_ARY_TYPE_EVALUATOR(ElementsHavingMultiplicity, Uint32, MULTIPLICITY_);
 
-/// @struct ElementsOfTypleSatisfying_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
+template <Uint32 MULTIPLICITY_, typename Typle_>
+typename ElementsHavingMultiplicity_f<Typle_,MULTIPLICITY_>::T elements_having_multiplicity (Typle_ const &)
+{
+    return typename ElementsHavingMultiplicity_f<Typle_,MULTIPLICITY_>::T();
+}
+
+/// @struct ElementsSatisfying_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Returns a Typle_t of all of the elements of Typle_ which satisfy a given predicate.
 /// @details Predicate_e_ must be an evaluator.
 /// @tparam Typle_ the Typle_t to search within.
 /// @tparam Predicate_e_ the predicate the types must satisfy to be returned.
 template <typename Typle_, typename Predicate_e_>
-struct ElementsOfTypleSatisfying_f
+struct ElementsSatisfying_f
 {
 private:
-    typedef typename ElementsOfTypleSatisfying_f<typename BodyTyple_f<Typle_>::T,Predicate_e_>::T ElementsInBodyTypleSatisfying;
+    typedef typename ElementsSatisfying_f<typename BodyTyple_f<Typle_>::T,Predicate_e_>::T ElementsInBodyTypleSatisfying;
 public:
     typedef typename If_f<Predicate_e_::template Eval_f<typename Head_f<Typle_>::T>::V,
                           typename HeadBodyTyple_f<typename Head_f<Typle_>::T,ElementsInBodyTypleSatisfying>::T,
@@ -469,13 +501,14 @@ public:
 
 /// @cond false
 template <typename Predicate_e_>
-struct ElementsOfTypleSatisfying_f<Typle_t<>,Predicate_e_>
+struct ElementsSatisfying_f<Typle_t<>,Predicate_e_>
 {
     typedef Typle_t<> T;
 };
 /// @endcond
 
-MAKE_2_ARY_TYPE_EVALUATOR(ElementsOfTypleSatisfying, typename, Predicate_e_);
+MAKE_2_ARY_TYPE_EVALUATOR(ElementsSatisfying, typename, Predicate_e_);
+MAKE_2_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(elements_satisfying, ElementsSatisfying);
 
 /// @struct ContainsDuplicates_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Determines if a Typle_t contains any duplicate types.
@@ -501,12 +534,6 @@ struct IsASubsetOf_f
 };
 
 /// @cond false
-// template <typename TypleAHead_, typename TypleB_>
-// struct IsASubsetOf_f<Typle_t<TypleAHead_>,TypleB_>
-// {
-//     static bool const V = Contains_f<TypleB_,TypleAHead_>::V;
-// };
-
 template <typename TypleB_>
 struct IsASubsetOf_f<Typle_t<>,TypleB_>
 {
@@ -570,6 +597,7 @@ struct IntersectionAsSets_f<Typle_t<>,TypleB_>
 /// @endcond
 
 MAKE_2_ARY_TYPE_EVALUATOR(IntersectionAsSets, typename, TypleB_);
+MAKE_2_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(intersection_as_sets, IntersectionAsSets);
 
 // renders the subtraction of TypleB_ from TypleA_, as sets
 /// @struct SetSubtraction_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
@@ -596,6 +624,7 @@ struct SetSubtraction_f<Typle_t<>,TypleB_>
 /// @endcond
 
 MAKE_2_ARY_TYPE_EVALUATOR(SetSubtraction, typename, TypleB_);
+MAKE_2_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(set_subtraction, SetSubtraction);
 
 /// @struct EachTypleHasEqualLength_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Checks that all supplied Typle_t have the same length.
@@ -666,6 +695,7 @@ struct Zip_f<Typle_t<>>
 /// @endcond
 
 MAKE_1_ARY_TYPE_EVALUATOR(Zip);
+MAKE_1_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(zip, Zip);
 
 /// @struct Unzip_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief The inverse to Zip_f -- e.g. (('a',1),('b',2),('c',3)) turns into (('a','b','c'),(1,2,3)).
@@ -678,6 +708,7 @@ struct Unzip_f
 };
 
 MAKE_1_ARY_TYPE_EVALUATOR(Unzip);
+MAKE_1_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(unzip, Unzip);
 
 /// @struct UniformTypleOfLength_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Generates a Typle_t with a specified length, containing only one type.
@@ -704,6 +735,12 @@ private:
 // NOTE: technically can't make an evaluator for UniformTypleOfLength_f, because its first
 // parameter is not a type, but a Uint32.  to add this capability would require changing
 // how evaluators are declared somewhat.
+
+template <Uint32 LENGTH_, typename Type_>
+typename UniformTypleOfLength_f<LENGTH_,Type_>::T uniform_typle (Type_ const &)
+{
+    return typename UniformTypleOfLength_f<LENGTH_,Type_>::T();
+}
 
 /// @struct TypleIsUniform_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
 /// @brief Returns true if (and only if) every element of the given Typle_t is the same.
@@ -755,6 +792,9 @@ public:
     typedef Head_ T;
 };
 /// @endcond
+
+MAKE_1_ARY_TYPE_EVALUATOR(TypeOfUniformTyple);
+MAKE_1_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(type_of_uniform_typle, TypeOfUniformTyple);
 
 } // end of namespace Tenh
 

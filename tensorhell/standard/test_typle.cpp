@@ -277,6 +277,15 @@ void test_OnEach (Context const &context)
     static_assert(Tenh::TypesAreEqual_f<OnEach_IsFloatingPointType_e::Eval_f<Tenh::Typle_t<float,int>>::T,
                                         Tenh::Typle_t<True,False>>::V, "error");
 
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::on_each(Tenh::Typle_t<>(),IsFloatingPointType_e())),
+                                        Tenh::Typle_t<>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::on_each(Tenh::Typle_t<int>(),IsFloatingPointType_e())),
+                                        Tenh::Typle_t<False>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::on_each(Tenh::Typle_t<float>(),IsFloatingPointType_e())),
+                                        Tenh::Typle_t<True>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::on_each(Tenh::Typle_t<float,int>(),IsFloatingPointType_e())),
+                                        Tenh::Typle_t<True,False>>::V, "error");
+
     // there is currently no runtime test code here, but that could change
 }
 
@@ -466,6 +475,12 @@ void test_Element (Context const &context)
     static_assert(Tenh::TypesAreEqual_f<Element2_e::Eval_f<T>::T,bool>::V, "error");
     static_assert(Tenh::TypesAreEqual_f<Element3_e::Eval_f<T>::T,char>::V, "error");
 
+    T t;
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::element<0>(t)),int>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::element<1>(t)),float>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::element<2>(t)),bool>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::element<3>(t)),char>::V, "error");
+
     // there is currently no runtime test code here, but that could change
 }
 
@@ -531,6 +546,15 @@ void test_TrailingTyple (Context const &context)
     static_assert(Tenh::TypesAreEqual_f<TrailingTyple4_e::Eval_f<T>::T,Tenh::Typle_t<char>>::V, "error");
     static_assert(Tenh::TypesAreEqual_f<TrailingTyple5_e::Eval_f<T>::T,Tenh::Typle_t<>>::V, "error");
 
+    T t;
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::trailing_typle<0>(t)),T>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::trailing_typle<1>(t)),Tenh::Typle_t<float,bool,float,char>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::trailing_typle<2>(t)),Tenh::Typle_t<bool,float,char>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::trailing_typle<3>(t)),Tenh::Typle_t<float,char>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::trailing_typle<4>(t)),Tenh::Typle_t<char>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::trailing_typle<5>(t)),Tenh::Typle_t<>>::V, "error");
+
+
     // there is currently no runtime test code here, but that could change
 }
 
@@ -556,6 +580,14 @@ void test_LeadingTyple (Context const &context)
     static_assert(Tenh::TypesAreEqual_f<LeadingTyple3_e::Eval_f<T>::T,Tenh::Typle_t<int,float,bool>>::V, "error");
     static_assert(Tenh::TypesAreEqual_f<LeadingTyple4_e::Eval_f<T>::T,Tenh::Typle_t<int,float,bool,float>>::V, "error");
     static_assert(Tenh::TypesAreEqual_f<LeadingTyple5_e::Eval_f<T>::T,T>::V, "error");
+
+    T t;
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::leading_typle<0>(t)),Tenh::Typle_t<>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::leading_typle<1>(t)),Tenh::Typle_t<int>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::leading_typle<2>(t)),Tenh::Typle_t<int,float>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::leading_typle<3>(t)),Tenh::Typle_t<int,float,bool>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::leading_typle<4>(t)),Tenh::Typle_t<int,float,bool,float>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::leading_typle<5>(t)),T>::V, "error");
 
     // there is currently no runtime test code here, but that could change
 }
@@ -618,6 +650,35 @@ void test_TypleRange (Context const &context)
 
     static_assert(Tenh::TypesAreEqual_f<Tenh::TypleRange_e<5,5>::Eval_f<T>::T,Tenh::Typle_t<>>::V, "error");
 
+    
+    T t;
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::typle_range<0,0>(t)),Tenh::Typle_t<>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::typle_range<0,1>(t)),Tenh::Typle_t<int>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::typle_range<0,2>(t)),Tenh::Typle_t<int,float>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::typle_range<0,3>(t)),Tenh::Typle_t<int,float,bool>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::typle_range<0,4>(t)),Tenh::Typle_t<int,float,bool,float>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::typle_range<0,5>(t)),Tenh::Typle_t<int,float,bool,float,char>>::V, "error");
+
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::typle_range<1,1>(t)),Tenh::Typle_t<>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::typle_range<1,2>(t)),Tenh::Typle_t<float>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::typle_range<1,3>(t)),Tenh::Typle_t<float,bool>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::typle_range<1,4>(t)),Tenh::Typle_t<float,bool,float>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::typle_range<1,5>(t)),Tenh::Typle_t<float,bool,float,char>>::V, "error");
+
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::typle_range<2,2>(t)),Tenh::Typle_t<>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::typle_range<2,3>(t)),Tenh::Typle_t<bool>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::typle_range<2,4>(t)),Tenh::Typle_t<bool,float>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::typle_range<2,5>(t)),Tenh::Typle_t<bool,float,char>>::V, "error");
+
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::typle_range<3,3>(t)),Tenh::Typle_t<>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::typle_range<3,4>(t)),Tenh::Typle_t<float>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::typle_range<3,5>(t)),Tenh::Typle_t<float,char>>::V, "error");
+
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::typle_range<4,4>(t)),Tenh::Typle_t<>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::typle_range<4,5>(t)),Tenh::Typle_t<char>>::V, "error");
+
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::typle_range<5,5>(t)),Tenh::Typle_t<>>::V, "error");
+
     // there is currently no runtime test code here, but that could change
 }
 
@@ -634,6 +695,12 @@ void test_UniqueTypesIn (Context const &context)
     static_assert(Tenh::TypesAreEqual_f<Tenh::UniqueTypesIn_e::Eval_f<Tenh::Typle_t<int,int>>::T,Tenh::Typle_t<int>>::V, "error");
     static_assert(Tenh::TypesAreEqual_f<Tenh::UniqueTypesIn_e::Eval_f<Tenh::Typle_t<int,float,int>>::T,Tenh::Typle_t<int,float>>::V, "error");
     static_assert(Tenh::TypesAreEqual_f<Tenh::UniqueTypesIn_e::Eval_f<Tenh::Typle_t<int,float,int,char>>::T,Tenh::Typle_t<int,float,char>>::V, "error");
+
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::unique_types_in(Tenh::Typle_t<>())),Tenh::Typle_t<>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::unique_types_in(Tenh::Typle_t<int>())),Tenh::Typle_t<int>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::unique_types_in(Tenh::Typle_t<int,int>())),Tenh::Typle_t<int>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::unique_types_in(Tenh::Typle_t<int,float,int>())),Tenh::Typle_t<int,float>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::unique_types_in(Tenh::Typle_t<int,float,int,char>())),Tenh::Typle_t<int,float,char>>::V, "error");
 
     // there is currently no runtime test code here, but that could change
 }
@@ -675,23 +742,23 @@ void test_ElementsHavingMultiplicity (Context const &context)
 
 void test_ElementsOfTypleSatisfying (Context const &context)
 {
-    static_assert(Tenh::TypesAreEqual_f<Tenh::ElementsOfTypleSatisfying_f<Tenh::Typle_t<int,char,int,float,float,double,double,double,int,bool>,
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ElementsSatisfying_f<Tenh::Typle_t<int,char,int,float,float,double,double,double,int,bool>,
                                                                                  IsFloatingPointType_e>::T,
                                         Tenh::Typle_t<float,float,double,double,double>>::V, "error");
-    static_assert(Tenh::TypesAreEqual_f<Tenh::ElementsOfTypleSatisfying_f<Tenh::Typle_t<int,char,int,int,bool>,
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ElementsSatisfying_f<Tenh::Typle_t<int,char,int,int,bool>,
                                                                                  IsFloatingPointType_e>::T,
                                         Tenh::Typle_t<>>::V, "error");
-    static_assert(Tenh::TypesAreEqual_f<Tenh::ElementsOfTypleSatisfying_f<Tenh::Typle_t<int>,
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ElementsSatisfying_f<Tenh::Typle_t<int>,
                                                                                  IsFloatingPointType_e>::T,
                                         Tenh::Typle_t<>>::V, "error");
-    static_assert(Tenh::TypesAreEqual_f<Tenh::ElementsOfTypleSatisfying_f<Tenh::Typle_t<float>,
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ElementsSatisfying_f<Tenh::Typle_t<float>,
                                                                                  IsFloatingPointType_e>::T,
                                         Tenh::Typle_t<float>>::V, "error");
-    static_assert(Tenh::TypesAreEqual_f<Tenh::ElementsOfTypleSatisfying_f<Tenh::Typle_t<>,
+    static_assert(Tenh::TypesAreEqual_f<Tenh::ElementsSatisfying_f<Tenh::Typle_t<>,
                                                                                  IsFloatingPointType_e>::T,
                                         Tenh::Typle_t<>>::V, "error");
 
-    typedef Tenh::ElementsOfTypleSatisfying_e<IsFloatingPointType_e> ElementsOfTypleThatAreFloatingPointType_e;
+    typedef Tenh::ElementsSatisfying_e<IsFloatingPointType_e> ElementsOfTypleThatAreFloatingPointType_e;
     static_assert(Tenh::TypesAreEqual_f<ElementsOfTypleThatAreFloatingPointType_e::Eval_f<Tenh::Typle_t<int,char,int,float,float,double,double,double,int,bool>>::T,
                                         Tenh::Typle_t<float,float,double,double,double>>::V, "error");
     static_assert(Tenh::TypesAreEqual_f<ElementsOfTypleThatAreFloatingPointType_e::Eval_f<Tenh::Typle_t<int,char,int,int,bool>>::T,
@@ -701,6 +768,22 @@ void test_ElementsOfTypleSatisfying (Context const &context)
     static_assert(Tenh::TypesAreEqual_f<ElementsOfTypleThatAreFloatingPointType_e::Eval_f<Tenh::Typle_t<float>>::T,
                                         Tenh::Typle_t<float>>::V, "error");
     static_assert(Tenh::TypesAreEqual_f<ElementsOfTypleThatAreFloatingPointType_e::Eval_f<Tenh::Typle_t<>>::T,
+                                        Tenh::Typle_t<>>::V, "error");
+
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::elements_satisfying(Tenh::Typle_t<int,char,int,float,float,double,double,double,int,bool>(),
+                                                                           IsFloatingPointType_e())),
+                                        Tenh::Typle_t<float,float,double,double,double>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::elements_satisfying(Tenh::Typle_t<int,char,int,int,bool>(),
+                                                                           IsFloatingPointType_e())),
+                                        Tenh::Typle_t<>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::elements_satisfying(Tenh::Typle_t<int>(),
+                                                                           IsFloatingPointType_e())),
+                                        Tenh::Typle_t<>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::elements_satisfying(Tenh::Typle_t<float>(),
+                                                                           IsFloatingPointType_e())),
+                                        Tenh::Typle_t<float>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::elements_satisfying(Tenh::Typle_t<>(),
+                                                                           IsFloatingPointType_e())),
                                         Tenh::Typle_t<>>::V, "error");
 
     // there is currently no runtime test code here, but that could change
@@ -828,6 +911,17 @@ void test_IntersectionAsSets (Context const &context)
     static_assert(Tenh::TypesAreEqual_f<Tenh::IntersectionAsSets_e<Tenh::Typle_t<int,double>>::Eval_f<Tenh::Typle_t<float,int,char>>::T,
                                         Tenh::Typle_t<int>>::V, "error");
 
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::intersection_as_sets(Tenh::Typle_t<>(),Tenh::Typle_t<>())),
+                                        Tenh::Typle_t<>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::intersection_as_sets(Tenh::Typle_t<int>(),Tenh::Typle_t<int>())),
+                                        Tenh::Typle_t<int>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::intersection_as_sets(Tenh::Typle_t<float>(),Tenh::Typle_t<int>())),
+                                        Tenh::Typle_t<>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::intersection_as_sets(Tenh::Typle_t<float,int>(),Tenh::Typle_t<int,float>())),
+                                        Tenh::Typle_t<float,int>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::intersection_as_sets(Tenh::Typle_t<float,int,char>(),Tenh::Typle_t<int,double>())),
+                                        Tenh::Typle_t<int>>::V, "error");
+
     // there is currently no runtime test code here, but that could change
 }
 
@@ -889,6 +983,14 @@ void test_SetSubtraction (Context const &context)
                                         Tenh::Typle_t<float,double>>::V, "error");
     static_assert(Tenh::TypesAreEqual_f<Tenh::SetSubtraction_e<Tenh::Typle_t<int,float>>::Eval_f<Tenh::Typle_t<int,float,double>>::T,
                                         Tenh::Typle_t<double>>::V, "error");
+
+
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::set_subtraction(Tenh::Typle_t<int,float>(),Tenh::Typle_t<>())),
+                                        Tenh::Typle_t<int,float>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::set_subtraction(Tenh::Typle_t<int,float>(),Tenh::Typle_t<int>())),
+                                        Tenh::Typle_t<float>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::set_subtraction(Tenh::Typle_t<int,float>(),Tenh::Typle_t<int,float>())),
+                                        Tenh::Typle_t<>>::V, "error");
 
     // there is currently no runtime test code here, but that could change
 }
@@ -974,6 +1076,14 @@ void test_Zip (Context const &context)
     static_assert(Tenh::TypesAreEqual_f<Tenh::Zip_e::Eval_f<Tenh::Typle_t<Tenh::Typle_t<int,float>,Tenh::Typle_t<char,Uint32>,Tenh::Typle_t<bool,double>>>::T,
                                         Tenh::Typle_t<Tenh::Typle_t<int,char,bool>,Tenh::Typle_t<float,Uint32,double>>>::V, "error");
 
+
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::zip(Tenh::Typle_t<Tenh::Typle_t<int>>())),
+                                        Tenh::Typle_t<Tenh::Typle_t<int>>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::zip(Tenh::Typle_t<Tenh::Typle_t<int>,Tenh::Typle_t<char>>())),
+                                        Tenh::Typle_t<Tenh::Typle_t<int,char>>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::zip(Tenh::Typle_t<Tenh::Typle_t<int>,Tenh::Typle_t<char>,Tenh::Typle_t<bool>>())),
+                                        Tenh::Typle_t<Tenh::Typle_t<int,char,bool>>>::V, "error");
+
     // there is currently no runtime test code here, but that could change
 }
 
@@ -1038,6 +1148,36 @@ void test_Unzip (Context const &context)
         static_assert(Tenh::TypesAreEqual_f<Tenh::Unzip_e::Eval_f<Tenh::Zip_f<Typles>::T>::T,Typles>::V, "error");
     }
 
+
+    {
+        typedef Tenh::Typle_t<> Typles;
+        static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::unzip(Tenh::zip(Typles()))),Typles>::V, "error");
+    }
+    {
+        typedef Tenh::Typle_t<Tenh::Typle_t<int>> Typles;
+        static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::unzip(Tenh::zip(Typles()))),Typles>::V, "error");
+    }
+    {
+        typedef Tenh::Typle_t<Tenh::Typle_t<int>,Tenh::Typle_t<float>> Typles;
+        static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::unzip(Tenh::zip(Typles()))),Typles>::V, "error");
+    }
+    {
+        typedef Tenh::Typle_t<Tenh::Typle_t<int>,Tenh::Typle_t<float>,Tenh::Typle_t<bool>> Typles;
+        static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::unzip(Tenh::zip(Typles()))),Typles>::V, "error");
+    }
+    {
+        typedef Tenh::Typle_t<Tenh::Typle_t<int,double>> Typles;
+        static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::unzip(Tenh::zip(Typles()))),Typles>::V, "error");
+    }
+    {
+        typedef Tenh::Typle_t<Tenh::Typle_t<int,double>,Tenh::Typle_t<float,char>> Typles;
+        static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::unzip(Tenh::zip(Typles()))),Typles>::V, "error");
+    }
+    {
+        typedef Tenh::Typle_t<Tenh::Typle_t<int,double>,Tenh::Typle_t<float,char>,Tenh::Typle_t<bool,Uint32>> Typles;
+        static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::unzip(Tenh::zip(Typles()))),Typles>::V, "error");
+    }
+
     // there is currently no runtime test code here, but that could change
 }
 
@@ -1047,6 +1187,11 @@ void test_UniformTypleOfLength (Context const &context)
     static_assert(Tenh::TypesAreEqual_f<Tenh::UniformTypleOfLength_f<1,int>::T,Tenh::Typle_t<int>>::V, "error");
     static_assert(Tenh::TypesAreEqual_f<Tenh::UniformTypleOfLength_f<2,int>::T,Tenh::Typle_t<int,int>>::V, "error");
     static_assert(Tenh::TypesAreEqual_f<Tenh::UniformTypleOfLength_f<3,int>::T,Tenh::Typle_t<int,int,int>>::V, "error");
+
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::uniform_typle<0>(int())),Tenh::Typle_t<>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::uniform_typle<1>(int())),Tenh::Typle_t<int>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::uniform_typle<2>(int())),Tenh::Typle_t<int,int>>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::uniform_typle<3>(int())),Tenh::Typle_t<int,int,int>>::V, "error");
 
     // there is currently no runtime test code here, but that could change
 }
@@ -1071,6 +1216,18 @@ void test_TypleIsUniform (Context const &context)
     static_assert(!Tenh::TypleIsUniform_e::Eval_f<Tenh::Typle_t<int,char>>::V, "error");
     static_assert(!Tenh::TypleIsUniform_e::Eval_f<Tenh::Typle_t<int,int,char>>::V, "error");
     static_assert(!Tenh::TypleIsUniform_e::Eval_f<Tenh::Typle_t<int,bool,char>>::V, "error");
+
+    // there is currently no runtime test code here, but that could change
+}
+
+void test_TypeOfUniformTyple (Context const &context)
+{
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::type_of_uniform_typle(Tenh::uniform_typle<1>(int()))),int>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::type_of_uniform_typle(Tenh::uniform_typle<2>(int()))),int>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::type_of_uniform_typle(Tenh::uniform_typle<3>(int()))),int>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::type_of_uniform_typle(Tenh::uniform_typle<1>(char()))),char>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::type_of_uniform_typle(Tenh::uniform_typle<2>(char()))),char>::V, "error");
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::type_of_uniform_typle(Tenh::uniform_typle<3>(char()))),char>::V, "error");
 
     // there is currently no runtime test code here, but that could change
 }
@@ -1119,6 +1276,7 @@ void AddTests (Directory &parent)
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_Unzip, RESULT_NO_ERROR);
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_UniformTypleOfLength, RESULT_NO_ERROR);
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_TypleIsUniform, RESULT_NO_ERROR);
+    LVD_ADD_TEST_CASE_FUNCTION(dir, test_TypeOfUniformTyple, RESULT_NO_ERROR);
 
     // TODO: make and test value and type evaluators for each of these metafunctions
 }

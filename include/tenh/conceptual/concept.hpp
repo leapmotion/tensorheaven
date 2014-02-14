@@ -122,7 +122,7 @@ private:
 template <typename Concept_, typename Predicate_e_>
 struct AncestorsSatisfyingPredicate_f
 {
-    typedef typename ElementsOfTypleSatisfying_f<typename AncestorsOf_f<Concept_>::T,Predicate_e_>::T T;
+    typedef typename ElementsSatisfying_f<typename AncestorsOf_f<Concept_>::T,Predicate_e_>::T T;
 private:
     AncestorsSatisfyingPredicate_f();
 };
