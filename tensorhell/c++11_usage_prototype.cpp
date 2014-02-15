@@ -665,7 +665,7 @@ void prototyping_for_better_use_of_complex ()
 // ///////////////////////////////////////////////////////////////////////////
 // decltype awesomeness
 // ///////////////////////////////////////////////////////////////////////////
-
+/*
 /// @struct Head_f typle.hpp "tenh/meta/typle.hpp"
 /// @brief Returns the first type in the argument Typle_t if nonempty; otherwise is undefined.
 template <typename T_> struct Head;
@@ -695,33 +695,33 @@ template <typename Head_, typename... Body_>
 struct Len<Typle_t<Head_,Body_...>> { static Uint32 const V = 1 + Length_f<Typle_t<Body_...>>::V; };
 /// @endcond
 
-#define MAKE_1_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(function, Metafunction) \
-template <typename T0_> \
-typename Metafunction<T0_>::T function (T0_ const &) \
-{ \
-    return typename Metafunction<T0_>::T(); \
-}
+// #define MAKE_1_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(function, Metafunction) \
+// template <typename T0_> \
+// typename Metafunction<T0_>::T function (T0_ const &) \
+// { \
+//     return typename Metafunction<T0_>::T(); \
+// }
 
-#define MAKE_2_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(function, Metafunction) \
-template <typename T0_, typename T1_> \
-typename Metafunction<T0_,T1_>::T function (T0_ const &, T1_ const &) \
-{ \
-    return typename Metafunction<T0_,T1_>::T(); \
-}
+// #define MAKE_2_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(function, Metafunction) \
+// template <typename T0_, typename T1_> \
+// typename Metafunction<T0_,T1_>::T function (T0_ const &, T1_ const &) \
+// { \
+//     return typename Metafunction<T0_,T1_>::T(); \
+// }
 
-#define MAKE_VARIADIC_TYPE_FUNCTION_FOR_METAFUNCTION(function, Metafunction) \
-template <typename... Types_> \
-typename Metafunction<Types_...>::T function (Types_...) \
-{ \
-    return typename Metafunction<Types_...>::T(); \
-}
+// #define MAKE_VARIADIC_TYPE_FUNCTION_FOR_METAFUNCTION(function, Metafunction) \
+// template <typename... Types_> \
+// typename Metafunction<Types_...>::T function (Types_...) \
+// { \
+//     return typename Metafunction<Types_...>::T(); \
+// }
 
-#define MAKE_1_ARY_VALUE_FUNCTION_FOR_METAFUNCTION(function, Metafunction) \
-template <typename T0_> \
-decltype(Metafunction<T0_>::V) function (T0_ const &) \
-{ \
-    return Metafunction<T0_>::V; \
-}
+// #define MAKE_1_ARY_VALUE_FUNCTION_FOR_METAFUNCTION(function, Metafunction) \
+// template <typename T0_> \
+// decltype(Metafunction<T0_>::V) function (T0_ const &) \
+// { \
+//     return Metafunction<T0_>::V; \
+// }
 
 #define MAKE_2_ARY_VALUE_FUNCTION_FOR_METAFUNCTION(function, Metafunction) \
 template <typename T0_, typename T1_> \
@@ -787,7 +787,7 @@ void prototyping_for_awesomeness ()
     std::cout << FORMAT_VALUE(type_string_of(concat(x,y,z))) << '\n';
     std::cout << '\n';
 }
-
+*/
 // ///////////////////////////////////////////////////////////////////////////
 // main function
 // ///////////////////////////////////////////////////////////////////////////
@@ -810,7 +810,7 @@ int main (int argc, char **argv)
     prototyping_for_enable_if();
     prototyping_for_random_number_generation();
     prototyping_for_better_use_of_complex();
-    prototyping_for_awesomeness();
+    // prototyping_for_awesomeness();
 
     return 0;
 }

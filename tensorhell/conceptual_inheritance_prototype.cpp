@@ -229,7 +229,7 @@ struct AncestorsOf_Recursive_f<Typle_t<>>
 template <typename Concept, typename Predicate>
 struct AncestorsSatisfyingPredicate_f
 {
-    typedef typename ElementsOfTypleSatisfying_f<typename AncestorsOf_f<Concept>::T,Predicate>::T T;
+    typedef typename ElementsSatisfying_f<typename AncestorsOf_f<Concept>::T,Predicate>::T T;
 };
 
 

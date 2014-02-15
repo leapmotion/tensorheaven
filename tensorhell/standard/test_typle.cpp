@@ -108,11 +108,11 @@ void test_HeadBodyTyple (Context const &context)
     static_assert(Tenh::TypesAreEqual_f<Tenh::HeadBodyTyple_e<Tenh::Typle_t<float,char>>::Eval_f<int>::T,
                                         Tenh::Typle_t<int,float,char>>::V, "error");
 
-    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::hb_typle(int(),Tenh::Typle_t<>())),
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::head_body_typle(int(),Tenh::Typle_t<>())),
                                         Tenh::Typle_t<int>>::V, "error");
-    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::hb_typle(int(),Tenh::Typle_t<float>())),
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::head_body_typle(int(),Tenh::Typle_t<float>())),
                                         Tenh::Typle_t<int,float>>::V, "error");
-    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::hb_typle(int(),Tenh::Typle_t<float,char>())),
+    static_assert(Tenh::TypesAreEqual_f<decltype(Tenh::head_body_typle(int(),Tenh::Typle_t<float,char>())),
                                         Tenh::Typle_t<int,float,char>>::V, "error");
 
     // there is currently no runtime test code here, but that could change

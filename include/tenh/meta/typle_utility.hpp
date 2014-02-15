@@ -41,6 +41,11 @@ public:
     public:
         typedef typename HeadEvaluator_::template Eval_f<BodyEvaluation>::T T;
     };
+    template <typename T_>
+    typename Eval_f<T_>::T operator () (T_ const &)
+    {
+        return typename Eval_f<T_>::T();
+    }
 };
 
 // composition of no maps produces the identity
@@ -52,30 +57,40 @@ struct CompositionOf_e<>
     {
         typedef T_ T; // identity map
     };
+    template <typename T_>
+    typename Eval_f<T_>::T operator () (T_ const &)
+    {
+        return typename Eval_f<T_>::T();
+    }
 };
 
 
 // apply a metafunction to each element in a Typle_t
 
-template <typename Typle_, typename FunctionEvaluator_>
+template <typename Typle_, typename Function_e_> struct OnEach_f;
+
+MAKE_2_ARY_TYPE_EVALUATOR_WITH_OPERATOR_PARENS(OnEach, typename, Function_e_);
+MAKE_2_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(on_each, OnEach);
+
+template <typename Typle_, typename Function_e_>
 struct OnEach_f
 {
     static_assert(IsTyple_f<Typle_>::V, "template parameter Typle_ must be a Typle_t");
 private:
-    typedef typename FunctionEvaluator_::template Eval_f<typename Head_f<Typle_>::T>::T HeadEvaluation;
-    typedef typename OnEach_f<typename BodyTyple_f<Typle_>::T,FunctionEvaluator_>::T BodyOnEach;
+    OnEach_f ();
+    Typle_ t;
+    Function_e_ f;
+    decltype(f(head(t))) f_head;
+    decltype(on_each(body_typle(t),f)) f_body_typle;
 public:
-    typedef typename HeadBodyTyple_f<HeadEvaluation,BodyOnEach>::T T;
+    typedef decltype(head_body_typle(f_head,f_body_typle)) T;
 };
 
-template <typename FunctionEvaluator_>
-struct OnEach_f<Typle_t<>,FunctionEvaluator_>
+template <typename Function_e_>
+struct OnEach_f<Typle_t<>,Function_e_>
 {
     typedef Typle_t<> T;
 };
-
-MAKE_2_ARY_TYPE_EVALUATOR(OnEach, typename, FunctionEvaluator_);
-MAKE_2_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(on_each, OnEach);
 
 // ///////////////////////////////////////////////////////////////////////////
 // logic
@@ -93,6 +108,11 @@ struct NegationOfPredicate_e
     {
         typedef Value_t<bool,!Predicate_e_::template Eval_f<T_>::V> T;
     };
+    template <typename T_>
+    typename Eval_f<T_>::T operator () (T_ const &)
+    {
+        return typename Eval_f<T_>::T();
+    }
     /// @endcond
 };
 
@@ -507,7 +527,7 @@ struct ElementsSatisfying_f<Typle_t<>,Predicate_e_>
 };
 /// @endcond
 
-MAKE_2_ARY_TYPE_EVALUATOR(ElementsSatisfying, typename, Predicate_e_);
+MAKE_2_ARY_TYPE_EVALUATOR_WITH_OPERATOR_PARENS(ElementsSatisfying, typename, Predicate_e_);
 MAKE_2_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(elements_satisfying, ElementsSatisfying);
 
 /// @struct ContainsDuplicates_f typle_utility.hpp "tenh/meta/typle_utility.hpp"
@@ -596,7 +616,7 @@ struct SetIntersection_f<Typle_t<>,TypleB_>
 };
 /// @endcond
 
-MAKE_2_ARY_TYPE_EVALUATOR(SetIntersection, typename, TypleB_);
+MAKE_2_ARY_TYPE_EVALUATOR_WITH_OPERATOR_PARENS(SetIntersection, typename, TypleB_);
 MAKE_2_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(intersection_as_sets, SetIntersection);
 
 // renders the subtraction of TypleB_ from TypleA_, as sets
@@ -623,7 +643,7 @@ struct SetSubtraction_f<Typle_t<>,TypleB_>
 };
 /// @endcond
 
-MAKE_2_ARY_TYPE_EVALUATOR(SetSubtraction, typename, TypleB_);
+MAKE_2_ARY_TYPE_EVALUATOR_WITH_OPERATOR_PARENS(SetSubtraction, typename, TypleB_);
 MAKE_2_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(set_subtraction, SetSubtraction);
 
 /// @struct EachTypleHasEqualLength_f typle_utility.hpp "tenh/meta/typle_utility.hpp"

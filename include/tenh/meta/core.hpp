@@ -74,6 +74,11 @@ struct MetaFunctionName##_e \
     { \
         typedef typename MetaFunctionName##_f<T_>::T T; \
     }; \
+    template <typename T_> \
+    typename MetaFunctionName##_f<T_>::T operator () (T_ const &) \
+    { \
+        return typename MetaFunctionName##_f<T_>::T(); \
+    } \
 }
 
 // if there is a primitive metafunction, say
@@ -94,6 +99,22 @@ struct MetaFunctionName##_e \
     }; \
 }
 
+#define MAKE_2_ARY_TYPE_EVALUATOR_WITH_OPERATOR_PARENS(MetaFunctionName, Type2, Name2) \
+template <Type2 Name2> \
+struct MetaFunctionName##_e \
+{ \
+    template <typename T_> \
+    struct Eval_f \
+    { \
+        typedef typename MetaFunctionName##_f<T_,Name2>::T T; \
+    }; \
+    template <typename T_> \
+    typename MetaFunctionName##_f<T_,Name2>::T operator () (T_ const &, Name2 const &) \
+    { \
+        return typename MetaFunctionName##_f<T_,Name2>::T(); \
+    } \
+}
+
 // if there is a "primitive" metafunction, say
 // template <typename Arg1_, Type2 Name2, Type3 Name3> struct FunctionName_f { typedef ... T; };
 // then MAKE_2_ARY_TYPE_EVALUATOR(FunctionName, Type2, Name2, Type3, Name3) will define an
@@ -110,6 +131,22 @@ struct MetaFunctionName##_e \
     { \
         typedef typename MetaFunctionName##_f<T_,Name2,Name3>::T T; \
     }; \
+}
+
+#define MAKE_3_ARY_TYPE_EVALUATOR_WITH_OPERATOR_PARENS(MetaFunctionName, Type2, Name2, Type3, Name3) \
+template <Type2 Name2, Type3 Name3> \
+struct MetaFunctionName##_e \
+{ \
+    template <typename T_> \
+    struct Eval_f \
+    { \
+        typedef typename MetaFunctionName##_f<T_,Name2,Name3>::T T; \
+    }; \
+    template <typename T_> \
+    typename MetaFunctionName##_f<T_,Name2,Name3>::T operator () (T_ const &, Name2 const &, Name3 const &) \
+    { \
+        return typename MetaFunctionName##_f<T_,Name2,Name3>::T(); \
+    } \
 }
 
 // if there is a "primitive" metafunction, say
@@ -129,6 +166,11 @@ struct MetaFunctionName##_e \
         static ReturnType const V = MetaFunctionName##_f<T_>::V; \
         typedef Tenh::Value_t<ReturnType,V> T; \
     }; \
+    template <typename T_> \
+    typename Eval_f<T_>::T operator () (T_ const &) \
+    { \
+        return typename Eval_f<T_>::T(); \
+    } \
 }
 
 // if there is a "primitive" metafunction, say
@@ -151,6 +193,11 @@ struct MetaFunctionName##_e \
         static ReturnType const V = MetaFunctionName##_f<T_,Name2>::V; \
         typedef Tenh::Value_t<ReturnType,V> T; \
     }; \
+    template <typename T_> \
+    typename Eval_f<T_>::T operator () (T_ const &) \
+    { \
+        return typename Eval_f<T_>::T(); \
+    } \
 }
 
 // if there is a "global" metafunction, say
@@ -173,6 +220,11 @@ struct MetaFunctionName##_e \
         static ReturnType const V = MetaFunctionName##_f<T_,Name2,Name3>::V; \
         typedef Tenh::Value_t<ReturnType,V> T; \
     }; \
+    template <typename T_> \
+    typename Eval_f<T_>::T operator () (T_ const &) \
+    { \
+        return typename Eval_f<T_>::T(); \
+    } \
 }
 
 // the following are for making ordinary C++ functions that can be used in

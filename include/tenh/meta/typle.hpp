@@ -132,10 +132,10 @@ template <typename Typle0_, typename Typle1_> struct Concat2Typles_f;
 /// @brief Returns the concatenation of the argument typles.
 template <typename... Ts_> struct ConcatTyples_f;
 
-MAKE_2_ARY_TYPE_EVALUATOR(HeadBodyTyple, typename, BodyTyple_);
-MAKE_2_ARY_TYPE_EVALUATOR(Concat2Typles, typename, Typle1_);
+MAKE_2_ARY_TYPE_EVALUATOR_WITH_OPERATOR_PARENS(HeadBodyTyple, typename, BodyTyple_);
+MAKE_2_ARY_TYPE_EVALUATOR_WITH_OPERATOR_PARENS(Concat2Typles, typename, Typle1_);
 
-MAKE_2_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(hb_typle, HeadBodyTyple);
+MAKE_2_ARY_TYPE_FUNCTION_FOR_METAFUNCTION(head_body_typle, HeadBodyTyple);
 MAKE_VARIADIC_TYPE_FUNCTION_FOR_METAFUNCTION(concat, ConcatTyples);
 
 /// @cond false

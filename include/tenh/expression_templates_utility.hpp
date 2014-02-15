@@ -57,6 +57,11 @@ struct IndexIsFree_e
         typedef typename Element_f<T_,1>::T Index;
         static bool const V = Contains_f<FreeIndexTyple_,Index>::V;
     };
+    template <typename T_>
+    typename Eval_f<T_>::T operator () (T_ const &)
+    {
+        return typename Eval_f<T_>::T();
+    }
 private:
     IndexIsFree_e();
 };

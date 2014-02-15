@@ -49,6 +49,11 @@ public:
     private:
         Eval_f();
     };
+    template <typename AbstractIndex_>
+    typename Eval_f<AbstractIndex_>::T operator () (AbstractIndex_ const &)
+    {
+        return typename Eval_f<AbstractIndex_>::T();
+    }
 };
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -67,6 +72,11 @@ struct Reindex_e
     private:
         Eval_f();
     };
+    template <typename ThingThatHasIndices_>
+    typename Eval_f<ThingThatHasIndices_>::T operator () (ThingThatHasIndices_ const &)
+    {
+        return typename Eval_f<ThingThatHasIndices_>::T();
+    }
 private:
     Reindex_e();
 };
