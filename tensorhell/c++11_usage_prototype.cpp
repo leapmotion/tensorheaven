@@ -788,6 +788,192 @@ void prototyping_for_awesomeness ()
     std::cout << '\n';
 }
 */
+
+// ///////////////////////////////////////////////////////////////////////////
+// prototyping for other awesomeness
+// ///////////////////////////////////////////////////////////////////////////
+
+template <typename T_, T_ VALUE_> Value_t<T_,VALUE_> value () { return Value_t<T_,VALUE_>(); }
+template <bool VALUE_> Value_t<bool,VALUE_> bool_ () { return Value_t<bool,VALUE_>(); }
+// inline Value_t<bool,true> true_ () { return Value_t<bool,true>(); }
+// inline Value_t<bool,false> false_ () { return Value_t<bool,false>(); }
+typedef Value_t<bool,true> True;
+typedef Value_t<bool,false> False;
+extern True true_;   // this acts as a metaprogramming "enum"
+extern False false_; // this acts as a metaprogramming "enum"
+
+template <bool C_>
+Value_t<bool,!C_> operator ! (Value_t<bool,C_> const &)
+{
+    return Value_t<bool,!C_>();
+}
+
+template <bool C0_, bool C1_>
+Value_t<bool,C0_&&C1_> operator && (Value_t<bool,C0_> const &, Value_t<bool,C1_> const &)
+{
+    return Value_t<bool,C0_&&C1_>();
+}
+
+template <bool C0_, bool C1_>
+Value_t<bool,C0_||C1_> operator || (Value_t<bool,C0_> const &, Value_t<bool,C1_> const &)
+{
+    return Value_t<bool,C0_||C1_>();
+}
+
+// base case -- vacuously true
+True and_ () { return True(); };
+// other base case -- direct value
+template <bool C_> Value_t<bool,C_> and_ (Value_t<bool,C_> const &) { return Value_t<bool,C_>(); }
+// recursive definition
+template <bool C_, typename... BodyValues_>
+Value_t<bool,And_f<Typle_t<Value_t<bool,C_>,BodyValues_...>>::V> and_ (Value_t<bool,C_> const &, BodyValues_...)
+{
+    return Value_t<bool,And_f<Typle_t<Value_t<bool,C_>,BodyValues_...>>::V>();
+}
+// alternate definition on typles
+template <typename... Types_>
+Value_t<bool,And_f<Typle_t<Types_...>>::V> and_ (Typle_t<Types_...> const &)
+{
+    return Value_t<bool,And_f<Typle_t<Types_...>>::V>();
+}
+
+// alternate way to define it using only C++ functions
+
+True and__ () { return True(); }
+
+template <bool C_>
+auto and__ (Value_t<bool,C_> const &v) -> decltype(v) { return v; }
+
+// this forward declaration is necessary for the deduced return type to work
+template <typename Head_, typename... BodyTypes_>
+auto and__ (Head_ const &head, BodyTypes_... body) -> decltype(head && and__(body...));
+
+template <typename Head_, typename... BodyTypes_>
+auto and__ (Head_ const &head, BodyTypes_... body) -> decltype(head && and__(body...))
+{
+    return head && and__(body...);
+}
+
+
+template <typename Function_e_>
+Typle_t<> on_each_ (Typle_t<> const &, Function_e_ const &f)
+{
+    return Typle_t<>();
+}
+
+// this forward declaration is apparently necessary for the recursive definition
+// and the auto/decltype return type inference to work together.
+template <typename Head_, typename... BodyTypes_, typename Function_e_>
+auto on_each_ (Typle_t<Head_,BodyTypes_...> const &t, Function_e_ const &f)
+    -> decltype(head_body_typle(f(head(t)),on_each_(body_typle(t),f)));
+
+template <typename Head_, typename... BodyTypes_, typename Function_e_>
+auto on_each_ (Typle_t<Head_,BodyTypes_...> const &t, Function_e_ const &f)
+    -> decltype(head_body_typle(f(head(t)),on_each_(body_typle(t),f)))
+{
+    // apply f to the head and call on_each_ recursively on the body typle
+    return head_body_typle(f(head(t)),on_each_(body_typle(t),f));
+}
+
+// #define MAKE_THINGY_2(function_name, expression, param0, param1, ...) \
+// template <__VA_ARGS__> \
+// auto function_name (param0, param1) -> decltype(expression) \
+// { \
+//     return expression; \
+// }
+
+// MAKE_THINGY_2(on_each__, Typle_t<>(), Typle_t<> const &, Function_e_ const &f, typename Function_e_);
+// MAKE_THINGY_2(on_each__, head_body_typle(f(head(t)),on_each__(body_typle(t),f)), Typle_t<Head_,BodyTypes_...> const &t, Function_e_ const &f, typename Head_, typename... BodyTypes_, typename Function_e_);
+
+template <Uint32 VALUE_> Value_t<Uint32,VALUE_> uint32_ () { return Value_t<Uint32,VALUE_>(); }
+
+template <Uint32 A_, Uint32 B_> Value_t<Uint32,A_+B_> operator + (Value_t<Uint32,A_> const &, Value_t<Uint32,B_> const &) { return Value_t<Uint32,A_+B_>(); }
+template <Uint32 A_, Uint32 B_> Value_t<Uint32,A_*B_> operator * (Value_t<Uint32,A_> const &, Value_t<Uint32,B_> const &) { return Value_t<Uint32,A_*B_>(); }
+
+decltype(uint32_<1>()) factorial_ (Value_t<Uint32,0> const &) { return uint32_<1>(); }
+template <Uint32 N_> auto factorial_ (Value_t<Uint32,N_> const &) -> decltype(uint32_<N_>()*factorial_(uint32_<N_-1>()));
+template <Uint32 N_> auto factorial_ (Value_t<Uint32,N_> const &) -> decltype(uint32_<N_>()*factorial_(uint32_<N_-1>())) { return uint32_<N_>()*factorial_(uint32_<N_-1>()); }
+
+void prototyping_for_other_awesomeness ()
+{
+    std::cout << "prototyping_for_other_awesomeness();\n";
+
+    std::cout << FORMAT_VALUE(type_string_of(!False())) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(!True())) << '\n';
+    std::cout << '\n';
+
+    std::cout << FORMAT_VALUE(type_string_of(False() && False())) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(True()  && False())) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(False() && True())) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(True()  && True())) << '\n';
+    std::cout << '\n';
+
+    std::cout << FORMAT_VALUE(type_string_of(False() || False())) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(True()  || False())) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(False() || True())) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(True()  || True())) << '\n';
+    std::cout << '\n';
+
+    std::cout << FORMAT_VALUE(type_string_of(and_())) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(and_(False()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(and_(True()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(and_(False(), False()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(and_(False(), True()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(and_(True(),  False()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(and_(True(),  True()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(and_(False(), False(), False()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(and_(False(), False(), True()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(and_(False(), True(),  False()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(and_(False(), True(),  True()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(and_(True(),  False(), False()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(and_(True(),  False(), True()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(and_(True(),  True(),  False()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(and_(True(),  True(),  True()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(and_(typle(True(), True(), True())))) << '\n';
+    std::cout << '\n';
+
+    std::cout << FORMAT_VALUE(type_string_of(and__())) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(and__(False()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(and__(True()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(and__(False(), False()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(and__(False(), True()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(and__(True(),  False()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(and__(True(),  True()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(and__(False(), False(), False()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(and__(False(), False(), True()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(and__(False(), True(),  False()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(and__(False(), True(),  True()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(and__(True(),  False(), False()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(and__(True(),  False(), True()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(and__(True(),  True(),  False()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(and__(True(),  True(),  True()))) << '\n';
+    std::cout << '\n';
+
+    std::cout << FORMAT_VALUE(type_string_of(and__(true_,  false_, true_))) << '\n';
+    std::cout << '\n';
+
+    {
+        IsValue_e is_value;
+        std::cout << FORMAT_VALUE(type_string_of(is_value(int()))) << '\n';
+        std::cout << FORMAT_VALUE(type_string_of(is_value(true_))) << '\n';
+        decltype(typle(true_,int())) t;
+        std::cout << FORMAT_VALUE(type_string_of(on_each_(t,is_value))) << '\n';
+        std::cout << '\n';
+    }
+    // {
+    //     IsValue_e is_value;
+    //     decltype(typle(true_,int())) t;
+    //     std::cout << FORMAT_VALUE(type_string_of(on_each__(t,is_value))) << '\n';
+    //     std::cout << '\n';
+    // }
+
+    std::cout << FORMAT_VALUE(type_string_of(factorial_(uint32_<0>()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(factorial_(uint32_<1>()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(factorial_(uint32_<2>()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(factorial_(uint32_<3>()))) << '\n';
+    std::cout << '\n';
+}
+
 // ///////////////////////////////////////////////////////////////////////////
 // main function
 // ///////////////////////////////////////////////////////////////////////////
@@ -811,6 +997,7 @@ int main (int argc, char **argv)
     prototyping_for_random_number_generation();
     prototyping_for_better_use_of_complex();
     // prototyping_for_awesomeness();
+    prototyping_for_other_awesomeness();
 
     return 0;
 }

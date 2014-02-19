@@ -629,7 +629,13 @@ x Use nullptr
 - Using a sentinel type e.g. for "fill with" turns out to be a great way to get around constructor
   choice ambiguity.  This ambiguity was a problem when we wanted to use conversion operators on
   expression templates that weren't conversion to the scalar type.
-- TODO: write about combination of decltype keyword with functions which produce conceptual types
+- The addition of "decltype" in the C++11 standard allows ordinary, templatized C++ functions to
+  fill the role of metafunctions which are usually implemented as structs containing a typedef.
+  The way this works is that instances of the various "pure types" (informally defined as types
+  that have no non-pure members) are what carry the type information, and that the full power of
+  C++ function overloading and operator overloading can be used to add this expressiveness and
+  directness to metaprogramming.  The decltype keyword is used to "ascend" back into the type
+  system, allowing the C++-function-based program to be evaluated at compile time.
 
 
 ###Notes from Tensor Heaven future planning

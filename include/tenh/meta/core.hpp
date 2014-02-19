@@ -75,7 +75,7 @@ struct MetaFunctionName##_e \
         typedef typename MetaFunctionName##_f<T_>::T T; \
     }; \
     template <typename T_> \
-    typename MetaFunctionName##_f<T_>::T operator () (T_ const &) \
+    typename MetaFunctionName##_f<T_>::T operator () (T_ const &) const \
     { \
         return typename MetaFunctionName##_f<T_>::T(); \
     } \
@@ -109,7 +109,7 @@ struct MetaFunctionName##_e \
         typedef typename MetaFunctionName##_f<T_,Name2>::T T; \
     }; \
     template <typename T_> \
-    typename MetaFunctionName##_f<T_,Name2>::T operator () (T_ const &, Name2 const &) \
+    typename MetaFunctionName##_f<T_,Name2>::T operator () (T_ const &, Name2 const &) const \
     { \
         return typename MetaFunctionName##_f<T_,Name2>::T(); \
     } \
@@ -143,7 +143,7 @@ struct MetaFunctionName##_e \
         typedef typename MetaFunctionName##_f<T_,Name2,Name3>::T T; \
     }; \
     template <typename T_> \
-    typename MetaFunctionName##_f<T_,Name2,Name3>::T operator () (T_ const &, Name2 const &, Name3 const &) \
+    typename MetaFunctionName##_f<T_,Name2,Name3>::T operator () (T_ const &, Name2 const &, Name3 const &) const \
     { \
         return typename MetaFunctionName##_f<T_,Name2,Name3>::T(); \
     } \
@@ -167,7 +167,7 @@ struct MetaFunctionName##_e \
         typedef Tenh::Value_t<ReturnType,V> T; \
     }; \
     template <typename T_> \
-    typename Eval_f<T_>::T operator () (T_ const &) \
+    typename Eval_f<T_>::T operator () (T_ const &) const \
     { \
         return typename Eval_f<T_>::T(); \
     } \
@@ -194,7 +194,7 @@ struct MetaFunctionName##_e \
         typedef Tenh::Value_t<ReturnType,V> T; \
     }; \
     template <typename T_> \
-    typename Eval_f<T_>::T operator () (T_ const &) \
+    typename Eval_f<T_>::T operator () (T_ const &) const \
     { \
         return typename Eval_f<T_>::T(); \
     } \
@@ -221,7 +221,7 @@ struct MetaFunctionName##_e \
         typedef Tenh::Value_t<ReturnType,V> T; \
     }; \
     template <typename T_> \
-    typename Eval_f<T_>::T operator () (T_ const &) \
+    typename Eval_f<T_>::T operator () (T_ const &) const \
     { \
         return typename Eval_f<T_>::T(); \
     } \
@@ -273,7 +273,7 @@ template <> struct Assert<true> { static bool const V = true; operator bool () c
 /// @brief Wrapper type to contain a compile time constant of any template value parameter type.
 /// @headerfile core.hpp "tenh/meta/core.hpp"
 /// @note The type string for this is defined in typestringof.hpp.
-template <typename T_, T_ VALUE_> struct Value_t { typedef T_ T; static T_ const V = VALUE_; operator T_ () const { return VALUE_; } };
+template <typename T_, T_ VALUE_> struct Value_t { typedef T_ T; static T_ const V = VALUE_; };
 
 template <typename T_> struct IsValue_f { static bool const V = false; };
 template <typename T_, T_ VALUE_> struct IsValue_f<Value_t<T_,VALUE_>> { static bool const V = true; };
@@ -305,11 +305,17 @@ MAKE_2_ARY_VALUE_EVALUATOR(TypesAreEqual, typename, T1_);
 
 /// @brief Compile-time conditional. Contains one of two types depending upon the boolean passed in.
 /// @headerfile core.hpp "tenh/meta/core.hpp"
-template <bool condition_, typename Then_, typename Else_> struct If_f;
+template <bool CONDITION_, typename Then_, typename Else_> struct If_f;
 /// @cond false
 template <typename Then_, typename Else_> struct If_f<true,Then_,Else_> { typedef Then_ T; };
 template <typename Then_, typename Else_> struct If_f<false,Then_,Else_> { typedef Else_ T; };
 /// @endcond
+
+template <bool CONDITION_, typename Then_, typename Else_>
+typename If_f<CONDITION_,Then_,Else_>::T if_ (Then_ const &, Else_ const &)
+{
+    return typename If_f<CONDITION_,Then_,Else_>::T();
+}
 
 // ///////////////////////////////////////////////////////////////////////////
 // setup for int type templates

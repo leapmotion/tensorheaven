@@ -27,22 +27,20 @@ namespace Tenh {
 // forward declaration -- this should go in function.hpp
 template <typename... Evaluators_> struct CompositionOf_e;
 
-template <typename HeadEvaluator_, typename... EvaluatorBodies_>
-struct CompositionOf_e<HeadEvaluator_,EvaluatorBodies_...>
+template <typename HeadEvaluator_, typename... BodyEvaluators_>
+struct CompositionOf_e<HeadEvaluator_,BodyEvaluators_...>
 {
 private:
-    typedef CompositionOf_e<EvaluatorBodies_...> BodyComposition;
+    HeadEvaluator_ h;
+    CompositionOf_e<BodyEvaluators_...> b;
 public:
     template <typename T_>
     struct Eval_f
     {
-    private:
-        typedef typename BodyComposition::template Eval_f<T_>::T BodyEvaluation;
-    public:
-        typedef typename HeadEvaluator_::template Eval_f<BodyEvaluation>::T T;
+        typedef decltype(h(b(T_()))) T; // plug an instance of T_ into b, then h.
     };
     template <typename T_>
-    typename Eval_f<T_>::T operator () (T_ const &)
+    typename Eval_f<T_>::T operator () (T_ const &t)
     {
         return typename Eval_f<T_>::T();
     }
