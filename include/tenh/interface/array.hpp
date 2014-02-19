@@ -67,7 +67,7 @@ struct Array_i
 };
 
 template <typename T> struct IsArray_i { static bool const V = false; };
-template <typename Derived_, typename Component_, Uint32 COMPONENT_COUNT_, ComponentQualifier COMPONENT_QUALIFIER_> struct IsArray_i<Array_i<Derived_,Component_,COMPONENT_COUNT_,COMPONENT_QUALIFIER_> > { static bool const V = true; };
+template <typename Derived_, typename Component_, Uint32 COMPONENT_COUNT_, ComponentQualifier COMPONENT_QUALIFIER_> struct IsArray_i<Array_i<Derived_,Component_,COMPONENT_COUNT_,COMPONENT_QUALIFIER_>> { static bool const V = true; };
 
 } // end of namespace Tenh
 

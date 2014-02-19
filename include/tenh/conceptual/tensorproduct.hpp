@@ -42,7 +42,7 @@ struct TensorProduct_c
 };
 
 template <typename FactorTyple_>
-struct IsConcept_f<TensorProduct_c<FactorTyple_> >
+struct IsConcept_f<TensorProduct_c<FactorTyple_>>
 {
     static bool const V = true;
 private:
@@ -55,7 +55,7 @@ template <typename T> struct IsTensorProduct_f
 private:
     IsTensorProduct_f();
 };
-template <typename FactorTyple_> struct IsTensorProduct_f<TensorProduct_c<FactorTyple_> >
+template <typename FactorTyple_> struct IsTensorProduct_f<TensorProduct_c<FactorTyple_>>
 {
     static bool const V = true;
 private:
@@ -68,7 +68,7 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(TensorProduct);
 #define AS_TENSOR_PRODUCT(Concept) UniqueTensorProductStructureOf_f<Concept>::T
 
 template <typename FactorTyple_>
-struct DualOf_f<TensorProduct_c<FactorTyple_> >
+struct DualOf_f<TensorProduct_c<FactorTyple_>>
 {
     typedef TensorProduct_c<typename DualOf_f<FactorTyple_>::T> T;
 private:
@@ -149,7 +149,7 @@ private:
     typedef TensorProduct_c<FactorTyple_> As_TensorProduct;
     typedef VectorSpace_c<typename ScalarFieldOf_f<typename Head_f<FactorTyple_>::T>::T,
                           ProductOfDimensions_f<FactorTyple_>::V,
-                          TensorProduct_c<typename IdsOfTyple_f<FactorTyple_>::T> > As_VectorSpace;
+                          TensorProduct_c<typename IdsOfTyple_f<FactorTyple_>::T>> As_VectorSpace;
     typedef EmbeddableInTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_c> As_EmbeddableInTensorProductOfVectorSpaces;
 public:
     typedef Typle_t<As_TensorProduct,As_VectorSpace,As_EmbeddableInTensorProductOfVectorSpaces> ParentTyple;
@@ -163,7 +163,7 @@ public:
 };
 
 template <typename FactorTyple_>
-struct IsConcept_f<TensorProductOfVectorSpaces_c<FactorTyple_> >
+struct IsConcept_f<TensorProductOfVectorSpaces_c<FactorTyple_>>
 {
     static bool const V = true;
 private:
@@ -176,7 +176,7 @@ template <typename T> struct IsTensorProductOfVectorSpaces_f
 private:
     IsTensorProductOfVectorSpaces_f();
 };
-template <typename FactorTyple_> struct IsTensorProductOfVectorSpaces_f<TensorProductOfVectorSpaces_c<FactorTyple_> >
+template <typename FactorTyple_> struct IsTensorProductOfVectorSpaces_f<TensorProductOfVectorSpaces_c<FactorTyple_>>
 {
     static bool const V = true;
 private:
@@ -189,7 +189,7 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(TensorProductOfVectorSpaces);
 #define AS_TENSOR_PRODUCT_OF_VECTOR_SPACES(Concept) UniqueTensorProductOfVectorSpacesStructureOf_f<Concept>::T
 
 template <typename FactorTyple_>
-struct DualOf_f<TensorProductOfVectorSpaces_c<FactorTyple_> >
+struct DualOf_f<TensorProductOfVectorSpaces_c<FactorTyple_>>
 {
     typedef TensorProductOfVectorSpaces_c<typename DualOf_f<FactorTyple_>::T> T;
 private:
@@ -208,7 +208,7 @@ struct TensorProductOfBases_c
     static_assert(AllTypesHaveUniqueBasisStructures_f<FactorTyple_>::V, "all factors must have unique basis structures");
 private:
     typedef TensorProduct_c<FactorTyple_> As_TensorProduct;
-    typedef Basis_c<TensorProduct_c<typename IdsOfTyple_f<FactorTyple_>::T> > As_Basis;
+    typedef Basis_c<TensorProduct_c<typename IdsOfTyple_f<FactorTyple_>::T>> As_Basis;
 public:
     typedef Typle_t<As_TensorProduct,As_Basis> ParentTyple;
 
@@ -221,7 +221,7 @@ public:
 };
 
 template <typename FactorTyple_>
-struct IsConcept_f<TensorProductOfBases_c<FactorTyple_> >
+struct IsConcept_f<TensorProductOfBases_c<FactorTyple_>>
 {
     static bool const V = true;
 private:
@@ -234,7 +234,7 @@ template <typename T> struct IsTensorProductOfBases_f
 private:
     IsTensorProductOfBases_f();
 };
-template <typename FactorTyple_> struct IsTensorProductOfBases_f<TensorProductOfBases_c<FactorTyple_> >
+template <typename FactorTyple_> struct IsTensorProductOfBases_f<TensorProductOfBases_c<FactorTyple_>>
 {
     static bool const V = true;
 private:
@@ -247,7 +247,7 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(TensorProductOfBases);
 #define AS_TENSOR_PRODUCT_OF_BASES(Concept) UniqueTensorProductOfBasesStructureOf_f<Concept>::T
 
 template <typename FactorTyple_>
-struct DualOf_f<TensorProductOfBases_c<FactorTyple_> >
+struct DualOf_f<TensorProductOfBases_c<FactorTyple_>>
 {
     typedef TensorProductOfBases_c<typename DualOf_f<FactorTyple_>::T> T;
 private:
@@ -280,7 +280,7 @@ public:
 };
 
 template <typename TensorProductOfVectorSpaces_, typename Basis_>
-struct IsConcept_f<BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_, Basis_> >
+struct IsConcept_f<BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_, Basis_>>
 {
     static bool const V = true;
 private:
@@ -293,7 +293,7 @@ template <typename T> struct IsBasedTensorProductOfVectorSpaces_f
 private:
     IsBasedTensorProductOfVectorSpaces_f();
 };
-template <typename TensorProductOfVectorSpaces_, typename Basis_> struct IsBasedTensorProductOfVectorSpaces_f<BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_,Basis_> >
+template <typename TensorProductOfVectorSpaces_, typename Basis_> struct IsBasedTensorProductOfVectorSpaces_f<BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_,Basis_>>
 {
     static bool const V = true;
 private:
@@ -306,7 +306,7 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(BasedTensorProductOfVectorSpaces);
 #define AS_BASED_TENSOR_PRODUCT_OF_VECTOR_SPACES(Concept) UniqueBasedTensorProductOfVectorSpacesStructureOf_f<Concept>::T
 
 template <typename TensorProductOfVectorSpaces, typename Basis>
-struct DualOf_f<BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces,Basis> >
+struct DualOf_f<BasedTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces,Basis>>
 {
     typedef BasedTensorProductOfVectorSpaces_c<typename DualOf_f<TensorProductOfVectorSpaces>::T,typename DualOf_f<Basis>::T> T;
 private:
@@ -340,7 +340,7 @@ public:
 };
 
 template <typename FactorTyple_>
-struct IsConcept_f<TensorProductOfBasedVectorSpaces_c<FactorTyple_> >
+struct IsConcept_f<TensorProductOfBasedVectorSpaces_c<FactorTyple_>>
 {
     static bool const V = true;
 private:
@@ -353,7 +353,7 @@ template <typename T> struct IsTensorProductOfBasedVectorSpaces_f
 private:
     IsTensorProductOfBasedVectorSpaces_f();
 };
-template <typename FactorTyple_> struct IsTensorProductOfBasedVectorSpaces_f<TensorProductOfBasedVectorSpaces_c<FactorTyple_> >
+template <typename FactorTyple_> struct IsTensorProductOfBasedVectorSpaces_f<TensorProductOfBasedVectorSpaces_c<FactorTyple_>>
 {
     static bool const V = true;
 private:
@@ -368,7 +368,7 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(TensorProductOfBasedVectorSpaces);
 // there is a natural identification of a tensor product of vector spaces with the
 // tensor product of the dual of the vector spaces
 template <typename FactorTyple_>
-struct DualOf_f<TensorProductOfBasedVectorSpaces_c<FactorTyple_> >
+struct DualOf_f<TensorProductOfBasedVectorSpaces_c<FactorTyple_>>
 {
     typedef TensorProductOfBasedVectorSpaces_c<typename DualOf_f<FactorTyple_>::T> T;
 private:
@@ -426,11 +426,11 @@ typename std::enable_if<(IS_BASED_VECTOR_SPACE_UNIQUELY(LhsBasedVectorSpace_) &&
 
 template <typename FactorTyple_, typename BasedVectorSpace_>
 TensorProductOfBasedVectorSpaces_c<typename Concat2Typles_f<FactorTyple_,
-                                                                   Typle_t<BasedVectorSpace_> >::T>
+                                                                   Typle_t<BasedVectorSpace_>>::T>
     operator * (TensorProductOfBasedVectorSpaces_c<FactorTyple_> const &, BasedVectorSpace_ const &)
 {
     return TensorProductOfBasedVectorSpaces_c<typename Concat2Typles_f<FactorTyple_,
-                                                                              Typle_t<BasedVectorSpace_> >::T>();
+                                                                              Typle_t<BasedVectorSpace_>>::T>();
 }
 
 template <typename FactorTyple_, typename BasedVectorSpace_>

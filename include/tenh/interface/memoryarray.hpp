@@ -97,9 +97,9 @@ struct MemoryArray_i
 };
 
 template <typename T> struct IsMemoryArray_i { static bool const V = false; };
-template <typename Derived_, typename Component_, Uint32 COMPONENT_COUNT_, ComponentsAreConst COMPONENTS_ARE_CONST_> struct IsMemoryArray_i<MemoryArray_i<Derived_,Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_> > { static bool const V = true; };
+template <typename Derived_, typename Component_, Uint32 COMPONENT_COUNT_, ComponentsAreConst COMPONENTS_ARE_CONST_> struct IsMemoryArray_i<MemoryArray_i<Derived_,Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_>> { static bool const V = true; };
 
-template <typename Derived_, typename Component_, Uint32 COMPONENT_COUNT_, ComponentsAreConst COMPONENTS_ARE_CONST_> struct IsArray_i<MemoryArray_i<Derived_,Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_> > { static bool const V = true; };
+template <typename Derived_, typename Component_, Uint32 COMPONENT_COUNT_, ComponentsAreConst COMPONENTS_ARE_CONST_> struct IsArray_i<MemoryArray_i<Derived_,Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_>> { static bool const V = true; };
 
 } // end of namespace Tenh
 

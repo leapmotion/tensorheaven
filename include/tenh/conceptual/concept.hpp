@@ -27,13 +27,13 @@ public:
 };
 
 template <typename Parameter_>
-struct IsConcept_f<ConceptExample_c<Parameter_> >
+struct IsConcept_f<ConceptExample_c<Parameter_>>
 { static bool const V = true; };
 
 template <typename T> struct IsConceptExample_f { static bool const V = false; };
 
 template <typename Parameter_>
-struct IsConceptExample_f<ConceptExample_c<Parameter_> >
+struct IsConceptExample_f<ConceptExample_c<Parameter_>>
 { static bool const V = true; };
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(ConceptExample);
@@ -102,7 +102,7 @@ private:
 };
 
 template <typename Head_>
-struct AncestorsOf_Recursive_f<Typle_t<Head_> >
+struct AncestorsOf_Recursive_f<Typle_t<Head_>>
 {
     // depth-first traversal of the ancestor tree
     typedef typename AncestorsOf_f<Head_>::T T;
@@ -239,7 +239,7 @@ private:
     typedef typename UniqueTypesIn_f<PropertyOfEach>::T UniquePropertyTyple;
     MultiProperty_f();
 public:
-    typedef typename SetSubtraction_f<UniquePropertyTyple,Typle_t<NullValue> >::T T;
+    typedef typename SetSubtraction_f<UniquePropertyTyple,Typle_t<NullValue>>::T T;
 };
 
 // if MultiProperty_f has exactly one element, returns that.

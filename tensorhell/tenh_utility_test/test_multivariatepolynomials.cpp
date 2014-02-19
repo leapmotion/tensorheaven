@@ -183,7 +183,7 @@ void add_particular_tests (Directory &parent)
 {
     // Directory &scalar_dir = parent.GetSubDirectory(FORMAT("Scalar = " << Tenh::type_string_of<Scalar_>()));
     // Directory &dim_dir = scalar_dir.GetSubDirectory(FORMAT("DIM = " << DIM_));
-    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM_,Tenh::Generic>,Tenh::Basis_c<Tenh::Generic> > BasedVectorSpace;
+    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM_,Tenh::Generic>,Tenh::Basis_c<Tenh::Generic>> BasedVectorSpace;
     Directory &degree_dir = parent.GetSubDirectory(FORMAT("Tenh::MultivariatePolynomial<" << DEGREE_ << ',' << Tenh::type_string_of<BasedVectorSpace>() << ',' << Tenh::type_string_of<Scalar_>() << '>'));
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(degree_dir, "constructor_without_initialization", constructor_without_initialization<Scalar_,BasedVectorSpace,DEGREE_>, RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(degree_dir, "constructor_fill_with", constructor_fill_with<Scalar_,BasedVectorSpace,DEGREE_>, new Context::Data<Scalar_>(42), RESULT_NO_ERROR);
@@ -248,7 +248,7 @@ void AddTests (Directory &parent)
     {
         static Uint32 const DIM = 1;
         typedef Tenh::VectorSpace_c<Tenh::RealField,DIM,Tenh::Generic> VectorSpace;
-        typedef Tenh::BasedVectorSpace_c<VectorSpace,Tenh::Basis_c<Tenh::Generic> > BasedVectorSpace;
+        typedef Tenh::BasedVectorSpace_c<VectorSpace,Tenh::Basis_c<Tenh::Generic>> BasedVectorSpace;
         add_addition_tests<float,BasedVectorSpace>(dir);
         add_multiplication_tests<float,BasedVectorSpace>(dir);
     }
@@ -256,7 +256,7 @@ void AddTests (Directory &parent)
     {
         static Uint32 const DIM = 3;
         typedef Tenh::VectorSpace_c<Tenh::RealField,DIM,Tenh::Generic> VectorSpace;
-        typedef Tenh::BasedVectorSpace_c<VectorSpace,Tenh::Basis_c<Tenh::Generic> > BasedVectorSpace;
+        typedef Tenh::BasedVectorSpace_c<VectorSpace,Tenh::Basis_c<Tenh::Generic>> BasedVectorSpace;
         add_addition_tests<float,BasedVectorSpace>(dir);
         add_multiplication_tests<float,BasedVectorSpace>(dir);
     }

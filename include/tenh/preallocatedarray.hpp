@@ -22,12 +22,12 @@ namespace Tenh {
 template <typename Component_, Uint32 COMPONENT_COUNT_, ComponentsAreConst COMPONENTS_ARE_CONST_ = ComponentsAreConst::FALSE, typename Derived_ = NullType>
 struct PreallocatedArray_t
     :
-    public MemoryArray_i<typename DerivedType_f<Derived_,PreallocatedArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> >::T,
+    public MemoryArray_i<typename DerivedType_f<Derived_,PreallocatedArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_>>::T,
                          Component_,
                          COMPONENT_COUNT_,
                          COMPONENTS_ARE_CONST_>
 {
-    typedef MemoryArray_i<typename DerivedType_f<Derived_,PreallocatedArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> >::T,
+    typedef MemoryArray_i<typename DerivedType_f<Derived_,PreallocatedArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_>>::T,
                           Component_,
                           COMPONENT_COUNT_,
                           COMPONENTS_ARE_CONST_> Parent_MemoryArray_i;
@@ -139,20 +139,20 @@ template <typename T> struct IsPreallocatedArray_t
 private:
     IsPreallocatedArray_t();
 };
-template <typename Component_, Uint32 COMPONENT_COUNT_, ComponentsAreConst COMPONENTS_ARE_CONST_, typename Derived_> struct IsPreallocatedArray_t<PreallocatedArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> >
+template <typename Component_, Uint32 COMPONENT_COUNT_, ComponentsAreConst COMPONENTS_ARE_CONST_, typename Derived_> struct IsPreallocatedArray_t<PreallocatedArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_>>
 {
     static bool const V = true;
 private:
     IsPreallocatedArray_t();
 };
 
-template <typename Component_, Uint32 COMPONENT_COUNT_, ComponentsAreConst COMPONENTS_ARE_CONST_, typename Derived_> struct IsArray_i<PreallocatedArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> >
+template <typename Component_, Uint32 COMPONENT_COUNT_, ComponentsAreConst COMPONENTS_ARE_CONST_, typename Derived_> struct IsArray_i<PreallocatedArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_>>
 {
     static bool const V = true;
 private:
     IsArray_i();
 };
-template <typename Component_, Uint32 COMPONENT_COUNT_, ComponentsAreConst COMPONENTS_ARE_CONST_, typename Derived_> struct IsMemoryArray_i<PreallocatedArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> >
+template <typename Component_, Uint32 COMPONENT_COUNT_, ComponentsAreConst COMPONENTS_ARE_CONST_, typename Derived_> struct IsMemoryArray_i<PreallocatedArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_>>
 {
     static bool const V = true;
 private:

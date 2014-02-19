@@ -27,7 +27,7 @@ void vector_based_IndexedObject_t (Context const &context)
     static Uint32 const DIM = 3;
     typedef int DummyId;
     typedef float Scalar;
-    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId> > BasedVectorSpace;
+    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId>> BasedVectorSpace;
     typedef Tenh::ImplementationOf_t<BasedVectorSpace,Scalar> Vector;
 
     // create an ExpressionTemplate_IndexedObject_t
@@ -86,7 +86,7 @@ void tensor_based_IndexedObject_t (Context const &context)
     static Uint32 const DIM = 3;
     typedef int DummyId;
     typedef float Scalar;
-    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId> > BasedVectorSpace;
+    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId>> BasedVectorSpace;
     typedef Tenh::Typle_t<BasedVectorSpace,Tenh::DualOf_f<BasedVectorSpace>::T> FactorTyple;
     typedef Tenh::TensorProductOfBasedVectorSpaces_c<FactorTyple> TensorProduct;
     typedef Tenh::ImplementationOf_t<TensorProduct,Scalar> Tensor;
@@ -149,7 +149,7 @@ void Addition_t (Context const &context)
     static Uint32 const DIM = 3;
     typedef int DummyId;
     typedef float Scalar;
-    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId> > BasedVectorSpace;
+    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId>> BasedVectorSpace;
     typedef Tenh::ImplementationOf_t<BasedVectorSpace,Scalar> Vector;
 
     typedef Tenh::AbstractIndex_c<'i'> I;
@@ -186,7 +186,7 @@ void ScalarMultiplication_t (Context const &context)
     static Uint32 const DIM = 3;
     typedef int DummyId;
     typedef float Scalar;
-    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId> > BasedVectorSpace;
+    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId>> BasedVectorSpace;
     typedef Tenh::ImplementationOf_t<BasedVectorSpace,Scalar> Vector;
 
     typedef Tenh::AbstractIndex_c<'i'> I;
@@ -220,7 +220,7 @@ void Multiplication_t (Context const &context)
     static Uint32 const DIM = 3;
     typedef int DummyId;
     typedef float Scalar;
-    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId> > BasedVectorSpace;
+    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId>> BasedVectorSpace;
     typedef Tenh::ImplementationOf_t<BasedVectorSpace,Scalar> Vector;
 
     typedef Tenh::AbstractIndex_c<'i'> I;
@@ -267,7 +267,7 @@ void IndexBundle_t (Context const &context)
     static Uint32 const DIM = 3;
     typedef int DummyId;
     typedef float Scalar;
-    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId> > BasedVectorSpace;
+    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId>> BasedVectorSpace;
     typedef Tenh::Typle_t<BasedVectorSpace,BasedVectorSpace,BasedVectorSpace> FactorTyple;
     typedef Tenh::TensorProductOfBasedVectorSpaces_c<FactorTyple> TensorProduct;
     typedef Tenh::ImplementationOf_t<TensorProduct,Scalar> Tensor;
@@ -303,7 +303,7 @@ void IndexSplit_t (Context const &context)
     static Uint32 const DIM = 3;
     typedef int DummyId;
     typedef float Scalar;
-    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId> > BasedVectorSpace;
+    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId>> BasedVectorSpace;
     typedef Tenh::Typle_t<BasedVectorSpace,BasedVectorSpace,BasedVectorSpace> FactorTyple;
     typedef Tenh::TensorProductOfBasedVectorSpaces_c<FactorTyple> TensorProduct;
     typedef Tenh::ImplementationOf_t<TensorProduct,Scalar> Tensor;
@@ -338,7 +338,7 @@ void IndexSplitToIndex_t (Context const &context)
     static Uint32 const DIM = 3;
     typedef int DummyId;
     typedef float Scalar;
-    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId> > BasedVectorSpace;
+    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId>> BasedVectorSpace;
     typedef Tenh::Typle_t<BasedVectorSpace,BasedVectorSpace,BasedVectorSpace> FactorTyple;
     typedef Tenh::TensorProductOfBasedVectorSpaces_c<FactorTyple> TensorProduct;
     typedef Tenh::ImplementationOf_t<TensorProduct,Scalar> Tensor;
@@ -373,7 +373,7 @@ void Eval_t (Context const &context)
     static Uint32 const DIM = 3;
     typedef int DummyId;
     typedef float Scalar;
-    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId> > BasedVectorSpace;
+    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId>> BasedVectorSpace;
     typedef Tenh::Typle_t<BasedVectorSpace,BasedVectorSpace,BasedVectorSpace> FactorTyple;
     typedef Tenh::TensorProductOfBasedVectorSpaces_c<FactorTyple> TensorProduct;
     typedef Tenh::ImplementationOf_t<TensorProduct,Scalar> Tensor;
@@ -406,7 +406,7 @@ void fancy_expression (Context const &context)
     static Uint32 const DIM = 3;
     typedef int DummyId;
     typedef float Scalar;
-    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId> > BasedVectorSpace;
+    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId>> BasedVectorSpace;
     typedef Tenh::Typle_t<BasedVectorSpace,BasedVectorSpace,BasedVectorSpace> FactorTyple;
     typedef Tenh::TensorProductOfBasedVectorSpaces_c<FactorTyple> TensorProduct;
     typedef Tenh::ImplementationOf_t<BasedVectorSpace,Scalar> Vector;

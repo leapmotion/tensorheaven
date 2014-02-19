@@ -628,7 +628,7 @@ struct SetSubtraction_f
 private:
     typedef typename If_f<Contains_f<TypleB_,typename Head_f<TypleA_>::T>::V,
                           Typle_t<>,
-                          Typle_t<typename Head_f<TypleA_>::T> >::T HeadTyple;
+                          Typle_t<typename Head_f<TypleA_>::T>>::T HeadTyple;
 public:
     typedef typename Concat2Typles_f<HeadTyple,typename SetSubtraction_f<typename BodyTyple_f<TypleA_>::T,TypleB_>::T>::T T;
 };
@@ -662,7 +662,7 @@ public:
 
 /// @cond false
 template <typename Head_>
-struct EachTypleHasEqualLength_f<Typle_t<Head_> >
+struct EachTypleHasEqualLength_f<Typle_t<Head_>>
 {
     static bool const V = true; // trivially true
 };
@@ -696,7 +696,7 @@ public:
 
 /// @cond false
 template <typename... RestOfTyples_>
-struct Zip_f<Typle_t<Typle_t<>,RestOfTyples_...> >
+struct Zip_f<Typle_t<Typle_t<>,RestOfTyples_...>>
 {
 private:
     typedef Typle_t<Typle_t<>,RestOfTyples_...> Typles;
@@ -767,7 +767,7 @@ template <typename Typle_> struct TypleIsUniform_f;
 
 /// @cond false
 template <typename Head_, typename... BodyTypes_>
-struct TypleIsUniform_f<Typle_t<Head_,BodyTypes_...> >
+struct TypleIsUniform_f<Typle_t<Head_,BodyTypes_...>>
 {
 private:
     typedef Typle_t<BodyTypes_...> BodyTyple;
@@ -778,7 +778,7 @@ public:
 };
 
 template <typename Head_>
-struct TypleIsUniform_f<Typle_t<Head_> >
+struct TypleIsUniform_f<Typle_t<Head_>>
 {
     static bool const V = true;
 };
@@ -800,7 +800,7 @@ template <typename Typle_> struct TypeOfUniformTyple_f;
 
 /// @cond false
 template <typename Head_, typename... BodyTypes_>
-struct TypeOfUniformTyple_f<Typle_t<Head_,BodyTypes_...> >
+struct TypeOfUniformTyple_f<Typle_t<Head_,BodyTypes_...>>
 {
 private:
     typedef Typle_t<Head_,BodyTypes_...> Typle;

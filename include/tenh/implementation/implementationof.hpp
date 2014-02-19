@@ -25,7 +25,7 @@ namespace Tenh {
 
 template <ComponentsAreConst COMPONENTS_ARE_CONST_>
 struct UseMemberArray_t { static std::string type_as_string () { return "UseMemberArray_t<" + FORMAT(COMPONENTS_ARE_CONST_) + '>'; } };
-template <ComponentsAreConst COMPONENTS_ARE_CONST_> struct DualOf_f<UseMemberArray_t<COMPONENTS_ARE_CONST_> >
+template <ComponentsAreConst COMPONENTS_ARE_CONST_> struct DualOf_f<UseMemberArray_t<COMPONENTS_ARE_CONST_>>
 {
     typedef UseMemberArray_t<COMPONENTS_ARE_CONST_> T;
 private:
@@ -38,7 +38,7 @@ template <typename T> struct IsUseMemberArray_f
 private:
     IsUseMemberArray_f();
 };
-template <ComponentsAreConst COMPONENTS_ARE_CONST_> struct IsUseMemberArray_f<UseMemberArray_t<COMPONENTS_ARE_CONST_> >
+template <ComponentsAreConst COMPONENTS_ARE_CONST_> struct IsUseMemberArray_f<UseMemberArray_t<COMPONENTS_ARE_CONST_>>
 {
     static bool const V = true;
 private:
@@ -47,7 +47,7 @@ private:
 
 template <ComponentsAreConst COMPONENTS_ARE_CONST_>
 struct UsePreallocatedArray_t { static std::string type_as_string () { return "UsePreallocatedArray_t<" + FORMAT(COMPONENTS_ARE_CONST_) + '>'; } };
-template <ComponentsAreConst COMPONENTS_ARE_CONST_> struct DualOf_f<UsePreallocatedArray_t<COMPONENTS_ARE_CONST_> >
+template <ComponentsAreConst COMPONENTS_ARE_CONST_> struct DualOf_f<UsePreallocatedArray_t<COMPONENTS_ARE_CONST_>>
 {
     typedef UsePreallocatedArray_t<COMPONENTS_ARE_CONST_> T;
 private:
@@ -60,7 +60,7 @@ template <typename T> struct IsUsePreallocatedArray_f
 private:
     IsUsePreallocatedArray_f();
 };
-template <ComponentsAreConst COMPONENTS_ARE_CONST_> struct IsUsePreallocatedArray_f<UsePreallocatedArray_t<COMPONENTS_ARE_CONST_> >
+template <ComponentsAreConst COMPONENTS_ARE_CONST_> struct IsUsePreallocatedArray_f<UsePreallocatedArray_t<COMPONENTS_ARE_CONST_>>
 {
     static bool const V = true;
 private:
@@ -86,7 +86,7 @@ template <typename T> struct IsUseProceduralArray_f
 private:
     IsUseProceduralArray_f();
 };
-template <typename ComponentGenerator_> struct IsUseProceduralArray_f<UseProceduralArray_t<ComponentGenerator_> >
+template <typename ComponentGenerator_> struct IsUseProceduralArray_f<UseProceduralArray_t<ComponentGenerator_>>
 {
     static bool const V = true;
 private:
@@ -106,7 +106,7 @@ template <typename Concept_,
           typename Scalar_,
           typename UseArrayType_,
           typename Derived_>
-struct IsImplementationOf_f<ImplementationOf_t<Concept_,Scalar_,UseArrayType_,Derived_> >
+struct IsImplementationOf_f<ImplementationOf_t<Concept_,Scalar_,UseArrayType_,Derived_>>
 {
     static bool const V = true;
 };
@@ -114,7 +114,7 @@ struct IsImplementationOf_f<ImplementationOf_t<Concept_,Scalar_,UseArrayType_,De
 // because there will be so many template specializations of ImplementationOf_t, all
 // with what would be identical type_as_string functions, just do it via metafunction once.
 template <typename Concept_, typename Scalar_, typename UseArrayType_, typename Derived_>
-struct TypeStringOf_t<ImplementationOf_t<Concept_,Scalar_,UseArrayType_,Derived_> >
+struct TypeStringOf_t<ImplementationOf_t<Concept_,Scalar_,UseArrayType_,Derived_>>
 {
     static std::string eval ()
     {
@@ -127,19 +127,19 @@ struct TypeStringOf_t<ImplementationOf_t<Concept_,Scalar_,UseArrayType_,Derived_
 template <typename T_> struct ComponentQualifierOfArrayType_f;
 
 template <ComponentsAreConst COMPONENTS_ARE_CONST_>
-struct ComponentQualifierOfArrayType_f<UseMemberArray_t<COMPONENTS_ARE_CONST_> >
+struct ComponentQualifierOfArrayType_f<UseMemberArray_t<COMPONENTS_ARE_CONST_>>
 {
     static ComponentQualifier const V = bool(COMPONENTS_ARE_CONST_) ? ComponentQualifier::CONST_MEMORY : ComponentQualifier::NONCONST_MEMORY;
 };
 
 template <ComponentsAreConst COMPONENTS_ARE_CONST_>
-struct ComponentQualifierOfArrayType_f<UsePreallocatedArray_t<COMPONENTS_ARE_CONST_> >
+struct ComponentQualifierOfArrayType_f<UsePreallocatedArray_t<COMPONENTS_ARE_CONST_>>
 {
     static ComponentQualifier const V = bool(COMPONENTS_ARE_CONST_) ? ComponentQualifier::CONST_MEMORY : ComponentQualifier::NONCONST_MEMORY;
 };
 
 template <typename ComponentGenerator_>
-struct ComponentQualifierOfArrayType_f<UseProceduralArray_t<ComponentGenerator_> >
+struct ComponentQualifierOfArrayType_f<UseProceduralArray_t<ComponentGenerator_>>
 {
     static ComponentQualifier const V = ComponentQualifier::PROCEDURAL;
 };

@@ -27,28 +27,28 @@ struct SymbolicExpression_t
 };
 
 template <Sint64 VALUE_>
-struct SInt_t : public SymbolicExpression_t<SInt_t<VALUE_> >
+struct SInt_t : public SymbolicExpression_t<SInt_t<VALUE_>>
 {
 	static Sint64 const VALUE = VALUE_;
 };
 
 // TODO (?): make SFrac_t take some sort of abstracted integral values?
 template <Sint64 NUMERATOR_, Uint64 DENOMINATOR_>
-struct SFrac_t : public SymbolicExpression_t<SFrac_t<NUMERATOR_,DENOMINATOR_> >
+struct SFrac_t : public SymbolicExpression_t<SFrac_t<NUMERATOR_,DENOMINATOR_>>
 {
 	static Sint64 const NUMERATOR = NUMERATOR_;
 	static Uint64 const DENOMINATOR = DENOMINATOR_;
 };
 
 template <Uint64 VALUE_>
-struct UInt_t : public SymbolicExpression_t<UInt_t<VALUE_> >
+struct UInt_t : public SymbolicExpression_t<UInt_t<VALUE_>>
 {
 	static Uint64 const VALUE = VALUE_;
 };
 
 // TODO (?): make UFrac_t take some sort of abstracted integral values?
 template <Uint64 NUMERATOR_, Uint64 DENOMINATOR_>
-struct UFrac_t : public SymbolicExpression_t<UFrac_t<NUMERATOR_,DENOMINATOR_> >
+struct UFrac_t : public SymbolicExpression_t<UFrac_t<NUMERATOR_,DENOMINATOR_>>
 {
 	static Uint64 const NUMERATOR = NUMERATOR_;
 	static Uint64 const DENOMINATOR = DENOMINATOR_;
@@ -59,7 +59,7 @@ struct E : public SymbolicExpression_t<E> { };
 struct I : public SymbolicExpression_t<I> { };
 
 template <Uint64 OPERAND_>
-struct Factorial_t : public SymbolicExpression_t<Factorial_t<OPERAND_> >
+struct Factorial_t : public SymbolicExpression_t<Factorial_t<OPERAND_>>
 {
 	static Uint64 const OPERAND = OPERAND_;
 };
@@ -70,7 +70,7 @@ struct Factorial_t : public SymbolicExpression_t<Factorial_t<OPERAND_> >
 // '+' : positive-sign (really does nothing)
 // '-' : negation
 template <typename Operand_, char OPERATION_>
-struct UnaryOperation_t : public SymbolicExpression_t<UnaryOperation_t<Operand_,OPERATION_> >
+struct UnaryOperation_t : public SymbolicExpression_t<UnaryOperation_t<Operand_,OPERATION_>>
 {
 	typedef Operand_ Operand;
 	static char const OPERATION = OPERATION_;
@@ -84,7 +84,7 @@ struct UnaryOperation_t : public SymbolicExpression_t<UnaryOperation_t<Operand_,
 // '^' : expenentiation (the base comes first, then the exponent) (this is sort of ill-defined if you consider branches)
 // 'L' : logarithm (the base comes first, then the argument) (this is sort of ill-defined if you consider branches)
 template <typename LeftOperand_, typename RightOperand_, char OPERATION_>
-struct BinaryOperation_t : public SymbolicExpression_t<BinaryOperation_t<LeftOperand_,RightOperand_,OPERATION_> >
+struct BinaryOperation_t : public SymbolicExpression_t<BinaryOperation_t<LeftOperand_,RightOperand_,OPERATION_>>
 {
 	typedef LeftOperand_ LeftOperand;
 	typedef RightOperand_ RightOperand;
@@ -93,14 +93,14 @@ struct BinaryOperation_t : public SymbolicExpression_t<BinaryOperation_t<LeftOpe
 
 // exponential function
 template <typename Operand_>
-struct Exp_t : public SymbolicExpression_t<Exp_t<Operand_> >
+struct Exp_t : public SymbolicExpression_t<Exp_t<Operand_>>
 {
 	typedef Operand_ Operand;
 };
 
 // natural logarithm (i.e. "ln")
 template <typename Operand_>
-struct Log_t : public SymbolicExpression_t<Log_t<Operand_> >
+struct Log_t : public SymbolicExpression_t<Log_t<Operand_>>
 {
 	typedef Operand_ Operand;
 };
@@ -246,7 +246,7 @@ struct Evaluate_t<Pi,long double>
 };
 
 template <typename Scalar>
-struct Evaluate_t<Pi,std::complex<Scalar> >
+struct Evaluate_t<Pi,std::complex<Scalar>>
 {
 	static std::complex<Scalar> eval ()
 	{
@@ -274,7 +274,7 @@ struct Evaluate_t<E,long double>
 };
 
 template <typename Scalar>
-struct Evaluate_t<E,std::complex<Scalar> >
+struct Evaluate_t<E,std::complex<Scalar>>
 {
 	static std::complex<Scalar> eval ()
 	{
@@ -284,7 +284,7 @@ struct Evaluate_t<E,std::complex<Scalar> >
 };
 
 template <typename Scalar>
-struct Evaluate_t<I,std::complex<Scalar> >
+struct Evaluate_t<I,std::complex<Scalar>>
 {
 	static std::complex<Scalar> eval ()
 	{
@@ -627,20 +627,20 @@ int main (int argc, char **argv)
 	test_constants<float>();
 	test_constants<double>();
 	test_constants<long double>();
-	test_constants<std::complex<float> >();
-	test_constants<std::complex<double> >();
-	test_constants<std::complex<long double> >();
+	test_constants<std::complex<float>>();
+	test_constants<std::complex<double>>();
+	test_constants<std::complex<long double>>();
 
-	test_complex_specific_constants<std::complex<float> >();
-	test_complex_specific_constants<std::complex<double> >();
-	test_complex_specific_constants<std::complex<long double> >();
+	test_complex_specific_constants<std::complex<float>>();
+	test_complex_specific_constants<std::complex<double>>();
+	test_complex_specific_constants<std::complex<long double>>();
 
 	test_factorial<Uint64>();
 	test_factorial<float>();
 	test_factorial<double>();
 	test_factorial<long double>();
-	test_factorial<std::complex<Uint32> >();
-	test_factorial<std::complex<float> >();
+	test_factorial<std::complex<Uint32>>();
+	test_factorial<std::complex<float>>();
 
 	test_exp_log<float>();
 	test_exp_log<double>();

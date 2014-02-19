@@ -39,7 +39,7 @@ struct Tuple_t
     // tuple types, doing default construction for all remaining elements, if any.
     Tuple_t (Tuple_t<Typle_t<>> const &) { } // default construction
     // construction from single-element leading tuples -- default constructor for body
-    Tuple_t (Tuple_t<Typle_t<HeadType> > const &leading_tuple) : m_head(leading_tuple.head()) { }
+    Tuple_t (Tuple_t<Typle_t<HeadType>> const &leading_tuple) : m_head(leading_tuple.head()) { }
     // construction from leading tuples having more than one element
     template <typename OtherHeadType_, typename... OtherBodyTypes_>
     Tuple_t (Tuple_t<Typle_t<OtherHeadType_,OtherBodyTypes_...>> const &leading_tuple)
@@ -543,7 +543,7 @@ private:
 
 // tack an element onto the beginning of a tuple (where the tuple is empty)
 template <typename HeadType_>
-inline Tuple_t<Typle_t<HeadType_> > operator >>= (HeadType_ const &head, Tuple_t<Typle_t<>> const &)
+inline Tuple_t<Typle_t<HeadType_>> operator >>= (HeadType_ const &head, Tuple_t<Typle_t<>> const &)
 {
     return Tuple_t<Typle_t<HeadType_>>(head);
 }

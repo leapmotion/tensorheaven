@@ -69,7 +69,7 @@ struct SymmetricPowerOfVectorSpace_c
 private:
     static Uint32 const VECTOR_SPACE_DIMENSION = BinomialCoefficient_t<DimensionOf_f<Factor_>::V+ORDER_-1,ORDER_>::V;
     typedef SymmetricPower_c<ORDER_,Factor_> As_SymmetricPower;
-    typedef VectorSpace_c<typename ScalarFieldOf_f<Factor_>::T,VECTOR_SPACE_DIMENSION,SymmetricPower_c<ORDER_,typename Factor_::Id> > As_VectorSpace;
+    typedef VectorSpace_c<typename ScalarFieldOf_f<Factor_>::T,VECTOR_SPACE_DIMENSION,SymmetricPower_c<ORDER_,typename Factor_::Id>> As_VectorSpace;
     typedef EmbeddableInTensorProductOfVectorSpaces_c<typename TensorPowerOfVectorSpace_f<ORDER_,Factor_>::T> As_EmbeddableInTensorProductOfVectorSpaces;
 public:
     typedef Typle_t<As_SymmetricPower,As_VectorSpace,As_EmbeddableInTensorProductOfVectorSpaces> ParentTyple;
@@ -179,7 +179,7 @@ public:
 };
 
 template <typename SymmetricPowerOfVectorSpace, typename Basis_>
-struct IsConcept_f<BasedSymmetricPowerOfVectorSpace_c<SymmetricPowerOfVectorSpace, Basis_> >
+struct IsConcept_f<BasedSymmetricPowerOfVectorSpace_c<SymmetricPowerOfVectorSpace, Basis_>>
 {
     static bool const V = true;
 private:
@@ -192,7 +192,7 @@ template <typename T> struct IsBasedSymmetricPowerOfVectorSpace_f
 private:
     IsBasedSymmetricPowerOfVectorSpace_f();
 };
-template <typename SymmetricPowerOfVectorSpace, typename Basis> struct IsBasedSymmetricPowerOfVectorSpace_f<BasedSymmetricPowerOfVectorSpace_c<SymmetricPowerOfVectorSpace,Basis> >
+template <typename SymmetricPowerOfVectorSpace, typename Basis> struct IsBasedSymmetricPowerOfVectorSpace_f<BasedSymmetricPowerOfVectorSpace_c<SymmetricPowerOfVectorSpace,Basis>>
 {
     static bool const V = true;
 private:
@@ -206,7 +206,7 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(BasedSymmetricPowerOfVectorSpace);
 
 // TODO: thinka bout this
 // template <typename SymmetricPowerOfVectorSpace, typename Basis>
-// struct DualOf_f<BasedSymmetricPowerOfVectorSpace_c<SymmetricPowerOfVectorSpace,Basis> >
+// struct DualOf_f<BasedSymmetricPowerOfVectorSpace_c<SymmetricPowerOfVectorSpace,Basis>>
 // {
 //     typedef BasedSymmetricPowerOfVectorSpace_c<typename DualOf_f<SymmetricPowerOfVectorSpace>::T,typename DualOf_f<Basis>::T> T;
 // };
@@ -349,7 +349,7 @@ public:
         TPowMultiIndex m(i); // this does the row-major conversion
         // sort into non-increasing order -- choosing this instead of non-decreasing
         // makes certain formulas not depend on the dimension of Factor_
-        sort<std::greater<Uint32> >(m);
+        sort<std::greater<Uint32>>(m);
 
         static Uint32 const NEXT_ORDER_DOWN = (ORDER_ <= 1) ? ORDER_ : (ORDER_ - 1);
         typedef LinearEmbedding_c<SymmetricPowerOfBasedVectorSpace_c<NEXT_ORDER_DOWN,Factor_>,

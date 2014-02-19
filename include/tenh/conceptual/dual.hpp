@@ -37,7 +37,7 @@ private:
 
 // here is where the self-double-dualness is implemented (as a template specialization)
 template <typename Primal>
-struct DualOf_f<Dual_c<Primal> >
+struct DualOf_f<Dual_c<Primal>>
 {
 	typedef Primal T;
 private:

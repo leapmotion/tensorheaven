@@ -21,20 +21,20 @@
 namespace Tenh {
 
 // Domain_ and Codomain_ must be based vector spaces.
-template <typename Domain_, typename Codomain_, typename Scalar_ = float, typename UseArrayType_ = UseMemberArray_t<ComponentsAreConst::FALSE> >
+template <typename Domain_, typename Codomain_, typename Scalar_ = float, typename UseArrayType_ = UseMemberArray_t<ComponentsAreConst::FALSE>>
 struct Operator
     :
     public ExpressionOperand_i<Operator<Domain_,Codomain_,Scalar_,UseArrayType_>,2>,
     public ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<Typle_t<Codomain_,typename DualOf_f<Domain_>::T>>,
                               Scalar_,
                               UseArrayType_,
-                              Operator<Domain_,Codomain_,Scalar_,UseArrayType_> >
+                              Operator<Domain_,Codomain_,Scalar_,UseArrayType_>>
 {
 private:
     typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<Typle_t<Codomain_,typename DualOf_f<Domain_>::T>>,
                                Scalar_,
                                UseArrayType_,
-                               Operator<Domain_,Codomain_,Scalar_,UseArrayType_> > Parent_Implementation;
+                               Operator<Domain_,Codomain_,Scalar_,UseArrayType_>> Parent_Implementation;
     typedef TensorProductOfBasedVectorSpaces_c<Typle_t<Codomain_,typename DualOf_f<Domain_>::T>> TensorProduct;
 public:
     typedef Scalar_ Scalar;
@@ -124,7 +124,7 @@ public:
 };
 
 template <typename Domain_, typename Codomain_, typename Scalar_, typename UseArrayType_>
-struct DualOf_f<Operator<Domain_,Codomain_,Scalar_,UseArrayType_> >
+struct DualOf_f<Operator<Domain_,Codomain_,Scalar_,UseArrayType_>>
 {
     // the "dual" of a linear operator is its natural adjoint; if
     // A : V --> W, then A* : W* --> V*, where * denotes the dual functor.

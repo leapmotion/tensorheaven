@@ -16,7 +16,7 @@ in defining ConceptType.\n\
 \n\
 Example:\n\
 \n\
-  ./conceptual_hierarchy_of.sh BasedVectorSpace . 0 \"#include \\\"tenh/conceptual/vectorspace.hpp\\\"\" \"using namespace Tenh;\" \"struct X { static std::string type_as_string () { return \\\"X\\\"; } };\" \"typedef VectorSpace_c<RealField,3,X> VectorSpace;\" \"typedef BasedVectorSpace_c<VectorSpace,Basis_c<X> > BasedVectorSpace;\"\n\
+  ./conceptual_hierarchy_of.sh BasedVectorSpace . 0 \"#include \\\"tenh/conceptual/vectorspace.hpp\\\"\" \"using namespace Tenh;\" \"struct X { static std::string type_as_string () { return \\\"X\\\"; } };\" \"typedef VectorSpace_c<RealField,3,X> VectorSpace;\" \"typedef BasedVectorSpace_c<VectorSpace,Basis_c<X>> BasedVectorSpace;\"\n\
 \n\
 This will produce a file called conceptual_hierarchy_of.png, which a graph generated\n\
 by the 'dot' application, which visualizes the conceptual ancestors of ConceptType,\n\

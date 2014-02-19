@@ -8,8 +8,8 @@
 
 void test_scalar2tensor ()
 {
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > B3;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,Basis_c<Generic> > B4;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic>> B3;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,Basis_c<Generic>> B4;
     typedef Scalar2TensorProductOfBasedVectorSpaces_c<B3,B4> Scalar2;
 
     typedef double Scalar;

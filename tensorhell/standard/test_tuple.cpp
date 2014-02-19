@@ -46,7 +46,7 @@ void test_default_construction (Context const &context)
 template <typename Typle>
 void add_particular_tests_for_tuple (Directory &parent)
 {
-    Directory &tuple = parent.GetSubDirectory(Tenh::type_string_of<Tenh::Tuple_t<Typle> >());
+    Directory &tuple = parent.GetSubDirectory(Tenh::type_string_of<Tenh::Tuple_t<Typle>>());
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(tuple, "length", test_length<Typle>, RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(tuple, "default_construction", test_default_construction<Typle>, RESULT_NO_ERROR);
 }
@@ -91,12 +91,12 @@ void add_leading_and_trailing_tuple_length_0_test (Directory &parent)
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent,
                                      FORMAT(Tenh::type_string_of<Tuple>() << "::leading_tuple<" << 0 << '>'),
                                      test_leading_tuple<Typle,0>,
-                                     new Context::Data<pair<Tuple,Tenh::EmptyTuple> >(pair<Tuple,Tenh::EmptyTuple>(l, Tenh::Static<Tenh::EmptyTuple>::SINGLETON)),
+                                     new Context::Data<pair<Tuple,Tenh::EmptyTuple>>(pair<Tuple,Tenh::EmptyTuple>(l, Tenh::Static<Tenh::EmptyTuple>::SINGLETON)),
                                      RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent,
                                      FORMAT(Tenh::type_string_of<Tuple>() << "::trailing_tuple<" << 0 << '>'),
                                      test_trailing_tuple<Typle,0>,
-                                     new Context::Data<pair<Tuple,Tenh::EmptyTuple> >(pair<Tuple,Tenh::EmptyTuple>(l, Tenh::Static<Tenh::EmptyTuple>::SINGLETON)),
+                                     new Context::Data<pair<Tuple,Tenh::EmptyTuple>>(pair<Tuple,Tenh::EmptyTuple>(l, Tenh::Static<Tenh::EmptyTuple>::SINGLETON)),
                                      RESULT_NO_ERROR);
 }
 
@@ -108,22 +108,22 @@ void add_leading_and_trailing_tuple_length_1_test (Directory &parent)
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent,
                                      FORMAT(Tenh::type_string_of<Tuple>() << "::leading_tuple<" << 0 << '>'),
                                      test_leading_tuple<Typle,0>,
-                                     new Context::Data<pair<Tuple,Tenh::EmptyTuple> >(pair<Tuple,Tenh::EmptyTuple>(l, Tenh::Static<Tenh::EmptyTuple>::SINGLETON)),
+                                     new Context::Data<pair<Tuple,Tenh::EmptyTuple>>(pair<Tuple,Tenh::EmptyTuple>(l, Tenh::Static<Tenh::EmptyTuple>::SINGLETON)),
                                      RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent,
                                      FORMAT(Tenh::type_string_of<Tuple>() << "::trailing_tuple<" << 0 << '>'),
                                      test_trailing_tuple<Typle,0>,
-                                     new Context::Data<pair<Tuple,Tuple> >(pair<Tuple,Tuple>(l, l)),
+                                     new Context::Data<pair<Tuple,Tuple>>(pair<Tuple,Tuple>(l, l)),
                                      RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent,
                                      FORMAT(Tenh::type_string_of<Tuple>() << "::leading_tuple<" << 1 << '>'),
                                      test_leading_tuple<Typle,1>,
-                                     new Context::Data<pair<Tuple,Tuple> >(pair<Tuple,Tuple>(l, l)),
+                                     new Context::Data<pair<Tuple,Tuple>>(pair<Tuple,Tuple>(l, l)),
                                      RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(parent,
                                      FORMAT(Tenh::type_string_of<Tuple>() << "::trailing_tuple<" << 1 << '>'),
                                      test_trailing_tuple<Typle,1>,
-                                     new Context::Data<pair<Tuple,Tenh::EmptyTuple> >(pair<Tuple,Tenh::EmptyTuple>(l, Tenh::Static<Tenh::EmptyTuple>::SINGLETON)),
+                                     new Context::Data<pair<Tuple,Tenh::EmptyTuple>>(pair<Tuple,Tenh::EmptyTuple>(l, Tenh::Static<Tenh::EmptyTuple>::SINGLETON)),
                                      RESULT_NO_ERROR);
 }
 
@@ -355,7 +355,7 @@ void AddTests (Directory &parent)
 
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_EmptyTuple, RESULT_NO_ERROR);
     add_particular_tests_for_tuple<Tenh::Typle_t<>>(dir);
-    add_particular_tests_for_tuple<Tenh::Typle_t<Sint32> >(dir);
+    add_particular_tests_for_tuple<Tenh::Typle_t<Sint32>>(dir);
     add_particular_tests_for_tuple<Tenh::Typle_t<Sint32,Sint8>>(dir);
     add_leading_and_trailing_tuple_tests(dir);
     LVD_ADD_TEST_CASE_FUNCTION(dir, test_tuple_concatenation, RESULT_NO_ERROR);

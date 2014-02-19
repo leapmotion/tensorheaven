@@ -141,7 +141,7 @@
 
 
 ###different multi-indexing schemes
-- "split"                 : if t is `Tensor2<Tensor2Sym<V>,Tensor2Sym<V> >`, then `t(P,Q).split(P,i,j),split(Q,k,l)`
+- "split"                 : if t is `Tensor2<Tensor2Sym<V>,Tensor2Sym<V>>`, then `t(P,Q).split(P,i,j),split(Q,k,l)`
                             is converse to bundle, implementation would be similar.
 - "multi-index"           : if s is `Tensor2<Tensor5,V>`, then `s(i,j,k,l,m,T)` would be `s(multiindex(i,j,k,l,m),T`)
                             implementation may be difficult if there are nested multi-indices
@@ -150,7 +150,7 @@
                             recursive and relatively easy.  "breaking tensor type boxes apart recursively"
 - "barred multi-index"    : `s(i|j|k|l|m|T)`
 - "direct sum indices"    : if t is `DirectSum<V,V>`, and s and u are `V` then `t(i+j) = s(i) + u(j)` could work,
-                            also if t is `Tensor2<DirectSum<V,V>,DirectSum<V,V> >` and s and u are `Tensor2<V,V>`
+                            also if t is `Tensor2<DirectSum<V,V>,DirectSum<V,V>>` and s and u are `Tensor2<V,V>`
                             then `t((a+b)|(c+d)) = s(a|c) + u(b|d)` could fill t as a block diagonal tensor.
 
 ###Notes for conceptual layer and refactor
@@ -554,7 +554,7 @@ x Use nullptr
     B b;
     // this would be typename DualOf_f<B>::T
     typedef decltype(dual(b)) DualOfB;
-    // this would be TensorProductOfBasedVectorSpaces_c<Typle_t<B,typename DualOf_f<B>::T> >
+    // this would be TensorProductOfBasedVectorSpaces_c<Typle_t<B,typename DualOf_f<B>::T>>
     typedef decltype(b * dual(b)) EndomorphismOfB;
     // this would be SymmetricPowerOfBasedVectorSpace_c<3,DualOfB>
     typedef decltype(sym<3>(dual(b))) Sym3_DualOfB;
@@ -568,9 +568,9 @@ x Use nullptr
 
   Contrast this with the current way:
 
-    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<U,V> > U_otimes_V;
-    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<W,X> > W_otimes_X;
-    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<U_otimes_V,W_otimes_X> > TProd;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<U,V>> U_otimes_V;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<W,X>> W_otimes_X;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<U_otimes_V,W_otimes_X>> TProd;
 - Use of ordinary functions and decltype to implement metaprograms.  For example,
     
     decltype(v * dual(u)) t; // makes t an instance of a 2-tensor conceptual type

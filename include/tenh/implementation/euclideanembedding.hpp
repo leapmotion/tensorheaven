@@ -61,10 +61,10 @@ private:
 
 // template specialization for inner product on Euclidean space
 template <typename VectorSpace_, typename OrthonormalBasisId_, typename Scalar_>
-struct EuclideanEmbedding_f<BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<OrthonormalBasisId_> >,StandardInnerProduct,Scalar_>
+struct EuclideanEmbedding_f<BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<OrthonormalBasisId_>>,StandardInnerProduct,Scalar_>
 {
 private:
-    typedef BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<OrthonormalBasisId_> > BasedVectorSpace;
+    typedef BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<OrthonormalBasisId_>> BasedVectorSpace;
     typedef typename EuclideanEmbedding2TensorFactorTyple_f<BasedVectorSpace>::T EuclideanEmbedding2TensorFactorTyple;
     typedef typename Diagonal2TensorProductOfBasedVectorSpaces_f<EuclideanEmbedding2TensorFactorTyple>::T Diagonal2Tensor;
     typedef ComponentGenerator_t<Scalar_,
@@ -73,7 +73,7 @@ private:
                                  StandardInnerProduct> ComponentGenerator;
     EuclideanEmbedding_f();
 public:
-    typedef ImplementationOf_t<Diagonal2Tensor,Scalar_,UseProceduralArray_t<ComponentGenerator> > T;
+    typedef ImplementationOf_t<Diagonal2Tensor,Scalar_,UseProceduralArray_t<ComponentGenerator>> T;
 };
 
 // ///////////////////////////////////////////////////////////////////////////

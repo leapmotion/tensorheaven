@@ -11,8 +11,8 @@ void test_embeddable_as_tensor_as_multilinear_form ()
 {
     std::cout << "EmbeddableAsTensor_i as multilinear form\n";
 
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,OrthonormalBasis_c<X> > B3;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,X>,OrthonormalBasis_c<X> > B4;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,OrthonormalBasis_c<X>> B3;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,X>,OrthonormalBasis_c<X>> B4;
     typedef DualOf_f<B3>::T DualOfB3;
     typedef DualOf_f<B4>::T DualOfB4;
     typedef TensorProductOfBasedVectorSpaces_c<Typle_t<DualOfB3,DualOfB4>> TensorProduct;
@@ -121,9 +121,9 @@ void test_product_of_abstract_indices ()
 void test_linear_solve_using_least_squares ()
 {
     typedef double Scalar;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,Generic>,OrthonormalBasis_c<Generic> > B2;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,OrthonormalBasis_c<Generic> > B3;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,OrthonormalBasis_c<Generic> > B4;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,Generic>,OrthonormalBasis_c<Generic>> B2;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,OrthonormalBasis_c<Generic>> B3;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,OrthonormalBasis_c<Generic>> B4;
     typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B2,DualOf_f<B2>::T>> T22;
     typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B2,DualOf_f<B3>::T>> T23;
     typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B2,DualOf_f<B4>::T>> T24;
@@ -180,8 +180,8 @@ void test_linear_solve_using_least_squares ()
 template <typename Concept_, typename Scalar_>
 void test_particular_implementation_of_vector_construction_via_vector_i ()
 {
-    typedef ImplementationOf_t<Concept_,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE> > U;
-    typedef ImplementationOf_t<Concept_,Scalar_,UsePreallocatedArray_t<ComponentsAreConst::FALSE> > V;
+    typedef ImplementationOf_t<Concept_,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE>> U;
+    typedef ImplementationOf_t<Concept_,Scalar_,UsePreallocatedArray_t<ComponentsAreConst::FALSE>> V;
     static Uint32 const DIM = U::DIM;
 
     U u(Static<WithoutInitialization>::SINGLETON);
@@ -226,8 +226,8 @@ void test_particular_implementation_of_vector_construction_via_vector_i ()
 void test_implementation_of_vector_construction_via_vector_i ()
 {
     typedef double Scalar;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > B3;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,Basis_c<Generic> > B4;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic>> B3;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,Basis_c<Generic>> B4;
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B3,B4> Diagonal2Tensor;
     typedef DirectSumOfBasedVectorSpaces_c<Typle_t<B3,B4>> DirectSum;
     typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B3,B4>> TensorProduct;
@@ -289,7 +289,7 @@ void test_identity_embedding ()
 {
     std::cout << "testing identity embedding/coembedding\n";
 
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > B;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic>> B;
     typedef DualOf_f<B>::T DualOfB;
     B b;
     DualOfB dual_of_b;
@@ -345,8 +345,8 @@ void test_diag2tensor_embedding ()
 {
     std::cout << "testing natural diag2tensor embedding/coembedding\n";
 
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > B3;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,Basis_c<Generic> > B4;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic>> B3;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,Basis_c<Generic>> B4;
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B3,B4> Diag2;
     typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B3,B4>> Tensor2;
     typedef SymmetricPowerOfBasedVectorSpace_c<2,B3> Sym2;
@@ -440,8 +440,8 @@ void test_scalar2tensor_embedding ()
 {
     std::cout << "testing natural scalar2tensor embedding/coembedding\n";
 
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > B3;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,Basis_c<Generic> > B4;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic>> B3;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,Basis_c<Generic>> B4;
     typedef Scalar2TensorProductOfBasedVectorSpaces_c<B3,B4> Scalar2;
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B3,B4> Diag2;
     typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B3,B4>> Tensor2;
@@ -590,7 +590,7 @@ void test_exterior_power_embedding_templatized ()
 
 void test_exterior_power_embedding ()
 {
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > B;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic>> B;
     test_exterior_power_embedding_templatized<1,B>();
     test_exterior_power_embedding_templatized<2,B>();
     test_exterior_power_embedding_templatized<3,B>();
@@ -632,7 +632,7 @@ void test_symmetric_power_embedding_templatized ()
 
 void test_symmetric_power_embedding ()
 {
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > B;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic>> B;
     test_symmetric_power_embedding_templatized<1,B>();
     test_symmetric_power_embedding_templatized<2,B>();
     test_symmetric_power_embedding_templatized<3,B>();
@@ -642,8 +642,8 @@ void test_embed_coembed_adjointness ()
 {
     std::cout << "testing embed/coembed adjointness\n";
 
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > B3;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,Basis_c<Generic> > B4;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic>> B3;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,Basis_c<Generic>> B4;
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B3,B4> Diag2;
     typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B3,B4>> Tensor2;
 
@@ -701,8 +701,8 @@ void test_type_system_helper_functions ()
     std::cout << FORMAT_VALUE(type_string_of(bvs(v3, b))) << '\n';
     std::cout << FORMAT_VALUE(type_string_of(bvs<3>(real_field, generic))) << '\n';
     std::cout << '\n';
-    BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > bvs3;
-    BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,Basis_c<Generic> > bvs4;
+    BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic>> bvs3;
+    BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,Basis_c<Generic>> bvs4;
     std::cout << FORMAT_VALUE(type_string_of(bvs3 + bvs4)) << '\n';
     std::cout << FORMAT_VALUE(type_string_of(bvs3 + bvs4 + bvs3)) << '\n';
     std::cout << FORMAT_VALUE(type_string_of((bvs3 + bvs4) + bvs3)) << '\n';

@@ -28,14 +28,14 @@ template <typename Component_,
           typename Derived_ = NullType>
 struct ProceduralArray_t
     :
-    public Array_i<typename DerivedType_f<Derived_,ProceduralArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_> >::T,
+    public Array_i<typename DerivedType_f<Derived_,ProceduralArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_>>::T,
                    Component_,
                    COMPONENT_COUNT_,
                    ComponentQualifier::PROCEDURAL>
 {
     enum { STATIC_ASSERT_IN_ENUM(IsComponentGenerator_t<ComponentGenerator_>::V, MUST_BE_COMPONENT_GENERATOR) };
 
-    typedef Array_i<typename DerivedType_f<Derived_,ProceduralArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_> >::T,
+    typedef Array_i<typename DerivedType_f<Derived_,ProceduralArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_>>::T,
                     Component_,
                     COMPONENT_COUNT_,
                     ComponentQualifier::PROCEDURAL> Parent_Array_i;
@@ -93,7 +93,7 @@ template <typename Component_,
           Uint32 COMPONENT_COUNT_,
           typename ComponentGenerator_,
           typename Derived_>
-struct IsProceduralArray_t<ProceduralArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_> >
+struct IsProceduralArray_t<ProceduralArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_>>
 {
     static bool const V = true;
 private:
@@ -104,7 +104,7 @@ template <typename Component_,
           Uint32 COMPONENT_COUNT_,
           typename ComponentGenerator_,
           typename Derived_>
-struct IsArray_i<ProceduralArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_> >
+struct IsArray_i<ProceduralArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_>>
 {
     static bool const V = true;
 private:

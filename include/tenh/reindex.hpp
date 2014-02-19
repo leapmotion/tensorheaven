@@ -91,7 +91,7 @@ private:
 // map on its domain.
 template <typename DomainAbstractIndexTyple_, typename CodomainAbstractIndexTyple_>
 template <AbstractIndexSymbol SYMBOL_>
-struct Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>::Eval_f<AbstractIndex_c<SYMBOL_> >
+struct Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>::Eval_f<AbstractIndex_c<SYMBOL_>>
 {
 private:
     typedef AbstractIndex_c<SYMBOL_> AbstractIndex;
@@ -116,11 +116,11 @@ public:
 
 template <typename DomainAbstractIndexTyple_, typename CodomainAbstractIndexTyple_>
 template <AbstractIndexSymbol SYMBOL_, Uint32 DIM_>
-struct Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>::Eval_f<DimIndex_t<SYMBOL_,DIM_> >
+struct Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>::Eval_f<DimIndex_t<SYMBOL_,DIM_>>
 {
 private:
     typedef Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_> Reindex;
-    typedef typename Reindex::template Eval_f<AbstractIndex_c<SYMBOL_> >::T MappedAbstractIndex;
+    typedef typename Reindex::template Eval_f<AbstractIndex_c<SYMBOL_>>::T MappedAbstractIndex;
     Eval_f();
 public:
     typedef DimIndex_t<SymbolOf_f<MappedAbstractIndex>::V,DIM_> T;
@@ -178,22 +178,22 @@ template <typename DomainAbstractIndexTyple_,
           typename CodomainAbstractIndexTyple_,
           AbstractIndexSymbol SYMBOL_>
 typename Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
-         ::template Eval_f<AbstractIndex_c<SYMBOL_> >::T
+         ::template Eval_f<AbstractIndex_c<SYMBOL_>>::T
     reindexed (AbstractIndex_c<SYMBOL_> const &i)
 {
     return typename Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
-                    ::template Eval_f<AbstractIndex_c<SYMBOL_> >::T();
+                    ::template Eval_f<AbstractIndex_c<SYMBOL_>>::T();
 }
 
 template <typename DomainAbstractIndexTyple_,
           typename CodomainAbstractIndexTyple_,
           AbstractIndexSymbol SYMBOL_>
 typename Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
-         ::template Eval_f<AbstractIndex_c<SYMBOL_> >::T
+         ::template Eval_f<AbstractIndex_c<SYMBOL_>>::T
     reindexed (AbstractIndex_c<SYMBOL_> &i)
 {
     return typename Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
-                    ::template Eval_f<AbstractIndex_c<SYMBOL_> >::T();
+                    ::template Eval_f<AbstractIndex_c<SYMBOL_>>::T();
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -207,11 +207,11 @@ template <typename DomainAbstractIndexTyple_,
           AbstractIndexSymbol SYMBOL_,
           Uint32 DIM_>
 typename Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
-         ::template Eval_f<DimIndex_t<SYMBOL_,DIM_> >::T
+         ::template Eval_f<DimIndex_t<SYMBOL_,DIM_>>::T
     reindexed (DimIndex_t<SYMBOL_,DIM_> const &i)
 {
     return typename Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
-                    ::template Eval_f<DimIndex_t<SYMBOL_,DIM_> >::T(i.value(), CheckRange::FALSE);
+                    ::template Eval_f<DimIndex_t<SYMBOL_,DIM_>>::T(i.value(), CheckRange::FALSE);
 }
 
 template <typename DomainAbstractIndexTyple_,
@@ -219,11 +219,11 @@ template <typename DomainAbstractIndexTyple_,
           AbstractIndexSymbol SYMBOL_,
           Uint32 DIM_>
 typename Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
-         ::template Eval_f<DimIndex_t<SYMBOL_,DIM_> >::T
+         ::template Eval_f<DimIndex_t<SYMBOL_,DIM_>>::T
     reindexed (DimIndex_t<SYMBOL_,DIM_> &i)
 {
     return typename Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
-                    ::template Eval_f<DimIndex_t<SYMBOL_,DIM_> >::T(i.value(), CheckRange::FALSE);
+                    ::template Eval_f<DimIndex_t<SYMBOL_,DIM_>>::T(i.value(), CheckRange::FALSE);
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -302,7 +302,7 @@ template <typename DomainAbstractIndexTyple_,
           typename CodomainAbstractIndexTyple_,
           typename Typle_>
 typename Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
-         ::template Eval_f<Tuple_t<Typle_> >::T
+         ::template Eval_f<Tuple_t<Typle_>>::T
     reindexed (Tuple_t<Typle_> const &tuple)
 {
     return reindexed<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>(tuple.head()) |
@@ -313,7 +313,7 @@ template <typename DomainAbstractIndexTyple_,
           typename CodomainAbstractIndexTyple_,
           typename Typle_>
 typename Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
-         ::template Eval_f<Tuple_t<Typle_> >::T
+         ::template Eval_f<Tuple_t<Typle_>>::T
     reindexed (Tuple_t<Typle_> &tuple)
 {
     return reindexed<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>(tuple.head()) |

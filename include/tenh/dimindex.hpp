@@ -58,20 +58,20 @@ private:
     IsDimIndex_f();
 };
 /// @cond false
-template <AbstractIndexSymbol SYMBOL, Uint32 DIM> struct IsDimIndex_f<DimIndex_t<SYMBOL,DIM> >
+template <AbstractIndexSymbol SYMBOL, Uint32 DIM> struct IsDimIndex_f<DimIndex_t<SYMBOL,DIM>>
 {
     static bool const V = true;
 private:
     IsDimIndex_f();
 };
 
-template <AbstractIndexSymbol SYMBOL, Uint32 DIM> struct IsComponentIndex_f<DimIndex_t<SYMBOL,DIM> >
+template <AbstractIndexSymbol SYMBOL, Uint32 DIM> struct IsComponentIndex_f<DimIndex_t<SYMBOL,DIM>>
 {
     static bool const V = true;
 private:
     IsComponentIndex_f();
 };
-template <AbstractIndexSymbol SYMBOL, Uint32 DIM> struct IsAbstractIndex_f<DimIndex_t<SYMBOL,DIM> >
+template <AbstractIndexSymbol SYMBOL, Uint32 DIM> struct IsAbstractIndex_f<DimIndex_t<SYMBOL,DIM>>
 {
     static bool const V = true;
 private:

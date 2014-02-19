@@ -31,7 +31,7 @@ struct Basis_c
 };
 
 template <typename Id_>
-struct IsConcept_f<Basis_c<Id_> >
+struct IsConcept_f<Basis_c<Id_>>
 {
     static bool const V = true;
 private:
@@ -82,7 +82,7 @@ struct OrthonormalBasis_c
 };
 
 template <typename Id_>
-struct IsConcept_f<OrthonormalBasis_c<Id_> >
+struct IsConcept_f<OrthonormalBasis_c<Id_>>
 {
     static bool const V = true;
 private:

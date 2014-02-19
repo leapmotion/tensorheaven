@@ -21,14 +21,14 @@
 
 namespace Tenh {
 
-template <typename BasedVectorSpace_, typename Scalar_ = float, typename UseArrayType_ = UseMemberArray_t<ComponentsAreConst::FALSE> >
+template <typename BasedVectorSpace_, typename Scalar_ = float, typename UseArrayType_ = UseMemberArray_t<ComponentsAreConst::FALSE>>
 struct Vector
     :
     public ExpressionOperand_i<Vector<BasedVectorSpace_,Scalar_,UseArrayType_>,1>,
-    public ImplementationOf_t<BasedVectorSpace_,Scalar_,UseArrayType_,Vector<BasedVectorSpace_,Scalar_,UseArrayType_> >
+    public ImplementationOf_t<BasedVectorSpace_,Scalar_,UseArrayType_,Vector<BasedVectorSpace_,Scalar_,UseArrayType_>>
 {
 private:
-    typedef ImplementationOf_t<BasedVectorSpace_,Scalar_,UseArrayType_,Vector<BasedVectorSpace_,Scalar_,UseArrayType_> > Parent_Implementation;
+    typedef ImplementationOf_t<BasedVectorSpace_,Scalar_,UseArrayType_,Vector<BasedVectorSpace_,Scalar_,UseArrayType_>> Parent_Implementation;
 public:
     typedef Scalar_ Scalar;
     typedef typename Parent_Implementation::ComponentIndex ComponentIndex;
@@ -113,7 +113,7 @@ public:
 };
 
 template <typename BasedVectorSpace_, typename Scalar_, typename UseArrayType_>
-struct DualOf_f<Vector<BasedVectorSpace_,Scalar_,UseArrayType_> >
+struct DualOf_f<Vector<BasedVectorSpace_,Scalar_,UseArrayType_>>
 {
     typedef Vector<typename DualOf_f<BasedVectorSpace_>::T,Scalar_,typename DualOf_f<UseArrayType_>::T> T;
 private:

@@ -113,10 +113,10 @@ void add_tests (Directory *parent)
     add_test_for_each_composition<V>(parent);
     add_test_for_each_composition<A>(parent);
     add_test_for_each_composition<S>(parent);
-//     add_test_for_each_composition<Tenh::Tensor2Antisymmetric_t<A> >(parent); // TODO: allow zero-dimensional vector spaces
-    add_test_for_each_composition<Tenh::Tensor2Antisymmetric_t<S> >(parent);
-    add_test_for_each_composition<Tenh::Tensor2Symmetric_t<A> >(parent);
-    add_test_for_each_composition<Tenh::Tensor2Symmetric_t<S> >(parent);
+//     add_test_for_each_composition<Tenh::Tensor2Antisymmetric_t<A>>(parent); // TODO: allow zero-dimensional vector spaces
+    add_test_for_each_composition<Tenh::Tensor2Antisymmetric_t<S>>(parent);
+    add_test_for_each_composition<Tenh::Tensor2Symmetric_t<A>>(parent);
+    add_test_for_each_composition<Tenh::Tensor2Symmetric_t<S>>(parent);
 }
 
 void AddTests (Directory *parent)

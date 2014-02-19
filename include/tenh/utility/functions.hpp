@@ -26,13 +26,13 @@ struct FunctionObjectType_m
     typedef CodomainSpace_ CoDomain;
     typedef Scalar_ Scalar;
 
-    typedef ImplementationOf_t<Domain,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE> > V;
-    typedef ImplementationOf_t<DualOfBasedVectorSpace,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE> > DualOfV;
-    typedef ImplementationOf_t<Sym2Dual,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE> > Sym2_DualOfV;
-    typedef ImplementationOf_t<Domain,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE> > In;
-    typedef ImplementationOf_t<CoDomain,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE> > Out;
-    typedef ImplementationOf_t<Differential1,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE> > D1;
-    typedef ImplementationOf_t<Differential2,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE> > D2;
+    typedef ImplementationOf_t<Domain,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE>> V;
+    typedef ImplementationOf_t<DualOfBasedVectorSpace,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE>> DualOfV;
+    typedef ImplementationOf_t<Sym2Dual,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE>> Sym2_DualOfV;
+    typedef ImplementationOf_t<Domain,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE>> In;
+    typedef ImplementationOf_t<CoDomain,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE>> Out;
+    typedef ImplementationOf_t<Differential1,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE>> D1;
+    typedef ImplementationOf_t<Differential2,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE>> D2;
 };
 
 // template specialization for when CodomainSpace_ is Scalar_
@@ -48,10 +48,10 @@ struct FunctionObjectType_m<ParameterSpace_,Scalar_,Scalar_>
     typedef Scalar_ CoDomain;
     typedef Scalar_ Scalar;
 
-    typedef ImplementationOf_t<ParameterSpace_,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE> > V;
-    typedef ImplementationOf_t<DualOfBasedVectorSpace,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE> > DualOfV;
-    typedef ImplementationOf_t<Sym2Dual,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE> > Sym2_DualOfV;
-    typedef ImplementationOf_t<ParameterSpace_,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE> > In;
+    typedef ImplementationOf_t<ParameterSpace_,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE>> V;
+    typedef ImplementationOf_t<DualOfBasedVectorSpace,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE>> DualOfV;
+    typedef ImplementationOf_t<Sym2Dual,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE>> Sym2_DualOfV;
+    typedef ImplementationOf_t<ParameterSpace_,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE>> In;
     typedef Scalar_ Out;
     typedef DualOfV D1;
     typedef Sym2_DualOfV D2;

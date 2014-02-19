@@ -111,7 +111,7 @@ template <Uint32 DIMENSION_,
           typename VectorSpaceId_,
           typename UseArrayType_,
           typename ScalarField_>
-struct DualOf_f<Vec<DIMENSION_,Scalar_,Basis_,VectorSpaceId_,UseArrayType_,ScalarField_> >
+struct DualOf_f<Vec<DIMENSION_,Scalar_,Basis_,VectorSpaceId_,UseArrayType_,ScalarField_>>
 {
     // The "dual" type of a vector is just a covector.  Note that Generic is self-dual
     typedef Vec<DIMENSION_,
@@ -245,7 +245,7 @@ struct DualOf_f<Op<CODOMAIN_DIMENSION_,
                    CodomainId_,
                    DomainId_,
                    UseArrayType_,
-                   ScalarField_> >
+                   ScalarField_>>
 {
     // The "dual" type of a linear operator is its natural adjoint; if
     // A : V --> W, then A* : W* --> V*, where * denotes the dual functor.

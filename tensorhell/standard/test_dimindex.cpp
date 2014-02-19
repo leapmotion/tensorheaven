@@ -29,17 +29,17 @@ void test_Reindex_e (Context const &context)
     typedef Tenh::Typle_t<j,P,k> CodomainIndexTyple;
     typedef Tenh::Reindex_e<DomainIndexTyple,CodomainIndexTyple> Reindex;
 
-    assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<Tenh::DimIndex_t<'i',42> >::T,Tenh::DimIndex_t<'j',42> >::V));
-    assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<Tenh::DimIndex_t<'j',8> >::T,Tenh::DimIndex_t<'P',8> >::V));
-    assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<Tenh::DimIndex_t<'P',3> >::T,Tenh::DimIndex_t<'k',3> >::V));
+    assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<Tenh::DimIndex_t<'i',42>>::T,Tenh::DimIndex_t<'j',42>>::V));
+    assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<Tenh::DimIndex_t<'j',8>>::T,Tenh::DimIndex_t<'P',8>>::V));
+    assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<Tenh::DimIndex_t<'P',3>>::T,Tenh::DimIndex_t<'k',3>>::V));
 
     static Tenh::AbstractIndexSymbol const OFFSET = 'k'; // this is the max of {'j','k','P'}
-    assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<Tenh::DimIndex_t<'a',123> >::T,
-                                  Tenh::DimIndex_t<OFFSET+'a',123> >::V));
-    assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<Tenh::DimIndex_t<'k',666> >::T,
-                                  Tenh::DimIndex_t<OFFSET+'k',666> >::V));
-    assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<Tenh::DimIndex_t<12345,67890> >::T,
-                                  Tenh::DimIndex_t<OFFSET+12345,67890> >::V));
+    assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<Tenh::DimIndex_t<'a',123>>::T,
+                                  Tenh::DimIndex_t<OFFSET+'a',123>>::V));
+    assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<Tenh::DimIndex_t<'k',666>>::T,
+                                  Tenh::DimIndex_t<OFFSET+'k',666>>::V));
+    assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<Tenh::DimIndex_t<12345,67890>>::T,
+                                  Tenh::DimIndex_t<OFFSET+12345,67890>>::V));
 }
 
 void test_induced_Typle_Reindex_e (Context const &context)
@@ -82,9 +82,9 @@ void test_reindexed (Context const &context)
     typedef Tenh::Typle_t<j,P,k> CodomainIndexTyple;
     typedef Tenh::Reindex_e<DomainIndexTyple,CodomainIndexTyple> Reindex;
 
-    assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<Tenh::DimIndex_t<'i',42> >::T,Tenh::DimIndex_t<'j',42> >::V));
-    assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<Tenh::DimIndex_t<'j',8> >::T,Tenh::DimIndex_t<'P',8> >::V));
-    assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<Tenh::DimIndex_t<'P',3> >::T,Tenh::DimIndex_t<'k',3> >::V));
+    assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<Tenh::DimIndex_t<'i',42>>::T,Tenh::DimIndex_t<'j',42>>::V));
+    assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<Tenh::DimIndex_t<'j',8>>::T,Tenh::DimIndex_t<'P',8>>::V));
+    assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<Tenh::DimIndex_t<'P',3>>::T,Tenh::DimIndex_t<'k',3>>::V));
 
     static Tenh::AbstractIndexSymbol const OFFSET = 'k'; // this is the max of {'j','k','P'}
 

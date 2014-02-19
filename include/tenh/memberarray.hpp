@@ -38,12 +38,12 @@ private:
 template <typename Component_, Uint32 COMPONENT_COUNT_, ComponentsAreConst COMPONENTS_ARE_CONST_ = ComponentsAreConst::FALSE, typename Derived_ = NullType>
 struct MemberArray_t
     :
-    public MemoryArray_i<typename DerivedType_f<Derived_,MemberArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> >::T,
+    public MemoryArray_i<typename DerivedType_f<Derived_,MemberArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_>>::T,
                          Component_,
                          COMPONENT_COUNT_,
                          COMPONENTS_ARE_CONST_>
 {
-    typedef MemoryArray_i<typename DerivedType_f<Derived_,MemberArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> >::T,
+    typedef MemoryArray_i<typename DerivedType_f<Derived_,MemberArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_>>::T,
                           Component_,
                           COMPONENT_COUNT_,
                           COMPONENTS_ARE_CONST_> Parent_MemoryArray_i;
@@ -131,20 +131,20 @@ template <typename T> struct IsMemberArray_t
 private:
     IsMemberArray_t();
 };
-template <typename Component_, Uint32 COMPONENT_COUNT_, ComponentsAreConst COMPONENTS_ARE_CONST_, typename Derived_> struct IsMemberArray_t<MemberArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> >
+template <typename Component_, Uint32 COMPONENT_COUNT_, ComponentsAreConst COMPONENTS_ARE_CONST_, typename Derived_> struct IsMemberArray_t<MemberArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_>>
 {
     static bool const V = true;
 private:
     IsMemberArray_t();
 };
 
-template <typename Component_, Uint32 COMPONENT_COUNT_, ComponentsAreConst COMPONENTS_ARE_CONST_, typename Derived_> struct IsArray_i<MemberArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> >
+template <typename Component_, Uint32 COMPONENT_COUNT_, ComponentsAreConst COMPONENTS_ARE_CONST_, typename Derived_> struct IsArray_i<MemberArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_>>
 {
     static bool const V = true;
 private:
     IsArray_i();
 };
-template <typename Component_, Uint32 COMPONENT_COUNT_, ComponentsAreConst COMPONENTS_ARE_CONST_, typename Derived_> struct IsMemoryArray_i<MemberArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> >
+template <typename Component_, Uint32 COMPONENT_COUNT_, ComponentsAreConst COMPONENTS_ARE_CONST_, typename Derived_> struct IsMemoryArray_i<MemberArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_>>
 {
     static bool const V = true;
 private:

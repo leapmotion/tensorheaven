@@ -186,7 +186,7 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Scalar2TensorProductOfBasedVectorSpace
 
 // TODO: verify that this mathematical claim is true
 template <typename Factor0, typename Factor1>
-struct DualOf_f<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0,Factor1> >
+struct DualOf_f<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0,Factor1>>
 {
     typedef Scalar2TensorProductOfBasedVectorSpaces_c<typename DualOf_f<Factor0>::T,typename DualOf_f<Factor1>::T> T;
 private:
@@ -227,7 +227,7 @@ private:
 template <typename Factor0_, typename Factor1_>
 typename std::enable_if<(!BOTH_FACTORS_ARE_BASES_UNIQUELY(Factor0_,Factor1_) &&
                          !BOTH_FACTORS_ARE_BASED_VECTOR_SPACES_UNIQUELY(Factor0_,Factor1_)),
-                        Scalar2TensorProduct_c<Factor0_,Factor1_> >::type
+                        Scalar2TensorProduct_c<Factor0_,Factor1_>>::type
     scalar2 (Factor0_ const &, Factor1_ const &)
 {
     return Scalar2TensorProduct_c<Factor0_,Factor1_>();
@@ -237,7 +237,7 @@ typename std::enable_if<(!BOTH_FACTORS_ARE_BASES_UNIQUELY(Factor0_,Factor1_) &&
 template <typename Factor0_, typename Factor1_>
 typename std::enable_if<(BOTH_FACTORS_ARE_BASES_UNIQUELY(Factor0_,Factor1_) &&
                          !BOTH_FACTORS_ARE_BASED_VECTOR_SPACES_UNIQUELY(Factor0_,Factor1_)),
-                        Scalar2TensorProductOfBases_c<Factor0_,Factor1_> >::type
+                        Scalar2TensorProductOfBases_c<Factor0_,Factor1_>>::type
     scalar2 (Factor0_ const &, Factor1_ const &)
 {
     return Scalar2TensorProductOfBases_c<Factor0_,Factor1_>();
@@ -247,7 +247,7 @@ typename std::enable_if<(BOTH_FACTORS_ARE_BASES_UNIQUELY(Factor0_,Factor1_) &&
 template <typename Factor0_, typename Factor1_>
 typename std::enable_if<(!BOTH_FACTORS_ARE_BASES_UNIQUELY(Factor0_,Factor1_) &&
                          BOTH_FACTORS_ARE_BASED_VECTOR_SPACES_UNIQUELY(Factor0_,Factor1_)),
-                        Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_> >::type
+                        Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>>::type
     scalar2 (Factor0_ const &, Factor1_ const &)
 {
     return Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>();

@@ -204,7 +204,7 @@ struct OperatorAdditionReturnType_f
         ExpressionTemplate_Addition_t<
             typename UniformlyIndexedExpressionTemplate_f<LhsDerived_,LHS_FREE_INDEX_COUNT_>::T,
             typename UniformlyIndexedExpressionTemplate_f<RhsDerived_,RHS_FREE_INDEX_COUNT_>::T,
-            '+'> > T;
+            '+'>> T;
 private:
     OperatorAdditionReturnType_f();
 };
@@ -234,7 +234,7 @@ struct OperatorSubtractionReturnType_f
         ExpressionTemplate_Addition_t<
             typename UniformlyIndexedExpressionTemplate_f<LhsDerived_,LHS_FREE_INDEX_COUNT_>::T,
             typename UniformlyIndexedExpressionTemplate_f<RhsDerived_,RHS_FREE_INDEX_COUNT_>::T,
-            '-'> > T;
+            '-'>> T;
 private:
     OperatorSubtractionReturnType_f();
 };
@@ -263,7 +263,7 @@ struct OperatorScalarMultiplicationReturnType_f
         ExpressionTemplate_ScalarMultiplication_t<
             typename UniformlyIndexedExpressionTemplate_f<Derived_,FREE_INDEX_COUNT_>::T,
             typename Derived_::Scalar,
-            OPERATOR_> > T;
+            OPERATOR_>> T;
 private:
     OperatorScalarMultiplicationReturnType_f();
 };
@@ -325,7 +325,7 @@ struct OperatorMultiplicationReturnType_f
     typedef Reindexable_t<
         ExpressionTemplate_Multiplication_t<
             typename LhsIndexedContractionExpressionTemplate_f<LhsDerived_,LHS_FREE_INDEX_COUNT_>::T,
-            typename RhsIndexedContractionExpressionTemplate_f<RhsDerived_,RHS_FREE_INDEX_COUNT_>::T> > T;
+            typename RhsIndexedContractionExpressionTemplate_f<RhsDerived_,RHS_FREE_INDEX_COUNT_>::T>> T;
 private:
     OperatorMultiplicationReturnType_f();
 };

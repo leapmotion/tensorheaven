@@ -32,9 +32,9 @@ Scalar_ sym (ComponentIndex_t<COMPONENT_COUNT_> const &i)
 
     // for using bundle_index_map -- the use of UsePreallocatedArray_t<ComponentsAreConst::FALSE> is somewhat arbitrary,
     // since only the static method bundle_index_map will be used.
-    typedef ImplementationOf_t<Projection,Scalar_,UsePreallocatedArray_t<ComponentsAreConst::FALSE> > BootstrappingImplementation;
-    typedef ImplementationOf_t<SymmetricPower,Scalar_,UsePreallocatedArray_t<ComponentsAreConst::FALSE> > Factor0BootstrappingImplementation;
-    typedef ImplementationOf_t<TensorPower,Scalar_,UsePreallocatedArray_t<ComponentsAreConst::FALSE> > Factor1BootstrappingImplementation;
+    typedef ImplementationOf_t<Projection,Scalar_,UsePreallocatedArray_t<ComponentsAreConst::FALSE>> BootstrappingImplementation;
+    typedef ImplementationOf_t<SymmetricPower,Scalar_,UsePreallocatedArray_t<ComponentsAreConst::FALSE>> Factor0BootstrappingImplementation;
+    typedef ImplementationOf_t<TensorPower,Scalar_,UsePreallocatedArray_t<ComponentsAreConst::FALSE>> Factor1BootstrappingImplementation;
 
     typedef typename BootstrappingImplementation::MultiIndex MultiIndex;
     typedef typename MultiIndex::IndexTyple IndexTyple;
@@ -72,10 +72,10 @@ private:
     typedef ComponentGenerator_t<Scalar_,
                                  DimensionOf_f<Projection>::V,
                                  ComponentGeneratorEvaluator::sym<ORDER_,Factor_,DimensionOf_f<Projection>::V,Scalar_>,
-                                 SymId_t<ORDER_,Factor_> > ComponentGenerator;
+                                 SymId_t<ORDER_,Factor_>> ComponentGenerator;
     Sym_f();
 public:
-    typedef ImplementationOf_t<Projection,Scalar_,UseProceduralArray_t<ComponentGenerator> > T;
+    typedef ImplementationOf_t<Projection,Scalar_,UseProceduralArray_t<ComponentGenerator>> T;
 };
 
 } // end of namespace Tenh

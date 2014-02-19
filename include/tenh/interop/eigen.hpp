@@ -31,7 +31,7 @@ struct EigenMapOf2Tensor_nonconst_f
     typedef Eigen::Map<Eigen::Matrix<Scalar_,
                                      DimensionOf_f<Factor0_>::V,
                                      DimensionOf_f<Factor1_>::V,
-                                     Eigen::RowMajor> > T;
+                                     Eigen::RowMajor>> T;
 };
 
 // const version
@@ -77,7 +77,7 @@ struct EigenMapOfVector_nonconst_f
     typedef Eigen::Map<Eigen::Matrix<Scalar_,
                                      DimensionOf_f<Type_>::V,
                                      1,
-                                     Eigen::ColMajor> > T;
+                                     Eigen::ColMajor>> T;
 };
 
 // const version

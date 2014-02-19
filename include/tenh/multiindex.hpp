@@ -544,7 +544,7 @@ private:
 };
 
 template <typename DomainIndexTyple_, typename CodomainIndexType_>
-struct MultiIndexMap_t<DomainIndexTyple_,Typle_t<CodomainIndexType_> >
+struct MultiIndexMap_t<DomainIndexTyple_,Typle_t<CodomainIndexType_>>
 {
     static_assert(!ContainsDuplicates_f<DomainIndexTyple_>::V, "DomainIndexTyple_ must not contain duplicates");
 

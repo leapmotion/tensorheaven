@@ -93,7 +93,7 @@ Reindexable_t<ExpressionTemplate_> reindexable (ExpressionTemplate_ const &e)
 template <typename DomainAbstractIndexTyple_, typename CodomainAbstractIndexTyple_>
 template <typename ExpressionTemplate_, typename FreeDimIndexTyple_>
 struct Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
-    ::Eval_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_> >
+    ::Eval_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_>>
 {
 private:
     typedef Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_> Reindex;
@@ -108,11 +108,11 @@ template <typename DomainAbstractIndexTyple_,
           typename ExpressionTemplate_,
           typename FreeDimIndexTyple_>
 typename Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
-         ::template Eval_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_> >::T
+         ::template Eval_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_>>::T
     reindexed (Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_> const &e)
 {
     typedef typename Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
-                     ::template Eval_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_> >::T Reindexed;
+                     ::template Eval_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_>>::T Reindexed;
     return Reindexed(reindexed<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>(e.derived_expression_template()));
 }
 
@@ -121,11 +121,11 @@ template <typename DomainAbstractIndexTyple_,
           typename ExpressionTemplate_,
           typename FreeDimIndexTyple_>
 typename Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
-         ::template Eval_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_> >::T
+         ::template Eval_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_>>::T
     reindexed (Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_> &e)
 {
     typedef typename Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
-                     ::template Eval_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_> >::T Reindexed;
+                     ::template Eval_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_>>::T Reindexed;
     return Reindexed(reindexed<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>(e.derived_expression_template()));
 }
 

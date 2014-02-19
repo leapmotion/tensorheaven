@@ -55,7 +55,7 @@ struct AbstractIndex_c
 };
 
 template <AbstractIndexSymbol SYMBOL_>
-struct IsConcept_f<AbstractIndex_c<SYMBOL_> >
+struct IsConcept_f<AbstractIndex_c<SYMBOL_>>
 {
     static bool const V = true;
 private:
@@ -63,7 +63,7 @@ private:
 };
 
 template <typename T> struct IsAbstractIndex_f { static bool const V = false; };
-template <AbstractIndexSymbol SYMBOL> struct IsAbstractIndex_f<AbstractIndex_c<SYMBOL> > { static bool const V = true; };
+template <AbstractIndexSymbol SYMBOL> struct IsAbstractIndex_f<AbstractIndex_c<SYMBOL>> { static bool const V = true; };
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(AbstractIndex);
 // special convenience macros

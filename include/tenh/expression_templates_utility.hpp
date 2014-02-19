@@ -403,7 +403,7 @@ private:
 // TODO: the use of UseMemberArray_t<ComponentsAreConst::FALSE> is somewhat arbitrary -- should this be addressed somehow?
 template <typename Scalar, typename BundleDimIndexTyple, typename ResultingFactorType, typename ResultingDimIndexType>
 typename BundleIndexMap_t<Scalar,BundleDimIndexTyple,ResultingFactorType,ResultingDimIndexType>::T const BundleIndexMap_t<Scalar,BundleDimIndexTyple,ResultingFactorType,ResultingDimIndexType>::V =
-    ImplementationOf_t<ResultingFactorType,Scalar,UseMemberArray_t<ComponentsAreConst::FALSE> >::template bundle_index_map<BundleDimIndexTyple,ResultingDimIndexType>;
+    ImplementationOf_t<ResultingFactorType,Scalar,UseMemberArray_t<ComponentsAreConst::FALSE>>::template bundle_index_map<BundleDimIndexTyple,ResultingDimIndexType>;
 
 // not an expression template, but just something that handles the bundled indices
 template <typename Operand, typename BundleAbstractIndexTyple, typename ResultingFactorType, typename ResultingAbstractIndexType, CheckFactorTypes CHECK_FACTOR_TYPES_>
@@ -572,7 +572,7 @@ struct IndexSplitter_t
         typedef MultiIndex_t<SourceFactorDimIndexTyple> SourceFactorMultiIndex;
         // TODO: the use of UseMemberArray_t<ComponentsAreConst::FALSE> here is arbitrary because it's just used to access a
         // static method.  figure out if this is a problem
-        typedef ImplementationOf_t<SourceFactor,Scalar,UseMemberArray_t<ComponentsAreConst::FALSE> > ImplementationOfSourceFactor;
+        typedef ImplementationOf_t<SourceFactor,Scalar,UseMemberArray_t<ComponentsAreConst::FALSE>> ImplementationOfSourceFactor;
 
         SourceFactorMultiIndex s(m.template range<SOURCE_INDEX_TYPE_INDEX,SOURCE_INDEX_TYPE_INDEX+Length_f<SplitAbstractIndexTyple>::V>());
         if (ImplementationOfSourceFactor::component_is_procedural_zero(s))
@@ -645,7 +645,7 @@ struct IndexSplitToIndex_t
         typedef ComponentIndex_t<DimensionOf_f<SourceFactor>::V> SourceFactorComponentIndex;
         // TODO: the use of UseMemberArray_t<ComponentsAreConst::FALSE> here is arbitrary because it's just used to access a
         // static method.  figure out if this is a problem
-        typedef ImplementationOf_t<SourceFactor,Scalar,UseMemberArray_t<ComponentsAreConst::FALSE> > ImplementationOfSourceFactor;
+        typedef ImplementationOf_t<SourceFactor,Scalar,UseMemberArray_t<ComponentsAreConst::FALSE>> ImplementationOfSourceFactor;
         typedef typename ImplementationOfSourceFactor::MultiIndex SourceFactorMultiIndex;
 
         // this does the vector-index to multi-index conversion

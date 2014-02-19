@@ -299,19 +299,19 @@ void add_particular_tests_for_scalar_and_use_array_type_Vector (Directory &paren
 {
     {
         static Uint32 const DIM = 0;
-        typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,X>,Tenh::Basis_c<X> > BasedVectorSpace;
+        typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,X>,Tenh::Basis_c<X>> BasedVectorSpace;
         typedef Tenh::Vector<BasedVectorSpace,Scalar_,UseArrayType_> V;
         add_particular_tests<V>(parent);
     }
     {
         static Uint32 const DIM = 1;
-        typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,X>,Tenh::Basis_c<X> > BasedVectorSpace;
+        typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,X>,Tenh::Basis_c<X>> BasedVectorSpace;
         typedef Tenh::Vector<BasedVectorSpace,Scalar_,UseArrayType_> V;
         add_particular_tests<V>(parent);
     }
     {
         static Uint32 const DIM = 3;
-        typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,X>,Tenh::Basis_c<X> > BasedVectorSpace;
+        typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,X>,Tenh::Basis_c<X>> BasedVectorSpace;
         typedef Tenh::Vector<BasedVectorSpace,Scalar_,UseArrayType_> V;
         add_particular_tests<V>(parent);
     }
@@ -340,13 +340,13 @@ void add_particular_tests_for_scalar_and_use_array_type_Vec (Directory &parent)
 template <typename Scalar_>
 void add_particular_tests_for_scalar_Vector (Directory &parent)
 {
-    add_particular_tests_for_scalar_and_use_array_type_Vector<Scalar_,Tenh::UseMemberArray_t<Tenh::ComponentsAreConst::FALSE> >(parent);
+    add_particular_tests_for_scalar_and_use_array_type_Vector<Scalar_,Tenh::UseMemberArray_t<Tenh::ComponentsAreConst::FALSE>>(parent);
 }
 
 template <typename Scalar_>
 void add_particular_tests_for_scalar_Vec (Directory &parent)
 {
-    add_particular_tests_for_scalar_and_use_array_type_Vec<Scalar_,Tenh::UseMemberArray_t<Tenh::ComponentsAreConst::FALSE> >(parent);
+    add_particular_tests_for_scalar_and_use_array_type_Vec<Scalar_,Tenh::UseMemberArray_t<Tenh::ComponentsAreConst::FALSE>>(parent);
 }
 
 void AddTests0 (Lvd::TestSystem::Directory &parent);

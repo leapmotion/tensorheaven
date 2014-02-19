@@ -69,7 +69,7 @@ struct Map_t<DomainElement,CodomainElement,EmptyMap>
     }
 };
 
-template <typename DomainElement, typename CodomainElement, typename RestOfMap> struct IsMap_t<Map_t<DomainElement,CodomainElement,RestOfMap> > { static bool const V = true; };
+template <typename DomainElement, typename CodomainElement, typename RestOfMap> struct IsMap_t<Map_t<DomainElement,CodomainElement,RestOfMap>> { static bool const V = true; };
 template <> struct IsMap_t<EmptyMap> { static bool const V = true; };
 
 template <typename Map, typename InputDomainElement>
@@ -334,13 +334,13 @@ struct Monoid_c
 };
 
 template <typename Identity, typename Operation, bool IS_ABELIAN>
-struct IsConcept_f<Monoid_c<Identity,Operation,IS_ABELIAN> >
+struct IsConcept_f<Monoid_c<Identity,Operation,IS_ABELIAN>>
 { static bool const V = true; };
 
 template <typename T> struct IsMonoid_f { static bool const V = false; };
 
 template <typename Identity, typename Operation, bool IS_ABELIAN>
-struct IsMonoid_f<Monoid_c<Identity,Operation,IS_ABELIAN> >
+struct IsMonoid_f<Monoid_c<Identity,Operation,IS_ABELIAN>>
 { static bool const V = true; };
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Monoid);
@@ -374,13 +374,13 @@ public:
 };
 
 template <typename Identity, typename Operation, typename Inversion, bool IS_ABELIAN>
-struct IsConcept_f<Group_c<Identity,Operation,Inversion,IS_ABELIAN> >
+struct IsConcept_f<Group_c<Identity,Operation,Inversion,IS_ABELIAN>>
 { static bool const V = true; };
 
 template <typename T> struct IsGroup_f { static bool const V = false; };
 
 template <typename Identity, typename Operation, typename Inversion, bool IS_ABELIAN>
-struct IsGroup_f<Group_c<Identity,Operation,Inversion,IS_ABELIAN> >
+struct IsGroup_f<Group_c<Identity,Operation,Inversion,IS_ABELIAN>>
 { static bool const V = true; };
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Group);
@@ -407,7 +407,7 @@ private:
 public:
     typedef Typle_t<As_AdditiveGroup,As_MultiplicativeMonoid> ParentTyple;
     typedef Map_t<AdditiveMonoid,typename AS_MONOID(As_AdditiveGroup),
-            Map_t<MultiplicativeMonoid,As_MultiplicativeMonoid> > StructureDisambiguationMap;
+            Map_t<MultiplicativeMonoid,As_MultiplicativeMonoid>> StructureDisambiguationMap;
 
     typedef AdditiveIdentity_ AdditiveIdentity;
     typedef Addition_ Addition;
@@ -433,7 +433,7 @@ template <typename AdditiveIdentity,
           typename MultiplicativeIdentity,
           typename Multiplication,
           bool IS_COMMUTATIVE>
-struct IsConcept_f<Ring_c<AdditiveIdentity,Addition,AdditiveInversion,MultiplicativeIdentity,Multiplication,IS_COMMUTATIVE> >
+struct IsConcept_f<Ring_c<AdditiveIdentity,Addition,AdditiveInversion,MultiplicativeIdentity,Multiplication,IS_COMMUTATIVE>>
 { static bool const V = true; };
 
 template <typename T> struct IsRing_f { static bool const V = false; };
@@ -444,7 +444,7 @@ template <typename AdditiveIdentity,
           typename MultiplicativeIdentity,
           typename Multiplication,
           bool IS_COMMUTATIVE>
-struct IsRing_f<Ring_c<AdditiveIdentity,Addition,AdditiveInversion,MultiplicativeIdentity,Multiplication,IS_COMMUTATIVE> >
+struct IsRing_f<Ring_c<AdditiveIdentity,Addition,AdditiveInversion,MultiplicativeIdentity,Multiplication,IS_COMMUTATIVE>>
 { static bool const V = true; };
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Ring);
@@ -471,7 +471,7 @@ private:
 public:
     typedef Typle_t<As_Ring,As_MultiplicativeGroup> ParentTyple;
     typedef Map_t<AdditiveGroup,typename AS_GROUP(As_Ring),
-            Map_t<MultiplicativeGroup,As_MultiplicativeGroup> > StructureDisambiguationMap;
+            Map_t<MultiplicativeGroup,As_MultiplicativeGroup>> StructureDisambiguationMap;
 
     typedef AdditiveIdentity_ AdditiveIdentity;
     typedef Addition_ Addition;
@@ -497,7 +497,7 @@ template <typename AdditiveIdentity,
           typename MultiplicativeIdentity,
           typename Multiplication,
           typename MultiplicativeInverse>
-struct IsConcept_f<Field_c<AdditiveIdentity,Addition,AdditiveInversion,MultiplicativeIdentity,Multiplication,MultiplicativeInverse> >
+struct IsConcept_f<Field_c<AdditiveIdentity,Addition,AdditiveInversion,MultiplicativeIdentity,Multiplication,MultiplicativeInverse>>
 { static bool const V = true; };
 
 template <typename T> struct IsField_f { static bool const V = false; };
@@ -508,7 +508,7 @@ template <typename AdditiveIdentity,
           typename MultiplicativeIdentity,
           typename Multiplication,
           typename MultiplicativeInverse>
-struct IsField_f<Field_c<AdditiveIdentity,Addition,AdditiveInversion,MultiplicativeIdentity,Multiplication,MultiplicativeInverse> >
+struct IsField_f<Field_c<AdditiveIdentity,Addition,AdditiveInversion,MultiplicativeIdentity,Multiplication,MultiplicativeInverse>>
 { static bool const V = true; };
 
 DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Field);
@@ -662,7 +662,7 @@ int main (int argc, char **argv)
         }
 
         {
-            typedef Map_t<int,float,Map_t<char,double> > TwoElementMap;
+            typedef Map_t<int,float,Map_t<char,double>> TwoElementMap;
             cout << FORMAT_VALUE(type_string_of<TwoElementMap>()) << '\n';
 
             typedef EvalMap_t<TwoElementMap,int>::T ShouldBe_float;
@@ -695,9 +695,9 @@ int main (int argc, char **argv)
             cout << "testing MapUnion_f\n";
             typedef MapUnion_f<Typle_t<>>::T M;
             cout << FORMAT_VALUE(type_string_of<M>()) << '\n';
-            typedef Map_t<int,float,Map_t<bool,char> > Map1;
-            typedef Map_t<int,float,Map_t<char,double> > Map2;
-//             typedef Map_t<int,double,Map_t<char,double> > Map3;
+            typedef Map_t<int,float,Map_t<bool,char>> Map1;
+            typedef Map_t<int,float,Map_t<char,double>> Map2;
+//             typedef Map_t<int,double,Map_t<char,double>> Map3;
             cout << FORMAT_VALUE(type_string_of<Map1>()) << '\n';
             cout << FORMAT_VALUE(type_string_of<Map2>()) << '\n';
             cout << FORMAT_VALUE(type_string_of<MapUnion_f<Typle_t<Map1>>::T>()) << '\n';

@@ -55,12 +55,12 @@ void test_Reindex_e (Context const &context)
     assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<P>::T,k>::V));
 
     static Tenh::AbstractIndexSymbol const OFFSET = 'k'; // this is the max of {'j','k','P'}
-    assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<Tenh::AbstractIndex_c<'a'> >::T,
-                                  Tenh::AbstractIndex_c<OFFSET+'a'> >::V));
-    assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<Tenh::AbstractIndex_c<'k'> >::T,
-                                  Tenh::AbstractIndex_c<OFFSET+'k'> >::V));
-    assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<Tenh::AbstractIndex_c<12345> >::T,
-                                  Tenh::AbstractIndex_c<OFFSET+12345> >::V));
+    assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<Tenh::AbstractIndex_c<'a'>>::T,
+                                  Tenh::AbstractIndex_c<OFFSET+'a'>>::V));
+    assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<Tenh::AbstractIndex_c<'k'>>::T,
+                                  Tenh::AbstractIndex_c<OFFSET+'k'>>::V));
+    assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<Tenh::AbstractIndex_c<12345>>::T,
+                                  Tenh::AbstractIndex_c<OFFSET+12345>>::V));
 }
 
 void test_induced_Typle_Reindex_e (Context const &context)

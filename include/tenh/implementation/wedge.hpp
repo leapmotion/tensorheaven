@@ -21,26 +21,26 @@ namespace Tenh {
 template <Uint32 ORDER_, typename Factor_, typename Scalar_, typename UseArrayType_, typename Derived_>
 struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_,Derived_>
     :
-    public EmbeddableAsTensor_i<typename DerivedType_f<Derived_,ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_,Derived_> >::T,
+    public EmbeddableAsTensor_i<typename DerivedType_f<Derived_,ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_,Derived_>>::T,
                                 Scalar_,
                                 ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,
                                 ComponentQualifierOfArrayType_f<UseArrayType_>::V>,
     // privately inherited because it is an implementation detail
     private ArrayStorage_f<Scalar_,
-                           DimensionOf_f<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_> >::V,
+                           DimensionOf_f<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>>::V,
                            UseArrayType_,
-                           typename DerivedType_f<Derived_,ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_,Derived_> >::T >::T
+                           typename DerivedType_f<Derived_,ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_,Derived_>>::T >::T
 {
     enum { STATIC_ASSERT_IN_ENUM(HasBasedVectorSpaceStructure_f<Factor_>::V, MUST_BE_BASED_VECTOR_SPACE) };
 
-    typedef EmbeddableAsTensor_i<typename DerivedType_f<Derived_,ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_,Derived_> >::T,
+    typedef EmbeddableAsTensor_i<typename DerivedType_f<Derived_,ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_,Derived_>>::T,
                                  Scalar_,
                                  ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,
                                  ComponentQualifierOfArrayType_f<UseArrayType_>::V> Parent_EmbeddableAsTensor_i;
     typedef typename ArrayStorage_f<Scalar_,
-                                    DimensionOf_f<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_> >::V,
+                                    DimensionOf_f<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>>::V,
                                     UseArrayType_,
-                                    typename DerivedType_f<Derived_,ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_,Derived_> >::T >::T Parent_Array_i;
+                                    typename DerivedType_f<Derived_,ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_,Derived_>>::T >::T Parent_Array_i;
 
     typedef ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_> Concept;
     typedef UseArrayType_ UseArrayType;
@@ -182,11 +182,11 @@ struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scal
     // these are what provide indexed expressions -- via expression templates
     using Parent_EmbeddableAsTensor_i::operator();
 
-    static bool component_is_procedural_zero (MultiIndex const &m) { return MultiIndexMultiplicity_t<MultiIndex>::eval(sorted<std::greater<Uint32> >(m)) != 1; }
+    static bool component_is_procedural_zero (MultiIndex const &m) { return MultiIndexMultiplicity_t<MultiIndex>::eval(sorted<std::greater<Uint32>>(m)) != 1; }
     static Scalar scalar_factor_for_component (MultiIndex const &m) { return SignComputer_t<MultiIndex>::compute(m); }
     static ComponentIndex vector_index_of (MultiIndex const &m)
     {
-        MultiIndex n = sorted<std::greater<Uint32> >(m);
+        MultiIndex n = sorted<std::greater<Uint32>>(m);
         return ComponentIndex(VectorIndexComputer_t<MultiIndex>::compute(n), CheckRange::FALSE);
     }
 
@@ -220,9 +220,9 @@ template <Uint32 ORDER_, typename Factor_, typename Scalar_, typename UseArrayTy
 template <typename FactorType, typename BundledIndex, Uint32 ORD>
 struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_,Derived_>::BundleIndexComputer_t<Typle_t<FactorType>, BundledIndex, ORD>
 {
-    static MultiIndex_t<Typle_t<FactorType> > compute (BundledIndex const &b)
+    static MultiIndex_t<Typle_t<FactorType>> compute (BundledIndex const &b)
     {
-        return MultiIndex_t<Typle_t<FactorType> >(FactorType(index_of_greatest_simplicial_number_leq(b.value(),ORD), CheckRange::FALSE));
+        return MultiIndex_t<Typle_t<FactorType>>(FactorType(index_of_greatest_simplicial_number_leq(b.value(),ORD), CheckRange::FALSE));
     }
 };
 
@@ -276,9 +276,9 @@ struct ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scal
 };
 
 template <Uint32 ORDER, typename Factor, typename Scalar, typename UseArrayType_, typename Derived_>
-struct DualOf_f<ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER,Factor>,Scalar,UseArrayType_,Derived_> >
+struct DualOf_f<ImplementationOf_t<ExteriorPowerOfBasedVectorSpace_c<ORDER,Factor>,Scalar,UseArrayType_,Derived_>>
 {
-    typedef ImplementationOf_t<typename DualOf_f<ExteriorPowerOfBasedVectorSpace_c<ORDER,Factor> >::T,Scalar,typename DualOf_f<UseArrayType_>::T,typename DualOf_f<Derived_>::T> T;
+    typedef ImplementationOf_t<typename DualOf_f<ExteriorPowerOfBasedVectorSpace_c<ORDER,Factor>>::T,Scalar,typename DualOf_f<UseArrayType_>::T,typename DualOf_f<Derived_>::T> T;
 };
 
 } // end of namespace Tenh

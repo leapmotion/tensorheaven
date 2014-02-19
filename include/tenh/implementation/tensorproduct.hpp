@@ -44,7 +44,7 @@ Scalar_ tensor_product_of_single_procedural_vector (ComponentIndex_t<DimensionOf
 } // end of namespace ComponentGeneratorEvaluator
 
 template <typename HeadProceduralVectorImplementationType_>
-struct TensorProductOfProceduralVectors_f<Typle_t<HeadProceduralVectorImplementationType_> >
+struct TensorProductOfProceduralVectors_f<Typle_t<HeadProceduralVectorImplementationType_>>
 {
 private:
     typedef Typle_t<HeadProceduralVectorImplementationType_> ProceduralVectorImplementationTyple_;
@@ -66,10 +66,10 @@ private:
                                  ComponentGeneratorEvaluator::tensor_product_of_single_procedural_vector<ProceduralVectorImplementationTyple_,
                                                                                                          TensorProductOfBasedVectorSpaces,
                                                                                                          Scalar>,
-                                 TensorProduct_c<ProceduralVectorImplementationTyple_> > ComponentGenerator;
+                                 TensorProduct_c<ProceduralVectorImplementationTyple_>> ComponentGenerator;
     TensorProductOfProceduralVectors_f();
 public:
-    typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces,Scalar,UseProceduralArray_t<ComponentGenerator> > T;
+    typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces,Scalar,UseProceduralArray_t<ComponentGenerator>> T;
 };
 
 // recursive case
@@ -119,10 +119,10 @@ private:
                                  ComponentGeneratorEvaluator::tensor_product_of_procedural_vectors<ProceduralVectorImplementationTyple_,
                                                                                                   TensorProductOfBasedVectorSpaces,
                                                                                                   Scalar>,
-                                 TensorProduct_c<ProceduralVectorImplementationTyple_> > ComponentGenerator;
+                                 TensorProduct_c<ProceduralVectorImplementationTyple_>> ComponentGenerator;
     TensorProductOfProceduralVectors_f();
 public:
-    typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces,Scalar,UseProceduralArray_t<ComponentGenerator> > T;
+    typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces,Scalar,UseProceduralArray_t<ComponentGenerator>> T;
 };
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -278,7 +278,7 @@ private:
 private:
     TensorProductOfProcedural2Tensors_f();
 public:
-    typedef ImplementationOf_t<ConceptualTypeOfTensorProduct,Scalar,UseProceduralArray_t<ComponentGenerator> > T;
+    typedef ImplementationOf_t<ConceptualTypeOfTensorProduct,Scalar,UseProceduralArray_t<ComponentGenerator>> T;
 };
 
 namespace ComponentGeneratorEvaluator {
@@ -321,7 +321,7 @@ private:
                                                                                                 Scalar>,
                                  TensorProduct_c<Procedural2TensorImplementationTyple>> ComponentGenerator;
 public:
-    typedef ImplementationOf_t<ConceptualTypeOfTensorProduct,Scalar,UseProceduralArray_t<ComponentGenerator> > T;
+    typedef ImplementationOf_t<ConceptualTypeOfTensorProduct,Scalar,UseProceduralArray_t<ComponentGenerator>> T;
 };
 
 } // end of namespace Tenh

@@ -370,7 +370,7 @@ struct IsExpressionTemplate_f<ExpressionTemplate_i<Derived_,
                                                    Scalar_,
                                                    FreeFactorTyple_,
                                                    FreeDimIndexTyple_,
-                                                   UsedDimIndexTyple_> >
+                                                   UsedDimIndexTyple_>>
 {
     static bool const V = true;
 };

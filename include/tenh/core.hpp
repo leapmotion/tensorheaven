@@ -176,7 +176,7 @@ template <>
 struct AssociatedFloatingPointType_t<long double> { typedef long double T; };
 
 template <typename RealScalar>
-struct AssociatedFloatingPointType_t<std::complex<RealScalar> > { typedef RealScalar T; };
+struct AssociatedFloatingPointType_t<std::complex<RealScalar>> { typedef RealScalar T; };
 
 template <>
 struct AssociatedFloatingPointType_t<Sint8> { typedef float T; }; // smallest lossless floating point conversion

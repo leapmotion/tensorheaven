@@ -25,7 +25,7 @@ void test_partial_inverse (Context const &context)
     static Uint32 const DIM = 3;
     typedef int DummyId;
     typedef float Scalar;
-    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId> > BasedVectorSpace;
+    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId>> BasedVectorSpace;
     typedef Tenh::Typle_t<BasedVectorSpace,BasedVectorSpace,BasedVectorSpace> FactorTyple;
     typedef Tenh::TensorProductOfBasedVectorSpaces_c<FactorTyple> TensorProduct;
     typedef Tenh::ImplementationOf_t<TensorProduct,Scalar> Tensor;

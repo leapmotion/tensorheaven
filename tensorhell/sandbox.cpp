@@ -441,9 +441,9 @@ int main (int argc, char **argv)
 
     {
         std::cout << "testing TensorProductOfProcedural2Tensors_f (for general 2-tensors)\n";
-        typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,int>,OrthonormalBasis_c<int> > BasedX;
-        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,float>,OrthonormalBasis_c<float> > BasedY;
-        typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,bool>,OrthonormalBasis_c<bool> > BasedZ;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,int>,OrthonormalBasis_c<int>> BasedX;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,float>,OrthonormalBasis_c<float>> BasedY;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,bool>,OrthonormalBasis_c<bool>> BasedZ;
         typedef TensorProductOfBasedVectorSpaces_c<Typle_t<BasedX,BasedY>> TensorProductA;
         typedef TensorProductOfBasedVectorSpaces_c<Typle_t<BasedY,BasedZ>> TensorProductB;
         typedef float Scalar;
@@ -461,7 +461,7 @@ int main (int argc, char **argv)
                                                                              CountingVectorGeneratorId<DimensionOf_f<TensorProductB>::V>>>> ImplementationB;
         {
             std::cout << FORMAT_VALUE(ImplementationA()) << '\n';
-            typedef TensorProductOfProcedural2Tensors_f<Typle_t<ImplementationA> >::T TProdOfImpl;
+            typedef TensorProductOfProcedural2Tensors_f<Typle_t<ImplementationA>>::T TProdOfImpl;
             std::cout << FORMAT_VALUE(TProdOfImpl()) << '\n';
         }
         {
@@ -481,9 +481,9 @@ int main (int argc, char **argv)
 
     {
         std::cout << "testing TensorProductOfProcedural2Tensors_f (for diagonal 2-tensors)\n";
-        typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,int>,OrthonormalBasis_c<int> > BasedX;
-        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,float>,OrthonormalBasis_c<float> > BasedY;
-        typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,bool>,OrthonormalBasis_c<bool> > BasedZ;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,int>,OrthonormalBasis_c<int>> BasedX;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,float>,OrthonormalBasis_c<float>> BasedY;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,bool>,OrthonormalBasis_c<bool>> BasedZ;
         typedef Diagonal2TensorProductOfBasedVectorSpaces_c<BasedX,BasedY> TensorProductA;
         typedef Diagonal2TensorProductOfBasedVectorSpaces_c<BasedY,BasedZ> TensorProductB;
         typedef float Scalar;
@@ -492,17 +492,17 @@ int main (int argc, char **argv)
                                    UseProceduralArray_t<ComponentGenerator_t<Scalar,
                                                                             DimensionOf_f<TensorProductA>::V,
                                                                             counting_vector_generator<Scalar,DimensionOf_f<TensorProductA>::V>,
-                                                                            CountingVectorGeneratorId<DimensionOf_f<TensorProductA>::V> > > > ImplementationA;
+                                                                            CountingVectorGeneratorId<DimensionOf_f<TensorProductA>::V>>>> ImplementationA;
         typedef ImplementationOf_t<TensorProductB,
                                    Scalar,
                                    UseProceduralArray_t<ComponentGenerator_t<Scalar,
                                                                             DimensionOf_f<TensorProductB>::V,
                                                                             counting_vector_generator<Scalar,DimensionOf_f<TensorProductB>::V>,
-                                                                            CountingVectorGeneratorId<DimensionOf_f<TensorProductB>::V> > > > ImplementationB;
+                                                                            CountingVectorGeneratorId<DimensionOf_f<TensorProductB>::V>>>> ImplementationB;
         std::cout << "this is totally broken.\n";
         {
             std::cout << FORMAT_VALUE(ImplementationA()) << '\n';
-            typedef TensorProductOfProcedural2Tensors_f<Typle_t<ImplementationA> >::T TProdOfImpl;
+            typedef TensorProductOfProcedural2Tensors_f<Typle_t<ImplementationA>>::T TProdOfImpl;
             std::cout << FORMAT_VALUE(TProdOfImpl()) << '\n';
         }
         {
@@ -524,26 +524,26 @@ int main (int argc, char **argv)
 
     {
         std::cout << "testing TensorProductOfProcedural2Tensors_f (for scalar 2-tensors)\n";
-        typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,int>,OrthonormalBasis_c<int> > BasedX;
-        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,float>,OrthonormalBasis_c<float> > BasedY;
-        typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,bool>,OrthonormalBasis_c<bool> > BasedZ;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,int>,OrthonormalBasis_c<int>> BasedX;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,float>,OrthonormalBasis_c<float>> BasedY;
+        typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,bool>,OrthonormalBasis_c<bool>> BasedZ;
         typedef Scalar2TensorProductOfBasedVectorSpaces_c<BasedX,BasedY> TensorProductA;
         typedef Scalar2TensorProductOfBasedVectorSpaces_c<BasedY,BasedZ> TensorProductB;
         typedef float Scalar;
         typedef ImplementationOf_t<TensorProductA,
                                    Scalar,
-                                   UseProceduralArray_t<ComponentGenerator_Constant_f<Scalar,1,2>::T> > ImplementationA;
+                                   UseProceduralArray_t<ComponentGenerator_Constant_f<Scalar,1,2>::T>> ImplementationA;
                                    // UseProceduralArray_t<ComponentGenerator_t<Scalar,
                                    //                                           DimensionOf_f<TensorProductA>::V,
                                    //                                           counting_vector_generator<Scalar,DimensionOf_f<TensorProductA>::V>,
-                                   //                                           CountingVectorGeneratorId<DimensionOf_f<TensorProductA>::V> > > > ImplementationA;
+                                   //                                           CountingVectorGeneratorId<DimensionOf_f<TensorProductA>::V>>>> ImplementationA;
         typedef ImplementationOf_t<TensorProductB,
                                    Scalar,
-                                   UseProceduralArray_t<ComponentGenerator_Constant_f<Scalar,1,3>::T> > ImplementationB;
+                                   UseProceduralArray_t<ComponentGenerator_Constant_f<Scalar,1,3>::T>> ImplementationB;
                                    // UseProceduralArray_t<ComponentGenerator_t<Scalar,
                                    //                                           DimensionOf_f<TensorProductB>::V,
                                    //                                           counting_vector_generator<Scalar,DimensionOf_f<TensorProductB>::V>,
-                                   //                                           CountingVectorGeneratorId<DimensionOf_f<TensorProductB>::V> > > > ImplementationB;
+                                   //                                           CountingVectorGeneratorId<DimensionOf_f<TensorProductB>::V>>>> ImplementationB;
         {
             std::cout << FORMAT_VALUE(ImplementationA()) << '\n';
             typedef TensorProductOfProcedural2Tensors_f<Typle_t<ImplementationA>>::T TProdOfImpl;

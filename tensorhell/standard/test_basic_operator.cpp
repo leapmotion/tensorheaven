@@ -388,23 +388,23 @@ void add_particular_tests_for_scalar_and_use_array_type (Directory &parent)
 {
     // TODO: these tests on 0-dimensional vector spaces aren't working -- fix
 //     {
-//         typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,0,X>,Tenh::Basis_c<X> > BasedVectorSpaceX;
-//         typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,1,Y>,Tenh::Basis_c<Y> > BasedVectorSpaceY;
-//         typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,2,Z>,Tenh::Basis_c<Z> > BasedVectorSpaceZ;
+//         typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,0,X>,Tenh::Basis_c<X>> BasedVectorSpaceX;
+//         typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,1,Y>,Tenh::Basis_c<Y>> BasedVectorSpaceY;
+//         typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,2,Z>,Tenh::Basis_c<Z>> BasedVectorSpaceZ;
 //         add_particular_tests<BasedVectorSpaceX,BasedVectorSpaceY,Scalar_,UseArrayType_>(parent);
 //         add_particular_composition_tests<BasedVectorSpaceX,BasedVectorSpaceY,BasedVectorSpaceZ,Scalar_,UseArrayType_>(parent);
 //     }
     {
-        typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,1,X>,Tenh::Basis_c<X> > BasedVectorSpaceX;
-        typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,3,Y>,Tenh::Basis_c<Y> > BasedVectorSpaceY;
-        typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,2,Z>,Tenh::Basis_c<Z> > BasedVectorSpaceZ;
+        typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,1,X>,Tenh::Basis_c<X>> BasedVectorSpaceX;
+        typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,3,Y>,Tenh::Basis_c<Y>> BasedVectorSpaceY;
+        typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,2,Z>,Tenh::Basis_c<Z>> BasedVectorSpaceZ;
         add_particular_tests<BasedVectorSpaceX,BasedVectorSpaceY,Scalar_,UseArrayType_>(parent);
         add_particular_composition_tests<BasedVectorSpaceX,BasedVectorSpaceY,BasedVectorSpaceZ,Scalar_,UseArrayType_>(parent);
     }
     {
-        typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,3,X>,Tenh::Basis_c<X> > BasedVectorSpaceX;
-        typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,4,Y>,Tenh::Basis_c<Y> > BasedVectorSpaceY;
-        typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,5,Z>,Tenh::Basis_c<Z> > BasedVectorSpaceZ;
+        typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,3,X>,Tenh::Basis_c<X>> BasedVectorSpaceX;
+        typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,4,Y>,Tenh::Basis_c<Y>> BasedVectorSpaceY;
+        typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,5,Z>,Tenh::Basis_c<Z>> BasedVectorSpaceZ;
         add_particular_tests<BasedVectorSpaceX,BasedVectorSpaceY,Scalar_,UseArrayType_>(parent);
         add_particular_composition_tests<BasedVectorSpaceX,BasedVectorSpaceY,BasedVectorSpaceZ,Scalar_,UseArrayType_>(parent);
     }
@@ -413,7 +413,7 @@ void add_particular_tests_for_scalar_and_use_array_type (Directory &parent)
 template <typename Scalar_>
 void add_particular_tests_for_scalar (Directory &parent)
 {
-    add_particular_tests_for_scalar_and_use_array_type<Scalar_,Tenh::UseMemberArray_t<Tenh::ComponentsAreConst::FALSE> >(parent);
+    add_particular_tests_for_scalar_and_use_array_type<Scalar_,Tenh::UseMemberArray_t<Tenh::ComponentsAreConst::FALSE>>(parent);
 }
 
 void AddTests (Directory &parent)
@@ -429,8 +429,8 @@ void AddTests (Directory &parent)
     add_particular_tests_for_scalar<Uint64>(dir);
     add_particular_tests_for_scalar<float>(dir);
     add_particular_tests_for_scalar<double>(dir);
-    add_particular_tests_for_scalar<complex<float> >(dir);
-    add_particular_tests_for_scalar<complex<double> >(dir);
+    add_particular_tests_for_scalar<complex<float>>(dir);
+    add_particular_tests_for_scalar<complex<double>>(dir);
 
     // TODO: refactor all this test code so that Op<...> can be tested in a way analogous to Vec.
 }

@@ -51,7 +51,7 @@ struct ExpressionTemplate_IndexedObject_t
                                                                                           SummedDimIndexTyple_,
                                                                                           FORCE_CONST_,
                                                                                           CHECK_FOR_ALIASING_,
-                                                                                          Derived_> >::T,
+                                                                                          Derived_>>::T,
                                 typename Object::Scalar,
                                 typename FreeFactorTyple_f<FactorTyple,DimIndexTyple>::T,
                                 typename FreeIndexTyple_f<DimIndexTyple>::T,
@@ -72,7 +72,7 @@ struct ExpressionTemplate_IndexedObject_t
                                                                                            SummedDimIndexTyple_,
                                                                                            FORCE_CONST_,
                                                                                            CHECK_FOR_ALIASING_,
-                                                                                           Derived_> >::T,
+                                                                                           Derived_>>::T,
                                  typename Object::Scalar,
                                  typename FreeFactorTyple_f<FactorTyple,DimIndexTyple>::T,
                                  typename FreeIndexTyple_f<DimIndexTyple>::T,
@@ -139,7 +139,7 @@ struct IsExpressionTemplate_f<ExpressionTemplate_IndexedObject_t<Object_,
                                                                  SummedDimIndexTyple_,
                                                                  FORCE_CONST_,
                                                                  CHECK_FOR_ALIASING_,
-                                                                 Derived_> >
+                                                                 Derived_>>
 {
     static bool const V = true;
 private:
@@ -421,7 +421,7 @@ private:
 };
 
 template <typename LeftOperand_, typename RightOperand_, char OPERATOR_>
-struct IsExpressionTemplate_f<ExpressionTemplate_Addition_t<LeftOperand_,RightOperand_,OPERATOR_> >
+struct IsExpressionTemplate_f<ExpressionTemplate_Addition_t<LeftOperand_,RightOperand_,OPERATOR_>>
 {
     static bool const V = true;
 private:
@@ -509,7 +509,7 @@ private:
 };
 
 template <typename Operand_, typename Scalar_, char OPERATOR_>
-struct IsExpressionTemplate_f<ExpressionTemplate_ScalarMultiplication_t<Operand_,Scalar_,OPERATOR_> >
+struct IsExpressionTemplate_f<ExpressionTemplate_ScalarMultiplication_t<Operand_,Scalar_,OPERATOR_>>
 {
     static bool const V = true;
 private:
@@ -605,7 +605,7 @@ private:
 };
 
 template <typename LeftOperand_, typename RightOperand_>
-struct IsExpressionTemplate_f<ExpressionTemplate_Multiplication_t<LeftOperand_,RightOperand_> >
+struct IsExpressionTemplate_f<ExpressionTemplate_Multiplication_t<LeftOperand_,RightOperand_>>
 {
     static bool const V = true;
 private:
@@ -701,7 +701,7 @@ struct IsExpressionTemplate_f<ExpressionTemplate_IndexBundle_t<Operand_,
                                                                BundleAbstractIndexTyple_,
                                                                ResultingFactorType_,
                                                                ResultingAbstractIndexType_,
-                                                               CHECK_FACTOR_TYPES_> >
+                                                               CHECK_FACTOR_TYPES_>>
 {
     static bool const V = true;
 private:
@@ -793,7 +793,7 @@ template <typename Operand_,
           typename SplitAbstractIndexTyple_>
 struct IsExpressionTemplate_f<ExpressionTemplate_IndexSplit_t<Operand_,
                                                               SourceAbstractIndexType_,
-                                                              SplitAbstractIndexTyple_> >
+                                                              SplitAbstractIndexTyple_>>
 {
     static bool const V = true;
 private:
@@ -828,7 +828,7 @@ struct ExpressionTemplate_IndexSplitToIndex_t
                                                typename SummedIndexTyple_f<typename IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>::DimIndexTyple>::T,
                                                ForceConst::TRUE,
                                                CheckForAliasing::TRUE, // irrelevant value
-                                               ExpressionTemplate_IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType> > Parent;
+                                               ExpressionTemplate_IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>> Parent;
     typedef typename Parent::Derived Derived;
     typedef typename Parent::Scalar Scalar;
     typedef typename Parent::FreeFactorTyple FreeFactorTyple;
@@ -886,7 +886,7 @@ template <typename Operand_,
           typename SplitAbstractIndexTyple_>
 struct IsExpressionTemplate_f<ExpressionTemplate_IndexSplitToIndex_t<Operand_,
                                                                      SourceAbstractIndexType_,
-                                                                     SplitAbstractIndexTyple_> >
+                                                                     SplitAbstractIndexTyple_>>
 {
     static bool const V = true;
 private:
@@ -988,7 +988,7 @@ struct IsExpressionTemplate_f<ExpressionTemplate_IndexEmbed_t<Operand_,
                                                               SourceAbstractIndexType_,
                                                               EmbeddingCodomain_,
                                                               EmbeddedAbstractIndexType_,
-                                                              EmbeddingId_> >
+                                                              EmbeddingId_>>
 {
     static bool const V = true;
 private:
@@ -1090,7 +1090,7 @@ struct IsExpressionTemplate_f<ExpressionTemplate_IndexCoembed_t<Operand_,
                                                                 SourceAbstractIndexType_,
                                                                 CoembeddingCodomain_,
                                                                 CoembeddedAbstractIndexType_,
-                                                                EmbeddingId_> >
+                                                                EmbeddingId_>>
 {
     static bool const V = true;
 private:

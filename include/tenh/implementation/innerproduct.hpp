@@ -31,10 +31,10 @@ struct StandardInnerProduct { static std::string type_as_string () { return "Sta
 
 // template specialization for standard inner product on a based vector space having orthonormal basis
 template <typename VectorSpace_, typename OrthonormalBasisId_, typename Scalar_>
-struct InnerProduct_f<BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<OrthonormalBasisId_> >,StandardInnerProduct,Scalar_>
+struct InnerProduct_f<BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<OrthonormalBasisId_>>,StandardInnerProduct,Scalar_>
 {
 private:
-    typedef BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<OrthonormalBasisId_> > BasedVectorSpace;
+    typedef BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<OrthonormalBasisId_>> BasedVectorSpace;
     typedef typename DualOf_f<BasedVectorSpace>::T DualOfBasedVectorSpace;
     typedef Scalar2TensorProductOfBasedVectorSpaces_c<DualOfBasedVectorSpace,DualOfBasedVectorSpace> Scalar2Tensor;
     typedef ComponentGenerator_t<Scalar_,
@@ -43,7 +43,7 @@ private:
                                  StandardInnerProduct> ComponentGenerator;
     InnerProduct_f();
 public:
-    typedef ImplementationOf_t<Scalar2Tensor,Scalar_,UseProceduralArray_t<ComponentGenerator> > T;
+    typedef ImplementationOf_t<Scalar2Tensor,Scalar_,UseProceduralArray_t<ComponentGenerator>> T;
 };
 
 // ///////////////////////////////////////////////////////////////////////////

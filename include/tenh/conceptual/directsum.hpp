@@ -40,7 +40,7 @@ struct DirectSum_c
 };
 
 template <typename SummandTyple_>
-struct IsConcept_f<DirectSum_c<SummandTyple_> >
+struct IsConcept_f<DirectSum_c<SummandTyple_>>
 {
     static bool const V = true;
 private:
@@ -53,7 +53,7 @@ template <typename T> struct IsDirectSum_f
 private:
     IsDirectSum_f();
 };
-template <typename SummandTyple_> struct IsDirectSum_f<DirectSum_c<SummandTyple_> >
+template <typename SummandTyple_> struct IsDirectSum_f<DirectSum_c<SummandTyple_>>
 {
     static bool const V = true;
 private:
@@ -66,7 +66,7 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(DirectSum);
 #define AS_DIRECT_SUM(Concept) UniqueDirectSumStructureOf_f<Concept>::T
 
 template <typename SummandTyple_>
-struct DualOf_f<DirectSum_c<SummandTyple_> >
+struct DualOf_f<DirectSum_c<SummandTyple_>>
 {
     typedef DirectSum_c<typename DualOf_f<SummandTyple_>::T> T;
 private:
@@ -162,7 +162,7 @@ public:
 };
 
 template <typename SummandTyple_>
-struct IsConcept_f<DirectSumOfVectorSpaces_c<SummandTyple_> >
+struct IsConcept_f<DirectSumOfVectorSpaces_c<SummandTyple_>>
 {
     static bool const V = true;
 private:
@@ -175,7 +175,7 @@ template <typename T> struct IsDirectSumOfVectorSpaces_f
 private:
     IsDirectSumOfVectorSpaces_f();
 };
-template <typename SummandTyple_> struct IsDirectSumOfVectorSpaces_f<DirectSumOfVectorSpaces_c<SummandTyple_> >
+template <typename SummandTyple_> struct IsDirectSumOfVectorSpaces_f<DirectSumOfVectorSpaces_c<SummandTyple_>>
 {
     static bool const V = true;
 private:
@@ -188,7 +188,7 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(DirectSumOfVectorSpaces);
 #define AS_DIRECT_SUM_OF_VECTOR_SPACES(Concept) UniqueDirectSumOfVectorSpacesStructureOf_f<Concept>::T
 
 template <typename SummandTyple_>
-struct DualOf_f<DirectSumOfVectorSpaces_c<SummandTyple_> >
+struct DualOf_f<DirectSumOfVectorSpaces_c<SummandTyple_>>
 {
     typedef DirectSumOfVectorSpaces_c<typename DualOf_f<SummandTyple_>::T> T;
 private:
@@ -220,7 +220,7 @@ public:
 };
 
 template <typename SummandTyple_>
-struct IsConcept_f<DirectSumOfBases_c<SummandTyple_> >
+struct IsConcept_f<DirectSumOfBases_c<SummandTyple_>>
 {
     static bool const V = true;
 private:
@@ -233,7 +233,7 @@ template <typename T> struct IsDirectSumOfBases_f
 private:
     IsDirectSumOfBases_f();
 };
-template <typename SummandTyple_> struct IsDirectSumOfBases_f<DirectSumOfBases_c<SummandTyple_> >
+template <typename SummandTyple_> struct IsDirectSumOfBases_f<DirectSumOfBases_c<SummandTyple_>>
 {
     static bool const V = true;
 private:
@@ -246,7 +246,7 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(DirectSumOfBases);
 #define AS_DIRECT_SUM_OF_BASES(Concept) UniqueDirectSumOfBasesStructureOf_f<Concept>::T
 
 template <typename SummandTyple_>
-struct DualOf_f<DirectSumOfBases_c<SummandTyple_> >
+struct DualOf_f<DirectSumOfBases_c<SummandTyple_>>
 {
     typedef DirectSumOfBases_c<typename DualOf_f<SummandTyple_>::T> T;
 private:
@@ -279,7 +279,7 @@ public:
 };
 
 template <typename DirectSumOfVectorSpaces_, typename Basis_>
-struct IsConcept_f<BasedDirectSumOfVectorSpaces_c<DirectSumOfVectorSpaces_, Basis_> >
+struct IsConcept_f<BasedDirectSumOfVectorSpaces_c<DirectSumOfVectorSpaces_, Basis_>>
 {
     static bool const V = true;
 private:
@@ -292,7 +292,7 @@ template <typename T> struct IsBasedDirectSumOfVectorSpaces_f
 private:
     IsBasedDirectSumOfVectorSpaces_f();
 };
-template <typename DirectSumOfVectorSpaces_, typename Basis_> struct IsBasedDirectSumOfVectorSpaces_f<BasedDirectSumOfVectorSpaces_c<DirectSumOfVectorSpaces_,Basis_> >
+template <typename DirectSumOfVectorSpaces_, typename Basis_> struct IsBasedDirectSumOfVectorSpaces_f<BasedDirectSumOfVectorSpaces_c<DirectSumOfVectorSpaces_,Basis_>>
 {
     static bool const V = true;
 private:
@@ -305,7 +305,7 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(BasedDirectSumOfVectorSpaces);
 #define AS_BASED_DIRECT_SUM_OF_VECTOR_SPACES(Concept) UniqueBasedDirectSumOfVectorSpacesStructureOf_f<Concept>::T
 
 template <typename DirectSumOfVectorSpaces, typename Basis>
-struct DualOf_f<BasedDirectSumOfVectorSpaces_c<DirectSumOfVectorSpaces,Basis> >
+struct DualOf_f<BasedDirectSumOfVectorSpaces_c<DirectSumOfVectorSpaces,Basis>>
 {
     typedef BasedDirectSumOfVectorSpaces_c<typename DualOf_f<DirectSumOfVectorSpaces>::T,typename DualOf_f<Basis>::T> T;
 private:
@@ -337,7 +337,7 @@ public:
 };
 
 template <typename SummandTyple_>
-struct IsConcept_f<DirectSumOfBasedVectorSpaces_c<SummandTyple_> >
+struct IsConcept_f<DirectSumOfBasedVectorSpaces_c<SummandTyple_>>
 {
     static bool const V = true;
 private:
@@ -350,7 +350,7 @@ template <typename T> struct IsDirectSumOfBasedVectorSpaces_f
 private:
     IsDirectSumOfBasedVectorSpaces_f();
 };
-template <typename SummandTyple_> struct IsDirectSumOfBasedVectorSpaces_f<DirectSumOfBasedVectorSpaces_c<SummandTyple_> >
+template <typename SummandTyple_> struct IsDirectSumOfBasedVectorSpaces_f<DirectSumOfBasedVectorSpaces_c<SummandTyple_>>
 {
     static bool const V = true;
 private:
@@ -365,7 +365,7 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(DirectSumOfBasedVectorSpaces);
 // there is a natural identification of the dual of a direct sum of vector spaces with the
 // direct sum of the duals of the vector spaces
 template <typename SummandTyple_>
-struct DualOf_f<DirectSumOfBasedVectorSpaces_c<SummandTyple_> >
+struct DualOf_f<DirectSumOfBasedVectorSpaces_c<SummandTyple_>>
 {
     typedef DirectSumOfBasedVectorSpaces_c<typename DualOf_f<SummandTyple_>::T> T;
 private:

@@ -21,15 +21,15 @@ namespace Tenh {
 template <typename Factor0_, typename Factor1_, typename Scalar_, typename UseArrayType_, typename Derived_>
 struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_>
     :
-    public EmbeddableAsTensor_i<typename DerivedType_f<Derived_, ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_> >::T,
+    public EmbeddableAsTensor_i<typename DerivedType_f<Derived_, ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_>>::T,
                                 Scalar_,
                                 Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,
                                 ComponentQualifierOfArrayType_f<UseArrayType_>::V>,
     // privately inherited because it is an implementation detail
     private ArrayStorage_f<Scalar_,
-                           DimensionOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_> >::V,
+                           DimensionOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>>::V,
                            UseArrayType_,
-                           typename DerivedType_f<Derived_, ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_> >::T >::T
+                           typename DerivedType_f<Derived_, ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_>>::T >::T
 {
     enum
     {
@@ -37,14 +37,14 @@ struct ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,F
         STATIC_ASSERT_IN_ENUM__UNIQUE(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor1_), MUST_BE_BASED_VECTOR_SPACE, FACTOR1)
     };
 
-    typedef EmbeddableAsTensor_i<typename DerivedType_f<Derived_, ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_> >::T,
+    typedef EmbeddableAsTensor_i<typename DerivedType_f<Derived_, ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_>>::T,
                                  Scalar_,
                                  Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,
                                  ComponentQualifierOfArrayType_f<UseArrayType_>::V> Parent_EmbeddableAsTensor_i;
     typedef typename ArrayStorage_f<Scalar_,
-                                    DimensionOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_> >::V,
+                                    DimensionOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>>::V,
                                     UseArrayType_,
-                                    typename DerivedType_f<Derived_, ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_> >::T >::T Parent_Array_i;
+                                    typename DerivedType_f<Derived_, ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_>>::T >::T Parent_Array_i;
 
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_> Concept;
     typedef UseArrayType_ UseArrayType;
@@ -211,9 +211,9 @@ template <Uint32 INDEX_>
 typename ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_>::template BasisVector_f<INDEX_>::T const ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_>::BasisVector_f<INDEX_>::V;
 
 template <typename Factor0_, typename Factor1_, typename Scalar_, typename UseArrayType_, typename Derived_>
-struct DualOf_f<ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_> >
+struct DualOf_f<ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_>>
 {
-    typedef ImplementationOf_t<typename DualOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_> >::T,Scalar_,typename DualOf_f<UseArrayType_>::T,typename DualOf_f<Derived_>::T> T;
+    typedef ImplementationOf_t<typename DualOf_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>>::T,Scalar_,typename DualOf_f<UseArrayType_>::T,typename DualOf_f<Derived_>::T> T;
 private:
     DualOf_f();
 };

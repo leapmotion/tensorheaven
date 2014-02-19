@@ -88,14 +88,14 @@ template <typename N_> struct Square_f { typedef Value_t<Uint,N_::V*N_::V> T; };
 ///////////////////////////////////////////////////////////////////////////////
 
 template <typename T_> struct Cube_f;
-template <Uint VALUE_> struct Cube_f<Value_t<Uint,VALUE_> >
+template <Uint VALUE_> struct Cube_f<Value_t<Uint,VALUE_>>
 {
     static Uint const V = VALUE_*VALUE_*VALUE_;
     // typedef Value_t<Uint,V> T;
 };
 
 template <typename T_> struct PlusOne_f;
-template <Uint VALUE_> struct PlusOne_f<Value_t<Uint,VALUE_> >
+template <Uint VALUE_> struct PlusOne_f<Value_t<Uint,VALUE_>>
 {
     static Uint const V = VALUE_+1;
     // typedef Value_t<Uint,V> T;
@@ -152,7 +152,7 @@ SymmetricIndex const SymmetricIndex_t<I_,J_>::V(SymmetricIndex(I_,J_));
 template <typename SymmetricIndex_> struct SymmetricIndexHash_f;
 
 template <Uint I_, Uint J_>
-struct SymmetricIndexHash_f<SymmetricIndex_t<I_,J_> >
+struct SymmetricIndexHash_f<SymmetricIndex_t<I_,J_>>
 {
     static Uint const V = TriangularNumber_f<I_>::V + J_;
 };
@@ -166,8 +166,8 @@ struct SymmetricIndexHashInverse_Helper_f
     // 6 7 8 9
     // . . . . .
     typedef typename Tenh::If_f<(N_ < K_),
-                                Type_t<SymmetricIndex_t<K_-1,N_> >,
-                                SymmetricIndexHashInverse_Helper_f<N_-K_,K_+1> >::T::T T;
+                                Type_t<SymmetricIndex_t<K_-1,N_>>,
+                                SymmetricIndexHashInverse_Helper_f<N_-K_,K_+1>>::T::T T;
 };
 
 template <Uint K_>
@@ -197,7 +197,7 @@ SymmetricIndex const SymmetricIndexHashInverse_f<N_>::V = SymmetricIndexHashInve
 // template <typename SymmetricIndex_> WhateverFunction_f;
 
 // template <Uint I_, Uint J_>
-// struct WhateverFunction_f<SymmetricIndex_t<I_,J_> >
+// struct WhateverFunction_f<SymmetricIndex_t<I_,J_>>
 // {
 //     typedef SymmetricIndex_t<I_+1,J_+1> T;
 // };
@@ -224,7 +224,7 @@ int main (int argc, char **argv)
 
 //     typedef SymmetricIndex_t<2,1> S;
 #define PRINT_SYMMETRIC_INDEX_HASH(i,j) cout << "SymmetricIndexHash_f<" << i << "," << j << ">::V = " \
-                                             << SymmetricIndexHash_f<SymmetricIndex_t<i,j> >::V << '\n'
+                                             << SymmetricIndexHash_f<SymmetricIndex_t<i,j>>::V << '\n'
     PRINT_SYMMETRIC_INDEX_HASH(0,0);
     PRINT_SYMMETRIC_INDEX_HASH(1,0);
     PRINT_SYMMETRIC_INDEX_HASH(1,1);
@@ -255,12 +255,12 @@ int main (int argc, char **argv)
     cout << FORMAT_VALUE(SymmetricIndexHash_f<SymmetricIndexHashInverse_f<5>::T>::V) << '\n';
     cout << '\n';
 
-    cout << FORMAT_VALUE((Tenh::type_string_of<SymmetricIndexHashInverse_f<SymmetricIndexHash_f<SymmetricIndex_t<0,0> >::V>::T>())) << '\n';
-    cout << FORMAT_VALUE((Tenh::type_string_of<SymmetricIndexHashInverse_f<SymmetricIndexHash_f<SymmetricIndex_t<1,0> >::V>::T>())) << '\n';
-    cout << FORMAT_VALUE((Tenh::type_string_of<SymmetricIndexHashInverse_f<SymmetricIndexHash_f<SymmetricIndex_t<1,1> >::V>::T>())) << '\n';
-    cout << FORMAT_VALUE((Tenh::type_string_of<SymmetricIndexHashInverse_f<SymmetricIndexHash_f<SymmetricIndex_t<2,0> >::V>::T>())) << '\n';
-    cout << FORMAT_VALUE((Tenh::type_string_of<SymmetricIndexHashInverse_f<SymmetricIndexHash_f<SymmetricIndex_t<2,1> >::V>::T>())) << '\n';
-    cout << FORMAT_VALUE((Tenh::type_string_of<SymmetricIndexHashInverse_f<SymmetricIndexHash_f<SymmetricIndex_t<2,2> >::V>::T>())) << '\n';
+    cout << FORMAT_VALUE((Tenh::type_string_of<SymmetricIndexHashInverse_f<SymmetricIndexHash_f<SymmetricIndex_t<0,0>>::V>::T>())) << '\n';
+    cout << FORMAT_VALUE((Tenh::type_string_of<SymmetricIndexHashInverse_f<SymmetricIndexHash_f<SymmetricIndex_t<1,0>>::V>::T>())) << '\n';
+    cout << FORMAT_VALUE((Tenh::type_string_of<SymmetricIndexHashInverse_f<SymmetricIndexHash_f<SymmetricIndex_t<1,1>>::V>::T>())) << '\n';
+    cout << FORMAT_VALUE((Tenh::type_string_of<SymmetricIndexHashInverse_f<SymmetricIndexHash_f<SymmetricIndex_t<2,0>>::V>::T>())) << '\n';
+    cout << FORMAT_VALUE((Tenh::type_string_of<SymmetricIndexHashInverse_f<SymmetricIndexHash_f<SymmetricIndex_t<2,1>>::V>::T>())) << '\n';
+    cout << FORMAT_VALUE((Tenh::type_string_of<SymmetricIndexHashInverse_f<SymmetricIndexHash_f<SymmetricIndex_t<2,2>>::V>::T>())) << '\n';
     cout << '\n';
 
     cout << FORMAT_VALUE((SymmetricIndex_t<0,0>::V)) << '\n';
@@ -308,25 +308,25 @@ int main (int argc, char **argv)
     }
 
     // typedef Typle_t<Square_f,Square_f> FunctionTyple;
-    // cout << FORMAT_VALUE(Tenh::type_string_of<Composition_f<FunctionTyple,Tenh::Value_t<Uint,0> >::T>()) << '\n';
+    // cout << FORMAT_VALUE(Tenh::type_string_of<Composition_f<FunctionTyple,Tenh::Value_t<Uint,0>>::T>()) << '\n';
 
     typedef Tenh::CompositionOf_e<Cube_e,PlusOne_e> AddOneThenCube_e;
     typedef Tenh::CompositionOf_e<PlusOne_e,Cube_e,PlusOne_e> AddOneThenCubeThenAddOne_e;
 
-    cout << FORMAT_VALUE((AddOneThenCube_e::Eval_f<Value_t<Uint,0> >::T::V)) << '\n';
-    cout << FORMAT_VALUE((AddOneThenCube_e::Eval_f<Value_t<Uint,1> >::T::V)) << '\n';
-    cout << FORMAT_VALUE((AddOneThenCube_e::Eval_f<Value_t<Uint,2> >::T::V)) << '\n';
-    cout << FORMAT_VALUE((AddOneThenCube_e::Eval_f<Value_t<Uint,3> >::T::V)) << '\n';
-    cout << FORMAT_VALUE((AddOneThenCube_e::Eval_f<Value_t<Uint,4> >::T::V)) << '\n';
-    cout << FORMAT_VALUE((AddOneThenCube_e::Eval_f<Value_t<Uint,5> >::T::V)) << '\n';
+    cout << FORMAT_VALUE((AddOneThenCube_e::Eval_f<Value_t<Uint,0>>::T::V)) << '\n';
+    cout << FORMAT_VALUE((AddOneThenCube_e::Eval_f<Value_t<Uint,1>>::T::V)) << '\n';
+    cout << FORMAT_VALUE((AddOneThenCube_e::Eval_f<Value_t<Uint,2>>::T::V)) << '\n';
+    cout << FORMAT_VALUE((AddOneThenCube_e::Eval_f<Value_t<Uint,3>>::T::V)) << '\n';
+    cout << FORMAT_VALUE((AddOneThenCube_e::Eval_f<Value_t<Uint,4>>::T::V)) << '\n';
+    cout << FORMAT_VALUE((AddOneThenCube_e::Eval_f<Value_t<Uint,5>>::T::V)) << '\n';
     cout << '\n';
 
-    cout << FORMAT_VALUE((AddOneThenCubeThenAddOne_e::Eval_f<Value_t<Uint,0> >::T::V)) << '\n';
-    cout << FORMAT_VALUE((AddOneThenCubeThenAddOne_e::Eval_f<Value_t<Uint,1> >::T::V)) << '\n';
-    cout << FORMAT_VALUE((AddOneThenCubeThenAddOne_e::Eval_f<Value_t<Uint,2> >::T::V)) << '\n';
-    cout << FORMAT_VALUE((AddOneThenCubeThenAddOne_e::Eval_f<Value_t<Uint,3> >::T::V)) << '\n';
-    cout << FORMAT_VALUE((AddOneThenCubeThenAddOne_e::Eval_f<Value_t<Uint,4> >::T::V)) << '\n';
-    cout << FORMAT_VALUE((AddOneThenCubeThenAddOne_e::Eval_f<Value_t<Uint,5> >::T::V)) << '\n';
+    cout << FORMAT_VALUE((AddOneThenCubeThenAddOne_e::Eval_f<Value_t<Uint,0>>::T::V)) << '\n';
+    cout << FORMAT_VALUE((AddOneThenCubeThenAddOne_e::Eval_f<Value_t<Uint,1>>::T::V)) << '\n';
+    cout << FORMAT_VALUE((AddOneThenCubeThenAddOne_e::Eval_f<Value_t<Uint,2>>::T::V)) << '\n';
+    cout << FORMAT_VALUE((AddOneThenCubeThenAddOne_e::Eval_f<Value_t<Uint,3>>::T::V)) << '\n';
+    cout << FORMAT_VALUE((AddOneThenCubeThenAddOne_e::Eval_f<Value_t<Uint,4>>::T::V)) << '\n';
+    cout << FORMAT_VALUE((AddOneThenCubeThenAddOne_e::Eval_f<Value_t<Uint,5>>::T::V)) << '\n';
 
     return 0;
 }

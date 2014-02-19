@@ -50,7 +50,7 @@ void test_read_access (Context const &context)
     typedef typename Type_::Factor1 V1;
     typedef typename Type_::Factor2 V2;
 
-    std::pair<Type_,Scalar> p = context.DataAs<std::pair<Type_,Scalar> >();
+    std::pair<Type_,Scalar> p = context.DataAs<std::pair<Type_,Scalar>>();
     Type_ t = p.first;
     Scalar s = p.second;
 
@@ -59,7 +59,7 @@ void test_read_access (Context const &context)
         for (typename V2::Index j; j.is_not_at_end(); ++j)
         {
             Tenh::MultiIndex_t<Tenh::TypeList_t<typename V1::Index,
-                Tenh::TypeList_t<typename V2::Index> > > ci(i,j);
+                Tenh::TypeList_t<typename V2::Index>>> ci(i,j);
             assert_eq(t[ci], t.component(i,j));
             if(i.value() == j.value())
             {
@@ -84,7 +84,7 @@ void test_write_on_diagonal (Context const &context)
     typedef typename Type_::Factor1 V1;
     typedef typename Type_::Factor2 V2;
 
-    std::pair<Type_,Scalar> p = context.DataAs<std::pair<Type_,Scalar> >();
+    std::pair<Type_,Scalar> p = context.DataAs<std::pair<Type_,Scalar>>();
     Type_ t = p.first;
 
     typename V1::Index i;
@@ -104,7 +104,7 @@ void test_write_off_diagonal (Context const &context)
     typedef typename Type_::Factor1 V1;
     typedef typename Type_::Factor2 V2;
 
-    std::pair<Type_,Scalar> p = context.DataAs<std::pair<Type_,Scalar> >();
+    std::pair<Type_,Scalar> p = context.DataAs<std::pair<Type_,Scalar>>();
     Type_ t = p.first;
 
     typename V1::Index i;
@@ -135,7 +135,7 @@ void add_particular_tests (Directory *parent)
     typedef Tenh::Tensor2Diagonal_t<V1, V2> Tensor2Diagonal;
 
     Directory *tensor2diagonal
-        = new Directory(Tenh::type_string_of<Tenh::Tensor2Diagonal_t<V1,V2> >(), parent);
+        = new Directory(Tenh::type_string_of<Tenh::Tensor2Diagonal_t<V1,V2>>(), parent);
 
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(tensor2diagonal, "constructor_without_initialization",
         constructor_without_initialization<Tensor2Diagonal>, RESULT_NO_ERROR);
@@ -147,14 +147,14 @@ void add_particular_tests (Directory *parent)
     std::pair<Tensor2Diagonal,Scalar> p(t,s);
 
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(tensor2diagonal, "test_read_access", test_read_access<Tensor2Diagonal>,
-        new Context::Data<std::pair<Tensor2Diagonal,Scalar> >(p), RESULT_NO_ERROR);
+        new Context::Data<std::pair<Tensor2Diagonal,Scalar>>(p), RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(tensor2diagonal, "test_write_on_diagonal",
-        test_write_on_diagonal<Tensor2Diagonal>, new Context::Data<std::pair<Tensor2Diagonal,Scalar> >(p),
+        test_write_on_diagonal<Tensor2Diagonal>, new Context::Data<std::pair<Tensor2Diagonal,Scalar>>(p),
         RESULT_NO_ERROR);
     // if (ROWS > 1 || COLS > 1)
     // {
     //     LVD_ADD_NAMED_TEST_CASE_FUNCTION(tensor2diagonal, "test_write_off_diagonal",
-    //         test_write_off_diagonal<Tensor2Diagonal>, new Context::Data<std::pair<Tensor2Diagonal,Scalar> >(p),
+    //         test_write_off_diagonal<Tensor2Diagonal>, new Context::Data<std::pair<Tensor2Diagonal,Scalar>>(p),
     //         RESULT_UNCAUGHT_EXCEPTION, STAGE_TEST_BODY);
     // }
 }
@@ -175,8 +175,8 @@ void AddTests (Directory *parent)
     add_particular_tests_for_scalar<Sint32>(tensor2diagonal);
     add_particular_tests_for_scalar<float>(tensor2diagonal);
     add_particular_tests_for_scalar<double>(tensor2diagonal);
-    add_particular_tests_for_scalar<complex<float> >(tensor2diagonal);
-    add_particular_tests_for_scalar<complex<double> >(tensor2diagonal);
+    add_particular_tests_for_scalar<complex<float>>(tensor2diagonal);
+    add_particular_tests_for_scalar<complex<double>>(tensor2diagonal);
 }
 
 } // end of namespace Tensor2Diagonal

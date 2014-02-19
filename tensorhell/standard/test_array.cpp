@@ -79,8 +79,8 @@ void AddTests (Directory &parent)
     add_particular_tests_for_scalar<Sint64>(dir);
     add_particular_tests_for_scalar<float>(dir);
     add_particular_tests_for_scalar<double>(dir);
-    add_particular_tests_for_scalar<complex<float> >(dir);
-    add_particular_tests_for_scalar<complex<double> >(dir);
+    add_particular_tests_for_scalar<complex<float>>(dir);
+    add_particular_tests_for_scalar<complex<double>>(dir);
 }
 
 } // end of namespace Array

@@ -69,7 +69,7 @@ struct ExteriorPowerOfVectorSpace_c
 private:
     static Uint32 const VECTOR_SPACE_DIMENSION = BinomialCoefficient_t<DimensionOf_f<Factor_>::V,ORDER_>::V;
     typedef ExteriorPower_c<ORDER_,Factor_> As_ExteriorPower;
-    typedef VectorSpace_c<typename ScalarFieldOf_f<Factor_>::T,VECTOR_SPACE_DIMENSION,ExteriorPower_c<ORDER_,typename Factor_::Id> > As_VectorSpace;
+    typedef VectorSpace_c<typename ScalarFieldOf_f<Factor_>::T,VECTOR_SPACE_DIMENSION,ExteriorPower_c<ORDER_,typename Factor_::Id>> As_VectorSpace;
     typedef EmbeddableInTensorProductOfVectorSpaces_c<typename TensorPowerOfVectorSpace_f<ORDER_,Factor_>::T> As_EmbeddableInTensorProductOfVectorSpaces;
 public:
     typedef Typle_t<As_ExteriorPower,As_VectorSpace,As_EmbeddableInTensorProductOfVectorSpaces> ParentTyple;
@@ -97,7 +97,7 @@ template <typename T> struct IsExteriorPowerOfVectorSpace_f
 private:
     IsExteriorPowerOfVectorSpace_f();
 };
-template <Uint32 ORDER, typename Factor> struct IsExteriorPowerOfVectorSpace_f<ExteriorPowerOfVectorSpace_c<ORDER,Factor> >
+template <Uint32 ORDER, typename Factor> struct IsExteriorPowerOfVectorSpace_f<ExteriorPowerOfVectorSpace_c<ORDER,Factor>>
 {
     static bool const V = true;
 private:
@@ -178,7 +178,7 @@ public:
 };
 
 template <typename ExteriorPowerOfVectorSpace, typename Basis_>
-struct IsConcept_f<BasedExteriorPowerOfVectorSpace_c<ExteriorPowerOfVectorSpace, Basis_> >
+struct IsConcept_f<BasedExteriorPowerOfVectorSpace_c<ExteriorPowerOfVectorSpace, Basis_>>
 { static bool const V = true; };
 
 template <typename T> struct IsBasedExteriorPowerOfVectorSpace_f { static bool const V = false; };
@@ -191,7 +191,7 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(BasedExteriorPowerOfVectorSpace);
 
 // TODO: thinka bout this
 // template <typename ExteriorPowerOfVectorSpace, typename Basis>
-// struct DualOf_f<BasedExteriorPowerOfVectorSpace_c<ExteriorPowerOfVectorSpace,Basis> >
+// struct DualOf_f<BasedExteriorPowerOfVectorSpace_c<ExteriorPowerOfVectorSpace,Basis>>
 // {
 //     typedef BasedExteriorPowerOfVectorSpace_c<typename DualOf_f<ExteriorPowerOfVectorSpace>::T,typename DualOf_f<Basis>::T> T;
 // private:
@@ -208,7 +208,7 @@ private:
     typedef typename UniformTyple_f<ORDER_,Factor_>::T FactorTyple;
 
     typedef BasedExteriorPowerOfVectorSpace_c<ExteriorPowerOfVectorSpace_c<ORDER_,Factor_>,
-                                              ExteriorPowerOfBasis_c<ORDER_,typename BasisOf_f<Factor_>::T> > As_BasedExteriorPowerOfVectorSpace;
+                                              ExteriorPowerOfBasis_c<ORDER_,typename BasisOf_f<Factor_>::T>> As_BasedExteriorPowerOfVectorSpace;
     typedef EmbeddableInTensorProductOfBasedVectorSpaces_c<typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T,
                                                            typename TensorPowerOfVectorSpace_f<ORDER_,Factor_>::T> As_EmbeddableInTensorProductOfBasedVectorSpaces;
 public:
@@ -333,7 +333,7 @@ public:
         TPowMultiIndex m(i); // this does the row-major conversion
         // sort into non-increasing order -- choosing this instead of non-decreasing
         // makes certain formulas not depend on the dimension of Factor_
-        sort<std::greater<Uint32> >(m);
+        sort<std::greater<Uint32>>(m);
         // if there is any index that occurs at least twice, then this is procedural zero.
         for (Uint32 j = 0; j < ORDER_-1; ++j)
             if (m.index(j, CheckRange::FALSE) == m.index(j+1, CheckRange::FALSE))
@@ -370,7 +370,7 @@ public:
         TPowMultiIndex m(i); // this does the row-major conversion
         // sort into non-increasing order -- choosing this instead of non-decreasing
         // makes certain formulas not depend on the dimension of Factor_
-        sort<std::greater<Uint32> >(m);
+        sort<std::greater<Uint32>>(m);
 
         static Uint32 const NEXT_ORDER_DOWN = (ORDER_ <= 1) ? ORDER_ : (ORDER_ - 1);
         typedef LinearEmbedding_c<ExteriorPowerOfBasedVectorSpace_c<NEXT_ORDER_DOWN,Factor_>,

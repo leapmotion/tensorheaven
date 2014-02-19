@@ -104,7 +104,7 @@ struct StandardBasisComponentGenerator_f
 {
     typedef ComponentGenerator_t<Scalar_,DIMENSION_,
                                  standard_basis_vector_generator<Scalar_,DIMENSION_,K_>,
-                                 StandardBasisVectorGeneratorId<DIMENSION_,K_> > T;
+                                 StandardBasisVectorGeneratorId<DIMENSION_,K_>> T;
 };
 
 template <typename BasedVectorSpace_, typename Scalar_, Uint32 K_>
@@ -113,7 +113,7 @@ struct StandardBasisVector_f
 private:
     typedef typename StandardBasisComponentGenerator_f<Scalar_,DimensionOf_f<BasedVectorSpace_>::V,K_>::T ComponentGenerator;
 public:
-    typedef ImplementationOf_t<BasedVectorSpace_,Scalar_,UseProceduralArray_t<ComponentGenerator> > T;
+    typedef ImplementationOf_t<BasedVectorSpace_,Scalar_,UseProceduralArray_t<ComponentGenerator>> T;
 };
 
 template <typename Scalar_, Uint32 DIM_>
@@ -132,7 +132,7 @@ void test_procedural_array_0 ()
     typedef ComponentGenerator_t<Scalar_,
                                  DIM_,
                                  standard_basis_vector_generator<Scalar_,DIM_,K_>,
-                                 StandardBasisVectorGeneratorId<DIM_,K_> > ComponentGenerator;
+                                 StandardBasisVectorGeneratorId<DIM_,K_>> ComponentGenerator;
     typedef ProceduralArray_t<Scalar_,DIM_,ComponentGenerator> A;
     A a;
     std::cout << FORMAT_VALUE(a.type_as_string()) << '\n';
@@ -148,7 +148,7 @@ void test_procedural_array_1 ()
     typedef ComponentGenerator_t<Scalar_,
                                  DIM_,
                                  counting_vector_generator<Scalar_,DIM_>,
-                                 CountingVectorGeneratorId<DIM_> > ComponentGenerator;
+                                 CountingVectorGeneratorId<DIM_>> ComponentGenerator;
     typedef ProceduralArray_t<Scalar_,DIM_,ComponentGenerator> A;
     A a;
     std::cout << FORMAT_VALUE(a.type_as_string()) << '\n';
@@ -182,7 +182,7 @@ void test_procedural_identity_tensor ()
                                  DimensionOf_f<TensorProduct>::V,
                                  identity_matrix_generator<Scalar_,DimensionOf_f<BasedVectorSpace_>::V>,
                                  IdentityMatrixGeneratorId> ComponentGenerator;
-    typedef ImplementationOf_t<TensorProduct,Scalar_,UseProceduralArray_t<ComponentGenerator> > IdentityTensor;
+    typedef ImplementationOf_t<TensorProduct,Scalar_,UseProceduralArray_t<ComponentGenerator>> IdentityTensor;
     IdentityTensor identity_tensor;
     std::cout << "test_procedural_identity_tensor<" << type_string_of<Scalar_>() << ',' << type_string_of<BasedVectorSpace_>() << ">\n";
     std::cout << FORMAT_VALUE(type_string_of<IdentityTensor>()) << '\n';
@@ -207,7 +207,7 @@ template <typename Scalar_, typename VectorSpace_>
 void test_standard_euclidean_inner_product ()
 {
     std::cout << "test_standard_euclidean_inner_product<" << type_string_of<Scalar_>() << ',' << type_string_of<VectorSpace_>() << ">\n";
-    typedef typename InnerProduct_f<BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<X> >,StandardInnerProduct,Scalar_>::T InnerProduct;
+    typedef typename InnerProduct_f<BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<X>>,StandardInnerProduct,Scalar_>::T InnerProduct;
     InnerProduct g;
     std::cout << FORMAT_VALUE(g) << '\n';
     AbstractIndex_c<'P'> P;
@@ -239,7 +239,7 @@ template <typename Scalar_, typename VectorSpace_>
 void test_euclidean_embedding_of_standard_euclidean_space ()
 {
     std::cout << "test_euclidean_embedding_of_standard_euclidean_space<" << type_string_of<Scalar_>() << ',' << type_string_of<VectorSpace_>() << ">\n";
-    typedef typename EuclideanEmbedding_f<BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<Generic> >,StandardInnerProduct,Scalar_>::T EuclideanEmbedding;
+    typedef typename EuclideanEmbedding_f<BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<Generic>>,StandardInnerProduct,Scalar_>::T EuclideanEmbedding;
     EuclideanEmbedding e;
     std::cout << FORMAT_VALUE(e) << '\n';
     AbstractIndex_c<'P'> P;
@@ -270,7 +270,7 @@ void test_tensor_power_of_euclidean_embedding ()
 template <typename Scalar_, Uint32 ORDER_, Uint32 DIMENSION_>
 void test_sym ()
 {
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,DIMENSION_,X>,Basis_c<X> > BasedVectorSpace;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,DIMENSION_,X>,Basis_c<X>> BasedVectorSpace;
     std::cout << "testing Sym_f<" << type_string_of<Scalar_>() << ',' << ORDER_ << ',' << DIMENSION_ << ">\n";
     typedef typename Sym_f<ORDER_,BasedVectorSpace,Scalar_>::T Sym;
     Sym sym;
@@ -281,7 +281,7 @@ void test_sym ()
 template <typename Scalar_, Uint32 ORDER_, Uint32 DIMENSION_>
 void test_alt ()
 {
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,DIMENSION_,X>,Basis_c<X> > BasedVectorSpace;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,DIMENSION_,X>,Basis_c<X>> BasedVectorSpace;
     std::cout << "testing Alt_f<" << type_string_of<Scalar_>() << ',' << ORDER_ << ',' << DIMENSION_ << ">\n";
     typedef typename Alt_f<ORDER_,BasedVectorSpace,Scalar_>::T Alt;
     Alt alt;

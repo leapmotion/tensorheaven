@@ -23,7 +23,7 @@ namespace Tenh {
 //
 // these raw metafunctions would be used as follows.
 //   Square_f<36>::V
-//   Length_f<Typle_t<...> >::V
+//   Length_f<Typle_t<...>>::V
 //   FancyType_f<true>::T     or     typename FancyType_f<true>::T
 //
 // without knowing the domain/codomain, it's difficult to use this type
@@ -423,8 +423,8 @@ enum
         Assert<!TypesAreEqual_f<int*,int>::V>::V &&
         Assert<!TypesAreEqual_f<int*,float*>::V>::V &&
 
-        Assert<If_f<true,Value_t<int,0>,Value_t<int,1> >::T::V == 0>::V &&
-        Assert<If_f<false,Value_t<int,0>,Value_t<int,1> >::T::V == 1>::V
+        Assert<If_f<true,Value_t<int,0>,Value_t<int,1>>::T::V == 0>::V &&
+        Assert<If_f<false,Value_t<int,0>,Value_t<int,1>>::T::V == 1>::V
 };
 
 } // end of namespace Tenh

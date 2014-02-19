@@ -8,7 +8,7 @@ void test_induced_inner_product ()
 {
     std::cout << "induced inner product\n";
 
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,OrthonormalBasis_c<X> > B;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,OrthonormalBasis_c<X>> B;
     typedef TensorPowerOfBasedVectorSpace_f<2,B>::T T2;
     typedef TensorPowerOfBasedVectorSpace_f<3,B>::T T3;
     typedef DualOf_f<TensorPowerOfBasedVectorSpace_f<2,B>::T>::T T2_star;
@@ -101,8 +101,8 @@ void test_induced_inner_product ()
 
 void test_direct_sums ()
 {
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,Basis_c<X> > BasedVectorSpace;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,1,X>,Basis_c<X> > RealLine;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,X>,Basis_c<X>> BasedVectorSpace;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,1,X>,Basis_c<X>> RealLine;
     typedef SymmetricPowerOfBasedVectorSpace_c<2, BasedVectorSpace> SymmetricSquare;
 
     typedef DirectSumOfBasedVectorSpaces_c<UniformTyple_f<4,BasedVectorSpace>::T> PowerOfVectorSpace;

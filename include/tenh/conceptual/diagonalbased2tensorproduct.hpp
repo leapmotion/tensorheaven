@@ -157,7 +157,7 @@ public:
 };
 
 template <typename Factor0_, typename Factor1_>
-struct IsConcept_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_> >
+struct IsConcept_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>>
 {
     static bool const V = true;
 private:
@@ -172,7 +172,7 @@ private:
 };
 
 template <typename Factor0_, typename Factor1_>
-struct IsDiagonal2TensorProductOfBasedVectorSpaces_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_> >
+struct IsDiagonal2TensorProductOfBasedVectorSpaces_f<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>>
 {
     static bool const V = true;
 private:

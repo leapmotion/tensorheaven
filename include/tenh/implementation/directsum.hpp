@@ -53,24 +53,24 @@ Uint32 component_for_offset (SummandTyple_ const &, Uint32 offset)
 template <typename SummandTyple_, typename Scalar_, typename UseArrayType_, typename Derived_>
 struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,UseArrayType_,Derived_>
     :
-    public Vector_i<typename DerivedType_f<Derived_,ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,UseArrayType_,Derived_> >::T,
+    public Vector_i<typename DerivedType_f<Derived_,ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,UseArrayType_,Derived_>>::T,
                     Scalar_,
                     DirectSumOfBasedVectorSpaces_c<SummandTyple_>,
                     ComponentQualifierOfArrayType_f<UseArrayType_>::V>,
     // privately inherited because it is an implementation detail
     private ArrayStorage_f<Scalar_,
-                           DimensionOf_f<DirectSumOfBasedVectorSpaces_c<SummandTyple_> >::V,
+                           DimensionOf_f<DirectSumOfBasedVectorSpaces_c<SummandTyple_>>::V,
                            UseArrayType_,
-                           typename DerivedType_f<Derived_,ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,UseArrayType_,Derived_> >::T >::T
+                           typename DerivedType_f<Derived_,ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,UseArrayType_,Derived_>>::T >::T
 {
-    typedef Vector_i<typename DerivedType_f<Derived_,ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,UseArrayType_,Derived_> >::T,
+    typedef Vector_i<typename DerivedType_f<Derived_,ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,UseArrayType_,Derived_>>::T,
                      Scalar_,
                      DirectSumOfBasedVectorSpaces_c<SummandTyple_>,
                      ComponentQualifierOfArrayType_f<UseArrayType_>::V> Parent_Vector_i;
     typedef typename ArrayStorage_f<Scalar_,
-                                    DimensionOf_f<DirectSumOfBasedVectorSpaces_c<SummandTyple_> >::V,
+                                    DimensionOf_f<DirectSumOfBasedVectorSpaces_c<SummandTyple_>>::V,
                                     UseArrayType_,
-                                    typename DerivedType_f<Derived_,ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,UseArrayType_,Derived_> >::T >::T Parent_Array_i;
+                                    typename DerivedType_f<Derived_,ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,UseArrayType_,Derived_>>::T >::T Parent_Array_i;
 
     typedef DirectSumOfBasedVectorSpaces_c<SummandTyple_> Concept;
     typedef UseArrayType_ UseArrayType;
@@ -205,7 +205,7 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,
                                    Scalar_,
                                    typename If_f<IsUseProceduralArray_f<UseArrayType_>::V,
                                                  UseArrayType_,
-                                                 UsePreallocatedArray_t<ELEMENT_COMPONENTS_ARE_CONST> >::T > T;
+                                                 UsePreallocatedArray_t<ELEMENT_COMPONENTS_ARE_CONST>>::T > T;
     };
 
     template <Uint32 N_>
@@ -260,9 +260,9 @@ template <Uint32 INDEX_>
 typename ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,UseArrayType_,Derived_>::template BasisVector_f<INDEX_>::T const ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,UseArrayType_,Derived_>::BasisVector_f<INDEX_>::V;
 
 template <typename SummandTyple_, typename Scalar_, typename UseArrayType_, typename Derived_>
-struct DualOf_f<ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,UseArrayType_,Derived_> >
+struct DualOf_f<ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,UseArrayType_,Derived_>>
 {
-    typedef ImplementationOf_t<typename DualOf_f<DirectSumOfBasedVectorSpaces_c<SummandTyple_> >::T,Scalar_,typename DualOf_f<UseArrayType_>::T, typename DualOf_f<Derived_>::T> T;
+    typedef ImplementationOf_t<typename DualOf_f<DirectSumOfBasedVectorSpaces_c<SummandTyple_>>::T,Scalar_,typename DualOf_f<UseArrayType_>::T, typename DualOf_f<Derived_>::T> T;
 };
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -305,7 +305,7 @@ struct DirectSumOf2TensorsHelper_t
     typedef typename FactorTypleOf_f<ConceptualTypeOfDirectSum_>::T FactorTyple;
     typedef typename Element_f<FactorTyple,0>::T Factor0;
     typedef typename Element_f<FactorTyple,1>::T Factor1;
-    typedef typename ImplementationOf_t<ConceptualTypeOfDirectSum_,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE> >::MultiIndex MultiIndex;
+    typedef typename ImplementationOf_t<ConceptualTypeOfDirectSum_,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE>>::MultiIndex MultiIndex;
     enum { STATIC_ASSERT_IN_ENUM((MultiIndex::LENGTH == 2), LENGTH_MUST_BE_EXACTLY_2) };
     typedef typename Head_f<Procedural2TensorImplementationTyple_>::T HeadImplementation;
     typedef typename FactorTypleOf_f<typename HeadImplementation::Concept>::T HeadFactorTyple;
@@ -402,11 +402,11 @@ private:
                                  ComponentGeneratorEvaluator::direct_sum_of_2tensors<Procedural2TensorImplementationTyple_,
                                                                                      ConceptualTypeOfDirectSum,
                                                                                      Scalar>,
-                                 DirectSum_c<Procedural2TensorImplementationTyple_> > ComponentGenerator;
+                                 DirectSum_c<Procedural2TensorImplementationTyple_>> ComponentGenerator;
 private:
     DirectSumOfProcedural2Tensors_f();
 public:
-    typedef ImplementationOf_t<ConceptualTypeOfDirectSum,Scalar,UseProceduralArray_t<ComponentGenerator> > T;
+    typedef ImplementationOf_t<ConceptualTypeOfDirectSum,Scalar,UseProceduralArray_t<ComponentGenerator>> T;
 };
 
 } // end of namespace Tenh

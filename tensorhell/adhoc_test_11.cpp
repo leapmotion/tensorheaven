@@ -7,7 +7,7 @@
 void test_poly_in_4_dim ()
 {
     std::cout << "Polynomials in 4 dimensions." << '\n';
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,X>,Basis_c<X> > BasedVectorSpace;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,X>,Basis_c<X>> BasedVectorSpace;
     typedef MultivariatePolynomial<2,BasedVectorSpace> PolyType;
     PolyType::SymDual w(fill_with(0));
     MultivariatePolynomial<1,BasedVectorSpace>::SymDual x(fill_with(1));
@@ -43,7 +43,7 @@ void test_poly_in_4_dim ()
 void test_polynomial_serialization ()
 {
     std::cout << "serializing Polynomials in 4 dimensions." << '\n';
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,X>,Basis_c<X> > BasedVectorSpace;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,X>,Basis_c<X>> BasedVectorSpace;
     typedef MultivariatePolynomial<2,BasedVectorSpace> PolyType;
     PolyType::SymDual w(fill_with(0));
     MultivariatePolynomial<1,BasedVectorSpace>::SymDual x(fill_with(1));
@@ -70,7 +70,7 @@ void test_polynomial_serialization ()
 void test_polynomial_multiplication ()
 {
     std::cout << "Polynomial multiplication tests." << '\n';
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,X>,Basis_c<X> > BasedVectorSpace;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,X>,Basis_c<X>> BasedVectorSpace;
     typedef MultivariatePolynomial<1,BasedVectorSpace> PolyType;
     PolyType::SymDual x(fill_with(0)),y(fill_with(0));
     x[PolyType::SymDual::ComponentIndex(0, CheckRange::TRUE)] = 1.0f;
@@ -91,10 +91,10 @@ void test_polynomial_multiplication ()
 void test_tuple_initialization ()
 {
     std::cout << "testing tuple-based initialization\n";
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,12,X>,Basis_c<X> > BVS;
-    typedef ImplementationOf_t<BVS,float,UseMemberArray_t<ComponentsAreConst::FALSE> > U;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,12,X>,Basis_c<X>> BVS;
+    typedef ImplementationOf_t<BVS,float,UseMemberArray_t<ComponentsAreConst::FALSE>> U;
     float array[12];
-    typedef ImplementationOf_t<BVS,float,UsePreallocatedArray_t<ComponentsAreConst::FALSE> > V;
+    typedef ImplementationOf_t<BVS,float,UsePreallocatedArray_t<ComponentsAreConst::FALSE>> V;
     U u(tuple(1.0f, 2.0f, 3.0f, 4.0f) | tuple(5.0f, 6.0f, 7.0f, 8.0f) | tuple(9.0f, 10.0f, 11.0f, 12.0f));
     V v(tuple(1.0f, 2.0f, 3.0f, 4.0f) | tuple(5.0f, 6.0f, 7.0f, 8.0f) | tuple(9.0f, 10.0f, 11.0f, 12.0f), &array[0]);
     std::cout << FORMAT_VALUE(u) << '\n';

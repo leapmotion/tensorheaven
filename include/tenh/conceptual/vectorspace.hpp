@@ -40,7 +40,7 @@ struct VectorSpace_c
 };
 
 template <typename ScalarField_, Uint32 DIMENSION_, typename Id_>
-struct IsConcept_f<VectorSpace_c<ScalarField_, DIMENSION_, Id_> >
+struct IsConcept_f<VectorSpace_c<ScalarField_, DIMENSION_, Id_>>
 {
     static bool const V = true;
 private:
@@ -53,7 +53,7 @@ template <typename T_> struct IsVectorSpace_f
 private:
     IsVectorSpace_f();
 };
-template <typename ScalarField_, Uint32 DIMENSION_, typename Id_> struct IsVectorSpace_f<VectorSpace_c<ScalarField_,DIMENSION_,Id_> >
+template <typename ScalarField_, Uint32 DIMENSION_, typename Id_> struct IsVectorSpace_f<VectorSpace_c<ScalarField_,DIMENSION_,Id_>>
 {
     static bool const V = true;
 private:
@@ -66,7 +66,7 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(VectorSpace);
 #define AS_VECTOR_SPACE(Concept) UniqueVectorSpaceStructureOf_f<Concept>::T
 
 template <typename ScalarField_, Uint32 DIMENSION_, typename Id_>
-struct DualOf_f<VectorSpace_c<ScalarField_,DIMENSION_,Id_> >
+struct DualOf_f<VectorSpace_c<ScalarField_,DIMENSION_,Id_>>
 {
     typedef VectorSpace_c<ScalarField_,DIMENSION_,typename DualOf_f<Id_>::T> T;
 private:
@@ -156,7 +156,7 @@ public:
 };
 
 template <typename VectorSpace_, typename Basis_>
-struct IsConcept_f<BasedVectorSpace_c<VectorSpace_, Basis_> >
+struct IsConcept_f<BasedVectorSpace_c<VectorSpace_, Basis_>>
 {
     static bool const V = true;
 private:
@@ -169,7 +169,7 @@ template <typename T_> struct IsBasedVectorSpace_f
 private:
     IsBasedVectorSpace_f();
 };
-template <typename VectorSpace_, typename Basis_> struct IsBasedVectorSpace_f<BasedVectorSpace_c<VectorSpace_,Basis_> >
+template <typename VectorSpace_, typename Basis_> struct IsBasedVectorSpace_f<BasedVectorSpace_c<VectorSpace_,Basis_>>
 {
     static bool const V = true;
 private:
@@ -182,7 +182,7 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(BasedVectorSpace);
 #define AS_BASED_VECTOR_SPACE(Concept) UniqueBasedVectorSpaceStructureOf_f<Concept>::T
 
 template <typename VectorSpace_, typename Basis_>
-struct DualOf_f<BasedVectorSpace_c<VectorSpace_,Basis_> >
+struct DualOf_f<BasedVectorSpace_c<VectorSpace_,Basis_>>
 {
     typedef BasedVectorSpace_c<typename DualOf_f<VectorSpace_>::T,typename DualOf_f<Basis_>::T> T;
 private:
@@ -294,19 +294,19 @@ BasedVectorSpace_c<VectorSpace_,Basis_> bvs (VectorSpace_ const &, Basis_ const 
 // convenience overload to make the declaration nicer-looking -- Id_ is used for both
 // the vector space id and the basis id.
 template <Uint32 DIMENSION_, typename ScalarField_, typename Id_>
-BasedVectorSpace_c<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,Basis_c<Id_> >
+BasedVectorSpace_c<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,Basis_c<Id_>>
     bvs (ScalarField_ const &, Id_ const &)
 {
-    return BasedVectorSpace_c<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,Basis_c<Id_> >();
+    return BasedVectorSpace_c<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,Basis_c<Id_>>();
 }
 
 // convenience overload to make the declaration nicer-looking -- Id_ is used for both
 // the vector space id and the basis id.
 template <Uint32 DIMENSION_, typename ScalarField_, typename Id_>
-BasedVectorSpace_c<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,OrthonormalBasis_c<Id_> >
+BasedVectorSpace_c<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,OrthonormalBasis_c<Id_>>
     o_n_bvs (ScalarField_ const &, Id_ const &)
 {
-    return BasedVectorSpace_c<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,OrthonormalBasis_c<Id_> >();
+    return BasedVectorSpace_c<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,OrthonormalBasis_c<Id_>>();
 }
 
 // ///////////////////////////////////////////////////////////////////////////
