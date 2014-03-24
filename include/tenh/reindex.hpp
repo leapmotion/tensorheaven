@@ -23,21 +23,12 @@ namespace Tenh {
 template <typename DomainAbstractIndexTyple_, typename CodomainAbstractIndexTyple_>
 struct AbstractIndexMap_e
 {
+    static_assert(Length_f<DomainAbstractIndexTyple_>::V > 0, "DomainAbstractIndexTyple_ must be nonempty");
+    static_assert(!ContainsDuplicates_f<DomainAbstractIndexTyple_>::V, "DomainAbstractIndexTyple_ must not contain duplicates");
+    static_assert(Length_f<DomainAbstractIndexTyple_>::V == Length_f<CodomainAbstractIndexTyple_>::V, "DomainAbstractIndexTyple_ and CodomainAbstractIndexTyple_ must have same length");
+    static_assert(And_f<typename OnEach_f<DomainAbstractIndexTyple_,IsAbstractIndex_e>::T>::V, "DomainAbstractIndexTyple_ must be Typle_t of AbstractIndex_c types");
+    static_assert(And_f<typename OnEach_f<CodomainAbstractIndexTyple_,IsAbstractIndex_e>::T>::V, "CodomainAbstractIndexTyple_ must be Typle_t of AbstractIndex_c types");
 private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(Length_f<DomainAbstractIndexTyple_>::V == Length_f<CodomainAbstractIndexTyple_>::V,
-                              LENGTHS_MUST_BE_EQUAL),
-        STATIC_ASSERT_IN_ENUM__UNIQUE((Length_f<DomainAbstractIndexTyple_>::V > 0), LENGTH_MUST_BE_POSITIVE, DOMAIN_LENGTH),
-        STATIC_ASSERT_IN_ENUM__UNIQUE((Length_f<CodomainAbstractIndexTyple_>::V > 0), LENGTH_MUST_BE_POSITIVE, CODOMAIN_LENGTH),
-        STATIC_ASSERT_IN_ENUM__UNIQUE((And_f<typename OnEach_f<DomainAbstractIndexTyple_,IsAbstractIndex_e>::T>::V),
-                                      MUST_BE_TYPLE_OF_ABSTRACT_INDEX_TYPES,
-                                      DOMAIN),
-        STATIC_ASSERT_IN_ENUM__UNIQUE((And_f<typename OnEach_f<CodomainAbstractIndexTyple_,IsAbstractIndex_e>::T>::V),
-                                      MUST_BE_TYPLE_OF_ABSTRACT_INDEX_TYPES,
-                                      CODOMAIN),
-        STATIC_ASSERT_IN_ENUM(!ContainsDuplicates_f<DomainAbstractIndexTyple_>::V, DOMAIN_INDICES_MUST_NOT_CONTAIN_DUPLICATES)
-    };
     AbstractIndexMap_e();
 public:
     template <typename AbstractIndex_>

@@ -52,7 +52,7 @@ struct Reindexable_t : public ExpressionOperand_i<Reindexable_t<ExpressionTempla
         operator () (AbstractIndex_c<SYMBOL_> const &) const
     {
         typedef typename ExpressionTemplate_::FreeDimIndexTyple FreeDimIndexTyple;
-        STATIC_ASSERT(Length_f<FreeDimIndexTyple>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
+        static_assert(Length_f<FreeDimIndexTyple>::V == 1, "must have exactly 1 free index");
         typedef typename AbstractIndicesOfDimIndexTyple_f<FreeDimIndexTyple>::T DomainAbstractIndexTyple;
         typedef Typle_t<AbstractIndex_c<SYMBOL_>> CodomainAbstractIndexTyple;
         return reindexed<DomainAbstractIndexTyple,CodomainAbstractIndexTyple>(m_derived_expression_template);
@@ -66,7 +66,7 @@ struct Reindexable_t : public ExpressionOperand_i<Reindexable_t<ExpressionTempla
     {
         typedef typename ExpressionTemplate_::FreeDimIndexTyple FreeDimIndexTyple;
         typedef Typle_t<AbstractIndexTypes_...> AbstractIndexTyple;
-        STATIC_ASSERT(Length_f<FreeDimIndexTyple>::V == Length_f<AbstractIndexTyple>::V, LENGTHS_MUST_BE_EQUAL);
+        static_assert(Length_f<FreeDimIndexTyple>::V == Length_f<AbstractIndexTyple>::V, "index typles must have same length");
         typedef typename AbstractIndicesOfDimIndexTyple_f<FreeDimIndexTyple>::T DomainAbstractIndexTyple;
         typedef Typle_t<AbstractIndexTypes_...> CodomainAbstractIndexTyple;
         return reindexed<DomainAbstractIndexTyple,CodomainAbstractIndexTyple>(m_derived_expression_template);

@@ -39,19 +39,19 @@ struct MultiIndex_t : Tuple_t<IndexTyple_>
         :
         Parent(HeadIndexType(i0, check_range), BodyMultiIndex(i1, check_range))
     {
-        STATIC_ASSERT((Parent::LENGTH == 2), LENGTH_DOES_NOT_MATCH_ARGUMENT_COUNT);
+        static_assert(Parent::LENGTH == 2, "length does not match argument count (2)");
     }
     MultiIndex_t (Uint32 i0, Uint32 i1, Uint32 i2, CheckRange check_range = CheckRange::TRUE)
         :
         Parent(HeadIndexType(i0, check_range), BodyMultiIndex(i1, i2, check_range))
     {
-        STATIC_ASSERT((Parent::LENGTH == 3), LENGTH_DOES_NOT_MATCH_ARGUMENT_COUNT);
+        static_assert(Parent::LENGTH == 3, "length does not match argument count (3)");
     }
     MultiIndex_t (Uint32 i0, Uint32 i1, Uint32 i2, Uint32 i3, CheckRange check_range = CheckRange::TRUE)
         :
         Parent(HeadIndexType(i0, check_range), BodyMultiIndex(i1, i2, i3, check_range))
     {
-        STATIC_ASSERT((Parent::LENGTH == 4), LENGTH_DOES_NOT_MATCH_ARGUMENT_COUNT);
+        static_assert(Parent::LENGTH == 4, "length does not match argument count (4)");
     }
     // can really only provide tuple-like initializer for 2-multi-indices, due to the lack
     // of a guarantee that BodyMultiIndex has more than a head index type.
@@ -59,7 +59,7 @@ struct MultiIndex_t : Tuple_t<IndexTyple_>
         :
         Parent(i0, BodyMultiIndex(i1))
     {
-        STATIC_ASSERT((Parent::LENGTH == 2), LENGTH_DOES_NOT_MATCH_ARGUMENT_COUNT);
+        static_assert(Parent::LENGTH == 2, "length does not match argument count (2)");
     }
 
     MultiIndex_t (MultiIndex_t<Typle_t<>> const &) { } // default construction

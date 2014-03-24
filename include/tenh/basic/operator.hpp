@@ -105,9 +105,9 @@ public:
     template <typename ExpressionTemplate_, typename FreeDimIndexTyple_>
     void operator = (Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_> const &rhs)
     {
-        STATIC_ASSERT(IsExpressionTemplate_f<ExpressionTemplate_>::V, MUST_BE_EXPRESSION_TEMPLATE);
-        STATIC_ASSERT_TYPES_ARE_EQUAL(typename ExpressionTemplate_::FreeDimIndexTyple,FreeDimIndexTyple_);
-        STATIC_ASSERT(Length_f<FreeDimIndexTyple_>::V == 2, LENGTH_MUST_BE_EXACTLY_2);
+        static_assert(IsExpressionTemplate_f<ExpressionTemplate_>::V, "ExpressionTemplate_ must be an ExpressionTemplate_i");
+        static_assert(TypesAreEqual_f<typename ExpressionTemplate_::FreeDimIndexTyple,FreeDimIndexTyple_>::V, "free indices must be the same");
+        static_assert(Length_f<FreeDimIndexTyple_>::V == 2, "must have exactly 2 free indices");
         AbstractIndex_c<'i'> i;
         AbstractIndex_c<'j'> j;
         (*this)(i*j) = rhs(i*j);

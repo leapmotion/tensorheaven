@@ -33,7 +33,7 @@ struct ProceduralArray_t
                    COMPONENT_COUNT_,
                    ComponentQualifier::PROCEDURAL>
 {
-    enum { STATIC_ASSERT_IN_ENUM(IsComponentGenerator_t<ComponentGenerator_>::V, MUST_BE_COMPONENT_GENERATOR) };
+    static_assert(IsComponentGenerator_t<ComponentGenerator_>::V, "ComponentGenerator_ must be a ComponentGenerator_t");
 
     typedef Array_i<typename DerivedType_f<Derived_,ProceduralArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_>>::T,
                     Component_,

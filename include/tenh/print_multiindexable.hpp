@@ -20,7 +20,7 @@ void print_multiindexable (std::ostream &out, MultiIndexable_ const &t, Typle_t<
 {
     typedef typename MultiIndexable_::Scalar Scalar;
     typedef typename MultiIndexable_::MultiIndex MultiIndex;
-    STATIC_ASSERT_TYPES_ARE_EQUAL(typename MultiIndex::IndexTyple, Typle_t<>);
+    static_assert(TypesAreEqual_f<typename MultiIndex::IndexTyple,Typle_t<>>::V, "MultiIndex must have matching index typle");
     out << Scalar(t);
 }
 
@@ -31,7 +31,7 @@ void print_multiindexable (std::ostream &out, MultiIndexable_ const &t, Typle_t<
 {
     typedef typename MultiIndexable_::MultiIndex MultiIndex;
     typedef Typle_t<Types_...> AllegedIndexTyple;
-    STATIC_ASSERT_TYPES_ARE_EQUAL(typename MultiIndex::IndexTyple, AllegedIndexTyple);
+    static_assert(TypesAreEqual_f<typename MultiIndex::IndexTyple,AllegedIndexTyple>::V, "MultiIndex must have matching index typle");
     static Uint32 const ORDER = MultiIndex::LENGTH;
     static Uint32 const COMPONENT_COUNT_OF_LAST_INDEX = Element_f<typename MultiIndex::IndexTyple,ORDER-1>::T::COMPONENT_COUNT;
 
