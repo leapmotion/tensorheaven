@@ -105,7 +105,7 @@ Scalar_ determinant_of_2tensor (Tensor_i<Derived_,
                                          TensorProductOfBasedVectorSpaces_c<Typle_t<Factor0_,Factor1_>>,
                                          ComponentQualifier::NONCONST_MEMORY> const &t)
 {
-    STATIC_ASSERT(DimensionOf_f<Factor0_>::V == DimensionOf_f<Factor1_>::V, FACTOR_DIMENSIONS_MUST_BE_EQUAL);
+    static_assert(DimensionOf_f<Factor0_>::V == DimensionOf_f<Factor1_>::V, "factor dimensions must be equal");
     // create Eigen Maps for the parameter -- this way no copying is necessary;
     // the t tensor's components are read directly by Eigen.
     typedef Eigen::Matrix<Scalar_,

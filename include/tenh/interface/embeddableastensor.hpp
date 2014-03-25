@@ -98,12 +98,9 @@ struct EmbeddableAsTensor_i
     :
     public Vector_i<Derived_,Scalar_,EmbeddableInTensorProductOfBasedVectorSpaces_,COMPONENT_QUALIFIER_>
 {
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM((!TypesAreEqual_f<Derived_,NullType>::V), DERIVED_MUST_NOT_BE_NULL_TYPE),
-        STATIC_ASSERT_IN_ENUM(IS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES_UNIQUELY(EmbeddableInTensorProductOfBasedVectorSpaces_),
-                              MUST_BE_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES),
-    };
+    static_assert(!TypesAreEqual_f<Derived_,NullType>::V, "Derived_ must not be NullType");
+    static_assert(IS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES_UNIQUELY(EmbeddableInTensorProductOfBasedVectorSpaces_),
+                  "EmbeddableInTensorProductOfBasedVectorSpaces_ must have unique embeddable in tensor product of based vector spaces structure");
 
     typedef Vector_i<Derived_,Scalar_,EmbeddableInTensorProductOfBasedVectorSpaces_,COMPONENT_QUALIFIER_> Parent_Vector_i;
     typedef typename Parent_Vector_i::Derived Derived;
@@ -146,7 +143,7 @@ struct EmbeddableAsTensor_i
     {
         typedef Typle_t<AbstractIndexTypes_...> AbstractIndexTyple;
         // make sure that the index typle actually contains AbstractIndex_c types
-        STATIC_ASSERT((EachTypeSatisfies_f<AbstractIndexTyple, IsAbstractIndex_e>::V), MUST_BE_TYPLE_OF_ABSTRACT_INDEX_TYPES);
+        static_assert(EachTypeSatisfies_f<AbstractIndexTyple,IsAbstractIndex_e>::V, "AbstractIndexTyple must be a Typle_t of AbstractIndex_c types");
         AbstractIndex_c<666> dummy_index;
         return Parent_Vector_i::operator()(dummy_index).split(dummy_index, abstract_multiindex);
     }
@@ -168,7 +165,7 @@ struct EmbeddableAsTensor_i
     Scalar_ operator () (Vector_i<Derived0_,Scalar_,BasedVectorSpace0_,COMPONENT_QUALIFIER0_> const &v0,
                          Vector_i<Derived1_,Scalar_,BasedVectorSpace1_,COMPONENT_QUALIFIER1_> const &v1) const
     {
-        STATIC_ASSERT(ORDER == 2, ORDER_MUST_BE_EXACTLY_2);
+        static_assert(ORDER == 2, "ORDER must be exactly 2");
         TensorProductOfBasedVectorSpaces upstairs;
         EmbeddableInTensorProductOfBasedVectorSpaces_ downstairs;
         AbstractIndex_c<'i'> i;
@@ -187,7 +184,7 @@ struct EmbeddableAsTensor_i
     template <typename ParameterTyple_>
     Scalar_ operator () (Tuple_t<ParameterTyple_> const &l) const
     {
-        STATIC_ASSERT(Length_f<ParameterTyple_>::V == ORDER, ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
+        static_assert(Length_f<ParameterTyple_>::V == ORDER, "argument count must match ORDER");
         typedef typename AbstractIndexRangeTyple_f<Length_f<ParameterTyple_>::V,667>::T AbstractIndexTyple;
         TensorProductOfBasedVectorSpaces upstairs;
         EmbeddableInTensorProductOfBasedVectorSpaces_ downstairs;

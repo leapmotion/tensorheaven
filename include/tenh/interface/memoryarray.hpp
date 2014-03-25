@@ -28,10 +28,7 @@ struct MemoryArray_i
     :
     public Array_i<Derived_,Component_,COMPONENT_COUNT_,(bool(COMPONENTS_ARE_CONST_) ? ComponentQualifier::CONST_MEMORY : ComponentQualifier::NONCONST_MEMORY)>
 {
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM((!TypesAreEqual_f<Derived_,NullType>::V), DERIVED_MUST_NOT_BE_NULL_TYPE)
-    };
+    static_assert(!TypesAreEqual_f<Derived_,NullType>::V, "Derived_ must not be NullType");
 
     typedef Array_i<Derived_,Component_,COMPONENT_COUNT_,(bool(COMPONENTS_ARE_CONST_) ? ComponentQualifier::CONST_MEMORY : ComponentQualifier::NONCONST_MEMORY)> Parent_Array_i;
 

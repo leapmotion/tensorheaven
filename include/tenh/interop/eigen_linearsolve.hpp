@@ -41,7 +41,7 @@ void linear_solve_using_least_squares (Tensor_i<Derived0_,
 {
     // for now require this special case -- non-standard inner products require
     // the use of a non-identity Euclidean embedding.
-    STATIC_ASSERT_TYPES_ARE_EQUAL(RhsInnerProductId_,StandardInnerProduct);
+    static_assert(TypesAreEqual_f<RhsInnerProductId_,StandardInnerProduct>::V, "for now only standard inner product is supported");
 
     typename EigenMapOf2Tensor_const_f<Factor0_,typename DualOf_f<Factor1_>::T,Scalar_>::T
         EigenMap_of_A(EigenMap_of_2tensor(A));

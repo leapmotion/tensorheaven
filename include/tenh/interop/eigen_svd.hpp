@@ -24,9 +24,7 @@ template <typename T, typename ResultUseArrayType_ = UsePreallocatedArray_t<Comp
 template <typename Factor0_, typename Factor1_, typename Scalar_, typename UseArrayType_, typename Derived_, typename ResultUseArrayType_>
 struct RowsOfTwoTensor_f<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<Typle_t<Factor0_,Factor1_>>,Scalar_, UseArrayType_, Derived_>, ResultUseArrayType_>
 {
-private:
-    enum { STATIC_ASSERT_IN_ENUM((!IsUseProceduralArray_f<UseArrayType_>::V), MUST_NOT_BE_USE_PROCEDURAL_ARRAY) };
-public:
+    static_assert(!IsUseProceduralArray_f<UseArrayType_>::V, "can't do this with UseProceduralArray_t");
     typedef ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<typename UniformTyple_f<DimensionOf_f<Factor0_>::V,Factor1_>::T>,Scalar_,ResultUseArrayType_> T;
     typedef ImplementationOf_t<Factor1_,Scalar_,UseArrayType_> RowType;
 };

@@ -20,10 +20,7 @@ namespace Tenh {
 template <typename Derived_, typename Component_, Uint32 COMPONENT_COUNT_, ComponentQualifier COMPONENT_QUALIFIER_>
 struct Array_i
 {
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM((!TypesAreEqual_f<Derived_,NullType>::V), DERIVED_MUST_NOT_BE_NULL_TYPE)
-    };
+    static_assert(!TypesAreEqual_f<Derived_,NullType>::V, "Derived_ must not be NullType");
 
     typedef Derived_ Derived;
     typedef Component_ Component;

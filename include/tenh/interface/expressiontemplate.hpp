@@ -72,12 +72,9 @@ template <typename Derived_,
           typename UsedDimIndexTyple_>
 struct ExpressionTemplate_i // _i is for "compile-time interface"
 {
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM((!TypesAreEqual_f<Derived_,NullType>::V), DERIVED_MUST_NOT_BE_NULL_TYPE),
-        STATIC_ASSERT_IN_ENUM__UNIQUE((EachTypeSatisfies_f<FreeDimIndexTyple_,IsDimIndex_e>::V), MUST_BE_TYPLE_OF_DIM_INDEX_TYPES, FREEDIMINDEXTYPLE),
-        STATIC_ASSERT_IN_ENUM__UNIQUE((EachTypeSatisfies_f<UsedDimIndexTyple_,IsDimIndex_e>::V), MUST_BE_TYPLE_OF_DIM_INDEX_TYPES, USEDDIMINDEXTYPLE)
-    };
+    static_assert(!TypesAreEqual_f<Derived_,NullType>::V, "Derived_ must not be NullType");
+    static_assert(EachTypeSatisfies_f<FreeDimIndexTyple_,IsDimIndex_e>::V, "FreeDimIndexTyple_ must be a Typle_t of DimIndex_t types");
+    static_assert(EachTypeSatisfies_f<UsedDimIndexTyple_,IsDimIndex_e>::V, "UsedDimIndexTyple_ must be a Typle_t of DimIndex_t types");
 
     typedef Derived_ Derived;
     // these typedefs make the Derived-specified typedefs available at the baseclass level,
@@ -137,12 +134,12 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     {
         typedef Typle_t<AbstractIndexTypes_...> AbstractIndexTyple;
         // make sure that ResultingAbstractIndexType actually is one
-        STATIC_ASSERT(IsAbstractIndex_f<ResultingAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX);
+        static_assert(IsAbstractIndex_f<ResultingAbstractIndexType>::V, "ResultingAbstractIndexType must be an AbstractIndex_c");
         // make sure that the index typle actually contains AbstractIndex_c types
-        STATIC_ASSERT((EachTypeSatisfies_f<AbstractIndexTyple,IsAbstractIndex_e>::V), MUST_BE_TYPLE_OF_ABSTRACT_INDEX_TYPES);
+        static_assert(EachTypeSatisfies_f<AbstractIndexTyple,IsAbstractIndex_e>::V, "bundled indices must all be AbstractIndex_c types");
         // make sure that ResultingFactorType is the correct conceptual type
         // TODO: there is probably a stronger type check (a type which is embeddable into a tensor space)
-        STATIC_ASSERT(HasBasedVectorSpaceStructure_f<ResultingFactorType>::V, MUST_BE_BASED_VECTOR_SPACE);
+        static_assert(HasBasedVectorSpaceStructure_f<ResultingFactorType>::V, "ResultingFactorType must have unique based vector space structure");
         return typename BundleReturnType_f<CheckFactorTypes::TRUE,
                                            ResultingFactorType,
                                            ResultingAbstractIndexType,
@@ -168,12 +165,12 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     {
         typedef Typle_t<AbstractIndexTypes_...> AbstractIndexTyple;
         // make sure that ResultingAbstractIndexType actually is one
-        STATIC_ASSERT(IsAbstractIndex_f<ResultingAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX);
+        static_assert(IsAbstractIndex_f<ResultingAbstractIndexType>::V, "ResultingAbstractIndexType must be an AbstractIndex_c");
         // make sure that the index typle actually contains AbstractIndex_c types
-        STATIC_ASSERT((EachTypeSatisfies_f<AbstractIndexTyple,IsAbstractIndex_e>::V), MUST_BE_TYPLE_OF_ABSTRACT_INDEX_TYPES);
+        static_assert(EachTypeSatisfies_f<AbstractIndexTyple,IsAbstractIndex_e>::V, "bundled indices must all be AbstractIndex_c types");
         // make sure that ResultingFactorType is the correct conceptual type
         // TODO: there is probably a stronger type check (a type which is embeddable into a tensor space)
-        STATIC_ASSERT(HasBasedVectorSpaceStructure_f<ResultingFactorType>::V, MUST_BE_BASED_VECTOR_SPACE);
+        static_assert(HasBasedVectorSpaceStructure_f<ResultingFactorType>::V, "ResultingFactorType must have unique based vector space structure");
         return typename BundleReturnType_f<CheckFactorTypes::FALSE,
                                            ResultingFactorType,
                                            ResultingAbstractIndexType,
@@ -203,9 +200,9 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
     {
         typedef Typle_t<AbstractIndexTypes_...> AbstractIndexTyple;
         // make sure that SourceAbstractIndexType actually is one
-        STATIC_ASSERT(IsAbstractIndex_f<SourceAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX);
+        static_assert(IsAbstractIndex_f<SourceAbstractIndexType>::V, "SourceAbstractIndexType must be an AbstractIndex_c");
         // make sure that the index typle actually contains AbstractIndex_c types
-        STATIC_ASSERT((EachTypeSatisfies_f<AbstractIndexTyple,IsAbstractIndex_e>::V), MUST_BE_TYPLE_OF_ABSTRACT_INDEX_TYPES);
+        static_assert(EachTypeSatisfies_f<AbstractIndexTyple,IsAbstractIndex_e>::V, "split indices must all be AbstractIndex_c types");
         return typename SplitReturnType_f<SourceAbstractIndexType,
                                           AbstractIndexTypes_...>::T(as_derived());
     }
@@ -224,7 +221,7 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
                AbstractIndex_c<SPLIT_ABSTRACT_INDEX_SYMBOL_> const &) const
     {
         // make sure that SourceAbstractIndexType actually is one
-        STATIC_ASSERT(IsAbstractIndex_f<SourceAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX);
+        static_assert(IsAbstractIndex_f<SourceAbstractIndexType>::V, "SourceAbstractIndexType must be an AbstractIndex_c");
         return ExpressionTemplate_IndexSplitToIndex_t<Derived,SourceAbstractIndexType,AbstractIndex_c<SPLIT_ABSTRACT_INDEX_SYMBOL_>>(as_derived());
     }
 
@@ -261,7 +258,7 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
                      AbstractIndex_c<EMBEDDED_ABSTRACT_INDEX_SYMBOL_> const &) const
     {
         // make sure that SourceAbstractIndexType_ actually is one
-        STATIC_ASSERT(IsAbstractIndex_f<SourceAbstractIndexType_>::V, MUST_BE_ABSTRACT_INDEX);
+        static_assert(IsAbstractIndex_f<SourceAbstractIndexType_>::V, "SourceAbstractIndexType_ must be an AbstractIndex_c");
         return typename EmbedReturnType_f<SourceAbstractIndexType_,
                                           EmbeddingCodomain_,
                                           EMBEDDED_ABSTRACT_INDEX_SYMBOL_,
@@ -280,7 +277,7 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
                AbstractIndex_c<EMBEDDED_ABSTRACT_INDEX_SYMBOL_> const &) const
     {
         // make sure that SourceAbstractIndexType_ actually is one
-        STATIC_ASSERT(IsAbstractIndex_f<SourceAbstractIndexType_>::V, MUST_BE_ABSTRACT_INDEX);
+        static_assert(IsAbstractIndex_f<SourceAbstractIndexType_>::V, "SourceAbstractIndexType_ must be an AbstractIndex_c");
         return typename EmbedReturnType_f<SourceAbstractIndexType_,
                                           EmbeddingCodomain_,
                                           EMBEDDED_ABSTRACT_INDEX_SYMBOL_,
@@ -318,7 +315,7 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
                        AbstractIndex_c<COEMBEDDED_ABSTRACT_INDEX_SYMBOL_> const &) const
     {
         // make sure that SourceAbstractIndexType_ actually is one
-        STATIC_ASSERT(IsAbstractIndex_f<SourceAbstractIndexType_>::V, MUST_BE_ABSTRACT_INDEX);
+        static_assert(IsAbstractIndex_f<SourceAbstractIndexType_>::V, "SourceAbstractIndexType_ must be an AbstractIndex_c");
         return typename CoembedReturnType_f<SourceAbstractIndexType_,
                                             CoembeddingCodomain_,
                                             COEMBEDDED_ABSTRACT_INDEX_SYMBOL_,
@@ -337,7 +334,7 @@ struct ExpressionTemplate_i // _i is for "compile-time interface"
                  AbstractIndex_c<COEMBEDDED_ABSTRACT_INDEX_SYMBOL_> const &) const
     {
         // make sure that SourceAbstractIndexType_ actually is one
-        STATIC_ASSERT(IsAbstractIndex_f<SourceAbstractIndexType_>::V, MUST_BE_ABSTRACT_INDEX);
+        static_assert(IsAbstractIndex_f<SourceAbstractIndexType_>::V, "SourceAbstractIndexType_ must be an AbstractIndex_c");
         return typename CoembedReturnType_f<SourceAbstractIndexType_,
                                             CoembeddingCodomain_,
                                             COEMBEDDED_ABSTRACT_INDEX_SYMBOL_,

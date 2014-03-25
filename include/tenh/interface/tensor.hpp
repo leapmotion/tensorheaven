@@ -28,11 +28,8 @@ struct Tensor_i
     :
     public EmbeddableAsTensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENT_QUALIFIER_>
 {
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM((!TypesAreEqual_f<Derived_,NullType>::V), DERIVED_MUST_NOT_BE_NULL_TYPE),
-        STATIC_ASSERT_IN_ENUM(IS_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES_UNIQUELY(TensorProductOfBasedVectorSpaces_), MUST_BE_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES)
-    };
+    static_assert(!TypesAreEqual_f<Derived_,NullType>::V, "Derived_ must not be NullType");
+    static_assert(IS_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES_UNIQUELY(TensorProductOfBasedVectorSpaces_), "TensorProductOfBasedVectorSpaces_ must have unique tensor product of based vector spaces structure");
 
     typedef EmbeddableAsTensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENT_QUALIFIER_> Parent_EmbeddableAsTensor_i;
     typedef typename Parent_EmbeddableAsTensor_i::Derived Derived;
@@ -65,7 +62,7 @@ struct Tensor_i
     {
         static_assert(IsTyple_f<OtherIndexTyple_>::V, "OtherIndexTyple_ must be a Typle_t");
         typedef MultiIndex_t<OtherIndexTyple_> OtherMultiIndex;
-        STATIC_ASSERT((OtherMultiIndex::LENGTH == MultiIndex::LENGTH), MUST_HAVE_EQUAL_LENGTHS);
+        static_assert(OtherMultiIndex::LENGTH == MultiIndex::LENGTH, "multiindex param must have a length equal to the order of the tensor");
         //std::cout << OtherMultiIndex::LENGTH << ", " << MultiIndex::LENGTH << '\n';
         assert(m.is_not_at_end() && "you used ComponentIndex_t(x, DONT_RANGE_CHECK) inappropriately");
         // NOTE: this construction is unnecessary to the code, but IS necessary to the 
@@ -80,7 +77,7 @@ struct Tensor_i
     {
         static_assert(IsTyple_f<OtherIndexTyple_>::V, "OtherIndexTyple_ must be a Typle_t");
         typedef MultiIndex_t<OtherIndexTyple_> OtherMultiIndex;
-        STATIC_ASSERT((OtherMultiIndex::LENGTH == MultiIndex::LENGTH), MUST_HAVE_EQUAL_LENGTHS);
+        static_assert(OtherMultiIndex::LENGTH == MultiIndex::LENGTH, "multiindex param must have a length equal to the order of the tensor");
         //std::cout << OtherMultiIndex::LENGTH << ", " << MultiIndex::LENGTH << '\n';
         assert(m.is_not_at_end() && "you used ComponentIndex_t(x, DONT_RANGE_CHECK) inappropriately");
         // NOTE: this construction is unnecessary to the code, but IS necessary to the 
@@ -109,7 +106,7 @@ struct Tensor_i
     typename IndexedExpressionConstType_f<Typle_t<AbstractIndexHeadType_>>::T
         operator () (Typle_t<AbstractIndexHeadType_> const &) const
     {
-        STATIC_ASSERT(IsAbstractIndex_f<AbstractIndexHeadType_>::V, MUST_BE_ABSTRACT_INDEX);
+        static_assert(IsAbstractIndex_f<AbstractIndexHeadType_>::V, "AbstractIndexHeadType_ must be an AbstractIndex_c");
         return typename IndexedExpressionConstType_f<Typle_t<AbstractIndexHeadType_>>::T(as_derived());
     }
     // specialization for indexed expressions using 1-multiindices, effectively indexing this
@@ -118,7 +115,7 @@ struct Tensor_i
     typename IndexedExpressionNonConstType_f<Typle_t<AbstractIndexHeadType_>>::T
         operator () (Typle_t<AbstractIndexHeadType_> const &)
     {
-        STATIC_ASSERT(IsAbstractIndex_f<AbstractIndexHeadType_>::V, MUST_BE_ABSTRACT_INDEX);
+        static_assert(IsAbstractIndex_f<AbstractIndexHeadType_>::V, "AbstractIndexHeadType_ must be an AbstractIndex_c");
         return typename IndexedExpressionNonConstType_f<Typle_t<AbstractIndexHeadType_>>::T(as_derived());
     }
 
@@ -129,8 +126,8 @@ struct Tensor_i
         operator () (Typle_t<AbstractIndexTypes_...> const &) const
     {
         typedef Typle_t<AbstractIndexTypes_...> AbstractIndexTyple;
-        STATIC_ASSERT((EachTypeSatisfies_f<AbstractIndexTyple,IsAbstractIndex_e>::V), EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
-        STATIC_ASSERT((Length_f<AbstractIndexTyple>::V == ORDER), ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
+        static_assert(EachTypeSatisfies_f<AbstractIndexTyple,IsAbstractIndex_e>::V, "each type must be an AbstractIndex_c");
+        static_assert(Length_f<AbstractIndexTyple>::V == ORDER, "must supply a number of indices equal to the order of the tensor");
         return typename IndexedExpressionConstType_f<AbstractIndexTyple>::T(as_derived());
     }
     template <typename... AbstractIndexTypes_>
@@ -138,8 +135,8 @@ struct Tensor_i
         operator () (Typle_t<AbstractIndexTypes_...> const &)
     {
         typedef Typle_t<AbstractIndexTypes_...> AbstractIndexTyple;
-        STATIC_ASSERT((EachTypeSatisfies_f<AbstractIndexTyple,IsAbstractIndex_e>::V), EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
-        STATIC_ASSERT((Length_f<AbstractIndexTyple>::V == ORDER), ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
+        static_assert(EachTypeSatisfies_f<AbstractIndexTyple,IsAbstractIndex_e>::V, "each type must be an AbstractIndex_c");
+        static_assert(Length_f<AbstractIndexTyple>::V == ORDER, "must supply a number of indices equal to the order of the tensor");
         return typename IndexedExpressionNonConstType_f<AbstractIndexTyple>::T(as_derived());
     }
 

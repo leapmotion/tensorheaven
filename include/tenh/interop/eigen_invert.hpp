@@ -31,7 +31,7 @@ bool invert_2tensor (Tensor_i<Derived0_,
                               TensorProductOfBasedVectorSpaces_c<Typle_t<typename DualOf_f<Factor1_>::T,typename DualOf_f<Factor0_>::T>>,
                               ComponentQualifier::NONCONST_MEMORY> &t_inverse)
 {
-    STATIC_ASSERT(DimensionOf_f<Factor0_>::V == DimensionOf_f<Factor1_>::V, FACTOR_DIMENSIONS_MUST_BE_EQUAL);
+    static_assert(DimensionOf_f<Factor0_>::V == DimensionOf_f<Factor1_>::V, "factor dimensions must be equal");
     // create Eigen Maps for each of the parameters -- this way no copying is necessary;
     // the t tensor's components are read directly by Eigen, and t_inverse's components
     // are directly written to by Eigen.

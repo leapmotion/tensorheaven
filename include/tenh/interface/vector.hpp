@@ -27,11 +27,8 @@ namespace Tenh {
 template <typename Derived_, typename Scalar_, typename BasedVectorSpace_, ComponentQualifier COMPONENT_QUALIFIER_>
 struct Vector_i
 {
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM((!TypesAreEqual_f<Derived_,NullType>::V), DERIVED_MUST_NOT_BE_NULL_TYPE),
-        STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(BasedVectorSpace_), MUST_BE_BASED_VECTOR_SPACE)
-    };
+    static_assert(!TypesAreEqual_f<Derived_,NullType>::V, "Derived_ must not be NullType");
+    static_assert(IS_BASED_VECTOR_SPACE_UNIQUELY(BasedVectorSpace_), "BasedVectorSpace_ must have unique based vector space structure");
 
     typedef Derived_ Derived;
     typedef Scalar_ Scalar;
@@ -58,13 +55,13 @@ struct Vector_i
     // type conversion operator for canonical coercion to Scalar type when the vector is 1-dimensional
     operator ComponentAccessConstReturnType () const
     {
-        STATIC_ASSERT((DIM == 1), ONLY_ONE_DIMENSIONAL_VECTORS_CAN_BE_CONVERTED_TO_SCALARS);
+        static_assert(DIM == 1, "only 1-d vectors can be converted to scalars");
         return as_derived().Derived::operator[](ComponentIndex(0, CheckRange::FALSE));
     }
     // this could be implemented as "operator Scalar & ()" but it would be bad to make implicit casts that can be used to change the value of this.
     ComponentAccessNonConstReturnType as_scalar ()
     {
-        STATIC_ASSERT((DIM == 1), ONLY_ONE_DIMENSIONAL_VECTORS_CAN_BE_CONVERTED_TO_SCALARS);
+        static_assert(DIM == 1, "only 1-d vectors can be converted to scalars");
         return as_derived().Derived::operator[](ComponentIndex(0, CheckRange::FALSE));
     }
 
@@ -129,26 +126,26 @@ struct Vector_i
     template <AbstractIndexSymbol SYMBOL_>
     typename IndexedExpressionConstType_f<SYMBOL_>::T operator () (AbstractIndex_c<SYMBOL_> const &) const
     {
-        STATIC_ASSERT((SYMBOL_ != '\0'), ABSTRACT_INDEX_SYMBOL_MUST_BE_POSITIVE);
+        static_assert(SYMBOL_ > 0, "AbstractIndex_c symbol must be positive");
         return typename IndexedExpressionConstType_f<SYMBOL_>::T(as_derived());
     }
     template <AbstractIndexSymbol SYMBOL_>
     typename IndexedExpressionNonConstType_f<SYMBOL_>::T operator () (AbstractIndex_c<SYMBOL_> const &)
     {
-        STATIC_ASSERT((SYMBOL_ != '\0'), ABSTRACT_INDEX_SYMBOL_MUST_BE_POSITIVE);
+        static_assert(SYMBOL_ > 0, "AbstractIndex_c symbol must be positive");
         return typename IndexedExpressionNonConstType_f<SYMBOL_>::T(as_derived());
     }
 
     template <AbstractIndexSymbol SYMBOL_>
     typename IndexedExpressionConstType_f<SYMBOL_>::T operator () (Typle_t<AbstractIndex_c<SYMBOL_>> const &) const
     {
-        STATIC_ASSERT((SYMBOL_ != '\0'), ABSTRACT_INDEX_SYMBOL_MUST_BE_POSITIVE);
+        static_assert(SYMBOL_ > 0, "AbstractIndex_c symbol must be positive");
         return typename IndexedExpressionConstType_f<SYMBOL_>::T(as_derived());
     }
     template <AbstractIndexSymbol SYMBOL_>
     typename IndexedExpressionNonConstType_f<SYMBOL_>::T operator () (Typle_t<AbstractIndex_c<SYMBOL_>> const &)
     {
-        STATIC_ASSERT((SYMBOL_ != '\0'), ABSTRACT_INDEX_SYMBOL_MUST_BE_POSITIVE);
+        static_assert(SYMBOL_ > 0, "AbstractIndex_c symbol must be positive");
         return typename IndexedExpressionNonConstType_f<SYMBOL_>::T(as_derived());
     }
 
@@ -175,7 +172,7 @@ struct Vector_i
     template <typename Typle_>
     Scalar_ operator () (Tuple_t<Typle_> const &p) const
     {
-        STATIC_ASSERT(Length_f<Typle_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
+        static_assert(Length_f<Typle_>::V == 1, "this function is only defined for 1-tuples");
         AbstractIndex_c<'i'> i;
         return operator()(i)*p.head()(i);
     }

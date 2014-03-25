@@ -86,7 +86,7 @@ MAKE_1_ARY_VALUE_EVALUATOR(IsDimIndex);
 template <typename DimIndexTyple_>
 struct Parent_ComponentIndex_TypleOf_f
 {
-    enum { STATIC_ASSERT_IN_ENUM(IsDimIndex_f<typename Head_f<DimIndexTyple_>::T>::V, MUST_BE_DIM_INDEX) };
+    static_assert(IsDimIndex_f<typename Head_f<DimIndexTyple_>::T>::V, "DimIndexTyple_ must contain only DimIndex_t types");
     typedef typename HeadBodyTyple_f<typename Head_f<DimIndexTyple_>::T::Parent_Index,
                                      typename Parent_ComponentIndex_TypleOf_f<typename BodyTyple_f<DimIndexTyple_>::T>::T>::T T;
 private:
@@ -110,11 +110,8 @@ private:
 template <typename FactorTyple_, typename AbstractIndexTyple_>
 struct DimIndexTypleOf_f
 {
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM((Length_f<FactorTyple_>::V == Length_f<AbstractIndexTyple_>::V), MUST_HAVE_EQUAL_LENGTHS),
-        STATIC_ASSERT_IN_ENUM(HasBasedVectorSpaceStructure_f<typename Head_f<FactorTyple_>::T>::V, MUST_BE_BASED_VECTOR_SPACE)
-    };
+    static_assert(Length_f<FactorTyple_>::V == Length_f<AbstractIndexTyple_>::V, "FactorTyple_ and AbstractIndexTyple_ must have equal lengths");
+    static_assert(HasBasedVectorSpaceStructure_f<typename Head_f<FactorTyple_>::T>::V, "FactorTyple_ must contain types having based vector spaces structures");
 private:
     DimIndexTypleOf_f();
     typedef DimIndex_t<Head_f<AbstractIndexTyple_>::T::SYMBOL,
