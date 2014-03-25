@@ -395,10 +395,7 @@ struct TaylorPolynomialVerifier_f
 template <typename OuterFunctionType_, typename InnerFunctionType_>
 struct FunctionComposition_t
 {
-private:
-    enum { STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename OuterFunctionType_::Domain, typename InnerFunctionType_::CoDomain>::V), TYPES_MUST_BE_EQUAL) };
-
-public:
+    static_assert(TypesAreEqual_f<typename OuterFunctionType_::Domain,typename InnerFunctionType_::CoDomain>::V, "OuterFunctionType_'s domain must match InnerFunctionType_'s codomain");
     typedef FunctionObjectType_m<typename InnerFunctionType_::Domain,
                                 typename OuterFunctionType_::CoDomain,
                                 typename InnerFunctionType_::Scalar> FunctionObjectType;

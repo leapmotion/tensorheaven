@@ -466,7 +466,7 @@ Scalar_ hat (ComponentIndex_t<DimensionOf_f<HatMorphism_>::V> const &i)
     typedef typename DualOf_f<BasedVectorSpace_>::T DualOfBasedVectorSpace;
     typedef TensorProductOfBasedVectorSpaces_c<Typle_t<BasedVectorSpace_,DualOfBasedVectorSpace>> EndomorphismOfBasedVectorSpace;
     typedef TensorProductOfBasedVectorSpaces_c<Typle_t<EndomorphismOfBasedVectorSpace,DualOfBasedVectorSpace>> HatMorphism;
-    STATIC_ASSERT_TYPES_ARE_EQUAL(HatMorphism, HatMorphism_);
+    static_assert(TypesAreEqual_f<HatMorphism,HatMorphism_>::V, "types must match");
 
     // hat(x,y,z) has the form
     // [ [  0 -z  y ]
@@ -507,10 +507,8 @@ struct HatId { static std::string type_as_string () { return "Hat"; } };
 template <typename BasedVectorSpace_, typename Scalar_>
 struct HatTensor_f
 {
+    static_assert(DimensionOf_f<BasedVectorSpace_>::V == 3, "dimension of BasedVectorSpace_ must be exactly 3");
 private:
-
-    enum { STATIC_ASSERT_IN_ENUM((DimensionOf_f<BasedVectorSpace_>::V == 3), DIMENSION_MUST_BE_EXACTLY_3) };
-
     typedef typename DualOf_f<BasedVectorSpace_>::T DualOfBasedVectorSpace;
     typedef TensorProductOfBasedVectorSpaces_c<Typle_t<BasedVectorSpace_,DualOfBasedVectorSpace>> Endomorphism;
     typedef TensorProductOfBasedVectorSpaces_c<Typle_t<Endomorphism,DualOfBasedVectorSpace>> HatMorphism;
@@ -532,7 +530,7 @@ ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<Typle_t<BasedVectorSpace_,
                    UseMemberArray_t<ComponentsAreConst::FALSE>>
     hat (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENT_QUALIFIER_> const &x)
 {
-    STATIC_ASSERT(DimensionOf_f<BasedVectorSpace_>::V == 3, DIMENSION_MUST_BE_EXACTLY_3);
+    static_assert(DimensionOf_f<BasedVectorSpace_>::V == 3, "dimension of BasedVectorSpace_ must be exactly 3");
     // for brevity
     typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<Typle_t<BasedVectorSpace_,typename DualOf_f<BasedVectorSpace_>::T>>,
                                Scalar_,

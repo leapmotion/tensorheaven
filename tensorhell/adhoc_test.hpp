@@ -54,7 +54,7 @@ using namespace Tenh;
 template<Uint32 ORDER, typename Vector, typename Scalar>
 ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER,Vector>,Scalar> test_vector_power (const ImplementationOf_t<Vector,Scalar> &input)
 {
-//    STATIC_ASSERT(IS_BASED_VECTORSPACE_UNIQUELY(Vector), MUST_BE_BASED_VECTOR_SPACE);
+//    static_assert(IS_BASED_VECTORSPACE_UNIQUELY(Vector), "Vector must have unique based vector space structure");
     typedef ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER,Vector>,Scalar> Sym;
     typedef ImplementationOf_t<Vector,Scalar> Vec;
 
@@ -293,7 +293,7 @@ template <typename Scalar_, typename EmbeddableAsTensorProduct_>
 void test_split_index_to_index_order_1 ()
 {
     typedef typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(EmbeddableAsTensorProduct_)::TensorProductOfBasedVectorSpaces TensorProduct;
-    STATIC_ASSERT(OrderOf_f<TensorProduct>::V == 1, UNSPECIFIED_MESSAGE);
+    static_assert(OrderOf_f<TensorProduct>::V == 1, "order of TensorProduct must be 1");
     std::cout << "test_split_index_to_index_order_1<" + type_string_of<Scalar_>() + ',' + type_string_of<EmbeddableAsTensorProduct_>() + ">\n";
     typedef ImplementationOf_t<EmbeddableAsTensorProduct_,float> S;
     S s(Static<WithoutInitialization>::SINGLETON);
@@ -317,7 +317,7 @@ template <typename Scalar_, typename EmbeddableAsTensorProduct_>
 void test_split_index_to_index_order_2 ()
 {
     typedef typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(EmbeddableAsTensorProduct_)::TensorProductOfBasedVectorSpaces TensorProduct;
-    STATIC_ASSERT(OrderOf_f<TensorProduct>::V == 2, UNSPECIFIED_MESSAGE);
+    static_assert(OrderOf_f<TensorProduct>::V == 2, "order of TensorProduct must be 2");
     std::cout << "test_split_index_to_index_order_2<" + type_string_of<Scalar_>() + ',' + type_string_of<EmbeddableAsTensorProduct_>() + ">\n";
     typedef ImplementationOf_t<EmbeddableAsTensorProduct_,float> S;
     S s(Static<WithoutInitialization>::SINGLETON);
@@ -347,7 +347,7 @@ template <typename Scalar_, typename EmbeddableAsTensorProduct_>
 void test_split_index_to_index_order_3 ()
 {
     typedef typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(EmbeddableAsTensorProduct_)::TensorProductOfBasedVectorSpaces TensorProduct;
-    STATIC_ASSERT(OrderOf_f<TensorProduct>::V == 3, UNSPECIFIED_MESSAGE);
+    static_assert(OrderOf_f<TensorProduct>::V == 3, "order of TensorProduct must be 3");
     std::cout << "test_split_index_to_index_order_3<" + type_string_of<Scalar_>() + ',' + type_string_of<EmbeddableAsTensorProduct_>() + ">\n";
     typedef ImplementationOf_t<EmbeddableAsTensorProduct_,float> S;
     S s(Static<WithoutInitialization>::SINGLETON);

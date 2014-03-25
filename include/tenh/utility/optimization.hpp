@@ -191,8 +191,8 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
     typedef typename ObjectiveFunction_::D2 HessianType;
     typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<Typle_t<typename DualOf_f<BasedVectorSpace_>::T,
                                                                           typename DualOf_f<BasedVectorSpace_>::T>>,Scalar_> Hessian2TensorType;
-    STATIC_ASSERT_TYPES_ARE_EQUAL(VectorType, typename ObjectiveFunction_::V);
-    STATIC_ASSERT_TYPES_ARE_EQUAL(Scalar_, typename ObjectiveFunction_::Out);
+    static_assert(TypesAreEqual_f<VectorType,typename ObjectiveFunction_::V>::V, "types must match");
+    static_assert(TypesAreEqual_f<Scalar_,typename ObjectiveFunction_::Out>::V, "types must match");
     static Scalar_ const LINE_SEARCH_GEOMETRIC_STEP_FACTOR = Scalar_(0.5);
     static Uint32 const LINE_SEARCH_GEOMETRIC_STEP_MAX_ITERATION_COUNT = 10;
     static int const LINE_SEARCH_UNIFORM_STEP_SUBSTEP_COUNT = 50;
@@ -326,8 +326,8 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_>
     typedef typename InnerProduct_f<BasedVectorSpace_,InnerProductId_,Scalar_>::T VectorInnerProductType;
     typedef ImplementationOf_t<typename DualOf_f<BasedVectorSpace_>::T,Scalar_> CoVectorType;
     typedef typename InnerProduct_f<typename DualOf_f<BasedVectorSpace_>::T,InnerProductId_,Scalar_>::T CoVectorInnerProductType;
-    STATIC_ASSERT_TYPES_ARE_EQUAL(VectorType, typename ObjectiveFunction_::V);
-    STATIC_ASSERT_TYPES_ARE_EQUAL(Scalar_, typename ObjectiveFunction_::Out);
+    static_assert(TypesAreEqual_f<VectorType,typename ObjectiveFunction_::V>::V, "types must match");
+    static_assert(TypesAreEqual_f<Scalar_,typename ObjectiveFunction_::Out>::V, "types must match");
     static int const LINE_SEARCH_SAMPLE_COUNT = 50;
     static Scalar_ const STEP_SCALE = Scalar_(1);
     static bool const PRINT_DEBUG_OUTPUT = false;
@@ -420,7 +420,7 @@ void randomize (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENT_QUALIFIER_
                 Scalar_ const &inner_radius,
                 Scalar_ const &outer_radius)
 {
-    STATIC_ASSERT(COMPONENT_QUALIFIER_ != ComponentQualifier::PROCEDURAL, MUST_NOT_BE_COMPONENTS_ARE_PROCEDURAL);
+    static_assert(COMPONENT_QUALIFIER_ != ComponentQualifier::PROCEDURAL, "must not use procedural components");
     Scalar_ squared_inner_radius = sqr(inner_radius);
     Scalar_ squared_outer_radius = sqr(outer_radius);
     Scalar_ sqn;

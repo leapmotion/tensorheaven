@@ -31,7 +31,7 @@ void test_wedge ()
     typedef Basis_c<X> B;
     typedef BasedVectorSpace_c<VSX,B> BasedX;
 
-    STATIC_ASSERT(HasBasedVectorSpaceStructure_f<BasedX>::V, MUST_BE_BASED_VECTOR_SPACE);
+    static_assert(HasBasedVectorSpaceStructure_f<BasedX>::V, "BasedX must be a based vector space");
 
     typedef ExteriorPowerOfBasedVectorSpace_c<3,BasedX> Wedge3_BasedX;
     typedef ExteriorPowerOfBasedVectorSpace_c<2,BasedX> Wedge2_BasedX;
@@ -95,7 +95,7 @@ void test_vee ()
     typedef Basis_c<X> B;
     typedef BasedVectorSpace_c<VSX,B> BasedX;
 
-    STATIC_ASSERT(HasBasedVectorSpaceStructure_f<BasedX>::V, MUST_BE_BASED_VECTOR_SPACE);
+    static_assert(HasBasedVectorSpaceStructure_f<BasedX>::V, "BasedX must be a based vector space");
 
     typedef SymmetricPowerOfBasedVectorSpace_c<3,BasedX> Sym3_BasedX;
     typedef SymmetricPowerOfBasedVectorSpace_c<2,BasedX> Sym2_BasedX;
