@@ -29,10 +29,7 @@ struct ExpressionTemplate_Eval_t
                                 typename Operand::FreeDimIndexTyple,
                                 typename Operand::UsedDimIndexTyple>
 {
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<Operand>::V, OPERAND_IS_EXPRESSION_TEMPLATE)
-    };
+    static_assert(IsExpressionTemplate_f<Operand>::V, "Operand must be an ExpressionTemplate_i");
 
     typedef ExpressionTemplate_i<ExpressionTemplate_Eval_t<Operand>,
                                  typename Operand::Scalar,

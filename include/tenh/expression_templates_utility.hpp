@@ -92,7 +92,7 @@ private:
     typedef typename FreeIndexTyple_f<IndexTyple_>::T FreeIndexTyple;
     typedef typename ElementsSatisfying_f<FactorAndIndexPairTyple,IndexIsFree_e<FreeIndexTyple>>::T FreeFactorAndIndexPairTyple;
     typedef typename Unzip_f<FreeFactorAndIndexPairTyple>::T Unzipped;
-    enum { STATIC_ASSERT_IN_ENUM((Length_f<Unzipped>::V == 0 || Length_f<Unzipped>::V == 2), LENGTH_MUST_BE_EXACTLY_0_OR_2) };
+    static_assert(Length_f<Unzipped>::V == 0 || Length_f<Unzipped>::V == 2, "length must be exactly 0 or 2");
     FreeFactorTyple_f();
 public:
     // each pair in FreeFactorAndIndexPairTyple is a (factor, index) Typle_t
@@ -102,11 +102,8 @@ public:
 template <typename AbstractIndexTyple_, typename SummedAbstractIndexTyple_, typename AbstractIndex>
 struct SummedAbstractIndexPairElementIndices_f
 {
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IsAbstractIndex_f<AbstractIndex>::V, MUST_BE_ABSTRACT_INDEX),
-        STATIC_ASSERT_IN_ENUM((OccurrenceCount_f<AbstractIndexTyple_,AbstractIndex>::V == 2), MUST_OCCUR_EXACTLY_TWICE)
-    };
+    static_assert(IsAbstractIndex_f<AbstractIndex>::V, "AbstractIndex must be an AbstractIndex_c");
+    static_assert(OccurrenceCount_f<AbstractIndexTyple_,AbstractIndex>::V == 2, "AbstractIndex must occur exactly twice in AbstractIndexTyple_");
     static Uint32 const FIRST = IndexOfFirstOccurrence_f<AbstractIndexTyple_,AbstractIndex>::V;
 private:
     SummedAbstractIndexPairElementIndices_f();
@@ -130,12 +127,9 @@ struct FactorsOfSummation_f
     typedef typename Element_f<FactorTyple,Pair::FIRST>::T FirstFactor;
     typedef typename Element_f<FactorTyple,Pair::SECOND>::T SecondFactor;
 private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM((Length_f<FactorTyple>::V == Length_f<AbstractIndexTyple>::V), MUST_HAVE_EQUAL_LENGTHS),
-        STATIC_ASSERT_IN_ENUM__UNIQUE(HasBasedVectorSpaceStructure_f<FirstFactor>::V, MUST_BE_BASED_VECTOR_SPACE, FIRSTFACTOR),
-        STATIC_ASSERT_IN_ENUM__UNIQUE(HasBasedVectorSpaceStructure_f<SecondFactor>::V, MUST_BE_BASED_VECTOR_SPACE, SECONDFACTOR)
-    };
+    static_assert(Length_f<FactorTyple>::V == Length_f<AbstractIndexTyple>::V, "FactorTyple and AbstractIndexTyple must have equal lengths");
+    static_assert(HasBasedVectorSpaceStructure_f<FirstFactor>::V, "FirstFactor must have unique based vector space structure");
+    static_assert(HasBasedVectorSpaceStructure_f<SecondFactor>::V, "SecondFactor must have unique based vector space structure");
     FactorsOfSummation_f();
 };
 
@@ -160,7 +154,7 @@ public:
 template <typename FactorTyple, typename AbstractIndexTyple>
 struct AllSummationsAreNaturalPairings_f<FactorTyple,AbstractIndexTyple,Typle_t<>>
 {
-    static bool const V = true; // so this can be used in STATIC_ASSERT_IN_ENUM
+    static bool const V = true; // so this can be used in static_assert
 private:
     AllSummationsAreNaturalPairings_f();
 };
@@ -172,14 +166,13 @@ template <typename Tensor, typename TensorDimIndexTyple, typename SummedDimIndex
 struct UnarySummation_t
 {
 private:
+
     typedef typename AbstractIndicesOfDimIndexTyple_f<TensorDimIndexTyple>::T AbstractIndexTyple;
     typedef typename AbstractIndicesOfDimIndexTyple_f<SummedDimIndexTyple>::T SummedAbstractIndexTyple;
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM((AllSummationsAreNaturalPairings_f<typename Tensor::FactorTyple,
-                                                                 AbstractIndexTyple,
-                                                                 SummedAbstractIndexTyple>::V), ALL_SUMMATIONS_MUST_BE_NATURAL_PAIRINGS)
-    };
+    static_assert(AllSummationsAreNaturalPairings_f<typename Tensor::FactorTyple,
+                                                    AbstractIndexTyple,
+                                                    SummedAbstractIndexTyple>::V, "all summations must be natural pairings");
+
 public:
 
     typedef typename Tensor::Scalar Scalar;
@@ -235,16 +228,13 @@ private:
                                      typename RightOperand::FreeDimIndexTyple>::T DimIndexTyple;
     typedef typename AbstractIndicesOfDimIndexTyple_f<DimIndexTyple>::T AbstractIndexTyple;
     typedef typename AbstractIndicesOfDimIndexTyple_f<SummedDimIndexTyple>::T SummedAbstractIndexTyple;
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<LeftOperand>::V, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
-        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<RightOperand>::V, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
-        STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename LeftOperand::Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM((Length_f<SummedDimIndexTyple>::V > 0), LENGTH_MUST_BE_POSITIVE),
-        STATIC_ASSERT_IN_ENUM((AllSummationsAreNaturalPairings_f<FactorTyple,
-                                                                 AbstractIndexTyple,
-                                                                 SummedAbstractIndexTyple>::V), ALL_SUMMATIONS_MUST_BE_NATURAL_PAIRINGS)
-    };
+    static_assert(IsExpressionTemplate_f<LeftOperand>::V, "LeftOperand must be an ExpressionTemplate_i");
+    static_assert(IsExpressionTemplate_f<RightOperand>::V, "RightOperand must be an ExpressionTemplate_i");
+    static_assert(TypesAreEqual_f<typename LeftOperand::Scalar,typename RightOperand::Scalar>::V, "operand scalar types must be equal");
+    static_assert(Length_f<SummedDimIndexTyple>::V > 0, "number of summed indices must be positive");
+    static_assert(AllSummationsAreNaturalPairings_f<FactorTyple,
+                                                    AbstractIndexTyple,
+                                                    SummedAbstractIndexTyple>::V, "all summations must be natural pairings");
 public:
     typedef typename LeftOperand::Scalar Scalar;
     typedef MultiIndex_t<FreeDimIndexTyple> MultiIndex;
@@ -280,16 +270,11 @@ public:
 template <typename LeftOperand, typename RightOperand, typename FreeDimIndexTyple>
 struct BinarySummation_t<LeftOperand,RightOperand,FreeDimIndexTyple,Typle_t<>>
 {
-private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<LeftOperand>::V, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
-        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<RightOperand>::V, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
-        STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename LeftOperand::Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<FreeDimIndexTyple,IsDimIndex_e>::V), MUST_BE_TYPLE_OF_DIM_INDEX_TYPES)
-        // no summation, so no need to check naturality of pairings
-    };
-public:
+    static_assert(IsExpressionTemplate_f<LeftOperand>::V, "LeftOperand must be an ExpressionTemplate_i");
+    static_assert(IsExpressionTemplate_f<RightOperand>::V, "RightOperand must be an ExpressionTemplate_i");
+    static_assert(TypesAreEqual_f<typename LeftOperand::Scalar,typename RightOperand::Scalar>::V, "operand scalar types must be equal");
+    static_assert(EachTypeSatisfies_f<FreeDimIndexTyple,IsDimIndex_e>::V, "each free index must be a DimIndex_t");
+    // no summation, so no need to check naturality of pairings
 
     typedef typename LeftOperand::Scalar Scalar;
     typedef MultiIndex_t<FreeDimIndexTyple> MultiIndex;
@@ -368,11 +353,8 @@ template <typename AbstractIndexTyple, typename FactorTyple, typename Extraction
 struct ExtractFactorsForAbstractIndices_f
 {
 private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM((OccurrenceCount_f<AbstractIndexTyple,typename Head_f<ExtractionAbstractIndexTyple>::T>::V == 1), MUST_OCCUR_EXACTLY_ONCE),
-        STATIC_ASSERT_IN_ENUM((IsASubsetOf_f<ExtractionAbstractIndexTyple,AbstractIndexTyple>::V), MUST_BE_SUBSET_OF)
-    };
+    static_assert(OccurrenceCount_f<AbstractIndexTyple,typename Head_f<ExtractionAbstractIndexTyple>::T>::V == 1, "each extracted type must occur exactly once in AbstractIndexTyple");
+    static_assert(IsASubsetOf_f<ExtractionAbstractIndexTyple,AbstractIndexTyple>::V, "ExtractionAbstractIndexTyple must be a subset of AbstractIndexTyple");
     static Uint32 const INDEX = IndexOfFirstOccurrence_f<AbstractIndexTyple,typename Head_f<ExtractionAbstractIndexTyple>::T>::V;
     ExtractFactorsForAbstractIndices_f();
 public:
@@ -411,14 +393,11 @@ struct IndexBundle_t
 {
     typedef typename AbstractIndicesOfDimIndexTyple_f<typename Operand::FreeDimIndexTyple>::T OperandFreeAbstractIndexTyple;
 
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_VECTOR_SPACES_UNIQUELY(ResultingFactorType), MUST_BE_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES),
-        STATIC_ASSERT_IN_ENUM(IsAbstractIndex_f<ResultingAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX),
-        STATIC_ASSERT_IN_ENUM((IsASubsetOf_f<BundleAbstractIndexTyple,OperandFreeAbstractIndexTyple>::V), BUNDLE_INDICES_MUST_BE_FREE),
-        STATIC_ASSERT_IN_ENUM((!Contains_f<BundleAbstractIndexTyple,ResultingAbstractIndexType>::V), BUNDLE_AND_RESULTING_MUST_BE_DISTINCT),
-        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<Operand>::V, OPERAND_IS_EXPRESSION_TEMPLATE)
-    };
+    static_assert(IsExpressionTemplate_f<Operand>::V, "Operand must be an ExpressionTemplate_i");
+    static_assert(IS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_VECTOR_SPACES_UNIQUELY(ResultingFactorType), "ResultingFactorType must have unique embeddable in tensor product of based vector spaces structure");
+    static_assert(IsAbstractIndex_f<ResultingAbstractIndexType>::V, "ResultingAbstractIndexType must be an AbstractIndex_c");
+    static_assert(IsASubsetOf_f<BundleAbstractIndexTyple,OperandFreeAbstractIndexTyple>::V, "bundled indices must be a subset of the free indices");
+    static_assert(!Contains_f<BundleAbstractIndexTyple,ResultingAbstractIndexType>::V, "BundleAbstractIndexTyple must not contain ResultingAbstractIndexType");
 
     // if Operand's free indices are i*j*k*l*m*n, the bundle indices are i*k*l, and the resulting
     // index is P, then the transformation is
@@ -442,12 +421,7 @@ struct IndexBundle_t
 private:
 
     typedef typename FactorTypleOf_f<typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(ResultingFactorType)::TensorProductOfBasedVectorSpaces>::T ResultingFactorTypeFactorTyple;
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(!bool(CHECK_FACTOR_TYPES_) ||
-                              (TypesAreEqual_f<BundleFactorTyple,ResultingFactorTypeFactorTyple>::V),
-                              BUNDLE_FACTORS_MUST_MATCH)
-    };
+    static_assert(!bool(CHECK_FACTOR_TYPES_) || TypesAreEqual_f<BundleFactorTyple,ResultingFactorTypeFactorTyple>::V, "bundle factors must match");
 
 public:
 
@@ -519,13 +493,10 @@ struct IndexSplitter_t
 {
     typedef typename AbstractIndicesOfDimIndexTyple_f<typename Operand::FreeDimIndexTyple>::T OperandFreeAbstractIndexTyple;
 
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IsAbstractIndex_f<SourceAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX),
-        STATIC_ASSERT_IN_ENUM((Contains_f<OperandFreeAbstractIndexTyple,SourceAbstractIndexType>::V), SOURCE_INDEX_MUST_BE_FREE),
-        STATIC_ASSERT_IN_ENUM((!HasNontrivialSetIntersection_f<Typle_t<SourceAbstractIndexType>,SplitAbstractIndexTyple>::V), SOURCE_AND_SPLIT_MUST_BE_DISTINCT),
-        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<Operand>::V, OPERAND_IS_EXPRESSION_TEMPLATE)
-    };
+    static_assert(IsExpressionTemplate_f<Operand>::V, "Operand must be an ExpressionTemplate_i");
+    static_assert(IsAbstractIndex_f<SourceAbstractIndexType>::V, "SourceAbstractIndexType must be an AbstractIndex_c");
+    static_assert(Contains_f<OperandFreeAbstractIndexTyple,SourceAbstractIndexType>::V, "source index must be free");
+    static_assert(!HasNontrivialSetIntersection_f<Typle_t<SourceAbstractIndexType>,SplitAbstractIndexTyple>::V, "source and split indices must be distinct");
 
     typedef typename Operand::Scalar Scalar;
     // we must replace SourceAbstractIndexType with MultiIndex_t<SplitAbstractIndexTyple> in the index typle
@@ -534,10 +505,7 @@ struct IndexSplitter_t
 
     typedef typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(SourceFactor)::TensorProductOfBasedVectorSpaces EmbeddingTensorProduct;
 
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM__UNIQUE((OrderOf_f<EmbeddingTensorProduct>::V == Length_f<SplitAbstractIndexTyple>::V), MUST_HAVE_EQUAL_LENGTHS, FREEFACTORTYPLE)
-    };
+    static_assert(OrderOf_f<EmbeddingTensorProduct>::V == Length_f<SplitAbstractIndexTyple>::V, "order of EmbeddingTensorProduct and length of SplitAbstractIndexTyple must be equal");
 
     typedef typename Concat2Typles_f<
         typename LeadingTyple_f<typename Operand::FreeFactorTyple,SOURCE_INDEX_TYPE_INDEX>::T,
@@ -557,10 +525,7 @@ struct IndexSplitter_t
     typedef typename Concat2Typles_f<typename Operand::UsedDimIndexTyple,SplitAbstractIndexTyple>::T UsedDimIndexTyple;
     typedef MultiIndex_t<DimIndexTyple> MultiIndex;
 
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM__UNIQUE((Length_f<FactorTyple>::V == Length_f<DimIndexTyple>::V), MUST_HAVE_EQUAL_LENGTHS, FACTORTYPLE)
-    };
+    static_assert(Length_f<FactorTyple>::V == Length_f<DimIndexTyple>::V, "must have same number of factors and indices");
 
     IndexSplitter_t (Operand const &operand) : m_operand(operand) { }
 
@@ -606,14 +571,11 @@ struct IndexSplitToIndex_t
 {
     typedef typename AbstractIndicesOfDimIndexTyple_f<typename Operand::FreeDimIndexTyple>::T OperandFreeAbstractIndexTyple;
 
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IsAbstractIndex_f<SourceAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX, SOURCE),
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IsAbstractIndex_f<SplitAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX, SPLIT),
-        STATIC_ASSERT_IN_ENUM((Contains_f<OperandFreeAbstractIndexTyple,SourceAbstractIndexType>::V), SOURCE_INDEX_MUST_BE_FREE),
-        STATIC_ASSERT_IN_ENUM((!TypesAreEqual_f<SourceAbstractIndexType,SplitAbstractIndexType>::V), SOURCE_AND_SPLIT_MUST_BE_DISTINCT),
-        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<Operand>::V, OPERAND_IS_EXPRESSION_TEMPLATE)
-    };
+    static_assert(IsExpressionTemplate_f<Operand>::V, "Operand must be an ExpressionTemplate_i");
+    static_assert(IsAbstractIndex_f<SourceAbstractIndexType>::V, "SourceAbstractIndexType must be an AbstractIndex_c");
+    static_assert(IsAbstractIndex_f<SplitAbstractIndexType>::V, "SplitAbstractIndexType must be an AbstractIndex_c");
+    static_assert(Contains_f<OperandFreeAbstractIndexTyple,SourceAbstractIndexType>::V, "source index must be free");
+    static_assert(!TypesAreEqual_f<SourceAbstractIndexType,SplitAbstractIndexType>::V, "source and split indices must be distinct");
 
     typedef typename Operand::Scalar Scalar;
     // we must replace SourceAbstractIndexType with SplitAbstractIndexType in the index typle
@@ -633,10 +595,7 @@ struct IndexSplitToIndex_t
     typedef typename Concat2Typles_f<typename Operand::UsedDimIndexTyple,Typle_t<SplitAbstractIndexType>>::T UsedDimIndexTyple;
     typedef MultiIndex_t<DimIndexTyple> MultiIndex;
 
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM__UNIQUE((Length_f<FactorTyple>::V == Length_f<DimIndexTyple>::V), MUST_HAVE_EQUAL_LENGTHS, FACTORTYPLE)
-    };
+    static_assert(Length_f<FactorTyple>::V == Length_f<DimIndexTyple>::V, "must have same number of factors and indices");
 
     IndexSplitToIndex_t (Operand const &operand) : m_operand(operand) { }
 
@@ -685,14 +644,11 @@ struct IndexEmbedder_t
 {
     typedef typename AbstractIndicesOfDimIndexTyple_f<typename Operand_::FreeDimIndexTyple>::T OperandFreeAbstractIndexTyple;
 
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IsAbstractIndex_f<SourceAbstractIndexType_>::V, MUST_BE_ABSTRACT_INDEX, SOURCE),
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IsAbstractIndex_f<EmbeddedAbstractIndexType_>::V, MUST_BE_ABSTRACT_INDEX, EMBEDDED),
-        STATIC_ASSERT_IN_ENUM((Contains_f<OperandFreeAbstractIndexTyple,SourceAbstractIndexType_>::V), SOURCE_INDEX_MUST_BE_FREE),
-        STATIC_ASSERT_IN_ENUM((!TypesAreEqual_f<SourceAbstractIndexType_,EmbeddedAbstractIndexType_>::V), SOURCE_AND_EMBEDDED_MUST_BE_DISTINCT),
-        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<Operand_>::V, OPERAND_IS_EXPRESSION_TEMPLATE)
-    };
+    static_assert(IsExpressionTemplate_f<Operand_>::V, "Operand_ must be an ExpressionTemplate_i");
+    static_assert(IsAbstractIndex_f<SourceAbstractIndexType_>::V, "SourceAbstractIndexType_ must be an AbstractIndex_c");
+    static_assert(IsAbstractIndex_f<EmbeddedAbstractIndexType_>::V, "EmbeddedAbstractIndexType_ must be an AbstractIndex_c");
+    static_assert(Contains_f<OperandFreeAbstractIndexTyple,SourceAbstractIndexType_>::V, "source index must be free");
+    static_assert(!TypesAreEqual_f<SourceAbstractIndexType_,EmbeddedAbstractIndexType_>::V, "source and embedded indices must be distinct");
 
     typedef typename Operand_::Scalar Scalar;
     // we must replace SourceAbstractIndexType_ with EmbeddedAbstractIndexType_ in the index typle
@@ -711,10 +667,7 @@ struct IndexEmbedder_t
     typedef typename Concat2Typles_f<typename Operand_::UsedDimIndexTyple,Typle_t<EmbeddedAbstractIndexType_>>::T UsedDimIndexTyple;
     typedef MultiIndex_t<DimIndexTyple> MultiIndex;
 
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM__UNIQUE((Length_f<FactorTyple>::V == Length_f<DimIndexTyple>::V), MUST_HAVE_EQUAL_LENGTHS, FACTORTYPLE)
-    };
+    static_assert(Length_f<FactorTyple>::V == Length_f<DimIndexTyple>::V, "must have same number of factors and indices");
 
     IndexEmbedder_t (Operand_ const &operand) : m_operand(operand) { }
 
@@ -761,14 +714,11 @@ struct IndexCoembedder_t
 {
     typedef typename AbstractIndicesOfDimIndexTyple_f<typename Operand_::FreeDimIndexTyple>::T OperandFreeAbstractIndexTyple;
 
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IsAbstractIndex_f<SourceAbstractIndexType_>::V, MUST_BE_ABSTRACT_INDEX, SOURCE),
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IsAbstractIndex_f<CoembeddedAbstractIndexType_>::V, MUST_BE_ABSTRACT_INDEX, EMBEDDED),
-        STATIC_ASSERT_IN_ENUM((Contains_f<OperandFreeAbstractIndexTyple,SourceAbstractIndexType_>::V), SOURCE_INDEX_MUST_BE_FREE),
-        STATIC_ASSERT_IN_ENUM((!TypesAreEqual_f<SourceAbstractIndexType_,CoembeddedAbstractIndexType_>::V), SOURCE_AND_EMBEDDED_MUST_BE_DISTINCT),
-        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<Operand_>::V, OPERAND_IS_EXPRESSION_TEMPLATE)
-    };
+    static_assert(IsExpressionTemplate_f<Operand_>::V, "Operand must be an ExpressionTemplate_i");
+    static_assert(IsAbstractIndex_f<SourceAbstractIndexType_>::V, "SourceAbstractIndexType_ must be an AbstractIndex_c");
+    static_assert(IsAbstractIndex_f<CoembeddedAbstractIndexType_>::V, "CoembeddedAbstractIndexType_ must be an AbstractIndex_c");
+    static_assert(Contains_f<OperandFreeAbstractIndexTyple,SourceAbstractIndexType_>::V, "source index must be free");
+    static_assert(!TypesAreEqual_f<SourceAbstractIndexType_,CoembeddedAbstractIndexType_>::V, "source and coembedded indices must be distinct");
 
     typedef typename Operand_::Scalar Scalar;
     // we must replace SourceAbstractIndexType_ with CoembeddedAbstractIndexType_ in the index typle
@@ -787,10 +737,7 @@ struct IndexCoembedder_t
     typedef typename Concat2Typles_f<typename Operand_::UsedDimIndexTyple,Typle_t<CoembeddedAbstractIndexType_>>::T UsedDimIndexTyple;
     typedef MultiIndex_t<DimIndexTyple> MultiIndex;
 
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM__UNIQUE((Length_f<FactorTyple>::V == Length_f<DimIndexTyple>::V), MUST_HAVE_EQUAL_LENGTHS, FACTORTYPLE)
-    };
+    static_assert(Length_f<FactorTyple>::V == Length_f<DimIndexTyple>::V, "must have same number of factors and indices");
 
     IndexCoembedder_t (Operand_ const &operand) : m_operand(operand) { }
 
@@ -807,7 +754,7 @@ struct IndexCoembedder_t
         Scalar retval(0);
         for (CoembedIndexIterator it(j); it.is_not_at_end(); ++it)
         {
-            STATIC_ASSERT_TYPES_ARE_EQUAL(typename CoembedIndexIterator::ComponentIndexReturnType, CoembeddingDomainComponentIndex);
+            static_assert(TypesAreEqual_f<typename CoembedIndexIterator::ComponentIndexReturnType,CoembeddingDomainComponentIndex>::V, "index types must match");
             // this replaces the CoembeddedAbstractIndexType_ portion with SourceAbstractIndexType_
             typename Operand_::MultiIndex c_rebundled(m.template leading_tuple<SOURCE_INDEX_TYPE_INDEX>()
                                                       |

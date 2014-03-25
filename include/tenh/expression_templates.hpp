@@ -57,13 +57,10 @@ struct ExpressionTemplate_IndexedObject_t
                                 typename FreeIndexTyple_f<DimIndexTyple>::T,
                                 SummedDimIndexTyple_>
 {
-    enum
-    {
-        // TODO: assert that Object is NOT an expression template (it could be e.g. an IndexBundle_t though)
-        // TODO: assert that FactorTyple is a Typle of BasedVectorSpace_c types.
-        STATIC_ASSERT_IN_ENUM__UNIQUE((EachTypeSatisfies_f<DimIndexTyple,IsDimIndex_e>::V), MUST_BE_TYPLE_OF_DIM_INDEX_TYPES, DIMINDEXTYPLE),
-        STATIC_ASSERT_IN_ENUM__UNIQUE((EachTypeSatisfies_f<SummedDimIndexTyple_,IsDimIndex_e>::V), MUST_BE_TYPLE_OF_DIM_INDEX_TYPES, SUMMEDDIMINDEXTYPLE)
-    };
+    // TODO: assert that Object is NOT an expression template (it could be e.g. an IndexBundle_t though)
+    // TODO: assert that FactorTyple is a Typle of BasedVectorSpace_c types.
+    static_assert(EachTypeSatisfies_f<DimIndexTyple,IsDimIndex_e>::V, "DimIndexTyple must be a Typle_t of DimIndex_t types");
+    static_assert(EachTypeSatisfies_f<SummedDimIndexTyple_,IsDimIndex_e>::V, "SummedIndexTyple must be a Typle_t of DimIndex_t types");
 
     typedef ExpressionTemplate_i<typename DerivedType_f<Derived_,
                                                         ExpressionTemplate_IndexedObject_t<Object,
@@ -224,14 +221,11 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTyple,DimIndexTyple,Typle
     template <typename RightOperand>
     void operator = (RightOperand const &right_operand)
     {
-        enum
-        {
-            STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<RightOperand>::V, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
-            STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-            STATIC_ASSERT_IN_ENUM((AreEqualAsSets_f<FreeDimIndexTyple,typename RightOperand::FreeDimIndexTyple>::V),OPERANDS_HAVE_SAME_FREE_INDICES),
-            STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_f<FreeDimIndexTyple>::V), LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
-            STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_f<typename RightOperand::FreeDimIndexTyple>::V), RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES)
-        };
+        static_assert(IsExpressionTemplate_f<RightOperand>::V, "RightOperand must be an ExpressionTemplate_i");
+        static_assert(TypesAreEqual_f<Scalar,typename RightOperand::Scalar>::V, "operand scalar types must be equal");
+        static_assert(AreEqualAsSets_f<FreeDimIndexTyple,typename RightOperand::FreeDimIndexTyple>::V, "operands must have same free indices");
+        static_assert(!ContainsDuplicates_f<FreeDimIndexTyple>::V, "left operand must have no duplicate free indices");
+        static_assert(!ContainsDuplicates_f<typename RightOperand::FreeDimIndexTyple>::V, "right operand must have no duplicate free indices");
 
         // check for aliasing (where source and destination memory overlap)
         Uint8 const *ptr = reinterpret_cast<Uint8 const *>(m_object.pointer_to_allocation());
@@ -250,14 +244,11 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTyple,DimIndexTyple,Typle
     template <typename RightOperand>
     void operator += (RightOperand const &right_operand)
     {
-        enum
-        {
-            STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<RightOperand>::V, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
-            STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-            STATIC_ASSERT_IN_ENUM((AreEqualAsSets_f<FreeDimIndexTyple,typename RightOperand::FreeDimIndexTyple>::V),OPERANDS_HAVE_SAME_FREE_INDICES),
-            STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_f<FreeDimIndexTyple>::V), LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
-            STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_f<typename RightOperand::FreeDimIndexTyple>::V), RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES)
-        };
+        static_assert(IsExpressionTemplate_f<RightOperand>::V, "RightOperand must be an ExpressionTemplate_i");
+        static_assert(TypesAreEqual_f<Scalar,typename RightOperand::Scalar>::V, "operand scalar types must be equal");
+        static_assert(AreEqualAsSets_f<FreeDimIndexTyple,typename RightOperand::FreeDimIndexTyple>::V, "operands must have same free indices");
+        static_assert(!ContainsDuplicates_f<FreeDimIndexTyple>::V, "left operand must have no duplicate free indices");
+        static_assert(!ContainsDuplicates_f<typename RightOperand::FreeDimIndexTyple>::V, "right operand must have no duplicate free indices");
 
         // check for aliasing (where source and destination memory overlap)
         Uint8 const *ptr = reinterpret_cast<Uint8 const *>(m_object.pointer_to_allocation());
@@ -276,14 +267,11 @@ struct ExpressionTemplate_IndexedObject_t<Object,FactorTyple,DimIndexTyple,Typle
     template <typename RightOperand>
     void operator -= (RightOperand const &right_operand)
     {
-        enum
-        {
-            STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<RightOperand>::V, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
-            STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-            STATIC_ASSERT_IN_ENUM((AreEqualAsSets_f<FreeDimIndexTyple,typename RightOperand::FreeDimIndexTyple>::V),OPERANDS_HAVE_SAME_FREE_INDICES),
-            STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_f<FreeDimIndexTyple>::V), LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
-            STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_f<typename RightOperand::FreeDimIndexTyple>::V), RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES)
-        };
+        static_assert(IsExpressionTemplate_f<RightOperand>::V, "RightOperand must be an ExpressionTemplate_i");
+        static_assert(TypesAreEqual_f<Scalar,typename RightOperand::Scalar>::V, "operand scalar types must be equal");
+        static_assert(AreEqualAsSets_f<FreeDimIndexTyple,typename RightOperand::FreeDimIndexTyple>::V, "operands must have same free indices");
+        static_assert(!ContainsDuplicates_f<FreeDimIndexTyple>::V, "left operand must have no duplicate free indices");
+        static_assert(!ContainsDuplicates_f<typename RightOperand::FreeDimIndexTyple>::V, "right operand must have no duplicate free indices");
 
         // check for aliasing (where source and destination memory overlap)
         Uint8 const *ptr = reinterpret_cast<Uint8 const *>(m_object.pointer_to_allocation());
@@ -355,17 +343,14 @@ private:
     typedef typename Zip_f<Typle_t<typename RightOperand::FreeFactorTyple,
                                    typename RightOperand::FreeDimIndexTyple>>::T RightFactorAndIndexTyple;
 
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<LeftOperand>::V, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
-        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<RightOperand>::V, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
-        STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename LeftOperand::Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM((AreEqualAsSets_f<LeftFactorAndIndexTyple,RightFactorAndIndexTyple>::V), OPERANDS_HAVE_SAME_FACTORS),
-        STATIC_ASSERT_IN_ENUM((AreEqualAsSets_f<typename LeftOperand::FreeDimIndexTyple,typename RightOperand::FreeDimIndexTyple>::V), OPERANDS_HAVE_SAME_FREE_INDICES),
-        STATIC_ASSERT_IN_ENUM(!ContainsDuplicates_f<typename LeftOperand::FreeDimIndexTyple>::V, LEFT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
-        STATIC_ASSERT_IN_ENUM(!ContainsDuplicates_f<typename RightOperand::FreeDimIndexTyple>::V, RIGHT_OPERAND_HAS_NO_DUPLICATE_FREE_INDICES),
-        STATIC_ASSERT_IN_ENUM((OPERATOR == '+' || OPERATOR == '-'), OPERATOR_IS_PLUS_OR_MINUS)
-    };
+    static_assert(IsExpressionTemplate_f<LeftOperand>::V, "LeftOperand must be an ExpressionTemplate_i");
+    static_assert(IsExpressionTemplate_f<RightOperand>::V, "RightOperand must be an ExpressionTemplate_i");
+    static_assert(TypesAreEqual_f<typename LeftOperand::Scalar,typename RightOperand::Scalar>::V, "operands must have same scalar type");
+    static_assert(AreEqualAsSets_f<LeftFactorAndIndexTyple,RightFactorAndIndexTyple>::V, "operands must have same indices and factor types");
+    static_assert(AreEqualAsSets_f<typename LeftOperand::FreeDimIndexTyple,typename RightOperand::FreeDimIndexTyple>::V, "operands must have same free indices");
+    static_assert(!ContainsDuplicates_f<typename LeftOperand::FreeDimIndexTyple>::V, "LeftOperand must not have duplicate free indices");
+    static_assert(!ContainsDuplicates_f<typename RightOperand::FreeDimIndexTyple>::V, "RightOperand must not have duplicate free indices");
+    static_assert(OPERATOR == '+' || OPERATOR == '-', "operator must be '+' or '-'");
 
 public:
 
@@ -456,12 +441,9 @@ struct ExpressionTemplate_ScalarMultiplication_t
     typedef typename Parent::UsedDimIndexTyple UsedDimIndexTyple;
     typedef typename Parent::MultiIndex MultiIndex;
 
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<Operand>::V, OPERAND_IS_EXPRESSION_TEMPLATE),
-        STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename Operand::Scalar,Scalar_>::V), OPERAND_SCALAR_MATCHES_SCALAR),
-        STATIC_ASSERT_IN_ENUM((OPERATOR == '*' || OPERATOR == '/'), OPERATOR_IS_VALID)
-    };
+    static_assert(IsExpressionTemplate_f<Operand>::V, "Operand must be an ExpressionTemplate_i");
+    static_assert(TypesAreEqual_f<typename Operand::Scalar,Scalar_>::V, "operand scalar type must match Scalar_");
+    static_assert(OPERATOR == '*' || OPERATOR == '/', "operator must be '*' or '/'");
 
     ExpressionTemplate_ScalarMultiplication_t (Operand const &operand, Scalar scalar_operand)
         :
@@ -555,13 +537,10 @@ struct ExpressionTemplate_Multiplication_t
     // though technically this is unnecessary, because the summed indices are "private"
     // to each contraction, so this is really for the human's benefit, not getting
     // confused by multiple repeated indices that have nothing to do with each other.
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<LeftOperand>::V, LEFT_OPERAND_IS_EXPRESSION_TEMPLATE),
-        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<RightOperand>::V, RIGHT_OPERAND_IS_EXPRESSION_TEMPLATE),
-        STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename LeftOperand::Scalar,typename RightOperand::Scalar>::V), OPERAND_SCALAR_TYPES_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM((!HasNontrivialSetIntersection_f<FreeDimIndexTyple,UsedDimIndexTyple>::V), FREE_INDICES_DONT_COLLIDE_WITH_USED)
-    };
+    static_assert(IsExpressionTemplate_f<LeftOperand>::V, "LeftOperand must be an ExpressionTemplate_i");
+    static_assert(IsExpressionTemplate_f<RightOperand>::V, "RightOperand must be an ExpressionTemplate_i");
+    static_assert(TypesAreEqual_f<typename LeftOperand::Scalar,typename RightOperand::Scalar>::V, "operands must have same scalar type");
+    static_assert(!HasNontrivialSetIntersection_f<FreeDimIndexTyple,UsedDimIndexTyple>::V, "free and used indices must not overlap");
     // TODO: ensure there are no indices that occur 3+ times (?)
 
     ExpressionTemplate_Multiplication_t (LeftOperand const &left_operand, RightOperand const &right_operand)
@@ -724,10 +703,7 @@ struct ExpressionTemplate_IndexSplit_t
                                               CheckForAliasing::TRUE, // irrelevant value
                                               ExpressionTemplate_IndexSplit_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTyple>>
 {
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IsAbstractIndex_f<SourceAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX),
-    };
+    static_assert(IsAbstractIndex_f<SourceAbstractIndexType>::V, "SourceAbstractIndexType must be an AbstractIndex_c");
 
     typedef ExpressionTemplate_IndexedObject_t<IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTyple>,
                                                typename IndexSplitter_t<Operand,SourceAbstractIndexType,SplitAbstractIndexTyple>::FactorTyple,
@@ -817,10 +793,7 @@ struct ExpressionTemplate_IndexSplitToIndex_t
                                               CheckForAliasing::TRUE, // irrelevant value
                                               ExpressionTemplate_IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>>
 {
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IsAbstractIndex_f<SourceAbstractIndexType>::V, MUST_BE_ABSTRACT_INDEX),
-    };
+    static_assert(IsAbstractIndex_f<SourceAbstractIndexType>::V, "SourceAbstractIndexType must be an AbstractIndex_c");
 
     typedef ExpressionTemplate_IndexedObject_t<IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>,
                                                typename IndexSplitToIndex_t<Operand,SourceAbstractIndexType,SplitAbstractIndexType>::FactorTyple,
@@ -913,10 +886,7 @@ struct ExpressionTemplate_IndexEmbed_t
                                               CheckForAliasing::TRUE, // irrelevant value
                                               ExpressionTemplate_IndexEmbed_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>>
 {
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IsAbstractIndex_f<SourceAbstractIndexType_>::V, MUST_BE_ABSTRACT_INDEX),
-    };
+    static_assert(IsAbstractIndex_f<SourceAbstractIndexType_>::V, "SourceAbstractIndexType must be an AbstractIndex_c");
 
     typedef ExpressionTemplate_IndexedObject_t<IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>,
                                                typename IndexEmbedder_t<Operand_,SourceAbstractIndexType_,EmbeddingCodomain_,EmbeddedAbstractIndexType_,EmbeddingId_>::FactorTyple,
@@ -1015,10 +985,7 @@ struct ExpressionTemplate_IndexCoembed_t
                                               CheckForAliasing::TRUE, // irrelevant value
                                               ExpressionTemplate_IndexCoembed_t<Operand_,SourceAbstractIndexType_,CoembeddingCodomain_,CoembeddedAbstractIndexType_,EmbeddingId_>>
 {
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IsAbstractIndex_f<SourceAbstractIndexType_>::V, MUST_BE_ABSTRACT_INDEX),
-    };
+    static_assert(IsAbstractIndex_f<SourceAbstractIndexType_>::V, "SourceAbstractIndexType must be an AbstractIndex_c");
 
     typedef ExpressionTemplate_IndexedObject_t<IndexCoembedder_t<Operand_,SourceAbstractIndexType_,CoembeddingCodomain_,CoembeddedAbstractIndexType_,EmbeddingId_>,
                                                typename IndexCoembedder_t<Operand_,SourceAbstractIndexType_,CoembeddingCodomain_,CoembeddedAbstractIndexType_,EmbeddingId_>::FactorTyple,
