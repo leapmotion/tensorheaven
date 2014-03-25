@@ -29,7 +29,7 @@ Scalar_ alt (ComponentIndex_t<COMPONENT_COUNT_> const &i)
     typedef typename TensorPowerOfBasedVectorSpace_f<ORDER_,Factor_>::T TensorPower;
     typedef Typle_t<ExteriorPower,typename DualOf_f<TensorPower>::T> FactorTyple;
     typedef TensorProductOfBasedVectorSpaces_c<FactorTyple> Projection;
-    STATIC_ASSERT(DimensionOf_f<Projection>::V == COMPONENT_COUNT_, DIMENSIONS_MUST_MATCH);
+    static_assert(DimensionOf_f<Projection>::V == COMPONENT_COUNT_, "dimensions must match");
 
     // for using bundle_index_map -- the use of UsePreallocatedArray_t<ComponentsAreConst::FALSE> is somewhat arbitrary,
     // since only the static method bundle_index_map will be used.
@@ -39,11 +39,11 @@ Scalar_ alt (ComponentIndex_t<COMPONENT_COUNT_> const &i)
 
     typedef typename BootstrappingImplementation::MultiIndex MultiIndex;
     typedef typename MultiIndex::IndexTyple IndexTyple;
-    STATIC_ASSERT(Length_f<IndexTyple>::V == 2, LENGTH_MUST_BE_EXACTLY_2);
+    static_assert(Length_f<IndexTyple>::V == 2, "must have exactly 2 indices");
     MultiIndex m(BootstrappingImplementation::template bundle_index_map<IndexTyple,ComponentIndex>(i));
 
     typedef typename Factor1BootstrappingImplementation::MultiIndex::IndexTyple Factor1IndexTyple;
-    STATIC_ASSERT(Length_f<Factor1IndexTyple>::V == ORDER_, LENGTHS_MUST_BE_EQUAL);
+    static_assert(Length_f<Factor1IndexTyple>::V == ORDER_, "number of factors must match ORDER_");
     typedef MultiIndex_t<Factor1IndexTyple> TensorPowerMultiIndex;
     typedef typename Factor1BootstrappingImplementation::ComponentIndex TensorPowerComponentIndex;
     TensorPowerMultiIndex m1(Factor1BootstrappingImplementation::template bundle_index_map<Factor1IndexTyple,TensorPowerComponentIndex>(m.template el<1>()));

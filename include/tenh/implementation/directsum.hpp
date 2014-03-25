@@ -21,7 +21,7 @@ template <typename SummandTyple_, Uint32 N>
 struct OffsetForComponent_f
 {
 private:
-    enum { STATIC_ASSERT_IN_ENUM((Length_f<SummandTyple_>::V > N), ATTEMPTED_ACCESS_PAST_LIST_END) };
+    static_assert(Length_f<SummandTyple_>::V > N, "attempted access past list end");
 public:
     static const Uint32 V = DimensionOf_f<typename Head_f<SummandTyple_>::T>::V + OffsetForComponent_f<typename BodyTyple_f<SummandTyple_>::T, N-1>::V;
 };
@@ -41,7 +41,7 @@ inline Uint32 component_for_offset (Typle_t<> const &, Uint32 offset)
 template <typename SummandTyple_>
 Uint32 component_for_offset (SummandTyple_ const &, Uint32 offset)
 {
-    STATIC_ASSERT((Length_f<SummandTyple_>::V > 0), LENGTH_MUST_BE_POSITIVE);
+    static_assert(Length_f<SummandTyple_>::V > 0, "SummandTyple_ length must be positive");
     typedef typename Head_f<SummandTyple_>::T HeadSummand;
     typedef typename BodyTyple_f<SummandTyple_>::T BodySummand;
     if (offset < DimensionOf_f<HeadSummand>::V)
@@ -96,15 +96,14 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,
     template <Uint32 INDEX_>
     struct BasisVector_f
     {
-    private:
-        enum { STATIC_ASSERT_IN_ENUM((INDEX_ < Parent_Vector_i::DIM), INDEX_OUT_OF_RANGE) };
-        BasisVector_f () { }
-    public:
+        static_assert(INDEX_ < Parent_Vector_i::DIM, "index out of range");
         typedef ImplementationOf_t<Concept,
                                    Scalar_,
                                    UseProceduralArray_t<typename ComponentGenerator_Characteristic_f<Scalar_,Parent_Vector_i::DIM,INDEX_>::T>,
                                    Derived_> T;
         static T const V;
+    private:
+        BasisVector_f () { }
     };
 
     explicit ImplementationOf_t (WithoutInitialization const &w) : Parent_Array_i(w) { }
@@ -118,7 +117,7 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,
         :
         Parent_Array_i(Static<WithoutInitialization>::SINGLETON)
     {
-        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
+        static_assert(IsUseMemberArray_f<UseArrayType_>::V, "UseArrayType_ must be a UseMemberArray_t type");
         // TODO: could make this use MemoryArray_i::copy_from (?)
         for (ComponentIndex i; i.is_not_at_end(); ++i)
             (*this)[i] = x[i];
@@ -129,7 +128,7 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,
         :
         Parent_Array_i(fill_with)
     {
-        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
+        static_assert(IsUseMemberArray_f<UseArrayType_>::V, "UseArrayType_ must be a UseMemberArray_t type");
     }
     // this is the tuple-based constructor
     template <typename... Types_>
@@ -137,7 +136,7 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,
         :
         Parent_Array_i(x.as_member_array())
     {
-        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
+        static_assert(IsUseMemberArray_f<UseArrayType_>::V, "UseArrayType_ must be a UseMemberArray_t type");
     }
 
     // only use these if UsePreallocatedArray_t<...> is specified
@@ -146,7 +145,7 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,
         :
         Parent_Array_i(pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "UseArrayType_ must be a UsePreallocatedArray_t type");
     }
     // similar to a copy constructor, except initializes from a Vector_i.
     // this was chosen to be explicit to avoid unnecessary copies.
@@ -156,7 +155,7 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,
         :
         Parent_Array_i(pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "UseArrayType_ must be a UsePreallocatedArray_t type");
         // TODO: could make this use MemoryArray_i::copy_from (?)
         for (ComponentIndex i; i.is_not_at_end(); ++i)
             (*this)[i] = x[i];
@@ -167,7 +166,7 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,
         :
         Parent_Array_i(fill_with, pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "UseArrayType_ must be a UsePreallocatedArray_t type");
     }
     // this is the tuple-based constructor
     template <typename... Types_>
@@ -176,7 +175,7 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,
         :
         Parent_Array_i(x, pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "UseArrayType_ must be a UsePreallocatedArray_t type");
     }
 
     // only use this if UseProceduralArray_t<...> is specified or if the vector space is 0-dimensional
@@ -184,7 +183,7 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,
         :
         Parent_Array_i(WithoutInitialization()) // sort of meaningless constructor
     {
-        STATIC_ASSERT(IsUseProceduralArray_f<UseArrayType_>::V || DIM == 0, MUST_BE_USE_PROCEDURAL_ARRAY_OR_BE_ZERO_DIMENSIONAL);
+        static_assert(IsUseProceduralArray_f<UseArrayType_>::V || DIM == 0, "UseArrayType_ must be UseProceduralArray_t or space must be 0-dimensional");
     }
 
     using Parent_Array_i::as_derived;
@@ -196,8 +195,8 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,
     template <Uint32 N_, ForceConst FORCE_CONST_>
     struct ElementType_f
     {
+        static_assert(Length_f<SummandTyple_>::V > N_, "attempted access past list end");
     private:
-        enum { STATIC_ASSERT_IN_ENUM((Length_f<SummandTyple_>::V > N_), ATTEMPTED_ACCESS_PAST_LIST_END) };
         static ComponentsAreConst const ELEMENT_COMPONENTS_ARE_CONST = 
             ComponentsAreConst(bool(FORCE_CONST_) || ComponentQualifierOfArrayType_f<UseArrayType_>::V == ComponentQualifier::CONST_MEMORY);
     public:
@@ -211,26 +210,26 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,
     template <Uint32 N_>
     typename ElementType_f<N_,ForceConst::FALSE>::T el ()
     {
-        STATIC_ASSERT((Length_f<SummandTyple_>::V > N_), ATTEMPTED_ACCESS_PAST_LIST_END);
+        static_assert(Length_f<SummandTyple_>::V > N_, "attempted access past list end");
         return typename ElementType_f<N_,ForceConst::FALSE>::T(pointer_to_allocation() + OffsetForComponent_f<SummandTyple_,N_>::V);
     }
 
     template <Uint32 N_>
     typename ElementType_f<N_,ForceConst::TRUE>::T el () const
     {
-        STATIC_ASSERT((Length_f<SummandTyple_>::V > N_), ATTEMPTED_ACCESS_PAST_LIST_END);
+        static_assert(Length_f<SummandTyple_>::V > N_, "attempted access past list end");
         return typename ElementType_f<N_,ForceConst::TRUE>::T(pointer_to_allocation() + OffsetForComponent_f<SummandTyple_,N_>::V);
     }
 
     typename ElementType_f<0,ForceConst::FALSE>::T el (Uint32 n)
     {
-        STATIC_ASSERT(TypleIsUniform_f<SummandTyple_>::V, TYPLE_MUST_BE_UNIFORM);
+        static_assert(TypleIsUniform_f<SummandTyple_>::V, "SummandTyple_ must be uniform");
         return typename ElementType_f<0,ForceConst::FALSE>::T(pointer_to_allocation() + DimensionOf_f<typename Head_f<SummandTyple_>::T>::V * n);
     }
 
     typename ElementType_f<0,ForceConst::TRUE>::T el (Uint32 n) const
     {
-        STATIC_ASSERT(TypleIsUniform_f<SummandTyple_>::V, TYPLE_MUST_BE_UNIFORM);
+        static_assert(TypleIsUniform_f<SummandTyple_>::V, "SummandTyple_ must be uniform");
         return typename ElementType_f<0,ForceConst::TRUE>::T(pointer_to_allocation() + DimensionOf_f<typename Head_f<SummandTyple_>::T>::V * n);
     }
 
@@ -240,14 +239,14 @@ struct ImplementationOf_t<DirectSumOfBasedVectorSpaces_c<SummandTyple_>,Scalar_,
     // template <Uint32 N, AbstractIndexSymbol SYMBOL_>
     // typename ElementType_f<N>::T::template IndexedExpressionNonConstType_f<SYMBOL_>::T el(AbstractIndex_c<SYMBOL_> const & i)
     // {
-    //     STATIC_ASSERT((SummandTyple_::LENGTH > N), ATTEMPTED_ACCESS_PAST_LIST_END);
+    //     static_assert(SummandTyple_::LENGTH > N, "attempted access past list end");
     //     return typename ElementType_f<N>::T(pointer_to_allocation() + OffsetForComponent_f<SummandTyple_,N>::V)(i);
     // }
     //
     // template <Uint32 N, AbstractIndexSymbol SYMBOL_>
     // typename ElementType_f<N>::T::template IndexedExpressionConstType_f<SYMBOL_>::T el(AbstractIndex_c<SYMBOL_> const & i) const
     // {
-    //     STATIC_ASSERT((SummandTyple_::LENGTH > N), ATTEMPTED_ACCESS_PAST_LIST_END);
+    //     static_assert(SummandTyple_::LENGTH > N, "attempted access past list end");
     //     return typename ElementType_f<N>::T(pointer_to_allocation() + OffsetForComponent_f<SummandTyple_,N>::V)(i);
     // }
 };
@@ -274,15 +273,12 @@ struct ConceptualTypeOfDirectSumOfProcedural2Tensors_f
 {
 private:
     typedef typename ConceptOfEachTypeIn_f<Procedural2TensorImplementationTyple_>::T ConceptTyple;
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<ConceptTyple,IsTensorProductOfBasedVectorSpaces_e>::V
-                               ||
-                               EachTypeSatisfies_f<ConceptTyple,IsDiagonal2TensorProductOfBasedVectorSpaces_e>::V
-                               ||
-                               EachTypeSatisfies_f<ConceptTyple,IsScalar2TensorProductOfBasedVectorSpaces_e>::V),
-                              MUST_BE_TYPLE_OF_SCALAR_OR_DIAGONAL_OR_2_TENSORS)
-    };
+    static_assert(EachTypeSatisfies_f<ConceptTyple,IsTensorProductOfBasedVectorSpaces_e>::V
+                  ||
+                  EachTypeSatisfies_f<ConceptTyple,IsDiagonal2TensorProductOfBasedVectorSpaces_e>::V
+                  ||
+                  EachTypeSatisfies_f<ConceptTyple,IsScalar2TensorProductOfBasedVectorSpaces_e>::V,
+                  "must be a typle of scalar or diagonal or 2-tensors");
     typedef typename FactorNOfEachTypeIn_f<0,ConceptTyple>::T SummandTyple0;
     typedef typename FactorNOfEachTypeIn_f<1,ConceptTyple>::T SummandTyple1;
     typedef DirectSumOfBasedVectorSpaces_c<SummandTyple0> Factor0DirectSum;
@@ -301,12 +297,12 @@ struct DirectSumOf2TensorsHelper_t
 {
     typedef ComponentIndex_t<DimensionOf_f<ConceptualTypeOfDirectSum_>::V> ComponentIndex;
     typedef typename ConceptualTypeOfDirectSumOfProcedural2Tensors_f<Procedural2TensorImplementationTyple_>::T ConceptualTypeOfDirectSum;
-    enum { STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<ConceptualTypeOfDirectSum_,ConceptualTypeOfDirectSum>::V), TYPES_MUST_BE_EQUAL) };
+    static_assert(TypesAreEqual_f<ConceptualTypeOfDirectSum_,ConceptualTypeOfDirectSum>::V, "types must be equal");
     typedef typename FactorTypleOf_f<ConceptualTypeOfDirectSum_>::T FactorTyple;
     typedef typename Element_f<FactorTyple,0>::T Factor0;
     typedef typename Element_f<FactorTyple,1>::T Factor1;
     typedef typename ImplementationOf_t<ConceptualTypeOfDirectSum_,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE>>::MultiIndex MultiIndex;
-    enum { STATIC_ASSERT_IN_ENUM((MultiIndex::LENGTH == 2), LENGTH_MUST_BE_EXACTLY_2) };
+    static_assert(MultiIndex::LENGTH == 2, "length must be exactly 2");
     typedef typename Head_f<Procedural2TensorImplementationTyple_>::T HeadImplementation;
     typedef typename FactorTypleOf_f<typename HeadImplementation::Concept>::T HeadFactorTyple;
     typedef typename Element_f<HeadFactorTyple,0>::T HeadFactor0;
@@ -390,11 +386,8 @@ private:
     typedef typename ScalarOfEachTypeIn_f<Procedural2TensorImplementationTyple_>::T ScalarTyple;
     typedef typename ConceptualTypeOfDirectSumOfProcedural2Tensors_f<Procedural2TensorImplementationTyple_>::T ConceptualTypeOfDirectSum;
 
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(TypleIsUniform_f<ScalarTyple>::V, ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM((EachTypeUsesProceduralArray_f<Procedural2TensorImplementationTyple_>::V), MUST_BE_TYPLE_OF_PROCEDURAL_IMPLEMENTATIONS)
-    };
+    static_assert(TypleIsUniform_f<ScalarTyple>::V, "all factor type scalars must be equal");
+    static_assert(EachTypeUsesProceduralArray_f<Procedural2TensorImplementationTyple_>::V, "must be a typle of procedural implementations");
 
     typedef typename Head_f<ScalarTyple>::T Scalar;
     typedef ComponentGenerator_t<Scalar,

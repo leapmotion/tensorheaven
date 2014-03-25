@@ -55,8 +55,8 @@ public:
 template <typename FactorTyple_, typename InnerProductIdTyple_, typename Scalar_>
 struct InnerProductOfEachInTyple_f
 {
+    static_assert(Length_f<FactorTyple_>::V == Length_f<InnerProductIdTyple_>::V, "FactorTyple_ and InnerProductIdTyple_ must have same length");
 private:
-    enum { STATIC_ASSERT_IN_ENUM(Length_f<FactorTyple_>::V == Length_f<InnerProductIdTyple_>::V, LENGTHS_MUST_BE_EQUAL) };
     InnerProductOfEachInTyple_f();
     typedef typename InnerProduct_f<typename Head_f<FactorTyple_>::T,
                                     typename Head_f<InnerProductIdTyple_>::T,

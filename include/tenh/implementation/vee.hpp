@@ -32,7 +32,7 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
                            UseArrayType_,
                            typename DerivedType_f<Derived_,ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_,Derived_>>::T >::T
 {
-    enum { STATIC_ASSERT_IN_ENUM(HasBasedVectorSpaceStructure_f<Factor_>::V, MUST_BE_BASED_VECTOR_SPACE) };
+    static_assert(HasBasedVectorSpaceStructure_f<Factor_>::V, "Factor_ must have unique based vector space structure");
 
     typedef EmbeddableAsTensor_i<typename DerivedType_f<Derived_,ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Scalar_,UseArrayType_,Derived_>>::T,
                                  Scalar_,
@@ -70,15 +70,14 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
     template <Uint32 INDEX_>
     struct BasisVector_f
     {
-    private:
-        enum { STATIC_ASSERT_IN_ENUM((INDEX_ < Parent_EmbeddableAsTensor_i::DIM), INDEX_OUT_OF_RANGE) };
-        BasisVector_f () { }
-    public:
+        static_assert(INDEX_ < Parent_EmbeddableAsTensor_i::DIM, "index out of range");
         typedef ImplementationOf_t<Concept,
                                    Scalar_,
                                    UseProceduralArray_t<typename ComponentGenerator_Characteristic_f<Scalar_,Parent_EmbeddableAsTensor_i::DIM,INDEX_>::T>,
                                    Derived_> T;
         static T const V;
+    private:
+        BasisVector_f () { }
     };
 
     explicit ImplementationOf_t (WithoutInitialization const &w) : Parent_Array_i(w) { }
@@ -92,7 +91,7 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
         :
         Parent_Array_i(Static<WithoutInitialization>::SINGLETON)
     {
-        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
+        static_assert(IsUseMemberArray_f<UseArrayType_>::V, "UseArrayType_ must be a UseMemberArray_t type");
         // TODO: could make this use MemoryArray_i::copy_from (?)
         for (ComponentIndex i; i.is_not_at_end(); ++i)
             (*this)[i] = x[i];
@@ -103,7 +102,7 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
         :
         Parent_Array_i(fill_with)
     {
-        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
+        static_assert(IsUseMemberArray_f<UseArrayType_>::V, "UseArrayType_ must be a UseMemberArray_t type");
     }
     // this is the tuple-based constructor
     template <typename Typle_>
@@ -111,7 +110,7 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
         :
         Parent_Array_i(x.as_member_array())
     {
-        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
+        static_assert(IsUseMemberArray_f<UseArrayType_>::V, "UseArrayType_ must be a UseMemberArray_t type");
     }
 
     // only use these if UsePreallocatedArray_t<...> is specified
@@ -120,7 +119,7 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
         :
         Parent_Array_i(pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "UseArrayType_ must be a UsePreallocatedArray_t type");
     }
     // similar to a copy constructor, except initializes from a Vector_i.
     // this was chosen to be explicit to avoid unnecessary copies.
@@ -130,7 +129,7 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
         :
         Parent_Array_i(pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "UseArrayType_ must be a UsePreallocatedArray_t type");
         // TODO: could make this use MemoryArray_i::copy_from (?)
         for (ComponentIndex i; i.is_not_at_end(); ++i)
             (*this)[i] = x[i];
@@ -141,7 +140,7 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
         :
         Parent_Array_i(fill_with, pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "UseArrayType_ must be a UsePreallocatedArray_t type");
     }
     // this is the tuple-based constructor
     template <typename Typle_>
@@ -150,7 +149,7 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
         :
         Parent_Array_i(x, pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "UseArrayType_ must be a UsePreallocatedArray_t type");
     }
 
     // only use this if UseProceduralArray_t<...> is specified
@@ -158,13 +157,12 @@ struct ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER_,Factor_>,Sca
         :
         Parent_Array_i(WithoutInitialization()) // sort of meaningless constructor
     {
-        STATIC_ASSERT(IsUseProceduralArray_f<UseArrayType_>::V, MUST_BE_USE_PROCEDURAL_ARRAY);
+        static_assert(IsUseProceduralArray_f<UseArrayType_>::V || DIM == 0, "UseArrayType_ must be UseProceduralArray_t or space must be 0-dimensional");
     }
 
     template <typename BundleIndexTyple, typename BundledIndex>
     static MultiIndex_t<BundleIndexTyple> bundle_index_map (BundledIndex const &b)
     {
-        //STATIC_ASSERT(IsDimIndex_f<BundledIndex>::V, MUST_BE_COMPONENT_INDEX);
         // this constructor breaks the vector index apart into a row-major multi-index
         return BundleIndexComputer_t<BundleIndexTyple, BundledIndex, ORDER_>::compute(b);
     }

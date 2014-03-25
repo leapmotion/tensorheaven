@@ -34,7 +34,7 @@ Scalar_ tensor_product_of_single_procedural_vector (ComponentIndex_t<DimensionOf
     typedef ComponentIndex_t<DimensionOf_f<TensorProductOfBasedVectorSpaces_>::V> ComponentIndex;
     typedef typename ConceptOfEachTypeIn_f<ProceduralVectorImplementationTyple_>::T ConceptTyple;
     typedef TensorProductOfBasedVectorSpaces_c<ConceptTyple> TensorProductOfBasedVectorSpaces;
-    STATIC_ASSERT_TYPES_ARE_EQUAL(TensorProductOfBasedVectorSpaces_, TensorProductOfBasedVectorSpaces);
+    static_assert(TypesAreEqual_f<TensorProductOfBasedVectorSpaces_,TensorProductOfBasedVectorSpaces>::V, "types must match");
     typedef typename Head_f<ProceduralVectorImplementationTyple_>::T HeadImplementation;
     HeadImplementation head_implementation;
     AbstractIndex_c<'a'> a;
@@ -51,13 +51,10 @@ private:
     typedef typename ConceptOfEachTypeIn_f<ProceduralVectorImplementationTyple_>::T ConceptTyple;
     typedef typename ScalarOfEachTypeIn_f<ProceduralVectorImplementationTyple_>::T ScalarTyple;
 
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM((Length_f<ProceduralVectorImplementationTyple_>::V > 0), LENGTH_MUST_BE_POSITIVE),
-        STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<ConceptTyple,IsBasedVectorSpace_e>::V), MUST_BE_TYPLE_OF_BASED_VECTOR_SPACES),
-        STATIC_ASSERT_IN_ENUM(TypleIsUniform_f<ScalarTyple>::V, ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM((EachTypeUsesProceduralArray_f<ProceduralVectorImplementationTyple_>::V), MUST_BE_TYPLE_OF_PROCEDURAL_IMPLEMENTATIONS)
-    };
+    static_assert(Length_f<ProceduralVectorImplementationTyple_>::V > 0, "must provide a positive number of vector implementations");
+    static_assert(EachTypeSatisfies_f<ConceptTyple,IsBasedVectorSpace_e>::V, "each factor must be a based vector space");
+    static_assert(TypleIsUniform_f<ScalarTyple>::V, "all factor type scalars must be equal");
+    static_assert(EachTypeUsesProceduralArray_f<ProceduralVectorImplementationTyple_>::V, "must be a typle of procedural implementations");
 
     typedef TensorProductOfBasedVectorSpaces_c<ConceptTyple> TensorProductOfBasedVectorSpaces;
     typedef typename Head_f<ScalarTyple>::T Scalar;
@@ -82,7 +79,7 @@ Scalar_ tensor_product_of_procedural_vectors (ComponentIndex_t<DimensionOf_f<Ten
     typedef ComponentIndex_t<DimensionOf_f<TensorProductOfBasedVectorSpaces_>::V> ComponentIndex;
     typedef typename ConceptOfEachTypeIn_f<ProceduralVectorImplementationTyple_>::T ConceptTyple;
     typedef TensorProductOfBasedVectorSpaces_c<ConceptTyple> TensorProductOfBasedVectorSpaces;
-    STATIC_ASSERT_TYPES_ARE_EQUAL(TensorProductOfBasedVectorSpaces_, TensorProductOfBasedVectorSpaces);
+    static_assert(TypesAreEqual_f<TensorProductOfBasedVectorSpaces_,TensorProductOfBasedVectorSpaces>::V, "types must match");
     typedef typename Head_f<ProceduralVectorImplementationTyple_>::T HeadImplementation;
     typedef typename TensorProductOfProceduralVectors_f<typename BodyTyple_f<ProceduralVectorImplementationTyple_>::T>::T BodyImplementation;
     HeadImplementation head_implementation;
@@ -104,13 +101,10 @@ private:
     typedef typename ConceptOfEachTypeIn_f<ProceduralVectorImplementationTyple_>::T ConceptTyple;
     typedef typename ScalarOfEachTypeIn_f<ProceduralVectorImplementationTyple_>::T ScalarTyple;
 
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM((Length_f<ProceduralVectorImplementationTyple_>::V > 0), LENGTH_MUST_BE_POSITIVE),
-        STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<ConceptTyple,IsBasedVectorSpace_e>::V), MUST_BE_TYPLE_OF_BASED_VECTOR_SPACES),
-        STATIC_ASSERT_IN_ENUM(TypleIsUniform_f<ScalarTyple>::V, ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM((EachTypeUsesProceduralArray_f<ProceduralVectorImplementationTyple_>::V), MUST_BE_TYPLE_OF_PROCEDURAL_IMPLEMENTATIONS)
-    };
+    static_assert(Length_f<ProceduralVectorImplementationTyple_>::V > 0, "must provide a positive number of vector implementations");
+    static_assert(EachTypeSatisfies_f<ConceptTyple,IsBasedVectorSpace_e>::V, "each factor must be a based vector space");
+    static_assert(TypleIsUniform_f<ScalarTyple>::V, "all factor type scalars must be equal");
+    static_assert(EachTypeUsesProceduralArray_f<ProceduralVectorImplementationTyple_>::V, "must be a typle of procedural implementations");
 
     typedef TensorProductOfBasedVectorSpaces_c<ConceptTyple> TensorProductOfBasedVectorSpaces;
     typedef typename Head_f<ScalarTyple>::T Scalar;
@@ -157,7 +151,7 @@ private:
     typedef Typle_t<ImplementationOf_t<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_>,
             Procedural2TensorImplementationTypes_...> Procedural2TensorImplementationTyple;
     typedef typename ConceptOfEachTypeIn_f<Procedural2TensorImplementationTyple>::T ConceptTyple;
-    enum { STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<ConceptTyple,IsScalar2TensorProductOfBasedVectorSpaces_e>::V), MUST_BE_TYPLE_OF_SCALAR_2_TENSORS) };
+    static_assert(EachTypeSatisfies_f<ConceptTyple,IsScalar2TensorProductOfBasedVectorSpaces_e>::V, "each factor must be a scalar 2-tensor");
     typedef typename FactorNOfEachTypeIn_f<0,ConceptTyple>::T Factor0Typle;
     typedef typename FactorNOfEachTypeIn_f<1,ConceptTyple>::T Factor1Typle;
     typedef TensorProductOfBasedVectorSpaces_c<Factor0Typle> Factor0TensorProduct;
@@ -182,7 +176,7 @@ private:
     typedef Typle_t<ImplementationOf_t<Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_>,
             Procedural2TensorImplementationBodyTypes_...> Procedural2TensorImplementationTyple;
     typedef typename ConceptOfEachTypeIn_f<Procedural2TensorImplementationTyple>::T ConceptTyple;
-    enum { STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<ConceptTyple,IsDiagonal2TensorProductOfBasedVectorSpaces_e>::V), MUST_BE_TYPLE_OF_DIAGONAL_2_TENSORS) };
+    static_assert(EachTypeSatisfies_f<ConceptTyple,IsDiagonal2TensorProductOfBasedVectorSpaces_e>::V, "each type must be a diagonal 2-tensor");
     typedef typename FactorNOfEachTypeIn_f<0,ConceptTyple>::T Factor0Typle;
     typedef typename FactorNOfEachTypeIn_f<1,ConceptTyple>::T Factor1Typle;
     typedef TensorProductOfBasedVectorSpaces_c<Factor0Typle> Factor0TensorProduct;
@@ -207,11 +201,8 @@ private:
     typedef Typle_t<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<Typle_t<Factor0_,Factor1_>>,Scalar_,UseArrayType_,Derived_>,
             Procedural2TensorImplementationBodyTypes_...> Procedural2TensorImplementationTyple;
     typedef typename ConceptOfEachTypeIn_f<Procedural2TensorImplementationTyple>::T ConceptTyple;
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<ConceptTyple,IsTensorProductOfBasedVectorSpaces_e>::V), MUST_BE_TYPLE_OF_DIAGONAL_2_TENSORS),
-        STATIC_ASSERT_IN_ENUM(EachTypeIsA2TensorProductOfBasedVectorSpaces_f<ConceptTyple>::V, MUST_BE_TYPLE_OF_2_TENSORS)
-    };
+    static_assert(EachTypeSatisfies_f<ConceptTyple,IsTensorProductOfBasedVectorSpaces_e>::V, "each type must be a tensor product of based vector spaces");
+    static_assert(EachTypeIsA2TensorProductOfBasedVectorSpaces_f<ConceptTyple>::V, "each type must be a 2-tensor");
     typedef typename FactorNOfEachTypeIn_f<0,ConceptTyple>::T Factor0Typle;
     typedef typename FactorNOfEachTypeIn_f<1,ConceptTyple>::T Factor1Typle;
     typedef TensorProductOfBasedVectorSpaces_c<Factor0Typle> Factor0TensorProduct;
@@ -228,9 +219,9 @@ Scalar_ tensor_product_of_2_tensors (ComponentIndex_t<DimensionOf_f<ConceptualTy
 {
     typedef ComponentIndex_t<DimensionOf_f<ConceptualTypeOfTensorProduct_>::V> ComponentIndex;
     typedef typename ConceptualTypeOfTensorProductOfProcedural2Tensors_f<Procedural2TensorImplementationTyple_>::T ConceptualTypeOfTensorProduct;
-    STATIC_ASSERT_TYPES_ARE_EQUAL(ConceptualTypeOfTensorProduct_, ConceptualTypeOfTensorProduct);
+    static_assert(TypesAreEqual_f<ConceptualTypeOfTensorProduct_,ConceptualTypeOfTensorProduct>::V, "types must match");
     typedef typename FactorTypleOf_f<ConceptualTypeOfTensorProduct_>::T FactorTyple;
-    STATIC_ASSERT((Length_f<FactorTyple>::V == 2), LENGTH_MUST_BE_EXACTLY_2);
+    static_assert(Length_f<FactorTyple>::V == 2, "must be a 2-tensor");
     typedef typename Element_f<FactorTyple,0>::T Factor0;
     typedef typename Element_f<FactorTyple,1>::T Factor1;
     typedef typename Head_f<Procedural2TensorImplementationTyple_>::T HeadImplementation;
@@ -262,11 +253,8 @@ private:
     typedef typename ScalarOfEachTypeIn_f<Procedural2TensorImplementationTyple_>::T ScalarTyple;
     typedef typename ConceptualTypeOfTensorProductOfProcedural2Tensors_f<Procedural2TensorImplementationTyple_>::T ConceptualTypeOfTensorProduct;
 
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(TypleIsUniform_f<ScalarTyple>::V, ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM((EachTypeUsesProceduralArray_f<Procedural2TensorImplementationTyple_>::V), MUST_BE_TYPLE_OF_PROCEDURAL_IMPLEMENTATIONS)
-    };
+    static_assert(TypleIsUniform_f<ScalarTyple>::V, "all factor type scalars must be equal");
+    static_assert(EachTypeUsesProceduralArray_f<Procedural2TensorImplementationTyple_>::V, "must be a typle of procedural implementations");
 
     typedef typename Head_f<ScalarTyple>::T Scalar;
     typedef ComponentGenerator_t<Scalar,
@@ -288,7 +276,7 @@ Scalar_ tensor_product_of_single_2_tensor (ComponentIndex_t<DimensionOf_f<Concep
 {
     typedef ComponentIndex_t<DimensionOf_f<ConceptualTypeOfTensorProduct_>::V> ComponentIndex;
     typedef typename ConceptualTypeOfTensorProductOfProcedural2Tensors_f<Procedural2TensorImplementationTyple_>::T ConceptualTypeOfTensorProduct;
-    STATIC_ASSERT_TYPES_ARE_EQUAL(ConceptualTypeOfTensorProduct_, ConceptualTypeOfTensorProduct);
+    static_assert(TypesAreEqual_f<ConceptualTypeOfTensorProduct_,ConceptualTypeOfTensorProduct>::V, "types must match");
     typedef typename Head_f<Procedural2TensorImplementationTyple_>::T HeadImplementation;
     HeadImplementation head_implementation;
     AbstractIndex_c<'a'> a;
@@ -307,11 +295,8 @@ private:
     typedef typename ScalarOfEachTypeIn_f<Procedural2TensorImplementationTyple>::T ScalarTyple;
     typedef typename ConceptualTypeOfTensorProductOfProcedural2Tensors_f<Procedural2TensorImplementationTyple>::T ConceptualTypeOfTensorProduct;
 
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(TypleIsUniform_f<ScalarTyple>::V, ALL_FACTOR_TYPE_SCALARS_ARE_EQUAL),
-        STATIC_ASSERT_IN_ENUM((EachTypeUsesProceduralArray_f<Procedural2TensorImplementationTyple>::V), MUST_BE_TYPLE_OF_PROCEDURAL_IMPLEMENTATIONS)
-    };
+    static_assert(TypleIsUniform_f<ScalarTyple>::V, "all factor type scalars must be equal");
+    static_assert(EachTypeUsesProceduralArray_f<Procedural2TensorImplementationTyple>::V, "must provide a typle of procedural implementations");
 
     typedef typename Head_f<ScalarTyple>::T Scalar;
     typedef ComponentGenerator_t<Scalar,

@@ -70,7 +70,7 @@ private:
 template <typename ComponentGenerator_>
 struct UseProceduralArray_t
 {
-    enum { STATIC_ASSERT_IN_ENUM(IsComponentGenerator_t<ComponentGenerator_>::V, MUST_BE_COMPONENT_GENERATOR) };
+    static_assert(IsComponentGenerator_t<ComponentGenerator_>::V, "ComponentGenerator_ must be a ComponentGenerator_t");
 
     typedef ComponentGenerator_ ComponentGenerator;
 

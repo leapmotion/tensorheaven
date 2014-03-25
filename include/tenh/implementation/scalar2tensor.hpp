@@ -31,11 +31,8 @@ struct ImplementationOf_t<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Fac
                            UseArrayType_,
                            typename DerivedType_f<Derived_,ImplementationOf_t<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_>>::T >::T
 {
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor0_), MUST_BE_BASED_VECTOR_SPACE, FACTOR0),
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor1_), MUST_BE_BASED_VECTOR_SPACE, FACTOR1)
-    };
+    static_assert(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor0_), "Factor0_ must have unique based vector space structure");
+    static_assert(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor1_), "Factor1_ must have unique based vector space structure");
 
     typedef EmbeddableAsTensor_i<typename DerivedType_f<Derived_,ImplementationOf_t<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,Scalar_,UseArrayType_,Derived_>>::T,
                                  Scalar_,
@@ -75,15 +72,14 @@ struct ImplementationOf_t<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Fac
     template <Uint32 INDEX_>
     struct BasisVector_f
     {
-    private:
-        enum { STATIC_ASSERT_IN_ENUM((INDEX_ < Parent_EmbeddableAsTensor_i::DIM), INDEX_OUT_OF_RANGE) };
-        BasisVector_f () { }
-    public:
+        static_assert(INDEX_ < Parent_EmbeddableAsTensor_i::DIM, "index out of range");
         typedef ImplementationOf_t<Concept,
                                    Scalar_,
                                    UseProceduralArray_t<typename ComponentGenerator_Characteristic_f<Scalar_,Parent_EmbeddableAsTensor_i::DIM,INDEX_>::T>,
                                    Derived_> T;
         static T const V;
+    private:
+        BasisVector_f () { }
     };
 
     explicit ImplementationOf_t (WithoutInitialization const &w) : Parent_Array_i(w) { }
@@ -97,7 +93,7 @@ struct ImplementationOf_t<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Fac
         :
         Parent_Array_i(Static<WithoutInitialization>::SINGLETON)
     {
-        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
+        static_assert(IsUseMemberArray_f<UseArrayType_>::V, "UseArrayType_ must be a UseMemberArray_t type");
         // TODO: could make this use MemoryArray_i::copy_from (?)
         for (ComponentIndex i; i.is_not_at_end(); ++i)
             (*this)[i] = x[i];
@@ -110,7 +106,7 @@ struct ImplementationOf_t<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Fac
         :
         Parent_Array_i(fill_with)
     {
-        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
+        static_assert(IsUseMemberArray_f<UseArrayType_>::V, "UseArrayType_ must be a UseMemberArray_t type");
     }
     // this is the tuple-based constructor
     template <typename Typle_>
@@ -118,7 +114,7 @@ struct ImplementationOf_t<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Fac
         :
         Parent_Array_i(x.as_member_array())
     {
-        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
+        static_assert(IsUseMemberArray_f<UseArrayType_>::V, "UseArrayType_ must be a UseMemberArray_t type");
     }
 
     // only use these if UsePreallocatedArray_t<...> is specified
@@ -127,7 +123,7 @@ struct ImplementationOf_t<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Fac
         :
         Parent_Array_i(pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "UseArrayType_ must be a UsePreallocatedArray_t type");
     }
     // similar to a copy constructor, except initializes from a Vector_i.
     // this was chosen to be explicit to avoid unnecessary copies.
@@ -137,7 +133,7 @@ struct ImplementationOf_t<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Fac
         :
         Parent_Array_i(pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "UseArrayType_ must be a UsePreallocatedArray_t type");
         // TODO: could make this use MemoryArray_i::copy_from (?)
         for (ComponentIndex i; i.is_not_at_end(); ++i)
             (*this)[i] = x[i];
@@ -148,7 +144,7 @@ struct ImplementationOf_t<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Fac
         :
         Parent_Array_i(fill_with, pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "UseArrayType_ must be a UsePreallocatedArray_t type");
     }
     // this is the tuple-based constructor
     template <typename Typle_>
@@ -157,7 +153,7 @@ struct ImplementationOf_t<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Fac
         :
         Parent_Array_i(x, pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "UseArrayType_ must be a UsePreallocatedArray_t type");
     }
 
     // only use this if UseProceduralArray_t<...> is specified
@@ -165,23 +161,12 @@ struct ImplementationOf_t<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Fac
         :
         Parent_Array_i(WithoutInitialization()) // sort of meaningless constructor
     {
-        STATIC_ASSERT(IsUseProceduralArray_f<UseArrayType_>::V, MUST_BE_USE_PROCEDURAL_ARRAY);
+        static_assert(IsUseProceduralArray_f<UseArrayType_>::V || DIM == 0, "UseArrayType_ must be UseProceduralArray_t or space must be 0-dimensional");
     }
 
     template <typename BundleIndexTyple, typename BundledIndex>
     static MultiIndex_t<BundleIndexTyple> bundle_index_map (BundledIndex const &b)
     {
-        // STATIC_ASSERT(IsDimIndex_f<BundledIndex>::V, MUST_BE_DIM_INDEX);
-        // STATIC_ASSERT(BundleIndexTyple::LENGTH == 2, LENGTH_MUST_BE_EXACTLY_2);
-        // typedef MultiIndex_t<BundleIndexTyple> MultiIndex;
-        // typedef typename BundleIndexTyple::HeadType Index1;
-        // typedef typename BundleIndexTyple::BodyTyple::HeadType Index2;
-        // STATIC_ASSERT(IsDimIndex_f<Index1>::V, MUST_BE_DIM_INDEX);
-        // STATIC_ASSERT(IsDimIndex_f<Index2>::V, MUST_BE_DIM_INDEX);
-        // STATIC_ASSERT(Index1::COMPONENT_COUNT == DimensionOf_f<Factor0_>::V, DIMENSIONS_MUST_MATCH);
-        // STATIC_ASSERT(Index2::COMPONENT_COUNT == DimensionOf_f<Factor1_>::V, DIMENSIONS_MUST_MATCH);
-        // Uint32 b_value = b.value();
-        // return MultiIndex(b_value, b_value, CheckRange::FALSE);
         return MultiIndex(0, 0, CheckRange::FALSE);
     }
 

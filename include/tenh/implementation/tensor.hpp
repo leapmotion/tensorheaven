@@ -65,8 +65,8 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTyple_>,Scala
     template <Uint32 INDEX_>
     struct BasisVector_f
     {
+        static_assert(INDEX_ < Parent_Tensor_i::DIM, "index out of range");
     private:
-        enum { STATIC_ASSERT_IN_ENUM((INDEX_ < Parent_Tensor_i::DIM), INDEX_OUT_OF_RANGE) };
         BasisVector_f () { }
         typedef typename ComponentGenerator_Characteristic_f<Scalar_,Parent_Tensor_i::DIM,INDEX_>::T ComponentGenerator;
     public:
@@ -88,7 +88,7 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTyple_>,Scala
         :
         Parent_Array_i(Static<WithoutInitialization>::SINGLETON)
     {
-        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
+        static_assert(IsUseMemberArray_f<UseArrayType_>::V, "UseArrayType_ must be a UseMemberArray_t type");
         // TODO: could make this use MemoryArray_i::copy_from (?)
         for (ComponentIndex i; i.is_not_at_end(); ++i)
             (*this)[i] = x[i];
@@ -99,7 +99,7 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTyple_>,Scala
         :
         Parent_Array_i(fill_with)
     {
-        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
+        static_assert(IsUseMemberArray_f<UseArrayType_>::V, "UseArrayType_ must be a UseMemberArray_t type");
     }
     // this is the tuple-based constructor
     template <typename... Types_>
@@ -107,7 +107,7 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTyple_>,Scala
         :
         Parent_Array_i(x.as_member_array())
     {
-        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
+        static_assert(IsUseMemberArray_f<UseArrayType_>::V, "UseArrayType_ must be a UseMemberArray_t type");
     }
 
     // only use these if UsePreallocatedArray_t<...> is specified
@@ -116,7 +116,7 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTyple_>,Scala
         :
         Parent_Array_i(pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "UseArrayType_ must be a UsePreallocatedArray_t type");
     }
     // similar to a copy constructor, except initializes from a Vector_i.
     // this was chosen to be explicit to avoid unnecessary copies.
@@ -126,7 +126,7 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTyple_>,Scala
         :
         Parent_Array_i(pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "UseArrayType_ must be a UsePreallocatedArray_t type");
         // TODO: could make this use MemoryArray_i::copy_from (?)
         for (ComponentIndex i; i.is_not_at_end(); ++i)
             (*this)[i] = x[i];
@@ -137,7 +137,7 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTyple_>,Scala
         :
         Parent_Array_i(fill_with, pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "UseArrayType_ must be a UsePreallocatedArray_t type");
     }
     // this is the tuple-based constructor
     template <typename... Types_>
@@ -146,7 +146,7 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTyple_>,Scala
         :
         Parent_Array_i(x, pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "UseArrayType_ must be a UsePreallocatedArray_t type");
     }
 
     // only use this if UseProceduralArray_t<...> is specified
@@ -154,13 +154,13 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTyple_>,Scala
         :
         Parent_Array_i(WithoutInitialization()) // sort of meaningless constructor
     {
-        STATIC_ASSERT(IsUseProceduralArray_f<UseArrayType_>::V, MUST_BE_USE_PROCEDURAL_ARRAY);
+        static_assert(IsUseProceduralArray_f<UseArrayType_>::V || DIM == 0, "UseArrayType_ must be UseProceduralArray_t or space must be 0-dimensional");
     }
 
     template <typename BundleIndexTyple, typename BundledIndex>
     static MultiIndex_t<BundleIndexTyple> bundle_index_map (BundledIndex const &b)
     {
-        STATIC_ASSERT(IsComponentIndex_f<BundledIndex>::V, MUST_BE_COMPONENT_INDEX);
+        static_assert(IsComponentIndex_f<BundledIndex>::V, "BundledIndex must be ComponentIndex_t");
         // this constructor breaks the vector index apart into a row-major multi-index
         return MultiIndex_t<BundleIndexTyple>(b);
     }
