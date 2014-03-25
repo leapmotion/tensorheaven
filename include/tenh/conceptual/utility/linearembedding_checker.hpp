@@ -133,7 +133,7 @@ bool linear_embedding_is_consistent (LinearEmbedding_c<Domain_,Codomain_,Scalar_
                 throw std::logic_error("embedded_component_is_procedural_zero(" + FORMAT(i) +
                                        ") returned true but scalar_factor_for_embedded_component(" +
                                        FORMAT(i) + ") failed to throw.");
-            } catch (std::domain_error const &e) { // note that domain_error inherits logic_error.
+            } catch (std::domain_error const &) { // note that domain_error inherits logic_error.
                 // catching this exception indicates scalar_factor_for_embedded_component functioned
                 // correctly for that particular input value.
             } catch (std::logic_error const &e) {
@@ -152,7 +152,7 @@ bool linear_embedding_is_consistent (LinearEmbedding_c<Domain_,Codomain_,Scalar_
                 throw std::logic_error("embedded_component_is_procedural_zero(" + FORMAT(i) +
                                        ") returned true but source_component_index_for_embedded_component(" +
                                        FORMAT(i) + ") failed to throw.");
-            } catch (std::domain_error const &e) { // note that domain_error inherits logic_error.
+            } catch (std::domain_error const &) { // note that domain_error inherits logic_error.
                 // catching this exception indicates source_component_index_for_embedded_component functioned
                 // correctly for that particular input value.
             } catch (std::logic_error const &e) {

@@ -10,6 +10,10 @@
 
 #if _WIN32
 #pragma warning( disable : 4503 )
+// this to handle the mutually-exclusive way that MSVC deals with certain template code
+#define TUMPLATE
+#else
+#define TUMPLATE template
 #endif
 
 #include <cassert>

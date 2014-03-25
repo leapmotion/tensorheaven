@@ -41,7 +41,12 @@ int main (int argc, char **argv, char **envp)
 
     {
         Directory &basic_dir = root.GetSubDirectory("basic");
-        Test::Basic::Operator::AddTests(basic_dir);
+        Test::Basic::Operator::AddTests0(basic_dir);
+        Test::Basic::Operator::AddTests1(basic_dir);
+        Test::Basic::Operator::AddTests2(basic_dir);
+        Test::Basic::Operator::AddTests3(basic_dir);
+        Test::Basic::Operator::AddTests4(basic_dir);
+        Test::Basic::Operator::AddTests5(basic_dir);
         Test::Basic::Vector::AddTests0(basic_dir);
         Test::Basic::Vector::AddTests1(basic_dir);
         Test::Basic::Vector::AddTests2(basic_dir);
@@ -62,7 +67,12 @@ int main (int argc, char **argv, char **envp)
 //         Test::InteropEigen::Inversion::AddTests(interop_eigen_dir);
 //     }
 
-    Test::LinearEmbedding::AddTests(root);
+    Test::LinearEmbedding::AddTests0(root);
+    Test::LinearEmbedding::AddTests1(root);
+    Test::LinearEmbedding::AddTests2(root);
+    Test::LinearEmbedding::AddTests3(root);
+    Test::LinearEmbedding::AddTests4(root);
+    Test::LinearEmbedding::AddTests5(root);
     Test::SplitAndBundle::AddTests(root);
     Test::Tuple::AddTests(root);
     Test::Typle::AddTests(root);

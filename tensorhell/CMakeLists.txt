@@ -8,32 +8,36 @@ find_path(BOOST_INCLUDE_DIR "boost" PATHS $ENV{BOOST_INCLUDE_DIR} NO_DEFAULT_PAT
 OPTION(ASM_EXAM "Keep ASM intermediaries for inspection of compiler optimizations." OFF)
 OPTION(NO_OPTIMIZE "Compile without optimization (useful for debugging; not implemented for MSVC currently)." OFF)
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+message("CMAKE_CXX_COMPILER_ID = ${CMAKE_CXX_COMPILER_ID}")
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+  message("compiler is MSVC")
   set(MSVC 1)
   set(CLANG 0)
   set(GCC 0)
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+  message("compiler is Clang")
   set(MSVC 0)
   set(CLANG 1)
   set(GCC 0)
-else() #GCC
+elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GCC")
+  message("compiler is GCC")
   set(MSVC 0)
   set(CLANG 0)
   set(GCC 1)
+else()
+  message(FATAL ERROR "unsupported compiler ${CMAKE_CXX_COMPILER_ID}")
 endif()
 
 # the root directory of the project (the one containing the tenh/ dir) is the only necessary include dir
 include_directories(${tensorheaven_test_SOURCE_DIR}/include ${EIGEN_INCLUDE_DIR} ${BOOST_INCLUDE_DIR})
 
-set(BASE_MSVC_FLAGS /arch:SSE2)
-# misnomer: The above MSVC flags are not used in Debug mode
-set(PRODUCTION_MSVC_FLAGS /GL /Ox /Oi /Ot /Ob2 )
-set(BASE_GCC_FLAGS -std=c++11 -Wall -Werror -Wno-unused-local-typedefs -Wno-attributes ) #-msse2 -Wno-reorder -Wno-strict-aliasing -Wno-missing-braces -Wno-uninitialized -Wno-sequence-point )
-set(BASE_CLANG_FLAGS -std=c++11 -stdlib=libc++ -Wall -Werror -Wno-local-type-template-args -Wno-tautological-compare ) #-stdlib=libc++ -Wall -Wno-deprecated-declarations -Wno-address-of-temporary -Wno-dynamic-class-memaccess -Wno-overloaded-virtual -Wno-missing-braces -Wno-unneeded-internal-declaration -Wno-reorder -Wno-local-type-template-args )
-set(PRODUCTION_GCC_FLAGS "")
 if(MSVC)
+  message("setting options for MSVC")
+  set(BASE_MSVC_FLAGS /arch:SSE2)
+  # misnomer: The above MSVC flags are not used in Debug mode
+  set(PRODUCTION_MSVC_FLAGS /GL /Ox /Oi /Ot /Ob2 )
   set(COMPILER_DEBUG_FLAGS /Zi /D_DEBUG /MDd /Od /fp:except /D_CRT_SECURE_NO_WARNINGS /D_SCL_SECURE_NO_WARNINGS=1 /RTC1 /MP)
-  set(COMPILER_RELEASE_FLAGS /Zi /D NDEBUG /D _CRT_SECURE_NO_WARNINGS /MD /O2 /fp:fast /WX /MP)
+  set(COMPILER_RELEASE_FLAGS /Zi /D NDEBUG /D _CRT_SECURE_NO_WARNINGS /MD /O2 /fp:fast /MP) #  /WX (warnings as errors)
   if(NO_OPTIMIZE)
     # TODO: implement NO_OPTIMIZE for MSVC
   endif()
@@ -44,7 +48,11 @@ if(MSVC)
   set(NOPRODUCTION_LINKER_FLAGS "")
   set(PRODUCTION_LINKER_FLAGS /LTCG )
   add_definitions(-DNOMINMAX)
-else() # clang or gcc
+else(CLANG OR GCC) # clang or gcc
+  message("setting options for Clang or GCC")
+  set(BASE_GCC_FLAGS -std=c++11 -Wall -Werror -Wno-unused-local-typedefs -Wno-attributes ) #-msse2 -Wno-reorder -Wno-strict-aliasing -Wno-missing-braces -Wno-uninitialized -Wno-sequence-point )
+  set(PRODUCTION_GCC_FLAGS "")
+  set(BASE_CLANG_FLAGS -std=c++11 -stdlib=libc++ -Wall -Werror -Wno-local-type-template-args -Wno-tautological-compare ) #-stdlib=libc++ -Wall -Wno-deprecated-declarations -Wno-address-of-temporary -Wno-dynamic-class-memaccess -Wno-overloaded-virtual -Wno-missing-braces -Wno-unneeded-internal-declaration -Wno-reorder -Wno-local-type-template-args )
   set(COMPILER_DEBUG_FLAGS -g3 )
   set(COMPILER_DEBUG_NO_OPTIMIZE_FLAGS -O0 -g3 )
   set(COMPILER_RELEASE_FLAGS -O3 -g0 -DNDEBUG )
@@ -73,7 +81,7 @@ if(MSVC)
   set(COMPILER_FLAGS ${COMPILER_FLAGS} ${BASE_MSVC_FLAGS})
 elseif(CLANG)
   set(COMPILER_FLAGS ${COMPILER_FLAGS} ${BASE_CLANG_FLAGS})
-else() # Linux
+else(GCC)
   set(COMPILER_FLAGS ${COMPILER_FLAGS} ${BASE_GCC_FLAGS})
 endif()
 
@@ -88,12 +96,14 @@ foreach(arg ${COMPILER_DEBUG_FLAGS})
 endforeach(arg ${COMPILER_DEBUG_FLAGS})
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} ${TEMP_COMPILER_DEBUG_FLAG_LIST}")
+message("CMAKE_CXX_FLAGS_DEBUG = ${CMAKE_CXX_FLAGS_DEBUG}")
 
 foreach(arg ${COMPILER_RELEASE_FLAGS})
   set(TEMP_COMPILER_RELEASE_FLAG_LIST "${TEMP_COMPILER_RELEASE_FLAG_LIST} ${arg}")
 endforeach(arg ${COMPILER_DEBUG_FLAGS})
 
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} ${TEMP_COMPILER_RELEASE_FLAG_LIST}")
+message("CMAKE_CXX_FLAGS_DEBUG = ${CMAKE_CXX_FLAGS_DEBUG}")
 
 
 # temp tests
@@ -106,9 +116,9 @@ add_executable(prettyprint prettyprint.cpp)
 add_executable(sandbox sandbox.cpp)
 add_executable(taylor_polynomial taylor_polynomial.cpp)
 
-set_source_files_properties(c++11_usage_prototype.cpp PROPERTIES COMPILE_FLAGS -std=c++11)
-set_source_files_properties(compile_time_generated_lookup_table.cpp PROPERTIES COMPILE_FLAGS -std=c++11)
-set_source_files_properties(sandbox.cpp PROPERTIES COMPILE_FLAGS -std=c++11)
+#set_source_files_properties(c++11_usage_prototype.cpp PROPERTIES COMPILE_FLAGS -std=c++11)
+#set_source_files_properties(compile_time_generated_lookup_table.cpp PROPERTIES COMPILE_FLAGS -std=c++11)
+#set_source_files_properties(sandbox.cpp PROPERTIES COMPILE_FLAGS -std=c++11)
 
 set(adhoc_test_SRCS
     adhoc_test.cpp
@@ -138,7 +148,12 @@ set(test_SRCS
     standard/randomize.cpp
     standard/test_abstractindex.cpp
     standard/test_array.cpp
-    standard/test_basic_operator.cpp
+    standard/test_basic_operator0.cpp
+    standard/test_basic_operator1.cpp
+    standard/test_basic_operator2.cpp
+    standard/test_basic_operator3.cpp
+    standard/test_basic_operator4.cpp
+    standard/test_basic_operator5.cpp
     standard/test_basic_vector0.cpp
     standard/test_basic_vector1.cpp
     standard/test_basic_vector2.cpp
@@ -147,7 +162,12 @@ set(test_SRCS
     standard/test_basic_vector5.cpp
     standard/test_dimindex.cpp
     standard/test_expressiontemplate_reindex.cpp
-    standard/test_linearembedding.cpp
+    standard/test_linearembedding0.cpp
+    standard/test_linearembedding1.cpp
+    standard/test_linearembedding2.cpp
+    standard/test_linearembedding3.cpp
+    standard/test_linearembedding4.cpp
+    standard/test_linearembedding5.cpp
     standard/test_split_and_bundle.cpp
     standard/test_tuple.cpp
     standard/test_typle.cpp)

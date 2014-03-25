@@ -419,14 +419,24 @@ void test_Min (Context const &context)
     typedef Tenh::Value_t<int,0> Zero;
     typedef Tenh::Value_t<int,1> One;
     typedef Tenh::Value_t<int,3> Three;
+#if defined(_WIN32)
+    // this is necessary because MSVC doesn't support constexpr yet
+    assert_eq((Tenh::Min_f<Tenh::Typle_t<>,int>::V), std::numeric_limits<int>::max());
+#else
     static_assert(Tenh::Min_f<Tenh::Typle_t<>,int>::V == std::numeric_limits<int>::max(), "error");
+#endif
     static_assert(Tenh::Min_f<Tenh::Typle_t<Zero,One>,int>::V == 0, "error");
     static_assert(Tenh::Min_f<Tenh::Typle_t<One,One>,int>::V == 1, "error");
     static_assert(Tenh::Min_f<Tenh::Typle_t<One,One,Three>,int>::V == 1, "error");
     static_assert(Tenh::Min_f<Tenh::Typle_t<Three,Three>,int>::V == 3, "error");
 
     typedef Tenh::Min_e<int> IntMin_e;
+#if defined(_WIN32)
+    // this is necessary because MSVC doesn't support constexpr yet
+    assert_eq((IntMin_e::Eval_f<Tenh::Typle_t<>>::V), std::numeric_limits<int>::max());
+#else
     static_assert(IntMin_e::Eval_f<Tenh::Typle_t<>>::V == std::numeric_limits<int>::max(), "error");
+#endif
     static_assert(IntMin_e::Eval_f<Tenh::Typle_t<Zero,One>>::V == 0, "error");
     static_assert(IntMin_e::Eval_f<Tenh::Typle_t<One,One>>::V == 1, "error");
     static_assert(IntMin_e::Eval_f<Tenh::Typle_t<One,One,Three>>::V == 1, "error");
@@ -440,14 +450,24 @@ void test_Max (Context const &context)
     typedef Tenh::Value_t<int,0> Zero;
     typedef Tenh::Value_t<int,1> One;
     typedef Tenh::Value_t<int,3> Three;
+#if defined(_WIN32)
+    // this is necessary because MSVC doesn't support constexpr yet
+    assert_eq((Tenh::Max_f<Tenh::Typle_t<>,int>::V), std::numeric_limits<int>::min());
+#else
     static_assert(Tenh::Max_f<Tenh::Typle_t<>,int>::V == std::numeric_limits<int>::min(), "error");
+#endif
     static_assert(Tenh::Max_f<Tenh::Typle_t<Zero,One>,int>::V == 1, "error");
     static_assert(Tenh::Max_f<Tenh::Typle_t<One,One>,int>::V == 1, "error");
     static_assert(Tenh::Max_f<Tenh::Typle_t<One,One,Three>,int>::V == 3, "error");
     static_assert(Tenh::Max_f<Tenh::Typle_t<Three,Three>,int>::V == 3, "error");
 
     typedef Tenh::Max_e<int> IntMax_e;
+#if defined(_WIN32)
+    // this is necessary because MSVC doesn't support constexpr yet
+    assert_eq((IntMax_e::Eval_f<Tenh::Typle_t<>>::V), std::numeric_limits<int>::min());
+#else
     static_assert(IntMax_e::Eval_f<Tenh::Typle_t<>>::V == std::numeric_limits<int>::min(), "error");
+#endif
     static_assert(IntMax_e::Eval_f<Tenh::Typle_t<Zero,One>>::V == 1, "error");
     static_assert(IntMax_e::Eval_f<Tenh::Typle_t<One,One>>::V == 1, "error");
     static_assert(IntMax_e::Eval_f<Tenh::Typle_t<One,One,Three>>::V == 3, "error");

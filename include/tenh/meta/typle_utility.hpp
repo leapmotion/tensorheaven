@@ -76,12 +76,17 @@ struct OnEach_f
     static_assert(IsTyple_f<Typle_>::V, "template parameter Typle_ must be a Typle_t");
 private:
     OnEach_f ();
-    Typle_ t;
-    Function_e_ f;
-    decltype(f(head(t))) f_head;
-    decltype(on_each(body_typle(t),f)) f_body_typle;
+//    Typle_ t;
+//    Function_e_ f;
+//    decltype(f(head(t))) f_head;
+//    decltype(on_each(body_typle(t),f)) f_body_typle;
+    typedef typename Head_f<Typle_>::T Head;
+    typedef typename BodyTyple_f<Typle_>::T BodyTyple;
+    typedef typename Function_e_::template Eval_f<Head>::T F_Head;
+    typedef typename OnEach_f<BodyTyple,Function_e_>::T F_BodyTyple;
 public:
-    typedef decltype(head_body_typle(f_head,f_body_typle)) T;
+//    typedef decltype(head_body_typle(f_head,f_body_typle)) T;
+    typedef typename HeadBodyTyple_f<F_Head,F_BodyTyple>::T T;
 };
 
 template <typename Function_e_>

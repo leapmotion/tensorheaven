@@ -799,8 +799,10 @@ template <bool VALUE_> Value_t<bool,VALUE_> bool_ () { return Value_t<bool,VALUE
 // inline Value_t<bool,false> false_ () { return Value_t<bool,false>(); }
 typedef Value_t<bool,true> True;
 typedef Value_t<bool,false> False;
-extern True true_;   // this acts as a metaprogramming "enum"
-extern False false_; // this acts as a metaprogramming "enum"
+//extern True true_;   // this acts as a metaprogramming "enum"
+//extern False false_; // this acts as a metaprogramming "enum"
+static True const true_;
+static False const false_;
 
 template <bool C_>
 Value_t<bool,!C_> operator ! (Value_t<bool,C_> const &)
@@ -892,9 +894,9 @@ template <Uint32 VALUE_> Value_t<Uint32,VALUE_> uint32_ () { return Value_t<Uint
 template <Uint32 A_, Uint32 B_> Value_t<Uint32,A_+B_> operator + (Value_t<Uint32,A_> const &, Value_t<Uint32,B_> const &) { return Value_t<Uint32,A_+B_>(); }
 template <Uint32 A_, Uint32 B_> Value_t<Uint32,A_*B_> operator * (Value_t<Uint32,A_> const &, Value_t<Uint32,B_> const &) { return Value_t<Uint32,A_*B_>(); }
 
-decltype(uint32_<1>()) factorial_ (Value_t<Uint32,0> const &) { return uint32_<1>(); }
-template <Uint32 N_> auto factorial_ (Value_t<Uint32,N_> const &) -> decltype(uint32_<N_>()*factorial_(uint32_<N_-1>()));
-template <Uint32 N_> auto factorial_ (Value_t<Uint32,N_> const &) -> decltype(uint32_<N_>()*factorial_(uint32_<N_-1>())) { return uint32_<N_>()*factorial_(uint32_<N_-1>()); }
+//decltype(uint32_<1>()) factorial_ (Value_t<Uint32,0> const &) { return uint32_<1>(); }
+//template <Uint32 N_> auto factorial_ (Value_t<Uint32,N_> const &) -> decltype(uint32_<N_>()*factorial_(uint32_<N_-1>()));
+//template <Uint32 N_> auto factorial_ (Value_t<Uint32,N_> const &) -> decltype(uint32_<N_>()*factorial_(uint32_<N_-1>())) { return uint32_<N_>()*factorial_(uint32_<N_-1>()); }
 
 void prototyping_for_other_awesomeness ()
 {
@@ -969,10 +971,10 @@ void prototyping_for_other_awesomeness ()
     //     std::cout << '\n';
     // }
 
-    std::cout << FORMAT_VALUE(type_string_of(factorial_(uint32_<0>()))) << '\n';
-    std::cout << FORMAT_VALUE(type_string_of(factorial_(uint32_<1>()))) << '\n';
-    std::cout << FORMAT_VALUE(type_string_of(factorial_(uint32_<2>()))) << '\n';
-    std::cout << FORMAT_VALUE(type_string_of(factorial_(uint32_<3>()))) << '\n';
+    //std::cout << FORMAT_VALUE(type_string_of(factorial_(uint32_<0>()))) << '\n';
+    //std::cout << FORMAT_VALUE(type_string_of(factorial_(uint32_<1>()))) << '\n';
+    //std::cout << FORMAT_VALUE(type_string_of(factorial_(uint32_<2>()))) << '\n';
+    //std::cout << FORMAT_VALUE(type_string_of(factorial_(uint32_<3>()))) << '\n';
     std::cout << '\n';
 }
 
