@@ -33,7 +33,7 @@ include_directories(${tensorheaven_test_SOURCE_DIR}/include ${EIGEN_INCLUDE_DIR}
 
 if(MSVC)
   message("setting options for MSVC")
-  set(BASE_MSVC_FLAGS /arch:SSE2)
+  set(BASE_MSVC_FLAGS /arch:SSE2 /bigobj)
   # misnomer: The above MSVC flags are not used in Debug mode
   set(PRODUCTION_MSVC_FLAGS /GL /Ox /Oi /Ot /Ob2 )
   set(COMPILER_DEBUG_FLAGS /Zi /D_DEBUG /MDd /Od /fp:except /D_CRT_SECURE_NO_WARNINGS /D_SCL_SECURE_NO_WARNINGS=1 /RTC1 /MP)
