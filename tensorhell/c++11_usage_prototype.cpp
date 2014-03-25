@@ -875,12 +875,14 @@ auto on_each_ (Typle_t<Head_,BodyTypes_...> const &t, Function_e_ const &f)
     return head_body_typle(f(head(t)),on_each_(body_typle(t),f));
 }
 
+/*
 // #define MAKE_THINGY_2(function_name, expression, param0, param1, ...) \
 // template <__VA_ARGS__> \
 // auto function_name (param0, param1) -> decltype(expression) \
 // { \
 //     return expression; \
 // }
+*/
 
 // MAKE_THINGY_2(on_each__, Typle_t<>(), Typle_t<> const &, Function_e_ const &f, typename Function_e_);
 // MAKE_THINGY_2(on_each__, head_body_typle(f(head(t)),on_each__(body_typle(t),f)), Typle_t<Head_,BodyTypes_...> const &t, Function_e_ const &f, typename Head_, typename... BodyTypes_, typename Function_e_);

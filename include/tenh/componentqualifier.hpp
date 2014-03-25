@@ -15,7 +15,7 @@ enum class ComponentQualifier : Uint32 { PROCEDURAL = 0, CONST_MEMORY, NONCONST_
 inline std::string component_qualifier_as_string (ComponentQualifier q)
 {
     static std::string const STRING_LOOKUP[3] = { "ComponentQualifier::PROCEDURAL", "ComponentQualifier::CONST_MEMORY", "ComponentQualifier::NONCONST_MEMORY" };
-    assert(q >= 0 && q < 3);
+    assert(Uint32(q) < 3);
     return STRING_LOOKUP[Uint32(q)];
 }
 
