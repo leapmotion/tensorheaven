@@ -181,8 +181,18 @@ set(tenh_utility_test_SRCS
     lvd/lvd_spawner.cpp
     lvd/lvd_testsystem.cpp
     standard/randomize.cpp
-    tenh_utility_test/test_homogeneouspolynomials.cpp
-    tenh_utility_test/test_multivariatepolynomials.cpp)
+    tenh_utility_test/test_homogeneouspolynomials0.cpp
+    tenh_utility_test/test_homogeneouspolynomials1.cpp
+    tenh_utility_test/test_homogeneouspolynomials2.cpp
+    tenh_utility_test/test_homogeneouspolynomials3.cpp
+    tenh_utility_test/test_homogeneouspolynomials4.cpp
+    tenh_utility_test/test_homogeneouspolynomials5.cpp
+    tenh_utility_test/test_multivariatepolynomials0.cpp
+    tenh_utility_test/test_multivariatepolynomials1.cpp
+    tenh_utility_test/test_multivariatepolynomials2.cpp
+    tenh_utility_test/test_multivariatepolynomials3.cpp
+    tenh_utility_test/test_multivariatepolynomials4.cpp
+    tenh_utility_test/test_multivariatepolynomials5.cpp)
 add_executable(tenh_utility_test tenh_utility_test/test.cpp ${tenh_utility_test_SRCS})
 include_directories(${tensorheaven_test_SOURCE_DIR}/../include
                     ${tensorheaven_test_SOURCE_DIR}/lvd
