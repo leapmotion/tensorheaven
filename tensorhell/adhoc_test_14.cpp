@@ -721,4 +721,26 @@ void test_type_system_helper_functions ()
     std::cout << '\n';
     std::cout << FORMAT_VALUE(type_string_of(sym<3>(bvs3))) << '\n';
     std::cout << '\n';
+
+    struct IdB { static std::string type_as_string () { return "B"; } };
+    struct IdC { static std::string type_as_string () { return "C"; } };
+
+    std::cout << FORMAT_VALUE(type_string_of(diag2(3,4))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(diag2(Basis_c<IdB>(),Basis_c<IdC>()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(diag2(OrthonormalBasis_c<IdB>(),Basis_c<IdC>()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(diag2(Basis_c<IdB>(),OrthonormalBasis_c<IdC>()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(diag2(OrthonormalBasis_c<IdB>(),OrthonormalBasis_c<IdC>()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(diag2(bvs<3>(RealField(),IdB()),bvs<4>(RealField(),IdC())))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(diag2(bvs<3>(RealField(),IdB()),Basis_c<IdC>()))) << '\n';
+    std::cout << '\n';
+
+    std::cout << FORMAT_VALUE(type_string_of(scalar2(3,4))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(scalar2(Basis_c<IdB>(),Basis_c<IdC>()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(scalar2(OrthonormalBasis_c<IdB>(),Basis_c<IdC>()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(scalar2(Basis_c<IdB>(),OrthonormalBasis_c<IdC>()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(scalar2(OrthonormalBasis_c<IdB>(),OrthonormalBasis_c<IdC>()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(scalar2(bvs<3>(RealField(),IdB()),bvs<4>(RealField(),IdC())))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(scalar2(bvs<3>(RealField(),IdB()),Basis_c<IdC>()))) << '\n';
+    std::cout << '\n';
+
 }
