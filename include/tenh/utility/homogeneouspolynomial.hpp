@@ -8,8 +8,6 @@
 
 #include "tenh/core.hpp"
 
-#include <iostream>
-
 #include "tenh/conceptual/symmetricpower.hpp"
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/conceptual/vectorspace.hpp"

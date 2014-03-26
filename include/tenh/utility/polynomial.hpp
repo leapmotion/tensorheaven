@@ -6,7 +6,6 @@
 #ifndef TENH_UTILITY_POLYNOMIAL_HPP_
 #define TENH_UTILITY_POLYNOMIAL_HPP_
 
-
 #include "tenh/core.hpp"
 
 #include "tenh/conceptual/symmetricpower.hpp"

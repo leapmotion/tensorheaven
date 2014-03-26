@@ -73,7 +73,7 @@ void add_random_polynomials_and_check_result (Context const &context)
         Tenh::randomize(v[i]);
     }
 
-    std::cerr << roly+poly << '\n';
+    //std::cerr << roly+poly << '\n';
     assert_about_eq((roly+poly).evaluate(v), (roly.evaluate(v) + poly.evaluate(v)));
 }
 
@@ -106,7 +106,7 @@ void multiply_random_polynomials_and_check_result (Context const &context)
         Tenh::randomize(v[i]);
     }
 
-    std::cerr << roly*poly << '\n';
+    //std::cerr << roly*poly << '\n';
     assert_about_eq((roly*poly).evaluate(v), (roly.evaluate(v) * poly.evaluate(v)));
 }
 
@@ -177,7 +177,7 @@ void add_particular_tests (Directory &parent)
     // Directory &scalar_dir = parent.GetSubDirectory(FORMAT("Scalar_ = " << Tenh::type_string_of<Scalar_>()));
     // Directory &dim_dir = scalar_dir.GetSubDirectory(FORMAT("DIM_ = " << DIM_));
     typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM_,Tenh::Generic>,Tenh::Basis_c<Tenh::Generic>> BasedVectorSpace;
-    Directory &degree_dir = parent.GetSubDirectory(FORMAT("Tenh::HomogeneousPolynomial<" << DEGREE_ << ',' << Tenh::type_string_of<BasedVectorSpace>() << ',' << Tenh::type_string_of<Scalar_>() << '>'));
+    Directory &degree_dir = parent.GetSubDirectory(FORMAT("HomogeneousPolynomial<" << DEGREE_ << ',' << Tenh::type_string_of<BasedVectorSpace>() << ',' << Tenh::type_string_of<Scalar_>() << '>'));
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(degree_dir, "constructor_without_initialization", constructor_without_initialization<Scalar_,BasedVectorSpace,DEGREE_>, RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(degree_dir, "constructor_fill_with", constructor_fill_with<Scalar_,BasedVectorSpace,DEGREE_>, new Context::Data<Scalar_>(42), RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(degree_dir, "multiply_random_polynomial_by_scalar_and_check_result", multiply_random_polynomial_by_scalar_and_check_result<Scalar_,BasedVectorSpace,DEGREE_>, RESULT_NO_ERROR);
@@ -185,7 +185,7 @@ void add_particular_tests (Directory &parent)
 
 void AddTests (Directory &parent)
 {
-    Directory &dir = parent.GetSubDirectory("Tenh::HomogeneousPolynomial");
+    Directory &dir = parent.GetSubDirectory("HomogeneousPolynomial");
 
     // the reason all the different combinations are enumerated by hand is
     // so that this source file can be easily broken into several source
@@ -242,16 +242,16 @@ void AddTests (Directory &parent)
         static Uint32 const DIM = 1;
         typedef Tenh::VectorSpace_c<Tenh::RealField,DIM,Tenh::Generic> VectorSpace;
         typedef Tenh::BasedVectorSpace_c<VectorSpace,Tenh::Basis_c<Tenh::Generic>> BasedVectorSpace;
-        add_addition_tests<float,BasedVectorSpace>(dir);
-        add_multiplication_tests<float,BasedVectorSpace>(dir);
+        add_addition_tests<double,BasedVectorSpace>(dir);
+        add_multiplication_tests<double,BasedVectorSpace>(dir);
     }
 
     {
         static Uint32 const DIM = 3;
         typedef Tenh::VectorSpace_c<Tenh::RealField,DIM,Tenh::Generic> VectorSpace;
         typedef Tenh::BasedVectorSpace_c<VectorSpace,Tenh::Basis_c<Tenh::Generic>> BasedVectorSpace;
-        add_addition_tests<float,BasedVectorSpace>(dir);
-        add_multiplication_tests<float,BasedVectorSpace>(dir);
+        add_addition_tests<double,BasedVectorSpace>(dir);
+        add_multiplication_tests<double,BasedVectorSpace>(dir);
     }
 }
 
