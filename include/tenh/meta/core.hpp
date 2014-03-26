@@ -273,7 +273,7 @@ template <> struct Assert<true> { static bool const V = true; operator bool () c
 /// @brief Wrapper type to contain a compile time constant of any template value parameter type.
 /// @headerfile core.hpp "tenh/meta/core.hpp"
 /// @note The type string for this is defined in typestringof.hpp.
-template <typename T_, T_ VALUE_> struct Value_t { typedef T_ T; static T_ const V = VALUE_; };
+template <typename T_, T_ VALUE_> struct Value_t { typedef T_ T; static T_ const V = VALUE_; Value_t () { } };
 
 template <typename T_> struct IsValue_f { static bool const V = false; };
 template <typename T_, T_ VALUE_> struct IsValue_f<Value_t<T_,VALUE_>> { static bool const V = true; };
