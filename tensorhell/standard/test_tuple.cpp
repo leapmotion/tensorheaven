@@ -32,7 +32,9 @@ template <typename Typle>
 void test_length (Context const &context)
 {
     typedef Tenh::Tuple_t<Typle> Tuple;
-    assert_eq(Tuple::length(), Tenh::Length_f<Typle>::V);
+    // this is kind of dumb, but GCC was getting linker errors because Length_f<Typle>::V wanted to live at runtime.
+    static decltype(Tenh::Length_f<Typle>::V) const LENGTH = Tenh::Length_f<Typle>::V;
+    assert_eq(Tuple::length(), LENGTH);
 }
 
 template <typename Typle>
