@@ -125,6 +125,7 @@ add_executable(taylor_polynomial taylor_polynomial.cpp)
 
 set(adhoc_test_SRCS
     adhoc_test.cpp
+    adhoc_test.hpp
     adhoc_test_00.cpp
     adhoc_test_01.cpp
     adhoc_test_02.cpp
@@ -145,47 +146,64 @@ add_executable(adhoc_test ${adhoc_test_SRCS})
 # test-framework-using tests
 set(test_SRCS
     lvd/lvd_callstack.cpp
+    lvd/lvd_callstack.hpp
     lvd/lvd_commandlineparser.cpp
+    lvd/lvd_commandlineparser.hpp
     lvd/lvd_spawner.cpp
+    lvd/lvd_spawner.hpp
     lvd/lvd_testsystem.cpp
+    lvd/lvd_testsystem.hpp
     standard/randomize.cpp
+    standard/randomize.hpp
     standard/test_abstractindex.cpp
+    standard/test_abstractindex.hpp
     standard/test_array.cpp
+    standard/test_array.hpp
     standard/test_basic_operator0.cpp
     standard/test_basic_operator1.cpp
     standard/test_basic_operator2.cpp
     standard/test_basic_operator3.cpp
     standard/test_basic_operator4.cpp
     standard/test_basic_operator5.cpp
+    standard/test_basic_operator.hpp
     standard/test_basic_vector0.cpp
     standard/test_basic_vector1.cpp
     standard/test_basic_vector2.cpp
     standard/test_basic_vector3.cpp
     standard/test_basic_vector4.cpp
     standard/test_basic_vector5.cpp
+    standard/test_basic_vector.hpp
     standard/test_dimindex.cpp
+    standard/test_dimindex.hpp
     standard/test_expressiontemplate_reindex.cpp
+    standard/test_expressiontemplate_reindex.hpp
     standard/test_homogeneouspolynomials0.cpp
     standard/test_homogeneouspolynomials1.cpp
     standard/test_homogeneouspolynomials2.cpp
     standard/test_homogeneouspolynomials3.cpp
     standard/test_homogeneouspolynomials4.cpp
     standard/test_homogeneouspolynomials5.cpp
+    standard/test_homogeneouspolynomials.hpp
     standard/test_linearembedding0.cpp
     standard/test_linearembedding1.cpp
     standard/test_linearembedding2.cpp
     standard/test_linearembedding3.cpp
     standard/test_linearembedding4.cpp
     standard/test_linearembedding5.cpp
+    standard/test_linearembedding.hpp
     standard/test_multivariatepolynomials0.cpp
     standard/test_multivariatepolynomials1.cpp
     standard/test_multivariatepolynomials2.cpp
     standard/test_multivariatepolynomials3.cpp
     standard/test_multivariatepolynomials4.cpp
     standard/test_multivariatepolynomials5.cpp
+    standard/test_multivariatepolynomials.hpp
     standard/test_split_and_bundle.cpp
+    standard/test_split_and_bundle.hpp
     standard/test_tuple.cpp
-    standard/test_typle.cpp)
+    standard/test_tuple.hpp
+    standard/test_typle.cpp
+    standard/test_typle.hpp)
 add_executable(test standard/test.cpp ${test_SRCS})
 include_directories(${tensorheaven_test_SOURCE_DIR}/../include
                     ${tensorheaven_test_SOURCE_DIR}/lvd
