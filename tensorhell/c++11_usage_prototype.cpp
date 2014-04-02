@@ -839,43 +839,46 @@ Value_t<bool,And_f<Typle_t<Types_...>>::V> and_ (Typle_t<Types_...> const &)
     return Value_t<bool,And_f<Typle_t<Types_...>>::V>();
 }
 
-// alternate way to define it using only C++ functions
+// alternate way to define it using only C++ functions (doesn't seem to work in GCC 4.8)
 
-True and__ () { return True(); }
+// True and__ () { return True(); }
+// 
+// // template <bool C_>
+// // auto and__ (Value_t<bool,C_> v) -> decltype(v) { return v; }
+// template <bool C_>
+// Value_t<bool,C_> and__ (Value_t<bool,C_> v) { return v; }
+// 
+// // this forward declaration is necessary for the deduced return type to work
+// template <typename Head_, typename... BodyTypes_>
+// auto and__ (Head_ head, BodyTypes_... body) -> decltype(head && and__(body...));
+// 
+// template <typename Head_, typename... BodyTypes_>
+// auto and__ (Head_ head, BodyTypes_... body) -> decltype(head && and__(body...))
+// {
+//     return head && and__(body...);
+// }
 
-template <bool C_>
-auto and__ (Value_t<bool,C_> const &v) -> decltype(v) { return v; }
+// alternate way to define it using only C++ functions (doesn't seem to work in GCC 4.8)
 
-// this forward declaration is necessary for the deduced return type to work
-template <typename Head_, typename... BodyTypes_>
-auto and__ (Head_ const &head, BodyTypes_... body) -> decltype(head && and__(body...));
-
-template <typename Head_, typename... BodyTypes_>
-auto and__ (Head_ const &head, BodyTypes_... body) -> decltype(head && and__(body...))
-{
-    return head && and__(body...);
-}
-
-
-template <typename Function_e_>
-Typle_t<> on_each_ (Typle_t<> const &, Function_e_ const &f)
-{
-    return Typle_t<>();
-}
-
-// this forward declaration is apparently necessary for the recursive definition
-// and the auto/decltype return type inference to work together.
-template <typename Head_, typename... BodyTypes_, typename Function_e_>
-auto on_each_ (Typle_t<Head_,BodyTypes_...> const &t, Function_e_ const &f)
-    -> decltype(head_body_typle(f(head(t)),on_each_(body_typle(t),f)));
-
-template <typename Head_, typename... BodyTypes_, typename Function_e_>
-auto on_each_ (Typle_t<Head_,BodyTypes_...> const &t, Function_e_ const &f)
-    -> decltype(head_body_typle(f(head(t)),on_each_(body_typle(t),f)))
-{
-    // apply f to the head and call on_each_ recursively on the body typle
-    return head_body_typle(f(head(t)),on_each_(body_typle(t),f));
-}
+// template <typename Function_e_>
+// Typle_t<> on_each_ (Typle_t<> const &, Function_e_ const &f)
+// {
+//     return Typle_t<>();
+// }
+// 
+// // this forward declaration is apparently necessary for the recursive definition
+// // and the auto/decltype return type inference to work together.
+// template <typename Head_, typename... BodyTypes_, typename Function_e_>
+// auto on_each_ (Typle_t<Head_,BodyTypes_...> const &t, Function_e_ const &f)
+//     -> decltype(head_body_typle(f(head(t)),on_each_(body_typle(t),f)));
+// 
+// template <typename Head_, typename... BodyTypes_, typename Function_e_>
+// auto on_each_ (Typle_t<Head_,BodyTypes_...> const &t, Function_e_ const &f)
+//     -> decltype(head_body_typle(f(head(t)),on_each_(body_typle(t),f)))
+// {
+//     // apply f to the head and call on_each_ recursively on the body typle
+//     return head_body_typle(f(head(t)),on_each_(body_typle(t),f));
+// }
 
 /*
 // #define MAKE_THINGY_2(function_name, expression, param0, param1, ...) \
@@ -936,32 +939,33 @@ void prototyping_for_other_awesomeness ()
     std::cout << FORMAT_VALUE(type_string_of(and_(typle(True(), True(), True())))) << '\n';
     std::cout << '\n';
 
-    std::cout << FORMAT_VALUE(type_string_of(and__())) << '\n';
-    std::cout << FORMAT_VALUE(type_string_of(and__(False()))) << '\n';
-    std::cout << FORMAT_VALUE(type_string_of(and__(True()))) << '\n';
-    std::cout << FORMAT_VALUE(type_string_of(and__(False(), False()))) << '\n';
-    std::cout << FORMAT_VALUE(type_string_of(and__(False(), True()))) << '\n';
-    std::cout << FORMAT_VALUE(type_string_of(and__(True(),  False()))) << '\n';
-    std::cout << FORMAT_VALUE(type_string_of(and__(True(),  True()))) << '\n';
-    std::cout << FORMAT_VALUE(type_string_of(and__(False(), False(), False()))) << '\n';
-    std::cout << FORMAT_VALUE(type_string_of(and__(False(), False(), True()))) << '\n';
-    std::cout << FORMAT_VALUE(type_string_of(and__(False(), True(),  False()))) << '\n';
-    std::cout << FORMAT_VALUE(type_string_of(and__(False(), True(),  True()))) << '\n';
-    std::cout << FORMAT_VALUE(type_string_of(and__(True(),  False(), False()))) << '\n';
-    std::cout << FORMAT_VALUE(type_string_of(and__(True(),  False(), True()))) << '\n';
-    std::cout << FORMAT_VALUE(type_string_of(and__(True(),  True(),  False()))) << '\n';
-    std::cout << FORMAT_VALUE(type_string_of(and__(True(),  True(),  True()))) << '\n';
-    std::cout << '\n';
-
-    std::cout << FORMAT_VALUE(type_string_of(and__(true_,  false_, true_))) << '\n';
-    std::cout << '\n';
+//     std::cout << FORMAT_VALUE(type_string_of(and__())) << '\n';
+//     std::cout << FORMAT_VALUE(type_string_of(and__(False()))) << '\n';
+//     std::cout << FORMAT_VALUE(type_string_of(and__(True()))) << '\n';
+//     std::cout << FORMAT_VALUE(type_string_of(and__(False(), False()))) << '\n';
+//     std::cout << FORMAT_VALUE(type_string_of(and__(False(), True()))) << '\n';
+//     std::cout << FORMAT_VALUE(type_string_of(and__(True(),  False()))) << '\n';
+//     std::cout << FORMAT_VALUE(type_string_of(and__(True(),  True()))) << '\n';
+//     std::cout << FORMAT_VALUE(type_string_of(and__(False(), False(), False()))) << '\n';
+//     std::cout << FORMAT_VALUE(type_string_of(and__(False(), False(), True()))) << '\n';
+//     std::cout << FORMAT_VALUE(type_string_of(and__(False(), True(),  False()))) << '\n';
+//     std::cout << FORMAT_VALUE(type_string_of(and__(False(), True(),  True()))) << '\n';
+//     std::cout << FORMAT_VALUE(type_string_of(and__(True(),  False(), False()))) << '\n';
+//     std::cout << FORMAT_VALUE(type_string_of(and__(True(),  False(), True()))) << '\n';
+//     std::cout << FORMAT_VALUE(type_string_of(and__(True(),  True(),  False()))) << '\n';
+//     std::cout << FORMAT_VALUE(type_string_of(and__(True(),  True(),  True()))) << '\n';
+//     std::cout << '\n';
+// 
+//     std::cout << FORMAT_VALUE(type_string_of(and__(true_,  false_, true_))) << '\n';
+//     std::cout << '\n';
 
     {
         IsValue_e is_value;
         std::cout << FORMAT_VALUE(type_string_of(is_value(int()))) << '\n';
         std::cout << FORMAT_VALUE(type_string_of(is_value(true_))) << '\n';
         decltype(typle(true_,int())) t;
-        std::cout << FORMAT_VALUE(type_string_of(on_each_(t,is_value))) << '\n';
+        std::cout << FORMAT_VALUE(type_string_of(on_each(t,is_value))) << '\n';
+//         std::cout << FORMAT_VALUE(type_string_of(on_each_(t,is_value))) << '\n';
         std::cout << '\n';
     }
     // {
