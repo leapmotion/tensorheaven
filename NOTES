@@ -93,6 +93,9 @@
   of Typle_t.  Similarly, when direct sum indices are implemented, use DirectSum_c.
 - make tensor-product-able things implement a "HasDefinedTensorProduct_f" metafunction which
   returns true, so that operator * can be used with an std::enable_if.  Same with direct sum.
+- write check to make sure that a LinearEmbedding_c actually is an embedding.
+- add "invertible" property to LinearEmbedding_c, and an induced inverted embedding
+- composition of LinearEmbedding_c objects.
 
 
 ###implemented features/items:
