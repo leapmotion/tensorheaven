@@ -96,6 +96,9 @@
 - write check to make sure that a LinearEmbedding_c actually is an embedding.
 - add "invertible" property to LinearEmbedding_c, and an induced inverted embedding
 - composition of LinearEmbedding_c objects.
+- change enum string access functions to use switch statements on enum values so that the
+  compiler can check for missing cases.
+- consider changing ::T and ::V to ::type and ::value to be consistent with the STL.
 
 
 ###implemented features/items:

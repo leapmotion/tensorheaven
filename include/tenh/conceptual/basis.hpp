@@ -116,38 +116,19 @@ private:
 };
 
 template <typename Typle_>
-struct AllTypesHaveBasisStructures_f // TEMP
+struct AllTypesHaveBasisStructures_f // TEMP: TODO: implement via EachTypeSatisfiesPredicate_f
 {
     static bool const V = And_f<typename OnEach_f<Typle_,HasBasisStructure_e>::T>::V;
 };
 
 template <typename Typle_>
-struct AllTypesHaveUniqueBasisStructures_f
+struct AllTypesHaveUniqueBasisStructures_f // TEMP: TODO: implement via EachTypeSatisfiesPredicate_f
 {
     static bool const V = And_f<typename OnEach_f<Typle_,HasUniqueBasisStructure_e>::T>::V;
 };
 
 MAKE_1_ARY_VALUE_EVALUATOR(AllTypesHaveUniqueBasisStructures);
 
-/*
-// TODO: change usage of this into EachTypeSatisfiesPredicate_f (or whatever)
-template <typename SummandTyple_>
-struct AllFactorsAreBases_f
-{
-    static bool const V = HasBasisStructure_f<typename Head_f<SummandTyple_>::T>::V &&
-                          AllFactorsAreBases_f<typename BodyTyple_f<SummandTyple_>::T>::V;
-private:
-    AllFactorsAreBases_f();
-};
-
-template <>
-struct AllFactorsAreBases_f<Typle_t<>>
-{
-    static bool const V = true;
-private:
-    AllFactorsAreBases_f();
-};
-*/
 // TODO: use OnEach_f
 template <typename Typle_>
 struct IdsOfTyple_f
