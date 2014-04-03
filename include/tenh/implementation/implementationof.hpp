@@ -23,9 +23,9 @@ namespace Tenh {
 
 // these are for the UseArrayType parameter in ImplementationOf_t
 
-template <bool COMPONENTS_ARE_CONST_>
+template <ComponentsAreConst COMPONENTS_ARE_CONST_>
 struct UseMemberArray_t { static std::string type_as_string (bool verbose) { return "UseMemberArray_t<" + FORMAT(COMPONENTS_ARE_CONST_) + '>'; } };
-template <bool COMPONENTS_ARE_CONST_> struct DualOf_f<UseMemberArray_t<COMPONENTS_ARE_CONST_> >
+template <ComponentsAreConst COMPONENTS_ARE_CONST_> struct DualOf_f<UseMemberArray_t<COMPONENTS_ARE_CONST_>>
 {
     typedef UseMemberArray_t<COMPONENTS_ARE_CONST_> T;
 private:
@@ -38,16 +38,16 @@ template <typename T> struct IsUseMemberArray_f
 private:
     IsUseMemberArray_f();
 };
-template <bool COMPONENTS_ARE_CONST_> struct IsUseMemberArray_f<UseMemberArray_t<COMPONENTS_ARE_CONST_> >
+template <ComponentsAreConst COMPONENTS_ARE_CONST_> struct IsUseMemberArray_f<UseMemberArray_t<COMPONENTS_ARE_CONST_>>
 {
     static bool const V = true;
 private:
     IsUseMemberArray_f();
 };
 
-template <bool COMPONENTS_ARE_CONST_>
+template <ComponentsAreConst COMPONENTS_ARE_CONST_>
 struct UsePreallocatedArray_t { static std::string type_as_string (bool verbose) { return "UsePreallocatedArray_t<" + FORMAT(COMPONENTS_ARE_CONST_) + '>'; } };
-template <bool COMPONENTS_ARE_CONST_> struct DualOf_f<UsePreallocatedArray_t<COMPONENTS_ARE_CONST_> >
+template <ComponentsAreConst COMPONENTS_ARE_CONST_> struct DualOf_f<UsePreallocatedArray_t<COMPONENTS_ARE_CONST_>>
 {
     typedef UsePreallocatedArray_t<COMPONENTS_ARE_CONST_> T;
 private:
@@ -60,7 +60,7 @@ template <typename T> struct IsUsePreallocatedArray_f
 private:
     IsUsePreallocatedArray_f();
 };
-template <bool COMPONENTS_ARE_CONST_> struct IsUsePreallocatedArray_f<UsePreallocatedArray_t<COMPONENTS_ARE_CONST_> >
+template <ComponentsAreConst COMPONENTS_ARE_CONST_> struct IsUsePreallocatedArray_f<UsePreallocatedArray_t<COMPONENTS_ARE_CONST_>>
 {
     static bool const V = true;
 private:
@@ -70,7 +70,7 @@ private:
 template <typename ComponentGenerator_>
 struct UseProceduralArray_t
 {
-    enum { STATIC_ASSERT_IN_ENUM(IsComponentGenerator_t<ComponentGenerator_>::V, MUST_BE_COMPONENT_GENERATOR) };
+    static_assert(IsComponentGenerator_t<ComponentGenerator_>::V, "ComponentGenerator_ must be a ComponentGenerator_t");
 
     typedef ComponentGenerator_ ComponentGenerator;
 
@@ -86,7 +86,7 @@ template <typename T> struct IsUseProceduralArray_f
 private:
     IsUseProceduralArray_f();
 };
-template <typename ComponentGenerator_> struct IsUseProceduralArray_f<UseProceduralArray_t<ComponentGenerator_> >
+template <typename ComponentGenerator_> struct IsUseProceduralArray_f<UseProceduralArray_t<ComponentGenerator_>>
 {
     static bool const V = true;
 private:
@@ -97,7 +97,7 @@ private:
 // have a "typedef Concept_ Concept" and a "typedef UseArrayType_ UseArrayType".
 template <typename Concept_,
           typename Scalar_,
-          typename UseArrayType_ = UseMemberArray_t<COMPONENTS_ARE_NONCONST>,
+          typename UseArrayType_ = UseMemberArray_t<ComponentsAreConst::FALSE>,
           typename Derived_ = NullType>
 struct ImplementationOf_t;
 
@@ -106,7 +106,7 @@ template <typename Concept_,
           typename Scalar_,
           typename UseArrayType_,
           typename Derived_>
-struct IsImplementationOf_f<ImplementationOf_t<Concept_,Scalar_,UseArrayType_,Derived_> >
+struct IsImplementationOf_f<ImplementationOf_t<Concept_,Scalar_,UseArrayType_,Derived_>>
 {
     static bool const V = true;
 };
@@ -126,22 +126,22 @@ struct TypeStringOf_t<ImplementationOf_t<Concept_,Scalar_,UseArrayType_,Derived_
 
 template <typename T_> struct ComponentQualifierOfArrayType_f;
 
-template <bool COMPONENTS_ARE_CONST_>
-struct ComponentQualifierOfArrayType_f<UseMemberArray_t<COMPONENTS_ARE_CONST_> >
+template <ComponentsAreConst COMPONENTS_ARE_CONST_>
+struct ComponentQualifierOfArrayType_f<UseMemberArray_t<COMPONENTS_ARE_CONST_>>
 {
-    static ComponentQualifier const V = COMPONENTS_ARE_CONST_ ? COMPONENTS_ARE_CONST_MEMORY : COMPONENTS_ARE_NONCONST_MEMORY;
+    static ComponentQualifier const V = bool(COMPONENTS_ARE_CONST_) ? ComponentQualifier::CONST_MEMORY : ComponentQualifier::NONCONST_MEMORY;
 };
 
-template <bool COMPONENTS_ARE_CONST_>
-struct ComponentQualifierOfArrayType_f<UsePreallocatedArray_t<COMPONENTS_ARE_CONST_> >
+template <ComponentsAreConst COMPONENTS_ARE_CONST_>
+struct ComponentQualifierOfArrayType_f<UsePreallocatedArray_t<COMPONENTS_ARE_CONST_>>
 {
-    static ComponentQualifier const V = COMPONENTS_ARE_CONST_ ? COMPONENTS_ARE_CONST_MEMORY : COMPONENTS_ARE_NONCONST_MEMORY;
+    static ComponentQualifier const V = bool(COMPONENTS_ARE_CONST_) ? ComponentQualifier::CONST_MEMORY : ComponentQualifier::NONCONST_MEMORY;
 };
 
 template <typename ComponentGenerator_>
-struct ComponentQualifierOfArrayType_f<UseProceduralArray_t<ComponentGenerator_> >
+struct ComponentQualifierOfArrayType_f<UseProceduralArray_t<ComponentGenerator_>>
 {
-    static ComponentQualifier const V = COMPONENTS_ARE_PROCEDURAL;
+    static ComponentQualifier const V = ComponentQualifier::PROCEDURAL;
 };
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -152,12 +152,12 @@ struct ComponentQualifierOfArrayType_f<UseProceduralArray_t<ComponentGenerator_>
 // (one of MemberArray_t, PreallocatedArray_t, ProceduralArray_t)
 template <typename Component_,
           Uint32 COMPONENT_COUNT_,
-          typename UseArrayType_,// = UseMemberArray_t<COMPONENTS_ARE_NONCONST>,
+          typename UseArrayType_,// = UseMemberArray_t<ComponentsAreConst::FALSE>,
           typename Derived_ = NullType>
 struct ArrayStorage_f;
 
 // template specialization for use of MemberArray_t
-template <typename Component_, Uint32 COMPONENT_COUNT_, bool COMPONENTS_ARE_CONST_, typename Derived_>
+template <typename Component_, Uint32 COMPONENT_COUNT_, ComponentsAreConst COMPONENTS_ARE_CONST_, typename Derived_>
 struct ArrayStorage_f<Component_,COMPONENT_COUNT_,UseMemberArray_t<COMPONENTS_ARE_CONST_>,Derived_>
 {
     typedef MemberArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> T;
@@ -165,7 +165,7 @@ private:
     ArrayStorage_f();
 };
 
-template <typename Component_, Uint32 COMPONENT_COUNT_, bool COMPONENTS_ARE_CONST_, typename Derived_>
+template <typename Component_, Uint32 COMPONENT_COUNT_, ComponentsAreConst COMPONENTS_ARE_CONST_, typename Derived_>
 struct ArrayStorage_f<Component_,COMPONENT_COUNT_,UsePreallocatedArray_t<COMPONENTS_ARE_CONST_>,Derived_>
 {
     typedef PreallocatedArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> T;
@@ -185,90 +185,91 @@ private:
 // helper metafunctions
 // ///////////////////////////////////////////////////////////////////////////
 
-template <typename TypeList_>
+// TODO: change these to use OnEach_f
+template <typename Typle_>
 struct ConceptOfEachTypeIn_f
 {
-    typedef TypeList_t<typename TypeList_::HeadType::Concept,
-                       typename ConceptOfEachTypeIn_f<typename TypeList_::BodyTypeList>::T> T;
+    typedef typename HeadBodyTyple_f<typename Head_f<Typle_>::T::Concept,
+                                     typename ConceptOfEachTypeIn_f<typename BodyTyple_f<Typle_>::T>::T>::T T;
 private:
     ConceptOfEachTypeIn_f();
 };
 
 template <>
-struct ConceptOfEachTypeIn_f<EmptyTypeList>
+struct ConceptOfEachTypeIn_f<Typle_t<>>
 {
-    typedef EmptyTypeList T;
+    typedef Typle_t<> T;
 private:
     ConceptOfEachTypeIn_f();
 };
 
-template <typename TypeList_>
+template <typename Typle_>
 struct ScalarOfEachTypeIn_f
 {
-    typedef TypeList_t<typename TypeList_::HeadType::Scalar,
-                       typename ScalarOfEachTypeIn_f<typename TypeList_::BodyTypeList>::T> T;
+    typedef typename HeadBodyTyple_f<typename Head_f<Typle_>::T::Scalar,
+                                     typename ScalarOfEachTypeIn_f<typename BodyTyple_f<Typle_>::T>::T>::T T;
 private:
     ScalarOfEachTypeIn_f();
 };
 
 template <>
-struct ScalarOfEachTypeIn_f<EmptyTypeList>
+struct ScalarOfEachTypeIn_f<Typle_t<>>
 {
-    typedef EmptyTypeList T;
+    typedef Typle_t<> T;
 private:
     ScalarOfEachTypeIn_f();
 };
 
-template <typename TypeList_>
+template <typename Typle_>
 struct EachTypeUsesProceduralArray_f
 {
-    static bool const V = IsUseProceduralArray_f<typename TypeList_::HeadType::UseArrayType>::V &&
-                          EachTypeUsesProceduralArray_f<typename TypeList_::BodyTypeList>::V;
+    static bool const V = IsUseProceduralArray_f<typename Head_f<Typle_>::T::UseArrayType>::V &&
+                          EachTypeUsesProceduralArray_f<typename BodyTyple_f<Typle_>::T>::V;
 private:
     EachTypeUsesProceduralArray_f();
 };
 
 template <>
-struct EachTypeUsesProceduralArray_f<EmptyTypeList>
+struct EachTypeUsesProceduralArray_f<Typle_t<>>
 {
     static bool const V = true; // vacuously true
 private:
     EachTypeUsesProceduralArray_f();
 };
 
-template <typename TensorProductOfBasedVectorSpacesTypeList_>
+template <typename TensorProductOfBasedVectorSpacesTyple_>
 struct EachTypeIsA2TensorProductOfBasedVectorSpaces_f
 {
-    static bool const V = IsTensorProductOfBasedVectorSpaces_f<typename TensorProductOfBasedVectorSpacesTypeList_::HeadType>::V &&
-                          (FactorTypeListOf_f<typename TensorProductOfBasedVectorSpacesTypeList_::HeadType>::T::LENGTH == 2) &&
-                          EachTypeIsA2TensorProductOfBasedVectorSpaces_f<typename TensorProductOfBasedVectorSpacesTypeList_::BodyTypeList>::V;
+    static bool const V = IsTensorProductOfBasedVectorSpaces_f<typename Head_f<TensorProductOfBasedVectorSpacesTyple_>::T>::V &&
+                          (Length_f<typename FactorTypleOf_f<typename Head_f<TensorProductOfBasedVectorSpacesTyple_>::T>::T>::V == 2) &&
+                          EachTypeIsA2TensorProductOfBasedVectorSpaces_f<typename BodyTyple_f<TensorProductOfBasedVectorSpacesTyple_>::T>::V;
 private:
     EachTypeIsA2TensorProductOfBasedVectorSpaces_f();
 };
 
 template <>
-struct EachTypeIsA2TensorProductOfBasedVectorSpaces_f<EmptyTypeList>
+struct EachTypeIsA2TensorProductOfBasedVectorSpaces_f<Typle_t<>>
 {
     static bool const V = true; // vacuously true
 private:
     EachTypeIsA2TensorProductOfBasedVectorSpaces_f();
 };
 
-template <Uint32 N_, typename TypeList_>
+template <Uint32 N_, typename Typle_>
 struct FactorNOfEachTypeIn_f
 {
 private:
-    typedef typename FactorTypeListOf_f<typename TypeList_::HeadType>::T FactorTypeListOfHead;
+    typedef typename FactorTypleOf_f<typename Head_f<Typle_>::T>::T FactorTypleOfHead;
     FactorNOfEachTypeIn_f();
 public:
-    typedef TypeList_t<typename Element_f<FactorTypeListOfHead,N_>::T,
-                       typename FactorNOfEachTypeIn_f<N_,typename TypeList_::BodyTypeList>::T> T;
+    typedef typename HeadBodyTyple_f<typename Element_f<FactorTypleOfHead,N_>::T,
+                                     typename FactorNOfEachTypeIn_f<N_,typename BodyTyple_f<Typle_>::T>::T>::T T;
 };
 
 template <Uint32 N_>
-struct FactorNOfEachTypeIn_f<N_,EmptyTypeList>
+struct FactorNOfEachTypeIn_f<N_,Typle_t<>>
 {
-    typedef EmptyTypeList T;
+    typedef Typle_t<> T;
 private:
     FactorNOfEachTypeIn_f();
 };

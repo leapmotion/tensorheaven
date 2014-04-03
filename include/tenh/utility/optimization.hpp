@@ -85,7 +85,7 @@ template <typename ObjectiveFunction_,
           typename BasedVectorSpace_,
           ComponentQualifier COMPONENT_QUALIFIER_>
 bool geometric_step (ObjectiveFunction_ const &f,
-                     Vector_i<Derived1_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_NONCONST_MEMORY> &position,
+                     Vector_i<Derived1_,Scalar_,BasedVectorSpace_,ComponentQualifier::NONCONST_MEMORY> &position,
                      Vector_i<Derived2_,Scalar_,BasedVectorSpace_,COMPONENT_QUALIFIER_> const &step,
                      Scalar_ scale_factor,
                      Uint32 max_iteration_count)
@@ -125,7 +125,7 @@ template <typename ObjectiveFunction_,
           typename BasedVectorSpace_,
           ComponentQualifier COMPONENT_QUALIFIER_>
 bool uniform_step (ObjectiveFunction_ const &f,
-                   Vector_i<Derived1_,Scalar_,BasedVectorSpace_,COMPONENTS_ARE_NONCONST_MEMORY> &position,
+                   Vector_i<Derived1_,Scalar_,BasedVectorSpace_,ComponentQualifier::NONCONST_MEMORY> &position,
                    Vector_i<Derived2_,Scalar_,BasedVectorSpace_,COMPONENT_QUALIFIER_> const &step,
                    Uint32 substep_count = 1)
 {
@@ -182,16 +182,17 @@ template <typename InnerProductId_, typename ObjectiveFunction_, typename BasedV
 ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const &func,
                                                         ImplementationOf_t<BasedVectorSpace_,Scalar_,GuessUseArrayType_,Derived_> const &guess,
                                                         Scalar_ tolerance,
-                                                        Scalar_ *minimum = NULL)
+                                                        Scalar_ *minimum = nullptr)
 {
     typedef ImplementationOf_t<BasedVectorSpace_,Scalar_> VectorType;
     typedef typename InnerProduct_f<BasedVectorSpace_,InnerProductId_,Scalar_>::T VectorInnerProductType;
     typedef ImplementationOf_t<typename DualOf_f<BasedVectorSpace_>::T,Scalar_> CoVectorType;
     typedef typename InnerProduct_f<typename DualOf_f<BasedVectorSpace_>::T,InnerProductId_,Scalar_>::T CoVectorInnerProductType;
     typedef typename ObjectiveFunction_::D2 HessianType;
-    typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<typename DualOf_f<BasedVectorSpace_>::T, TypeList_t<typename DualOf_f<BasedVectorSpace_>::T> > >,Scalar_> Hessian2TensorType;
-    STATIC_ASSERT_TYPES_ARE_EQUAL(VectorType, typename ObjectiveFunction_::V);
-    STATIC_ASSERT_TYPES_ARE_EQUAL(Scalar_, typename ObjectiveFunction_::Out);
+    typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<Typle_t<typename DualOf_f<BasedVectorSpace_>::T,
+                                                                          typename DualOf_f<BasedVectorSpace_>::T>>,Scalar_> Hessian2TensorType;
+    static_assert(TypesAreEqual_f<VectorType,typename ObjectiveFunction_::V>::V, "types must match");
+    static_assert(TypesAreEqual_f<Scalar_,typename ObjectiveFunction_::Out>::V, "types must match");
     static Scalar_ const LINE_SEARCH_GEOMETRIC_STEP_FACTOR = Scalar_(0.5);
     static Uint32 const LINE_SEARCH_GEOMETRIC_STEP_MAX_ITERATION_COUNT = 10;
     static int const LINE_SEARCH_UNIFORM_STEP_SUBSTEP_COUNT = 50;
@@ -233,7 +234,7 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_> minimize (ObjectiveFunction_ const
         if (g_norm <= tolerance)
         {
             // tolerance_was_attained = true;
-            if (minimum != NULL)
+            if (minimum != nullptr)
                 *minimum = current_value;
             break;
         }
@@ -325,8 +326,8 @@ ImplementationOf_t<BasedVectorSpace_,Scalar_>
     typedef typename InnerProduct_f<BasedVectorSpace_,InnerProductId_,Scalar_>::T VectorInnerProductType;
     typedef ImplementationOf_t<typename DualOf_f<BasedVectorSpace_>::T,Scalar_> CoVectorType;
     typedef typename InnerProduct_f<typename DualOf_f<BasedVectorSpace_>::T,InnerProductId_,Scalar_>::T CoVectorInnerProductType;
-    STATIC_ASSERT_TYPES_ARE_EQUAL(VectorType, typename ObjectiveFunction_::V);
-    STATIC_ASSERT_TYPES_ARE_EQUAL(Scalar_, typename ObjectiveFunction_::Out);
+    static_assert(TypesAreEqual_f<VectorType,typename ObjectiveFunction_::V>::V, "types must match");
+    static_assert(TypesAreEqual_f<Scalar_,typename ObjectiveFunction_::Out>::V, "types must match");
     static int const LINE_SEARCH_SAMPLE_COUNT = 50;
     static Scalar_ const STEP_SCALE = Scalar_(1);
     static bool const PRINT_DEBUG_OUTPUT = false;
@@ -419,7 +420,7 @@ void randomize (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENT_QUALIFIER_
                 Scalar_ const &inner_radius,
                 Scalar_ const &outer_radius)
 {
-    STATIC_ASSERT(COMPONENT_QUALIFIER_ != COMPONENTS_ARE_PROCEDURAL, MUST_NOT_BE_COMPONENTS_ARE_PROCEDURAL);
+    static_assert(COMPONENT_QUALIFIER_ != ComponentQualifier::PROCEDURAL, "must not use procedural components");
     Scalar_ squared_inner_radius = sqr(inner_radius);
     Scalar_ squared_outer_radius = sqr(outer_radius);
     Scalar_ sqn;
@@ -449,7 +450,7 @@ ImplementationOf_t<BasedVectorSpace_,typename ObjectiveFunction_::Scalar>
                                  typename ObjectiveFunction_::Scalar search_radius,
                                  Uint32 sample_count = 10000,
                                  Uint32 max_iteration_count = 8,
-                                 typename ObjectiveFunction_::Scalar *minimum = NULL)
+                                 typename ObjectiveFunction_::Scalar *minimum = nullptr)
 {
     typedef typename ObjectiveFunction_::Scalar Scalar;
     assert(search_radius > Scalar(0) && "search_radius must be positive");
@@ -484,7 +485,7 @@ ImplementationOf_t<BasedVectorSpace_,typename ObjectiveFunction_::Scalar>
         search_radius /= Scalar(2);
     }
 
-    if (minimum != NULL)
+    if (minimum != nullptr)
         *minimum = min;
 
     return minimizer;

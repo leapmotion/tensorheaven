@@ -11,40 +11,40 @@
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/implementation/implementationof.hpp"
 #include "tenh/interface/tensor.hpp"
-#include "tenh/meta/tuple.hpp"
+#include "tenh/tuple.hpp"
 
 namespace Tenh {
 
-template <typename FactorTypeList_, typename Scalar_, typename UseArrayType_, typename Derived_>
-struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Scalar_,UseArrayType_,Derived_>
+template <typename FactorTyple_, typename Scalar_, typename UseArrayType_, typename Derived_>
+struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTyple_>,Scalar_,UseArrayType_,Derived_>
     :
-    public Tensor_i<typename DerivedType_f<Derived_,ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Scalar_,UseArrayType_,Derived_> >::T,
+    public Tensor_i<typename DerivedType_f<Derived_,ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTyple_>,Scalar_,UseArrayType_,Derived_>>::T,
                     Scalar_,
-                    TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,
+                    TensorProductOfBasedVectorSpaces_c<FactorTyple_>,
                     ComponentQualifierOfArrayType_f<UseArrayType_>::V>,
     // privately inherited because it is an implementation detail
     private ArrayStorage_f<Scalar_,
-                           DimensionOf_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >::V,
+                           DimensionOf_f<TensorProductOfBasedVectorSpaces_c<FactorTyple_>>::V,
                            UseArrayType_,
-                           typename DerivedType_f<Derived_, ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Scalar_,UseArrayType_,Derived_> >::T >::T
+                           typename DerivedType_f<Derived_, ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTyple_>,Scalar_,UseArrayType_,Derived_>>::T >::T
 {
-    typedef Tensor_i<typename DerivedType_f<Derived_,ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Scalar_,UseArrayType_,Derived_> >::T,
+    typedef Tensor_i<typename DerivedType_f<Derived_,ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTyple_>,Scalar_,UseArrayType_,Derived_>>::T,
                      Scalar_,
-                     TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,
+                     TensorProductOfBasedVectorSpaces_c<FactorTyple_>,
                      ComponentQualifierOfArrayType_f<UseArrayType_>::V> Parent_Tensor_i;
     typedef typename ArrayStorage_f<Scalar_,
-                                    DimensionOf_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >::V,
+                                    DimensionOf_f<TensorProductOfBasedVectorSpaces_c<FactorTyple_>>::V,
                                     UseArrayType_,
-                                    typename DerivedType_f<Derived_, ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Scalar_,UseArrayType_,Derived_> >::T >::T Parent_Array_i;
+                                    typename DerivedType_f<Derived_, ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTyple_>,Scalar_,UseArrayType_,Derived_>>::T >::T Parent_Array_i;
 
-    typedef TensorProductOfBasedVectorSpaces_c<FactorTypeList_> Concept;
+    typedef TensorProductOfBasedVectorSpaces_c<FactorTyple_> Concept;
     typedef UseArrayType_ UseArrayType;
     typedef typename Parent_Tensor_i::Derived Derived;
     typedef typename Parent_Tensor_i::Scalar Scalar;
     using Parent_Tensor_i::DIM;
     typedef typename Parent_Tensor_i::ComponentIndex ComponentIndex;
 
-    typedef typename Parent_Tensor_i::FactorTypeList FactorTypeList;
+    typedef typename Parent_Tensor_i::FactorTyple FactorTyple;
     typedef typename Parent_Tensor_i::MultiIndex MultiIndex;
     using Parent_Tensor_i::ORDER;
     using Parent_Tensor_i::IS_TENSOR_I;
@@ -65,8 +65,8 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
     template <Uint32 INDEX_>
     struct BasisVector_f
     {
+        static_assert(INDEX_ < Parent_Tensor_i::DIM, "index out of range");
     private:
-        enum { STATIC_ASSERT_IN_ENUM((INDEX_ < Parent_Tensor_i::DIM), INDEX_OUT_OF_RANGE) };
         BasisVector_f () { }
         typedef typename ComponentGenerator_Characteristic_f<Scalar_,Parent_Tensor_i::DIM,INDEX_>::T ComponentGenerator;
     public:
@@ -88,7 +88,7 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
         :
         Parent_Array_i(Static<WithoutInitialization>::SINGLETON)
     {
-        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
+        static_assert(IsUseMemberArray_f<UseArrayType_>::V, "UseArrayType_ must be a UseMemberArray_t type");
         // TODO: could make this use MemoryArray_i::copy_from (?)
         for (ComponentIndex i; i.is_not_at_end(); ++i)
             (*this)[i] = x[i];
@@ -99,54 +99,54 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
         :
         Parent_Array_i(fill_with)
     {
-        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
+        static_assert(IsUseMemberArray_f<UseArrayType_>::V, "UseArrayType_ must be a UseMemberArray_t type");
     }
     // this is the tuple-based constructor
-    template <typename HeadType_, typename BodyTypeList_>
-    ImplementationOf_t (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x)
+    template <typename... Types_>
+    ImplementationOf_t (Tuple_t<Typle_t<Types_...>> const &x)
         :
         Parent_Array_i(x.as_member_array())
     {
-        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
+        static_assert(IsUseMemberArray_f<UseArrayType_>::V, "UseArrayType_ must be a UseMemberArray_t type");
     }
 
     // only use these if UsePreallocatedArray_t<...> is specified
 
-    explicit ImplementationOf_t (QualifiedComponent *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+    explicit ImplementationOf_t (QualifiedComponent *pointer_to_allocation, CheckPointer check_pointer = CheckPointer::TRUE)
         :
         Parent_Array_i(pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "UseArrayType_ must be a UsePreallocatedArray_t type");
     }
     // similar to a copy constructor, except initializes from a Vector_i.
     // this was chosen to be explicit to avoid unnecessary copies.
     template <typename OtherDerived_, ComponentQualifier OTHER_COMPONENT_QUALIFIER_>
     ImplementationOf_t (Vector_i<OtherDerived_,Scalar_,Concept,OTHER_COMPONENT_QUALIFIER_> const &x,
-                        QualifiedComponent *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+                        QualifiedComponent *pointer_to_allocation, CheckPointer check_pointer = CheckPointer::TRUE)
         :
         Parent_Array_i(pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "UseArrayType_ must be a UsePreallocatedArray_t type");
         // TODO: could make this use MemoryArray_i::copy_from (?)
         for (ComponentIndex i; i.is_not_at_end(); ++i)
             (*this)[i] = x[i];
     }
     template <typename T_>
     ImplementationOf_t (FillWith_t<T_> const &fill_with,
-                        QualifiedComponent *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+                        QualifiedComponent *pointer_to_allocation, CheckPointer check_pointer = CheckPointer::TRUE)
         :
         Parent_Array_i(fill_with, pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "UseArrayType_ must be a UsePreallocatedArray_t type");
     }
     // this is the tuple-based constructor
-    template <typename HeadType_, typename BodyTypeList_>
-    ImplementationOf_t (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x,
-                        QualifiedComponent *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+    template <typename... Types_>
+    ImplementationOf_t (Tuple_t<Typle_t<Types_...>> const &x,
+                        QualifiedComponent *pointer_to_allocation, CheckPointer check_pointer = CheckPointer::TRUE)
         :
         Parent_Array_i(x, pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "UseArrayType_ must be a UsePreallocatedArray_t type");
     }
 
     // only use this if UseProceduralArray_t<...> is specified
@@ -154,15 +154,15 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
         :
         Parent_Array_i(WithoutInitialization()) // sort of meaningless constructor
     {
-        STATIC_ASSERT(IsUseProceduralArray_f<UseArrayType_>::V, MUST_BE_USE_PROCEDURAL_ARRAY);
+        static_assert(IsUseProceduralArray_f<UseArrayType_>::V || DIM == 0, "UseArrayType_ must be UseProceduralArray_t or space must be 0-dimensional");
     }
 
-    template <typename BundleIndexTypeList, typename BundledIndex>
-    static MultiIndex_t<BundleIndexTypeList> bundle_index_map (BundledIndex const &b)
+    template <typename BundleIndexTyple, typename BundledIndex>
+    static MultiIndex_t<BundleIndexTyple> bundle_index_map (BundledIndex const &b)
     {
-        STATIC_ASSERT(IsComponentIndex_f<BundledIndex>::V, MUST_BE_COMPONENT_INDEX);
+        static_assert(IsComponentIndex_f<BundledIndex>::V, "BundledIndex must be ComponentIndex_t");
         // this constructor breaks the vector index apart into a row-major multi-index
-        return MultiIndex_t<BundleIndexTypeList>(b);
+        return MultiIndex_t<BundleIndexTyple>(b);
     }
 
     using Parent_Array_i::as_derived;
@@ -183,17 +183,17 @@ struct ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Sc
     using Parent_Tensor_i::vector_index_of;
 };
 
-template <typename FactorTypeList_, typename Scalar_, typename UseArrayType_, typename Derived_>
-typename ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Scalar_,UseArrayType_,Derived_>::Zero const ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Scalar_,UseArrayType_,Derived_>::ZERO;
+template <typename FactorTyple_, typename Scalar_, typename UseArrayType_, typename Derived_>
+typename ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTyple_>,Scalar_,UseArrayType_,Derived_>::Zero const ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTyple_>,Scalar_,UseArrayType_,Derived_>::ZERO;
 
-template <typename FactorTypeList_, typename Scalar_, typename UseArrayType_, typename Derived_>
+template <typename FactorTyple_, typename Scalar_, typename UseArrayType_, typename Derived_>
 template <Uint32 INDEX_>
-typename ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Scalar_,UseArrayType_,Derived_>::template BasisVector_f<INDEX_>::T const ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Scalar_,UseArrayType_,Derived_>::BasisVector_f<INDEX_>::V;
+typename ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTyple_>,Scalar_,UseArrayType_,Derived_>::template BasisVector_f<INDEX_>::T const ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTyple_>,Scalar_,UseArrayType_,Derived_>::BasisVector_f<INDEX_>::V;
 
-template <typename FactorTypeList_, typename Scalar_, typename UseArrayType_, typename Derived_>
-struct DualOf_f<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,Scalar_,UseArrayType_,Derived_> >
+template <typename FactorTyple_, typename Scalar_, typename UseArrayType_, typename Derived_>
+struct DualOf_f<ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<FactorTyple_>,Scalar_,UseArrayType_,Derived_>>
 {
-    typedef ImplementationOf_t<typename DualOf_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_> >::T,Scalar_,typename DualOf_f<UseArrayType_>::T,typename DualOf_f<Derived_>::T> T;
+    typedef ImplementationOf_t<typename DualOf_f<TensorProductOfBasedVectorSpaces_c<FactorTyple_>>::T,Scalar_,typename DualOf_f<UseArrayType_>::T,typename DualOf_f<Derived_>::T> T;
 private:
     DualOf_f();
 };

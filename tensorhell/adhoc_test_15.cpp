@@ -53,7 +53,7 @@ void test_terse_strings ()
                               TensorPowerOfBasedVectorSpace_f<3,BX>::T,
                               double,
                               NaturalEmbedding,
-                              DISABLE_EXCEPTIONS>::T linear_embedding;
+                              WithExceptions::DISABLED>::T linear_embedding;
             std::cout << FORMAT_VALUE(terse_string_of(linear_embedding)) << '\n';
         }
     }

@@ -7,7 +7,7 @@
 void test_poly_in_0_dim ()
 {
     std::cout << "Polynomials in 0 dimensions." << '\n';
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,0,IdX>,Basis_c<IdX> > BasedVectorSpace;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,0,IdX>,Basis_c<IdX>> BasedVectorSpace;
     typedef MultivariatePolynomial<2,BasedVectorSpace> PolyType;
     PolyType::SymDual w(fill_with(0));
     MultivariatePolynomial<1,BasedVectorSpace>::SymDual x(fill_with(1));
@@ -33,11 +33,11 @@ void test_poly_in_0_dim ()
 void test_poly_in_1_dim ()
 {
     std::cout << "Polynomials in 1 dimension." << '\n';
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,1,IdX>,Basis_c<IdX> > BasedVectorSpace;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,1,IdX>,Basis_c<IdX>> BasedVectorSpace;
     typedef MultivariatePolynomial<2,BasedVectorSpace> PolyType;
     PolyType::SymDual w(fill_with(0));
     MultivariatePolynomial<1,BasedVectorSpace>::SymDual x(fill_with(1));
-    w[PolyType::SymDual::ComponentIndex(0, CHECK_RANGE)] = 1; // x^2
+    w[PolyType::SymDual::ComponentIndex(0, CheckRange::TRUE)] = 1; // x^2
     std::cout << FORMAT_VALUE(w) << '\n';
     PolyType roly(w,MultivariatePolynomial<1,BasedVectorSpace>(x,3));
     PolyType poly(fill_with(0));

@@ -39,7 +39,7 @@
     * `Blah_m<...>` for meta-programmingy things like type lists, related metafunctions, or are
       "terminal" metaprogram types that aren't metafunctions (i.e. they are metaprogram values)
     * `Blah_f<...>` for meta-functions which "return" a type T or a value V
-- rename `List_t::body()` to `List_t::body_list()`, since the body list type is `BodyList`
+- maybe rename `Tuple_t::body()` to `Tuple_t::body_tuple()`, since the body type is `BodyTuple`
 - maybe change array (and array-like) indexing schemes to use signed integers, where negative
   values index from the end of the array (although this would come at a runtime cost).  this
   should probably not include vector/tensor indexing.  could do this with some type similar to
@@ -77,9 +77,29 @@
 - change metafunction predicates to use _e suffix, to regularize them with the ones produced
   by MAKE_X_ARY_VALUE_EVALUATOR.  maybe just make all predicates be generated using those
   macros from "primitive" metafunctions.
-- make a "2-tensor out of LinearEmbedding_c" procedural 2-tensor (is this actually useful?)
+- make a "2-tensor out of LinearEmbedding_c" procedural 2-tensor (is this actually useful?
+  yes, for printing/debugging)
+- make a "LinearEmbedding_c out of 2-tensor" LinearEmbedding_c, which could be useful for
+  more-easily constructing LinearEmbedding_c instances, since they (can) use lookup tables
+  anyway.
 - make an abstracted summation function/facility so that different methods for summation can
   be implemented -- e.g. fast-naive, or sorted-for-accuracy, etc.
+- maybe rename XXXXTyple to XXXXs for brevity.  this should easily be distinguished from the
+  XXXXs usage in "typename... XXXXs" because of the dereferencing "XXXXs...", though this
+  makes grepping for stuff harder.
+- move stuff into "primitive" directory, e.g. preallocatedarray.hpp, memoryarray.hpp, 
+  componentgenerator.hpp, componentindex.hpp, dimindex.hpp, list.hpp, etc.
+- make abstract multiindices use TensorProduct_c (or TensorProductOfAbstractIndices_c) instead
+  of Typle_t.  Similarly, when direct sum indices are implemented, use DirectSum_c.
+- make tensor-product-able things implement a "HasDefinedTensorProduct_f" metafunction which
+  returns true, so that operator * can be used with an std::enable_if.  Same with direct sum.
+- write check to make sure that a LinearEmbedding_c actually is an embedding.
+- add "invertible" property to LinearEmbedding_c, and an induced inverted embedding
+- composition of LinearEmbedding_c objects.
+- change enum string access functions to use switch statements on enum values so that the
+  compiler can check for missing cases.
+- consider changing ::T and ::V to ::type and ::value to be consistent with the STL.
+- make VERBOSE and TERSE strongly typed enums
 
 
 ###implemented features/items:
@@ -128,7 +148,7 @@
 
 
 ###different multi-indexing schemes
-- "split"                 : if t is `Tensor2<Tensor2Sym<V>,Tensor2Sym<V> >`, then `t(P,Q).split(P,i,j),split(Q,k,l)`
+- "split"                 : if t is `Tensor2<Tensor2Sym<V>,Tensor2Sym<V>>`, then `t(P,Q).split(P,i,j),split(Q,k,l)`
                             is converse to bundle, implementation would be similar.
 - "multi-index"           : if s is `Tensor2<Tensor5,V>`, then `s(i,j,k,l,m,T)` would be `s(multiindex(i,j,k,l,m),T`)
                             implementation may be difficult if there are nested multi-indices
@@ -137,7 +157,7 @@
                             recursive and relatively easy.  "breaking tensor type boxes apart recursively"
 - "barred multi-index"    : `s(i|j|k|l|m|T)`
 - "direct sum indices"    : if t is `DirectSum<V,V>`, and s and u are `V` then `t(i+j) = s(i) + u(j)` could work,
-                            also if t is `Tensor2<DirectSum<V,V>,DirectSum<V,V> >` and s and u are `Tensor2<V,V>`
+                            also if t is `Tensor2<DirectSum<V,V>,DirectSum<V,V>>` and s and u are `Tensor2<V,V>`
                             then `t((a+b)|(c+d)) = s(a|c) + u(b|d)` could fill t as a block diagonal tensor.
 
 ###Notes for conceptual layer and refactor
@@ -539,19 +559,17 @@
   deal with in the future.
 - "Template typedefs" are possible through "alias declarations" in C++11:
 
-  C++11 added alias declarations, which are generalization of typedef, allowing templates:
-
         template <size_t N>
         using Vector = Matrix<N, 1>;
 
   The type Vector<3> is equivalent to Matrix<3, 1>.
-- All the TypeList_t stuff (which is deeply interwoven into Tensor Heaven) could be refactored
+x All the TypeList_t stuff (which is deeply interwoven into Tensor Heaven) could be refactored
   to use variadic templates, though it would probably be good to do a bunch of experiments and
   gain experience using them before settling on a design/best practice.
 - Tons of the metaprogramming uses static const variables -- these can be changed to use constexpr,
   though it looks like lack of MSVC support will hold this one back for a long time.
 - Static asserts with error strings will be awesome (no more making enums for the error messages).
-- Use nullptr
+x Use nullptr
 - Change private constructors to use the new " = delete" notation added in C++11.
 - Move semantics for move constructors for various memory-containing structures (e.g. vectors)
 - Once "decltype" becomes available, it would be possible to do things like
@@ -560,8 +578,7 @@
     B b;
     // this would be typename DualOf_f<B>::T
     typedef decltype(dual(b)) DualOfB;
-    // this would be TensorProductOfBasedVectorSpaces_c<TypeList_t<B,
-    //                                                  TypeList_t<typename DualOf_f<B>::T> > >
+    // this would be TensorProductOfBasedVectorSpaces_c<Typle_t<B,typename DualOf_f<B>::T>>
     typedef decltype(b * dual(b)) EndomorphismOfB;
     // this would be SymmetricPowerOfBasedVectorSpace_c<3,DualOfB>
     typedef decltype(sym<3>(dual(b))) Sym3_DualOfB;
@@ -575,9 +592,30 @@
 
   Contrast this with the current way:
 
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<U,TypeList_t<V> > > U_otimes_V;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<W,TypeList_t<X> > > W_otimes_X;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<U_otimes_V,TypeList_t<W_otimes_X> > > TProd;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<U,V>> U_otimes_V;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<W,X>> W_otimes_X;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<U_otimes_V,W_otimes_X>> TProd;
+- Use of ordinary functions and decltype to implement metaprograms.  For example,
+    
+    decltype(v * dual(u)) t; // makes t an instance of a 2-tensor conceptual type
+    decltype(concat(int(),float(),bool())) x; // makes x an instance of Typle_t<int,float,bool>
+    decltype(on_each(typle, evaluator)) evaluated_typle; // evaluator is some _e instance
+
+  The advantage of this is that it allows constructions in "standard C++" using instances
+  of pure types (i.e. a type that has no members and no code), without the need for the
+  "typename" or "template" keyword, or "dereferencing" metafunction values via ::T or ::V,
+  and to get back from the instance world to the type world, "decltype" is used.  To get
+  constexpr-like functionality, functions could be defined that use the _f type metafunctions;
+
+    template <typename... Types_>
+    Uint32 length (Typle_t<Types_...> const &) { return Length_f<Typle_t<Types_...>>::V; }
+
+  Another useful function could be (assuming it works)
+
+    template <typename T_>
+    bool types_are_equal (T_ const &, T_ const &) { return true; }
+    template <typename T0_, typename T1_>
+    bool types_are_equal (T0_ const &, T1_ const &) { return false; }
 
 
 ###Notes/Reflections on the development of a really really template-heavy math library
@@ -615,6 +653,13 @@
 - Using a sentinel type e.g. for "fill with" turns out to be a great way to get around constructor
   choice ambiguity.  This ambiguity was a problem when we wanted to use conversion operators on
   expression templates that weren't conversion to the scalar type.
+- The addition of "decltype" in the C++11 standard allows ordinary, templatized C++ functions to
+  fill the role of metafunctions which are usually implemented as structs containing a typedef.
+  The way this works is that instances of the various "pure types" (informally defined as types
+  that have no non-pure members) are what carry the type information, and that the full power of
+  C++ function overloading and operator overloading can be used to add this expressiveness and
+  directness to metaprogramming.  The decltype keyword is used to "ascend" back into the type
+  system, allowing the C++-function-based program to be evaluated at compile time.
 
 
 ###Notes from Tensor Heaven future planning

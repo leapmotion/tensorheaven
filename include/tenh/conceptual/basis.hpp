@@ -20,7 +20,7 @@ namespace Tenh {
 template <typename Id_>
 struct Basis_c
 {
-    typedef EmptyTypeList ParentTypeList;
+    typedef Typle_t<> ParentTyple;
 
     typedef Id_ Id;
 
@@ -34,7 +34,7 @@ struct Basis_c
 };
 
 template <typename Id_>
-struct IsConcept_f<Basis_c<Id_> >
+struct IsConcept_f<Basis_c<Id_>>
 {
     static bool const V = true;
 private:
@@ -47,7 +47,7 @@ template <typename T_> struct IsBasis_f
 private:
     IsBasis_f();
 };
-template <typename Id_> struct IsBasis_f<Basis_c<Id_> >
+template <typename Id_> struct IsBasis_f<Basis_c<Id_>>
 {
     static bool const V = true;
 private:
@@ -60,7 +60,7 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Basis);
 #define AS_BASIS(Concept) UniqueBasisStructureOf_f<Concept>::T
 
 template <typename Id_>
-struct DualOf_f<Basis_c<Id_> >
+struct DualOf_f<Basis_c<Id_>>
 {
     typedef Basis_c<typename DualOf_f<Id_>::T> T;
 private:
@@ -74,7 +74,7 @@ private:
 template <typename Id_>
 struct OrthonormalBasis_c
 {
-    typedef TypeList_t<Basis_c<Id_> > ParentTypeList;
+    typedef Typle_t<Basis_c<Id_>> ParentTyple;
 
     typedef Id_ Id;
 
@@ -88,7 +88,7 @@ struct OrthonormalBasis_c
 };
 
 template <typename Id_>
-struct IsConcept_f<OrthonormalBasis_c<Id_> >
+struct IsConcept_f<OrthonormalBasis_c<Id_>>
 {
     static bool const V = true;
 private:
@@ -101,7 +101,7 @@ template <typename T_> struct IsOrthonormalBasis_f
 private:
     IsOrthonormalBasis_f();
 };
-template <typename Id_> struct IsOrthonormalBasis_f<OrthonormalBasis_c<Id_> >
+template <typename Id_> struct IsOrthonormalBasis_f<OrthonormalBasis_c<Id_>>
 {
     static bool const V = true;
 private:
@@ -114,45 +114,43 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(OrthonormalBasis);
 #define AS_ORTHONORMAL_BASIS(Concept) UniqueOrthonormalBasisStructureOf_f<Concept>::T
 
 template <typename Id_>
-struct DualOf_f<OrthonormalBasis_c<Id_> >
+struct DualOf_f<OrthonormalBasis_c<Id_>>
 {
     typedef OrthonormalBasis_c<typename DualOf_f<Id_>::T> T;
 private:
     DualOf_f();
 };
 
-template <typename SummandTypeList_>
-struct AllFactorsAreBases_f
+template <typename Typle_>
+struct AllTypesHaveBasisStructures_f // TEMP: TODO: implement via EachTypeSatisfiesPredicate_f
 {
-    static bool const V = HasBasisStructure_f<typename SummandTypeList_::HeadType>::V &&
-                          AllFactorsAreBases_f<typename SummandTypeList_::BodyTypeList>::V;
+    static bool const V = And_f<typename OnEach_f<Typle_,HasBasisStructure_e>::T>::V;
+};
+
+template <typename Typle_>
+struct AllTypesHaveUniqueBasisStructures_f // TEMP: TODO: implement via EachTypeSatisfiesPredicate_f
+{
+    static bool const V = And_f<typename OnEach_f<Typle_,HasUniqueBasisStructure_e>::T>::V;
+};
+
+MAKE_1_ARY_VALUE_EVALUATOR(AllTypesHaveUniqueBasisStructures);
+
+// TODO: use OnEach_f
+template <typename Typle_>
+struct IdsOfTyple_f
+{
+    typedef typename HeadBodyTyple_f<typename Head_f<Typle_>::T::Id,
+                                     typename IdsOfTyple_f<typename BodyTyple_f<Typle_>::T>::T>::T T;
 private:
-    AllFactorsAreBases_f();
+    IdsOfTyple_f();
 };
 
 template <>
-struct AllFactorsAreBases_f<EmptyTypeList>
+struct IdsOfTyple_f<Typle_t<>>
 {
-    static bool const V = true;
+    typedef Typle_t<> T;
 private:
-    AllFactorsAreBases_f();
-};
-
-template <typename TypeList>
-struct IdsOfTypeList_t
-{
-    typedef TypeList_t<typename TypeList::HeadType::Id,
-                       typename IdsOfTypeList_t<typename TypeList::BodyTypeList>::T> T;
-private:
-    IdsOfTypeList_t();
-};
-
-template <>
-struct IdsOfTypeList_t<EmptyTypeList>
-{
-    typedef EmptyTypeList T;
-private:
-    IdsOfTypeList_t();
+    IdsOfTyple_f();
 };
 
 // ///////////////////////////////////////////////////////////////////////////

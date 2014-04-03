@@ -103,11 +103,11 @@ std::set<Element_,Compare_,Allocator_> set_union (std::set<Element_,Compare_,All
 // this can be used to verify that the functions associated with coembed are
 // consistent with those of embed, for a particular linear embedding.
 template <typename Domain_, typename Codomain_, typename Scalar_, typename EmbeddingId_>
-bool linear_embedding_is_consistent (LinearEmbedding_c<Domain_,Codomain_,Scalar_,EmbeddingId_,ENABLE_EXCEPTIONS> const &,
-                                     std::string *error_string = NULL)
+bool linear_embedding_is_consistent (LinearEmbedding_c<Domain_,Codomain_,Scalar_,EmbeddingId_,WithExceptions::ENABLED> const &,
+                                     std::string *error_string = nullptr)
 {
-    typedef LinearEmbedding_c<Domain_,Codomain_,Scalar_,EmbeddingId_,ENABLE_EXCEPTIONS> LinearEmbedding;
-    typedef typename CoembedIndexIterator_f<Domain_,Codomain_,Scalar_,EmbeddingId_,ENABLE_EXCEPTIONS>::T CoembedIndexIterator;
+    typedef LinearEmbedding_c<Domain_,Codomain_,Scalar_,EmbeddingId_,WithExceptions::ENABLED> LinearEmbedding;
+    typedef typename CoembedIndexIterator_f<Domain_,Codomain_,Scalar_,EmbeddingId_,WithExceptions::ENABLED>::T CoembedIndexIterator;
     typedef ComponentIndex_t<DimensionOf_f<Domain_>::V> DomainComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<Codomain_>::V> CodomainComponentIndex;
 
@@ -133,7 +133,7 @@ bool linear_embedding_is_consistent (LinearEmbedding_c<Domain_,Codomain_,Scalar_
                 throw std::logic_error("embedded_component_is_procedural_zero(" + FORMAT(i) +
                                        ") returned true but scalar_factor_for_embedded_component(" +
                                        FORMAT(i) + ") failed to throw.");
-            } catch (std::domain_error const &e) { // note that domain_error inherits logic_error.
+            } catch (std::domain_error const &) { // note that domain_error inherits logic_error.
                 // catching this exception indicates scalar_factor_for_embedded_component functioned
                 // correctly for that particular input value.
             } catch (std::logic_error const &e) {
@@ -152,7 +152,7 @@ bool linear_embedding_is_consistent (LinearEmbedding_c<Domain_,Codomain_,Scalar_
                 throw std::logic_error("embedded_component_is_procedural_zero(" + FORMAT(i) +
                                        ") returned true but source_component_index_for_embedded_component(" +
                                        FORMAT(i) + ") failed to throw.");
-            } catch (std::domain_error const &e) { // note that domain_error inherits logic_error.
+            } catch (std::domain_error const &) { // note that domain_error inherits logic_error.
                 // catching this exception indicates source_component_index_for_embedded_component functioned
                 // correctly for that particular input value.
             } catch (std::logic_error const &e) {
@@ -200,7 +200,7 @@ bool linear_embedding_is_consistent (LinearEmbedding_c<Domain_,Codomain_,Scalar_
     if (errors_were_encountered)
     {
         // return the error string if it was requested.
-        if (error_string != NULL)
+        if (error_string != nullptr)
             *error_string = errors.str();
         return false;
     }
@@ -288,7 +288,7 @@ bool linear_embedding_is_consistent (LinearEmbedding_c<Domain_,Codomain_,Scalar_
     if (errors_were_encountered)
     {
         // return the error string if it was requested.
-        if (error_string != NULL)
+        if (error_string != nullptr)
             *error_string = errors.str();
         return false;
     }
@@ -327,7 +327,7 @@ bool linear_embedding_is_consistent (LinearEmbedding_c<Domain_,Codomain_,Scalar_
     }
 
     // return the error string if it was requested.
-    if (error_string != NULL)
+    if (error_string != nullptr)
         *error_string = errors.str();
 
     return !errors_were_encountered;

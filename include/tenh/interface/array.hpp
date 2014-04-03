@@ -20,10 +20,7 @@ namespace Tenh {
 template <typename Derived_, typename Component_, Uint32 COMPONENT_COUNT_, ComponentQualifier COMPONENT_QUALIFIER_>
 struct Array_i
 {
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM((!TypesAreEqual_f<Derived_,NullType>::V), DERIVED_MUST_NOT_BE_NULL_TYPE)
-    };
+    static_assert(!TypesAreEqual_f<Derived_,NullType>::V, "Derived_ must not be NullType");
 
     typedef Derived_ Derived;
     typedef Component_ Component;
@@ -67,7 +64,7 @@ struct Array_i
 };
 
 template <typename T> struct IsArray_i { static bool const V = false; };
-template <typename Derived_, typename Component_, Uint32 COMPONENT_COUNT_, ComponentQualifier COMPONENT_QUALIFIER_> struct IsArray_i<Array_i<Derived_,Component_,COMPONENT_COUNT_,COMPONENT_QUALIFIER_> > { static bool const V = true; };
+template <typename Derived_, typename Component_, Uint32 COMPONENT_COUNT_, ComponentQualifier COMPONENT_QUALIFIER_> struct IsArray_i<Array_i<Derived_,Component_,COMPONENT_COUNT_,COMPONENT_QUALIFIER_>> { static bool const V = true; };
 
 } // end of namespace Tenh
 

@@ -8,7 +8,7 @@
 #include <complex>
 
 #include "tenh/memberarray.hpp"
-#include "tenh/meta/tuple.hpp"
+#include "tenh/tuple.hpp"
 
 // this is included last because it redefines the `assert` macro,
 // which would be bad for the above includes.
@@ -79,8 +79,8 @@ void AddTests (Directory &parent)
     add_particular_tests_for_scalar<Sint64>(dir);
     add_particular_tests_for_scalar<float>(dir);
     add_particular_tests_for_scalar<double>(dir);
-    add_particular_tests_for_scalar<complex<float> >(dir);
-    add_particular_tests_for_scalar<complex<double> >(dir);
+    add_particular_tests_for_scalar<complex<float>>(dir);
+    add_particular_tests_for_scalar<complex<double>>(dir);
 }
 
 } // end of namespace Array

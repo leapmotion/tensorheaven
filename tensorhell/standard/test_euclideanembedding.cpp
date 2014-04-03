@@ -90,10 +90,10 @@ void add_tests_for_verify_on_vector_type_1 (Directory *parent)
     add_test_for_verify_on_vector_type<V>(parent);
     add_test_for_verify_on_vector_type<A>(parent);
     add_test_for_verify_on_vector_type<S>(parent);
-//     add_test_for_verify_on_vector_type<Tenh::Tensor2Antisymmetric_t<A> >(parent); // TODO: allow zero-dimensional vector spaces
-    add_test_for_verify_on_vector_type<Tenh::Tensor2Antisymmetric_t<S> >(parent);
-    add_test_for_verify_on_vector_type<Tenh::Tensor2Symmetric_t<A> >(parent);
-    add_test_for_verify_on_vector_type<Tenh::Tensor2Symmetric_t<S> >(parent);
+//     add_test_for_verify_on_vector_type<Tenh::Tensor2Antisymmetric_t<A>>(parent); // TODO: allow zero-dimensional vector spaces
+    add_test_for_verify_on_vector_type<Tenh::Tensor2Antisymmetric_t<S>>(parent);
+    add_test_for_verify_on_vector_type<Tenh::Tensor2Symmetric_t<A>>(parent);
+    add_test_for_verify_on_vector_type<Tenh::Tensor2Symmetric_t<S>>(parent);
 }
 
 // tensor types whose factors don't have to be identical
@@ -177,10 +177,10 @@ void add_tests_for_verify_on_tensor_type_1 (Directory *parent)
 
     add_test_for_verify_on_tensor_type<A>(parent);
     add_test_for_verify_on_tensor_type<S>(parent);
-//     add_test_for_verify_on_tensor_type<Tenh::Tensor2Antisymmetric_t<A> >(parent); // TODO: allow zero-dimensional vector spaces
-    add_test_for_verify_on_tensor_type<Tenh::Tensor2Antisymmetric_t<S> >(parent);
-    add_test_for_verify_on_tensor_type<Tenh::Tensor2Symmetric_t<A> >(parent);
-    add_test_for_verify_on_tensor_type<Tenh::Tensor2Symmetric_t<S> >(parent);
+//     add_test_for_verify_on_tensor_type<Tenh::Tensor2Antisymmetric_t<A>>(parent); // TODO: allow zero-dimensional vector spaces
+    add_test_for_verify_on_tensor_type<Tenh::Tensor2Antisymmetric_t<S>>(parent);
+    add_test_for_verify_on_tensor_type<Tenh::Tensor2Symmetric_t<A>>(parent);
+    add_test_for_verify_on_tensor_type<Tenh::Tensor2Symmetric_t<S>>(parent);
 }
 
 // tensor types whose factors don't have to be identical

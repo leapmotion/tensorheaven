@@ -23,7 +23,7 @@ template <Uint32 DIMENSION_,
           typename Scalar_ = float,
           typename Basis_ = OrthonormalBasis_c<Generic>,
           typename VectorSpaceId_ = Generic,
-          typename UseArrayType_ = UseMemberArray_t<COMPONENTS_ARE_NONCONST>,
+          typename UseArrayType_ = UseMemberArray_t<ComponentsAreConst::FALSE>,
           typename ScalarField_ = RealField>
 struct Vec : public Vector<BasedVectorSpace_c<VectorSpace_c<ScalarField_,DIMENSION_,VectorSpaceId_>,Basis_>,Scalar_,UseArrayType_>
 {
@@ -47,41 +47,41 @@ public:
         :
         Parent_Vector(fill_with)
     {
-        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
+        static_assert(IsUseMemberArray_f<UseArrayType_>::V, "Vec must be UseMemberArray in order to call the fill with constructor.");
     }
     // this is the tuple-based constructor
-    template <typename HeadType_, typename BodyTypeList_>
-    Vec (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x)
+    template <typename... Types_>
+    Vec (Tuple_t<Typle_t<Types_...>> const &x)
         :
         Parent_Vector(x.as_member_array())
     {
-        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
+        static_assert(IsUseMemberArray_f<UseArrayType_>::V, "Vec must be UseMemberArray in order to call the List constructor.");
     }
 
     // only use these if UsePreallocatedArray_t<...> is specified
 
-    explicit Vec (Scalar_ *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+    explicit Vec (Scalar_ *pointer_to_allocation, CheckPointer check_pointer = CheckPointer::TRUE)
         :
         Parent_Vector(pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "Vec must be UsePreallocatedArray in order to call the pointer to allocation constructor.");
     }
     template <typename T_>
     Vec (FillWith_t<T_> const &fill_with,
-         Scalar_ *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+         Scalar_ *pointer_to_allocation, CheckPointer check_pointer = CheckPointer::TRUE)
         :
         Parent_Vector(fill_with, pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "Vec must be UsePreallocatedArray in order to call the pointer to allocation constructor.");
     }
     // this is the tuple-based constructor
-    template <typename HeadType_, typename BodyTypeList_>
-    Vec (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x,
-         Scalar_ *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+    template <typename... Types_>
+    Vec (Tuple_t<Typle_t<Types_...>> const &x,
+         Scalar_ *pointer_to_allocation, CheckPointer check_pointer = CheckPointer::TRUE)
         :
         Parent_Vector(x, pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "Vec must be UsePreallocatedArray in order to call the pointer to allocation constructor.");
     }
 
     // only use this if UseProceduralArray_t<...> is specified or if the vector space is 0-dimensional
@@ -89,8 +89,8 @@ public:
         :
         Parent_Vector(WithoutInitialization()) // sort of meaningless constructor
     {
-        STATIC_ASSERT(IsUseProceduralArray_f<UseArrayType_>::V || DIMENSION_ == 0,
-                      MUST_BE_USE_PROCEDURAL_ARRAY_OR_BE_ZERO_DIMENSIONAL);
+        static_assert(IsUseProceduralArray_f<UseArrayType_>::V || DIMENSION_ == 0,
+                      "Vec must be procedural, or 0 dimensional to use the default constructor.");
     }
 
     using Parent_Vector::operator =;
@@ -111,7 +111,7 @@ template <Uint32 DIMENSION_,
           typename VectorSpaceId_,
           typename UseArrayType_,
           typename ScalarField_>
-struct DualOf_f<Vec<DIMENSION_,Scalar_,Basis_,VectorSpaceId_,UseArrayType_,ScalarField_> >
+struct DualOf_f<Vec<DIMENSION_,Scalar_,Basis_,VectorSpaceId_,UseArrayType_,ScalarField_>>
 {
     // The "dual" type of a vector is just a covector.  Note that Generic is self-dual
     typedef Vec<DIMENSION_,
@@ -134,7 +134,7 @@ template <Uint32 CODOMAIN_DIMENSION_,
           typename DomainBasis_ = OrthonormalBasis_c<Generic>,
           typename CodomainId_ = Generic,
           typename DomainId_ = Generic,
-          typename UseArrayType_ = UseMemberArray_t<COMPONENTS_ARE_NONCONST>,
+          typename UseArrayType_ = UseMemberArray_t<ComponentsAreConst::FALSE>,
           typename ScalarField_ = RealField>
 struct Op
     :
@@ -167,40 +167,40 @@ public:
         :
         Parent_Operator(fill_with)
     {
-        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
+        static_assert(IsUseMemberArray_f<UseArrayType_>::V, "Op must be UseMemberArray in order to call the fill with constructor.");
     }
     // this is the tuple-based constructor
-    template <typename HeadType_, typename BodyTypeList_>
-    Op (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x)
+    template <typename... Types_>
+    Op (Tuple_t<Typle_t<Types_...>> const &x)
         :
         Parent_Operator(x.as_member_array())
     {
-        STATIC_ASSERT(IsUseMemberArray_f<UseArrayType_>::V, MUST_BE_USE_MEMBER_ARRAY);
+        static_assert(IsUseMemberArray_f<UseArrayType_>::V, "Op must be UseMemberArray in order to call the List constructor.");
     }
 
     // only use these if UsePreallocatedArray_t<...> is specified
 
-    explicit Op (Scalar_ *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+    explicit Op (Scalar_ *pointer_to_allocation, CheckPointer check_pointer = CheckPointer::TRUE)
         :
         Parent_Operator(pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "Op must be UsePreallocatedArray in order to call the pointer to allocation constructor.");
     }
     Op (Scalar_ const &fill_with,
-        Scalar_ *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+        Scalar_ *pointer_to_allocation, CheckPointer check_pointer = CheckPointer::TRUE)
         :
         Parent_Operator(fill_with, pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "Op must be UsePreallocatedArray in order to call the pointer to allocation constructor.");
     }
     // this is the tuple-based constructor
-    template <typename HeadType_, typename BodyTypeList_>
-    Op (List_t<TypeList_t<HeadType_,BodyTypeList_> > const &x,
-        Scalar_ *pointer_to_allocation, bool check_pointer = CHECK_POINTER)
+    template <typename... Types_>
+    Op (Tuple_t<Typle_t<Types_...>> const &x,
+        Scalar_ *pointer_to_allocation, CheckPointer check_pointer = CheckPointer::TRUE)
         :
         Parent_Operator(x, pointer_to_allocation, check_pointer)
     {
-        STATIC_ASSERT(IsUsePreallocatedArray_f<UseArrayType_>::V, MUST_BE_USE_PREALLOCATED_ARRAY);
+        static_assert(IsUsePreallocatedArray_f<UseArrayType_>::V, "Op must be UsePreallocatedArray in order to call the pointer to allocation constructor.");
     }
 
     // only use this if UseProceduralArray_t<...> is specified or if the vector space is 0-dimensional
@@ -208,8 +208,8 @@ public:
         :
         Parent_Operator(WithoutInitialization()) // sort of meaningless constructor
     {
-        STATIC_ASSERT(IsUseProceduralArray_f<UseArrayType_>::V || DIM == 0,
-                      MUST_BE_USE_PROCEDURAL_ARRAY_OR_BE_ZERO_DIMENSIONAL);
+        static_assert(IsUseProceduralArray_f<UseArrayType_>::V || DIM == 0,
+                      "Op must be procedural, or 0 dimensional to use the default constructor.");
     }
 
     using Parent_Operator::operator =;
@@ -245,7 +245,7 @@ struct DualOf_f<Op<CODOMAIN_DIMENSION_,
                    CodomainId_,
                    DomainId_,
                    UseArrayType_,
-                   ScalarField_> >
+                   ScalarField_>>
 {
     // The "dual" type of a linear operator is its natural adjoint; if
     // A : V --> W, then A* : W* --> V*, where * denotes the dual functor.

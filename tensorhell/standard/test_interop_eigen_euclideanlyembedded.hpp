@@ -78,10 +78,10 @@ void add_embedding_tests_1 (Directory *parent)
 
     add_euclidean_embedding_tests_for_Tensor2Type<A>(parent);
     add_euclidean_embedding_tests_for_Tensor2Type<S>(parent);
-//     add_euclidean_embedding_tests_for_Tensor2Type<Tenh::Tensor2Antisymmetric_t<A> >(parent); // TODO: allow zero-dimensional vector spaces
-    add_euclidean_embedding_tests_for_Tensor2Type<Tenh::Tensor2Antisymmetric_t<S> >(parent);
-    add_euclidean_embedding_tests_for_Tensor2Type<Tenh::Tensor2Symmetric_t<A> >(parent);
-    add_euclidean_embedding_tests_for_Tensor2Type<Tenh::Tensor2Symmetric_t<S> >(parent);
+//     add_euclidean_embedding_tests_for_Tensor2Type<Tenh::Tensor2Antisymmetric_t<A>>(parent); // TODO: allow zero-dimensional vector spaces
+    add_euclidean_embedding_tests_for_Tensor2Type<Tenh::Tensor2Antisymmetric_t<S>>(parent);
+    add_euclidean_embedding_tests_for_Tensor2Type<Tenh::Tensor2Symmetric_t<A>>(parent);
+    add_euclidean_embedding_tests_for_Tensor2Type<Tenh::Tensor2Symmetric_t<S>>(parent);
 }
 
 template <typename Scalar, Uint32 DIM1, Uint32 DIM2>

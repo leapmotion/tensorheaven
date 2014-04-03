@@ -8,24 +8,27 @@
 
 #include "tenh/core.hpp"
 
+#include <type_traits>
+
 #include "tenh/conceptual/concept.hpp"
 #include "tenh/conceptual/basis.hpp"
 #include "tenh/conceptual/dual.hpp"
 #include "tenh/conceptual/vectorspace.hpp"
-#include "tenh/meta/typelist.hpp"
+#include "tenh/meta/typle.hpp"
 
 namespace Tenh {
 
-inline std::string plus_separated_terse_string_of (EmptyTypeList const &)
+inline std::string plus_separated_terse_string_of (Typle_t<> const &)
 {
     return "";
 }
 
-template <typename SummandHeadType_, typename SummandBodyTypeList_>
-std::string plus_separated_terse_string_of (TypeList_t<SummandHeadType_,SummandBodyTypeList_> const &)
+template <typename Head_, typename... BodyTypes_>
+std::string plus_separated_terse_string_of (Typle_t<Head_,BodyTypes_...> const &)
 {
-    std::string body_string(plus_separated_terse_string_of(SummandBodyTypeList_()));
-    return terse_string_of<SummandHeadType_>() + (body_string.empty() ? "" : '+' + body_string);
+    typedef Typle_t<BodyTypes_...> BodyTyple;
+    std::string body_string(plus_separated_terse_string_of(BodyTyple()));
+    return terse_string_of<Head_>() + (body_string.empty() ? "" : '+' + body_string);
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -33,29 +36,27 @@ std::string plus_separated_terse_string_of (TypeList_t<SummandHeadType_,SummandB
 // ///////////////////////////////////////////////////////////////////////////
 
 // generic direct sum of formal symbols (e.g. identifiers, builtin C++ types, etc)
-template <typename SummandTypeList_>
+template <typename SummandTyple_>
 struct DirectSum_c
 {
-private:
-    enum { STATIC_ASSERT_IN_ENUM(IsTypeList_f<SummandTypeList_>::V, MUST_BE_TYPELIST) };
+    static_assert(IsTyple_f<SummandTyple_>::V, "SummandTyple_ must be a Typle_t");
 
-public:
-    typedef EmptyTypeList ParentTypeList;
+    typedef Typle_t<> ParentTyple;
 
-    typedef SummandTypeList_ SummandTypeList;
-    static Uint32 const SUMMAND_COUNT = SummandTypeList::LENGTH;
+    typedef SummandTyple_ SummandTyple;
+    static Uint32 const SUMMAND_COUNT = Length_f<SummandTyple>::V;
 
     static std::string type_as_string (bool verbose)
     {
         if (verbose)
-            return "DirectSum_c<" + type_string_of<SummandTypeList_>() + '>';
+            return "DirectSum_c<" + type_string_of<SummandTyple_>() + '>';
         else
-            return '(' + plus_separated_terse_string_of(SummandTypeList_()) + ')';
+            return '(' + plus_separated_terse_string_of(SummandTyple_()) + ')';
     }
 };
 
-template <typename SummandTypeList_>
-struct IsConcept_f<DirectSum_c<SummandTypeList_> >
+template <typename SummandTyple_>
+struct IsConcept_f<DirectSum_c<SummandTyple_>>
 {
     static bool const V = true;
 private:
@@ -68,7 +69,7 @@ template <typename T> struct IsDirectSum_f
 private:
     IsDirectSum_f();
 };
-template <typename SummandTypeList_> struct IsDirectSum_f<DirectSum_c<SummandTypeList_> >
+template <typename SummandTyple_> struct IsDirectSum_f<DirectSum_c<SummandTyple_>>
 {
     static bool const V = true;
 private:
@@ -80,51 +81,50 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(DirectSum);
 #define IS_DIRECT_SUM_UNIQUELY(Concept) HasUniqueDirectSumStructure_f<Concept>::V
 #define AS_DIRECT_SUM(Concept) UniqueDirectSumStructureOf_f<Concept>::T
 
-template <typename SummandTypeList_>
-struct DualOf_f<DirectSum_c<SummandTypeList_> >
+template <typename SummandTyple_>
+struct DualOf_f<DirectSum_c<SummandTyple_>>
 {
-    typedef DirectSum_c<typename DualOf_f<SummandTypeList_>::T> T;
+    typedef DirectSum_c<typename DualOf_f<SummandTyple_>::T> T;
 private:
     DualOf_f();
 };
 
 // property IDs
 
-struct SummandCount; // could this be a forward declaration? Looks like yes.
-struct SummandTypeList; // could this be a forward declaration? Looks like yes.
+struct SummandCount;
+struct SummandTyple;
+struct UniformDirectSumSummand;
 
 // BaseProperty_f accessors
 
-template <typename SummandTypeList_>
-struct BaseProperty_f<DirectSum_c<SummandTypeList_>,SummandCount>
+template <typename SummandTyple_>
+struct BaseProperty_f<DirectSum_c<SummandTyple_>,SummandCount>
 {
-    typedef Value_t<Uint32,SummandTypeList_::LENGTH> T;
+    typedef Value_t<Uint32,Length_f<SummandTyple_>::V> T;
 private:
     BaseProperty_f();
 };
 
-template <typename SummandTypeList_>
-struct BaseProperty_f<DirectSum_c<SummandTypeList_>,SummandTypeList>
+template <typename SummandTyple_>
+struct BaseProperty_f<DirectSum_c<SummandTyple_>,SummandTyple>
 {
-    typedef SummandTypeList_ T;
+    typedef SummandTyple_ T;
 private:
     BaseProperty_f();
 };
 
-// this function is only well-defined if SummandTypeList_ is uniform and has at least one element
-// disabled due to name problems
-// template <typename SummandTypeList_>
-// struct BaseProperty_f<DirectSum_c<SummandTypeList_>,TensorPowerFactor>
-// {
-// private:
-//     static bool const THERE_IS_A_UNIQUE_FACTOR = SummandTypeList_::LENGTH >= 1 &&
-//                                                  TypeListIsUniform_t<SummandTypeList_>::V;
-//     BaseProperty_f();
-// public:
-//     typedef typename If_f<THERE_IS_A_UNIQUE_FACTOR,
-//                           typename SummandTypeList_::HeadType,
-//                           NullValue>::T T;
-// };
+template <typename SummandTyple_>
+struct BaseProperty_f<DirectSum_c<SummandTyple_>,UniformDirectSumSummand>
+{
+private:
+    static bool const THERE_IS_A_UNIQUE_SUMMAND = Length_f<SummandTyple_>::V >= 1 &&
+                                                  TypleIsUniform_f<SummandTyple_>::V;
+    BaseProperty_f();
+public:
+    typedef typename If_f<THERE_IS_A_UNIQUE_SUMMAND,
+                          typename Head_f<SummandTyple_>::T,
+                          NullValue>::T T;
+};
 
 // named property accessors
 
@@ -134,56 +134,54 @@ template <typename Concept_> struct SummandCountOf_f
 private:
     SummandCountOf_f();
 };
-template <typename Concept_> struct SummandTypeListOf_f
+template <typename Concept_> struct SummandTypleOf_f
 {
-    typedef typename Property_f<Concept_,SummandTypeList>::T T;
+    typedef typename Property_f<Concept_,SummandTyple>::T T;
 private:
-    SummandTypeListOf_f();
+    SummandTypleOf_f();
 };
-// template <typename Concept_> struct TensorPowerFactorOf_f
-// {
-//     typedef typename Property_f<Concept_,TensorPowerFactor>::T T;
-// private:
-//     TensorPowerFactorOf_f();
-// };
+template <typename Concept_> struct UniformDirectSumSummandOf_f
+{
+    typedef typename Property_f<Concept_,UniformDirectSumSummand>::T T;
+private:
+    UniformDirectSumSummandOf_f();
+};
+
+MAKE_1_ARY_VALUE_EVALUATOR(SummandCountOf);
+MAKE_1_ARY_TYPE_EVALUATOR(SummandTypleOf);
+MAKE_1_ARY_TYPE_EVALUATOR(UniformDirectSumSummandOf);
 
 // ///////////////////////////////////////////////////////////////////////////
 // DirectSumOfVectorSpaces_c
 // ///////////////////////////////////////////////////////////////////////////
 
-// SummandTypeList_ must be a TypeList_t of VectorSpace_c types
-template <typename SummandTypeList_>
+template <typename SummandTyple_>
 struct DirectSumOfVectorSpaces_c
 {
+    static_assert(IsTyple_f<SummandTyple_>::V, "SummandTyple_ must be a Typle_t");
+    static_assert(AllTypesHaveUniqueVectorSpaceStructures_f<SummandTyple_>::V, "all summands must be vector spaces");
+    static_assert(AllTypesHaveSameScalarField_f<SummandTyple_>::V, "all summands must have the same scalar field");
 private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IsTypeList_f<SummandTypeList_>::V, MUST_BE_TYPELIST),
-        STATIC_ASSERT_IN_ENUM(AllFactorsAreVectorSpaces_f<SummandTypeList_>::V, ALL_FACTORS_MUST_BE_VECTOR_SPACES),
-        STATIC_ASSERT_IN_ENUM(AllFactorsHaveTheSameField_f<SummandTypeList_>::V, ALL_FACTORS_MUST_HAVE_SAME_FIELD)
-    };
-
-    typedef DirectSum_c<SummandTypeList_> As_DirectSum;
-    typedef VectorSpace_c<typename ScalarFieldOf_f<typename SummandTypeList_::HeadType>::T,
-                          SumOfDimensions_t<SummandTypeList_>::V,
-                          DirectSum_c<typename IdsOfTypeList_t<SummandTypeList_>::T> > As_VectorSpace;
+    typedef DirectSum_c<SummandTyple_> As_DirectSum;
+    typedef VectorSpace_c<typename ScalarFieldOf_f<typename Head_f<SummandTyple_>::T>::T,
+                          SumOfDimensions_f<SummandTyple_>::V,
+                          DirectSum_c<typename IdsOfTyple_f<SummandTyple_>::T>> As_VectorSpace;
 public:
-    typedef TypeList_t<As_DirectSum,
-            TypeList_t<As_VectorSpace> > ParentTypeList;
+    typedef Typle_t<As_DirectSum,As_VectorSpace> ParentTyple;
 
     typedef typename As_VectorSpace::Id Id;
 
     static std::string type_as_string (bool verbose)
     {
         if (verbose)
-            return "DirectSumOfVectorSpaces_c<" + type_string_of<SummandTypeList_>() + '>';
+            return "DirectSumOfVectorSpaces_c<" + type_string_of<SummandTyple_>() + '>';
         else
-            return '(' + plus_separated_terse_string_of(SummandTypeList_()) + ')';
+            return '(' + plus_separated_terse_string_of(SummandTyple_()) + ')';
     }
 };
 
-template <typename SummandTypeList_>
-struct IsConcept_f<DirectSumOfVectorSpaces_c<SummandTypeList_> >
+template <typename SummandTyple_>
+struct IsConcept_f<DirectSumOfVectorSpaces_c<SummandTyple_>>
 {
     static bool const V = true;
 private:
@@ -196,7 +194,7 @@ template <typename T> struct IsDirectSumOfVectorSpaces_f
 private:
     IsDirectSumOfVectorSpaces_f();
 };
-template <typename SummandTypeList_> struct IsDirectSumOfVectorSpaces_f<DirectSumOfVectorSpaces_c<SummandTypeList_> >
+template <typename SummandTyple_> struct IsDirectSumOfVectorSpaces_f<DirectSumOfVectorSpaces_c<SummandTyple_>>
 {
     static bool const V = true;
 private:
@@ -208,10 +206,10 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(DirectSumOfVectorSpaces);
 #define IS_DIRECT_SUM_OF_VECTOR_SPACES_UNIQUELY(Concept) HasUniqueDirectSumOfVectorSpacesStructure_f<Concept>::V
 #define AS_DIRECT_SUM_OF_VECTOR_SPACES(Concept) UniqueDirectSumOfVectorSpacesStructureOf_f<Concept>::T
 
-template <typename SummandTypeList_>
-struct DualOf_f<DirectSumOfVectorSpaces_c<SummandTypeList_> >
+template <typename SummandTyple_>
+struct DualOf_f<DirectSumOfVectorSpaces_c<SummandTyple_>>
 {
-    typedef DirectSumOfVectorSpaces_c<typename DualOf_f<SummandTypeList_>::T> T;
+    typedef DirectSumOfVectorSpaces_c<typename DualOf_f<SummandTyple_>::T> T;
 private:
     DualOf_f();
 };
@@ -220,34 +218,31 @@ private:
 // DirectSumOfBases_c
 // ///////////////////////////////////////////////////////////////////////////
 
-// SummandTypeList_ must be a TypeList_t of Basis_c types
-template <typename SummandTypeList_>
+template <typename SummandTyple_>
 struct DirectSumOfBases_c
 {
+    static_assert(IsTyple_f<SummandTyple_>::V, "SummandTyple_ must be a Typle_t");
+    static_assert(AllTypesHaveBasisStructures_f<SummandTyple_>::V, "all summands must be bases");
+    static_assert(AllTypesHaveUniqueBasisStructures_f<SummandTyple_>::V, "all summands must have unique basis structures");
 private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IsTypeList_f<SummandTypeList_>::V, MUST_BE_TYPELIST),
-        STATIC_ASSERT_IN_ENUM(AllFactorsAreBases_f<SummandTypeList_>::V, ALL_FACTORS_MUST_BE_BASES)
-    };
-    typedef DirectSum_c<SummandTypeList_> As_DirectSum;
-    typedef Basis_c<DirectSum_c<typename IdsOfTypeList_t<SummandTypeList_>::T> > As_Basis;
+    typedef DirectSum_c<SummandTyple_> As_DirectSum;
+    typedef Basis_c<DirectSum_c<typename IdsOfTyple_f<SummandTyple_>::T>> As_Basis;
 public:
-    typedef TypeList_t<As_DirectSum, TypeList_t<As_Basis> > ParentTypeList;
+    typedef Typle_t<As_DirectSum,As_Basis> ParentTyple;
 
     typedef typename As_Basis::Id Id;
 
     static std::string type_as_string (bool verbose)
     {
         if (verbose)
-            return "DirectSumOfBases_c<" + type_string_of<SummandTypeList_>() + '>';
+            return "DirectSumOfBases_c<" + type_string_of<SummandTyple_>() + '>';
         else
-            return '(' + plus_separated_terse_string_of(SummandTypeList_()) + ')';
+            return '(' + plus_separated_terse_string_of(SummandTyple_()) + ')';
     }
 };
 
-template <typename SummandTypeList_>
-struct IsConcept_f<DirectSumOfBases_c<SummandTypeList_> >
+template <typename SummandTyple_>
+struct IsConcept_f<DirectSumOfBases_c<SummandTyple_>>
 {
     static bool const V = true;
 private:
@@ -260,7 +255,7 @@ template <typename T> struct IsDirectSumOfBases_f
 private:
     IsDirectSumOfBases_f();
 };
-template <typename SummandTypeList_> struct IsDirectSumOfBases_f<DirectSumOfBases_c<SummandTypeList_> >
+template <typename SummandTyple_> struct IsDirectSumOfBases_f<DirectSumOfBases_c<SummandTyple_>>
 {
     static bool const V = true;
 private:
@@ -272,10 +267,10 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(DirectSumOfBases);
 #define IS_DIRECT_SUM_OF_BASES_UNIQUELY(Concept) HasUniqueDirectSumOfBasesStructure_f<Concept>::V
 #define AS_DIRECT_SUM_OF_BASES(Concept) UniqueDirectSumOfBasesStructureOf_f<Concept>::T
 
-template <typename SummandTypeList_>
-struct DualOf_f<DirectSumOfBases_c<SummandTypeList_> >
+template <typename SummandTyple_>
+struct DualOf_f<DirectSumOfBases_c<SummandTyple_>>
 {
-    typedef DirectSumOfBases_c<typename DualOf_f<SummandTypeList_>::T> T;
+    typedef DirectSumOfBases_c<typename DualOf_f<SummandTyple_>::T> T;
 private:
     DualOf_f();
 };
@@ -288,18 +283,13 @@ private:
 template <typename DirectSumOfVectorSpaces_, typename Basis_>
 struct BasedDirectSumOfVectorSpaces_c
 {
+    static_assert(IS_DIRECT_SUM_OF_VECTOR_SPACES_UNIQUELY(DirectSumOfVectorSpaces_), "DirectSumOfVectorSpaces_ must have unique direct sum of vector spaces structure");
+    static_assert(IS_BASIS_UNIQUELY(Basis_), "Basis_ must have unique basis structure");
 private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IS_DIRECT_SUM_OF_VECTOR_SPACES_UNIQUELY(DirectSumOfVectorSpaces_), MUST_BE_DIRECT_SUM_OF_VECTOR_SPACES),
-        STATIC_ASSERT_IN_ENUM(IS_BASIS_UNIQUELY(Basis_), MUST_BE_BASIS),
-    };
-
     typedef DirectSumOfVectorSpaces_ As_DirectSumOfVectorSpaces;
     typedef BasedVectorSpace_c<DirectSumOfVectorSpaces_,Basis_> As_BasedVectorSpace;
 public:
-    typedef TypeList_t<As_DirectSumOfVectorSpaces,
-            TypeList_t<As_BasedVectorSpace> > ParentTypeList;
+    typedef Typle_t<As_DirectSumOfVectorSpaces,As_BasedVectorSpace> ParentTyple;
 
     typedef typename As_BasedVectorSpace::Id Id;
 
@@ -314,7 +304,7 @@ public:
 };
 
 template <typename DirectSumOfVectorSpaces_, typename Basis_>
-struct IsConcept_f<BasedDirectSumOfVectorSpaces_c<DirectSumOfVectorSpaces_, Basis_> >
+struct IsConcept_f<BasedDirectSumOfVectorSpaces_c<DirectSumOfVectorSpaces_, Basis_>>
 {
     static bool const V = true;
 private:
@@ -327,7 +317,7 @@ template <typename T> struct IsBasedDirectSumOfVectorSpaces_f
 private:
     IsBasedDirectSumOfVectorSpaces_f();
 };
-template <typename DirectSumOfVectorSpaces_, typename Basis_> struct IsBasedDirectSumOfVectorSpaces_f<BasedDirectSumOfVectorSpaces_c<DirectSumOfVectorSpaces_,Basis_> >
+template <typename DirectSumOfVectorSpaces_, typename Basis_> struct IsBasedDirectSumOfVectorSpaces_f<BasedDirectSumOfVectorSpaces_c<DirectSumOfVectorSpaces_,Basis_>>
 {
     static bool const V = true;
 private:
@@ -340,7 +330,7 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(BasedDirectSumOfVectorSpaces);
 #define AS_BASED_DIRECT_SUM_OF_VECTOR_SPACES(Concept) UniqueBasedDirectSumOfVectorSpacesStructureOf_f<Concept>::T
 
 template <typename DirectSumOfVectorSpaces, typename Basis>
-struct DualOf_f<BasedDirectSumOfVectorSpaces_c<DirectSumOfVectorSpaces,Basis> >
+struct DualOf_f<BasedDirectSumOfVectorSpaces_c<DirectSumOfVectorSpaces,Basis>>
 {
     typedef BasedDirectSumOfVectorSpaces_c<typename DualOf_f<DirectSumOfVectorSpaces>::T,typename DualOf_f<Basis>::T> T;
 private:
@@ -351,36 +341,31 @@ private:
 // DirectSumOfBasedVectorSpaces_c
 // ///////////////////////////////////////////////////////////////////////////
 
-// SummandTypeList_ must be a TypeList_t of BasedVectorSpace_c types
-template <typename SummandTypeList_>
+template <typename SummandTyple_>
 struct DirectSumOfBasedVectorSpaces_c
 {
+    static_assert(IsTyple_f<SummandTyple_>::V, "SummandTyple_ must be a Typle_t");
+    static_assert(AllTypesHaveUniqueBasedVectorSpaceStructures_f<SummandTyple_>::V, "all summands must be based vector spaces");
 private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IsTypeList_f<SummandTypeList_>::V, MUST_BE_TYPELIST),
-        STATIC_ASSERT_IN_ENUM(AllFactorsAreBasedVectorSpaces_f<SummandTypeList_>::V, ALL_FACTORS_MUST_BE_BASED_VECTOR_SPACES),
-    };
-
-    typedef typename PropertyOfEachInTypeList_f<SummandTypeList_,Basis>::T BasisTypeList;
-    typedef BasedDirectSumOfVectorSpaces_c<DirectSumOfVectorSpaces_c<SummandTypeList_>,
-                                           DirectSumOfBases_c<BasisTypeList> > As_BasedDirectSumOfVectorSpaces;
+    typedef typename PropertyOfEachInTyple_f<SummandTyple_,Basis>::T BasisTyple;
+    typedef BasedDirectSumOfVectorSpaces_c<DirectSumOfVectorSpaces_c<SummandTyple_>,
+                                           DirectSumOfBases_c<BasisTyple>> As_BasedDirectSumOfVectorSpaces;
 public:
-    typedef TypeList_t<As_BasedDirectSumOfVectorSpaces> ParentTypeList;
+    typedef Typle_t<As_BasedDirectSumOfVectorSpaces> ParentTyple;
 
     typedef typename As_BasedDirectSumOfVectorSpaces::Id Id;
 
     static std::string type_as_string (bool verbose)
     {
         if (verbose)
-            return "DirectSumOfBasedVectorSpaces_c<" + type_string_of<SummandTypeList_>() + '>';
+            return "DirectSumOfBasedVectorSpaces_c<" + type_string_of<SummandTyple_>() + '>';
         else
-            return '(' + plus_separated_terse_string_of(SummandTypeList_()) + ')';
+            return '(' + plus_separated_terse_string_of(SummandTyple_()) + ')';
     }
 };
 
-template <typename SummandTypeList_>
-struct IsConcept_f<DirectSumOfBasedVectorSpaces_c<SummandTypeList_> >
+template <typename SummandTyple_>
+struct IsConcept_f<DirectSumOfBasedVectorSpaces_c<SummandTyple_>>
 {
     static bool const V = true;
 private:
@@ -393,7 +378,7 @@ template <typename T> struct IsDirectSumOfBasedVectorSpaces_f
 private:
     IsDirectSumOfBasedVectorSpaces_f();
 };
-template <typename SummandTypeList_> struct IsDirectSumOfBasedVectorSpaces_f<DirectSumOfBasedVectorSpaces_c<SummandTypeList_> >
+template <typename SummandTyple_> struct IsDirectSumOfBasedVectorSpaces_f<DirectSumOfBasedVectorSpaces_c<SummandTyple_>>
 {
     static bool const V = true;
 private:
@@ -407,10 +392,10 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(DirectSumOfBasedVectorSpaces);
 
 // there is a natural identification of the dual of a direct sum of vector spaces with the
 // direct sum of the duals of the vector spaces
-template <typename SummandTypeList_>
-struct DualOf_f<DirectSumOfBasedVectorSpaces_c<SummandTypeList_> >
+template <typename SummandTyple_>
+struct DualOf_f<DirectSumOfBasedVectorSpaces_c<SummandTyple_>>
 {
-    typedef DirectSumOfBasedVectorSpaces_c<typename DualOf_f<SummandTypeList_>::T> T;
+    typedef DirectSumOfBasedVectorSpaces_c<typename DualOf_f<SummandTyple_>::T> T;
 private:
     DualOf_f();
 };
@@ -422,74 +407,80 @@ private:
 // for now, just do direct sum of based vector spaces
 
 template <typename LhsBasedVectorSpace_, typename RhsBasedVectorSpace_>
-typename EnableIf_f<(IS_BASED_VECTOR_SPACE_UNIQUELY(LhsBasedVectorSpace_) &&
-                     IS_BASED_VECTOR_SPACE_UNIQUELY(RhsBasedVectorSpace_)),
-                    DirectSumOfBasedVectorSpaces_c<TypeList_t<LhsBasedVectorSpace_,
-                                                   TypeList_t<RhsBasedVectorSpace_> > > >::T
+typename std::enable_if<(IS_BASED_VECTOR_SPACE_UNIQUELY(LhsBasedVectorSpace_) &&
+                         IS_BASED_VECTOR_SPACE_UNIQUELY(RhsBasedVectorSpace_)),
+                        DirectSumOfBasedVectorSpaces_c<Typle_t<LhsBasedVectorSpace_,
+                                                               RhsBasedVectorSpace_>>>::type
     operator + (LhsBasedVectorSpace_ const &, RhsBasedVectorSpace_ const &)
 {
-    return DirectSumOfBasedVectorSpaces_c<TypeList_t<LhsBasedVectorSpace_,
-                                          TypeList_t<RhsBasedVectorSpace_> > >();
+    return DirectSumOfBasedVectorSpaces_c<Typle_t<LhsBasedVectorSpace_,
+                                                  RhsBasedVectorSpace_>>();
 }
 
-template <typename SummandTypeList_, typename BasedVectorSpace_>
-DirectSumOfBasedVectorSpaces_c<typename ConcatenationOfTypeLists_t<SummandTypeList_,
-                                                                   TypeList_t<BasedVectorSpace_> >::T>
-    operator + (DirectSumOfBasedVectorSpaces_c<SummandTypeList_> const &, BasedVectorSpace_ const &)
+template <typename SummandTyple_, typename BasedVectorSpace_>
+DirectSumOfBasedVectorSpaces_c<typename Concat2Typles_f<SummandTyple_,
+                                                               Typle_t<BasedVectorSpace_>>::T>
+    operator + (DirectSumOfBasedVectorSpaces_c<SummandTyple_> const &, BasedVectorSpace_ const &)
 {
-    return DirectSumOfBasedVectorSpaces_c<typename ConcatenationOfTypeLists_t<SummandTypeList_,
-                                                                              TypeList_t<BasedVectorSpace_> >::T>();
+    return DirectSumOfBasedVectorSpaces_c<typename Concat2Typles_f<SummandTyple_,
+                                                                          Typle_t<BasedVectorSpace_>>::T>();
 }
 
-template <typename SummandTypeList_, typename BasedVectorSpace_>
-DirectSumOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_,SummandTypeList_> >
-    operator + (BasedVectorSpace_ const &, DirectSumOfBasedVectorSpaces_c<SummandTypeList_> const &)
+template <typename SummandTyple_, typename BasedVectorSpace_>
+DirectSumOfBasedVectorSpaces_c<typename HeadBodyTyple_f<BasedVectorSpace_,SummandTyple_>::T>
+    operator + (BasedVectorSpace_ const &, DirectSumOfBasedVectorSpaces_c<SummandTyple_> const &)
 {
-    return DirectSumOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_,SummandTypeList_> >();
+    return DirectSumOfBasedVectorSpaces_c<typename HeadBodyTyple_f<BasedVectorSpace_,SummandTyple_>::T>();
 }
 
-template <typename LhsSummandTypeList_, typename RhsSummandTypeList_>
-DirectSumOfBasedVectorSpaces_c<TypeList_t<DirectSumOfBasedVectorSpaces_c<LhsSummandTypeList_>,
-                               TypeList_t<DirectSumOfBasedVectorSpaces_c<RhsSummandTypeList_> > > >
-    operator + (DirectSumOfBasedVectorSpaces_c<LhsSummandTypeList_> const &,
-                DirectSumOfBasedVectorSpaces_c<RhsSummandTypeList_> const &)
+template <typename LhsSummandTyple_, typename RhsSummandTyple_>
+DirectSumOfBasedVectorSpaces_c<Typle_t<DirectSumOfBasedVectorSpaces_c<LhsSummandTyple_>,
+                                       DirectSumOfBasedVectorSpaces_c<RhsSummandTyple_>>>
+    operator + (DirectSumOfBasedVectorSpaces_c<LhsSummandTyple_> const &,
+                DirectSumOfBasedVectorSpaces_c<RhsSummandTyple_> const &)
 {
-    return DirectSumOfBasedVectorSpaces_c<TypeList_t<DirectSumOfBasedVectorSpaces_c<LhsSummandTypeList_>,
-                                          TypeList_t<DirectSumOfBasedVectorSpaces_c<RhsSummandTypeList_> > > >();
+    return DirectSumOfBasedVectorSpaces_c<Typle_t<DirectSumOfBasedVectorSpaces_c<LhsSummandTyple_>,
+                                                  DirectSumOfBasedVectorSpaces_c<RhsSummandTyple_>>>();
 }
 
 // ///////////////////////////////////////////////////////////////////////////
 // meta-functions for taking direct sum powers of stuff
-// disabled due to lack of a good name
 // ///////////////////////////////////////////////////////////////////////////
 
-// template <Uint32 ORDER_, typename Factor_>
-// struct TensorPower_f
-// {
-//     typedef DirectSum_c<typename UniformTypeListOfLength_t<ORDER_,Factor_>::T> T;
-// private:
-//     TensorPower_f();
-// };
-//
-// template <Uint32 ORDER_, typename Factor_>
-// struct TensorPowerOfVectorSpace_f
-// {
-// private:
-//     enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_VECTOR_SPACE) };
-//     TensorPowerOfVectorSpace_f();
-// public:
-//     typedef DirectSumOfVectorSpaces_c<typename UniformTypeListOfLength_t<ORDER_,Factor_>::T> T;
-// };
-//
-// template <Uint32 ORDER_, typename Factor_>
-// struct TensorPowerOfBasedVectorSpace_f
-// {
-// private:
-//     enum { STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor_), MUST_BE_BASED_VECTOR_SPACE) };
-//     TensorPowerOfBasedVectorSpace_f();
-// public:
-//     typedef DirectSumOfBasedVectorSpaces_c<typename UniformTypeListOfLength_t<ORDER_,Factor_>::T> T;
-// };
+template <Uint32 ORDER_, typename Summand_>
+struct UniformDirectSum_f
+{
+    typedef DirectSum_c<typename UniformTyple_f<ORDER_,Summand_>::T> T;
+private:
+    UniformDirectSum_f ();
+};
+
+template <Uint32 ORDER_, typename Summand_>
+struct UniformDirectSumOfVectorSpace_f
+{
+    static_assert(IS_VECTOR_SPACE_UNIQUELY(Summand_), "Summand_ must have a unique vector space structure");
+    typedef DirectSumOfVectorSpaces_c<typename UniformTyple_f<ORDER_,Summand_>::T> T;
+private:
+    UniformDirectSumOfVectorSpace_f ();
+};
+
+template <Uint32 ORDER_, typename Summand_>
+struct UniformDirectSumOfBasis_f
+{
+    static_assert(IS_BASIS_UNIQUELY(Summand_), "Summand_ must have a unique basis structure");
+    typedef DirectSumOfBases_c<typename UniformTyple_f<ORDER_,Summand_>::T> T;
+private:
+    UniformDirectSumOfBasis_f ();
+};
+
+template <Uint32 ORDER_, typename Summand_>
+struct UniformDirectSumOfBasedVectorSpace_f
+{
+    static_assert(IS_BASED_VECTOR_SPACE_UNIQUELY(Summand_), "Summand_ must have a unique based vector space structure");
+    typedef DirectSumOfBasedVectorSpaces_c<typename UniformTyple_f<ORDER_,Summand_>::T> T;
+private:
+    UniformDirectSumOfBasedVectorSpace_f ();
+};
 
 } // end of namespace Tenh
 

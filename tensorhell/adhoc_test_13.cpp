@@ -8,11 +8,11 @@ void test_zero_vector ()
 {
     std::cout << "zero vector\n";
 
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,IdX>,OrthonormalBasis_c<IdX> > B3;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,IdX>,OrthonormalBasis_c<IdX> > B4;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B3,TypeList_t<B4> > > TensorProduct;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,IdX>,OrthonormalBasis_c<IdX>> B3;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,IdX>,OrthonormalBasis_c<IdX>> B4;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B3,B4>> TensorProduct;
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B3,B4> Diagonal2TensorProduct;
-    typedef DirectSumOfBasedVectorSpaces_c<TypeList_t<B3,TypeList_t<B4> > > DirectSum;
+    typedef DirectSumOfBasedVectorSpaces_c<Typle_t<B3,B4>> DirectSum;
     typedef SymmetricPowerOfBasedVectorSpace_c<2,B3> Sym;
     typedef ExteriorPowerOfBasedVectorSpace_c<2,B3> Alt;
 
@@ -37,11 +37,11 @@ void test_basis_vectors ()
 {
     std::cout << "basis vectors\n";
 
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,IdX>,OrthonormalBasis_c<IdX> > B3;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,IdX>,OrthonormalBasis_c<IdX> > B4;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B3,TypeList_t<B4> > > TensorProduct;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,IdX>,OrthonormalBasis_c<IdX>> B3;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,IdX>,OrthonormalBasis_c<IdX>> B4;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B3,B4>> TensorProduct;
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B3,B4> Diagonal2TensorProduct;
-    typedef DirectSumOfBasedVectorSpaces_c<TypeList_t<B3,TypeList_t<B4> > > DirectSum;
+    typedef DirectSumOfBasedVectorSpaces_c<Typle_t<B3,B4>> DirectSum;
     typedef SymmetricPowerOfBasedVectorSpace_c<2,B3> Sym;
     typedef ExteriorPowerOfBasedVectorSpace_c<2,B3> Alt;
 
@@ -139,9 +139,9 @@ void test_eval_value ()
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
     AbstractIndex_c<'k'> k;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > BasedVectorSpace;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic>> BasedVectorSpace;
     typedef float Scalar;
-    typedef ImplementationOf_t<BasedVectorSpace,Scalar,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > V;
+    typedef ImplementationOf_t<BasedVectorSpace,Scalar,UseMemberArray_t<ComponentsAreConst::FALSE>> V;
     V x(uniform_tuple<Scalar>(1, 2, 3));
     V y(uniform_tuple<Scalar>(4, 8, 9));
     V z(uniform_tuple<Scalar>(0, 8, 0));
@@ -155,9 +155,8 @@ void test_eval_value ()
     std::cout << FORMAT_VALUE((x(i)*y(j)).eval()) << '\n';
     std::cout << FORMAT_VALUE((x(i)*y(j)).eval().value()) << '\n';
 
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace,
-                                               TypeList_t<BasedVectorSpace> > > TensorProduct;
-    typedef ImplementationOf_t<TensorProduct,Scalar,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > T;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<BasedVectorSpace,BasedVectorSpace>> TensorProduct;
+    typedef ImplementationOf_t<TensorProduct,Scalar,UseMemberArray_t<ComponentsAreConst::FALSE>> T;
     T t((x(i)*y(j)).eval().value());
     std::cout << FORMAT_VALUE(t) << '\n';
     // this should use "operator EvaluatedTensor const &" in ExpressionTemplate_Eval_t
@@ -170,18 +169,18 @@ void test_eval_value ()
 void test_direct_sum_of_2tensors ()
 {
     typedef double Scalar;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,1,Generic>,Basis_c<Generic> > B1;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,Generic>,Basis_c<Generic> > B2;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > B3;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B1,TypeList_t<B1> > > T11;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B1,TypeList_t<B2> > > T12;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B1,TypeList_t<B3> > > T13;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B2,TypeList_t<B1> > > T21;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B2,TypeList_t<B2> > > T22;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B2,TypeList_t<B3> > > T23;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B3,TypeList_t<B1> > > T31;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B3,TypeList_t<B2> > > T32;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B3,TypeList_t<B3> > > T33;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,1,Generic>,Basis_c<Generic>> B1;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,Generic>,Basis_c<Generic>> B2;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic>> B3;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B1,B1>> T11;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B1,B2>> T12;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B1,B3>> T13;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B2,B1>> T21;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B2,B2>> T22;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B2,B3>> T23;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B3,B1>> T31;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B3,B2>> T32;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B3,B3>> T33;
     typedef ComponentGenerator_t<Scalar,
                                  DimensionOf_f<T11>::V,
                                  constant_component_generator_evaluator<Scalar,DimensionOf_f<T11>::V,11>,
@@ -218,25 +217,17 @@ void test_direct_sum_of_2tensors ()
                                  DimensionOf_f<T33>::V,
                                  constant_component_generator_evaluator<Scalar,DimensionOf_f<T33>::V,33>,
                                  Generic> ComponentGenerator33;
-    typedef ImplementationOf_t<T11,Scalar,UseProceduralArray_t<ComponentGenerator11> > T_11;
-    typedef ImplementationOf_t<T12,Scalar,UseProceduralArray_t<ComponentGenerator12> > T_12;
-    typedef ImplementationOf_t<T13,Scalar,UseProceduralArray_t<ComponentGenerator13> > T_13;
-    typedef ImplementationOf_t<T21,Scalar,UseProceduralArray_t<ComponentGenerator21> > T_21;
-    typedef ImplementationOf_t<T22,Scalar,UseProceduralArray_t<ComponentGenerator22> > T_22;
-    typedef ImplementationOf_t<T23,Scalar,UseProceduralArray_t<ComponentGenerator23> > T_23;
-    typedef ImplementationOf_t<T31,Scalar,UseProceduralArray_t<ComponentGenerator31> > T_31;
-    typedef ImplementationOf_t<T32,Scalar,UseProceduralArray_t<ComponentGenerator32> > T_32;
-    typedef ImplementationOf_t<T33,Scalar,UseProceduralArray_t<ComponentGenerator33> > T_33;
+    typedef ImplementationOf_t<T11,Scalar,UseProceduralArray_t<ComponentGenerator11>> T_11;
+    typedef ImplementationOf_t<T12,Scalar,UseProceduralArray_t<ComponentGenerator12>> T_12;
+    typedef ImplementationOf_t<T13,Scalar,UseProceduralArray_t<ComponentGenerator13>> T_13;
+    typedef ImplementationOf_t<T21,Scalar,UseProceduralArray_t<ComponentGenerator21>> T_21;
+    typedef ImplementationOf_t<T22,Scalar,UseProceduralArray_t<ComponentGenerator22>> T_22;
+    typedef ImplementationOf_t<T23,Scalar,UseProceduralArray_t<ComponentGenerator23>> T_23;
+    typedef ImplementationOf_t<T31,Scalar,UseProceduralArray_t<ComponentGenerator31>> T_31;
+    typedef ImplementationOf_t<T32,Scalar,UseProceduralArray_t<ComponentGenerator32>> T_32;
+    typedef ImplementationOf_t<T33,Scalar,UseProceduralArray_t<ComponentGenerator33>> T_33;
 
-    typedef TypeList_t<T_11,
-            TypeList_t<T_12,
-            TypeList_t<T_13,
-            TypeList_t<T_21,
-            TypeList_t<T_22,
-            TypeList_t<T_23,
-            TypeList_t<T_31,
-            TypeList_t<T_32,
-            TypeList_t<T_33> > > > > > > > > TL;
+    typedef Typle_t<T_11,T_12,T_13,T_21,T_22,T_23,T_31,T_32,T_33> TL;
     typedef DirectSumOfProcedural2Tensors_f<TL>::T D;
     D d;
     std::cout << "direct sum of procedural 2-tensors\n";
@@ -246,9 +237,9 @@ void test_direct_sum_of_2tensors ()
 void test_direct_sum_of_diagonal2tensors ()
 {
     typedef double Scalar;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,1,Generic>,Basis_c<Generic> > B1;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,Generic>,Basis_c<Generic> > B2;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > B3;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,1,Generic>,Basis_c<Generic>> B1;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,Generic>,Basis_c<Generic>> B2;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic>> B3;
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B1,B1> T11;
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B1,B2> T12;
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B1,B3> T13;
@@ -294,25 +285,17 @@ void test_direct_sum_of_diagonal2tensors ()
                                  DimensionOf_f<T33>::V,
                                  constant_component_generator_evaluator<Scalar,DimensionOf_f<T33>::V,33>,
                                  Generic> ComponentGenerator33;
-    typedef ImplementationOf_t<T11,Scalar,UseProceduralArray_t<ComponentGenerator11> > T_11;
-    typedef ImplementationOf_t<T12,Scalar,UseProceduralArray_t<ComponentGenerator12> > T_12;
-    typedef ImplementationOf_t<T13,Scalar,UseProceduralArray_t<ComponentGenerator13> > T_13;
-    typedef ImplementationOf_t<T21,Scalar,UseProceduralArray_t<ComponentGenerator21> > T_21;
-    typedef ImplementationOf_t<T22,Scalar,UseProceduralArray_t<ComponentGenerator22> > T_22;
-    typedef ImplementationOf_t<T23,Scalar,UseProceduralArray_t<ComponentGenerator23> > T_23;
-    typedef ImplementationOf_t<T31,Scalar,UseProceduralArray_t<ComponentGenerator31> > T_31;
-    typedef ImplementationOf_t<T32,Scalar,UseProceduralArray_t<ComponentGenerator32> > T_32;
-    typedef ImplementationOf_t<T33,Scalar,UseProceduralArray_t<ComponentGenerator33> > T_33;
+    typedef ImplementationOf_t<T11,Scalar,UseProceduralArray_t<ComponentGenerator11>> T_11;
+    typedef ImplementationOf_t<T12,Scalar,UseProceduralArray_t<ComponentGenerator12>> T_12;
+    typedef ImplementationOf_t<T13,Scalar,UseProceduralArray_t<ComponentGenerator13>> T_13;
+    typedef ImplementationOf_t<T21,Scalar,UseProceduralArray_t<ComponentGenerator21>> T_21;
+    typedef ImplementationOf_t<T22,Scalar,UseProceduralArray_t<ComponentGenerator22>> T_22;
+    typedef ImplementationOf_t<T23,Scalar,UseProceduralArray_t<ComponentGenerator23>> T_23;
+    typedef ImplementationOf_t<T31,Scalar,UseProceduralArray_t<ComponentGenerator31>> T_31;
+    typedef ImplementationOf_t<T32,Scalar,UseProceduralArray_t<ComponentGenerator32>> T_32;
+    typedef ImplementationOf_t<T33,Scalar,UseProceduralArray_t<ComponentGenerator33>> T_33;
 
-    typedef TypeList_t<T_11,
-            TypeList_t<T_12,
-            TypeList_t<T_13,
-            TypeList_t<T_21,
-            TypeList_t<T_22,
-            TypeList_t<T_23,
-            TypeList_t<T_31,
-            TypeList_t<T_32,
-            TypeList_t<T_33> > > > > > > > > TL;
+    typedef Typle_t<T_11,T_12,T_13,T_21,T_22,T_23,T_31,T_32,T_33> TL;
     typedef DirectSumOfProcedural2Tensors_f<TL>::T D;
     D d;
     std::cout << "direct sum of procedural diagonal-2-tensors\n";
@@ -322,12 +305,10 @@ void test_direct_sum_of_diagonal2tensors ()
 void test_direct_sum_of_inner_products ()
 {
     typedef double Scalar;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,OrthonormalBasis_c<Generic> > B3;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,OrthonormalBasis_c<Generic> > B4;
-    typedef DirectSumOfBasedVectorSpaces_c<TypeList_t<B3,
-                                           TypeList_t<B4> > > DirectSum;
-    typedef DirectSum_c<TypeList_t<StandardInnerProduct,
-                        TypeList_t<StandardInnerProduct> > > DirectSumInnerProductId;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,OrthonormalBasis_c<Generic>> B3;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,OrthonormalBasis_c<Generic>> B4;
+    typedef DirectSumOfBasedVectorSpaces_c<Typle_t<B3,B4>> DirectSum;
+    typedef DirectSum_c<Typle_t<StandardInnerProduct,StandardInnerProduct>> DirectSumInnerProductId;
     InnerProduct_f<DirectSum,DirectSumInnerProductId,Scalar>::T inner_product;
     std::cout << "direct sum of inner products\n";
     std::cout << FORMAT_VALUE(inner_product) << '\n';

@@ -22,7 +22,7 @@ struct EmbeddableInTensorProductOfVectorSpaces_c
 {
     // NOTE: we can't static-assert that the template parameters are the types that they're required to be,
     // since the concept hierarchy isn't fully available in this file.
-    typedef EmptyTypeList ParentTypeList;
+    typedef Typle_t<> ParentTyple;
 
     typedef Exactly_TensorProductOfVectorSpaces_ TensorProductOfVectorSpaces;
 
@@ -33,7 +33,7 @@ struct EmbeddableInTensorProductOfVectorSpaces_c
 };
 
 template <typename TensorProductOfVectorSpaces_>
-struct IsConcept_f<EmbeddableInTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_> >
+struct IsConcept_f<EmbeddableInTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_>>
 {
     static bool const V = true;
 private:
@@ -46,7 +46,7 @@ template <typename T> struct IsEmbeddableInTensorProductOfVectorSpaces_f
 private:
     IsEmbeddableInTensorProductOfVectorSpaces_f();
 };
-template <typename TensorProductOfVectorSpaces_> struct IsEmbeddableInTensorProductOfVectorSpaces_f<EmbeddableInTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_> >
+template <typename TensorProductOfVectorSpaces_> struct IsEmbeddableInTensorProductOfVectorSpaces_f<EmbeddableInTensorProductOfVectorSpaces_c<TensorProductOfVectorSpaces_>>
 {
     static bool const V = true;
 private:
@@ -77,7 +77,7 @@ private:
     // since the concept hierarchy isn't fully available in this file.
     typedef EmbeddableInTensorProductOfVectorSpaces_c<Exactly_TensorProductOfVectorSpaces_> As_EmbeddableInTensorProductOfVectorSpaces;
 public:
-    typedef TypeList_t<As_EmbeddableInTensorProductOfVectorSpaces> ParentTypeList;
+    typedef Typle_t<As_EmbeddableInTensorProductOfVectorSpaces> ParentTyple;
 
     typedef Exactly_TensorProductOfBasedVectorSpaces_ TensorProductOfBasedVectorSpaces;
 
@@ -89,7 +89,7 @@ public:
 };
 
 template <typename Exactly_TensorProductOfBasedVectorSpaces_, typename Exactly_TensorProductOfVectorSpaces_>
-struct IsConcept_f<EmbeddableInTensorProductOfBasedVectorSpaces_c<Exactly_TensorProductOfBasedVectorSpaces_,Exactly_TensorProductOfVectorSpaces_> >
+struct IsConcept_f<EmbeddableInTensorProductOfBasedVectorSpaces_c<Exactly_TensorProductOfBasedVectorSpaces_,Exactly_TensorProductOfVectorSpaces_>>
 {
     static bool const V = true;
 private:
@@ -102,7 +102,7 @@ template <typename T> struct IsEmbeddableInTensorProductOfBasedVectorSpaces_f
 private:
     IsEmbeddableInTensorProductOfBasedVectorSpaces_f();
 };
-template <typename Exactly_TensorProductOfBasedVectorSpaces_, typename Exactly_TensorProductOfVectorSpaces_> struct IsEmbeddableInTensorProductOfBasedVectorSpaces_f<EmbeddableInTensorProductOfBasedVectorSpaces_c<Exactly_TensorProductOfBasedVectorSpaces_,Exactly_TensorProductOfVectorSpaces_> >
+template <typename Exactly_TensorProductOfBasedVectorSpaces_, typename Exactly_TensorProductOfVectorSpaces_> struct IsEmbeddableInTensorProductOfBasedVectorSpaces_f<EmbeddableInTensorProductOfBasedVectorSpaces_c<Exactly_TensorProductOfBasedVectorSpaces_,Exactly_TensorProductOfVectorSpaces_>>
 {
     static bool const V = true;
 private:

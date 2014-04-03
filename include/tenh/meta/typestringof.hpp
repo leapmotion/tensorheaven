@@ -51,11 +51,11 @@ struct TypeStringOf_t<std::complex<T>,VERBOSE_>
     static std::string eval () { return "complex<" + TypeStringOf_t<T,VERBOSE_>::eval() + '>'; }
 };
 
-template <typename T_, bool VERBOSE_>
-struct TypeStringOf_t<Type_t<T_>,VERBOSE_>
-{
-    static std::string eval () { return "Type_t<" + TypeStringOf_t<T_,VERBOSE_>::eval() + '>'; }
-};
+// for const types
+template <typename T_, bool VERBOSE_> struct TypeStringOf_t<T_ const,VERBOSE_> { static std::string eval () { return TypeStringOf_t<T_,VERBOSE_>::eval() + " const"; } };
+// for pointer types
+template <typename T_, bool VERBOSE_> struct TypeStringOf_t<T_ *,VERBOSE_> { static std::string eval () { return TypeStringOf_t<T_,VERBOSE_>::eval() + " *"; } };
+template <typename T_, bool VERBOSE_> struct TypeStringOf_t<T_ const *,VERBOSE_> { static std::string eval () { return TypeStringOf_t<T_,VERBOSE_>::eval() + " const *"; } };
 
 template <typename T_, T_ VALUE_, bool VERBOSE_>
 struct TypeStringOf_t<Value_t<T_,VALUE_>,VERBOSE_>
@@ -64,6 +64,12 @@ struct TypeStringOf_t<Value_t<T_,VALUE_>,VERBOSE_>
 };
 
 template <bool VERBOSE_> struct TypeStringOf_t<NullValue,VERBOSE_> { static std::string eval () { return "NullValue"; } };
+
+template <typename T_, bool VERBOSE_>
+struct TypeStringOf_t<Type_t<T_>,VERBOSE_>
+{
+    static std::string eval () { return "Type_t<" + TypeStringOf_t<T_,VERBOSE_>::eval() + '>'; }
+};
 /// @endcond
 
 /// @brief Overload for operator<< to stream objects of type TypeStringOf_t

@@ -28,13 +28,12 @@ template <typename RhsInnerProductId_,
           ComponentQualifier COMPONENT_QUALIFIER1_>
 void linear_solve_using_least_squares (Tensor_i<Derived0_,
                                                 Scalar_,
-                                                TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0_,
-                                                                                   TypeList_t<typename DualOf_f<Factor1_>::T> > >,
+                                                TensorProductOfBasedVectorSpaces_c<Typle_t<Factor0_,typename DualOf_f<Factor1_>::T>>,
                                                 COMPONENT_QUALIFIER0_> const &A,
                                        Vector_i<Derived2_,
                                                 Scalar_,
                                                 Factor1_,
-                                                COMPONENTS_ARE_NONCONST_MEMORY> &x,
+                                                ComponentQualifier::NONCONST_MEMORY> &x,
                                        Vector_i<Derived1_,
                                                 Scalar_,
                                                 Factor0_,
@@ -42,7 +41,7 @@ void linear_solve_using_least_squares (Tensor_i<Derived0_,
 {
     // for now require this special case -- non-standard inner products require
     // the use of a non-identity Euclidean embedding.
-    STATIC_ASSERT_TYPES_ARE_EQUAL(RhsInnerProductId_,StandardInnerProduct);
+    static_assert(TypesAreEqual_f<RhsInnerProductId_,StandardInnerProduct>::V, "for now only standard inner product is supported");
 
     typename EigenMapOf2Tensor_const_f<Factor0_,typename DualOf_f<Factor1_>::T,Scalar_>::T
         EigenMap_of_A(EigenMap_of_2tensor(A));

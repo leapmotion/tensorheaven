@@ -13,50 +13,45 @@
 #include <algorithm>
 
 #include "tenh/componentindex.hpp"
-#include "tenh/list.hpp"
-#include "tenh/meta/typelist_utility.hpp"
+#include "tenh/tuple.hpp"
 
 namespace Tenh {
 
-// IndexTypeList should be a TypeList_t containing ComponentIndex_t types
-template <typename IndexTypeList_>
-struct MultiIndex_t : List_t<IndexTypeList_>
+// IndexTyple_ should be a Typle_t containing ComponentIndex_t types
+template <typename IndexTyple_>
+struct MultiIndex_t : Tuple_t<IndexTyple_>
 {
-private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<IndexTypeList_,IsComponentIndex_p>::V), EACH_TYPE_MUST_BE_INDEX)
-    };
+    static_assert(IsTyple_f<IndexTyple_>::V, "IndexTyple_ must be a Typle_t");
+    static_assert(EachTypeSatisfies_f<IndexTyple_,IsComponentIndex_e>::V, "each type must be a ComponentIndex_t");
 
-public:
-    typedef List_t<IndexTypeList_> Parent;
+    typedef Tuple_t<IndexTyple_> Parent;
     using Parent::LENGTH;
-    typedef IndexTypeList_ IndexTypeList;
-    typedef typename IndexTypeList::HeadType HeadIndexType;
-    typedef typename IndexTypeList::BodyTypeList BodyIndexTypeList;
-    typedef MultiIndex_t<BodyIndexTypeList> BodyMultiIndex;
+    typedef IndexTyple_ IndexTyple;
+    typedef typename Head_f<IndexTyple_>::T HeadIndexType;
+    typedef typename BodyTyple_f<IndexTyple_>::T BodyIndexTyple;
+    typedef MultiIndex_t<BodyIndexTyple> BodyMultiIndex;
     static Uint32 const COMPONENT_COUNT = HeadIndexType::COMPONENT_COUNT * BodyMultiIndex::COMPONENT_COUNT;
 
     MultiIndex_t () { } // default constructor initializes to "first" component
     MultiIndex_t (HeadIndexType const &head, BodyMultiIndex const &body) : Parent(head, body) { }
     // tuple-like initializers for raw Uint32
-    MultiIndex_t (Uint32 i0, Uint32 i1, bool check_range = CHECK_RANGE) // TODO: replace with IndexTypeList::HeadType i0, IndexTypeList::BodyTypeList::HeadType i1 ?
+    MultiIndex_t (Uint32 i0, Uint32 i1, CheckRange check_range = CheckRange::TRUE)
         :
         Parent(HeadIndexType(i0, check_range), BodyMultiIndex(i1, check_range))
     {
-        STATIC_ASSERT((Parent::LENGTH == 2), LENGTH_DOES_NOT_MATCH_ARGUMENT_COUNT);
+        static_assert(Parent::LENGTH == 2, "length does not match argument count (2)");
     }
-    MultiIndex_t (Uint32 i0, Uint32 i1, Uint32 i2, bool check_range = CHECK_RANGE)
+    MultiIndex_t (Uint32 i0, Uint32 i1, Uint32 i2, CheckRange check_range = CheckRange::TRUE)
         :
         Parent(HeadIndexType(i0, check_range), BodyMultiIndex(i1, i2, check_range))
     {
-        STATIC_ASSERT((Parent::LENGTH == 3), LENGTH_DOES_NOT_MATCH_ARGUMENT_COUNT);
+        static_assert(Parent::LENGTH == 3, "length does not match argument count (3)");
     }
-    MultiIndex_t (Uint32 i0, Uint32 i1, Uint32 i2, Uint32 i3, bool check_range = CHECK_RANGE)
+    MultiIndex_t (Uint32 i0, Uint32 i1, Uint32 i2, Uint32 i3, CheckRange check_range = CheckRange::TRUE)
         :
         Parent(HeadIndexType(i0, check_range), BodyMultiIndex(i1, i2, i3, check_range))
     {
-        STATIC_ASSERT((Parent::LENGTH == 4), LENGTH_DOES_NOT_MATCH_ARGUMENT_COUNT);
+        static_assert(Parent::LENGTH == 4, "length does not match argument count (4)");
     }
     // can really only provide tuple-like initializer for 2-multi-indices, due to the lack
     // of a guarantee that BodyMultiIndex has more than a head index type.
@@ -64,23 +59,24 @@ public:
         :
         Parent(i0, BodyMultiIndex(i1))
     {
-        STATIC_ASSERT((Parent::LENGTH == 2), LENGTH_DOES_NOT_MATCH_ARGUMENT_COUNT);
+        static_assert(Parent::LENGTH == 2, "length does not match argument count (2)");
     }
 
-    MultiIndex_t (MultiIndex_t<EmptyTypeList> const &) { } // default construction
-    MultiIndex_t (MultiIndex_t<TypeList_t<HeadIndexType> > const &leading_multi_index)
+    MultiIndex_t (MultiIndex_t<Typle_t<>> const &) { } // default construction
+    // this includes the copy constructor (probably)
+    template <typename OtherIndexTyple_>
+    MultiIndex_t (MultiIndex_t<OtherIndexTyple_> const &leading_multi_index)
         :
         Parent(leading_multi_index)
-    { }
-    // this includes the copy constructor
-    template <typename OtherHeadIndexType, typename OtherBodyIndexTypeList>
-    MultiIndex_t (MultiIndex_t<TypeList_t<OtherHeadIndexType,OtherBodyIndexTypeList> > const &leading_multi_index)
-        :
-        Parent(leading_multi_index)
-    { }
+    {
+        static_assert(IsTyple_f<OtherIndexTyple_>::V, "OtherIndexTyple_ must be a Typle_t");
+        static_assert(EachTypeSatisfies_f<OtherIndexTyple_,IsComponentIndex_e>::V, "each type must be a ComponentIndex_t");
+    }
 
 private:
-    static Uint32 const BODY_COMPONENT_COUNT_OR_ONE = If_f<BodyMultiIndex::COMPONENT_COUNT==0,Value_t<Uint32,1>,Value_t<Uint32,BodyMultiIndex::COMPONENT_COUNT> >::T::V;
+    static Uint32 const BODY_COMPONENT_COUNT_OR_ONE = If_f<BodyMultiIndex::COMPONENT_COUNT==0,
+                                                           Value_t<Uint32,1>,
+                                                           Value_t<Uint32,BodyMultiIndex::COMPONENT_COUNT>>::T::V;
 
 public:
     // for converting a vector index into a multi-index via row-major ordering (most significant is head).
@@ -97,7 +93,7 @@ public:
     bool is_at_end () const { return this->head().is_at_end(); } // because the head is the last one incremented
     bool is_not_at_end () const { return this->head().is_not_at_end(); } // because the head is the last one incremented
     Uint32 value () const { return BodyMultiIndex::COMPONENT_COUNT*this->head().value() + this->body().value(); }
-    ComponentIndex_t<COMPONENT_COUNT> as_component_index () const { return ComponentIndex_t<COMPONENT_COUNT>(value(), DONT_CHECK_RANGE); }
+    ComponentIndex_t<COMPONENT_COUNT> as_component_index () const { return ComponentIndex_t<COMPONENT_COUNT>(value(), CheckRange::FALSE); }
     // TODO: think about adding a redundant single index that just increments and can be returned directly in value()
     void operator ++ ()
     {
@@ -111,46 +107,46 @@ public:
     }
     void reset () { this->head().reset(); body().reset(); }
 
-    // slighty hacky way to use List_t's existing functionality -- NOTE: this only
-    // works because MultiIndex_t<IndexTypeList> inherits non-virtually from
-    // List_t<IndexTypeList> and has no members.
+    // slighty hacky way to use Tuple_t's existing functionality -- NOTE: this only
+    // works because MultiIndex_t<IndexTyple> inherits non-virtually from
+    // Tuple_t<IndexTyple> and has no members.
     BodyMultiIndex const &body () const { return *static_cast<BodyMultiIndex const *>(&Parent::body()); }
     BodyMultiIndex &body () { return *static_cast<BodyMultiIndex *>(&Parent::body()); }
 
-    // if IndexTypeList is uniform (meaning all its types are the same), then this provides
+    // if IndexTyple is uniform (meaning all its types are the same), then this provides
     // run-time access to the ith index.
-    HeadIndexType const &index (Uint32 i, bool check_range = CHECK_RANGE) const
+    HeadIndexType const &index (Uint32 i, CheckRange check_range = CheckRange::TRUE) const
     {
-        STATIC_ASSERT(TypeListIsUniform_t<IndexTypeList>::V, ALL_TYPES_IN_TYPELIST_MUST_BE_THE_SAME);
+        static_assert(TypleIsUniform_f<IndexTyple_>::V, "IndexTyple_ must be uniform to use this method");
         assert(this->is_layed_out_contiguously_in_memory());
-        if (check_range && i >= LENGTH)
+        if (bool(check_range) && i >= LENGTH)
             throw std::out_of_range("index argument was out of range");
         HeadIndexType const *multi_index_as_array = &this->head();
         return multi_index_as_array[i];
     }
-    HeadIndexType &index (Uint32 i, bool check_range = CHECK_RANGE)
+    HeadIndexType &index (Uint32 i, CheckRange check_range = CheckRange::TRUE)
     {
-        STATIC_ASSERT(TypeListIsUniform_t<IndexTypeList>::V, ALL_TYPES_IN_TYPELIST_MUST_BE_THE_SAME);
+        static_assert(TypleIsUniform_f<IndexTyple_>::V, "IndexTyple_ must be uniform to use this method");
         assert(this->is_layed_out_contiguously_in_memory());
-        if (check_range && i >= LENGTH)
+        if (bool(check_range) && i >= LENGTH)
             throw std::out_of_range("index argument was out of range");
         HeadIndexType *multi_index_as_array = &this->head();
         return multi_index_as_array[i];
     }
-    // if IndexTypeList is non-uniform (meaning not all its types are the same), then this provides
+    // if IndexTyple is non-uniform (meaning not all its types are the same), then this provides
     // run-time access to the ith index in a weakly-typed way (via the Uint32-typed value())
-    Uint32 value_of_index (Uint32 i, bool check_range = CHECK_RANGE) const
+    Uint32 value_of_index (Uint32 i, CheckRange check_range = CheckRange::TRUE) const
     {
         assert(this->is_layed_out_contiguously_in_memory());
-        if (check_range && i >= LENGTH)
+        if (bool(check_range) && i >= LENGTH)
             throw std::out_of_range("index argument was out of range");
         Uint32 const *multi_index_as_array = reinterpret_cast<Uint32 const *>(&this->head());
         return multi_index_as_array[i];
     }
-    Uint32 value_of_index (Uint32 i, bool check_range = CHECK_RANGE)
+    Uint32 value_of_index (Uint32 i, CheckRange check_range = CheckRange::TRUE)
     {
         assert(this->is_layed_out_contiguously_in_memory());
-        if (check_range && i >= LENGTH)
+        if (bool(check_range) && i >= LENGTH)
             throw std::out_of_range("index argument was out of range");
         Uint32 const *multi_index_as_array = reinterpret_cast<Uint32 const *>(&this->head());
         return multi_index_as_array[i];
@@ -158,114 +154,112 @@ public:
 
     // TODO: rename to RangeMultiIndex_t
 
-    // slighty hacky way to use List_t's existing functionality -- NOTE: this only
-    // works because MultiIndex_t<IndexTypeList> inherits non-virtually from
-    // List_t<IndexTypeList> and has no members.
+    // slighty hacky way to use Tuple_t's existing functionality -- NOTE: this only
+    // works because MultiIndex_t<IndexTyple> inherits non-virtually from
+    // Tuple_t<IndexTyple> and has no members.
     // returns the type of the MultiIndex_t having the specified range
-    template <Uint32 START_INDEX, Uint32 END_INDEX>
-    struct RangeType_t
+    template <Uint32 START_INDEX_, Uint32 END_INDEX_>
+    struct RangeType_f
     {
-        typedef MultiIndex_t<typename TypeListRange_f<IndexTypeList,START_INDEX,END_INDEX>::T> T;
+        typedef MultiIndex_t<typename TypleRange_f<IndexTyple,START_INDEX_,END_INDEX_>::T> T;
     };
 
     // returns the MultiIndex_t which is the given range of elements
-    template <Uint32 START_INDEX, Uint32 END_INDEX>
-    typename RangeType_t<START_INDEX,END_INDEX>::T const &range () const
+    template <Uint32 START_INDEX_, Uint32 END_INDEX_>
+    typename RangeType_f<START_INDEX_,END_INDEX_>::T const &range () const
     {
-        return *static_cast<typename RangeType_t<START_INDEX,END_INDEX>::T const *>(&(this->Parent::template range<START_INDEX,END_INDEX>()));
+        return *static_cast<typename RangeType_f<START_INDEX_,END_INDEX_>::T const *>(&(this->Parent::template range<START_INDEX_,END_INDEX_>()));
     }
-    template <Uint32 START_INDEX, Uint32 END_INDEX>
-    typename RangeType_t<START_INDEX,END_INDEX>::T &range ()
+    template <Uint32 START_INDEX_, Uint32 END_INDEX_>
+    typename RangeType_f<START_INDEX_,END_INDEX_>::T &range ()
     {
-        return *static_cast<typename RangeType_t<START_INDEX,END_INDEX>::T *>(&(this->Parent::template range<START_INDEX,END_INDEX>()));
+        return *static_cast<typename RangeType_f<START_INDEX_,END_INDEX_>::T *>(&(this->Parent::template range<START_INDEX_,END_INDEX_>()));
     }
 
-    // slighty hacky way to use List_t's existing functionality -- NOTE: this only
-    // works because MultiIndex_t<IndexTypeList> inherits non-virtually from
-    // List_t<IndexTypeList> and has no members.
-    // returns the type of the leading MultiIndex_t ending at the INDEXth element
-    template <Uint32 INDEX>
-    struct LeadingListType_t
+    // slighty hacky way to use Tuple_t's existing functionality -- NOTE: this only
+    // works because MultiIndex_t<IndexTyple> inherits non-virtually from
+    // Tuple_t<IndexTyple> and has no members.
+    // returns the type of the leading MultiIndex_t ending at the END_INDEX_th element
+    template <Uint32 END_INDEX_>
+    struct LeadingTupleType_f
     {
-        typedef MultiIndex_t<typename LeadingTypeList_f<IndexTypeList,INDEX>::T> T;
+        typedef MultiIndex_t<typename LeadingTyple_f<IndexTyple,END_INDEX_>::T> T;
     };
 
     // TODO: rename to leading_multi_index
-    // returns the leading MultiIndex_t ending at the INDEXth element.
-    template <Uint32 INDEX>
-    typename LeadingListType_t<INDEX>::T const &leading_list () const
+    // returns the leading MultiIndex_t ending at the END_INDEX_th element.
+    template <Uint32 END_INDEX_>
+    typename LeadingTupleType_f<END_INDEX_>::T const &leading_tuple () const
     {
-        return *static_cast<typename LeadingListType_t<INDEX>::T const *>(&(this->Parent::template leading_list<INDEX>()));
+        return *static_cast<typename LeadingTupleType_f<END_INDEX_>::T const *>(&(this->Parent::template leading_tuple<END_INDEX_>()));
     }
-    template <Uint32 INDEX>
-    typename LeadingListType_t<INDEX>::T &leading_list ()
+    template <Uint32 END_INDEX_>
+    typename LeadingTupleType_f<END_INDEX_>::T &leading_tuple ()
     {
-        return *static_cast<typename LeadingListType_t<INDEX>::T *>(&(this->Parent::template leading_list<INDEX>()));
+        return *static_cast<typename LeadingTupleType_f<END_INDEX_>::T *>(&(this->Parent::template leading_tuple<END_INDEX_>()));
     }
 
     // TODO: rename to TrailingMultiIndex_t
 
-    // slighty hacky way to use List_t's existing functionality -- NOTE: this only
-    // works because MultiIndex_t<IndexTypeList> inherits non-virtually from
-    // List_t<IndexTypeList> and has no members.
-    // returns the type of the trailing List_t starting at the INDEXth element
-    template <Uint32 INDEX>
-    struct TrailingListType_t
+    // slighty hacky way to use Tuple_t's existing functionality -- NOTE: this only
+    // works because MultiIndex_t<IndexTyple> inherits non-virtually from
+    // Tuple_t<IndexTyple> and has no members.
+    // returns the type of the trailing Tuple_t starting at the START_INDEX_th element
+    template <Uint32 START_INDEX_>
+    struct TrailingTupleType_f
     {
-        typedef MultiIndex_t<typename TrailingTypeList_f<IndexTypeList,INDEX>::T> T;
+        typedef MultiIndex_t<typename TrailingTyple_f<IndexTyple,START_INDEX_>::T> T;
     };
 
     // TODO: rename to trailing_multi_index
-    // returns the trailing MultiIndex_t starting at the INDEXth element
-    template <Uint32 INDEX>
-    typename TrailingListType_t<INDEX>::T const &trailing_list () const
+    // returns the trailing MultiIndex_t starting at the START_INDEX_th element
+    template <Uint32 START_INDEX_>
+    typename TrailingTupleType_f<START_INDEX_>::T const &trailing_tuple () const
     {
-        return *static_cast<typename TrailingListType_t<INDEX>::T const *>(&(this->Parent::template trailing_list<INDEX>()));
+        return *static_cast<typename TrailingTupleType_f<START_INDEX_>::T const *>(&(this->Parent::template trailing_tuple<START_INDEX_>()));
     };
-    template <Uint32 INDEX>
-    typename TrailingListType_t<INDEX>::T &trailing_list ()
+    template <Uint32 START_INDEX_>
+    typename TrailingTupleType_f<START_INDEX_>::T &trailing_tuple ()
     {
-        return *static_cast<typename TrailingListType_t<INDEX>::T *>(&(this->Parent::template trailing_list<INDEX>()));
+        return *static_cast<typename TrailingTupleType_f<START_INDEX_>::T *>(&(this->Parent::template trailing_tuple<START_INDEX_>()));
     };
 
-    static std::string type_as_string (bool verbose) { return "MultiIndex_t<" + type_string_of<IndexTypeList>() + '>'; }
+    static std::string type_as_string (bool verbose) { return "MultiIndex_t<" + type_string_of<IndexTyple>() + '>'; }
 };
 
-// template specializations for the IndexTypeList list corner cases
+// template specializations for the IndexTyple tuple corner cases
 template <typename HeadIndexType_>
-struct MultiIndex_t<TypeList_t<HeadIndexType_> > : public List_t<TypeList_t<HeadIndexType_> >
+struct MultiIndex_t<Typle_t<HeadIndexType_>> : public Tuple_t<Typle_t<HeadIndexType_>>
 {
-private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IsComponentIndex_f<HeadIndexType_>::V, MUST_BE_INDEX)
-    };
-public:
+    static_assert(IsComponentIndex_f<HeadIndexType_>::V, "HeadIndexType_ must be a ComponentIndex_t");
 
-    typedef List_t<TypeList_t<HeadIndexType_> > Parent;
+    typedef Tuple_t<Typle_t<HeadIndexType_>> Parent;
     typedef HeadIndexType_ HeadIndexType;
     using Parent::LENGTH;
-    typedef TypeList_t<HeadIndexType> IndexTypeList;
-    typedef typename IndexTypeList::BodyTypeList BodyIndexTypeList;
-    typedef MultiIndex_t<BodyIndexTypeList> BodyMultiIndex;
+    typedef Typle_t<HeadIndexType> IndexTyple;
+    typedef Typle_t<> BodyIndexTyple;
+    typedef MultiIndex_t<BodyIndexTyple> BodyMultiIndex;
     static Uint32 const COMPONENT_COUNT = HeadIndexType::COMPONENT_COUNT;
 
     MultiIndex_t () { } // default constructor initializes to "first" component
     // explicit because it has a range-check (in the HeadIndexType constructor)
-    explicit MultiIndex_t (Uint32 i, bool check_range = CHECK_RANGE) : Parent(HeadIndexType(i, check_range)) { }
+    explicit MultiIndex_t (Uint32 i, CheckRange check_range = CheckRange::TRUE) : Parent(HeadIndexType(i, check_range)) { }
     explicit MultiIndex_t (HeadIndexType const &head) : Parent(head) { }
 
-    MultiIndex_t (MultiIndex_t<EmptyTypeList> const &) { } // default construction
+    MultiIndex_t (MultiIndex_t<Typle_t<>> const &) { } // default construction
     // this is the copy constructor
     MultiIndex_t (MultiIndex_t const &m)
         :
         Parent(m)
     { }
-    template <typename OtherHeadIndexType, typename OtherBodyIndexTypeList>
-    MultiIndex_t (MultiIndex_t<TypeList_t<OtherHeadIndexType,OtherBodyIndexTypeList> > const &leading_multi_index)
+    template <typename OtherIndexTyple_>
+    MultiIndex_t (MultiIndex_t<OtherIndexTyple_> const &leading_multi_index)
         :
         Parent(leading_multi_index)
-    { }
+    {
+        static_assert(IsTyple_f<OtherIndexTyple_>::V, "OtherIndexTyple_ must be a Typle_t");
+        static_assert(EachTypeSatisfies_f<OtherIndexTyple_,IsComponentIndex_e>::V, "each type must be a ComponentIndex_t");
+    }
 
     bool operator == (MultiIndex_t const &m) const { return this->head() == m.head(); }
     bool operator != (MultiIndex_t const &m) const { return this->head() != m.head(); }
@@ -274,50 +268,50 @@ public:
     bool is_at_end () const { return this->head().is_at_end(); }
     bool is_not_at_end () const { return this->head().is_not_at_end(); }
     Uint32 value () const { return this->head().value(); }
-    ComponentIndex_t<COMPONENT_COUNT> as_component_index () const { return ComponentIndex_t<COMPONENT_COUNT>(value(), DONT_CHECK_RANGE); }
+    ComponentIndex_t<COMPONENT_COUNT> as_component_index () const { return ComponentIndex_t<COMPONENT_COUNT>(value(), CheckRange::FALSE); }
     void operator ++ () { ++(this->head()); }
     void reset () { this->head().reset(); }
 
-    // slighty hacky way to use List_t's existing functionality -- NOTE: this only
-    // works because MultiIndex_t<IndexTypeList> inherits non-virtually from
-    // List_t<IndexTypeList> and has no members.
+    // slighty hacky way to use Tuple_t's existing functionality -- NOTE: this only
+    // works because MultiIndex_t<IndexTyple> inherits non-virtually from
+    // Tuple_t<IndexTyple> and has no members.
     BodyMultiIndex const &body () const { return *static_cast<BodyMultiIndex const *>(&Parent::body()); }
     BodyMultiIndex &body () { return *static_cast<BodyMultiIndex *>(&Parent::body()); }
 
-    // if IndexTypeList is uniform (meaning all its types are the same), then this provides
+    // if IndexTyple is uniform (meaning all its types are the same), then this provides
     // run-time access to the ith index.
-    HeadIndexType const &index (Uint32 i, bool check_range = CHECK_RANGE) const
+    HeadIndexType const &index (Uint32 i, CheckRange check_range = CheckRange::TRUE) const
     {
-        STATIC_ASSERT(TypeListIsUniform_t<IndexTypeList>::V, ALL_TYPES_IN_TYPELIST_MUST_BE_THE_SAME);
+        static_assert(TypleIsUniform_f<IndexTyple>::V, "IndexTyple_ must be uniform to use this method");
         assert(this->is_layed_out_contiguously_in_memory());
-        if (check_range && i >= LENGTH)
+        if (bool(check_range) && i >= LENGTH)
             throw std::out_of_range("index argument was out of range");
         HeadIndexType const *multi_index_as_array = &this->head();
         return multi_index_as_array[i];
     }
-    HeadIndexType &index (Uint32 i, bool check_range = CHECK_RANGE)
+    HeadIndexType &index (Uint32 i, CheckRange check_range = CheckRange::TRUE)
     {
-        STATIC_ASSERT(TypeListIsUniform_t<IndexTypeList>::V, ALL_TYPES_IN_TYPELIST_MUST_BE_THE_SAME);
+        static_assert(TypleIsUniform_f<IndexTyple>::V, "IndexTyple_ must be uniform to use this method");
         assert(this->is_layed_out_contiguously_in_memory());
-        if (check_range && i >= LENGTH)
+        if (bool(check_range) && i >= LENGTH)
             throw std::out_of_range("index argument was out of range");
         HeadIndexType *multi_index_as_array = &this->head();
         return multi_index_as_array[i];
     }
-    // if IndexTypeList is non-uniform (meaning not all its types are the same), then this provides
+    // if IndexTyple is non-uniform (meaning not all its types are the same), then this provides
     // run-time access to the ith index in a weakly-typed way (via the Uint32-typed value())
-    Uint32 value_of_index (Uint32 i, bool check_range = CHECK_RANGE) const
+    Uint32 value_of_index (Uint32 i, CheckRange check_range = CheckRange::TRUE) const
     {
         assert(this->is_layed_out_contiguously_in_memory());
-        if (check_range && i >= LENGTH)
+        if (bool(check_range) && i >= LENGTH)
             throw std::out_of_range("index argument was out of range");
         Uint32 const *multi_index_as_array = reinterpret_cast<Uint32 const *>(&this->head());
         return multi_index_as_array[i];
     }
-    Uint32 value_of_index (Uint32 i, bool check_range = CHECK_RANGE)
+    Uint32 value_of_index (Uint32 i, CheckRange check_range = CheckRange::TRUE)
     {
         assert(this->is_layed_out_contiguously_in_memory());
-        if (check_range && i >= LENGTH)
+        if (bool(check_range) && i >= LENGTH)
             throw std::out_of_range("index argument was out of range");
         Uint32 const *multi_index_as_array = reinterpret_cast<Uint32 const *>(&this->head());
         return multi_index_as_array[i];
@@ -325,89 +319,92 @@ public:
 
     // type conversion operator -- because this MultiIndex_t only has one component,
     // it can be canonically identified as its component type.
-    operator HeadIndexType const & () const { return this->head(); }
-    operator HeadIndexType & () { return this->head(); }
+    operator HeadIndexType_ const & () const { return this->head(); }
+    operator HeadIndexType_ & () { return this->head(); }
 
     // TODO: rename to LeadingMultiIndex_t
 
-    // slighty hacky way to use List_t's existing functionality -- NOTE: this only
-    // works because MultiIndex_t<IndexTypeList> inherits non-virtually from
-    // List_t<IndexTypeList> and has no members.
+    // slighty hacky way to use Tuple_t's existing functionality -- NOTE: this only
+    // works because MultiIndex_t<IndexTyple> inherits non-virtually from
+    // Tuple_t<IndexTyple> and has no members.
     // returns the type of the MultiIndex_t having the specified range
-    template <Uint32 START_INDEX, Uint32 END_INDEX>
-    struct RangeType_t
+    template <Uint32 START_INDEX_, Uint32 END_INDEX_>
+    struct RangeType_f
     {
-        typedef MultiIndex_t<typename TypeListRange_f<IndexTypeList,START_INDEX,END_INDEX>::T> T;
+        typedef MultiIndex_t<typename TypleRange_f<IndexTyple,START_INDEX_,END_INDEX_>::T> T;
     };
 
     // returns the MultiIndex_t which is the given range of elements
-    template <Uint32 START_INDEX, Uint32 END_INDEX>
-    typename RangeType_t<START_INDEX,END_INDEX>::T const &range () const
+    template <Uint32 START_INDEX_, Uint32 END_INDEX_>
+    typename RangeType_f<START_INDEX_,END_INDEX_>::T const &range () const
     {
-        return *static_cast<typename RangeType_t<START_INDEX,END_INDEX>::T const *>(&(this->Parent::template range<START_INDEX,END_INDEX>()));
+        return *static_cast<typename RangeType_f<START_INDEX_,END_INDEX_>::T const *>(&(this->Parent::template range<START_INDEX_,END_INDEX_>()));
     }
-    template <Uint32 START_INDEX, Uint32 END_INDEX>
-    typename RangeType_t<START_INDEX,END_INDEX>::T &range ()
+    template <Uint32 START_INDEX_, Uint32 END_INDEX_>
+    typename RangeType_f<START_INDEX_,END_INDEX_>::T &range ()
     {
-        return *static_cast<typename RangeType_t<START_INDEX,END_INDEX>::T *>(&(this->Parent::template range<START_INDEX,END_INDEX>()));
+        return *static_cast<typename RangeType_f<START_INDEX_,END_INDEX_>::T *>(&(this->Parent::template range<START_INDEX_,END_INDEX_>()));
     }
 
-    // slighty hacky way to use List_t's existing functionality -- NOTE: this only
-    // works because MultiIndex_t<IndexTypeList> inherits non-virtually from
-    // List_t<IndexTypeList> and has no members.
-    // returns the type of the leading MultiIndex_t ending at the INDEXth element
-    template <Uint32 INDEX>
-    struct LeadingListType_t
+    // slighty hacky way to use Tuple_t's existing functionality -- NOTE: this only
+    // works because MultiIndex_t<IndexTyple> inherits non-virtually from
+    // Tuple_t<IndexTyple> and has no members.
+    // returns the type of the leading MultiIndex_t ending at the END_INDEX_th element
+    template <Uint32 END_INDEX_>
+    struct LeadingTupleType_f
     {
-        typedef MultiIndex_t<typename LeadingTypeList_f<IndexTypeList,INDEX>::T> T;
+        typedef MultiIndex_t<typename LeadingTyple_f<IndexTyple,END_INDEX_>::T> T;
     };
 
     // TODO: rename to leading_multi_index
-    // returns the leading MultiIndex_t ending at the INDEXth element.
-    template <Uint32 INDEX>
-    typename LeadingListType_t<INDEX>::T const &leading_list () const
+    // returns the leading MultiIndex_t ending at the END_INDEX_th element.
+    template <Uint32 END_INDEX_>
+    typename LeadingTupleType_f<END_INDEX_>::T const &leading_tuple () const
     {
-        return *static_cast<typename LeadingListType_t<INDEX>::T const *>(&(this->Parent::template leading_list<INDEX>()));
+        return *static_cast<typename LeadingTupleType_f<END_INDEX_>::T const *>(&(this->Parent::template leading_tuple<END_INDEX_>()));
     }
-    template <Uint32 INDEX>
-    typename LeadingListType_t<INDEX>::T &leading_list ()
+    template <Uint32 END_INDEX_>
+    typename LeadingTupleType_f<END_INDEX_>::T &leading_tuple ()
     {
-        return *static_cast<typename LeadingListType_t<INDEX>::T *>(&(this->Parent::template leading_list<INDEX>()));
+        return *static_cast<typename LeadingTupleType_f<END_INDEX_>::T *>(&(this->Parent::template leading_tuple<END_INDEX_>()));
     }
 
-    // slighty hacky way to use List_t's existing functionality -- NOTE: this only
-    // works because MultiIndex_t<IndexTypeList> inherits non-virtually from
-    // List_t<IndexTypeList> and has no members.
-    // returns the type of the trailing List_t starting at the INDEXth element
-    template <Uint32 INDEX>
-    struct TrailingListType_t
+    // TODO: rename to TrailingMultiIndex_t
+
+    // slighty hacky way to use Tuple_t's existing functionality -- NOTE: this only
+    // works because MultiIndex_t<IndexTyple> inherits non-virtually from
+    // Tuple_t<IndexTyple> and has no members.
+    // returns the type of the trailing Tuple_t starting at the START_INDEX_th element
+    template <Uint32 START_INDEX_>
+    struct TrailingTupleType_f
     {
-        typedef MultiIndex_t<typename TrailingTypeList_f<IndexTypeList,INDEX>::T> T;
+        typedef MultiIndex_t<typename TrailingTyple_f<IndexTyple,START_INDEX_>::T> T;
     };
 
-    // returns the trailing MultiIndex_t starting at the INDEXth element
-    template <Uint32 INDEX>
-    typename TrailingListType_t<INDEX>::T const &trailing_list () const
+    // TODO: rename to trailing_multi_index
+    // returns the trailing MultiIndex_t starting at the START_INDEX_th element
+    template <Uint32 START_INDEX_>
+    typename TrailingTupleType_f<START_INDEX_>::T const &trailing_tuple () const
     {
-        return *static_cast<typename TrailingListType_t<INDEX>::T const *>(&(this->Parent::template trailing_list<INDEX>()));
+        return *static_cast<typename TrailingTupleType_f<START_INDEX_>::T const *>(&(this->Parent::template trailing_tuple<START_INDEX_>()));
     };
-    template <Uint32 INDEX>
-    typename TrailingListType_t<INDEX>::T &trailing_list ()
+    template <Uint32 START_INDEX_>
+    typename TrailingTupleType_f<START_INDEX_>::T &trailing_tuple ()
     {
-        return *static_cast<typename TrailingListType_t<INDEX>::T *>(&(this->Parent::template trailing_list<INDEX>()));
+        return *static_cast<typename TrailingTupleType_f<START_INDEX_>::T *>(&(this->Parent::template trailing_tuple<START_INDEX_>()));
     };
 
-    static std::string type_as_string (bool verbose) { return "MultiIndex_t<" + type_string_of<IndexTypeList>() + '>'; }
+    static std::string type_as_string (bool verbose) { return "MultiIndex_t<" + type_string_of<IndexTyple>() + '>'; }
 };
 
 template <>
-struct MultiIndex_t<EmptyTypeList> : public List_t<EmptyTypeList>
+struct MultiIndex_t<Typle_t<>> : public Tuple_t<Typle_t<>>
 {
-    typedef List_t<EmptyTypeList> Parent;
+    typedef Tuple_t<Typle_t<>> Parent;
     using Parent::LENGTH;
-    typedef EmptyTypeList IndexTypeList;
-    typedef EmptyTypeList BodyIndexTypeList;
-    typedef MultiIndex_t<BodyIndexTypeList> BodyMultiIndex;
+    typedef Typle_t<> IndexTyple;
+    typedef Typle_t<> BodyIndexTyple;
+    typedef MultiIndex_t<BodyIndexTyple> BodyMultiIndex;
     static Uint32 const COMPONENT_COUNT = 0;
 
     MultiIndex_t () { }
@@ -419,69 +416,71 @@ struct MultiIndex_t<EmptyTypeList> : public List_t<EmptyTypeList>
     bool is_at_end () const { return true; }
     bool is_not_at_end () const { return false; }
     Uint32 value () const { return 0; } // vacuous value
-    ComponentIndex_t<COMPONENT_COUNT> as_component_index () const { return ComponentIndex_t<COMPONENT_COUNT>(value(), DONT_CHECK_RANGE); }
+    ComponentIndex_t<COMPONENT_COUNT> as_component_index () const { return ComponentIndex_t<COMPONENT_COUNT>(value(), CheckRange::FALSE); }
     void operator ++ () { } // no-op
     void reset () { } // no-op
 
-    // slighty hacky way to use List_t's existing functionality -- NOTE: this only
-    // works because MultiIndex_t<IndexTypeList> inherits non-virtually from
-    // List_t<IndexTypeList> and has no members.
+    // slighty hacky way to use Tuple_t's existing functionality -- NOTE: this only
+    // works because MultiIndex_t<IndexTyple> inherits non-virtually from
+    // Tuple_t<IndexTyple> and has no members.
     BodyMultiIndex const &body () const { return *static_cast<BodyMultiIndex const *>(&Parent::body()); }
     BodyMultiIndex &body () { return *static_cast<BodyMultiIndex *>(&Parent::body()); }
 
-    static std::string type_as_string (bool verbose) { return "MultiIndex_t<" + type_string_of<IndexTypeList>() + '>'; }
+    static std::string type_as_string (bool verbose) { return "MultiIndex_t<" + type_string_of<IndexTyple>() + '>'; }
 };
 
 
 
-template <typename T> struct IsAMultiIndex_t
+template <typename T_> struct IsMultiIndex_f
 {
     static bool const V = false;
 private:
-    IsAMultiIndex_t();
+    IsMultiIndex_f();
 };
-template <typename IndexTypeList> struct IsAMultiIndex_t<MultiIndex_t<IndexTypeList> >
+template <typename IndexTyple_> struct IsMultiIndex_f<MultiIndex_t<IndexTyple_>>
 {
     static bool const V = true;
 private:
-    IsAMultiIndex_t();
+    IsMultiIndex_f();
 };
 
+MAKE_1_ARY_VALUE_EVALUATOR(IsMultiIndex);
 
 
-// type-specific analogs of all the operator overloads for List_t
 
-// tack an element onto the beginning of a list (where the list is empty)
-template <typename HeadType>
-inline MultiIndex_t<TypeList_t<HeadType> > operator >>= (HeadType const &head, MultiIndex_t<EmptyTypeList> const &)
+// type-specific analogs of all the operator overloads for Tuple_t
+
+// tack an element onto the beginning of a tuple (where the tuple is empty)
+template <typename HeadType_>
+inline MultiIndex_t<Typle_t<HeadType_>> operator >>= (HeadType_ const &head, MultiIndex_t<Typle_t<>> const &)
 {
-    return MultiIndex_t<TypeList_t<HeadType> >(head);
+    return MultiIndex_t<Typle_t<HeadType_>>(head);
 }
 
-// tack an element onto the beginning of a list (catch-all case)
-template <typename HeadType, typename BodyTypeList>
-inline MultiIndex_t<TypeList_t<HeadType,BodyTypeList> > operator >>= (HeadType const &head, MultiIndex_t<BodyTypeList> const &body)
+// tack an element onto the beginning of a tuple (catch-all case)
+template <typename HeadType_, typename... BodyTypes_>
+inline MultiIndex_t<Typle_t<HeadType_,BodyTypes_...>> operator >>= (HeadType_ const &head, MultiIndex_t<Typle_t<BodyTypes_...>> const &body)
 {
-    return MultiIndex_t<TypeList_t<HeadType,BodyTypeList> >(head, body);
+    return MultiIndex_t<Typle_t<HeadType_,BodyTypes_...>>(head, body);
 }
 
 
 // base case
-inline MultiIndex_t<EmptyTypeList> operator | (MultiIndex_t<EmptyTypeList> const &, MultiIndex_t<EmptyTypeList> const &)
+inline MultiIndex_t<Typle_t<>> operator | (MultiIndex_t<Typle_t<>> const &, MultiIndex_t<Typle_t<>> const &)
 {
-    return MultiIndex_t<EmptyTypeList>();
+    return MultiIndex_t<Typle_t<>>();
 }
 
 // base case
-template <typename TypeList_>
-MultiIndex_t<TypeList_> operator | (MultiIndex_t<TypeList_> const &lhs, MultiIndex_t<EmptyTypeList> const &)
+template <typename Typle_>
+MultiIndex_t<Typle_> operator | (MultiIndex_t<Typle_> const &lhs, MultiIndex_t<Typle_t<>> const &)
 {
     return lhs;
 }
 
 // base case
-template <typename TypeList_>
-MultiIndex_t<TypeList_> operator | (MultiIndex_t<EmptyTypeList> const &, MultiIndex_t<TypeList_> const &rhs)
+template <typename Typle_>
+MultiIndex_t<Typle_> operator | (MultiIndex_t<Typle_t<>> const &, MultiIndex_t<Typle_> const &rhs)
 {
     return rhs;
 }
@@ -489,13 +488,12 @@ MultiIndex_t<TypeList_> operator | (MultiIndex_t<EmptyTypeList> const &, MultiIn
 // this allows you to do stuff like
 // tuple(1, 2, 3) | tuple(4, 5, 6) | tuple(7, 8, 9)
 // to get the 9-tuple (1, 2, 3, 4, 5, 6, 7, 8, 9) without having to make a 9-tuple function explicitly.
-template <typename Lhs_TypeList_,
-          typename Rhs_TypeList_>
-MultiIndex_t<typename ConcatenationOfTypeLists_t<Lhs_TypeList_,Rhs_TypeList_>::T>
-    operator | (MultiIndex_t<Lhs_TypeList_> const &lhs,
-                MultiIndex_t<Rhs_TypeList_> const &rhs)
+template <typename Lhs_Typle_,
+          typename Rhs_Typle_>
+MultiIndex_t<typename Concat2Typles_f<Lhs_Typle_,Rhs_Typle_>::T>
+    operator | (MultiIndex_t<Lhs_Typle_> const &lhs, MultiIndex_t<Rhs_Typle_> const &rhs)
 {
-    return MultiIndex_t<typename ConcatenationOfTypeLists_t<Lhs_TypeList_,Rhs_TypeList_>::T>(lhs.head(), lhs.body() | rhs);
+    return MultiIndex_t<typename Concat2Typles_f<Lhs_Typle_,Rhs_Typle_>::T>(lhs.head(), lhs.body() | rhs);
 }
 
 
@@ -503,22 +501,22 @@ MultiIndex_t<typename ConcatenationOfTypeLists_t<Lhs_TypeList_,Rhs_TypeList_>::T
 
 
 // in-place sort of a uniform MultiIndex_t -- the default type for Compare should be std::less<Uint32>
-template <typename Compare, typename IndexTypeList>
-void sort (MultiIndex_t<IndexTypeList> &m)
+template <typename Compare_, typename IndexTyple_>
+void sort (MultiIndex_t<IndexTyple_> &m)
 {
-    STATIC_ASSERT(TypeListIsUniform_t<IndexTypeList>::V, ALL_TYPES_IN_TYPELIST_MUST_BE_THE_SAME);
+    static_assert(TypleIsUniform_f<IndexTyple_>::V, "IndexTyple_ must be uniform in order to sort");
     // run-time check that the memory is actually layed out contiguously, which is necessary for the reinterpret_cast to work.
     assert(m.is_layed_out_contiguously_in_memory());
     Uint32 *starting_pointer = reinterpret_cast<Uint32*>(&m.head());
-    std::sort(starting_pointer, starting_pointer + m.LENGTH, Compare());
+    std::sort(starting_pointer, starting_pointer + m.LENGTH, Compare_());
 }
 
 // functional sort of a uniform MultiIndex_t -- the default type for Compare should be std::less<Uint32>
-template <typename Compare, typename IndexTypeList>
-MultiIndex_t<IndexTypeList> sorted (MultiIndex_t<IndexTypeList> const &m)
+template <typename Compare_, typename IndexTyple_>
+MultiIndex_t<IndexTyple_> sorted (MultiIndex_t<IndexTyple_> const &m)
 {
-    MultiIndex_t<IndexTypeList> retval(m);
-    sort<Compare>(retval);
+    MultiIndex_t<IndexTyple_> retval(m);
+    sort<Compare_>(retval);
     return retval;
 }
 
@@ -526,73 +524,70 @@ MultiIndex_t<IndexTypeList> sorted (MultiIndex_t<IndexTypeList> const &m)
 
 
 
-// DomainIndexTypeList must be a TypeList_t of unique types
-// CodomainIndexTypeList must be a TypeList_t consisting of a subset of DomainIndexTypeList
-template <typename DomainIndexTypeList, typename CodomainIndexTypeList>
+// DomainIndexTyple_ must be a Typle_t of unique types
+// CodomainIndexTyple_ must be a Typle_t consisting of a subset of DomainIndexTyple_
+template <typename DomainIndexTyple_, typename CodomainIndexTyple_>
 struct MultiIndexMap_t
 {
-private:
-    enum { STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_t<DomainIndexTypeList>::V), DOMAIN_INDICES_MUST_NOT_CONTAIN_DUPLICATES) };
-    MultiIndexMap_t();
+    static_assert(!ContainsDuplicates_f<DomainIndexTyple_>::V, "DomainIndexTyple_ must not contain duplicates");
 
-public:
-    typedef MultiIndex_t<DomainIndexTypeList> DomainIndex;
-    typedef MultiIndex_t<CodomainIndexTypeList> CodomainIndex;
+    typedef MultiIndex_t<DomainIndexTyple_> DomainIndex;
+    typedef MultiIndex_t<CodomainIndexTyple_> CodomainIndex;
     typedef CodomainIndex (*EvalMapType) (DomainIndex const &);
     static CodomainIndex eval (DomainIndex const &i)
     {
-        return CodomainIndex(i.template el<IndexOfFirstOccurrence_f<DomainIndexTypeList,typename CodomainIndexTypeList::HeadType>::V>(),
-                             MultiIndexMap_t<DomainIndexTypeList,typename CodomainIndexTypeList::BodyTypeList>::eval(i));
+        return CodomainIndex(i.template el<IndexOfFirstOccurrence_f<DomainIndexTyple_,typename Head_f<CodomainIndexTyple_>::T>::V>(),
+                             MultiIndexMap_t<DomainIndexTyple_,typename BodyTyple_f<CodomainIndexTyple_>::T>::eval(i));
     }
+private:
+    MultiIndexMap_t();
 };
 
-template <typename DomainIndexTypeList, typename CodomainIndexType>
-struct MultiIndexMap_t<DomainIndexTypeList,TypeList_t<CodomainIndexType> >
+template <typename DomainIndexTyple_, typename CodomainIndexType_>
+struct MultiIndexMap_t<DomainIndexTyple_,Typle_t<CodomainIndexType_>>
 {
-private:
-    enum { STATIC_ASSERT_IN_ENUM((!ContainsDuplicates_t<DomainIndexTypeList>::V), DOMAIN_INDICES_MUST_NOT_CONTAIN_DUPLICATES) };
-    MultiIndexMap_t();
+    static_assert(!ContainsDuplicates_f<DomainIndexTyple_>::V, "DomainIndexTyple_ must not contain duplicates");
 
-public:
-    typedef TypeList_t<CodomainIndexType> CodomainIndexTypeList;
-    typedef MultiIndex_t<DomainIndexTypeList> DomainIndex;
-    typedef MultiIndex_t<CodomainIndexTypeList> CodomainIndex;
+    typedef Typle_t<CodomainIndexType_> CodomainIndexTyple_;
+    typedef MultiIndex_t<DomainIndexTyple_> DomainIndex;
+    typedef MultiIndex_t<CodomainIndexTyple_> CodomainIndex;
     typedef CodomainIndex (*EvalMapType) (DomainIndex const &);
     static CodomainIndex eval (DomainIndex const &i)
     {
-        return CodomainIndex(i.template el<IndexOfFirstOccurrence_f<DomainIndexTypeList,typename CodomainIndexTypeList::HeadType>::V>());
+        return CodomainIndex(i.template el<IndexOfFirstOccurrence_f<DomainIndexTyple_,typename Head_f<CodomainIndexTyple_>::T>::V>());
     }
+private:
+    MultiIndexMap_t();
 };
 
-template <typename MultiIndex>
+template <typename MultiIndex_>
 struct MultiIndexMultiplicity_t
 {
-    static Uint32 eval (MultiIndex const &m, Uint32 count = 1)
+    static_assert(IsMultiIndex_f<MultiIndex_>::V, "MultiIndex_ must be a MultiIndex_t");
+    static_assert(TypleIsUniform_f<typename MultiIndex_::IndexTyple>::V, "MultiIndex_ must have uniform component types");
+    static Uint32 eval (MultiIndex_ const &m, Uint32 count = 1)
     {
-        STATIC_ASSERT(TypeListIsUniform_t<typename MultiIndex::IndexTypeList>::V, ALL_TYPES_IN_TYPELIST_MUST_BE_THE_SAME);
-
-        return count * ((m.head() == m.body().head()) ? MultiIndexMultiplicity_t<typename MultiIndex::BodyMultiIndex>::eval(m.body(),count + 1) : MultiIndexMultiplicity_t<typename MultiIndex::BodyMultiIndex>::eval(m.body(),1));
+        return count * ((m.head() == m.body().head()) ? 
+                        MultiIndexMultiplicity_t<typename MultiIndex_::BodyMultiIndex>::eval(m.body(),count + 1) :
+                        MultiIndexMultiplicity_t<typename MultiIndex_::BodyMultiIndex>::eval(m.body(),1));
     }
 private:
     MultiIndexMultiplicity_t();
 };
 
-template<typename IndexType>
-struct MultiIndexMultiplicity_t<MultiIndex_t<TypeList_t<IndexType, EmptyTypeList> > >
+template<typename IndexType_>
+struct MultiIndexMultiplicity_t<MultiIndex_t<Typle_t<IndexType_>>>
 {
-    static Uint32 eval (MultiIndex_t<TypeList_t<IndexType, EmptyTypeList> > const &m, Uint32 count = 1)
-    {
-        return count;
-    }
+    static Uint32 eval (MultiIndex_t<Typle_t<IndexType_>> const &m, Uint32 count = 1) { return count; }
 private:
     MultiIndexMultiplicity_t();
 };
 
 
-template <typename IndexTypeList>
-Uint32 trailing_zero_count (MultiIndex_t<IndexTypeList> const &m)
+template <typename IndexTyple_>
+Uint32 trailing_zero_count (MultiIndex_t<IndexTyple_> const &m)
 {
-    if (IndexTypeList::LENGTH == 0)
+    if (Length_f<IndexTyple_>::V == 0)
         return 0;
 
     for (Uint32 i = 0; i < m.length(); ++i)

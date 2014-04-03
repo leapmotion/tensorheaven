@@ -23,9 +23,9 @@ namespace Tenh {
 template <typename ScalarField_, Uint32 DIMENSION_, typename Id_>
 struct VectorSpace_c
 {
-    typedef EmptyTypeList ParentTypeList;
+    typedef Typle_t<> ParentTyple;
 
-    enum { STATIC_ASSERT_IN_ENUM(IS_FIELD_UNIQUELY(ScalarField_), MUST_BE_FIELD) };
+    static_assert(IS_FIELD_UNIQUELY(ScalarField_), "ScalarField of VectorSpace_c must be a field.");
 
     typedef ScalarField_ ScalarField;
     static Uint32 const DIMENSION = DIMENSION_;
@@ -43,7 +43,7 @@ struct VectorSpace_c
 };
 
 template <typename ScalarField_, Uint32 DIMENSION_, typename Id_>
-struct IsConcept_f<VectorSpace_c<ScalarField_, DIMENSION_, Id_> >
+struct IsConcept_f<VectorSpace_c<ScalarField_, DIMENSION_, Id_>>
 {
     static bool const V = true;
 private:
@@ -56,7 +56,7 @@ template <typename T_> struct IsVectorSpace_f
 private:
     IsVectorSpace_f();
 };
-template <typename ScalarField_, Uint32 DIMENSION_, typename Id_> struct IsVectorSpace_f<VectorSpace_c<ScalarField_,DIMENSION_,Id_> >
+template <typename ScalarField_, Uint32 DIMENSION_, typename Id_> struct IsVectorSpace_f<VectorSpace_c<ScalarField_,DIMENSION_,Id_>>
 {
     static bool const V = true;
 private:
@@ -69,7 +69,7 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(VectorSpace);
 #define AS_VECTOR_SPACE(Concept) UniqueVectorSpaceStructureOf_f<Concept>::T
 
 template <typename ScalarField_, Uint32 DIMENSION_, typename Id_>
-struct DualOf_f<VectorSpace_c<ScalarField_,DIMENSION_,Id_> >
+struct DualOf_f<VectorSpace_c<ScalarField_,DIMENSION_,Id_>>
 {
     typedef VectorSpace_c<ScalarField_,DIMENSION_,typename DualOf_f<Id_>::T> T;
 private:
@@ -129,6 +129,10 @@ private:
     ScalarFieldOf_f();
 };
 
+MAKE_1_ARY_VALUE_EVALUATOR(DimensionOf);
+MAKE_1_ARY_TYPE_EVALUATOR(IdOf);
+MAKE_1_ARY_TYPE_EVALUATOR(ScalarFieldOf);
+
 // ///////////////////////////////////////////////////////////////////////////
 // BasedVectorSpace_c
 // ///////////////////////////////////////////////////////////////////////////
@@ -138,15 +142,12 @@ template <typename VectorSpace_, typename Basis_>
 struct BasedVectorSpace_c
 {
 private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(VectorSpace_), MUST_BE_VECTOR_SPACE),
-        STATIC_ASSERT_IN_ENUM(IS_BASIS_UNIQUELY(Basis_), MUST_BE_BASIS)
-    };
+    static_assert(IS_VECTOR_SPACE_UNIQUELY(VectorSpace_), "VectorSpace_ must have unique vector space structure");
+    static_assert(IS_BASIS_UNIQUELY(Basis_), "Basis_ must have unique basis structure");
 
     typedef VectorSpace_ As_VectorSpace;
 public:
-    typedef TypeList_t<As_VectorSpace> ParentTypeList;
+    typedef Typle_t<As_VectorSpace> ParentTyple;
 
     typedef typename As_VectorSpace::Id Id;
     typedef Basis_ Basis;
@@ -161,7 +162,7 @@ public:
 };
 
 template <typename VectorSpace_, typename Basis_>
-struct IsConcept_f<BasedVectorSpace_c<VectorSpace_, Basis_> >
+struct IsConcept_f<BasedVectorSpace_c<VectorSpace_, Basis_>>
 {
     static bool const V = true;
 private:
@@ -174,7 +175,7 @@ template <typename T_> struct IsBasedVectorSpace_f
 private:
     IsBasedVectorSpace_f();
 };
-template <typename VectorSpace_, typename Basis_> struct IsBasedVectorSpace_f<BasedVectorSpace_c<VectorSpace_,Basis_> >
+template <typename VectorSpace_, typename Basis_> struct IsBasedVectorSpace_f<BasedVectorSpace_c<VectorSpace_,Basis_>>
 {
     static bool const V = true;
 private:
@@ -187,7 +188,7 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(BasedVectorSpace);
 #define AS_BASED_VECTOR_SPACE(Concept) UniqueBasedVectorSpaceStructureOf_f<Concept>::T
 
 template <typename VectorSpace_, typename Basis_>
-struct DualOf_f<BasedVectorSpace_c<VectorSpace_,Basis_> >
+struct DualOf_f<BasedVectorSpace_c<VectorSpace_,Basis_>>
 {
     typedef BasedVectorSpace_c<typename DualOf_f<VectorSpace_>::T,typename DualOf_f<Basis_>::T> T;
 private:
@@ -217,106 +218,46 @@ private:
     BasisOf_f();
 };
 
-// TODO: Replace with predicate-based thing
-template <typename SummandTypeList_>
-struct AllFactorsAreVectorSpaces_f
+// helper metafunctions
+
+template <typename Typle_>
+struct AllTypesHaveUniqueVectorSpaceStructures_f
 {
-    static bool const V = HasVectorSpaceStructure_f<typename SummandTypeList_::HeadType>::V &&
-                          AllFactorsAreVectorSpaces_f<typename SummandTypeList_::BodyTypeList>::V;
+    static bool const V = And_f<typename OnEach_f<Typle_,HasUniqueVectorSpaceStructure_e>::T>::V;
 private:
-    AllFactorsAreVectorSpaces_f();
+    AllTypesHaveUniqueVectorSpaceStructures_f ();
 };
 
-template <>
-struct AllFactorsAreVectorSpaces_f<EmptyTypeList>
+template <typename Typle_>
+struct AllTypesHaveUniqueBasedVectorSpaceStructures_f
 {
-    static bool const V = true;
+    static bool const V = And_f<typename OnEach_f<Typle_,HasUniqueBasedVectorSpaceStructure_e>::T>::V;
 private:
-    AllFactorsAreVectorSpaces_f();
+    AllTypesHaveUniqueBasedVectorSpaceStructures_f ();
 };
 
-template <typename FactorTypeList_>
-struct AllFactorsAreBasedVectorSpaces_f
+template <typename Typle_>
+struct AllTypesHaveSameScalarField_f
 {
-    static bool const V = HasBasedVectorSpaceStructure_f<typename FactorTypeList_::HeadType>::V &&
-                          AllFactorsAreBasedVectorSpaces_f<typename FactorTypeList_::BodyTypeList>::V;
+    static bool const V = TypleIsUniform_f<typename OnEach_f<Typle_,ScalarFieldOf_e>::T>::V;
 private:
-    AllFactorsAreBasedVectorSpaces_f();
+    AllTypesHaveSameScalarField_f ();
 };
 
-template <>
-struct AllFactorsAreBasedVectorSpaces_f<EmptyTypeList>
+template <typename Typle_>
+struct SumOfDimensions_f
 {
-    static bool const V = true;
+    static Uint32 const V = Sum_f<typename OnEach_f<Typle_,DimensionOf_e>::T,Uint32>::V;
 private:
-    AllFactorsAreBasedVectorSpaces_f();
+    SumOfDimensions_f ();
 };
 
-template <typename SummandTypeList_>
-struct AllFactorsHaveTheSameField_f
+template <typename Typle_>
+struct ProductOfDimensions_f
 {
+    static Uint32 const V = Product_f<typename OnEach_f<Typle_,DimensionOf_e>::T,Uint32>::V;
 private:
-    typedef typename SummandTypeList_::HeadType HeadType;
-    typedef typename SummandTypeList_::BodyTypeList BodyTypeList;
-    AllFactorsHaveTheSameField_f();
-public:
-    static bool const V = TypesAreEqual_f<typename ScalarFieldOf_f<HeadType>::T,
-                                          typename ScalarFieldOf_f<typename BodyTypeList::HeadType>::T>::V &&
-                          AllFactorsHaveTheSameField_f<BodyTypeList>::V;
-};
-
-template <typename HeadType>
-struct AllFactorsHaveTheSameField_f<TypeList_t<HeadType> >
-{
-    static bool const V = true;
-private:
-    AllFactorsHaveTheSameField_f();
-};
-
-template <>
-struct AllFactorsHaveTheSameField_f<EmptyTypeList>
-{
-    static bool const V = true;
-private:
-    AllFactorsHaveTheSameField_f();
-};
-
-template <typename SummandTypeList_>
-struct SumOfDimensions_t
-{
-private:
-    enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(typename SummandTypeList_::HeadType), MUST_BE_VECTOR_SPACE) };
-    SumOfDimensions_t();
-public:
-    static Uint32 const V = DimensionOf_f<typename SummandTypeList_::HeadType>::V +
-                            SumOfDimensions_t<typename SummandTypeList_::BodyTypeList>::V;
-};
-
-template <>
-struct SumOfDimensions_t<EmptyTypeList>
-{
-    static Uint32 const V = 0;
-private:
-    SumOfDimensions_t();
-};
-
-template <typename FactorTypeList_>
-struct ProductOfDimensions_t
-{
-private:
-    enum { STATIC_ASSERT_IN_ENUM(IS_VECTOR_SPACE_UNIQUELY(typename FactorTypeList_::HeadType), MUST_BE_VECTOR_SPACE) };
-    ProductOfDimensions_t();
-public:
-    static Uint32 const V = DimensionOf_f<typename FactorTypeList_::HeadType>::V *
-                            ProductOfDimensions_t<typename FactorTypeList_::BodyTypeList>::V;
-};
-
-template <>
-struct ProductOfDimensions_t<EmptyTypeList>
-{
-    static Uint32 const V = 1; // a 0-tensor is the scalar field by convention
-private:
-    ProductOfDimensions_t();
+    ProductOfDimensions_f ();
 };
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -359,19 +300,19 @@ BasedVectorSpace_c<VectorSpace_,Basis_> bvs (VectorSpace_ const &, Basis_ const 
 // convenience overload to make the declaration nicer-looking -- Id_ is used for both
 // the vector space id and the basis id.
 template <Uint32 DIMENSION_, typename ScalarField_, typename Id_>
-BasedVectorSpace_c<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,Basis_c<Id_> >
+BasedVectorSpace_c<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,Basis_c<Id_>>
     bvs (ScalarField_ const &, Id_ const &)
 {
-    return BasedVectorSpace_c<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,Basis_c<Id_> >();
+    return BasedVectorSpace_c<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,Basis_c<Id_>>();
 }
 
 // convenience overload to make the declaration nicer-looking -- Id_ is used for both
 // the vector space id and the basis id.
 template <Uint32 DIMENSION_, typename ScalarField_, typename Id_>
-BasedVectorSpace_c<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,OrthonormalBasis_c<Id_> >
+BasedVectorSpace_c<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,OrthonormalBasis_c<Id_>>
     o_n_bvs (ScalarField_ const &, Id_ const &)
 {
-    return BasedVectorSpace_c<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,OrthonormalBasis_c<Id_> >();
+    return BasedVectorSpace_c<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,OrthonormalBasis_c<Id_>>();
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -382,12 +323,11 @@ BasedVectorSpace_c<VectorSpace_c<ScalarField_,DIMENSION_,Id_>,OrthonormalBasis_c
 struct IdentityEmbedding { static std::string type_as_string (bool verbose) { return "IdentityEmbedding"; } };
 
 // canonical identity embedding
-template <typename OnBasedVectorSpace_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
-struct LinearEmbedding_c<OnBasedVectorSpace_,OnBasedVectorSpace_,Scalar_,IdentityEmbedding,ENABLE_EXCEPTIONS_>
+template <typename OnBasedVectorSpace_, typename Scalar_, WithExceptions WITH_EXCEPTIONS_>
+struct LinearEmbedding_c<OnBasedVectorSpace_,OnBasedVectorSpace_,Scalar_,IdentityEmbedding,WITH_EXCEPTIONS_>
 {
-private:
-    enum { STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(OnBasedVectorSpace_), MUST_BE_BASED_VECTOR_SPACE) };
-public:
+    static_assert(IS_BASED_VECTOR_SPACE_UNIQUELY(OnBasedVectorSpace_), "OnBasedVectorSpace_ must have unique based vector space structure");
+
     typedef ComponentIndex_t<DimensionOf_f<OnBasedVectorSpace_>::V> ComponentIndex;
 
     struct CoembedIndexIterator

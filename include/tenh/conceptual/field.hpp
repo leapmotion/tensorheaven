@@ -16,7 +16,7 @@ namespace Tenh {
 template <typename Id_>
 struct Field_c
 {
-    typedef EmptyTypeList ParentTypeList;
+    typedef Typle_t<> ParentTyple;
 
 	typedef Id_ Id;
 
@@ -30,7 +30,7 @@ struct Field_c
 };
 
 template <typename Id_>
-struct IsConcept_f<Field_c<Id_> >
+struct IsConcept_f<Field_c<Id_>>
 {
     static bool const V = true;
 private:
@@ -42,7 +42,7 @@ template <typename T> struct IsField_f
     static bool const V = false;
 private:
 };
-template <typename Id> struct IsField_f<Field_c<Id> >
+template <typename Id> struct IsField_f<Field_c<Id>>
 {
     static bool const V = true;
 private:

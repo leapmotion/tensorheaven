@@ -8,6 +8,8 @@
 
 #include "tenh/core.hpp"
 
+#include <type_traits>
+
 #include "tenh/componentindex.hpp" // technically not conceptual code, but close enough.
 #include "tenh/conceptual/concept.hpp"
 #include "tenh/conceptual/diagonalbased2tensorproduct.hpp"
@@ -27,7 +29,7 @@ namespace Tenh {
 template <typename Factor0_, typename Factor1_>
 struct Scalar2TensorProduct_c
 {
-    typedef EmptyTypeList ParentTypeList;
+    typedef Typle_t<> ParentTyple;
 
     typedef Factor0_ Factor0;
     typedef Factor1_ Factor1;
@@ -42,7 +44,7 @@ struct Scalar2TensorProduct_c
 };
 
 template <typename Factor0_, typename Factor1_>
-struct IsConcept_f<Scalar2TensorProduct_c<Factor0_,Factor1_> >
+struct IsConcept_f<Scalar2TensorProduct_c<Factor0_,Factor1_>>
 {
     static bool const V = true;
 private:
@@ -57,7 +59,7 @@ private:
 };
 
 template <typename Factor0_, typename Factor1_>
-struct IsScalar2TensorProduct_f<Scalar2TensorProduct_c<Factor0_,Factor1_> >
+struct IsScalar2TensorProduct_f<Scalar2TensorProduct_c<Factor0_,Factor1_>>
 {
     static bool const V = true;
 private:
@@ -76,17 +78,13 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Scalar2TensorProduct);
 template <typename Factor0_, typename Factor1_>
 struct Scalar2TensorProductOfBases_c
 {
+    static_assert(IS_BASIS_UNIQUELY(Factor0_), "Factor0_ must have a unique basis structure");
+    static_assert(IS_BASIS_UNIQUELY(Factor1_), "Factor1_ must have a unique basis structure");
 private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IS_BASIS_UNIQUELY(Factor0_), MUST_BE_BASIS, FACTOR0),
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IS_BASIS_UNIQUELY(Factor1_), MUST_BE_BASIS, FACTOR1)
-    };
-    typedef Basis_c<Scalar2TensorProduct_c<Factor0_,Factor1_> > As_Basis;
+    typedef Basis_c<Scalar2TensorProduct_c<Factor0_,Factor1_>> As_Basis;
     typedef Scalar2TensorProduct_c<Factor0_,Factor1_> As_Scalar2TensorProduct;
 public:
-    typedef TypeList_t<As_Basis,
-            TypeList_t<As_Scalar2TensorProduct> > ParentTypeList;
+    typedef Typle_t<As_Basis,As_Scalar2TensorProduct> ParentTyple;
 
     typedef typename As_Basis::Id Id;
     typedef Factor0_ Factor0;
@@ -102,7 +100,7 @@ public:
 };
 
 template <typename Factor0_, typename Factor1_>
-struct IsConcept_f<Scalar2TensorProductOfBases_c<Factor0_,Factor1_> >
+struct IsConcept_f<Scalar2TensorProductOfBases_c<Factor0_,Factor1_>>
 {
     static bool const V = true;
 private:
@@ -117,7 +115,7 @@ private:
 };
 
 template <typename Factor0_, typename Factor1_>
-struct IsScalar2TensorProductOfBases_f<Scalar2TensorProductOfBases_c<Factor0_,Factor1_> >
+struct IsScalar2TensorProductOfBases_f<Scalar2TensorProductOfBases_c<Factor0_,Factor1_>>
 {
     static bool const V = true;
 private:
@@ -136,27 +134,23 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Scalar2TensorProductOfBases);
 template <typename Factor0_, typename Factor1_>
 struct Scalar2TensorProductOfBasedVectorSpaces_c
 {
+    static_assert(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor0_), "Factor0_ must have a unique based vector space structure");
+    static_assert(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor1_), "Factor1_ must have a unique based vector space structure");
+    static_assert(TypesAreEqual_f<typename ScalarFieldOf_f<Factor0_>::T,typename ScalarFieldOf_f<Factor1_>::T>::V, "all factors must have the same scalar field");
 private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor0_), MUST_BE_BASED_VECTOR_SPACE, FACTOR0),
-        STATIC_ASSERT_IN_ENUM__UNIQUE(IS_BASED_VECTOR_SPACE_UNIQUELY(Factor1_), MUST_BE_BASED_VECTOR_SPACE, FACTOR1),
-        STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename ScalarFieldOf_f<Factor0_>::T,typename ScalarFieldOf_f<Factor1_>::T>::V), ALL_FACTORS_MUST_HAVE_SAME_FIELD),
-    };
-    typedef TypeList_t<Factor0_,TypeList_t<Factor1_> > FactorTypeList;
+    typedef Typle_t<Factor0_,Factor1_> FactorTyple;
 
     typedef VectorSpace_c<typename ScalarFieldOf_f<Factor0_>::T,
                           1,
-                          Scalar2TensorProduct_c<Factor0_,Factor1_> > UnderlyingVectorSpace;
+                          Scalar2TensorProduct_c<Factor0_,Factor1_>> UnderlyingVectorSpace;
 
     typedef BasedVectorSpace_c<UnderlyingVectorSpace,
                                Scalar2TensorProductOfBases_c<typename BasisOf_f<Factor0_>::T,
-                                                             typename BasisOf_f<Factor1_>::T> > As_BasedVectorSpace;
-    typedef EmbeddableInTensorProductOfBasedVectorSpaces_c<TensorProductOfBasedVectorSpaces_c<FactorTypeList>,
-                                                           TensorProductOfVectorSpaces_c<FactorTypeList> > As_EmbeddableInTensorProductOfBasedVectorSpaces;
+                                                             typename BasisOf_f<Factor1_>::T>> As_BasedVectorSpace;
+    typedef EmbeddableInTensorProductOfBasedVectorSpaces_c<TensorProductOfBasedVectorSpaces_c<FactorTyple>,
+                                                           TensorProductOfVectorSpaces_c<FactorTyple>> As_EmbeddableInTensorProductOfBasedVectorSpaces;
 public:
-    typedef TypeList_t<As_BasedVectorSpace,
-            TypeList_t<As_EmbeddableInTensorProductOfBasedVectorSpaces> > ParentTypeList;
+    typedef Typle_t<As_BasedVectorSpace,As_EmbeddableInTensorProductOfBasedVectorSpaces> ParentTyple;
 
     typedef typename As_BasedVectorSpace::Id Id;
     typedef Factor0_ Factor0;
@@ -172,7 +166,7 @@ public:
 };
 
 template <typename Factor0_, typename Factor1_>
-struct IsConcept_f<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_> >
+struct IsConcept_f<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>>
 {
     static bool const V = true;
 private:
@@ -187,7 +181,7 @@ private:
 };
 
 template <typename Factor0_, typename Factor1_>
-struct IsScalar2TensorProductOfBasedVectorSpaces_f<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_> >
+struct IsScalar2TensorProductOfBasedVectorSpaces_f<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>>
 {
     static bool const V = true;
 private:
@@ -201,31 +195,31 @@ DEFINE_CONCEPTUAL_STRUCTURE_METAFUNCTIONS(Scalar2TensorProductOfBasedVectorSpace
 
 // TODO: verify that this mathematical claim is true
 template <typename Factor0, typename Factor1>
-struct DualOf_f<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0,Factor1> >
+struct DualOf_f<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0,Factor1>>
 {
     typedef Scalar2TensorProductOfBasedVectorSpaces_c<typename DualOf_f<Factor0>::T,typename DualOf_f<Factor1>::T> T;
 private:
     DualOf_f();
 };
 
-// convenience metafunction for using a FactorTypeList_ instead of two separate factors
-template <typename FactorTypeList_>
+// convenience metafunction for using a FactorTyple_ instead of two separate factors
+template <typename FactorTyple_>
 struct Scalar2TensorProductOfBasedVectorSpaces_f
 {
+    static_assert(Length_f<FactorTyple_>::V == 2, "there must be exactly 2 factors");
 private:
-    enum { STATIC_ASSERT_IN_ENUM(FactorTypeList_::LENGTH == 2, LENGTH_MUST_BE_EXACTLY_2) };
-    typedef typename FactorTypeList_::HeadType Factor0;
-    typedef typename FactorTypeList_::BodyTypeList::HeadType Factor1;
+    typedef typename Element_f<FactorTyple_,0>::T Factor0;
+    typedef typename Element_f<FactorTyple_,1>::T Factor1;
     Scalar2TensorProductOfBasedVectorSpaces_f();
 public:
     typedef Scalar2TensorProductOfBasedVectorSpaces_c<Factor0,Factor1> T;
 };
 
-// specialization for FactorTypeListOf_f
+// specialization for FactorTypleOf_f
 template <typename Factor0_, typename Factor1_>
-struct BaseProperty_f<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,FactorTypeList>
+struct BaseProperty_f<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,FactorTyple>
 {
-    typedef TypeList_t<Factor0_,TypeList_t<Factor1_> > T;
+    typedef Typle_t<Factor0_,Factor1_> T;
 private:
     BaseProperty_f();
 };
@@ -234,16 +228,47 @@ private:
 // helper functions for easing use of the type system
 // ///////////////////////////////////////////////////////////////////////////
 
-// for now, just do scalar 2-tensor product of based vector spaces
+// some helper macros for the following different versions of diag2
+#define BOTH_FACTORS_ARE_BASES_UNIQUELY(Factor0, Factor1) (IS_BASIS_UNIQUELY(Factor0) && IS_BASIS_UNIQUELY(Factor1))
+#define BOTH_FACTORS_ARE_BASED_VECTOR_SPACES_UNIQUELY(Factor0, Factor1) (IS_BASED_VECTOR_SPACE_UNIQUELY(Factor0) && IS_BASED_VECTOR_SPACE_UNIQUELY(Factor1))
+
+// formal scalar 2-tensor product
 template <typename Factor0_, typename Factor1_>
-Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_> scalar2 (Factor0_ const &, Factor1_ const &)
+typename std::enable_if<(!BOTH_FACTORS_ARE_BASES_UNIQUELY(Factor0_,Factor1_) &&
+                         !BOTH_FACTORS_ARE_BASED_VECTOR_SPACES_UNIQUELY(Factor0_,Factor1_)),
+                        Scalar2TensorProduct_c<Factor0_,Factor1_>>::type
+    scalar2 (Factor0_ const &, Factor1_ const &)
+{
+    return Scalar2TensorProduct_c<Factor0_,Factor1_>();
+}
+
+// scalar 2-tensor product of bases
+template <typename Factor0_, typename Factor1_>
+typename std::enable_if<(BOTH_FACTORS_ARE_BASES_UNIQUELY(Factor0_,Factor1_) &&
+                         !BOTH_FACTORS_ARE_BASED_VECTOR_SPACES_UNIQUELY(Factor0_,Factor1_)),
+                        Scalar2TensorProductOfBases_c<Factor0_,Factor1_>>::type
+    scalar2 (Factor0_ const &, Factor1_ const &)
+{
+    return Scalar2TensorProductOfBases_c<Factor0_,Factor1_>();
+}
+
+// scalar 2-tensor product of based vector spaces
+template <typename Factor0_, typename Factor1_>
+typename std::enable_if<(!BOTH_FACTORS_ARE_BASES_UNIQUELY(Factor0_,Factor1_) &&
+                         BOTH_FACTORS_ARE_BASED_VECTOR_SPACES_UNIQUELY(Factor0_,Factor1_)),
+                        Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>>::type
+    scalar2 (Factor0_ const &, Factor1_ const &)
 {
     return Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>();
 }
 
+#undef BOTH_FACTORS_ARE_BASES_UNIQUELY
+#undef BOTH_FACTORS_ARE_BASED_VECTOR_SPACES_UNIQUELY
+
 // for now, just do scalar 2-tensor product of based vector spaces
 template <typename Factor0_, typename Factor1_>
-Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_> scalar2 (TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0_,TypeList_t<Factor1_> > > const &)
+Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>
+    scalar2 (TensorProductOfBasedVectorSpaces_c<Typle_t<Factor0_,Factor1_>> const &)
 {
     return Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>();
 }
@@ -252,16 +277,16 @@ Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_> scalar2 (TensorProd
 // linear embedding of scalar 2-tensor into corresponding tensor product
 // ///////////////////////////////////////////////////////////////////////////
 
-template <typename Factor0_, typename Factor1_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
+template <typename Factor0_, typename Factor1_, typename Scalar_, WithExceptions WITH_EXCEPTIONS_>
 struct LinearEmbedding_c<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,
-                         TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0_,TypeList_t<Factor1_> > >,
+                         TensorProductOfBasedVectorSpaces_c<Typle_t<Factor0_,Factor1_>>,
                          Scalar_,
                          NaturalEmbedding,
-                         ENABLE_EXCEPTIONS_>
+                         WITH_EXCEPTIONS_>
 {
 private:
     typedef Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_> Scalar2;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<Factor0_,TypeList_t<Factor1_> > > Tensor2;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<Factor0_,Factor1_>> Tensor2;
     static bool const FACTOR0DIM_LEQ_FACTOR1DIM = DimensionOf_f<Factor0_>::V <= DimensionOf_f<Factor1_>::V;
     static Uint32 const DIM = DimensionOf_f<Factor0_>::V <= DimensionOf_f<Factor1_>::V ?
                               DimensionOf_f<Factor0_>::V :
@@ -275,7 +300,7 @@ public:
     struct CoembedIndexIterator
     {
         CoembedIndexIterator (Scalar2ComponentIndex const &) : m() { }
-        void operator ++ () { m.increment_by(DimensionOf_f<Factor1_>::V+1, DONT_CHECK_RANGE); }
+        void operator ++ () { m.increment_by(DimensionOf_f<Factor1_>::V+1, CheckRange::FALSE); }
         bool is_not_at_end () const { return m.value() < (DimensionOf_f<Factor1_>::V+1)*DIM; }
         Scalar_ scale_factor () const { return Scalar_(1); }
         typedef Tensor2ComponentIndex ComponentIndexReturnType;
@@ -285,8 +310,7 @@ public:
     };
 
 private:
-    typedef MultiIndex_t<TypeList_t<Factor0ComponentIndex,
-                         TypeList_t<Factor1ComponentIndex> > > Tensor2MultiIndex;
+    typedef MultiIndex_t<Typle_t<Factor0ComponentIndex,Factor1ComponentIndex>> Tensor2MultiIndex;
 public:
     static bool embedded_component_is_procedural_zero (Tensor2ComponentIndex const &i)
     {
@@ -296,18 +320,18 @@ public:
     }
     static Scalar_ scalar_factor_for_embedded_component (Tensor2ComponentIndex const &i)
     {
-        if (ENABLE_EXCEPTIONS_ && embedded_component_is_procedural_zero(i))
+        if (bool(WITH_EXCEPTIONS_) && embedded_component_is_procedural_zero(i))
             throw std::domain_error(FORMAT(i.value()) + " is not in the domain of scalar_factor_for_embedded_component");
 
         return Scalar_(1);
     }
     static Scalar2ComponentIndex source_component_index_for_embedded_component (Tensor2ComponentIndex const &i)
     {
-        if (ENABLE_EXCEPTIONS_ && embedded_component_is_procedural_zero(i))
+        if (bool(WITH_EXCEPTIONS_) && embedded_component_is_procedural_zero(i))
             throw std::domain_error(FORMAT(i.value()) + " is not in the domain of scalar_factor_for_embedded_component");
 
         // there is only one component for a scalar 2-tensor -- zero.
-        return Scalar2ComponentIndex(0, DONT_CHECK_RANGE);
+        return Scalar2ComponentIndex(0, CheckRange::FALSE);
     }
 };
 
@@ -316,26 +340,26 @@ public:
 // corresponding 2nd symmetric power
 // ///////////////////////////////////////////////////////////////////////////
 
-template <typename Factor_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
+template <typename Factor_, typename Scalar_, WithExceptions WITH_EXCEPTIONS_>
 struct LinearEmbedding_c<Scalar2TensorProductOfBasedVectorSpaces_c<Factor_,Factor_>,
                          SymmetricPowerOfBasedVectorSpace_c<2,Factor_>,
                          Scalar_,
                          NaturalEmbedding,
-                         ENABLE_EXCEPTIONS_>
+                         WITH_EXCEPTIONS_>
 {
 private:
-    typedef Scalar2TensorProductOfBasedVectorSpaces_c<Factor_,Factor_> Diag2;
+    typedef Scalar2TensorProductOfBasedVectorSpaces_c<Factor_,Factor_> Scalar2;
     typedef SymmetricPowerOfBasedVectorSpace_c<2,Factor_> Sym2;
     static Uint32 const DIM = DimensionOf_f<Factor_>::V;
 public:
-    typedef ComponentIndex_t<DimensionOf_f<Diag2>::V> Scalar2ComponentIndex;
+    typedef ComponentIndex_t<DimensionOf_f<Scalar2>::V> Scalar2ComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<Sym2>::V> Sym2ComponentIndex;
     typedef ComponentIndex_t<DimensionOf_f<Factor_>::V> FactorComponentIndex;
 
     struct CoembedIndexIterator
     {
         CoembedIndexIterator (Scalar2ComponentIndex const &) : m(), m_increment(2) { }
-        void operator ++ () { m.increment_by(m_increment, DONT_CHECK_RANGE); ++m_increment; } // increment triangularly
+        void operator ++ () { m.increment_by(m_increment, CheckRange::FALSE); ++m_increment; } // increment triangularly
         bool is_not_at_end () const { return m.is_not_at_end(); }
         Scalar_ scale_factor () const { return Scalar_(1); }
         typedef Sym2ComponentIndex ComponentIndexReturnType;
@@ -350,24 +374,24 @@ public:
         // Sym2 uses the lower-triangular indexing (which doesn't depend on the dimension of Factor_)
         Uint32 t = index_of_greatest_simplicial_number_leq(i.value(), 2);
         // std::cout << FORMAT_VALUE(i.value()) << ", " << FORMAT_VALUE(t) << '\n';
-        FactorComponentIndex row(t-1, DONT_CHECK_RANGE);
-        FactorComponentIndex col(i.value() - t*(t-1)/2, DONT_CHECK_RANGE);
+        FactorComponentIndex row(t-1, CheckRange::FALSE);
+        FactorComponentIndex col(i.value() - t*(t-1)/2, CheckRange::FALSE);
         // off-diagonals are procedural zeros
         return row.value() != col.value();
     }
     static Scalar_ scalar_factor_for_embedded_component (Sym2ComponentIndex const &i)
     {
-        if (ENABLE_EXCEPTIONS_ && embedded_component_is_procedural_zero(i))
+        if (bool(WITH_EXCEPTIONS_) && embedded_component_is_procedural_zero(i))
             throw std::domain_error(FORMAT(i.value()) + " is not in the domain of scalar_factor_for_embedded_component");
 
         return Scalar_(1);
     }
     static Scalar2ComponentIndex source_component_index_for_embedded_component (Sym2ComponentIndex const &i)
     {
-        if (ENABLE_EXCEPTIONS_ && embedded_component_is_procedural_zero(i))
+        if (bool(WITH_EXCEPTIONS_) && embedded_component_is_procedural_zero(i))
             throw std::domain_error(FORMAT(i.value()) + " is not in the domain of scalar_factor_for_embedded_component");
 
-        return Scalar2ComponentIndex(0, DONT_CHECK_RANGE);
+        return Scalar2ComponentIndex(0, CheckRange::FALSE);
     }
 };
 
@@ -375,12 +399,12 @@ public:
 // linear embedding of scalar 2-tensor into corresponding diagonal 2-tensor
 // ///////////////////////////////////////////////////////////////////////////
 
-template <typename Factor0_, typename Factor1_, typename Scalar_, bool ENABLE_EXCEPTIONS_>
+template <typename Factor0_, typename Factor1_, typename Scalar_, WithExceptions WITH_EXCEPTIONS_>
 struct LinearEmbedding_c<Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,
                          Diagonal2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_>,
                          Scalar_,
                          NaturalEmbedding,
-                         ENABLE_EXCEPTIONS_>
+                         WITH_EXCEPTIONS_>
 {
 private:
     typedef Scalar2TensorProductOfBasedVectorSpaces_c<Factor0_,Factor1_> Scalar2;
@@ -413,7 +437,7 @@ public:
     static Scalar2ComponentIndex source_component_index_for_embedded_component (Diag2ComponentIndex const &i)
     {
         // there is only one component for a scalar 2-tensor -- zero.
-        return Scalar2ComponentIndex(0, DONT_CHECK_RANGE);
+        return Scalar2ComponentIndex(0, CheckRange::FALSE);
     }
 };
 

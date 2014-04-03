@@ -39,7 +39,7 @@ struct ComponentIndex_t
     ///  exception throw) for safety. If DONT_RANGE_CHECK is explicitly provided (an
     ///  intentional and ugly bit of code), the range check can be avoided for efficiency
     ///  when you know for a fact that your value is within the correct range.
-    explicit ComponentIndex_t (Uint32 i, bool check_range = CHECK_RANGE) { set_to(i, check_range); }
+    explicit ComponentIndex_t (Uint32 i, CheckRange check_range = CheckRange::TRUE) { set_to(i, check_range); }
 
     /// Copy constructor, no range-checking necessary.
     ComponentIndex_t (ComponentIndex_t const &i) : m(i.m) { }
@@ -53,16 +53,16 @@ struct ComponentIndex_t
     Uint32 value () const { return m; }
     void operator ++ () { ++m; }
     void reset () { m = 0; }
-    void set_to (Uint32 i, bool check_range = CHECK_RANGE)
+    void set_to (Uint32 i, CheckRange check_range = CheckRange::TRUE)
     {
         m = i;
-        if (check_range && m >= COMPONENT_COUNT)
+        if (bool(check_range) && m >= COMPONENT_COUNT)
             throw std::out_of_range("Raw-integer argument to ComponentIndex_t<...> constructor was out of range.");
     }
-    void increment_by (Uint32 inc, bool check_range = CHECK_RANGE)
+    void increment_by (Uint32 inc, CheckRange check_range = CheckRange::TRUE)
     {
         m += inc;
-        if (check_range && m >= COMPONENT_COUNT)
+        if (bool(check_range) && m >= COMPONENT_COUNT)
             throw std::out_of_range("Raw-integer argument to ComponentIndex_t<...> constructor was out of range.");
     }
     void set_to_end () { m = COMPONENT_COUNT_; }
@@ -89,7 +89,7 @@ private:
 /// @tparam T the type to test.
 template <typename T> struct IsComponentIndex_f { static bool const V = false; };
 /// @cond false
-template <Uint32 COMPONENT_COUNT> struct IsComponentIndex_f<ComponentIndex_t<COMPONENT_COUNT> >
+template <Uint32 COMPONENT_COUNT> struct IsComponentIndex_f<ComponentIndex_t<COMPONENT_COUNT>>
 {
     static bool const V = true;
 private:
@@ -97,20 +97,7 @@ private:
 };
 /// @endcond
 
-/// @struct IsComponentIndex_p componentindex.hpp "tenh/componentindex.hpp"
-/// @brief Predicate version of IsComponentIndex_f.
-struct IsComponentIndex_p
-{
-    /// @cond false
-    template <typename T>
-    struct Eval_t
-    {
-        static bool const V = IsComponentIndex_f<T>::V;
-    };
-private:
-    IsComponentIndex_p();
-    /// @endcond
-};
+MAKE_1_ARY_VALUE_EVALUATOR(IsComponentIndex);
 
 /// Operator overload for outputting a ComponentIndex_t with an ostream.
 template <Uint32 COMPONENT_COUNT>

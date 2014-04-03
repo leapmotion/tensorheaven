@@ -7,8 +7,8 @@
 void test_multiindex_sort ()
 {
     typedef ComponentIndex_t<5> C;
-    typedef UniformTypeListOfLength_t<3,C>::T IndexTypeList;
-    typedef MultiIndex_t<IndexTypeList> MultiIndex;
+    typedef UniformTyple_f<3,C>::T IndexTyple;
+    typedef MultiIndex_t<IndexTyple> MultiIndex;
 
     MultiIndex m; // default constructor uses default constructor of each component
     m.el<0>() = C(3);
@@ -16,7 +16,7 @@ void test_multiindex_sort ()
     //m.el<2>() = C(4);
     m.index(2) = C(4);
     std::cout << FORMAT_VALUE(m) << '\n';
-    sort<std::less<Uint32> >(m);
+    sort<std::less<Uint32>>(m);
     std::cout << "after sort: " << FORMAT_VALUE(m) << '\n';
 
     std::cout << '\n' << '\n';
@@ -25,13 +25,13 @@ void test_multiindex_sort ()
 void test_multiindex_sort_2 ()
 {
     typedef ComponentIndex_t<5> C;
-    typedef UniformTypeListOfLength_t<1,C>::T IndexTypeList;
-    typedef MultiIndex_t<IndexTypeList> MultiIndex;
+    typedef UniformTyple_f<1,C>::T IndexTyple;
+    typedef MultiIndex_t<IndexTyple> MultiIndex;
 
     MultiIndex m; // default constructor uses default constructor of each component
     m.index(0) = C(4);
     std::cout << FORMAT_VALUE(m) << '\n';
-    sort<std::less<Uint32> >(m);
+    sort<std::less<Uint32>>(m);
     std::cout << "after sort: " << FORMAT_VALUE(m) << '\n';
 
     std::cout << '\n' << '\n';

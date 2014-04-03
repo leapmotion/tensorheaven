@@ -14,13 +14,10 @@ namespace Tenh {
 template <typename Derived_, Uint32 FREE_INDEX_COUNT_>
 struct ExpressionOperand_i
 {
-private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM((!TypesAreEqual_f<Derived_,NullType>::V), DERIVED_MUST_NOT_BE_NULL_TYPE),
-        STATIC_ASSERT_IN_ENUM(FREE_INDEX_COUNT_ <= 2, FREE_INDEX_COUNT_MUST_BE_AT_MOST_2)
-    };
-public:
+
+    static_assert((!TypesAreEqual_f<Derived_,NullType>::V), "Derived type for ExpressionOperand_i must not be NullType.");
+    static_assert(FREE_INDEX_COUNT_ <= 2, "ExpressionOperand_i must have more than one free index.");
+
 
     typedef Derived_ Derived;
     static Uint32 const FREE_INDEX_COUNT = FREE_INDEX_COUNT_;

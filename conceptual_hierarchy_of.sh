@@ -16,7 +16,7 @@ in defining ConceptType.\n\
 \n\
 Example:\n\
 \n\
-  ./conceptual_hierarchy_of.sh BasedVectorSpace . 0 \"#include \\\"tenh/conceptual/vectorspace.hpp\\\"\" \"using namespace Tenh;\" \"struct X { static std::string type_as_string (bool verbose) { return \\\"X\\\"; } };\" \"typedef VectorSpace_c<RealField,3,X> VectorSpace;\" \"typedef BasedVectorSpace_c<VectorSpace,Basis_c<X> > BasedVectorSpace;\"\n\
+  ./conceptual_hierarchy_of.sh BasedVectorSpace . 0 \"#include \\\"tenh/conceptual/vectorspace.hpp\\\"\" \"using namespace Tenh;\" \"struct X { static std::string type_as_string (bool verbose) { return \\\"X\\\"; } };\" \"typedef VectorSpace_c<RealField,3,X> VectorSpace;\" \"typedef BasedVectorSpace_c<VectorSpace,Basis_c<X>> BasedVectorSpace;\"\n\
 \n\
 This will produce a file called conceptual_hierarchy_of.png, which a graph generated\n\
 by the 'dot' application, which visualizes the conceptual ancestors of ConceptType,\n\
@@ -51,7 +51,7 @@ done
 SOURCE_CODE="
 // generated source code
 
-#include \"tenh/conceptual/conceptualinheritancegraph.hpp\"
+#include \"tenh/conceptual/utility/conceptualinheritancegraph.hpp\"
 #include <iostream>
 ${DECLARATIONS}
 
@@ -69,6 +69,6 @@ echo "${SOURCE_CODE}"
 # write the generated source code out to a file
 echo "${SOURCE_CODE}" > conceptual_hierarchy_of.cpp
 # compile the source code, generate the dot file, and generate the png graph
-g++ -I ${TENSORHEAVEN_DIR} conceptual_hierarchy_of.cpp -o conceptual_hierarchy_of && \
+clang++ -std=c++11 -stdlib=libc++ -I ${TENSORHEAVEN_DIR} conceptual_hierarchy_of.cpp -o conceptual_hierarchy_of && \
 ./conceptual_hierarchy_of > conceptual_hierarchy_of.dot && \
 dot conceptual_hierarchy_of.dot -Tpng -oconceptual_hierarchy_of.png

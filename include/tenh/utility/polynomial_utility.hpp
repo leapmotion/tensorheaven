@@ -20,19 +20,19 @@ struct VariableStringComputer
     static std::string compute(typename HomogeneousPolynomial<DEG,BasedVectorSpace_,Scalar>::Sym::MultiIndex const &n)
     {
         typedef typename HomogeneousPolynomial<DEG,BasedVectorSpace_,Scalar>::Sym::MultiIndex MultiIndex;
-        MultiIndex m = sorted<std::less<Uint32> >(n);
-        Uint32 last = m.value_of_index(0, DONT_CHECK_RANGE);
+        MultiIndex m = sorted<std::less<Uint32>>(n);
+        Uint32 last = m.value_of_index(0, CheckRange::FALSE);
         Uint32 count = 1;
         std::string result = "x" + FORMAT(last);
         for (Uint32 i = 1; i < MultiIndex::LENGTH; ++i)
         {
-            if (m.value_of_index(i, DONT_CHECK_RANGE) == last)
+            if (m.value_of_index(i, CheckRange::FALSE) == last)
             {
                 ++count;
             }
             else
             {
-                last = m.value_of_index(i, DONT_CHECK_RANGE);
+                last = m.value_of_index(i, CheckRange::FALSE);
                 if (count != 1)
                 {
                     result += "^" + FORMAT(count);
@@ -82,21 +82,21 @@ struct VariableStringComputer<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,
     static std::string compute(typename HomogeneousPolynomial<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,2,VectorSpaceId_>,Basis_>,Scalar>::Sym::MultiIndex const &n)
     {
         typedef typename HomogeneousPolynomial<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,2,VectorSpaceId_>,Basis_>,Scalar>::Sym::MultiIndex MultiIndex;
-        MultiIndex m = sorted<std::less<Uint32> >(n);
+        MultiIndex m = sorted<std::less<Uint32>>(n);
         char vars[3] = "xy";
-        Uint32 last = m.value_of_index(0, DONT_CHECK_RANGE);
+        Uint32 last = m.value_of_index(0, CheckRange::FALSE);
         Uint32 count = 1;
         std::string result;
         result.push_back(vars[last]);
         for (Uint32 i = 1; i < MultiIndex::LENGTH; ++i)
         {
-            if (m.value_of_index(i, DONT_CHECK_RANGE) == last)
+            if (m.value_of_index(i, CheckRange::FALSE) == last)
             {
                 ++count;
             }
             else
             {
-                last = m.value_of_index(i, DONT_CHECK_RANGE);
+                last = m.value_of_index(i, CheckRange::FALSE);
                 if (count != 1)
                 {
                     result += "^" + FORMAT(count);
@@ -123,21 +123,21 @@ struct VariableStringComputer<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,
     static std::string compute(typename HomogeneousPolynomial<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,3,VectorSpaceId_>,Basis_>,Scalar>::Sym::MultiIndex const &n)
     {
         typedef typename HomogeneousPolynomial<DEG,BasedVectorSpace_c<VectorSpace_c<ScalarField_,3,VectorSpaceId_>,Basis_>,Scalar>::Sym::MultiIndex MultiIndex;
-        MultiIndex m = sorted<std::less<Uint32> >(n);
+        MultiIndex m = sorted<std::less<Uint32>>(n);
         char vars[4] = "xyz";
-        Uint32 last = m.value_of_index(0, DONT_CHECK_RANGE);
+        Uint32 last = m.value_of_index(0, CheckRange::FALSE);
         Uint32 count = 1;
         std::string result;
         result.push_back(vars[last]);
         for (Uint32 i = 1; i < MultiIndex::LENGTH; ++i)
         {
-            if (m.value_of_index(i, DONT_CHECK_RANGE) == last)
+            if (m.value_of_index(i, CheckRange::FALSE) == last)
             {
                 ++count;
             }
             else
             {
-                last = m.value_of_index(i, DONT_CHECK_RANGE);
+                last = m.value_of_index(i, CheckRange::FALSE);
                 if (count != 1)
                 {
                     result += "^" + FORMAT(count);
@@ -171,7 +171,7 @@ std::ostream &operator << (std::ostream &out, HomogeneousPolynomial<DEG,BasedVec
     for (ComponentIndex it; it.is_not_at_end(); ++it)
     {
 
-        MultiIndex m = PolyType::Sym::template bundle_index_map<typename MultiIndex::IndexTypeList, ComponentIndex>(it);
+        MultiIndex m = PolyType::Sym::template bundle_index_map<typename MultiIndex::IndexTyple,ComponentIndex>(it);
         Scalar coeff = poly.coefficients()[it] * Scalar(Factorial_t<DEG>::V / (MultiIndexMultiplicity_t<MultiIndex>::eval(m)));
         if (coeff == Scalar(1))
         {

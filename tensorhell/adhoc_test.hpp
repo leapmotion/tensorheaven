@@ -10,6 +10,7 @@
 #include "tenh/conceptual/basis.hpp"
 #include "tenh/conceptual/diagonalbased2tensorproduct.hpp"
 #include "tenh/conceptual/exteriorpower.hpp"
+#include "tenh/conceptual/linearembedding.hpp"
 #include "tenh/conceptual/symmetricpower.hpp"
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/conceptual/utility/conceptualinheritancegraph.hpp"
@@ -54,7 +55,7 @@ using namespace Tenh;
 template<Uint32 ORDER, typename Vector, typename Scalar>
 ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER,Vector>,Scalar> test_vector_power (const ImplementationOf_t<Vector,Scalar> &input)
 {
-//    STATIC_ASSERT(IS_BASED_VECTORSPACE_UNIQUELY(Vector), MUST_BE_BASED_VECTOR_SPACE);
+//    static_assert(IS_BASED_VECTORSPACE_UNIQUELY(Vector), "Vector must have unique based vector space structure");
     typedef ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER,Vector>,Scalar> Sym;
     typedef ImplementationOf_t<Vector,Scalar> Vec;
 
@@ -63,10 +64,10 @@ ImplementationOf_t<SymmetricPowerOfBasedVectorSpace_c<ORDER,Vector>,Scalar> test
     for (typename Sym::ComponentIndex it; it.is_not_at_end(); ++it)
     {
         //result[it] = Scalar(1);
-        typename Sym::MultiIndex m = Sym::template bundle_index_map<typename Sym::MultiIndex::IndexTypeList, typename Sym::ComponentIndex>(it);
+        typename Sym::MultiIndex m = Sym::template bundle_index_map<typename Sym::MultiIndex::IndexTyple, typename Sym::ComponentIndex>(it);
         for (Uint32 i = 0; i < Sym::MultiIndex::LENGTH; ++i)
         {
-            result[it] *= input[typename Vec::ComponentIndex(m.value_of_index(i, DONT_CHECK_RANGE))];
+            result[it] *= input[typename Vec::ComponentIndex(m.value_of_index(i, CheckRange::FALSE))];
         }
     }
     return result;
@@ -104,7 +105,7 @@ struct StandardBasisComponentGenerator_f
 {
     typedef ComponentGenerator_t<Scalar_,DIMENSION_,
                                  standard_basis_vector_generator<Scalar_,DIMENSION_,K_>,
-                                 StandardBasisVectorGeneratorId<DIMENSION_,K_> > T;
+                                 StandardBasisVectorGeneratorId<DIMENSION_,K_>> T;
 };
 
 template <typename BasedVectorSpace_, typename Scalar_, Uint32 K_>
@@ -113,7 +114,7 @@ struct StandardBasisVector_f
 private:
     typedef typename StandardBasisComponentGenerator_f<Scalar_,DimensionOf_f<BasedVectorSpace_>::V,K_>::T ComponentGenerator;
 public:
-    typedef ImplementationOf_t<BasedVectorSpace_,Scalar_,UseProceduralArray_t<ComponentGenerator> > T;
+    typedef ImplementationOf_t<BasedVectorSpace_,Scalar_,UseProceduralArray_t<ComponentGenerator>> T;
 };
 
 template <typename Scalar_, Uint32 DIM_>
@@ -132,7 +133,7 @@ void test_procedural_array_0 ()
     typedef ComponentGenerator_t<Scalar_,
                                  DIM_,
                                  standard_basis_vector_generator<Scalar_,DIM_,K_>,
-                                 StandardBasisVectorGeneratorId<DIM_,K_> > ComponentGenerator;
+                                 StandardBasisVectorGeneratorId<DIM_,K_>> ComponentGenerator;
     typedef ProceduralArray_t<Scalar_,DIM_,ComponentGenerator> A;
     A a;
     std::cout << FORMAT_VALUE(a.type_as_string(VERBOSE)) << '\n';
@@ -148,7 +149,7 @@ void test_procedural_array_1 ()
     typedef ComponentGenerator_t<Scalar_,
                                  DIM_,
                                  counting_vector_generator<Scalar_,DIM_>,
-                                 CountingVectorGeneratorId<DIM_> > ComponentGenerator;
+                                 CountingVectorGeneratorId<DIM_>> ComponentGenerator;
     typedef ProceduralArray_t<Scalar_,DIM_,ComponentGenerator> A;
     A a;
     std::cout << FORMAT_VALUE(a.type_as_string(VERBOSE)) << '\n';
@@ -176,13 +177,13 @@ struct IdentityMatrixGeneratorId { static std::string type_as_string (bool verbo
 template <typename Scalar_, typename BasedVectorSpace_>
 void test_procedural_identity_tensor ()
 {
-    typedef TypeList_t<BasedVectorSpace_,TypeList_t<typename DualOf_f<BasedVectorSpace_>::T> > FactorTypeList;
-    typedef TensorProductOfBasedVectorSpaces_c<FactorTypeList> TensorProduct;
+    typedef Typle_t<BasedVectorSpace_,typename DualOf_f<BasedVectorSpace_>::T> FactorTyple;
+    typedef TensorProductOfBasedVectorSpaces_c<FactorTyple> TensorProduct;
     typedef ComponentGenerator_t<Scalar_,
                                  DimensionOf_f<TensorProduct>::V,
                                  identity_matrix_generator<Scalar_,DimensionOf_f<BasedVectorSpace_>::V>,
                                  IdentityMatrixGeneratorId> ComponentGenerator;
-    typedef ImplementationOf_t<TensorProduct,Scalar_,UseProceduralArray_t<ComponentGenerator> > IdentityTensor;
+    typedef ImplementationOf_t<TensorProduct,Scalar_,UseProceduralArray_t<ComponentGenerator>> IdentityTensor;
     IdentityTensor identity_tensor;
     std::cout << "test_procedural_identity_tensor<" << type_string_of<Scalar_>() << ',' << type_string_of<BasedVectorSpace_>() << ">\n";
     std::cout << FORMAT_VALUE(type_string_of<IdentityTensor>()) << '\n';
@@ -207,7 +208,7 @@ template <typename Scalar_, typename VectorSpace_>
 void test_standard_euclidean_inner_product ()
 {
     std::cout << "test_standard_euclidean_inner_product<" << type_string_of<Scalar_>() << ',' << type_string_of<VectorSpace_>() << ">\n";
-    typedef typename InnerProduct_f<BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<IdX> >,StandardInnerProduct,Scalar_>::T InnerProduct;
+    typedef typename InnerProduct_f<BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<IdX>>,StandardInnerProduct,Scalar_>::T InnerProduct;
     InnerProduct g;
     std::cout << FORMAT_VALUE(g) << '\n';
     AbstractIndex_c<'P'> P;
@@ -239,7 +240,7 @@ template <typename Scalar_, typename VectorSpace_>
 void test_euclidean_embedding_of_standard_euclidean_space ()
 {
     std::cout << "test_euclidean_embedding_of_standard_euclidean_space<" << type_string_of<Scalar_>() << ',' << type_string_of<VectorSpace_>() << ">\n";
-    typedef typename EuclideanEmbedding_f<BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<Generic> >,StandardInnerProduct,Scalar_>::T EuclideanEmbedding;
+    typedef typename EuclideanEmbedding_f<BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<Generic>>,StandardInnerProduct,Scalar_>::T EuclideanEmbedding;
     EuclideanEmbedding e;
     std::cout << FORMAT_VALUE(e) << '\n';
     AbstractIndex_c<'P'> P;
@@ -270,7 +271,7 @@ void test_tensor_power_of_euclidean_embedding ()
 template <typename Scalar_, Uint32 ORDER_, Uint32 DIMENSION_>
 void test_sym ()
 {
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,DIMENSION_,IdX>,Basis_c<IdX> > BasedVectorSpace;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,DIMENSION_,IdX>,Basis_c<IdX>> BasedVectorSpace;
     std::cout << "testing Sym_f<" << type_string_of<Scalar_>() << ',' << ORDER_ << ',' << DIMENSION_ << ">\n";
     typedef typename Sym_f<ORDER_,BasedVectorSpace,Scalar_>::T Sym;
     Sym sym;
@@ -281,7 +282,7 @@ void test_sym ()
 template <typename Scalar_, Uint32 ORDER_, Uint32 DIMENSION_>
 void test_alt ()
 {
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,DIMENSION_,IdX>,Basis_c<IdX> > BasedVectorSpace;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,DIMENSION_,IdX>,Basis_c<IdX>> BasedVectorSpace;
     std::cout << "testing Alt_f<" << type_string_of<Scalar_>() << ',' << ORDER_ << ',' << DIMENSION_ << ">\n";
     typedef typename Alt_f<ORDER_,BasedVectorSpace,Scalar_>::T Alt;
     Alt alt;
@@ -293,7 +294,7 @@ template <typename Scalar_, typename EmbeddableAsTensorProduct_>
 void test_split_index_to_index_order_1 ()
 {
     typedef typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(EmbeddableAsTensorProduct_)::TensorProductOfBasedVectorSpaces TensorProduct;
-    STATIC_ASSERT(OrderOf_f<TensorProduct>::V == 1, UNSPECIFIED_MESSAGE);
+    static_assert(OrderOf_f<TensorProduct>::V == 1, "order of TensorProduct must be 1");
     std::cout << "test_split_index_to_index_order_1<" + type_string_of<Scalar_>() + ',' + type_string_of<EmbeddableAsTensorProduct_>() + ">\n";
     typedef ImplementationOf_t<EmbeddableAsTensorProduct_,float> S;
     S s(Static<WithoutInitialization>::SINGLETON);
@@ -303,13 +304,13 @@ void test_split_index_to_index_order_1 ()
     AbstractIndex_c<'i'> i;
     AbstractIndex_c<'j'> j;
     AbstractIndex_c<'k'> k;
-    std::cout << FORMAT_VALUE(s(i).split(i,EmptyTypeList()*k)) << '\n';
+    std::cout << FORMAT_VALUE(s(i).split(i,Typle_t<>()*k)) << '\n';
     std::cout << FORMAT_VALUE(s(i).split(i,j)) << '\n';
-    std::cout << FORMAT_VALUE(s(i).split(i,j).split(j,EmptyTypeList()*k)) << '\n';
+    std::cout << FORMAT_VALUE(s(i).split(i,j).split(j,Typle_t<>()*k)) << '\n';
     std::cout << "the following should be exactly zero\n";
-    std::cout << FORMAT_VALUE(s(i).split(i,EmptyTypeList()*k) - s(i).split(i,j).split(j,EmptyTypeList()*k)) << '\n';
+    std::cout << FORMAT_VALUE(s(i).split(i,Typle_t<>()*k) - s(i).split(i,j).split(j,Typle_t<>()*k)) << '\n';
     std::cout << "the following should be exactly zero\n";
-    std::cout << FORMAT_VALUE(s(i).split(i,j) - s(i).split(i,EmptyTypeList()*k).bundle(EmptyTypeList()*k,TensorProduct(),j)) << '\n';
+    std::cout << FORMAT_VALUE(s(i).split(i,j) - s(i).split(i,Typle_t<>()*k).bundle(Typle_t<>()*k,TensorProduct(),j)) << '\n';
     std::cout << '\n';
 }
 
@@ -317,7 +318,7 @@ template <typename Scalar_, typename EmbeddableAsTensorProduct_>
 void test_split_index_to_index_order_2 ()
 {
     typedef typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(EmbeddableAsTensorProduct_)::TensorProductOfBasedVectorSpaces TensorProduct;
-    STATIC_ASSERT(OrderOf_f<TensorProduct>::V == 2, UNSPECIFIED_MESSAGE);
+    static_assert(OrderOf_f<TensorProduct>::V == 2, "order of TensorProduct must be 2");
     std::cout << "test_split_index_to_index_order_2<" + type_string_of<Scalar_>() + ',' + type_string_of<EmbeddableAsTensorProduct_>() + ">\n";
     typedef ImplementationOf_t<EmbeddableAsTensorProduct_,float> S;
     S s(Static<WithoutInitialization>::SINGLETON);
@@ -347,7 +348,7 @@ template <typename Scalar_, typename EmbeddableAsTensorProduct_>
 void test_split_index_to_index_order_3 ()
 {
     typedef typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(EmbeddableAsTensorProduct_)::TensorProductOfBasedVectorSpaces TensorProduct;
-    STATIC_ASSERT(OrderOf_f<TensorProduct>::V == 3, UNSPECIFIED_MESSAGE);
+    static_assert(OrderOf_f<TensorProduct>::V == 3, "order of TensorProduct must be 3");
     std::cout << "test_split_index_to_index_order_3<" + type_string_of<Scalar_>() + ',' + type_string_of<EmbeddableAsTensorProduct_>() + ">\n";
     typedef ImplementationOf_t<EmbeddableAsTensorProduct_,float> S;
     S s(Static<WithoutInitialization>::SINGLETON);

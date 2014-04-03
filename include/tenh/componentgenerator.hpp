@@ -55,14 +55,14 @@ template <typename Component_,
           Uint32 COMPONENT_COUNT_,
           Component_ (*evaluator_)(ComponentIndex_t<COMPONENT_COUNT_> const &),
           typename Id_>
-struct IsComponentGenerator_t<ComponentGenerator_t<Component_,COMPONENT_COUNT_,evaluator_,Id_> >
+struct IsComponentGenerator_t<ComponentGenerator_t<Component_,COMPONENT_COUNT_,evaluator_,Id_>>
 {
   static bool const V = true;
 private:
     IsComponentGenerator_t();
 };
 
-// NOTE: you may need to provide a template specialization for DualOf_f<ComponentGenerator_t<...> >
+// NOTE: you may need to provide a template specialization for DualOf_f<ComponentGenerator_t<...>>
 
 // ///////////////////////////////////////////////////////////////////////////
 // some convenience component generators
@@ -83,7 +83,7 @@ struct ComponentGenerator_Constant_f
     typedef ComponentGenerator_t<Component_,
                                  COMPONENT_COUNT_,
                                  constant_component_generator_evaluator<Component_,COMPONENT_COUNT_,VALUE_>,
-                                 ComponentGenerator_Constant<VALUE_> > T;
+                                 ComponentGenerator_Constant<VALUE_>> T;
 private:
     ComponentGenerator_Constant_f () { }
 };
@@ -106,7 +106,7 @@ struct ComponentGenerator_Characteristic_f
     typedef ComponentGenerator_t<Component_,
                                  COMPONENT_COUNT_,
                                  characteristic_component_generator_evaluator<Component_,COMPONENT_COUNT_,INDEX_>,
-                                 ComponentGenerator_Characteristic<INDEX_> > T;
+                                 ComponentGenerator_Characteristic<INDEX_>> T;
 private:
     ComponentGenerator_Characteristic_f () { }
 };

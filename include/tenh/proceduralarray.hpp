@@ -28,17 +28,17 @@ template <typename Component_,
           typename Derived_ = NullType>
 struct ProceduralArray_t
     :
-    public Array_i<typename DerivedType_f<Derived_,ProceduralArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_> >::T,
+    public Array_i<typename DerivedType_f<Derived_,ProceduralArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_>>::T,
                    Component_,
                    COMPONENT_COUNT_,
-                   COMPONENTS_ARE_PROCEDURAL>
+                   ComponentQualifier::PROCEDURAL>
 {
-    enum { STATIC_ASSERT_IN_ENUM(IsComponentGenerator_t<ComponentGenerator_>::V, MUST_BE_COMPONENT_GENERATOR) };
+    static_assert(IsComponentGenerator_t<ComponentGenerator_>::V, "ComponentGenerator_ must be a ComponentGenerator_t");
 
-    typedef Array_i<typename DerivedType_f<Derived_,ProceduralArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_> >::T,
+    typedef Array_i<typename DerivedType_f<Derived_,ProceduralArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_>>::T,
                     Component_,
                     COMPONENT_COUNT_,
-                    COMPONENTS_ARE_PROCEDURAL> Parent_Array_i;
+                    ComponentQualifier::PROCEDURAL> Parent_Array_i;
 
     typedef typename Parent_Array_i::Component Component;
     using Parent_Array_i::COMPONENT_COUNT;
@@ -70,8 +70,8 @@ struct ProceduralArray_t
     // really just used so that stuff that uses ArrayStorage_f doesn't have to
     // jump through template hoops to declare the right thing.
     Uint32 allocation_size_in_bytes () const { return 0; }
-    Component_ const *pointer_to_allocation () const { return NULL; }
-    QualifiedComponent *pointer_to_allocation () { return NULL; }
+    Component_ const *pointer_to_allocation () const { return nullptr; }
+    QualifiedComponent *pointer_to_allocation () { return nullptr; }
     bool overlaps_memory_range (Uint8 const *ptr, Uint32 range) const { return false; }
 
     static std::string type_as_string (bool verbose)
@@ -93,7 +93,7 @@ template <typename Component_,
           Uint32 COMPONENT_COUNT_,
           typename ComponentGenerator_,
           typename Derived_>
-struct IsProceduralArray_t<ProceduralArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_> >
+struct IsProceduralArray_t<ProceduralArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_>>
 {
     static bool const V = true;
 private:
@@ -104,7 +104,7 @@ template <typename Component_,
           Uint32 COMPONENT_COUNT_,
           typename ComponentGenerator_,
           typename Derived_>
-struct IsArray_i<ProceduralArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_> >
+struct IsArray_i<ProceduralArray_t<Component_,COMPONENT_COUNT_,ComponentGenerator_,Derived_>>
 {
     static bool const V = true;
 private:

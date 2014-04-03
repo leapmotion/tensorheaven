@@ -26,7 +26,7 @@ private:
     typedef typename ComponentGenerator_Constant_f<Scalar_,DimensionOf_f<Scalar2Tensor>::V,1>::T ComponentGenerator;
     Identity_f ();
 public:
-    typedef ImplementationOf_t<Scalar2Tensor,Scalar_,UseProceduralArray_t<ComponentGenerator> > T;
+    typedef ImplementationOf_t<Scalar2Tensor,Scalar_,UseProceduralArray_t<ComponentGenerator>> T;
 };
 
 } // end of namespace Tenh

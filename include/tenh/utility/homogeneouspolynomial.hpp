@@ -8,15 +8,12 @@
 
 #include "tenh/core.hpp"
 
-#include <iostream>
-
 #include "tenh/conceptual/symmetricpower.hpp"
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/conceptual/vectorspace.hpp"
 #include "tenh/implementation/sym.hpp"
 #include "tenh/implementation/vector.hpp"
 #include "tenh/implementation/vee.hpp"
-#include "tenh/meta/typelist_utility.hpp"
 #include "tenh/multiindex.hpp"
 #include "tenh/preallocatedarray.hpp"
 
@@ -102,7 +99,7 @@ struct HomogeneousPolynomial
 
         for (ResultComponentIndex it; it.is_not_at_end(); ++it)
         {
-            ResultMultiIndex m = ResultSymDual::template bundle_index_map<typename ResultMultiIndex::IndexTypeList, ResultComponentIndex>(it);
+            ResultMultiIndex m = ResultSymDual::template bundle_index_map<typename ResultMultiIndex::IndexTyple, ResultComponentIndex>(it);
             result.m_coefficients[it] *= static_cast<Scalar_>(MultiIndexMultiplicity_t<ResultMultiIndex>::eval(m))
                                          / static_cast<Scalar_>(Factorial_t<OTHER_DEGREE_ + DEGREE_>::V);
         }
@@ -132,13 +129,13 @@ struct HomogeneousPolynomial
     // this object is alive -- this is effectively a shallow copy.
     ConstCoefficientArray as_array () const
     {
-        return ConstCoefficientArray(reinterpret_cast<Scalar_ const *>(&m_coefficients), DONT_CHECK_POINTER);
+        return ConstCoefficientArray(reinterpret_cast<Scalar_ const *>(&m_coefficients), CheckPointer::FALSE);
     }
     // NOTE: the PreallocatedArray_t returned from this is valid only as long as
     // this object is alive -- this is effectively a shallow copy.
     CoefficientArray as_array ()
     {
-        return CoefficientArray(reinterpret_cast<Scalar_ *>(&m_coefficients), DONT_CHECK_POINTER);
+        return CoefficientArray(reinterpret_cast<Scalar_ *>(&m_coefficients), CheckPointer::FALSE);
     }
 
 private:
@@ -151,10 +148,10 @@ private:
 
         for (typename Sym::ComponentIndex it; it.is_not_at_end(); ++it)
         {
-            typename Sym::MultiIndex m = Sym::template bundle_index_map<typename Sym::MultiIndex::IndexTypeList, typename Sym::ComponentIndex>(it);
+            typename Sym::MultiIndex m = Sym::template bundle_index_map<typename Sym::MultiIndex::IndexTyple, typename Sym::ComponentIndex>(it);
             for (Uint32 i = 0; i < Sym::MultiIndex::LENGTH; ++i)
             {
-                result[it] *= input[typename Vector::ComponentIndex(m.value_of_index(i, DONT_CHECK_RANGE))];
+                result[it] *= input[typename Vector::ComponentIndex(m.value_of_index(i, CheckRange::FALSE))];
             }
             result[it] *= Factorial_t<DEGREE_>::V / (MultiIndexMultiplicity_t<typename Sym::MultiIndex>::eval(m));
         }

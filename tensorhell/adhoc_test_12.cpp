@@ -8,7 +8,7 @@ void test_induced_inner_product ()
 {
     std::cout << "induced inner product\n";
 
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,IdX>,OrthonormalBasis_c<IdX> > B;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,IdX>,OrthonormalBasis_c<IdX>> B;
     typedef TensorPowerOfBasedVectorSpace_f<2,B>::T T2;
     typedef TensorPowerOfBasedVectorSpace_f<3,B>::T T3;
     typedef DualOf_f<TensorPowerOfBasedVectorSpace_f<2,B>::T>::T T2_star;
@@ -101,13 +101,13 @@ void test_induced_inner_product ()
 
 void test_direct_sums ()
 {
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,IdX>,Basis_c<IdX> > BasedVectorSpace;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,1,IdX>,Basis_c<IdX> > RealLine;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,IdX>,Basis_c<IdX>> BasedVectorSpace;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,1,IdX>,Basis_c<IdX>> RealLine;
     typedef SymmetricPowerOfBasedVectorSpace_c<2, BasedVectorSpace> SymmetricSquare;
 
-    typedef DirectSumOfBasedVectorSpaces_c<UniformTypeListOfLength_t<4,BasedVectorSpace>::T> PowerOfVectorSpace;
+    typedef DirectSumOfBasedVectorSpaces_c<UniformTyple_f<4,BasedVectorSpace>::T> PowerOfVectorSpace;
 
-    typedef DirectSumOfBasedVectorSpaces_c<TypeList_t<SymmetricSquare, TypeList_t<BasedVectorSpace, TypeList_t<RealLine> > > > DirectSumType;
+    typedef DirectSumOfBasedVectorSpaces_c<Typle_t<SymmetricSquare,BasedVectorSpace,RealLine>> DirectSumType;
     typedef ImplementationOf_t<DirectSumType, float> T;
     typedef ImplementationOf_t<BasedVectorSpace, float> S;
     typedef ImplementationOf_t<PowerOfVectorSpace, float> R;

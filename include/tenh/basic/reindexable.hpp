@@ -16,18 +16,12 @@
 
 namespace Tenh {
 
-template <typename ExpressionTemplate_, typename FreeDimIndexTypeList_ = typename ExpressionTemplate_::FreeDimIndexTypeList>
-struct Reindexable_t : public ExpressionOperand_i<Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_>,Length_f<FreeDimIndexTypeList_>::V>
+template <typename ExpressionTemplate_, typename FreeDimIndexTyple_ = typename ExpressionTemplate_::FreeDimIndexTyple>
+struct Reindexable_t : public ExpressionOperand_i<Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_>,Length_f<FreeDimIndexTyple_>::V>
 {
-private:
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM(IsExpressionTemplate_f<ExpressionTemplate_>::V, MUST_BE_EXPRESSION_TEMPLATE),
-        STATIC_ASSERT_IN_ENUM((EachTypeSatisfies_f<FreeDimIndexTypeList_,IsDimIndex_p>::V), MUST_BE_TYPELIST_OF_DIM_INDEX_TYPES),
-        STATIC_ASSERT_IN_ENUM((TypesAreEqual_f<typename ExpressionTemplate_::FreeDimIndexTypeList,FreeDimIndexTypeList_>::V), TYPES_MUST_BE_EQUAL)
-    };
-
-public:
+    static_assert(IsExpressionTemplate_f<ExpressionTemplate_>::V, "The type argument to Reindexable must be an ExpressionTemplate.");
+    static_assert((EachTypeSatisfies_f<FreeDimIndexTyple_,IsDimIndex_e>::V), "Each type in FreeDimIndexTyple_ must be a DimIndex_t.");
+    static_assert((TypesAreEqual_f<typename ExpressionTemplate_::FreeDimIndexTyple,FreeDimIndexTyple_>::V), "FreeDimIndexTyple_ in Reindexable must be the FreeDimIndexTyple of the ExpressionTemplate.");
 
     typedef typename ExpressionTemplate_::Derived DerivedExpressionTemplate;
     typedef typename ExpressionTemplate_::MultiIndex MultiIndex;
@@ -39,48 +33,48 @@ public:
 
     operator Scalar () const
     {
-        STATIC_ASSERT_TYPELIST_IS_EMPTY(typename ExpressionTemplate_::FreeDimIndexTypeList);
+        static_assert(Length_f<typename ExpressionTemplate_::FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
         return Scalar(m_derived_expression_template);
     }
     Scalar operator [] (MultiIndex const &m) const { return m_derived_expression_template[m]; }
 
     // for when there are no free indices
-    DerivedExpressionTemplate const &operator () (EmptyTypeList const &) const
+    DerivedExpressionTemplate const &operator () (Typle_t<> const &) const
     {
-        STATIC_ASSERT_TYPELIST_IS_EMPTY(typename ExpressionTemplate_::FreeDimIndexTypeList);
+        static_assert(Length_f<typename ExpressionTemplate_::FreeDimIndexTyple>::V == 0, "only 0-tensors are naturally coerced into scalars");
         return m_derived_expression_template;
     }
 
     template <AbstractIndexSymbol SYMBOL_>
-    typename Reindex_e<typename AbstractIndicesOfDimIndexTypeList_t<typename ExpressionTemplate_::FreeDimIndexTypeList>::T,
-                       TypeList_t<AbstractIndex_c<SYMBOL_> > >
+    typename Reindex_e<typename AbstractIndicesOfDimIndexTyple_f<typename ExpressionTemplate_::FreeDimIndexTyple>::T,
+                       Typle_t<AbstractIndex_c<SYMBOL_>>>
              ::template Eval_f<DerivedExpressionTemplate>::T
         operator () (AbstractIndex_c<SYMBOL_> const &) const
     {
-        typedef typename ExpressionTemplate_::FreeDimIndexTypeList FreeDimIndexTypeList;
-        STATIC_ASSERT(FreeDimIndexTypeList::LENGTH == 1, LENGTH_MUST_BE_EXACTLY_1);
-        typedef typename AbstractIndicesOfDimIndexTypeList_t<FreeDimIndexTypeList>::T DomainAbstractIndexTypeList;
-        typedef TypeList_t<AbstractIndex_c<SYMBOL_> > CodomainAbstractIndexTypeList;
-        return reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(m_derived_expression_template);
+        typedef typename ExpressionTemplate_::FreeDimIndexTyple FreeDimIndexTyple;
+        static_assert(Length_f<FreeDimIndexTyple>::V == 1, "must have exactly 1 free index");
+        typedef typename AbstractIndicesOfDimIndexTyple_f<FreeDimIndexTyple>::T DomainAbstractIndexTyple;
+        typedef Typle_t<AbstractIndex_c<SYMBOL_>> CodomainAbstractIndexTyple;
+        return reindexed<DomainAbstractIndexTyple,CodomainAbstractIndexTyple>(m_derived_expression_template);
     }
 
-    template <typename AbstractIndexHeadType_, typename AbstractIndexBodyTypeList_>
-    typename Reindex_e<typename AbstractIndicesOfDimIndexTypeList_t<typename ExpressionTemplate_::FreeDimIndexTypeList>::T,
-                       TypeList_t<AbstractIndexHeadType_,AbstractIndexBodyTypeList_> >
+    template <typename... AbstractIndexTypes_>
+    typename Reindex_e<typename AbstractIndicesOfDimIndexTyple_f<typename ExpressionTemplate_::FreeDimIndexTyple>::T,
+                       Typle_t<AbstractIndexTypes_...>>
              ::template Eval_f<DerivedExpressionTemplate>::T
-        operator () (TypeList_t<AbstractIndexHeadType_,AbstractIndexBodyTypeList_> const &) const
+        operator () (Typle_t<AbstractIndexTypes_...> const &) const
     {
-        typedef typename ExpressionTemplate_::FreeDimIndexTypeList FreeDimIndexTypeList;
-        typedef TypeList_t<AbstractIndexHeadType_,AbstractIndexBodyTypeList_> AbstractIndexTypeList;
-        STATIC_ASSERT(Length_f<FreeDimIndexTypeList>::V == Length_f<AbstractIndexTypeList>::V, LENGTHS_MUST_BE_EQUAL);
-        typedef typename AbstractIndicesOfDimIndexTypeList_t<FreeDimIndexTypeList>::T DomainAbstractIndexTypeList;
-        typedef TypeList_t<AbstractIndexHeadType_,AbstractIndexBodyTypeList_> CodomainAbstractIndexTypeList;
-        return reindexed<DomainAbstractIndexTypeList,CodomainAbstractIndexTypeList>(m_derived_expression_template);
+        typedef typename ExpressionTemplate_::FreeDimIndexTyple FreeDimIndexTyple;
+        typedef Typle_t<AbstractIndexTypes_...> AbstractIndexTyple;
+        static_assert(Length_f<FreeDimIndexTyple>::V == Length_f<AbstractIndexTyple>::V, "index typles must have same length");
+        typedef typename AbstractIndicesOfDimIndexTyple_f<FreeDimIndexTyple>::T DomainAbstractIndexTyple;
+        typedef Typle_t<AbstractIndexTypes_...> CodomainAbstractIndexTyple;
+        return reindexed<DomainAbstractIndexTyple,CodomainAbstractIndexTyple>(m_derived_expression_template);
     }
 
     static std::string type_as_string (bool verbose)
     {
-        return "Reindexable_t<" + type_string_of<ExpressionTemplate_>() + ',' + type_string_of<FreeDimIndexTypeList_>() + '>';
+        return "Reindexable_t<" + type_string_of<ExpressionTemplate_>() + ',' + type_string_of<FreeDimIndexTyple_>() + '>';
     }
 
 private:
@@ -96,43 +90,43 @@ Reindexable_t<ExpressionTemplate_> reindexable (ExpressionTemplate_ const &e)
 }
 
 // specialization for Reindex_e for Reindexable_t types
-template <typename DomainAbstractIndexTypeList_, typename CodomainAbstractIndexTypeList_>
-template <typename ExpressionTemplate_, typename FreeDimIndexTypeList_>
-struct Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
-    ::Eval_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_> >
+template <typename DomainAbstractIndexTyple_, typename CodomainAbstractIndexTyple_>
+template <typename ExpressionTemplate_, typename FreeDimIndexTyple_>
+struct Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
+    ::Eval_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_>>
 {
 private:
-    typedef Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_> Reindex;
+    typedef Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_> Reindex;
     Eval_f();
 public:
     typedef Reindexable_t<typename Reindex::template Eval_f<ExpressionTemplate_>::T,
-                          typename Reindex::template Eval_f<FreeDimIndexTypeList_>::T> T;
+                          typename Reindex::template Eval_f<FreeDimIndexTyple_>::T> T;
 };
 
-template <typename DomainAbstractIndexTypeList_,
-          typename CodomainAbstractIndexTypeList_,
+template <typename DomainAbstractIndexTyple_,
+          typename CodomainAbstractIndexTyple_,
           typename ExpressionTemplate_,
-          typename FreeDimIndexTypeList_>
-typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
-         ::template Eval_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_> >::T
-    reindexed (Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_> const &e)
+          typename FreeDimIndexTyple_>
+typename Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
+         ::template Eval_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_>>::T
+    reindexed (Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_> const &e)
 {
-    typedef typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
-                     ::template Eval_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_> >::T Reindexed;
-    return Reindexed(reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.derived_expression_template()));
+    typedef typename Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
+                     ::template Eval_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_>>::T Reindexed;
+    return Reindexed(reindexed<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>(e.derived_expression_template()));
 }
 
-template <typename DomainAbstractIndexTypeList_,
-          typename CodomainAbstractIndexTypeList_,
+template <typename DomainAbstractIndexTyple_,
+          typename CodomainAbstractIndexTyple_,
           typename ExpressionTemplate_,
-          typename FreeDimIndexTypeList_>
-typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
-         ::template Eval_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_> >::T
-    reindexed (Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_> &e)
+          typename FreeDimIndexTyple_>
+typename Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
+         ::template Eval_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_>>::T
+    reindexed (Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_> &e)
 {
-    typedef typename Reindex_e<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>
-                     ::template Eval_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTypeList_> >::T Reindexed;
-    return Reindexed(reindexed<DomainAbstractIndexTypeList_,CodomainAbstractIndexTypeList_>(e.derived_expression_template()));
+    typedef typename Reindex_e<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>
+                     ::template Eval_f<Reindexable_t<ExpressionTemplate_,FreeDimIndexTyple_>>::T Reindexed;
+    return Reindexed(reindexed<DomainAbstractIndexTyple_,CodomainAbstractIndexTyple_>(e.derived_expression_template()));
 }
 
 } // end of namespace Tenh

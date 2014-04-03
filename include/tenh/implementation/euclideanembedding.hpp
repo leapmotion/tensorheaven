@@ -39,7 +39,7 @@ struct EuclideanSpaceId_t
 template <Uint32 DIMENSION_>
 struct BasedEuclideanSpace_f
 {
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,DIMENSION_,EuclideanSpaceId_t<DIMENSION_> >,OrthonormalBasis_c<Generic> > T;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,DIMENSION_,EuclideanSpaceId_t<DIMENSION_>>,OrthonormalBasis_c<Generic>> T;
 private:
     BasedEuclideanSpace_f();
 };
@@ -47,12 +47,12 @@ private:
 // metafunction for easily determining the 2-tensor factors for a Euclidean embedding
 // a linear map from BasedVectorSpace_ to BasedEuclideanSpace_f
 template <typename BasedVectorSpace_>
-struct EuclideanEmbedding2TensorFactorTypeList_f
+struct EuclideanEmbedding2TensorFactorTyple_f
 {
-    typedef TypeList_t<typename BasedEuclideanSpace_f<DimensionOf_f<BasedVectorSpace_>::V>::T,
-            TypeList_t<typename DualOf_f<BasedVectorSpace_>::T> > T;
+    typedef Typle_t<typename BasedEuclideanSpace_f<DimensionOf_f<BasedVectorSpace_>::V>::T,
+                    typename DualOf_f<BasedVectorSpace_>::T> T;
 private:
-    EuclideanEmbedding2TensorFactorTypeList_f();
+    EuclideanEmbedding2TensorFactorTyple_f();
 };
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -61,19 +61,19 @@ private:
 
 // template specialization for inner product on Euclidean space
 template <typename VectorSpace_, typename OrthonormalBasisId_, typename Scalar_>
-struct EuclideanEmbedding_f<BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<OrthonormalBasisId_> >,StandardInnerProduct,Scalar_>
+struct EuclideanEmbedding_f<BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<OrthonormalBasisId_>>,StandardInnerProduct,Scalar_>
 {
 private:
-    typedef BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<OrthonormalBasisId_> > BasedVectorSpace;
-    typedef typename EuclideanEmbedding2TensorFactorTypeList_f<BasedVectorSpace>::T EuclideanEmbedding2TensorFactorTypeList;
-    typedef typename Diagonal2TensorProductOfBasedVectorSpaces_f<EuclideanEmbedding2TensorFactorTypeList>::T Diagonal2Tensor;
+    typedef BasedVectorSpace_c<VectorSpace_,OrthonormalBasis_c<OrthonormalBasisId_>> BasedVectorSpace;
+    typedef typename EuclideanEmbedding2TensorFactorTyple_f<BasedVectorSpace>::T EuclideanEmbedding2TensorFactorTyple;
+    typedef typename Diagonal2TensorProductOfBasedVectorSpaces_f<EuclideanEmbedding2TensorFactorTyple>::T Diagonal2Tensor;
     typedef ComponentGenerator_t<Scalar_,
                                  DimensionOf_f<Diagonal2Tensor>::V,
                                  constant_component_generator_evaluator<Scalar_,DimensionOf_f<Diagonal2Tensor>::V,1>,
                                  StandardInnerProduct> ComponentGenerator;
     EuclideanEmbedding_f();
 public:
-    typedef ImplementationOf_t<Diagonal2Tensor,Scalar_,UseProceduralArray_t<ComponentGenerator> > T;
+    typedef ImplementationOf_t<Diagonal2Tensor,Scalar_,UseProceduralArray_t<ComponentGenerator>> T;
 };
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -82,39 +82,40 @@ public:
 
 // meta-function helper for induced Euclidean embeddings
 
-template <typename FactorTypeList_, typename InnerProductIdTypeList_, typename Scalar_>
-struct EuclideanEmbeddingOfEachInTypeList_f
+template <typename FactorTyple_, typename InnerProductIdTyple_, typename Scalar_>
+struct EuclideanEmbeddingOfEachInTyple_f
 {
+    static_assert(Length_f<FactorTyple_>::V == Length_f<InnerProductIdTyple_>::V, "FactorTyple_ and InnerProductIdTyple_ must have same length");
 private:
-    enum { STATIC_ASSERT_IN_ENUM(FactorTypeList_::LENGTH == InnerProductIdTypeList_::LENGTH, LENGTHS_MUST_BE_EQUAL) };
-    EuclideanEmbeddingOfEachInTypeList_f();
+    EuclideanEmbeddingOfEachInTyple_f();
+    typedef typename EuclideanEmbedding_f<typename Head_f<FactorTyple_>::T,
+                                          typename Head_f<InnerProductIdTyple_>::T,
+                                          Scalar_>::T HeadEuclideanEmbedding;
+    typedef typename EuclideanEmbeddingOfEachInTyple_f<typename BodyTyple_f<FactorTyple_>::T,
+                                                       typename BodyTyple_f<InnerProductIdTyple_>::T,
+                                                       Scalar_>::T BodyEuclideanEmbeddingTyple;
 public:
-    typedef TypeList_t<typename EuclideanEmbedding_f<typename FactorTypeList_::HeadType,
-                                                     typename InnerProductIdTypeList_::HeadType,
-                                                     Scalar_>::T,
-                       typename EuclideanEmbeddingOfEachInTypeList_f<typename FactorTypeList_::BodyTypeList,
-                                                                     typename InnerProductIdTypeList_::BodyTypeList,
-                                                                     Scalar_>::T> T;
+    typedef typename HeadBodyTyple_f<HeadEuclideanEmbedding,BodyEuclideanEmbeddingTyple>::T T;
 };
 
 template <typename Scalar_>
-struct EuclideanEmbeddingOfEachInTypeList_f<EmptyTypeList,EmptyTypeList,Scalar_>
+struct EuclideanEmbeddingOfEachInTyple_f<Typle_t<>,Typle_t<>,Scalar_>
 {
-    typedef EmptyTypeList T;
+    typedef Typle_t<> T;
 private:
-    EuclideanEmbeddingOfEachInTypeList_f();
+    EuclideanEmbeddingOfEachInTyple_f();
 };
 
 // TODO: do specialization for ORDER_ == 0 (but this would depend on the basis being "field unit"
 // (i.e. the 0th tensor power is the field itself and 1 is the basis vector)).
-template <typename FactorTypeList_, typename InnerProductIdTypeList_, typename Scalar_>
-struct EuclideanEmbedding_f<TensorProductOfBasedVectorSpaces_c<FactorTypeList_>,TensorProduct_c<InnerProductIdTypeList_>,Scalar_>
+template <typename FactorTyple_, typename InnerProductIdTyple_, typename Scalar_>
+struct EuclideanEmbedding_f<TensorProductOfBasedVectorSpaces_c<FactorTyple_>,TensorProduct_c<InnerProductIdTyple_>,Scalar_>
 {
 private:
-    typedef typename EuclideanEmbeddingOfEachInTypeList_f<FactorTypeList_,InnerProductIdTypeList_,Scalar_>::T EuclideanEmbeddingTypeList;
+    typedef typename EuclideanEmbeddingOfEachInTyple_f<FactorTyple_,InnerProductIdTyple_,Scalar_>::T EuclideanEmbeddingTyple;
     EuclideanEmbedding_f();
 public:
-    typedef typename TensorProductOfProcedural2Tensors_f<EuclideanEmbeddingTypeList>::T T;
+    typedef typename TensorProductOfProcedural2Tensors_f<EuclideanEmbeddingTyple>::T T;
 };
 
 } // end of namespace Tenh

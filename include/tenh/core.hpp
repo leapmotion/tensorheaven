@@ -10,13 +10,17 @@
 
 #if _WIN32
 #pragma warning( disable : 4503 )
+#pragma warning( disable : 4800 )
+// this to handle the mutually-exclusive way that MSVC deals with certain template code
+#define TUMPLATE
+#else
+#define TUMPLATE template
 #endif
 
 #include <cassert>
 #include <complex>
 
 #include "tenh/meta/core.hpp"
-#include "tenh/meta/static_assert.hpp"
 
 #define FORMAT(expr) static_cast<std::ostringstream &>(std::ostringstream().flush() << expr).str()
 #define FORMAT_VALUE(expr) #expr << " = " << (expr) // TODO: move this out into test code
@@ -54,15 +58,15 @@ std::string type_string_of ();
 template <typename T_>
 struct FillWith_t
 {
-	explicit FillWith_t (T_ const &t) : m(t) { }
+    explicit FillWith_t (T_ const &t) : m(t) { }
 
-	T_ const &value () const { return m; }
+    T_ const &value () const { return m; }
 
 	static std::string type_as_string (bool verbose) { return "FillWith_t<" + type_string_of<T_>() + '>'; }
 
 private:
 
-	T_ m;
+    T_ m;
 };
 
 /// @brief A convenience function for specifying "fill with" parameters for constructors.
@@ -74,7 +78,7 @@ private:
 template <typename T_>
 FillWith_t<T_> fill_with (T_ const &t)
 {
-	return FillWith_t<T_>(t);
+    return FillWith_t<T_>(t);
 }
 
 /// @brief A type for use as a generic identifier, e.g. in a Basis_c.
@@ -117,23 +121,31 @@ T cube (T const &t)
 }
 
 /// @brief These are used in constructors for determining if a range check should be done.
-///  The default check parameter value should be CHECK_RANGE, which is more expensive,
-///  but if you know what you're doing, you can pass in DONT_CHECK_RANGE to avoid the
+///  The default check parameter value should be CheckRange::TRUE, which is more expensive,
+///  but if you know what you're doing, you can pass in CheckRange::FALSE to avoid the
 ///  range check and gain efficiency (e.g. if you know for a fact that the value is
 ///  within the correct range).  This is a compromise between completely correct program
 ///  behavior and program efficiency.
-static bool const CHECK_RANGE = true;
-static bool const DONT_CHECK_RANGE = false;
+enum class CheckRange : bool { TRUE = true, FALSE = false };
+
+inline std::ostream &operator << (std::ostream &out, CheckRange check_range)
+{
+    return out << "CheckRange::" << (bool(check_range) ? "TRUE" : "FALSE");
+}
 
 /// @brief These are used in constructors for determining if a pointer check should be done.
-///  The default check parameter value should be CHECK_POINTER, which is more expensive,
-///  but if you know what you're doing, you can pass in DONT_CHECK_POINTER to avoid the
+///  The default check parameter value should be CheckPointer::TRUE, which is more expensive,
+///  but if you know what you're doing, you can pass in CheckPointer::FALSE to avoid the
 ///  pointer check and gain efficiency (e.g. if you know for a fact that the pointer is
-///  non-NULL).  This is a compromise between completely correct program behavior and
+///  non-null).  This is a compromise between completely correct program behavior and
 ///  program efficiency.
 /// @todo TODO: should these be moved to preallocatedarray.hpp? (if they're only used there)
-static bool const CHECK_POINTER = true;
-static bool const DONT_CHECK_POINTER = false;
+enum class CheckPointer : bool { TRUE = true, FALSE = false };
+
+inline std::ostream &operator << (std::ostream &out, CheckPointer check_pointer)
+{
+    return out << "CheckPointer::" << (bool(check_pointer) ? "TRUE" : "FALSE");
+}
 
 /// @brief Used in the curiously recurring template pattern, where the derived type is passed
 ///  to parent classes as a template parameter, so that the baseclass can access the
@@ -168,7 +180,7 @@ template <>
 struct AssociatedFloatingPointType_t<long double> { typedef long double T; };
 
 template <typename RealScalar>
-struct AssociatedFloatingPointType_t<std::complex<RealScalar> > { typedef RealScalar T; };
+struct AssociatedFloatingPointType_t<std::complex<RealScalar>> { typedef RealScalar T; };
 
 template <>
 struct AssociatedFloatingPointType_t<Sint8> { typedef float T; }; // smallest lossless floating point conversion

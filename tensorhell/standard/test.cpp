@@ -11,16 +11,17 @@
 #include "test_basic_vector.hpp"
 #include "test_dimindex.hpp"
 #include "test_expressiontemplate_reindex.hpp"
+#include "test_homogeneouspolynomials.hpp"
 // #include "test_euclideanembedding.hpp"
 // #include "test_euclideanembeddinginverse.hpp"
 // #include "test_interop_eigen_euclideanlyembedded.hpp"
 // #include "test_interop_eigen_inversion.hpp"
 // #include "test_interop_eigen_ldlt.hpp"
 #include "test_linearembedding.hpp"
-#include "test_list.hpp"
+#include "test_multivariatepolynomials.hpp"
 #include "test_split_and_bundle.hpp"
 #include "test_tuple.hpp"
-#include "test_typelist.hpp"
+#include "test_typle.hpp"
 // #include "test_tensor2.hpp"
 // #include "test_tensor2diagonal.hpp"
 // #include "test_expressiontemplates.hpp"
@@ -42,7 +43,12 @@ int main (int argc, char **argv, char **envp)
 
     {
         Directory &basic_dir = root.GetSubDirectory("basic");
-        Test::Basic::Operator::AddTests(basic_dir);
+        Test::Basic::Operator::AddTests0(basic_dir);
+        Test::Basic::Operator::AddTests1(basic_dir);
+        Test::Basic::Operator::AddTests2(basic_dir);
+        Test::Basic::Operator::AddTests3(basic_dir);
+        Test::Basic::Operator::AddTests4(basic_dir);
+        Test::Basic::Operator::AddTests5(basic_dir);
         Test::Basic::Vector::AddTests0(basic_dir);
         Test::Basic::Vector::AddTests1(basic_dir);
         Test::Basic::Vector::AddTests2(basic_dir);
@@ -53,6 +59,14 @@ int main (int argc, char **argv, char **envp)
 
     Test::DimIndex::AddTests(root);
     Test::ExpressionTemplate_Reindex::AddTests(root);
+    {
+        Test::HomogeneousPolynomials::AddTests0(root);
+        Test::HomogeneousPolynomials::AddTests1(root);
+        Test::HomogeneousPolynomials::AddTests2(root);
+        Test::HomogeneousPolynomials::AddTests3(root);
+        Test::HomogeneousPolynomials::AddTests4(root);
+        Test::HomogeneousPolynomials::AddTests5(root);
+    }
 //     Test::EigenLDLT::AddTests(root);
 //     Test::EuclideanEmbedding::AddTests(root);
 //     Test::EuclideanEmbeddingInverse::AddTests(root);
@@ -63,11 +77,25 @@ int main (int argc, char **argv, char **envp)
 //         Test::InteropEigen::Inversion::AddTests(interop_eigen_dir);
 //     }
 
-    Test::LinearEmbedding::AddTests(root);
-    Test::List::AddTests(root);
+    {
+        Test::LinearEmbedding::AddTests0(root);
+        Test::LinearEmbedding::AddTests1(root);
+        Test::LinearEmbedding::AddTests2(root);
+        Test::LinearEmbedding::AddTests3(root);
+        Test::LinearEmbedding::AddTests4(root);
+        Test::LinearEmbedding::AddTests5(root);
+    }
+    {
+        Test::MultivariatePolynomials::AddTests0(root);
+        Test::MultivariatePolynomials::AddTests1(root);
+        Test::MultivariatePolynomials::AddTests2(root);
+        Test::MultivariatePolynomials::AddTests3(root);
+        Test::MultivariatePolynomials::AddTests4(root);
+        Test::MultivariatePolynomials::AddTests5(root);
+    }
     Test::SplitAndBundle::AddTests(root);
     Test::Tuple::AddTests(root);
-    Test::TypeList::AddTests(root);
+    Test::Typle::AddTests(root);
 //     Test::Tensor2::AddTests(root);
 //     Test::Tensor2Diagonal::AddTests(root);
 

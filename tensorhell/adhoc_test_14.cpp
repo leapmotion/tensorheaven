@@ -11,11 +11,11 @@ void test_embeddable_as_tensor_as_multilinear_form ()
 {
     std::cout << "EmbeddableAsTensor_i as multilinear form\n";
 
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,IdX>,OrthonormalBasis_c<IdX> > B3;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,IdX>,OrthonormalBasis_c<IdX> > B4;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,IdX>,OrthonormalBasis_c<IdX>> B3;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,IdX>,OrthonormalBasis_c<IdX>> B4;
     typedef DualOf_f<B3>::T DualOfB3;
     typedef DualOf_f<B4>::T DualOfB4;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<DualOfB3,TypeList_t<DualOfB4> > > TensorProduct;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<DualOfB3,DualOfB4>> TensorProduct;
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<DualOfB3,DualOfB4> Diagonal2TensorProduct;
     typedef SymmetricPowerOfBasedVectorSpace_c<3,DualOfB3> Sym;
     typedef ExteriorPowerOfBasedVectorSpace_c<2,DualOfB3> Alt;
@@ -107,32 +107,32 @@ void test_product_of_abstract_indices ()
     AbstractIndex_c<'l'> l;
 
     std::cout << "testing product of abstract indices\n";
-    std::cout << FORMAT_VALUE(symbol_string_of_abstract_index_type_list(i*j)) << '\n';
-    std::cout << FORMAT_VALUE(symbol_string_of_abstract_index_type_list((i*j)*k)) << '\n';
-    std::cout << FORMAT_VALUE(symbol_string_of_abstract_index_type_list(i*(j*k))) << '\n';
-    std::cout << FORMAT_VALUE(symbol_string_of_abstract_index_type_list(i*j*k)) << '\n';
-    std::cout << FORMAT_VALUE(symbol_string_of_abstract_index_type_list((i*j)*(k*l))) << '\n';
-    std::cout << FORMAT_VALUE(symbol_string_of_abstract_index_type_list(i*(j*k*l))) << '\n';
-    std::cout << FORMAT_VALUE(symbol_string_of_abstract_index_type_list((i*j*k)*l)) << '\n';
-    std::cout << FORMAT_VALUE(symbol_string_of_abstract_index_type_list(i*j*k*l)) << '\n';
+    std::cout << FORMAT_VALUE(symbol_string_of_abstract_index_typle(i*j)) << '\n';
+    std::cout << FORMAT_VALUE(symbol_string_of_abstract_index_typle((i*j)*k)) << '\n';
+    std::cout << FORMAT_VALUE(symbol_string_of_abstract_index_typle(i*(j*k))) << '\n';
+    std::cout << FORMAT_VALUE(symbol_string_of_abstract_index_typle(i*j*k)) << '\n';
+    std::cout << FORMAT_VALUE(symbol_string_of_abstract_index_typle((i*j)*(k*l))) << '\n';
+    std::cout << FORMAT_VALUE(symbol_string_of_abstract_index_typle(i*(j*k*l))) << '\n';
+    std::cout << FORMAT_VALUE(symbol_string_of_abstract_index_typle((i*j*k)*l)) << '\n';
+    std::cout << FORMAT_VALUE(symbol_string_of_abstract_index_typle(i*j*k*l)) << '\n';
     std::cout << '\n';
 }
 
 void test_linear_solve_using_least_squares ()
 {
     typedef double Scalar;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,Generic>,OrthonormalBasis_c<Generic> > B2;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,OrthonormalBasis_c<Generic> > B3;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,OrthonormalBasis_c<Generic> > B4;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B2,TypeList_t<DualOf_f<B2>::T> > > T22;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B2,TypeList_t<DualOf_f<B3>::T> > > T23;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B2,TypeList_t<DualOf_f<B4>::T> > > T24;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B3,TypeList_t<DualOf_f<B2>::T> > > T32;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B3,TypeList_t<DualOf_f<B3>::T> > > T33;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B3,TypeList_t<DualOf_f<B4>::T> > > T34;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B4,TypeList_t<DualOf_f<B2>::T> > > T42;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B4,TypeList_t<DualOf_f<B3>::T> > > T43;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B4,TypeList_t<DualOf_f<B4>::T> > > T44;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,Generic>,OrthonormalBasis_c<Generic>> B2;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,OrthonormalBasis_c<Generic>> B3;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,OrthonormalBasis_c<Generic>> B4;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B2,DualOf_f<B2>::T>> T22;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B2,DualOf_f<B3>::T>> T23;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B2,DualOf_f<B4>::T>> T24;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B3,DualOf_f<B2>::T>> T32;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B3,DualOf_f<B3>::T>> T33;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B3,DualOf_f<B4>::T>> T34;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B4,DualOf_f<B2>::T>> T42;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B4,DualOf_f<B3>::T>> T43;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B4,DualOf_f<B4>::T>> T44;
 
     typedef ImplementationOf_t<B2,Scalar> V2;
     typedef ImplementationOf_t<B3,Scalar> V3;
@@ -180,8 +180,8 @@ void test_linear_solve_using_least_squares ()
 template <typename Concept_, typename Scalar_>
 void test_particular_implementation_of_vector_construction_via_vector_i ()
 {
-    typedef ImplementationOf_t<Concept_,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > U;
-    typedef ImplementationOf_t<Concept_,Scalar_,UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST> > V;
+    typedef ImplementationOf_t<Concept_,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE>> U;
+    typedef ImplementationOf_t<Concept_,Scalar_,UsePreallocatedArray_t<ComponentsAreConst::FALSE>> V;
     static Uint32 const DIM = U::DIM;
 
     U u(Static<WithoutInitialization>::SINGLETON);
@@ -202,7 +202,7 @@ void test_particular_implementation_of_vector_construction_via_vector_i ()
     typename V::Parent_Vector_i const &v_as_vector_i = v;
     std::cout << FORMAT_VALUE(v_as_vector_i) << '\n';
     {
-        std::cout << "testing UseMemberArray_t<COMPONENTS_ARE_NONCONST> construction from Vector_i types\n";
+        std::cout << "testing UseMemberArray_t<ComponentsAreConst::FALSE> construction from Vector_i types\n";
         U constructed_from_vector_i_0(u_as_vector_i);
         std::cout << FORMAT_VALUE(constructed_from_vector_i_0) << '\n';
         U constructed_from_vector_i_1(v_as_vector_i);
@@ -211,7 +211,7 @@ void test_particular_implementation_of_vector_construction_via_vector_i ()
         std::cout << FORMAT_VALUE(constructed_from_vector_i_2) << '\n';
     }
     {
-        std::cout << "testing UsePreallocatedArray_t<COMPONENTS_ARE_NONCONST> construction from Vector_i types\n";
+        std::cout << "testing UsePreallocatedArray_t<ComponentsAreConst::FALSE> construction from Vector_i types\n";
         Scalar_ other_array[3];
         V constructed_from_vector_i_0(u_as_vector_i, &other_array[0]);
         std::cout << FORMAT_VALUE(constructed_from_vector_i_0) << '\n';
@@ -226,11 +226,11 @@ void test_particular_implementation_of_vector_construction_via_vector_i ()
 void test_implementation_of_vector_construction_via_vector_i ()
 {
     typedef double Scalar;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > B3;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,Basis_c<Generic> > B4;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic>> B3;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,Basis_c<Generic>> B4;
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B3,B4> Diagonal2Tensor;
-    typedef DirectSumOfBasedVectorSpaces_c<TypeList_t<B3,TypeList_t<B4> > > DirectSum;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B3,TypeList_t<B4> > > TensorProduct;
+    typedef DirectSumOfBasedVectorSpaces_c<Typle_t<B3,B4>> DirectSum;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B3,B4>> TensorProduct;
     typedef ExteriorPowerOfBasedVectorSpace_c<3,B4> ExteriorPower;
     typedef SymmetricPowerOfBasedVectorSpace_c<3,B3> SymmetricPower;
     test_particular_implementation_of_vector_construction_via_vector_i<B3,Scalar>();
@@ -245,8 +245,8 @@ void test_const_component_arrays ()
 {
     {
         std::cout << "testing const-component MemberArray_t\n";
-        typedef MemberArray_t<Uint32,8,COMPONENTS_ARE_NONCONST> MemberArrayNonConst;
-        typedef MemberArray_t<Uint32,8,COMPONENTS_ARE_CONST> MemberArrayConst;
+        typedef MemberArray_t<Uint32,8,ComponentsAreConst::FALSE> MemberArrayNonConst;
+        typedef MemberArray_t<Uint32,8,ComponentsAreConst::TRUE> MemberArrayConst;
 
         MemberArrayNonConst nonconst_array(Static<WithoutInitialization>::SINGLETON);
         for (MemberArrayNonConst::ComponentIndex i; i.is_not_at_end(); ++i)
@@ -266,7 +266,7 @@ void test_const_component_arrays ()
 
     {
         std::cout << "testing const-component PreallocatedArray_t\n";
-        typedef PreallocatedArray_t<Uint32,8,COMPONENTS_ARE_CONST> PreallocatedArrayConst;
+        typedef PreallocatedArray_t<Uint32,8,ComponentsAreConst::TRUE> PreallocatedArrayConst;
 
         Uint32 const data[8] = {2, 4, 8, 16, 32, 64, 128, 256};
 
@@ -289,7 +289,7 @@ void test_identity_embedding ()
 {
     std::cout << "testing identity embedding/coembedding\n";
 
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > B;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic>> B;
     typedef DualOf_f<B>::T DualOfB;
     B b;
     DualOfB dual_of_b;
@@ -318,8 +318,7 @@ void test_identity_embedding ()
     std::cout << FORMAT_VALUE(a.coembed_using<IdentityEmbedding>(dual_of_b,j)) << '\n';
     std::cout << '\n';
 
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B,
-                                               TypeList_t<DualOfB> > > TProd;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B,DualOfB>> TProd;
     TProd t;
     typedef ImplementationOf_t<TProd,Scalar> T;
 
@@ -346,10 +345,10 @@ void test_diag2tensor_embedding ()
 {
     std::cout << "testing natural diag2tensor embedding/coembedding\n";
 
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > B3;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,Basis_c<Generic> > B4;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic>> B3;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,Basis_c<Generic>> B4;
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B3,B4> Diag2;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B3,TypeList_t<B4> > > Tensor2;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B3,B4>> Tensor2;
     typedef SymmetricPowerOfBasedVectorSpace_c<2,B3> Sym2;
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B3,B3> Diag2OfB3;
 
@@ -441,11 +440,11 @@ void test_scalar2tensor_embedding ()
 {
     std::cout << "testing natural scalar2tensor embedding/coembedding\n";
 
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > B3;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,Basis_c<Generic> > B4;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic>> B3;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,Basis_c<Generic>> B4;
     typedef Scalar2TensorProductOfBasedVectorSpaces_c<B3,B4> Scalar2;
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B3,B4> Diag2;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B3,TypeList_t<B4> > > Tensor2;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B3,B4>> Tensor2;
     typedef SymmetricPowerOfBasedVectorSpace_c<2,B3> Sym2;
     typedef Scalar2TensorProductOfBasedVectorSpaces_c<B3,B3> Scalar2OfB3;
 
@@ -582,7 +581,7 @@ void test_exterior_power_embedding_templatized ()
 
     std::cout << FORMAT_VALUE(e) << '\n';
     std::cout << FORMAT_VALUE(e.embed(tpow,j)) << '\n';
-    typename AbstractIndexRangeTypeList_f<ORDER_,'k'>::T abstract_index_range;
+    typename AbstractIndexRangeTyple_f<ORDER_,'k'>::T abstract_index_range;
     std::cout << FORMAT_VALUE(e.embed(tpow,j).split(j,abstract_index_range)) << '\n';
     // this causes a compile error because single indices and 1-multiindices are distinct types.
     // std::cout << FORMAT_VALUE(e.embed(tpow,j).eval().value()) << '\n';
@@ -591,7 +590,7 @@ void test_exterior_power_embedding_templatized ()
 
 void test_exterior_power_embedding ()
 {
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > B;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic>> B;
     test_exterior_power_embedding_templatized<1,B>();
     test_exterior_power_embedding_templatized<2,B>();
     test_exterior_power_embedding_templatized<3,B>();
@@ -624,7 +623,7 @@ void test_symmetric_power_embedding_templatized ()
 
     std::cout << FORMAT_VALUE(s) << '\n';
     std::cout << FORMAT_VALUE(s.embed(tpow,j)) << '\n';
-    typename AbstractIndexRangeTypeList_f<ORDER_,'k'>::T abstract_index_range;
+    typename AbstractIndexRangeTyple_f<ORDER_,'k'>::T abstract_index_range;
     std::cout << FORMAT_VALUE(s.embed(tpow,j).split(j,abstract_index_range)) << '\n';
     // this causes a compile error because single indices and 1-multiindices are distinct types.
     // std::cout << FORMAT_VALUE(s.embed(tpow,j).eval().value()) << '\n';
@@ -633,7 +632,7 @@ void test_symmetric_power_embedding_templatized ()
 
 void test_symmetric_power_embedding ()
 {
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > B;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic>> B;
     test_symmetric_power_embedding_templatized<1,B>();
     test_symmetric_power_embedding_templatized<2,B>();
     test_symmetric_power_embedding_templatized<3,B>();
@@ -643,10 +642,10 @@ void test_embed_coembed_adjointness ()
 {
     std::cout << "testing embed/coembed adjointness\n";
 
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > B3;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,Basis_c<Generic> > B4;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic>> B3;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,Basis_c<Generic>> B4;
     typedef Diagonal2TensorProductOfBasedVectorSpaces_c<B3,B4> Diag2;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<B3,TypeList_t<B4> > > Tensor2;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<B3,B4>> Tensor2;
 
     typedef double Scalar;
     typedef ImplementationOf_t<B3,Scalar> V3;
@@ -702,8 +701,8 @@ void test_type_system_helper_functions ()
     std::cout << FORMAT_VALUE(type_string_of(bvs(v3, b))) << '\n';
     std::cout << FORMAT_VALUE(type_string_of(bvs<3>(real_field, generic))) << '\n';
     std::cout << '\n';
-    BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic> > bvs3;
-    BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,Basis_c<Generic> > bvs4;
+    BasedVectorSpace_c<VectorSpace_c<RealField,3,Generic>,Basis_c<Generic>> bvs3;
+    BasedVectorSpace_c<VectorSpace_c<RealField,4,Generic>,Basis_c<Generic>> bvs4;
     std::cout << FORMAT_VALUE(type_string_of(bvs3 + bvs4)) << '\n';
     std::cout << FORMAT_VALUE(type_string_of(bvs3 + bvs4 + bvs3)) << '\n';
     std::cout << FORMAT_VALUE(type_string_of((bvs3 + bvs4) + bvs3)) << '\n';
@@ -722,4 +721,26 @@ void test_type_system_helper_functions ()
     std::cout << '\n';
     std::cout << FORMAT_VALUE(type_string_of(sym<3>(bvs3))) << '\n';
     std::cout << '\n';
+
+    struct IdB { static std::string type_as_string (bool verbose) { return "B"; } };
+    struct IdC { static std::string type_as_string (bool verbose) { return "C"; } };
+
+    std::cout << FORMAT_VALUE(type_string_of(diag2(3,4))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(diag2(Basis_c<IdB>(),Basis_c<IdC>()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(diag2(OrthonormalBasis_c<IdB>(),Basis_c<IdC>()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(diag2(Basis_c<IdB>(),OrthonormalBasis_c<IdC>()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(diag2(OrthonormalBasis_c<IdB>(),OrthonormalBasis_c<IdC>()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(diag2(bvs<3>(RealField(),IdB()),bvs<4>(RealField(),IdC())))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(diag2(bvs<3>(RealField(),IdB()),Basis_c<IdC>()))) << '\n';
+    std::cout << '\n';
+
+    std::cout << FORMAT_VALUE(type_string_of(scalar2(3,4))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(scalar2(Basis_c<IdB>(),Basis_c<IdC>()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(scalar2(OrthonormalBasis_c<IdB>(),Basis_c<IdC>()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(scalar2(Basis_c<IdB>(),OrthonormalBasis_c<IdC>()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(scalar2(OrthonormalBasis_c<IdB>(),OrthonormalBasis_c<IdC>()))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(scalar2(bvs<3>(RealField(),IdB()),bvs<4>(RealField(),IdC())))) << '\n';
+    std::cout << FORMAT_VALUE(type_string_of(scalar2(bvs<3>(RealField(),IdB()),Basis_c<IdC>()))) << '\n';
+    std::cout << '\n';
+
 }

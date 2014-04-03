@@ -15,27 +15,27 @@
 #include "tenh/conceptual/tensorproduct.hpp"
 #include "tenh/expression_templates.hpp"
 #include "tenh/interface/vector.hpp"
-#include "tenh/meta/typelist_utility.hpp"
+#include "tenh/meta/typle_utility.hpp"
 
 namespace Tenh {
 
-template <typename FactorTypeList>
-struct FactorComponentIndexTypeList_t
+template <typename FactorTyple_>
+struct FactorComponentIndexTyple_f
 {
-    typedef TypeList_t<ComponentIndex_t<DimensionOf_f<typename FactorTypeList::HeadType>::V>,
-                       typename FactorComponentIndexTypeList_t<typename FactorTypeList::BodyTypeList>::T> T;
+    typedef typename HeadBodyTyple_f<ComponentIndex_t<DimensionOf_f<typename Head_f<FactorTyple_>::T>::V>,
+                                     typename FactorComponentIndexTyple_f<typename BodyTyple_f<FactorTyple_>::T>::T>::T T;
 };
 
-template <typename HeadType>
-struct FactorComponentIndexTypeList_t<TypeList_t<HeadType> >
+template <typename HeadType_>
+struct FactorComponentIndexTyple_f<Typle_t<HeadType_>>
 {
-    typedef TypeList_t<ComponentIndex_t<DimensionOf_f<HeadType>::V> > T;
+    typedef Typle_t<ComponentIndex_t<DimensionOf_f<HeadType_>::V>> T;
 };
 
 template <>
-struct FactorComponentIndexTypeList_t<EmptyTypeList>
+struct FactorComponentIndexTyple_f<Typle_t<>>
 {
-    typedef EmptyTypeList T;
+    typedef Typle_t<> T;
 };
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -43,23 +43,23 @@ struct FactorComponentIndexTypeList_t<EmptyTypeList>
 // a multilinear form.
 // ///////////////////////////////////////////////////////////////////////////
 
-template <typename ParameterTypeList_, typename AbstractIndexTypeList_>
-struct IndexedParameterListReturnType_f
+template <typename ParameterTyple_, typename AbstractIndexTyple_>
+struct IndexedParameterTupleReturnType_f
 {
 private:
-    typedef typename Head_f<ParameterTypeList_>::T HeadParameter;
-    typedef typename Body_f<ParameterTypeList_>::T BodyParameterTypeList;
-    typedef typename Head_f<AbstractIndexTypeList_>::T HeadAbstractIndex;
-    typedef typename Body_f<AbstractIndexTypeList_>::T BodyAbstractIndexTypeList;
+    typedef typename Head_f<ParameterTyple_>::T HeadParameter;
+    typedef typename BodyTyple_f<ParameterTyple_>::T BodyParameterTyple;
+    typedef typename Head_f<AbstractIndexTyple_>::T HeadAbstractIndex;
+    typedef typename BodyTyple_f<AbstractIndexTyple_>::T BodyAbstractIndexTyple;
     static AbstractIndexSymbol const HEAD_SYMBOL = SymbolOf_f<HeadAbstractIndex>::V;
     typedef typename HeadParameter::template IndexedExpressionConstType_f<HEAD_SYMBOL>::T LeftOperand;
-    typedef typename IndexedParameterListReturnType_f<BodyParameterTypeList,BodyAbstractIndexTypeList>::T RightOperand;
+    typedef typename IndexedParameterTupleReturnType_f<BodyParameterTyple,BodyAbstractIndexTyple>::T RightOperand;
 public:
     typedef ExpressionTemplate_Multiplication_t<LeftOperand,RightOperand> T;
 };
 
 template <typename HeadParameter, typename HeadAbstractIndex>
-struct IndexedParameterListReturnType_f<TypeList_t<HeadParameter>,TypeList_t<HeadAbstractIndex> >
+struct IndexedParameterTupleReturnType_f<Typle_t<HeadParameter>,Typle_t<HeadAbstractIndex>>
 {
 private:
     static AbstractIndexSymbol const HEAD_SYMBOL = SymbolOf_f<HeadAbstractIndex>::V;
@@ -67,18 +67,18 @@ public:
     typedef typename HeadParameter::template IndexedExpressionConstType_f<HEAD_SYMBOL>::T T;
 };
 
-template <typename ParameterTypeList_, typename AbstractIndexTypeList_>
-typename IndexedParameterListReturnType_f<ParameterTypeList_,AbstractIndexTypeList_>::T
-    indexed_parameter_list (List_t<ParameterTypeList_> const &p, AbstractIndexTypeList_ const &)
+template <typename ParameterTyple_, typename AbstractIndexTyple_>
+typename IndexedParameterTupleReturnType_f<ParameterTyple_,AbstractIndexTyple_>::T
+    indexed_parameter_tuple (Tuple_t<ParameterTyple_> const &p, AbstractIndexTyple_ const &)
 {
-    typedef typename Head_f<AbstractIndexTypeList_>::T HeadAbstractIndex;
-    typedef typename Body_f<AbstractIndexTypeList_>::T BodyAbstractIndexTypeList;
-    return p.head()(HeadAbstractIndex())*indexed_parameter_list(p.body(), BodyAbstractIndexTypeList());
+    typedef typename Head_f<AbstractIndexTyple_>::T HeadAbstractIndex;
+    typedef typename BodyTyple_f<AbstractIndexTyple_>::T BodyAbstractIndexTyple;
+    return p.head()(HeadAbstractIndex())*indexed_parameter_tuple(p.body(), BodyAbstractIndexTyple());
 }
 
 template <typename HeadParameter, typename HeadAbstractIndex>
-typename IndexedParameterListReturnType_f<TypeList_t<HeadParameter>,TypeList_t<HeadAbstractIndex> >::T
-    indexed_parameter_list (List_t<TypeList_t<HeadParameter> > const &p, TypeList_t<HeadAbstractIndex> const &)
+typename IndexedParameterTupleReturnType_f<Typle_t<HeadParameter>,Typle_t<HeadAbstractIndex>>::T
+    indexed_parameter_tuple (Tuple_t<Typle_t<HeadParameter>> const &p, Typle_t<HeadAbstractIndex> const &)
 {
     return p.head()(HeadAbstractIndex());
 }
@@ -98,12 +98,9 @@ struct EmbeddableAsTensor_i
     :
     public Vector_i<Derived_,Scalar_,EmbeddableInTensorProductOfBasedVectorSpaces_,COMPONENT_QUALIFIER_>
 {
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM((!TypesAreEqual_f<Derived_,NullType>::V), DERIVED_MUST_NOT_BE_NULL_TYPE),
-        STATIC_ASSERT_IN_ENUM(IS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES_UNIQUELY(EmbeddableInTensorProductOfBasedVectorSpaces_),
-                              MUST_BE_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES),
-    };
+    static_assert(!TypesAreEqual_f<Derived_,NullType>::V, "Derived_ must not be NullType");
+    static_assert(IS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES_UNIQUELY(EmbeddableInTensorProductOfBasedVectorSpaces_),
+                  "EmbeddableInTensorProductOfBasedVectorSpaces_ must have unique embeddable in tensor product of based vector spaces structure");
 
     typedef Vector_i<Derived_,Scalar_,EmbeddableInTensorProductOfBasedVectorSpaces_,COMPONENT_QUALIFIER_> Parent_Vector_i;
     typedef typename Parent_Vector_i::Derived Derived;
@@ -118,8 +115,8 @@ struct EmbeddableAsTensor_i
 
     typedef EmbeddableInTensorProductOfBasedVectorSpaces_ EmbeddableInTensorProductOfBasedVectorSpaces;
     typedef typename AS_EMBEDDABLE_IN_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES(EmbeddableInTensorProductOfBasedVectorSpaces)::TensorProductOfBasedVectorSpaces TensorProductOfBasedVectorSpaces;
-    typedef typename FactorTypeListOf_f<TensorProductOfBasedVectorSpaces>::T FactorTypeList;
-    typedef MultiIndex_t<typename FactorComponentIndexTypeList_t<FactorTypeList>::T> MultiIndex;
+    typedef typename FactorTypleOf_f<TensorProductOfBasedVectorSpaces>::T FactorTyple;
+    typedef MultiIndex_t<typename FactorComponentIndexTyple_f<FactorTyple>::T> MultiIndex;
     // this is not the "fully expanded" order, but the number of [what you could think of
     // as "parenthesized"] factors that formed this tensor product type.
     static Uint32 const ORDER = OrderOf_f<TensorProductOfBasedVectorSpaces>::V;
@@ -138,15 +135,15 @@ struct EmbeddableAsTensor_i
     // this provides the "split" operation without needing an intermediate temporary index,
     // since this object will be frequently split.
     // TODO: could the C++11 infer the return type?  this return type is annoying
-    template <typename AbstractIndexHeadType, typename AbstractIndexBodyTypeList>
+    template <typename... AbstractIndexTypes_>
     typename Parent_Vector_i::template IndexedExpressionConstType_f<666>::T
                             ::template SplitReturnType_f<AbstractIndex_c<666>,
-                                                         AbstractIndexHeadType,
-                                                         AbstractIndexBodyTypeList>::T
-        split (TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList> const &abstract_multiindex) const
+                                                         AbstractIndexTypes_...>::T
+        split (Typle_t<AbstractIndexTypes_...> const &abstract_multiindex) const
     {
-        // make sure that the index type list actually contains AbstractIndex_c types
-        STATIC_ASSERT((EachTypeSatisfies_f<TypeList_t<AbstractIndexHeadType,AbstractIndexBodyTypeList>, IsAbstractIndex_p>::V), MUST_BE_TYPELIST_OF_ABSTRACT_INDEX_TYPES);
+        typedef Typle_t<AbstractIndexTypes_...> AbstractIndexTyple;
+        // make sure that the index typle actually contains AbstractIndex_c types
+        static_assert(EachTypeSatisfies_f<AbstractIndexTyple,IsAbstractIndex_e>::V, "AbstractIndexTyple must be a Typle_t of AbstractIndex_c types");
         AbstractIndex_c<666> dummy_index;
         return Parent_Vector_i::operator()(dummy_index).split(dummy_index, abstract_multiindex);
     }
@@ -168,7 +165,7 @@ struct EmbeddableAsTensor_i
     Scalar_ operator () (Vector_i<Derived0_,Scalar_,BasedVectorSpace0_,COMPONENT_QUALIFIER0_> const &v0,
                          Vector_i<Derived1_,Scalar_,BasedVectorSpace1_,COMPONENT_QUALIFIER1_> const &v1) const
     {
-        STATIC_ASSERT(ORDER == 2, ORDER_MUST_BE_EXACTLY_2);
+        static_assert(ORDER == 2, "ORDER must be exactly 2");
         TensorProductOfBasedVectorSpaces upstairs;
         EmbeddableInTensorProductOfBasedVectorSpaces_ downstairs;
         AbstractIndex_c<'i'> i;
@@ -184,17 +181,17 @@ struct EmbeddableAsTensor_i
     // is equivalent to
     //   X.split(i_1*...*i_k)*v_1(i_1)*...*v_k(i_k)
     // though is implemented using coembed, which should be close to optimally efficient.
-    template <typename ParameterTypeList_>
-    Scalar_ operator () (List_t<ParameterTypeList_> const &l) const
+    template <typename ParameterTyple_>
+    Scalar_ operator () (Tuple_t<ParameterTyple_> const &l) const
     {
-        STATIC_ASSERT(Length_f<ParameterTypeList_>::V == ORDER, ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
-        typedef typename AbstractIndexRangeTypeList_f<Length_f<ParameterTypeList_>::V,667>::T AbstractIndexTypeList;
+        static_assert(Length_f<ParameterTyple_>::V == ORDER, "argument count must match ORDER");
+        typedef typename AbstractIndexRangeTyple_f<Length_f<ParameterTyple_>::V,667>::T AbstractIndexTyple;
         TensorProductOfBasedVectorSpaces upstairs;
         EmbeddableInTensorProductOfBasedVectorSpaces_ downstairs;
         AbstractIndex_c<'p'> p;
         AbstractIndex_c<'q'> q;
-        AbstractIndexTypeList a;
-        return operator()(p) * indexed_parameter_list(l,a).bundle(a,dual(upstairs),q).coembed(q,dual(downstairs),p);
+        AbstractIndexTyple a;
+        return operator()(p) * indexed_parameter_tuple(l,a).bundle(a,dual(upstairs),q).coembed(q,dual(downstairs),p);
     }
 
     static bool component_is_procedural_zero (MultiIndex const &m) { return as_derived().component_is_procedural_zero(m); }

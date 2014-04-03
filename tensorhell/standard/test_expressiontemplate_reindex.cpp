@@ -27,7 +27,7 @@ void vector_based_IndexedObject_t (Context const &context)
     static Uint32 const DIM = 3;
     typedef int DummyId;
     typedef float Scalar;
-    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId> > BasedVectorSpace;
+    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId>> BasedVectorSpace;
     typedef Tenh::ImplementationOf_t<BasedVectorSpace,Scalar> Vector;
 
     // create an ExpressionTemplate_IndexedObject_t
@@ -35,9 +35,9 @@ void vector_based_IndexedObject_t (Context const &context)
     typedef Tenh::AbstractIndex_c<'k'> K;
 
     // set up the abstract index mapping
-    typedef Tenh::TypeTuple_f<J>::T DomainIndexTypeList;
-    typedef Tenh::TypeTuple_f<K>::T CodomainIndexTypeList;
-    typedef Tenh::Reindex_e<DomainIndexTypeList,CodomainIndexTypeList> Reindex;
+    typedef Tenh::Typle_t<J> DomainIndexTyple;
+    typedef Tenh::Typle_t<K> CodomainIndexTyple;
+    typedef Tenh::Reindex_e<DomainIndexTyple,CodomainIndexTyple> Reindex;
     assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<J>::T,K>::V));
 
     // ensure that the indices are mapped properly, including ones that aren't used in the expression
@@ -72,12 +72,12 @@ void vector_based_IndexedObject_t (Context const &context)
         // it's supposed to be (via type_as_string).  what's being tested is essentially
         // the commutativity of the operations of creating an ExpressionTemplate_IndexedObject_t
         // and reindexing.
-        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(v(j))).type_as_string(Tenh::VERBOSE),
-                  v(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j)).type_as_string(Tenh::VERBOSE)); // expected value
-        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(v(k))).type_as_string(Tenh::VERBOSE),
-                  v(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(k)).type_as_string(Tenh::VERBOSE)); // expected value
-        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(v(p))).type_as_string(Tenh::VERBOSE),
-                  v(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(p)).type_as_string(Tenh::VERBOSE)); // expected value
+        assert_eq(type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(v(j))),
+                  type_string_of(v(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(j)))); // expected value
+        assert_eq(type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(v(k))),
+                  type_string_of(v(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(k)))); // expected value
+        assert_eq(type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(v(p))),
+                  type_string_of(v(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(p)))); // expected value
     }
 }
 
@@ -86,36 +86,36 @@ void tensor_based_IndexedObject_t (Context const &context)
     static Uint32 const DIM = 3;
     typedef int DummyId;
     typedef float Scalar;
-    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId> > BasedVectorSpace;
-    typedef Tenh::TypeTuple_f<BasedVectorSpace,Tenh::DualOf_f<BasedVectorSpace>::T>::T FactorTypeList;
-    typedef Tenh::TensorProductOfBasedVectorSpaces_c<FactorTypeList> TensorProduct;
+    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId>> BasedVectorSpace;
+    typedef Tenh::Typle_t<BasedVectorSpace,Tenh::DualOf_f<BasedVectorSpace>::T> FactorTyple;
+    typedef Tenh::TensorProductOfBasedVectorSpaces_c<FactorTyple> TensorProduct;
     typedef Tenh::ImplementationOf_t<TensorProduct,Scalar> Tensor;
 
     typedef Tenh::AbstractIndex_c<'j'> J;
     typedef Tenh::AbstractIndex_c<'k'> K;
 
     // set up the abstract index mapping
-    typedef Tenh::TypeTuple_f<J>::T DomainIndexTypeList;
-    typedef Tenh::TypeTuple_f<K>::T CodomainIndexTypeList;
-    typedef Tenh::Reindex_e<DomainIndexTypeList,CodomainIndexTypeList> Reindex;
+    typedef Tenh::Typle_t<J> DomainIndexTyple;
+    typedef Tenh::Typle_t<K> CodomainIndexTyple;
+    typedef Tenh::Reindex_e<DomainIndexTyple,CodomainIndexTyple> Reindex;
     assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<J>::T,K>::V));
 
     // ensure that the indices are mapped properly, including ones that aren't used in the expression
     {
-        typedef Tensor::IndexedExpressionConstType_f<Tenh::TypeTuple_f<J,K>::T>::T IndexedExpression;
-        typedef Tensor::IndexedExpressionConstType_f<Tenh::TypeTuple_f<K,Tenh::AbstractIndex_c<'k'+'k'> >::T>::T ExpectedIndexedExpression;
+        typedef Tensor::IndexedExpressionConstType_f<Tenh::Typle_t<J,K>>::T IndexedExpression;
+        typedef Tensor::IndexedExpressionConstType_f<Tenh::Typle_t<K,Tenh::AbstractIndex_c<'k'+'k'>>>::T ExpectedIndexedExpression;
         typedef Reindex::Eval_f<IndexedExpression>::T ActualIndexedExpression;
         assert((Tenh::TypesAreEqual_f<ActualIndexedExpression,ExpectedIndexedExpression>::V));
     }
     {
-        typedef Tensor::IndexedExpressionConstType_f<Tenh::TypeTuple_f<J,J>::T>::T IndexedExpression;
-        typedef Tensor::IndexedExpressionConstType_f<Tenh::TypeTuple_f<K,K>::T>::T ExpectedIndexedExpression;
+        typedef Tensor::IndexedExpressionConstType_f<Tenh::Typle_t<J,J>>::T IndexedExpression;
+        typedef Tensor::IndexedExpressionConstType_f<Tenh::Typle_t<K,K>>::T ExpectedIndexedExpression;
         typedef Reindex::Eval_f<IndexedExpression>::T ActualIndexedExpression;
         assert((Tenh::TypesAreEqual_f<ActualIndexedExpression,ExpectedIndexedExpression>::V));
     }
     {
-        typedef Tensor::IndexedExpressionConstType_f<Tenh::TypeTuple_f<Tenh::AbstractIndex_c<'a'>,Tenh::AbstractIndex_c<'b'> >::T>::T IndexedExpression;
-        typedef Tensor::IndexedExpressionConstType_f<Tenh::TypeTuple_f<Tenh::AbstractIndex_c<'k'+'a'>,Tenh::AbstractIndex_c<'k'+'b'> >::T>::T ExpectedIndexedExpression;
+        typedef Tensor::IndexedExpressionConstType_f<Tenh::Typle_t<Tenh::AbstractIndex_c<'a'>,Tenh::AbstractIndex_c<'b'>>>::T IndexedExpression;
+        typedef Tensor::IndexedExpressionConstType_f<Tenh::Typle_t<Tenh::AbstractIndex_c<'k'+'a'>,Tenh::AbstractIndex_c<'k'+'b'>>>::T ExpectedIndexedExpression;
         typedef Reindex::Eval_f<IndexedExpression>::T ActualIndexedExpression;
         assert((Tenh::TypesAreEqual_f<ActualIndexedExpression,ExpectedIndexedExpression>::V));
     }
@@ -129,18 +129,18 @@ void tensor_based_IndexedObject_t (Context const &context)
         P p;
         Tensor t(Tenh::fill_with(0));
         // hacky, but effective, way of ensuring the reindexed expression template is what it's supposed to be.
-        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(j*k))).type_as_string(Tenh::VERBOSE),
-                  t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j*k)).type_as_string(Tenh::VERBOSE)); // expected value
-        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(k*p))).type_as_string(Tenh::VERBOSE),
-                  t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(k*p)).type_as_string(Tenh::VERBOSE)); // expected value
+        assert_eq(type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(t(j*k))),
+                  type_string_of(t(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(j*k)))); // expected value
+        assert_eq(type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(t(k*p))),
+                  type_string_of(t(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(k*p)))); // expected value
 
         // single-indexed expressions
-        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(j))).type_as_string(Tenh::VERBOSE),
-                  t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j)).type_as_string(Tenh::VERBOSE)); // expected value
-        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(k))).type_as_string(Tenh::VERBOSE),
-                  t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(k)).type_as_string(Tenh::VERBOSE)); // expected value
-        assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(p))).type_as_string(Tenh::VERBOSE),
-                  t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(p)).type_as_string(Tenh::VERBOSE)); // expected value
+        assert_eq(type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(t(j))),
+                  type_string_of(t(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(j)))); // expected value
+        assert_eq(type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(t(k))),
+                  type_string_of(t(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(k)))); // expected value
+        assert_eq(type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(t(p))),
+                  type_string_of(t(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(p)))); // expected value
     }
 }
 
@@ -149,7 +149,7 @@ void Addition_t (Context const &context)
     static Uint32 const DIM = 3;
     typedef int DummyId;
     typedef float Scalar;
-    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId> > BasedVectorSpace;
+    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId>> BasedVectorSpace;
     typedef Tenh::ImplementationOf_t<BasedVectorSpace,Scalar> Vector;
 
     typedef Tenh::AbstractIndex_c<'i'> I;
@@ -157,9 +157,9 @@ void Addition_t (Context const &context)
     typedef Tenh::AbstractIndex_c<'k'> K;
 
     // set up the abstract index mapping
-    typedef Tenh::TypeTuple_f<I>::T DomainIndexTypeList;
-    typedef Tenh::TypeTuple_f<J>::T CodomainIndexTypeList;
-    typedef Tenh::Reindex_e<DomainIndexTypeList,CodomainIndexTypeList> Reindex;
+    typedef Tenh::Typle_t<I> DomainIndexTyple;
+    typedef Tenh::Typle_t<J> CodomainIndexTyple;
+    typedef Tenh::Reindex_e<DomainIndexTyple,CodomainIndexTyple> Reindex;
     assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<I>::T,J>::V));
 
     Vector x(Tenh::fill_with(3));
@@ -170,15 +170,15 @@ void Addition_t (Context const &context)
     K k;
     // hacky, but effective, way of ensuring the reindexed expression template is what it's supposed to be.
     // verify that the operations of index-expression-addition and reindexing commute.
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(i) + y(i))).type_as_string(Tenh::VERBOSE),
-              (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(i)) +
-               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(i))).type_as_string(Tenh::VERBOSE)); // expected value
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(j) + y(j))).type_as_string(Tenh::VERBOSE),
-              (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(j)) +
-               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(j))).type_as_string(Tenh::VERBOSE)); // expected value
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(k) + y(k))).type_as_string(Tenh::VERBOSE),
-              (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(k)) +
-               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(k))).type_as_string(Tenh::VERBOSE)); // expected value
+    assert_eq(type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(x(i) + y(i))),
+              type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(x(i)) +
+                             Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(y(i)))); // expected value
+    assert_eq(type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(x(j) + y(j))),
+              type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(x(j)) +
+                             Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(y(j)))); // expected value
+    assert_eq(type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(x(k) + y(k))),
+              type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(x(k)) +
+                             Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(y(k)))); // expected value
 }
 
 void ScalarMultiplication_t (Context const &context)
@@ -186,7 +186,7 @@ void ScalarMultiplication_t (Context const &context)
     static Uint32 const DIM = 3;
     typedef int DummyId;
     typedef float Scalar;
-    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId> > BasedVectorSpace;
+    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId>> BasedVectorSpace;
     typedef Tenh::ImplementationOf_t<BasedVectorSpace,Scalar> Vector;
 
     typedef Tenh::AbstractIndex_c<'i'> I;
@@ -194,9 +194,9 @@ void ScalarMultiplication_t (Context const &context)
     typedef Tenh::AbstractIndex_c<'k'> K;
 
     // set up the abstract index mapping
-    typedef Tenh::TypeTuple_f<I>::T DomainIndexTypeList;
-    typedef Tenh::TypeTuple_f<J>::T CodomainIndexTypeList;
-    typedef Tenh::Reindex_e<DomainIndexTypeList,CodomainIndexTypeList> Reindex;
+    typedef Tenh::Typle_t<I> DomainIndexTyple;
+    typedef Tenh::Typle_t<J> CodomainIndexTyple;
+    typedef Tenh::Reindex_e<DomainIndexTyple,CodomainIndexTyple> Reindex;
     assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<I>::T,J>::V));
 
     Vector x(Tenh::fill_with(3));
@@ -207,12 +207,12 @@ void ScalarMultiplication_t (Context const &context)
     K k;
     // hacky, but effective, way of ensuring the reindexed expression template is what it's supposed to be.
     // verify that the operations of index-expression-scalar-multiplication and reindexing commute.
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(i) * Scalar(3))).type_as_string(Tenh::VERBOSE),
-              (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(i)) * Scalar(3)).type_as_string(Tenh::VERBOSE)); // expected value
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(j) * Scalar(3))).type_as_string(Tenh::VERBOSE),
-              (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(j)) * Scalar(3)).type_as_string(Tenh::VERBOSE)); // expected value
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(k) * Scalar(3))).type_as_string(Tenh::VERBOSE),
-              (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(k)) * Scalar(3)).type_as_string(Tenh::VERBOSE)); // expected value
+    assert_eq(type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(x(i) * Scalar(3))),
+              type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(x(i)) * Scalar(3))); // expected value
+    assert_eq(type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(x(j) * Scalar(3))),
+              type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(x(j)) * Scalar(3))); // expected value
+    assert_eq(type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(x(k) * Scalar(3))),
+              type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(x(k)) * Scalar(3))); // expected value
 }
 
 void Multiplication_t (Context const &context)
@@ -220,7 +220,7 @@ void Multiplication_t (Context const &context)
     static Uint32 const DIM = 3;
     typedef int DummyId;
     typedef float Scalar;
-    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId> > BasedVectorSpace;
+    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId>> BasedVectorSpace;
     typedef Tenh::ImplementationOf_t<BasedVectorSpace,Scalar> Vector;
 
     typedef Tenh::AbstractIndex_c<'i'> I;
@@ -228,9 +228,9 @@ void Multiplication_t (Context const &context)
     typedef Tenh::AbstractIndex_c<'k'> K;
 
     // set up the abstract index mapping
-    typedef Tenh::TypeTuple_f<I>::T DomainIndexTypeList;
-    typedef Tenh::TypeTuple_f<J>::T CodomainIndexTypeList;
-    typedef Tenh::Reindex_e<DomainIndexTypeList,CodomainIndexTypeList> Reindex;
+    typedef Tenh::Typle_t<I> DomainIndexTyple;
+    typedef Tenh::Typle_t<J> CodomainIndexTyple;
+    typedef Tenh::Reindex_e<DomainIndexTyple,CodomainIndexTyple> Reindex;
     assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<I>::T,J>::V));
 
     Vector x(Tenh::fill_with(3));
@@ -241,25 +241,25 @@ void Multiplication_t (Context const &context)
     K k;
     // hacky, but effective, way of ensuring the reindexed expression template is what it's supposed to be.
     // verify that the operations of index-expression-multiplication and reindexing commute.
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(i) * y(i))).type_as_string(Tenh::VERBOSE),
-              (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(i)) *
-               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(i))).type_as_string(Tenh::VERBOSE)); // expected value
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(j) * y(j))).type_as_string(Tenh::VERBOSE),
-              (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(j)) *
-               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(j))).type_as_string(Tenh::VERBOSE)); // expected value
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(k) * y(k))).type_as_string(Tenh::VERBOSE),
-              (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(k)) *
-               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(k))).type_as_string(Tenh::VERBOSE)); // expected value
+    assert_eq(type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(x(i) * y(i))),
+              type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(x(i)) *
+                             Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(y(i)))); // expected value
+    assert_eq(type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(x(j) * y(j))),
+              type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(x(j)) *
+                             Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(y(j)))); // expected value
+    assert_eq(type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(x(k) * y(k))),
+              type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(x(k)) *
+                             Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(y(k)))); // expected value
 
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(i) * y(j))).type_as_string(Tenh::VERBOSE),
-              (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(i)) *
-               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(j))).type_as_string(Tenh::VERBOSE)); // expected value
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(j) * y(k))).type_as_string(Tenh::VERBOSE),
-              (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(j)) *
-               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(k))).type_as_string(Tenh::VERBOSE)); // expected value
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(k) * y(i))).type_as_string(Tenh::VERBOSE),
-              (Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(x(k)) *
-               Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(y(i))).type_as_string(Tenh::VERBOSE)); // expected value
+    assert_eq(type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(x(i) * y(j))),
+              type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(x(i)) *
+                             Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(y(j)))); // expected value
+    assert_eq(type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(x(j) * y(k))),
+              type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(x(j)) *
+                             Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(y(k)))); // expected value
+    assert_eq(type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(x(k) * y(i))),
+              type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(x(k)) *
+                             Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(y(i)))); // expected value
 }
 
 void IndexBundle_t (Context const &context)
@@ -267,9 +267,9 @@ void IndexBundle_t (Context const &context)
     static Uint32 const DIM = 3;
     typedef int DummyId;
     typedef float Scalar;
-    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId> > BasedVectorSpace;
-    typedef Tenh::TypeTuple_f<BasedVectorSpace,BasedVectorSpace,BasedVectorSpace>::T FactorTypeList;
-    typedef Tenh::TensorProductOfBasedVectorSpaces_c<FactorTypeList> TensorProduct;
+    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId>> BasedVectorSpace;
+    typedef Tenh::Typle_t<BasedVectorSpace,BasedVectorSpace,BasedVectorSpace> FactorTyple;
+    typedef Tenh::TensorProductOfBasedVectorSpaces_c<FactorTyple> TensorProduct;
     typedef Tenh::ImplementationOf_t<TensorProduct,Scalar> Tensor;
 
     typedef Tenh::AbstractIndex_c<'i'> I;
@@ -278,9 +278,9 @@ void IndexBundle_t (Context const &context)
     typedef Tenh::AbstractIndex_c<'l'> L;
 
     // set up the abstract index mapping
-    typedef Tenh::TypeTuple_f<I>::T DomainIndexTypeList;
-    typedef Tenh::TypeTuple_f<J>::T CodomainIndexTypeList;
-    typedef Tenh::Reindex_e<DomainIndexTypeList,CodomainIndexTypeList> Reindex;
+    typedef Tenh::Typle_t<I> DomainIndexTyple;
+    typedef Tenh::Typle_t<J> CodomainIndexTyple;
+    typedef Tenh::Reindex_e<DomainIndexTyple,CodomainIndexTyple> Reindex;
     assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<I>::T,J>::V));
 
     Tensor t(Tenh::fill_with(3));
@@ -291,11 +291,11 @@ void IndexBundle_t (Context const &context)
     L l;
     // hacky, but effective, way of ensuring the reindexed expression template is what it's supposed to be.
     // verify that the operations of index-expression-bundle and reindexing commute.
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(i*j*k).bundle(i*j*k,TensorProduct(),l)).type_as_string(Tenh::VERBOSE)),
-              (t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i*j*k))
-               .bundle(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i*j*k),
-                       TensorProduct(),
-                       Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(l))).type_as_string(Tenh::VERBOSE)); // expected value
+    assert_eq(type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(t(i*j*k).bundle(i*j*k,TensorProduct(),l))),
+              type_string_of(t(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(i*j*k))
+                             .bundle(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(i*j*k),
+                                     TensorProduct(),
+                                     Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(l)))); // expected value
 }
 
 void IndexSplit_t (Context const &context)
@@ -303,9 +303,9 @@ void IndexSplit_t (Context const &context)
     static Uint32 const DIM = 3;
     typedef int DummyId;
     typedef float Scalar;
-    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId> > BasedVectorSpace;
-    typedef Tenh::TypeTuple_f<BasedVectorSpace,BasedVectorSpace,BasedVectorSpace>::T FactorTypeList;
-    typedef Tenh::TensorProductOfBasedVectorSpaces_c<FactorTypeList> TensorProduct;
+    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId>> BasedVectorSpace;
+    typedef Tenh::Typle_t<BasedVectorSpace,BasedVectorSpace,BasedVectorSpace> FactorTyple;
+    typedef Tenh::TensorProductOfBasedVectorSpaces_c<FactorTyple> TensorProduct;
     typedef Tenh::ImplementationOf_t<TensorProduct,Scalar> Tensor;
 
     typedef Tenh::AbstractIndex_c<'i'> I;
@@ -314,9 +314,9 @@ void IndexSplit_t (Context const &context)
     typedef Tenh::AbstractIndex_c<'l'> L;
 
     // set up the abstract index mapping
-    typedef Tenh::TypeTuple_f<I>::T DomainIndexTypeList;
-    typedef Tenh::TypeTuple_f<J>::T CodomainIndexTypeList;
-    typedef Tenh::Reindex_e<DomainIndexTypeList,CodomainIndexTypeList> Reindex;
+    typedef Tenh::Typle_t<I> DomainIndexTyple;
+    typedef Tenh::Typle_t<J> CodomainIndexTyple;
+    typedef Tenh::Reindex_e<DomainIndexTyple,CodomainIndexTyple> Reindex;
     assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<I>::T,J>::V));
 
     Tensor t(Tenh::fill_with(3));
@@ -327,10 +327,10 @@ void IndexSplit_t (Context const &context)
     L l;
     // hacky, but effective, way of ensuring the reindexed expression template is what it's supposed to be.
     // verify that the operations of index-expression-split and reindexing commute.
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(i).split(i,j*k*l)).type_as_string(Tenh::VERBOSE)),
-              (t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i))
-               .split(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i),
-                      Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j*k*l))).type_as_string(Tenh::VERBOSE)); // expected value
+    assert_eq(type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(t(i).split(i,j*k*l))),
+              type_string_of(t(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(i))
+                             .split(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(i),
+                                    Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(j*k*l)))); // expected value
 }
 
 void IndexSplitToIndex_t (Context const &context)
@@ -338,9 +338,9 @@ void IndexSplitToIndex_t (Context const &context)
     static Uint32 const DIM = 3;
     typedef int DummyId;
     typedef float Scalar;
-    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId> > BasedVectorSpace;
-    typedef Tenh::TypeTuple_f<BasedVectorSpace,BasedVectorSpace,BasedVectorSpace>::T FactorTypeList;
-    typedef Tenh::TensorProductOfBasedVectorSpaces_c<FactorTypeList> TensorProduct;
+    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId>> BasedVectorSpace;
+    typedef Tenh::Typle_t<BasedVectorSpace,BasedVectorSpace,BasedVectorSpace> FactorTyple;
+    typedef Tenh::TensorProductOfBasedVectorSpaces_c<FactorTyple> TensorProduct;
     typedef Tenh::ImplementationOf_t<TensorProduct,Scalar> Tensor;
 
     typedef Tenh::AbstractIndex_c<'i'> I;
@@ -349,9 +349,9 @@ void IndexSplitToIndex_t (Context const &context)
     typedef Tenh::AbstractIndex_c<'l'> L;
 
     // set up the abstract index mapping
-    typedef Tenh::TypeTuple_f<I>::T DomainIndexTypeList;
-    typedef Tenh::TypeTuple_f<J>::T CodomainIndexTypeList;
-    typedef Tenh::Reindex_e<DomainIndexTypeList,CodomainIndexTypeList> Reindex;
+    typedef Tenh::Typle_t<I> DomainIndexTyple;
+    typedef Tenh::Typle_t<J> CodomainIndexTyple;
+    typedef Tenh::Reindex_e<DomainIndexTyple,CodomainIndexTyple> Reindex;
     assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<I>::T,J>::V));
 
     Tensor t(Tenh::fill_with(3));
@@ -362,10 +362,10 @@ void IndexSplitToIndex_t (Context const &context)
     // L l;
     // hacky, but effective, way of ensuring the reindexed expression template is what it's supposed to be.
     // verify that the operations of index-expression-split-to-index and reindexing commute.
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(i).split(i,j)).type_as_string(Tenh::VERBOSE)),
-              (t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i))
-               .split(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i),
-                      Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j))).type_as_string(Tenh::VERBOSE)); // expected value
+    assert_eq(type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(t(i).split(i,j))),
+              type_string_of(t(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(i))
+                             .split(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(i),
+                                    Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(j)))); // expected value
 }
 
 void Eval_t (Context const &context)
@@ -373,9 +373,9 @@ void Eval_t (Context const &context)
     static Uint32 const DIM = 3;
     typedef int DummyId;
     typedef float Scalar;
-    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId> > BasedVectorSpace;
-    typedef Tenh::TypeTuple_f<BasedVectorSpace,BasedVectorSpace,BasedVectorSpace>::T FactorTypeList;
-    typedef Tenh::TensorProductOfBasedVectorSpaces_c<FactorTypeList> TensorProduct;
+    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId>> BasedVectorSpace;
+    typedef Tenh::Typle_t<BasedVectorSpace,BasedVectorSpace,BasedVectorSpace> FactorTyple;
+    typedef Tenh::TensorProductOfBasedVectorSpaces_c<FactorTyple> TensorProduct;
     typedef Tenh::ImplementationOf_t<TensorProduct,Scalar> Tensor;
 
     typedef Tenh::AbstractIndex_c<'i'> I;
@@ -384,9 +384,9 @@ void Eval_t (Context const &context)
     typedef Tenh::AbstractIndex_c<'l'> L;
 
     // set up the abstract index mapping
-    typedef Tenh::TypeTuple_f<I>::T DomainIndexTypeList;
-    typedef Tenh::TypeTuple_f<J>::T CodomainIndexTypeList;
-    typedef Tenh::Reindex_e<DomainIndexTypeList,CodomainIndexTypeList> Reindex;
+    typedef Tenh::Typle_t<I> DomainIndexTyple;
+    typedef Tenh::Typle_t<J> CodomainIndexTyple;
+    typedef Tenh::Reindex_e<DomainIndexTyple,CodomainIndexTyple> Reindex;
     assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<I>::T,J>::V));
 
     Tensor t(Tenh::fill_with(3));
@@ -397,8 +397,8 @@ void Eval_t (Context const &context)
     // L l;
     // hacky, but effective, way of ensuring the reindexed expression template is what it's supposed to be.
     // verify that the operations of index-expression-eval and reindexing commute.
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(t(i).eval()).type_as_string(Tenh::VERBOSE)),
-              (t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i)).eval().type_as_string(Tenh::VERBOSE))); // expected value
+    assert_eq(type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(t(i).eval())),
+              type_string_of(t(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(i)).eval())); // expected value
 }
 
 void fancy_expression (Context const &context)
@@ -406,9 +406,9 @@ void fancy_expression (Context const &context)
     static Uint32 const DIM = 3;
     typedef int DummyId;
     typedef float Scalar;
-    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId> > BasedVectorSpace;
-    typedef Tenh::TypeTuple_f<BasedVectorSpace,BasedVectorSpace,BasedVectorSpace>::T FactorTypeList;
-    typedef Tenh::TensorProductOfBasedVectorSpaces_c<FactorTypeList> TensorProduct;
+    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM,DummyId>,Tenh::Basis_c<DummyId>> BasedVectorSpace;
+    typedef Tenh::Typle_t<BasedVectorSpace,BasedVectorSpace,BasedVectorSpace> FactorTyple;
+    typedef Tenh::TensorProductOfBasedVectorSpaces_c<FactorTyple> TensorProduct;
     typedef Tenh::ImplementationOf_t<BasedVectorSpace,Scalar> Vector;
     typedef Tenh::ImplementationOf_t<TensorProduct,Scalar> Tensor;
 
@@ -418,9 +418,9 @@ void fancy_expression (Context const &context)
     typedef Tenh::AbstractIndex_c<'l'> L;
 
     // set up the abstract index mapping
-    typedef Tenh::TypeTuple_f<I>::T DomainIndexTypeList;
-    typedef Tenh::TypeTuple_f<J>::T CodomainIndexTypeList;
-    typedef Tenh::Reindex_e<DomainIndexTypeList,CodomainIndexTypeList> Reindex;
+    typedef Tenh::Typle_t<I> DomainIndexTyple;
+    typedef Tenh::Typle_t<J> CodomainIndexTyple;
+    typedef Tenh::Reindex_e<DomainIndexTyple,CodomainIndexTyple> Reindex;
     assert((Tenh::TypesAreEqual_f<Reindex::Eval_f<I>::T,J>::V));
 
     Tensor t(Tenh::fill_with(3));
@@ -434,11 +434,11 @@ void fancy_expression (Context const &context)
     L l;
     // hacky, but effective, way of ensuring the reindexed expression template is what it's supposed to be.
     // verify that the operations of composing this fancy expression and reindexing commute.
-    assert_eq((Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(Scalar(3) * t(i*j*k)*a(j*k*l) + x(i)*c(l))).type_as_string(Tenh::VERBOSE),
-              (Scalar(3) * t(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i*j*k))
-                         * a(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(j*k*l))
-                         + x(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(i))
-                         * c(Tenh::reindexed<DomainIndexTypeList,CodomainIndexTypeList>(l))).type_as_string(Tenh::VERBOSE)); // expected value
+    assert_eq(type_string_of(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(Scalar(3) * t(i*j*k)*a(j*k*l) + x(i)*c(l))),
+              type_string_of(Scalar(3) * t(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(i*j*k))
+                                       * a(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(j*k*l))
+                                       + x(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(i))
+                                       * c(Tenh::reindexed<DomainIndexTyple,CodomainIndexTyple>(l)))); // expected value
 }
 
 void AddTests (Directory &parent)

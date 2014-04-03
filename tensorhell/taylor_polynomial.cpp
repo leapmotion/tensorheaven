@@ -82,7 +82,7 @@ void randomize (long double &x)
 }
 
 // open annulus of given inner and outer radii in the vector space -- false
-// is the parameter value for COMPONENTS_ARE_PROCEDURAL
+// is the parameter value for ComponentQualifier::PROCEDURAL
 template <typename InnerProductId_, typename Derived_, typename Scalar_, typename BasedVectorSpace_>
 void randomize (Vector_i<Derived_,Scalar_,BasedVectorSpace_,false> &x,
                 Scalar_ const &inner_radius,
@@ -112,17 +112,15 @@ struct FunctionObjectType_m
     typedef typename DualOf_f<ParameterSpace_>::T DualOfBasedVectorSpace;
     typedef SymmetricPowerOfBasedVectorSpace_c<2,DualOfBasedVectorSpace> Sym2Dual;
     typedef CodomainSpace_ CodomainSpace;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<CodomainSpace_,
-                                               TypeList_t<DualOfBasedVectorSpace> > > Differential1;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<CodomainSpace_,
-                                               TypeList_t<Sym2Dual> > > Differential2;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<CodomainSpace_,DualOfBasedVectorSpace>> Differential1;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<CodomainSpace_,Sym2Dual>> Differential2;
 
-    typedef ImplementationOf_t<ParameterSpace_,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > V;
-    typedef ImplementationOf_t<DualOfBasedVectorSpace,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > DualOfV;
-    typedef ImplementationOf_t<Sym2Dual,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > Sym2_DualOfV;
-    typedef ImplementationOf_t<CodomainSpace_,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > Out;
-    typedef ImplementationOf_t<Differential1,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > D1;
-    typedef ImplementationOf_t<Differential2,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > D2;
+    typedef ImplementationOf_t<ParameterSpace_,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE>> V;
+    typedef ImplementationOf_t<DualOfBasedVectorSpace,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE>> DualOfV;
+    typedef ImplementationOf_t<Sym2Dual,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE>> Sym2_DualOfV;
+    typedef ImplementationOf_t<CodomainSpace_,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE>> Out;
+    typedef ImplementationOf_t<Differential1,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE>> D1;
+    typedef ImplementationOf_t<Differential2,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE>> D2;
 };
 
 // template specialization for when CodomainSpace_ is Scalar_
@@ -135,9 +133,9 @@ struct FunctionObjectType_m<ParameterSpace_,Scalar_,Scalar_>
     typedef DualOfBasedVectorSpace Differential1;
     typedef Sym2Dual Differential2;
 
-    typedef ImplementationOf_t<ParameterSpace_,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > V;
-    typedef ImplementationOf_t<DualOfBasedVectorSpace,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > DualOfV;
-    typedef ImplementationOf_t<Sym2Dual,Scalar_,UseMemberArray_t<COMPONENTS_ARE_NONCONST> > Sym2_DualOfV;
+    typedef ImplementationOf_t<ParameterSpace_,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE>> V;
+    typedef ImplementationOf_t<DualOfBasedVectorSpace,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE>> DualOfV;
+    typedef ImplementationOf_t<Sym2Dual,Scalar_,UseMemberArray_t<ComponentsAreConst::FALSE>> Sym2_DualOfV;
     typedef Scalar_ Out;
     typedef DualOfV D1;
     typedef Sym2_DualOfV D2;
@@ -466,11 +464,9 @@ template <typename BasedVectorSpace_, typename HatMorphism_, typename Scalar_>
 Scalar_ hat (ComponentIndex_t<DimensionOf_f<HatMorphism_>::V> const &i)
 {
     typedef typename DualOf_f<BasedVectorSpace_>::T DualOfBasedVectorSpace;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_,
-                                               TypeList_t<DualOfBasedVectorSpace> > > EndomorphismOfBasedVectorSpace;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<EndomorphismOfBasedVectorSpace,
-                                               TypeList_t<DualOfBasedVectorSpace> > > HatMorphism;
-    STATIC_ASSERT_TYPES_ARE_EQUAL(HatMorphism, HatMorphism_);
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<BasedVectorSpace_,DualOfBasedVectorSpace>> EndomorphismOfBasedVectorSpace;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<EndomorphismOfBasedVectorSpace,DualOfBasedVectorSpace>> HatMorphism;
+    static_assert(TypesAreEqual_f<HatMorphism,HatMorphism_>::V, "types must match");
 
     // hat(x,y,z) has the form
     // [ [  0 -z  y ]
@@ -511,15 +507,11 @@ struct HatId { static std::string type_as_string (bool verbose) { return "Hat"; 
 template <typename BasedVectorSpace_, typename Scalar_>
 struct HatTensor_f
 {
+    static_assert(DimensionOf_f<BasedVectorSpace_>::V == 3, "dimension of BasedVectorSpace_ must be exactly 3");
 private:
-
-    enum { STATIC_ASSERT_IN_ENUM((DimensionOf_f<BasedVectorSpace_>::V == 3), DIMENSION_MUST_BE_EXACTLY_3) };
-
     typedef typename DualOf_f<BasedVectorSpace_>::T DualOfBasedVectorSpace;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_,
-                                               TypeList_t<DualOfBasedVectorSpace> > > Endomorphism;
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<Endomorphism,
-                                               TypeList_t<DualOfBasedVectorSpace> > > HatMorphism;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<BasedVectorSpace_,DualOfBasedVectorSpace>> Endomorphism;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<Endomorphism,DualOfBasedVectorSpace>> HatMorphism;
 
     typedef ComponentGenerator_t<Scalar_,
                                  DimensionOf_f<HatMorphism>::V,
@@ -527,24 +519,22 @@ private:
                                  HatId> ComponentGenerator;
     HatTensor_f();
 public:
-    typedef ImplementationOf_t<HatMorphism,Scalar_,UseProceduralArray_t<ComponentGenerator> > T;
+    typedef ImplementationOf_t<HatMorphism,Scalar_,UseProceduralArray_t<ComponentGenerator>> T;
 };
 
 // Lie algebra morphism from (R^3, \times) to (so(3), [.,.]) - as a 2-tensor
 // TODO: figure out if this make sense to have for arbitrary 3-dimensional based vector spaces
 template <typename Derived_, typename Scalar_, typename BasedVectorSpace_, ComponentQualifier COMPONENT_QUALIFIER_>
-ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_,
-                                                      TypeList_t<typename DualOf_f<BasedVectorSpace_>::T> > >,
+ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<Typle_t<BasedVectorSpace_,typename DualOf_f<BasedVectorSpace_>::T>>,
                    Scalar_,
-                   UseMemberArray_t<COMPONENTS_ARE_NONCONST> >
+                   UseMemberArray_t<ComponentsAreConst::FALSE>>
     hat (Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENT_QUALIFIER_> const &x)
 {
-    STATIC_ASSERT(DimensionOf_f<BasedVectorSpace_>::V == 3, DIMENSION_MUST_BE_EXACTLY_3);
+    static_assert(DimensionOf_f<BasedVectorSpace_>::V == 3, "dimension of BasedVectorSpace_ must be exactly 3");
     // for brevity
-    typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_,
-                                                      TypeList_t<typename DualOf_f<BasedVectorSpace_>::T> > >,
+    typedef ImplementationOf_t<TensorProductOfBasedVectorSpaces_c<Typle_t<BasedVectorSpace_,typename DualOf_f<BasedVectorSpace_>::T>>,
                                Scalar_,
-                               UseMemberArray_t<COMPONENTS_ARE_NONCONST> > T;
+                               UseMemberArray_t<ComponentsAreConst::FALSE>> T;
     typedef typename Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENT_QUALIFIER_>::ComponentIndex c;
     typedef typename T::ComponentIndex C;
     T retval(Static<WithoutInitialization>::SINGLETON);
@@ -712,8 +702,7 @@ private:
 
 public:
 
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_,
-                                               TypeList_t<typename DualOf_f<BasedVectorSpace_>::T> > > CodomainSpace;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<BasedVectorSpace_,typename DualOf_f<BasedVectorSpace_>::T>> CodomainSpace;
     typedef FunctionObjectType_m<BasedVectorSpace_,CodomainSpace,Scalar_> FunctionObjectType;
 
     typedef typename FunctionObjectType::DualOfBasedVectorSpace DualOfBasedVectorSpace;
@@ -796,8 +785,7 @@ private:
 
 public:
 
-    typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace_,
-                                               TypeList_t<typename DualOf_f<BasedVectorSpace_>::T> > > CodomainSpace;
+    typedef TensorProductOfBasedVectorSpaces_c<Typle_t<BasedVectorSpace_,typename DualOf_f<BasedVectorSpace_>::T>> CodomainSpace;
     typedef FunctionObjectType_m<BasedVectorSpace_,CodomainSpace,Scalar_> FunctionObjectType;
 
     typedef typename FunctionObjectType::DualOfBasedVectorSpace DualOfBasedVectorSpace;
@@ -1023,8 +1011,7 @@ struct BigFunction_t
 private:
 
     typedef CayleyTransform_t<BasedVectorSpace_,Scalar_> CayleyTransform;
-    typedef TensorProduct_c<TypeList_t<StandardInnerProduct,
-                            TypeList_t<StandardInnerProduct> > > InnerProductId;
+    typedef TensorProduct_c<Typle_t<StandardInnerProduct,StandardInnerProduct>> InnerProductId;
 
     QuadraticFunction_t<typename CayleyTransform::CodomainSpace,Scalar_,InnerProductId> m_q;
     CayleyTransform m_cayley_transform;
@@ -1033,7 +1020,7 @@ private:
 template <typename Scalar_>
 struct WaveyFunction_t
 {
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,Generic>,OrthonormalBasis_c<Generic> > BasedVectorSpace;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,2,Generic>,OrthonormalBasis_c<Generic>> BasedVectorSpace;
     typedef FunctionObjectType_m<BasedVectorSpace,Scalar_,Scalar_> FunctionObjectType;
 
     typedef typename FunctionObjectType::DualOfBasedVectorSpace DualOfBasedVectorSpace;
@@ -1051,31 +1038,31 @@ struct WaveyFunction_t
     Out function (Vector_i<Derived_,Scalar_,BasedVectorSpace,COMPONENT_QUALIFIER_> const &x) const
     {
         typedef Vector_i<Derived_,Scalar_,BasedVectorSpace,COMPONENT_QUALIFIER_> P;
-        Scalar_ const &u = x[typename P::ComponentIndex(0, DONT_CHECK_RANGE)];
-        Scalar_ const &v = x[typename P::ComponentIndex(1, DONT_CHECK_RANGE)];
+        Scalar_ const &u = x[typename P::ComponentIndex(0, CheckRange::FALSE)];
+        Scalar_ const &v = x[typename P::ComponentIndex(1, CheckRange::FALSE)];
         return sin(u)*sin(v);
     }
     template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
     D1 D_function (Vector_i<Derived_,Scalar_,BasedVectorSpace,COMPONENT_QUALIFIER_> const &x) const
     {
         typedef Vector_i<Derived_,Scalar_,BasedVectorSpace,COMPONENT_QUALIFIER_> P;
-        Scalar_ const &u = x[typename P::ComponentIndex(0, DONT_CHECK_RANGE)];
-        Scalar_ const &v = x[typename P::ComponentIndex(1, DONT_CHECK_RANGE)];
+        Scalar_ const &u = x[typename P::ComponentIndex(0, CheckRange::FALSE)];
+        Scalar_ const &v = x[typename P::ComponentIndex(1, CheckRange::FALSE)];
         D1 retval(Static<WithoutInitialization>::SINGLETON);
-        retval[typename D1::ComponentIndex(0, DONT_CHECK_RANGE)] = cos(u)*sin(v);
-        retval[typename D1::ComponentIndex(1, DONT_CHECK_RANGE)] = sin(u)*cos(v);
+        retval[typename D1::ComponentIndex(0, CheckRange::FALSE)] = cos(u)*sin(v);
+        retval[typename D1::ComponentIndex(1, CheckRange::FALSE)] = sin(u)*cos(v);
         return retval;
     }
     template <typename Derived_, ComponentQualifier COMPONENT_QUALIFIER_>
     D2 D2_function (Vector_i<Derived_,Scalar_,BasedVectorSpace,COMPONENT_QUALIFIER_> const &x) const
     {
         typedef Vector_i<Derived_,Scalar_,BasedVectorSpace,COMPONENT_QUALIFIER_> P;
-        Scalar_ const &u = x[typename P::ComponentIndex(0, DONT_CHECK_RANGE)];
-        Scalar_ const &v = x[typename P::ComponentIndex(1, DONT_CHECK_RANGE)];
+        Scalar_ const &u = x[typename P::ComponentIndex(0, CheckRange::FALSE)];
+        Scalar_ const &v = x[typename P::ComponentIndex(1, CheckRange::FALSE)];
         D2 retval(Static<WithoutInitialization>::SINGLETON);
-        retval[typename D2::ComponentIndex(0, DONT_CHECK_RANGE)] = -sin(u)*sin(v);
-        retval[typename D2::ComponentIndex(1, DONT_CHECK_RANGE)] = cos(u)*cos(v);
-        retval[typename D2::ComponentIndex(2, DONT_CHECK_RANGE)] = -sin(u)*sin(v);
+        retval[typename D2::ComponentIndex(0, CheckRange::FALSE)] = -sin(u)*sin(v);
+        retval[typename D2::ComponentIndex(1, CheckRange::FALSE)] = cos(u)*cos(v);
+        retval[typename D2::ComponentIndex(2, CheckRange::FALSE)] = -sin(u)*sin(v);
         return retval;
     }
 };
@@ -1140,7 +1127,7 @@ int main (int argc, char **argv)
 
     typedef double Scalar;
     static Uint32 const DIM = 3;
-    typedef BasedVectorSpace_c<VectorSpace_c<RealField,DIM,Generic>,OrthonormalBasis_c<Generic> > BasedVectorSpace;
+    typedef BasedVectorSpace_c<VectorSpace_c<RealField,DIM,Generic>,OrthonormalBasis_c<Generic>> BasedVectorSpace;
     typedef ImplementationOf_t<BasedVectorSpace,Scalar> V;
 
     typedef CayleyTransform_t<BasedVectorSpace,Scalar> C;
@@ -1215,10 +1202,9 @@ int main (int argc, char **argv)
 //         std::cerr << FORMAT_VALUE((cayley_transform(i*j)*inner_product.split(i*k)*cayley_transform(k*l)).eval().tensor_value()) << "\n\n";
 //         std::cerr << FORMAT_VALUE(cayley_transform(i*j)*inner_product.split(i*k)*cayley_transform(k*l) - inner_product_inverse.split(j*l)) << "\n\n";
 //         std::cerr << FORMAT_VALUE((cayley_transform(i*j)*inner_product.split(i*k)*cayley_transform(k*l) - inner_product_inverse.split(j*l)).eval().tensor_value()) << "\n\n";
-        typedef TypeList_t<StandardInnerProduct,
-                TypeList_t<StandardInnerProduct> > InnerProductFactorList;
+        typedef Typle_t<StandardInnerProduct,StandardInnerProduct> InnerProductFactorTyple;
         std::cerr << "this value should be about equal to 0: "
-                  << FORMAT_VALUE(squared_norm<TensorProduct_c<InnerProductFactorList> >((cayley_transform(i*j)*inner_product.split(i*k)*cayley_transform(k*l) - inner_product.split(j*l)).eval().value())) << "\n\n";
+                  << FORMAT_VALUE(squared_norm<TensorProduct_c<InnerProductFactorTyple>>((cayley_transform(i*j)*inner_product.split(i*k)*cayley_transform(k*l) - inner_product.split(j*l)).eval().value())) << "\n\n";
     }
 
 //     std::cerr << "QuadraticFunction_t\n";
@@ -1316,10 +1302,8 @@ int main (int argc, char **argv)
 //         N_t<BasedVectorSpace,Scalar> helpy;
         typedef N_t<BasedVectorSpace,Scalar> N;
         N n;
-        typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace,
-                                                   TypeList_t<DualOf_f<BasedVectorSpace>::T> > > CodomainSpace;
-        typedef TensorProduct_c<TypeList_t<StandardInnerProduct,
-                                TypeList_t<StandardInnerProduct> > > CodomainInnerProductId;
+        typedef TensorProductOfBasedVectorSpaces_c<Typle_t<BasedVectorSpace,DualOf_f<BasedVectorSpace>::T>> CodomainSpace;
+        typedef TensorProduct_c<Typle_t<StandardInnerProduct,StandardInnerProduct>> CodomainInnerProductId;
         TaylorPolynomialVerifier_t<BasedVectorSpace,CodomainSpace,CodomainInnerProductId,Scalar,N> verifier;
         for (Uint32 i = 0; i < SAMPLES; ++i)
         {
@@ -1344,10 +1328,8 @@ int main (int argc, char **argv)
 //         CayleyTransform_t<BasedVectorSpace,Scalar> helpy;
         typedef CayleyTransform_t<BasedVectorSpace,Scalar> CayleyTransform;
         CayleyTransform cayley_transform;
-        typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace,
-                                                   TypeList_t<DualOf_f<BasedVectorSpace>::T> > > CodomainSpace;
-        typedef TensorProduct_c<TypeList_t<StandardInnerProduct,
-                                TypeList_t<StandardInnerProduct> > > CodomainInnerProductId;
+        typedef TensorProductOfBasedVectorSpaces_c<Typle_t<BasedVectorSpace,DualOf_f<BasedVectorSpace>::T>> CodomainSpace;
+        typedef TensorProduct_c<Typle_t<StandardInnerProduct,StandardInnerProduct>> CodomainInnerProductId;
         TaylorPolynomialVerifier_t<BasedVectorSpace,CodomainSpace,CodomainInnerProductId,Scalar,CayleyTransform> verifier;
         for (Uint32 i = 0; i < SAMPLES; ++i)
         {
@@ -1371,10 +1353,8 @@ int main (int argc, char **argv)
         Scalar big_o_bound(0);
         typedef BigFunction_t<BasedVectorSpace,Scalar> BigFunction;
         BigFunction big_function;
-//         typedef TensorProductOfBasedVectorSpaces_c<TypeList_t<BasedVectorSpace,
-//                                                    TypeList_t<DualOf_f<BasedVectorSpace>::T> > > CodomainSpace;
-//         typedef TensorProduct_c<TypeList_t<StandardInnerProduct,
-//                                 TypeList_t<StandardInnerProduct> > > CodomainInnerProductId;
+//         typedef TensorProductOfBasedVectorSpaces_c<Typle_t<BasedVectorSpace,DualOf_f<BasedVectorSpace>::T>> CodomainSpace;
+//         typedef TensorProduct_c<Typle_t<StandardInnerProduct,StandardInnerProduct>> CodomainInnerProductId;
         TaylorPolynomialVerifier_t<BasedVectorSpace,Scalar,StandardInnerProduct,Scalar,BigFunction> verifier;
         for (Uint32 i = 0; i < SAMPLES; ++i)
         {

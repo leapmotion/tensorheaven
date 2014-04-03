@@ -24,6 +24,6 @@ float hand_written_inner_product (EV const &u, V const &v)
 {
     float retval(0);
     for (Uint32 i = 0; i < 1000; ++i)
-        retval += u[typename EV::Index(i, DONT_CHECK_RANGE)] * v[typename V::Index(i, DONT_CHECK_RANGE)];
+        retval += u[typename EV::Index(i, CheckRange::FALSE)] * v[typename V::Index(i, CheckRange::FALSE)];
     return retval;
 }

@@ -35,15 +35,15 @@ private:
 
 // fixed-length array of a given component type, which must be a POD type
 // (the allocation_size_in_bytes and pointer_to_allocation methods require this).
-template <typename Component_, Uint32 COMPONENT_COUNT_, bool COMPONENTS_ARE_CONST_ = COMPONENTS_ARE_NONCONST, typename Derived_ = NullType>
+template <typename Component_, Uint32 COMPONENT_COUNT_, ComponentsAreConst COMPONENTS_ARE_CONST_ = ComponentsAreConst::FALSE, typename Derived_ = NullType>
 struct MemberArray_t
     :
-    public MemoryArray_i<typename DerivedType_f<Derived_,MemberArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> >::T,
+    public MemoryArray_i<typename DerivedType_f<Derived_,MemberArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_>>::T,
                          Component_,
                          COMPONENT_COUNT_,
                          COMPONENTS_ARE_CONST_>
 {
-    typedef MemoryArray_i<typename DerivedType_f<Derived_,MemberArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> >::T,
+    typedef MemoryArray_i<typename DerivedType_f<Derived_,MemberArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_>>::T,
                           Component_,
                           COMPONENT_COUNT_,
                           COMPONENTS_ARE_CONST_> Parent_MemoryArray_i;
@@ -75,7 +75,7 @@ struct MemberArray_t
 #pragma GCC diagnostic pop
 #endif // __clang_version__
 
-    template <bool OTHER_COMPONENTS_ARE_CONST_, typename OtherDerived_>
+    template <ComponentsAreConst OTHER_COMPONENTS_ARE_CONST_, typename OtherDerived_>
     MemberArray_t (MemberArray_t<Component_,COMPONENT_COUNT_,OTHER_COMPONENTS_ARE_CONST_,OtherDerived_> const &m)
     {
         memcpy(&m_component[0], m.pointer_to_allocation(), allocation_size_in_bytes());
@@ -131,20 +131,20 @@ template <typename T> struct IsMemberArray_t
 private:
     IsMemberArray_t();
 };
-template <typename Component_, Uint32 COMPONENT_COUNT_, bool COMPONENTS_ARE_CONST_, typename Derived_> struct IsMemberArray_t<MemberArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> >
+template <typename Component_, Uint32 COMPONENT_COUNT_, ComponentsAreConst COMPONENTS_ARE_CONST_, typename Derived_> struct IsMemberArray_t<MemberArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_>>
 {
     static bool const V = true;
 private:
     IsMemberArray_t();
 };
 
-template <typename Component_, Uint32 COMPONENT_COUNT_, bool COMPONENTS_ARE_CONST_, typename Derived_> struct IsArray_i<MemberArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> >
+template <typename Component_, Uint32 COMPONENT_COUNT_, ComponentsAreConst COMPONENTS_ARE_CONST_, typename Derived_> struct IsArray_i<MemberArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_>>
 {
     static bool const V = true;
 private:
     IsArray_i();
 };
-template <typename Component_, Uint32 COMPONENT_COUNT_, bool COMPONENTS_ARE_CONST_, typename Derived_> struct IsMemoryArray_i<MemberArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_> >
+template <typename Component_, Uint32 COMPONENT_COUNT_, ComponentsAreConst COMPONENTS_ARE_CONST_, typename Derived_> struct IsMemoryArray_i<MemberArray_t<Component_,COMPONENT_COUNT_,COMPONENTS_ARE_CONST_,Derived_>>
 {
     static bool const V = true;
 private:

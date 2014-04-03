@@ -110,18 +110,18 @@ void add_inversion_tests_1 (Directory *parent)
         add_inversion_test_for_Tensor2Type<A,A>(parent);
     add_inversion_test_for_Tensor2Type<D,D>(parent);
     add_inversion_test_for_Tensor2Type<S,S>(parent);
-//     add_inversion_test_for_Tensor2Type<Tenh::Tensor2Antisymmetric_t<A> >(parent); // TODO: allow zero-dimensional vector spaces
+//     add_inversion_test_for_Tensor2Type<Tenh::Tensor2Antisymmetric_t<A>>(parent); // TODO: allow zero-dimensional vector spaces
     if (S::dim() % 2 == 0) // antisymmetric can only be invertible for even dimension
-        add_inversion_test_for_Tensor2Type<Tenh::Tensor2Antisymmetric_t<S>,Tenh::Tensor2Antisymmetric_t<S> >(parent);
-    add_inversion_test_for_Tensor2Type<Tenh::Tensor2Symmetric_t<A>,Tenh::Tensor2Symmetric_t<A> >(parent);
-    add_inversion_test_for_Tensor2Type<Tenh::Tensor2Symmetric_t<S>,Tenh::Tensor2Symmetric_t<S> >(parent);
+        add_inversion_test_for_Tensor2Type<Tenh::Tensor2Antisymmetric_t<S>,Tenh::Tensor2Antisymmetric_t<S>>(parent);
+    add_inversion_test_for_Tensor2Type<Tenh::Tensor2Symmetric_t<A>,Tenh::Tensor2Symmetric_t<A>>(parent);
+    add_inversion_test_for_Tensor2Type<Tenh::Tensor2Symmetric_t<S>,Tenh::Tensor2Symmetric_t<S>>(parent);
 }
 
 template <typename Factor1, typename Factor2>
 void add_inversion_test_2 (Directory *parent)
 {
-    add_inversion_test_for_Tensor2Type<Tenh::Tensor2_t<Factor1,Factor2>,Tenh::Tensor2_t<Factor2,Factor1> >(parent);
-    add_inversion_test_for_Tensor2Type<Tenh::Tensor2_t<Factor2,Factor1>,Tenh::Tensor2_t<Factor1,Factor2> >(parent);
+    add_inversion_test_for_Tensor2Type<Tenh::Tensor2_t<Factor1,Factor2>,Tenh::Tensor2_t<Factor2,Factor1>>(parent);
+    add_inversion_test_for_Tensor2Type<Tenh::Tensor2_t<Factor2,Factor1>,Tenh::Tensor2_t<Factor1,Factor2>>(parent);
 }
 
 void AddTests (Lvd::TestSystem::Directory *parent);

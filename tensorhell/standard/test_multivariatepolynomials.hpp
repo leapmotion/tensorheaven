@@ -1,10 +1,13 @@
 // ///////////////////////////////////////////////////////////////////////////
-// test_multivariatepolynomials.cpp by Ted Nitz, created 2013/10/01
+// test_multivariatepolynomials.hpp by Ted Nitz, created 2013/10/01
 // Copyright Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "test_multivariatepolynomials.hpp"
+#if !defined(TEST_MULTIVARIATEPOLYNOMIALS_HPP_)
+#define TEST_MULTIVARIATEPOLYNOMIALS_HPP_
+
 #include "randomize.hpp"
+#include "test.hpp"
 
 #include <sstream>
 #include <complex>
@@ -15,6 +18,14 @@
 // this is included last because it redefines the `assert` macro,
 // which would be bad for the above includes.
 #include "lvd_testsystem.hpp"
+
+namespace Lvd {
+namespace TestSystem {
+
+struct Directory;
+
+} // end of namespace TestSystem
+} // end of namespace Lvd
 
 using namespace Lvd;
 using namespace std;
@@ -76,7 +87,7 @@ void multiply_random_polynomials_and_check_result (Context const &context)
         Tenh::randomize(v[i]);
     }
 
-    std::cerr << roly*poly << '\n';
+    //std::cerr << roly*poly << '\n';
     assert_about_eq((roly*poly).evaluate(v), (roly.evaluate(v) * poly.evaluate(v)));
 }
 
@@ -110,7 +121,7 @@ void add_random_polynomials_and_check_result (Context const &context)
         Tenh::randomize(v[i]);
     }
 
-    std::cerr << roly+poly << '\n';
+    //std::cerr << roly+poly << '\n';
     assert_about_eq((roly+poly).evaluate(v), (roly.evaluate(v) + poly.evaluate(v)));
 }
 
@@ -183,84 +194,21 @@ void add_particular_tests (Directory &parent)
 {
     // Directory &scalar_dir = parent.GetSubDirectory(FORMAT("Scalar = " << Tenh::type_string_of<Scalar_>()));
     // Directory &dim_dir = scalar_dir.GetSubDirectory(FORMAT("DIM = " << DIM_));
-    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM_,Tenh::Generic>,Tenh::Basis_c<Tenh::Generic> > BasedVectorSpace;
-    Directory &degree_dir = parent.GetSubDirectory(FORMAT("Tenh::MultivariatePolynomial<" << DEGREE_ << ',' << Tenh::type_string_of<BasedVectorSpace>() << ',' << Tenh::type_string_of<Scalar_>() << '>'));
+    typedef Tenh::BasedVectorSpace_c<Tenh::VectorSpace_c<Tenh::RealField,DIM_,Tenh::Generic>,Tenh::Basis_c<Tenh::Generic>> BasedVectorSpace;
+    Directory &degree_dir = parent.GetSubDirectory(FORMAT("MultivariatePolynomial<" << DEGREE_ << ',' << Tenh::type_string_of<BasedVectorSpace>() << ',' << Tenh::type_string_of<Scalar_>() << '>'));
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(degree_dir, "constructor_without_initialization", constructor_without_initialization<Scalar_,BasedVectorSpace,DEGREE_>, RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(degree_dir, "constructor_fill_with", constructor_fill_with<Scalar_,BasedVectorSpace,DEGREE_>, new Context::Data<Scalar_>(42), RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(degree_dir, "multiply_random_polynomial_by_scalar_and_check_result", multiply_random_polynomial_by_scalar_and_check_result<Scalar_,BasedVectorSpace,DEGREE_>, RESULT_NO_ERROR);
 }
 
-void AddTests (Directory &parent)
-{
-    Directory &dir = parent.GetSubDirectory("Tenh::MultivariatePolynomial");
+void AddTests0 (Lvd::TestSystem::Directory &parent);
+void AddTests1 (Lvd::TestSystem::Directory &parent);
+void AddTests2 (Lvd::TestSystem::Directory &parent);
+void AddTests3 (Lvd::TestSystem::Directory &parent);
+void AddTests4 (Lvd::TestSystem::Directory &parent);
+void AddTests5 (Lvd::TestSystem::Directory &parent);
 
-    // the reason all the different combinations are enumerated by hand is
-    // so that this source file can be easily broken into several source
-    // files, reducing the compilation resources required and allowing
-    // parallel compilation.
-
-    // // add_particular_tests_for_scalar<Tenh::Sint8>(dir);
-    // // add_particular_tests_for_scalar<Tenh::Uint32>(dir);
-    // // add_particular_tests_for_scalar<Tenh::Sint64>(dir);
-
-    // TODO: re-add tests for integral types once integral types are working
-
-    add_particular_tests<float,1,1>(dir);
-    add_particular_tests<float,1,2>(dir);
-    add_particular_tests<float,1,3>(dir);
-    add_particular_tests<float,2,1>(dir);
-    add_particular_tests<float,2,2>(dir);
-    add_particular_tests<float,2,3>(dir);
-    add_particular_tests<float,3,1>(dir);
-    add_particular_tests<float,3,2>(dir);
-    add_particular_tests<float,3,3>(dir);
-
-    add_particular_tests<double,1,1>(dir);
-    add_particular_tests<double,1,2>(dir);
-    add_particular_tests<double,1,3>(dir);
-    add_particular_tests<double,2,1>(dir);
-    add_particular_tests<double,2,2>(dir);
-    add_particular_tests<double,2,3>(dir);
-    add_particular_tests<double,3,1>(dir);
-    add_particular_tests<double,3,2>(dir);
-    add_particular_tests<double,3,3>(dir);
-
-    add_particular_tests<complex<float>,1,1>(dir);
-    add_particular_tests<complex<float>,1,2>(dir);
-    add_particular_tests<complex<float>,1,3>(dir);
-    add_particular_tests<complex<float>,2,1>(dir);
-    add_particular_tests<complex<float>,2,2>(dir);
-    add_particular_tests<complex<float>,2,3>(dir);
-    add_particular_tests<complex<float>,3,1>(dir);
-    add_particular_tests<complex<float>,3,2>(dir);
-    add_particular_tests<complex<float>,3,3>(dir);
-
-    add_particular_tests<complex<double>,1,1>(dir);
-    add_particular_tests<complex<double>,1,2>(dir);
-    add_particular_tests<complex<double>,1,3>(dir);
-    add_particular_tests<complex<double>,2,1>(dir);
-    add_particular_tests<complex<double>,2,2>(dir);
-    add_particular_tests<complex<double>,2,3>(dir);
-    add_particular_tests<complex<double>,3,1>(dir);
-    add_particular_tests<complex<double>,3,2>(dir);
-    add_particular_tests<complex<double>,3,3>(dir);
-
-    {
-        static Uint32 const DIM = 1;
-        typedef Tenh::VectorSpace_c<Tenh::RealField,DIM,Tenh::Generic> VectorSpace;
-        typedef Tenh::BasedVectorSpace_c<VectorSpace,Tenh::Basis_c<Tenh::Generic> > BasedVectorSpace;
-        add_addition_tests<float,BasedVectorSpace>(dir);
-        add_multiplication_tests<float,BasedVectorSpace>(dir);
-    }
-
-    {
-        static Uint32 const DIM = 3;
-        typedef Tenh::VectorSpace_c<Tenh::RealField,DIM,Tenh::Generic> VectorSpace;
-        typedef Tenh::BasedVectorSpace_c<VectorSpace,Tenh::Basis_c<Tenh::Generic> > BasedVectorSpace;
-        add_addition_tests<float,BasedVectorSpace>(dir);
-        add_multiplication_tests<float,BasedVectorSpace>(dir);
-    }
-}
-
-} // end of namespace Vector
+} // end of namespace MultivariatePolynomials
 } // end of namespace Test
+
+#endif // !defined(TEST_MULTIVARIATEPOLYNOMIALS_HPP_)

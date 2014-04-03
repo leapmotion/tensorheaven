@@ -28,12 +28,8 @@ struct Tensor_i
     :
     public EmbeddableAsTensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENT_QUALIFIER_>
 {
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM((!TypesAreEqual_f<Derived_,NullType>::V), DERIVED_MUST_NOT_BE_NULL_TYPE),
-        //STATIC_ASSERT_IN_ENUM((FactorTypeList_::LENGTH > 0), MUST_BE_NONEMPTY) // TODO: deprecate this, since 0-order tensors should be allowed
-        STATIC_ASSERT_IN_ENUM(IS_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES_UNIQUELY(TensorProductOfBasedVectorSpaces_), MUST_BE_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES)
-    };
+    static_assert(!TypesAreEqual_f<Derived_,NullType>::V, "Derived_ must not be NullType");
+    static_assert(IS_TENSOR_PRODUCT_OF_BASED_VECTOR_SPACES_UNIQUELY(TensorProductOfBasedVectorSpaces_), "TensorProductOfBasedVectorSpaces_ must have unique tensor product of based vector spaces structure");
 
     typedef EmbeddableAsTensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENT_QUALIFIER_> Parent_EmbeddableAsTensor_i;
     typedef typename Parent_EmbeddableAsTensor_i::Derived Derived;
@@ -46,8 +42,8 @@ struct Tensor_i
     typedef typename Parent_EmbeddableAsTensor_i::QualifiedComponent QualifiedComponent;
 
     typedef TensorProductOfBasedVectorSpaces_ TensorProductOfBasedVectorSpaces;
-    typedef typename FactorTypeListOf_f<TensorProductOfBasedVectorSpaces>::T FactorTypeList;
-    typedef MultiIndex_t<typename FactorComponentIndexTypeList_t<FactorTypeList>::T> MultiIndex;
+    typedef typename FactorTypleOf_f<TensorProductOfBasedVectorSpaces>::T FactorTyple;
+    typedef MultiIndex_t<typename FactorComponentIndexTyple_f<FactorTyple>::T> MultiIndex;
     // this is not the "fully expanded" order, but the number of [what you could think of
     // as "parenthesized"] factors that formed this tensor product type.
     static Uint32 const ORDER = OrderOf_f<TensorProductOfBasedVectorSpaces_>::V;
@@ -61,92 +57,92 @@ struct Tensor_i
     using Parent_EmbeddableAsTensor_i::as_derived;
     using Parent_EmbeddableAsTensor_i::operator[];
     // multi-index component access which is a frontend for the vector-index component access
-    template <typename OtherIndexTypeList>
-    ComponentAccessConstReturnType operator [] (MultiIndex_t<OtherIndexTypeList> const &m) const
+    template <typename OtherIndexTyple_>
+    ComponentAccessConstReturnType operator [] (MultiIndex_t<OtherIndexTyple_> const &m) const
     {
-        STATIC_ASSERT(IsTypeList_f<OtherIndexTypeList>::V, MUST_BE_TYPELIST);
-        typedef MultiIndex_t<OtherIndexTypeList> OtherMultiIndex;
-        STATIC_ASSERT((OtherMultiIndex::LENGTH == MultiIndex::LENGTH), MUST_HAVE_EQUAL_LENGTHS);
+        static_assert(IsTyple_f<OtherIndexTyple_>::V, "OtherIndexTyple_ must be a Typle_t");
+        typedef MultiIndex_t<OtherIndexTyple_> OtherMultiIndex;
+        static_assert(OtherMultiIndex::LENGTH == MultiIndex::LENGTH, "multiindex param must have a length equal to the order of the tensor");
         //std::cout << OtherMultiIndex::LENGTH << ", " << MultiIndex::LENGTH << '\n';
         assert(m.is_not_at_end() && "you used ComponentIndex_t(x, DONT_RANGE_CHECK) inappropriately");
-        // NOTE: this construction is unnecessary to the code, but IS necessary to the compile-time type checking
-        // the compiler should optimize it out anyway.
+        // NOTE: this construction is unnecessary to the code, but IS necessary to the 
+        // compile-time type checking -- the compiler should optimize it out anyway.
         MultiIndex x(m);
         // m.value() is what does the multi-index-to-vector-index computation
-        return Parent_EmbeddableAsTensor_i::operator[](ComponentIndex(m.value(), DONT_CHECK_RANGE));
+        return Parent_EmbeddableAsTensor_i::operator[](ComponentIndex(m.value(), CheckRange::FALSE));
     }
     // multi-index component access which is a frontend for the vector-index component access
-    template <typename OtherIndexTypeList>
-    ComponentAccessNonConstReturnType operator [] (MultiIndex_t<OtherIndexTypeList> const &m)
+    template <typename OtherIndexTyple_>
+    ComponentAccessNonConstReturnType operator [] (MultiIndex_t<OtherIndexTyple_> const &m)
     {
-        STATIC_ASSERT(IsTypeList_f<OtherIndexTypeList>::V, MUST_BE_TYPELIST);
-        typedef MultiIndex_t<OtherIndexTypeList> OtherMultiIndex;
-        STATIC_ASSERT((OtherMultiIndex::LENGTH == MultiIndex::LENGTH), MUST_HAVE_EQUAL_LENGTHS);
+        static_assert(IsTyple_f<OtherIndexTyple_>::V, "OtherIndexTyple_ must be a Typle_t");
+        typedef MultiIndex_t<OtherIndexTyple_> OtherMultiIndex;
+        static_assert(OtherMultiIndex::LENGTH == MultiIndex::LENGTH, "multiindex param must have a length equal to the order of the tensor");
         //std::cout << OtherMultiIndex::LENGTH << ", " << MultiIndex::LENGTH << '\n';
         assert(m.is_not_at_end() && "you used ComponentIndex_t(x, DONT_RANGE_CHECK) inappropriately");
-        // NOTE: this construction is unnecessary to the code, but IS necessary to the compile-time type checking
-        // the compiler should optimize it out anyway.
+        // NOTE: this construction is unnecessary to the code, but IS necessary to the 
+        // compile-time type checking -- the compiler should optimize it out anyway.
         MultiIndex x(m);
         // m.value() is what does the multi-index-to-vector-index computation
-        return Parent_EmbeddableAsTensor_i::operator[](ComponentIndex(m.value(), DONT_CHECK_RANGE));
+        return Parent_EmbeddableAsTensor_i::operator[](ComponentIndex(m.value(), CheckRange::FALSE));
     }
 
     using Parent_EmbeddableAsTensor_i::operator();
 
     // Because the return type for "operator () (...) const" is an abomination, use this helper.
-    // This metafunction also serves to allow a 1-multiindex (i.e. a typelist of abstract indices
+    // This metafunction also serves to allow a 1-multiindex (i.e. a typle of abstract indices
     // having 1 element) to create vector-indexed expressions.
-    template <typename AbstractIndexTypeList_>
+    template <typename AbstractIndexTyple_>
     struct IndexedExpressionConstType_f;
     // Because the return type for "operator () (...) const" is an abomination, use this helper.
-    // This metafunction also serves to allow a 1-multiindex (i.e. a typelist of abstract indices
+    // This metafunction also serves to allow a 1-multiindex (i.e. a typle of abstract indices
     // having 1 element) to create vector-indexed expressions.
-    template <typename AbstractIndexTypeList_>
+    template <typename AbstractIndexTyple_>
     struct IndexedExpressionNonConstType_f;
 
     // specialization for indexed expressions using 1-multiindices, effectively indexing this
     // Tensor_i as a Vector_i
     template <typename AbstractIndexHeadType_>
-    typename IndexedExpressionConstType_f<TypeList_t<AbstractIndexHeadType_> >::T
-        operator () (TypeList_t<AbstractIndexHeadType_> const &) const
+    typename IndexedExpressionConstType_f<Typle_t<AbstractIndexHeadType_>>::T
+        operator () (Typle_t<AbstractIndexHeadType_> const &) const
     {
-        STATIC_ASSERT(IsAbstractIndex_f<AbstractIndexHeadType_>::V, MUST_BE_ABSTRACT_INDEX);
-        return typename IndexedExpressionConstType_f<TypeList_t<AbstractIndexHeadType_> >::T(as_derived());
+        static_assert(IsAbstractIndex_f<AbstractIndexHeadType_>::V, "AbstractIndexHeadType_ must be an AbstractIndex_c");
+        return typename IndexedExpressionConstType_f<Typle_t<AbstractIndexHeadType_>>::T(as_derived());
     }
     // specialization for indexed expressions using 1-multiindices, effectively indexing this
     // Tensor_i as a Vector_i
     template <typename AbstractIndexHeadType_>
-    typename IndexedExpressionNonConstType_f<TypeList_t<AbstractIndexHeadType_> >::T
-        operator () (TypeList_t<AbstractIndexHeadType_> const &)
+    typename IndexedExpressionNonConstType_f<Typle_t<AbstractIndexHeadType_>>::T
+        operator () (Typle_t<AbstractIndexHeadType_> const &)
     {
-        STATIC_ASSERT(IsAbstractIndex_f<AbstractIndexHeadType_>::V, MUST_BE_ABSTRACT_INDEX);
-        return typename IndexedExpressionNonConstType_f<TypeList_t<AbstractIndexHeadType_> >::T(as_derived());
+        static_assert(IsAbstractIndex_f<AbstractIndexHeadType_>::V, "AbstractIndexHeadType_ must be an AbstractIndex_c");
+        return typename IndexedExpressionNonConstType_f<Typle_t<AbstractIndexHeadType_>>::T(as_derived());
     }
 
     // the two separate head/body template arguments are necessary to disambiguate this method
     // from one that takes a single index (i.e. the index-by-vector-index one).
-    template <typename AbstractIndexHeadType_, typename AbstractIndexBodyTypeList_>
-    typename IndexedExpressionConstType_f<TypeList_t<AbstractIndexHeadType_,AbstractIndexBodyTypeList_> >::T
-        operator () (TypeList_t<AbstractIndexHeadType_,AbstractIndexBodyTypeList_> const &) const
+    template <typename... AbstractIndexTypes_>
+    typename IndexedExpressionConstType_f<Typle_t<AbstractIndexTypes_...>>::T
+        operator () (Typle_t<AbstractIndexTypes_...> const &) const
     {
-        typedef TypeList_t<AbstractIndexHeadType_,AbstractIndexBodyTypeList_> AbstractIndexTypeList;
-        STATIC_ASSERT((EachTypeSatisfies_f<AbstractIndexTypeList,IsAbstractIndex_p>::V), EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
-        STATIC_ASSERT((AbstractIndexTypeList::LENGTH == ORDER), ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
-        return typename IndexedExpressionConstType_f<TypeList_t<AbstractIndexHeadType_,AbstractIndexBodyTypeList_> >::T(as_derived());
+        typedef Typle_t<AbstractIndexTypes_...> AbstractIndexTyple;
+        static_assert(EachTypeSatisfies_f<AbstractIndexTyple,IsAbstractIndex_e>::V, "each type must be an AbstractIndex_c");
+        static_assert(Length_f<AbstractIndexTyple>::V == ORDER, "must supply a number of indices equal to the order of the tensor");
+        return typename IndexedExpressionConstType_f<AbstractIndexTyple>::T(as_derived());
     }
-    template <typename AbstractIndexHeadType_, typename AbstractIndexBodyTypeList_>
-    typename IndexedExpressionNonConstType_f<TypeList_t<AbstractIndexHeadType_,AbstractIndexBodyTypeList_> >::T
-        operator () (TypeList_t<AbstractIndexHeadType_,AbstractIndexBodyTypeList_> const &)
+    template <typename... AbstractIndexTypes_>
+    typename IndexedExpressionNonConstType_f<Typle_t<AbstractIndexTypes_...>>::T
+        operator () (Typle_t<AbstractIndexTypes_...> const &)
     {
-        typedef TypeList_t<AbstractIndexHeadType_,AbstractIndexBodyTypeList_> AbstractIndexTypeList;
-        STATIC_ASSERT((EachTypeSatisfies_f<AbstractIndexTypeList,IsAbstractIndex_p>::V), EACH_TYPE_MUST_BE_ABSTRACT_INDEX);
-        STATIC_ASSERT((AbstractIndexTypeList::LENGTH == ORDER), ARGUMENT_LENGTH_MUST_EQUAL_ORDER);
-        return typename IndexedExpressionNonConstType_f<TypeList_t<AbstractIndexHeadType_,AbstractIndexBodyTypeList_> >::T(as_derived());
+        typedef Typle_t<AbstractIndexTypes_...> AbstractIndexTyple;
+        static_assert(EachTypeSatisfies_f<AbstractIndexTyple,IsAbstractIndex_e>::V, "each type must be an AbstractIndex_c");
+        static_assert(Length_f<AbstractIndexTyple>::V == ORDER, "must supply a number of indices equal to the order of the tensor");
+        return typename IndexedExpressionNonConstType_f<AbstractIndexTyple>::T(as_derived());
     }
 
     static bool component_is_procedural_zero (MultiIndex const &) { return false; }
     static Scalar scalar_factor_for_component (MultiIndex const &) { return Scalar(1); }
-    static ComponentIndex vector_index_of (MultiIndex const &m) { return ComponentIndex(m.value(), DONT_CHECK_RANGE); }
+    static ComponentIndex vector_index_of (MultiIndex const &m) { return ComponentIndex(m.value(), CheckRange::FALSE); }
 
     static std::string type_as_string (bool verbose)
     {
@@ -163,51 +159,55 @@ template <typename Derived_, typename Scalar_, typename TensorProductOfBasedVect
 std::ostream &operator << (std::ostream &out, Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENT_QUALIFIER_> const &t)
 {
     typedef Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENT_QUALIFIER_> Tensor;
-    typedef typename Tensor::MultiIndex::IndexTypeList IndexTypeList;
-    print_multiindexable(out, t, IndexTypeList());
+    typedef typename Tensor::MultiIndex::IndexTyple IndexTyple;
+    print_multiindexable(out, t, IndexTyple());
     return out;
 }
 
 // the general definition indexes this Tensor_i as a tensor (using a multiindex)
 template <typename Derived_, typename Scalar_, typename TensorProductOfBasedVectorSpaces_, ComponentQualifier COMPONENT_QUALIFIER_>
-template <typename AbstractIndexTypeList_>
-struct Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENT_QUALIFIER_>::IndexedExpressionConstType_f
+template <typename AbstractIndexTyple_>
+struct Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENT_QUALIFIER_>
+       ::IndexedExpressionConstType_f
 {
     typedef ExpressionTemplate_IndexedObject_t<
                 Derived, // have to use Derived instead of Tensor_i, so that the return-a-reference operator[] is used
-                FactorTypeList,
-                typename DimIndexTypeListOf_t<FactorTypeList,AbstractIndexTypeList_>::T,
-                typename SummedIndexTypeList_t<typename DimIndexTypeListOf_t<FactorTypeList,AbstractIndexTypeList_>::T>::T,
-                FORCE_CONST,
-                CHECK_FOR_ALIASING> T;
+                FactorTyple,
+                typename DimIndexTypleOf_f<FactorTyple,AbstractIndexTyple_>::T,
+                typename SummedIndexTyple_f<typename DimIndexTypleOf_f<FactorTyple,AbstractIndexTyple_>::T>::T,
+                ForceConst::TRUE,
+                CheckForAliasing::TRUE> T;
 };
 
 // the special definition (for 1-multiindices) indexes this Tensor_i as a Vector_i
 template <typename Derived_, typename Scalar_, typename TensorProductOfBasedVectorSpaces_, ComponentQualifier COMPONENT_QUALIFIER_>
 template <typename AbstractIndexHeadType_>
-struct Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENT_QUALIFIER_>::IndexedExpressionConstType_f<TypeList_t<AbstractIndexHeadType_> >
+struct Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENT_QUALIFIER_>
+       ::IndexedExpressionConstType_f<Typle_t<AbstractIndexHeadType_>>
 {
     typedef typename Parent_EmbeddableAsTensor_i::template IndexedExpressionConstType_f<SymbolOf_f<AbstractIndexHeadType_>::V>::T T;
 };
 
 // the general definition indexes this Tensor_i as a tensor (using a multiindex)
 template <typename Derived_, typename Scalar_, typename TensorProductOfBasedVectorSpaces_, ComponentQualifier COMPONENT_QUALIFIER_>
-template <typename AbstractIndexTypeList_>
-struct Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENT_QUALIFIER_>::IndexedExpressionNonConstType_f
+template <typename AbstractIndexTyple_>
+struct Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENT_QUALIFIER_>
+       ::IndexedExpressionNonConstType_f
 {
     typedef ExpressionTemplate_IndexedObject_t<
                 Derived, // have to use Derived instead of Tensor_i, so that the return-a-reference operator[] is used
-                FactorTypeList,
-                typename DimIndexTypeListOf_t<FactorTypeList,AbstractIndexTypeList_>::T,
-                typename SummedIndexTypeList_t<typename DimIndexTypeListOf_t<FactorTypeList,AbstractIndexTypeList_>::T>::T,
-                DONT_FORCE_CONST,
-                CHECK_FOR_ALIASING> T;
+                FactorTyple,
+                typename DimIndexTypleOf_f<FactorTyple,AbstractIndexTyple_>::T,
+                typename SummedIndexTyple_f<typename DimIndexTypleOf_f<FactorTyple,AbstractIndexTyple_>::T>::T,
+                ForceConst::FALSE,
+                CheckForAliasing::TRUE> T;
 };
 
 // the special definition (for 1-multiindices) indexes this Tensor_i as a Vector_i
 template <typename Derived_, typename Scalar_, typename TensorProductOfBasedVectorSpaces_, ComponentQualifier COMPONENT_QUALIFIER_>
 template <typename AbstractIndexHeadType_>
-struct Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENT_QUALIFIER_>::IndexedExpressionNonConstType_f<TypeList_t<AbstractIndexHeadType_> >
+struct Tensor_i<Derived_,Scalar_,TensorProductOfBasedVectorSpaces_,COMPONENT_QUALIFIER_>
+       ::IndexedExpressionNonConstType_f<Typle_t<AbstractIndexHeadType_>>
 {
     typedef typename Parent_EmbeddableAsTensor_i::template IndexedExpressionNonConstType_f<SymbolOf_f<AbstractIndexHeadType_>::V>::T T;
 };

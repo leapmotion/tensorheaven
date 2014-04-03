@@ -8,7 +8,6 @@
 #include <utility> // for std::pair
 #include <complex>
 
-#include "tenh/meta/typelist.hpp"
 #include "tenh/multiindex.hpp"
 #include "tenh/tensor2.hpp"
 #include "tenh/vector.hpp"
@@ -51,7 +50,7 @@ void test_read_access (Context const &context)
     typedef typename Type_::Factor1 V1;
     typedef typename Type_::Factor2 V2;
 
-    std::pair<Type_,Scalar> p = context.DataAs<std::pair<Type_,Scalar> >();
+    std::pair<Type_,Scalar> p = context.DataAs<std::pair<Type_,Scalar>>();
     Type_ t = p.first;
     Scalar s = p.second;
 
@@ -60,7 +59,7 @@ void test_read_access (Context const &context)
         for (typename V2::Index j; j.is_not_at_end(); ++j)
         {
             Tenh::MultiIndex_t<Tenh::TypeList_t<typename V1::Index,
-                Tenh::TypeList_t<typename V2::Index> > > ci(i,j);
+                Tenh::TypeList_t<typename V2::Index>>> ci(i,j);
             assert_eq(t[ci], t.component(i,j));
             assert_eq(t[ci], s);
             assert_eq(t.scalar_factor_for_component(ci), Scalar(1));
@@ -76,7 +75,7 @@ void test_write_access (Context const &context)
     typedef typename Type_::Factor1 V1;
     typedef typename Type_::Factor2 V2;
 
-    std::pair<Type_,Scalar> p = context.DataAs<std::pair<Type_,Scalar> >();
+    std::pair<Type_,Scalar> p = context.DataAs<std::pair<Type_,Scalar>>();
     Type_ t = p.first;
 
     for (typename V1::Index i; i.is_not_at_end(); ++i)
@@ -100,7 +99,7 @@ void add_particular_tests (Directory *parent)
     typedef Tenh::Tensor2_t<V1, V2> Tensor2;
 
     Directory *tensor2
-        = new Directory(Tenh::type_string_of<Tenh::Tensor2_t<V1,V2> >(), parent);
+        = new Directory(Tenh::type_string_of<Tenh::Tensor2_t<V1,V2>>(), parent);
 
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(tensor2, "constructor_without_initialization",
         constructor_without_initialization<Tensor2>, RESULT_NO_ERROR);
@@ -112,9 +111,9 @@ void add_particular_tests (Directory *parent)
     std::pair<Tensor2,Scalar> p(t,s);
 
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(tensor2, "test_read_access", test_read_access<Tensor2>,
-        new Context::Data<std::pair<Tensor2,Scalar> >(p), RESULT_NO_ERROR);
+        new Context::Data<std::pair<Tensor2,Scalar>>(p), RESULT_NO_ERROR);
     LVD_ADD_NAMED_TEST_CASE_FUNCTION(tensor2, "test_write_access",
-        test_write_access<Tensor2>, new Context::Data<std::pair<Tensor2,Scalar> >(p), RESULT_NO_ERROR);
+        test_write_access<Tensor2>, new Context::Data<std::pair<Tensor2,Scalar>>(p), RESULT_NO_ERROR);
 }
 
 template <typename Scalar>
@@ -133,8 +132,8 @@ void AddTests (Directory *parent)
     add_particular_tests_for_scalar<Sint32>(tensor2);
     add_particular_tests_for_scalar<float>(tensor2);
     add_particular_tests_for_scalar<double>(tensor2);
-    add_particular_tests_for_scalar<complex<float> >(tensor2);
-    add_particular_tests_for_scalar<complex<double> >(tensor2);
+    add_particular_tests_for_scalar<complex<float>>(tensor2);
+    add_particular_tests_for_scalar<complex<double>>(tensor2);
 }
 
 } // end of namespace Tensor2

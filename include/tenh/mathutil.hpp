@@ -56,7 +56,7 @@ private:
 template<Uint32 N, Uint32 K>
 struct BinomialCoefficient_t
 {
-	static const Uint32 V = If_f<(K > N), Value_t<Uint32,0>, BinomialCoefficientImpl_t<N,K> >::T::V;
+	static const Uint32 V = If_f<(K > N), Value_t<Uint32,0>, BinomialCoefficientImpl_t<N,K>>::T::V;
 private:
     BinomialCoefficient_t();
 };
@@ -73,7 +73,7 @@ struct IndexOfGreatestSimplicialNumberLEQ_t
 {
     static const Uint32 V = If_f<(BinomialCoefficient_t<iteration,D>::V > X),
                                  Value_t<Uint32,iteration-1>,
-                                 IndexOfGreatestSimplicialNumberLEQ_t<X,D,iteration+1> >::T::V;
+                                 IndexOfGreatestSimplicialNumberLEQ_t<X,D,iteration+1>>::T::V;
 private:
     IndexOfGreatestSimplicialNumberLEQ_t();
 };

@@ -27,11 +27,8 @@ namespace Tenh {
 template <typename Derived_, typename Scalar_, typename BasedVectorSpace_, ComponentQualifier COMPONENT_QUALIFIER_>
 struct Vector_i
 {
-    enum
-    {
-        STATIC_ASSERT_IN_ENUM((!TypesAreEqual_f<Derived_,NullType>::V), DERIVED_MUST_NOT_BE_NULL_TYPE),
-        STATIC_ASSERT_IN_ENUM(IS_BASED_VECTOR_SPACE_UNIQUELY(BasedVectorSpace_), MUST_BE_BASED_VECTOR_SPACE)
-    };
+    static_assert(!TypesAreEqual_f<Derived_,NullType>::V, "Derived_ must not be NullType");
+    static_assert(IS_BASED_VECTOR_SPACE_UNIQUELY(BasedVectorSpace_), "BasedVectorSpace_ must have unique based vector space structure");
 
     typedef Derived_ Derived;
     typedef Scalar_ Scalar;
@@ -39,11 +36,11 @@ struct Vector_i
     static Uint32 const DIM = DimensionOf_f<BasedVectorSpace>::V;
 
     typedef ComponentIndex_t<DIM> ComponentIndex;
-    typedef MultiIndex_t<TypeList_t<ComponentIndex> > MultiIndex;
+    typedef MultiIndex_t<Typle_t<ComponentIndex>> MultiIndex;
 
     // this is necessary so that ExpressionTemplate_IndexedObject_t knows that a vector is
     // a 1-tensor having a particular type.
-    typedef TypeList_t<BasedVectorSpace> FactorTypeList;
+    typedef Typle_t<BasedVectorSpace> FactorTyple;
 
     static ComponentQualifier const COMPONENT_QUALIFIER = COMPONENT_QUALIFIER_;
     typedef typename ComponentQualifier_m<Scalar_,COMPONENT_QUALIFIER_>::ComponentAccessConstReturnType ComponentAccessConstReturnType;
@@ -58,14 +55,14 @@ struct Vector_i
     // type conversion operator for canonical coercion to Scalar type when the vector is 1-dimensional
     operator ComponentAccessConstReturnType () const
     {
-        STATIC_ASSERT((DIM == 1), ONLY_ONE_DIMENSIONAL_VECTORS_CAN_BE_CONVERTED_TO_SCALARS);
-        return as_derived().Derived::operator[](ComponentIndex(0, DONT_CHECK_RANGE));
+        static_assert(DIM == 1, "only 1-d vectors can be converted to scalars");
+        return as_derived().Derived::operator[](ComponentIndex(0, CheckRange::FALSE));
     }
     // this could be implemented as "operator Scalar & ()" but it would be bad to make implicit casts that can be used to change the value of this.
     ComponentAccessNonConstReturnType as_scalar ()
     {
-        STATIC_ASSERT((DIM == 1), ONLY_ONE_DIMENSIONAL_VECTORS_CAN_BE_CONVERTED_TO_SCALARS);
-        return as_derived().Derived::operator[](ComponentIndex(0, DONT_CHECK_RANGE));
+        static_assert(DIM == 1, "only 1-d vectors can be converted to scalars");
+        return as_derived().Derived::operator[](ComponentIndex(0, CheckRange::FALSE));
     }
 
     // accessor as Derived type
@@ -92,31 +89,31 @@ struct Vector_i
     ComponentAccessNonConstReturnType operator [] (ComponentIndex const &i) { return as_derived().operator[](i); }
 
     template <typename Index_>
-    ComponentAccessConstReturnType operator [] (MultiIndex_t<TypeList_t<Index_> > const &m) const { return as_derived().operator[](m.head()); }
+    ComponentAccessConstReturnType operator [] (MultiIndex_t<Typle_t<Index_>> const &m) const { return as_derived().operator[](m.head()); }
     template <typename Index_>
-    ComponentAccessNonConstReturnType operator [] (MultiIndex_t<TypeList_t<Index_> > const &m) { return as_derived().operator[](m.head()); }
+    ComponentAccessNonConstReturnType operator [] (MultiIndex_t<Typle_t<Index_>> const &m) { return as_derived().operator[](m.head()); }
 
     // because the return type for "operator () (...) const" is an abomination, use this helper.
     template <AbstractIndexSymbol SYMBOL_>
     struct IndexedExpressionConstType_f
     {
         typedef ExpressionTemplate_IndexedObject_t<Vector_i,
-                                                   TypeList_t<BasedVectorSpace>,
-                                                   TypeList_t<DimIndex_t<SYMBOL_,DIM> >,
-                                                   EmptyTypeList,
-                                                   FORCE_CONST,
-                                                   CHECK_FOR_ALIASING> T;
+                                                   Typle_t<BasedVectorSpace>,
+                                                   Typle_t<DimIndex_t<SYMBOL_,DIM>>,
+                                                   Typle_t<>,
+                                                   ForceConst::TRUE,
+                                                   CheckForAliasing::TRUE> T;
     };
     // because the return type for "operator () (...)" is an abomination, use this helper.
     template <AbstractIndexSymbol SYMBOL_>
     struct IndexedExpressionNonConstType_f
     {
         typedef ExpressionTemplate_IndexedObject_t<Vector_i,
-                                                   TypeList_t<BasedVectorSpace>,
-                                                   TypeList_t<DimIndex_t<SYMBOL_,DIM> >,
-                                                   EmptyTypeList,
-                                                   DONT_FORCE_CONST,
-                                                   CHECK_FOR_ALIASING> T;
+                                                   Typle_t<BasedVectorSpace>,
+                                                   Typle_t<DimIndex_t<SYMBOL_,DIM>>,
+                                                   Typle_t<>,
+                                                   ForceConst::FALSE,
+                                                   CheckForAliasing::TRUE> T;
     };
 
     // the argument is technically unnecessary, as its value is not used.  however,
@@ -129,26 +126,26 @@ struct Vector_i
     template <AbstractIndexSymbol SYMBOL_>
     typename IndexedExpressionConstType_f<SYMBOL_>::T operator () (AbstractIndex_c<SYMBOL_> const &) const
     {
-        STATIC_ASSERT((SYMBOL_ != '\0'), ABSTRACT_INDEX_SYMBOL_MUST_BE_POSITIVE);
+        static_assert(SYMBOL_ > 0, "AbstractIndex_c symbol must be positive");
         return typename IndexedExpressionConstType_f<SYMBOL_>::T(as_derived());
     }
     template <AbstractIndexSymbol SYMBOL_>
     typename IndexedExpressionNonConstType_f<SYMBOL_>::T operator () (AbstractIndex_c<SYMBOL_> const &)
     {
-        STATIC_ASSERT((SYMBOL_ != '\0'), ABSTRACT_INDEX_SYMBOL_MUST_BE_POSITIVE);
+        static_assert(SYMBOL_ > 0, "AbstractIndex_c symbol must be positive");
         return typename IndexedExpressionNonConstType_f<SYMBOL_>::T(as_derived());
     }
 
     template <AbstractIndexSymbol SYMBOL_>
-    typename IndexedExpressionConstType_f<SYMBOL_>::T operator () (TypeList_t<AbstractIndex_c<SYMBOL_> > const &) const
+    typename IndexedExpressionConstType_f<SYMBOL_>::T operator () (Typle_t<AbstractIndex_c<SYMBOL_>> const &) const
     {
-        STATIC_ASSERT((SYMBOL_ != '\0'), ABSTRACT_INDEX_SYMBOL_MUST_BE_POSITIVE);
+        static_assert(SYMBOL_ > 0, "AbstractIndex_c symbol must be positive");
         return typename IndexedExpressionConstType_f<SYMBOL_>::T(as_derived());
     }
     template <AbstractIndexSymbol SYMBOL_>
-    typename IndexedExpressionNonConstType_f<SYMBOL_>::T operator () (TypeList_t<AbstractIndex_c<SYMBOL_> > const &)
+    typename IndexedExpressionNonConstType_f<SYMBOL_>::T operator () (Typle_t<AbstractIndex_c<SYMBOL_>> const &)
     {
-        STATIC_ASSERT((SYMBOL_ != '\0'), ABSTRACT_INDEX_SYMBOL_MUST_BE_POSITIVE);
+        static_assert(SYMBOL_ > 0, "AbstractIndex_c symbol must be positive");
         return typename IndexedExpressionNonConstType_f<SYMBOL_>::T(as_derived());
     }
 
@@ -172,10 +169,10 @@ struct Vector_i
     //   X(tuple(v))
     // evaluates as
     //   X(i)*v(i).
-    template <typename ParameterTypeList_>
-    Scalar_ operator () (List_t<ParameterTypeList_> const &p) const
+    template <typename Typle_>
+    Scalar_ operator () (Tuple_t<Typle_> const &p) const
     {
-        STATIC_ASSERT(Length_f<ParameterTypeList_>::V == 1, LENGTH_MUST_BE_EXACTLY_1);
+        static_assert(Length_f<Typle_>::V == 1, "this function is only defined for 1-tuples");
         AbstractIndex_c<'i'> i;
         return operator()(i)*p.head()(i);
     }
@@ -192,7 +189,7 @@ struct Vector_i
         embed_using (EmbeddingCodomain_ const &, AbstractIndex_c<EMBEDDED_ABSTRACT_INDEX_SYMBOL_> const &i) const
     {
         AbstractIndex_c<666> dummy_index;
-        return operator()(dummy_index).template embed_using<EmbeddingId_>(dummy_index, EmbeddingCodomain_(), i);
+        return operator()(dummy_index).TUMPLATE embed_using<EmbeddingId_>(dummy_index, EmbeddingCodomain_(), i);
     }
     // this provides the "embed" operation without needing an intermediate temporary index,
     // since this object will be frequently embedded.
@@ -206,7 +203,7 @@ struct Vector_i
         embed (EmbeddingCodomain_ const &, AbstractIndex_c<EMBEDDED_ABSTRACT_INDEX_SYMBOL_> const &i) const
     {
         AbstractIndex_c<666> dummy_index;
-        return operator()(dummy_index).template embed(dummy_index, EmbeddingCodomain_(), i);
+        return operator()(dummy_index).TUMPLATE embed(dummy_index, EmbeddingCodomain_(), i);
     }
     // this provides the "coembed_using" operation without needing an intermediate temporary index,
     // since this object will be frequently embedded.
@@ -220,7 +217,7 @@ struct Vector_i
         coembed_using (CoembeddingCodomain_ const &, AbstractIndex_c<COEMBEDDED_ABSTRACT_INDEX_SYMBOL_> const &i) const
     {
         AbstractIndex_c<666> dummy_index;
-        return operator()(dummy_index).template coembed_using<EmbeddingId_>(dummy_index, CoembeddingCodomain_(), i);
+        return operator()(dummy_index).TUMPLATE coembed_using<EmbeddingId_>(dummy_index, CoembeddingCodomain_(), i);
     }
     // this provides the "coembed" operation without needing an intermediate temporary index,
     // since this object will be frequently embedded.
@@ -234,7 +231,7 @@ struct Vector_i
         coembed (CoembeddingCodomain_ const &, AbstractIndex_c<COEMBEDDED_ABSTRACT_INDEX_SYMBOL_> const &i) const
     {
         AbstractIndex_c<666> dummy_index;
-        return operator()(dummy_index).template coembed(dummy_index, CoembeddingCodomain_(), i);
+        return operator()(dummy_index).TUMPLATE coembed(dummy_index, CoembeddingCodomain_(), i);
     }
 
     Uint32 allocation_size_in_bytes () const { return as_derived().allocation_size_in_bytes(); }
@@ -258,7 +255,7 @@ struct Vector_i
 };
 
 template <typename T_> struct IsAVector_i { static bool const V = false; };
-template <typename Derived_, typename Scalar_, typename BasedVectorSpace_, ComponentQualifier COMPONENT_QUALIFIER_> struct IsAVector_i<Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENT_QUALIFIER_> > { static bool const V = true; };
+template <typename Derived_, typename Scalar_, typename BasedVectorSpace_, ComponentQualifier COMPONENT_QUALIFIER_> struct IsAVector_i<Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENT_QUALIFIER_>> { static bool const V = true; };
 
 template <typename Derived_, typename Scalar_, typename BasedVectorSpace_, ComponentQualifier COMPONENT_QUALIFIER_>
 std::ostream &operator << (std::ostream &out, Vector_i<Derived_,Scalar_,BasedVectorSpace_,COMPONENT_QUALIFIER_> const &v)
