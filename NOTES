@@ -100,6 +100,8 @@
   compiler can check for missing cases.
 - consider changing ::T and ::V to ::type and ::value to be consistent with the STL.
 - make VERBOSE and TERSE strongly typed enums
+- change enum string access functions to use switch statements on enum values so that the
+  compiler can check for missing cases.
 
 
 ###implemented features/items:
