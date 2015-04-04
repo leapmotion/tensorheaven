@@ -248,7 +248,8 @@ struct Property_f
 {
 private:
     typedef typename MultiProperty_f<Concept_,PropertyId_>::T MultiProperty;
-    static_assert(Length_f<MultiProperty>::V == 1, "property is not well-defined");
+    static_assert(Length_f<MultiProperty>::V > 0, "property is not well-defined because it lacks any value");
+    static_assert(Length_f<MultiProperty>::V <= 1, "property is not well-defined because it is not unique");
     Property_f();
 public:
     typedef typename Head_f<MultiProperty>::T T;

@@ -81,6 +81,14 @@ private:
 
 MAKE_1_ARY_VALUE_EVALUATOR(IsDimIndex);
 
+// BaseProperty_f accessors
+
+template <AbstractIndexSymbol SYMBOL_, Uint32 DIM_>
+struct BaseProperty_f<DimIndex_t<SYMBOL_,DIM_>,Symbol>
+{
+    typedef Value_t<AbstractIndexSymbol,SYMBOL_> T;
+};
+
 /// @brief Takes a Typle_t of DimIndex_t and returns a Typle_t of the associated parent ComponentIndex_t.
 /// @headerfile dimindex.hpp "tenh/dimindex.hpp"
 template <typename DimIndexTyple_>
