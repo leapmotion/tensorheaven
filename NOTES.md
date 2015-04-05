@@ -1,7 +1,7 @@
-#TENSOR HEAVEN - Tenh (pronounced "tench", similar to hyperbolic tangent tanh)
+# TENSOR HEAVEN - Tenh (pronounced "tench", similar to hyperbolic tangent tanh)
 
 
-##NOTES
+## NOTES
 - all library code is in tenh/
   * ideally there will be few/no cpp files
 - only the root directory (the directory containing tenh/) should be included, in the same manner as Eigen.
@@ -10,7 +10,7 @@
   in the tensorhell/ subdirectory will build all of these.  the executable name for the "real" tests is "test".
 
 
-###future goals:
+### Future goals
 - positive and negative compile tests
 - optimize evaluation algorithm (ordering operations to do the minimal amount of computation)
 - vectorizing as many operations as possible (in cooperation with loop-unrolling?)
@@ -21,7 +21,7 @@
   so having a formal mechanism to work with explicit bases may clarify and simplify some calculations
 
 
-###random TODOs:
+### Random TODOs
 - implement all (?) reindexing as a lookup table for speed.
 - see if it's possible to do strong range check guarantees for indices (`Index_t`) -- this would probably
   require a "for each" construct which would best be accomplished with lambda expressions
@@ -104,52 +104,52 @@
   compiler can check for missing cases.
 
 
-###implemented features/items:
-- x operator overloads for expression templates
-- x trace-type expression templates (where a tensor is contracted with itself, a case which is distinct from * style expression templates)
-- x prohibiting 3+ summed index expressions
-- x assignment expression templates
-- x check assignment for aliasing
-- x symmetric 2-tensors
-- x antisymmetric 2-tensors
-- x custom natural pairing (for non-isometric parameterizations)
-- x scalar multiplication/division in expression templates
-- x unary negation in expression templates
-- x printing expression templates
-- x down-casting tensors (extracting symmetries out of "broken apart" indexed tensor expressions);
-    "bundling" multi-indices into a more-specific "total" index type
-- x up-casting tensors (breaking symmetries indexed tensor expressions);
-    "splitting" a tensor "total" index into a less-specific multi-index
-- x diagonal 2-tensors
-- x SVD on 2-tensors, using Eigen
-- x eigen-decomposition of symmetric 2-tensors, using Eigen
-- x Eigen interop for using Tensor2_t as Eigen::Map (no memory copy necessary)
-- x functions for converting Tensor2Antisymmetric_t and Tensor2Symmetric_t to Eigen::Matrix types
-- x eval method for expression templates (to avoid aliasing problem when assigning)
-- x no_alias method for avoiding the run-time check against aliased expression template assignments
-- x Euclidean embeddings for vector and tensor types for when an inner-product-compatible representation is needed.
-- x Basis identifier for each vector space, giving an additional feature to distinguish vector types with,
-    for added correctness, which is particularly useful for the Euclidean embedding stuff.
-- x allow 0-dimensional vector spaces (this was done via -Wno-tautological-compare)
-- x relaxed the C++-driven type checking in preference to static-assert-driven type checking, made all
-    indices used in indexed expressions "weakly typed", except for bundled indices (e.g. the index p in
-    t(i|j).bundle(i|j,p) -- it is necessary to know the type of p for this to be a well-defined bundle).  all
-    other index types can be inferred from their use in the expression.
-- x strongly-typed vector spaces, and only natural pairings thereof allowed.
-- x exterior powers -- i.e. wedges.
-- x symmetric powers -- e.g. "vee"s.
-- x diagonal 2-tensor products of based vector spaces
-- x "mapped" tensors/vectors (using preallocated memory) and "procedural" tensors/vectors (using static
-    component-generating functions).
-- x "basic mode", allowing standard linear algebra notation, for easier adoption by non-experts
-- x choice of bases for tensors-with-symmetry rendering significant type-system simplification
-    and computational speedups.
-- x a canonical "zero" procedural-array-based ImplementationOf_t for all vector types (including tensor, vee, etc)
-- x basis vector procedural-array-based ImplementationOf_t for all vector types (including tensor, vee, etc)
-- x multilinear form evaluation via "operator ()" (e.g. g(x,y) as evaluation of a bilinear form).
+### Implemented features/items
+- operator overloads for expression templates
+- trace-type expression templates (where a tensor is contracted with itself, a case which is distinct from * style expression templates)
+- prohibiting 3+ summed index expressions
+- assignment expression templates
+- check assignment for aliasing
+- symmetric 2-tensors
+- antisymmetric 2-tensors
+- custom natural pairing (for non-isometric parameterizations)
+- scalar multiplication/division in expression templates
+- unary negation in expression templates
+- printing expression templates
+- down-casting tensors (extracting symmetries out of "broken apart" indexed tensor expressions);
+  "bundling" multi-indices into a more-specific "total" index type
+- up-casting tensors (breaking symmetries indexed tensor expressions);
+  "splitting" a tensor "total" index into a less-specific multi-index
+- diagonal 2-tensors
+- SVD on 2-tensors, using Eigen
+- eigen-decomposition of symmetric 2-tensors, using Eigen
+- Eigen interop for using Tensor2_t as Eigen::Map (no memory copy necessary)
+- functions for converting Tensor2Antisymmetric_t and Tensor2Symmetric_t to Eigen::Matrix types
+- eval method for expression templates (to avoid aliasing problem when assigning)
+- no_alias method for avoiding the run-time check against aliased expression template assignments
+- Euclidean embeddings for vector and tensor types for when an inner-product-compatible representation is needed.
+- Basis identifier for each vector space, giving an additional feature to distinguish vector types with,
+  for added correctness, which is particularly useful for the Euclidean embedding stuff.
+- allow 0-dimensional vector spaces (this was done via -Wno-tautological-compare)
+- relaxed the C++-driven type checking in preference to static-assert-driven type checking, made all
+  indices used in indexed expressions "weakly typed", except for bundled indices (e.g. the index p in
+  t(i|j).bundle(i|j,p) -- it is necessary to know the type of p for this to be a well-defined bundle).  all
+  other index types can be inferred from their use in the expression.
+- strongly-typed vector spaces, and only natural pairings thereof allowed.
+- exterior powers -- i.e. wedges.
+- symmetric powers -- e.g. "vee"s.
+- diagonal 2-tensor products of based vector spaces
+- "mapped" tensors/vectors (using preallocated memory) and "procedural" tensors/vectors (using static
+  component-generating functions).
+- "basic mode", allowing standard linear algebra notation, for easier adoption by non-experts
+- choice of bases for tensors-with-symmetry rendering significant type-system simplification
+  and computational speedups.
+- a canonical "zero" procedural-array-based ImplementationOf_t for all vector types (including tensor, vee, etc)
+- basis vector procedural-array-based ImplementationOf_t for all vector types (including tensor, vee, etc)
+- multilinear form evaluation via "operator ()" (e.g. g(x,y) as evaluation of a bilinear form).
 
 
-###different multi-indexing schemes
+### Different multi-indexing schemes
 - "split"                 : if t is `Tensor2<Tensor2Sym<V>,Tensor2Sym<V>>`, then `t(P,Q).split(P,i,j),split(Q,k,l)`
                             is converse to bundle, implementation would be similar.
 - "multi-index"           : if s is `Tensor2<Tensor5,V>`, then `s(i,j,k,l,m,T)` would be `s(multiindex(i,j,k,l,m),T`)
@@ -162,7 +162,7 @@
                             also if t is `Tensor2<DirectSum<V,V>,DirectSum<V,V>>` and s and u are `Tensor2<V,V>`
                             then `t((a+b)|(c+d)) = s(a|c) + u(b|d)` could fill t as a block diagonal tensor.
 
-###Notes for conceptual layer and refactor
+### Notes for conceptual layer and refactor
 - In order to incorporate the order-of-operations and diagonal 2-tensor contraction optimizations,
   the operator overloads which generate expression templates should do the expression template AST
   optimization (e.g. if the expression is `a(i)*d(i|j)*b(j)` and d is diagonal, then this should turn
@@ -259,7 +259,7 @@
 - copy constructor for PreallocatedArray_t and subclasses?  maybe one for MemberArray_t and subclasses.
 
 
-###Features necessary for "version 1.0"
+### Features necessary for "version 1.0"
 - x implementation of diagonal 2-tensors (of based vector spaces)
 - implementation of the optimization for contraction with diagonal 2-tensors (necessary so
     that we can implement inner products and other similar bilinear forms efficiently).
@@ -295,7 +295,7 @@
 - Talking to Tom about officially licensing the LVD unit test code (important for legal purposes)
 
 
-###Notes for Gabe's "Linear Operator" ("Hom"?) paradigm
+### Notes for Gabe's "Linear Operator" ("Hom"?) paradigm
 - The general idea is to do linear algebra in the "Hom" formalism, without implicitly
   identifying Hom(V,W) with the tensor product W \otimes V^*.
 - This is accomplished by defining operator* to be composition in the ordinary function
@@ -338,7 +338,7 @@
   operator can be taken.
 
 
-###Notes for generalized embed/coembed (generalizations of split/bundle)
+### Notes for generalized embed/coembed (generalizations of split/bundle)
 - The "embed" and "coembed" operations are defined via the following properties:
     * Accessing components of an "embedded" vector/tensor should be a sparse operation
       involving no fractions (e.g. direct component access for vees, or plus-or-minus 1
@@ -429,7 +429,7 @@
       functions required by embed.
 
 
-###Notes for refined indexed expressions
+### Notes for refined indexed expressions
 - In addition to creating abstract multi-indices via the | operator, e.g.
     x(i)*g(i*j)*y(j)
   make "direct sums" of induces, e.g. if x and y are vectors of type U and V respectively,
@@ -473,7 +473,7 @@
   nontrivial and requires some thought.
 
 
-###Notes for conceptual layer refinement to implement clearer/simpler categorical structure
+### Notes for conceptual layer refinement to implement clearer/simpler categorical structure
 - Add a hierarchy of "concept classes", in which whole classes of concepts have a fixed
   inheritance hierarchy, with a root class of "concept".  This defines a poset structure
   on the set of conceptual classes, and allows the "meet" of a finite set of concepts to
@@ -539,7 +539,7 @@
   or perhaps the embed/project stuff could happen before it.
 
 
-###Notes for terse type strings
+### Notes for terse type strings
 - The goal is to provide human-readable (i.e. non-template-notation) strings for the
   many types in tenh as compactly as possible, especially the conceptual types.
 - Things that represent mathematical objects (e.g. vector spaces, tensor products)
@@ -556,7 +556,7 @@
 - In strings that require parentheses, the goal should be to use the minimal amount.
 
 
-###Notes for [probable] upgrade to C++11 (to happen after "version 1.0" is reached)
+### Notes for [probable] upgrade to C++11 (to happen after "version 1.0" is reached)
 - TODO: look into C++11 support for embedded (and other) compilers that we might have to
   deal with in the future.
 - "Template typedefs" are possible through "alias declarations" in C++11:
@@ -565,13 +565,13 @@
         using Vector = Matrix<N, 1>;
 
   The type Vector<3> is equivalent to Matrix<3, 1>.
-x All the TypeList_t stuff (which is deeply interwoven into Tensor Heaven) could be refactored
+- x All the TypeList_t stuff (which is deeply interwoven into Tensor Heaven) could be refactored
   to use variadic templates, though it would probably be good to do a bunch of experiments and
   gain experience using them before settling on a design/best practice.
 - Tons of the metaprogramming uses static const variables -- these can be changed to use constexpr,
   though it looks like lack of MSVC support will hold this one back for a long time.
 - Static asserts with error strings will be awesome (no more making enums for the error messages).
-x Use nullptr
+- x Use nullptr
 - Change private constructors to use the new " = delete" notation added in C++11.
 - Move semantics for move constructors for various memory-containing structures (e.g. vectors)
 - Once "decltype" becomes available, it would be possible to do things like
@@ -620,7 +620,7 @@ x Use nullptr
     bool types_are_equal (T0_ const &, T1_ const &) { return false; }
 
 
-###Notes/Reflections on the development of a really really template-heavy math library
+### Notes/Reflections on the development of a really really template-heavy math library
 - The overarching conclusion is that C++ template metaprogramming (TMP) is the shittiest
   functional programming language that is widely used -- it's an emergent property of the original
   idea of making generic code (container classes, etc), and so was never designed as a first class
@@ -664,10 +664,8 @@ x Use nullptr
   system, allowing the C++-function-based program to be evaluated at compile time.
 
 
-###Notes from Tensor Heaven future planning
+### Notes from Tensor Heaven future planning
 - Projects which will use Tensor Heaven
-    * Generalized elephantoid reconstruction for more-robust fingertips
-        - Using valley points to get additional info
     * Multivariate polynomials (c.f. Kevin's polynomial class); will use fully symmetric tensors
     * Higher order SVD (implement in C++ with Tenh, then use some C++-to-Matlab layer interface
       library to provide this facility in Matlab for David's use)
@@ -724,7 +722,7 @@ x Use nullptr
       Because of the commercial licensing, we would have to have them give up the rights
       to the source code changes.
 
-###Interesting Facts
+### Interesting Facts
 - On 2013.10.03,
   `find . -name "*.hpp" -exec grep -vE "^[ ]*$|^[ ]*//.*|^[ ]*\{$|^[ ]*\};?$|^[ ]*:$" {} \; | wc -l`
   produced 6289 (lines of meaningful code)
