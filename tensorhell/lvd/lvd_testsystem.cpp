@@ -1,6 +1,6 @@
 // ///////////////////////////////////////////////////////////////////////////
 // lvd_testsystem.cpp by Victor Dods, created 2007/02/10
-// Copyright Victor Dods, licensed for use by Leap Motion Inc.
+// Copyright Victor Dods, licensed for unrestricted use by Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
 #include <csignal>

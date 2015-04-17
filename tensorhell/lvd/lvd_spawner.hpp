@@ -1,6 +1,6 @@
 // ///////////////////////////////////////////////////////////////////////////
 // lvd_spawner.hpp by Victor Dods, created 2007/02/09
-// Copyright Victor Dods, licensed for use by Leap Motion Inc.
+// Copyright Victor Dods, licensed for unrestricted use by Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
 #if !defined(LVD_SPAWNER_HPP_)

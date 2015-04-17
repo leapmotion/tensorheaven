@@ -1,6 +1,6 @@
 // ///////////////////////////////////////////////////////////////////////////
 // lvd_commandlineparser.hpp by Victor Dods, created 2006/02/18
-// Copyright Victor Dods, licensed for use by Leap Motion Inc.
+// Copyright Victor Dods, licensed for unrestricted use by Leap Motion Inc.
 // ///////////////////////////////////////////////////////////////////////////
 
 #if !defined(LVD_COMMANDLINEPARSER_HPP_)
